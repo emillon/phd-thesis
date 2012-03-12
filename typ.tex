@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpartir}
+
+\newcommand{\irule}[3]{ \inferrule*[right=(#1)]{#2}{#3} }
+
+\newcommand{\tyint} {\mathop{\mathrm{int}}}
+\newcommand{\tybool}{\mathop{\mathrm{bool}}}
+
+\newcommand{\nselect}[2]{ \mathop{\mathrm{select}}(#1, #2) }
+\newcommand{\nguard} [1]{ \mathop{\mathrm{guard}}(#1) }
+\newcommand{\nloop}  [1]{ \mathop{\mathrm{loop}}(#1) }
+\newcommand{\npass}  [0]{ \mathop{\mathrm{pass}} }
+\newcommand{\ndo}    [2]{ \mathop{\mathrm{do}} (#1) \mathop{\mathrm{with}} : #2 }
+\newcommand{\ngoto}  [1]{ \mathop{\mathrm{goto}}(#1) }
+
+\DeclareUnicodeCharacter{0393}{\Gamma}
+\DeclareUnicodeCharacter{22A2}{\vdash}
+\DeclareUnicodeCharacter{2208}{\in}
+
+\begin{document}
+
+\section*{Syntaxe}
+
+\section*{Typage}
+
+
+\[ \irule{Seq}
+{
+Γ ⊢ a \\ Γ ⊢ b
+}{
+Γ ⊢ a;b
+} \]
+
+\[ \irule{Select}
+{
+Γ ⊢ a \\ Γ ⊢ b
+}{
+Γ ⊢ \nselect{a}{b}
+} \]
+
+\[ \irule{Guard}
+{
+Γ ⊢ e : \tybool
+}{
+Γ ⊢ \nguard{e}
+} \]
+
+\[ \irule{Loop}
+{
+Γ ⊢ b
+}{
+Γ ⊢ \nloop{b}
+} \]
+
+\[ \irule{Pass}{
+}{ Γ ⊢ \npass
+} \]
+
+\[ \irule{Do}
+{
+Γ [l] ⊢ b
+}{
+Γ ⊢ \ndo{l}{b}
+} \]
+
+
+
+\[ \irule{Goto}
+{
+l ∈ Γ
+}{
+Γ ⊢ \ngoto{l}
+} \]
+
+
+
+
+\end{document}
