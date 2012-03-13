@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage{mathpartir}
+\usepackage{syntax}
 
 \newcommand{\irule}[3]{ \inferrule*[right=(#1)]{#2}{#3} }
 
@@ -16,64 +17,84 @@
 \newcommand{\ngoto}  [1]{ \mathop{\mathrm{goto}}(#1) }
 
 \DeclareUnicodeCharacter{0393}{\Gamma}
-\DeclareUnicodeCharacter{22A2}{\vdash}
+\DeclareUnicodeCharacter{03B5}{\epsilon}
+\DeclareUnicodeCharacter{03C3}{\sigma}
+\DeclareUnicodeCharacter{2190}{\leftarrow}
+\DeclareUnicodeCharacter{2191}{\uparrow}
+\DeclareUnicodeCharacter{2192}{\rightarrow}
+\DeclareUnicodeCharacter{21D2}{\Rightarrow}
+\DeclareUnicodeCharacter{2205}{\emptyset}
 \DeclareUnicodeCharacter{2208}{\in}
+\DeclareUnicodeCharacter{22A2}{\vdash}
 
 \begin{document}
 
 \section*{Syntaxe}
 
+\begin{grammar}
+<programme> ::= ( fonctions , globales , <bloc> )
+
+     <bloc> ::= <instr> ; <bloc>
+           \alt $ε$
+
+    <instr> ::= <lval> $←$ <expr>
+           \alt <lval> $←$ funexp (args)
+           \alt  $∅ ←$ funexp (args)
+           \alt $↑$ nom \{ <bloc> \}
+           \alt if (<expr>) \{ <bloc> \}
+           \alt \{ <bloc> \} label:
+           \alt goto label
+           \alt forever \{ <bloc> \}
+
+    <expr> ::= <lval>
+          \alt unop <expr>
+          \alt <expr> binop <expr>
+          \alt cst
+          \alt \& <lval>
+          \alt \& fonction
+
+    <lval> ::= var
+          \alt <lval> . champ
+          \alt <lval> [ <expr> ]
+          \alt * <expr>
+
+\end{grammar}
+
+\section*{Sémantique}
+
+Sémantique concrète : un état est constitué d'un point de contrôle $p$ et d'un
+état mémoire $σ$.
+
+Les jugements ont les formes suivantes :
+
+\begin{itemize}
+
+\item $σ ⊢ lv ⇒ a$ :
+
+  la left-value lv correspond à l'adresse mémoire a.
+
+\item $σ ⊢ e ⇒ v$ :
+
+  l'expression e s'évalue en v.
+
+\item $<l, instr, l'>$ :
+
+  on peut passer du point l au point l' en effectuant
+  l'instruction instr.
+
+\item $<l, cond, l'>$ :
+
+  on peut passer du point l au point l' si cond est vraie.
+
+\item $(l, σ) → (l', σ')$ :
+
+  permet de définit la fonction de transition principale
+
+\end{itemize}
+
+
+
 \section*{Typage}
-
-
-\[ \irule{Seq}
-{
-Γ ⊢ a \\ Γ ⊢ b
-}{
-Γ ⊢ a;b
-} \]
-
-\[ \irule{Select}
-{
-Γ ⊢ a \\ Γ ⊢ b
-}{
-Γ ⊢ \nselect{a}{b}
-} \]
-
-\[ \irule{Guard}
-{
-Γ ⊢ e : \tybool
-}{
-Γ ⊢ \nguard{e}
-} \]
-
-\[ \irule{Loop}
-{
-Γ ⊢ b
-}{
-Γ ⊢ \nloop{b}
-} \]
-
-\[ \irule{Pass}{
-}{ Γ ⊢ \npass
-} \]
-
-\[ \irule{Do}
-{
-Γ [l] ⊢ b
-}{
-Γ ⊢ \ndo{l}{b}
-} \]
-
-
-
-\[ \irule{Goto}
-{
-l ∈ Γ
-}{
-Γ ⊢ \ngoto{l}
-} \]
-
 
 
 
