@@ -25,6 +25,7 @@
 \DeclareUnicodeCharacter{21D2}{\Rightarrow}
 \DeclareUnicodeCharacter{2205}{\emptyset}
 \DeclareUnicodeCharacter{2208}{\in}
+\DeclareUnicodeCharacter{2295}{\oplus}
 \DeclareUnicodeCharacter{22A2}{\vdash}
 
 \begin{document}
@@ -91,6 +92,24 @@ Les jugements ont les formes suivantes :
   permet de définit la fonction de transition principale
 
 \end{itemize}
+
+\[ \irule{Assign}{
+  \langle l, lv ← e, l' \rangle \\
+  σ ⊢ lv ⇒ a \\
+  σ ⊢ e ⇒ v
+}{
+  (l, σ) → (l', σ ⊕\{ a → v \})
+} \]
+
+\[ \irule{Eval-Cst}{
+}{
+  σ ⊢ c ⇒ c
+} \]
+
+\[ \irule{Eval-Lv-Var}{
+}{
+  σ ⊢ lv ⇒ lv
+} \]
 
 
 
