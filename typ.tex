@@ -181,8 +181,6 @@ Les jugements ont les formes suivantes :
   (l, σ) → (l', σ ⊕ \{ a → v \})
 } \]
 
-TODO fcalls
-
 \[ \irule{Instr-Decl}{
   \langle l, ↑x \{ b \}, l' \rangle \\
   σ' = σ ⊕ \{ x → \top \} \\
@@ -191,6 +189,30 @@ TODO fcalls
 }{
   (l, σ) → (l', σ'' \backslash x)
 } \]
+
+\[ \irule{Instr-Fcall}{
+  \langle l, lv ← fe(\vec{e}), l' \rangle \\
+  σ ⊢ fe ⇒ f \\
+  σ ⊢ \vec{e} ⇒ \vec{v} \\
+  σ' = σ ⊕ formals(f, \vec{v}) ⊕ \{ !ret → \top \} \\
+  (Entry(f), σ') → (Exit(f), σ'') \\
+  σ'' ⊢ !ret ⇒ v_{ret} \\
+  σ'' ⊢ lv ⇒ a
+}{
+  (l, σ) → (l', σ'' \backslash (formals(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\})
+} \]
+
+\[ \irule{Instr-Fcall-Void}{
+  \langle l, ∅ ← fe(\vec{e}), l' \rangle \\
+  σ ⊢ fe ⇒ f \\
+  σ ⊢ \vec{e} ⇒ \vec{v} \\
+  σ' = σ ⊕ formals(f, \vec{v}) \\
+  (Entry(f), σ') → (Exit(f), σ'')
+}{
+  (l, σ) → (l', σ'' \backslash formals(f))
+} \]
+
+TODO definir $σ ⊢ fe ⇒ f$
 
 \subsection{Sémantique des conditions}
 
