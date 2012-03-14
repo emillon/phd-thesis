@@ -11,20 +11,9 @@
 
 \section{Syntaxe}
 
+\begin{minipage}{0.6\textwidth}
 \begin{grammar}
 <programme> ::= ( fonctions , globales , <bloc> )
-
-     <bloc> ::= <instr> ; <bloc>
-           \alt $ε$
-
-    <instr> ::= <lval> $←$ <expr>
-           \alt <lval> $←$ funexp (args)
-           \alt  $∅ ←$ funexp (args)
-           \alt $↑$ nom \{ <bloc> \}
-           \alt if (<expr>) \{ <bloc> \}
-           \alt \{ <bloc> \} label:
-           \alt goto label
-           \alt forever \{ <bloc> \}
 
     <expr> ::= <lval>
           \alt unop <expr>
@@ -37,8 +26,24 @@
           \alt <lval> . champ
           \alt <lval> [ <expr> ]
           \alt * <expr>
+\end{grammar}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{grammar}
+     <bloc> ::= <instr> ; <bloc>
+           \alt $ε$
+
+    <instr> ::= <lval> $←$ <expr>
+           \alt <lval> $←$ funexp (args)
+           \alt  $∅ ←$ funexp (args)
+           \alt $↑$ nom \{ <bloc> \}
+           \alt if (<expr>) \{ <bloc> \}
+           \alt \{ <bloc> \} label:
+           \alt goto label
+           \alt forever \{ <bloc> \}
 
 \end{grammar}
+\end{minipage}
 
 \section{Sémantique}
 
@@ -62,24 +67,19 @@ Les jugements ont les formes suivantes :
 \begin{itemize}
 
 \item $σ ⊢ lv ⇒ a$ :
-
   la left-value lv correspond à l'adresse mémoire a.
 
 \item $σ ⊢ e ⇒ v$ :
-
   l'expression e s'évalue en v.
 
 \item $<l, instr, l'>$ :
-
   on peut passer du point l au point l' en effectuant
   l'instruction instr.
 
 \item $<l, cond, l'>$ :
-
   on peut passer du point l au point l' si cond est vraie.
 
 \item $(l, σ) → (l', σ')$ :
-
   permet de définit la fonction de transition principale
 
 \end{itemize}
@@ -155,24 +155,25 @@ Les jugements ont les formes suivantes :
 
 \subsection{Sémantique des instructions}
 
-\[ \irule{Instr-Assign}{
+\begin{eqnarray*}
+\irule{Instr-Assign}{
   \langle l, lv ← e, l' \rangle \\
   σ ⊢ lv ⇒ a \\
   σ ⊢ e ⇒ v
 }{
   (l, σ) → (l', σ ⊕ \{ a → v \})
-} \]
-
-\[ \irule{Instr-Decl}{
+}
+\\
+\irule{Instr-Decl}{
   \langle l, ↑x \{ b \}, l' \rangle \\
   σ' = σ ⊕ \{ x → \top \} \\
   \langle l_b, b, l_b' \rangle \\
   (l_b, σ') → (l_b', σ'')
 }{
   (l, σ) → (l', σ'' \backslash x)
-} \]
-
-\[ \irule{Instr-Fcall}{
+}
+\\
+\irule{Instr-Fcall}{
   \langle l, lv ← fe(\vec{e}), l' \rangle \\
   σ ⊢ fe ⇒ f \\
   σ ⊢ \vec{e} ⇒ \vec{v} \\
@@ -182,9 +183,9 @@ Les jugements ont les formes suivantes :
   σ'' ⊢ lv ⇒ a
 }{
   (l, σ) → (l', σ'' \backslash (formals(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\})
-} \]
-
-\[ \irule{Instr-Fcall-Void}{
+}
+\\
+\irule{Instr-Fcall-Void}{
   \langle l, ∅ ← fe(\vec{e}), l' \rangle \\
   σ ⊢ fe ⇒ f \\
   σ ⊢ \vec{e} ⇒ \vec{v} \\
@@ -192,7 +193,8 @@ Les jugements ont les formes suivantes :
   (Entry(f), σ') → (Exit(f), σ'')
 }{
   (l, σ) → (l', σ'' \backslash formals(f))
-} \]
+}
+\end{eqnarray*}
 
 TODO definir $σ ⊢ fe ⇒ f$
 
