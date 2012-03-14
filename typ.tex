@@ -25,12 +25,13 @@
 \DeclareUnicodeCharacter{21D2}{\Rightarrow}
 \DeclareUnicodeCharacter{2205}{\emptyset}
 \DeclareUnicodeCharacter{2208}{\in}
+\DeclareUnicodeCharacter{2260}{\neq}
 \DeclareUnicodeCharacter{2295}{\oplus}
 \DeclareUnicodeCharacter{22A2}{\vdash}
 
 \begin{document}
 
-\section*{Syntaxe}
+\section{Syntaxe}
 
 \begin{grammar}
 <programme> ::= ( fonctions , globales , <bloc> )
@@ -61,7 +62,7 @@
 
 \end{grammar}
 
-\section*{Sémantique}
+\section{Sémantique}
 
 Sémantique concrète : un état est constitué d'un point de contrôle $p$ et d'un
 état mémoire $σ$.
@@ -93,27 +94,116 @@ Les jugements ont les formes suivantes :
 
 \end{itemize}
 
-\[ \irule{Assign}{
-  \langle l, lv ← e, l' \rangle \\
-  σ ⊢ lv ⇒ a \\
-  σ ⊢ e ⇒ v
+\subsection{Sémantique des left-values}
+
+\[ \irule{Eval-Lv-Var}{
+  (v, a) ∈ σ
 }{
-  (l, σ) → (l', σ ⊕\{ a → v \})
+  σ ⊢ v ⇒ a
 } \]
+
+\[ \irule{Eval-Lv-Field}{
+  σ ⊢ lv ⇒ a
+}{
+  σ ⊢ lv.f ⇒ a + f
+} \]
+
+\[ \irule{Eval-Lv-Array}{
+  σ ⊢ lv ⇒ a \\
+  σ ⊢ e ⇒ n \\
+}{
+  σ ⊢ lv[e] ⇒ a + n
+} \]
+
+\[ \irule{Eval-Lv-Deref}{
+  σ ⊢ e ⇒ \&a
+}{
+  σ ⊢ *e ⇒ a
+} \]
+
+\subsection{Sémantique des expressions}
 
 \[ \irule{Eval-Cst}{
 }{
   σ ⊢ c ⇒ c
 } \]
 
-\[ \irule{Eval-Lv-Var}{
+\[ \irule{Eval-Lv}{
+  σ ⊢ lv ⇒ a \\
+  (a, v) ∈ σ
 }{
-  σ ⊢ lv ⇒ lv
+  σ ⊢ lv ⇒ v
 } \]
 
+\[ \irule{Eval-Unop}{
+  σ ⊢ e ⇒ v
+}{
+  σ ⊢ op e ⇒ \widehat{op} v
+} \]
+
+\[ \irule{Eval-Binop}{
+  σ ⊢ e_1 ⇒ v_1 \\
+  σ ⊢ e_2 ⇒ v_2
+}{
+  σ ⊢ e_1 op e_2 ⇒ v_1 \widehat{op} v_2
+} \]
+
+\[ \irule{Eval-AddrOf}{
+  σ ⊢ lv ⇒ a
+}{
+  σ ⊢ \&lv ⇒ \&a
+} \]
+
+\[ \irule{Eval-AddrOfFun}{
+}{
+  σ ⊢ \&f ⇒ \&f
+} \]
+
+\subsection{Sémantique des instructions}
+
+\[ \irule{Instr-Assign}{
+  \langle l, lv ← e, l' \rangle \\
+  σ ⊢ lv ⇒ a \\
+  σ ⊢ e ⇒ v
+}{
+  (l, σ) → (l', σ ⊕ \{ a → v \})
+} \]
+
+TODO fcalls
+
+\[ \irule{Instr-Decl}{
+  \langle l, ↑x \{ b \}, l' \rangle \\
+  σ' = σ ⊕ \{ x → v \} \\
+  \langle l_b, b, l_b' \rangle \\
+  (l_b, σ') → (l_b', σ'')
+}{
+  (l, σ) → (l', σ'' \backslash x)
+} \]
+
+FIXME v=?
+
+\[ \irule{Instr-If-True}{
+  \langle l, if(e) \{ b \}, l' \rangle \\
+  σ ⊢ e ⇒ n \\
+  n ≠ 0 \\
+  \langle l_b, b, l_b' \rangle \\
+  (l_b, σ) → (l_b', σ')
+}{
+  (l, σ) → (l', σ')
+} \]
+
+\[ \irule{Instr-If-False}{
+  \langle l, if(e) \{ b \}, l' \rangle \\
+  σ ⊢ e ⇒ 0
+}{
+  (l, σ) → (l', σ)
+} \]
+
+\subsection{Sémantique des conditions}
 
 
-\section*{Typage}
+
+\section{Typage}
 
 
 
