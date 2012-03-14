@@ -4,30 +4,8 @@
 \usepackage{mathpartir}
 \usepackage{syntax}
 
-\newcommand{\irule}[3]{ \inferrule*[right=(#1)]{#2}{#3} }
-
-\newcommand{\tyint} {\mathop{\mathrm{int}}}
-\newcommand{\tybool}{\mathop{\mathrm{bool}}}
-
-\newcommand{\nselect}[2]{ \mathop{\mathrm{select}}(#1, #2) }
-\newcommand{\nguard} [1]{ \mathop{\mathrm{guard}}(#1) }
-\newcommand{\nloop}  [1]{ \mathop{\mathrm{loop}}(#1) }
-\newcommand{\npass}  [0]{ \mathop{\mathrm{pass}} }
-\newcommand{\ndo}    [2]{ \mathop{\mathrm{do}} (#1) \mathop{\mathrm{with}} : #2 }
-\newcommand{\ngoto}  [1]{ \mathop{\mathrm{goto}}(#1) }
-
-\DeclareUnicodeCharacter{0393}{\Gamma}
-\DeclareUnicodeCharacter{03B5}{\epsilon}
-\DeclareUnicodeCharacter{03C3}{\sigma}
-\DeclareUnicodeCharacter{2190}{\leftarrow}
-\DeclareUnicodeCharacter{2191}{\uparrow}
-\DeclareUnicodeCharacter{2192}{\rightarrow}
-\DeclareUnicodeCharacter{21D2}{\Rightarrow}
-\DeclareUnicodeCharacter{2205}{\emptyset}
-\DeclareUnicodeCharacter{2208}{\in}
-\DeclareUnicodeCharacter{2260}{\neq}
-\DeclareUnicodeCharacter{2295}{\oplus}
-\DeclareUnicodeCharacter{22A2}{\vdash}
+\input{defs.tex}
+\input{unicode.tex}
 
 \begin{document}
 
