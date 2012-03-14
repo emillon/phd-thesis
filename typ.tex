@@ -3,6 +3,7 @@
 
 \usepackage{mathpartir}
 \usepackage{syntax}
+\usepackage{amssymb}
 
 \input{defs.tex}
 \input{unicode.tex}
@@ -256,6 +257,19 @@ TODO definir $σ ⊢ fe ⇒ f$
 }{
   Γ ⊢ \{ b \} l:
 }
+\\
+\irule{Decl}{
+  Γ ⊕ {x : τ} ⊢ b
+}{
+  Γ ⊢ ↑x \{b\}
+}
+&
+\irule{Assign}{
+  Γ ⊢ lv : τ \\
+  Γ ⊢ e  : τ
+}{
+  Γ ⊢ lv ← e
+}
 \end{eqnarray*}
 
 \subsection{Expressions}
@@ -268,6 +282,44 @@ TODO definir $σ ⊢ fe ⇒ f$
 \irule{Const-Float}{
 }{
   Γ ⊢ f : Float
+}
+\\
+\irule{Op-Int}{
+  op ∈ \{+,-,×,/,\&,|,\&\&,||,⋘,⋙\} \\
+  Γ ⊢ e_1 : Int \\
+  Γ ⊢ e_2 : Int
+}{
+  Γ ⊢ e_1 op e_2 : Int
+}
+\\
+\irule{Op-Float}{
+  op ∈ \{+,-,×,/\} \\
+  Γ ⊢ e_1 : Float \\
+  Γ ⊢ e_2 : Float
+}{
+  Γ ⊢ e_1 op e_2 : Float
+}
+\\
+\irule{Op-Cmp}{
+  op ∈ \{=,≠,≤,≥,<,>\} \\
+  Γ ⊢ e_1 : Int \\
+  Γ ⊢ e_2 : Int
+}{
+  Γ ⊢ e_1 op e_2 : Int
+}
+\\
+\irule{Unop-Minus}{
+  τ ∈ \{ Int, Float \} \\
+  Γ ⊢ e : τ
+}{
+  Γ ⊢ -e : τ
+}
+&
+\irule{Unop-Not}{
+  op ∈ \{ \tilde, ! \}
+  Γ ⊢ e : Int
+}{
+  Γ ⊢ op e : Int
 }
 \end{eqnarray*}
 
