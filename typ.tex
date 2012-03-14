@@ -67,6 +67,18 @@
 Sémantique concrète : un état est constitué d'un point de contrôle $p$ et d'un
 état mémoire $σ$.
 
+\subsection{Valeurs}
+
+Les valeurs peuvent être :
+
+\begin{itemize}
+\item $n$ : un entier
+\item $\&a$ : un pointeur vers l'adresse $a$
+\item $\&f$ : un pointeur vers la fonction $f$
+\end{itemize}
+
+\subsection{Jugements}
+
 Les jugements ont les formes suivantes :
 
 \begin{itemize}
@@ -173,35 +185,22 @@ TODO fcalls
 
 \[ \irule{Instr-Decl}{
   \langle l, ↑x \{ b \}, l' \rangle \\
-  σ' = σ ⊕ \{ x → v \} \\
+  σ' = σ ⊕ \{ x → \top \} \\
   \langle l_b, b, l_b' \rangle \\
   (l_b, σ') → (l_b', σ'')
 }{
   (l, σ) → (l', σ'' \backslash x)
 } \]
 
-FIXME v=?
+\subsection{Sémantique des conditions}
 
-\[ \irule{Instr-If-True}{
-  \langle l, if(e) \{ b \}, l' \rangle \\
+\[ \irule{Cond}{
+  \langle l, e, l' \rangle \\
   σ ⊢ e ⇒ n \\
-  n ≠ 0 \\
-  \langle l_b, b, l_b' \rangle \\
-  (l_b, σ) → (l_b', σ')
-}{
-  (l, σ) → (l', σ')
-} \]
-
-\[ \irule{Instr-If-False}{
-  \langle l, if(e) \{ b \}, l' \rangle \\
-  σ ⊢ e ⇒ 0
+  n ≠ 0
 }{
   (l, σ) → (l', σ)
 } \]
-
-\subsection{Sémantique des conditions}
-
-
 
 \section{Typage}
 
