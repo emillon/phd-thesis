@@ -210,6 +210,65 @@ TODO definir $σ ⊢ fe ⇒ f$
 
 \section{Typage}
 
+\subsection{Jugements}
 
+\begin{itemize}
+\item $Γ ⊢ b$ :
+  sous $Γ$, $b$ est bien typé.
+\item $Γ ⊢ e : τ$ :
+  sous $Γ$, $e$ est typable en $τ$.
+\end{itemize}
+
+\subsection{Flôt de contrôle}
+
+\begin{eqnarray*}
+\irule{Pass}{
+}{
+  Γ ⊢ ε
+}
+&
+\irule{Seq}{
+  Γ ⊢ s \\
+  Γ ⊢ b
+}{
+  Γ ⊢ s;b
+}
+\\
+\irule{Forever}{
+  Γ ⊢ b
+}{
+  Γ ⊢ forever \{ b \}
+}
+&
+\irule{If}{
+  Γ ⊢ e : Int \\
+  Γ ⊢ b
+}{
+  Γ ⊢ if (e) \{ b \}
+} \\
+\irule{Goto}{
+}{
+  Γ ⊢ goto l
+}
+&
+\irule{DoWith}{
+  Γ ⊢ b
+}{
+  Γ ⊢ \{ b \} l:
+}
+\end{eqnarray*}
+
+\subsection{Expressions}
+\begin{eqnarray*}
+\irule{Const-Int}{
+}{
+  Γ ⊢ n : Int
+}
+&
+\irule{Const-Float}{
+}{
+  Γ ⊢ f : Float
+}
+\end{eqnarray*}
 
 \end{document}
