@@ -86,68 +86,72 @@ Les jugements ont les formes suivantes :
 
 \subsection{Sémantique des left-values}
 
-\[ \irule{Eval-Lv-Var}{
+\begin{eqnarray*}
+\irule{Eval-Lv-Var}{
   (v, a) ∈ σ
 }{
   σ ⊢ v ⇒ a
-} \]
-
-\[ \irule{Eval-Lv-Field}{
+}
+&
+\irule{Eval-Lv-Deref}{
+  σ ⊢ e ⇒ \&a
+}{
+  σ ⊢ *e ⇒ a
+}
+\\
+\irule{Eval-Lv-Field}{
   σ ⊢ lv ⇒ a
 }{
   σ ⊢ lv.f ⇒ a + f
-} \]
-
-\[ \irule{Eval-Lv-Array}{
+}
+&
+\irule{Eval-Lv-Array}{
   σ ⊢ lv ⇒ a \\
   σ ⊢ e ⇒ n \\
 }{
   σ ⊢ lv[e] ⇒ a + n
-} \]
-
-\[ \irule{Eval-Lv-Deref}{
-  σ ⊢ e ⇒ \&a
-}{
-  σ ⊢ *e ⇒ a
-} \]
+}
+\end{eqnarray*}
 
 \subsection{Sémantique des expressions}
 
-\[ \irule{Eval-Cst}{
+\begin{eqnarray*}
+\irule{Eval-Cst}{
 }{
   σ ⊢ c ⇒ c
-} \]
-
-\[ \irule{Eval-Lv}{
+}
+&
+\irule{Eval-Lv}{
   σ ⊢ lv ⇒ a \\
   (a, v) ∈ σ
 }{
   σ ⊢ lv ⇒ v
-} \]
-
-\[ \irule{Eval-Unop}{
+}
+\\
+\irule{Eval-Unop}{
   σ ⊢ e ⇒ v
 }{
   σ ⊢ op e ⇒ \widehat{op} v
-} \]
-
-\[ \irule{Eval-Binop}{
+}
+&
+\irule{Eval-Binop}{
   σ ⊢ e_1 ⇒ v_1 \\
   σ ⊢ e_2 ⇒ v_2
 }{
   σ ⊢ e_1 op e_2 ⇒ v_1 \widehat{op} v_2
-} \]
-
-\[ \irule{Eval-AddrOf}{
+}
+\\
+\irule{Eval-AddrOf}{
   σ ⊢ lv ⇒ a
 }{
   σ ⊢ \&lv ⇒ \&a
-} \]
-
-\[ \irule{Eval-AddrOfFun}{
+}
+&
+\irule{Eval-AddrOfFun}{
 }{
   σ ⊢ \&f ⇒ \&f
-} \]
+}
+\end{eqnarray*}
 
 \subsection{Sémantique des instructions}
 
