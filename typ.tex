@@ -178,22 +178,22 @@ Les jugements ont les formes suivantes :
   \langle l, lv ← fe(\vec{e}), l' \rangle \\
   σ ⊢ fe ⇒ f \\
   σ ⊢ \vec{e} ⇒ \vec{v} \\
-  σ' = σ ⊕ formals(f, \vec{v}) ⊕ \{ !ret → \top \} \\
+  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret → \top \} \\
   (Entry(f), σ') → (Exit(f), σ'') \\
   σ'' ⊢ !ret ⇒ v_{ret} \\
   σ'' ⊢ lv ⇒ a
 }{
-  (l, σ) → (l', σ'' \backslash (formals(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\})
+  (l, σ) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\})
 }
 \\
 \irule{Instr-Fcall-Void}{
   \langle l, ∅ ← fe(\vec{e}), l' \rangle \\
   σ ⊢ fe ⇒ f \\
   σ ⊢ \vec{e} ⇒ \vec{v} \\
-  σ' = σ ⊕ formals(f, \vec{v}) \\
+  σ' = σ ⊕ \{args(f)  = \vec{v}\} \\
   (Entry(f), σ') → (Exit(f), σ'')
 }{
-  (l, σ) → (l', σ'' \backslash formals(f))
+  (l, σ) → (l', σ'' \backslash args(f))
 }
 \end{eqnarray*}
 
@@ -257,18 +257,35 @@ TODO definir $σ ⊢ fe ⇒ f$
 }{
   Γ ⊢ \{ b \} l:
 }
-\\
-\irule{Decl}{
-  Γ ⊕ {x : τ} ⊢ b
+\end{eqnarray*}
+
+\subsection{Left values}
+
+\begin{eqnarray*}
+\irule{Lv-Var}{
+  (v, τ) ∈ Γ
 }{
-  Γ ⊢ ↑x \{b\}
+  Γ ⊢ v : τ
 }
 &
-\irule{Assign}{
-  Γ ⊢ lv : τ \\
-  Γ ⊢ e  : τ
+\irule{Lv-Field}{
+  Γ ⊢ lv : τ_s \\
+  (f, τ_f) ∈ τ_s
 }{
-  Γ ⊢ lv ← e
+  Γ ⊢ lv.f : τ_f
+}
+\\
+\irule{Lv-Deref}{
+  Γ ⊢ e : τ*
+}{
+  Γ ⊢ *e : τ
+}
+&
+\irule{Lv-Array}{
+  Γ ⊢ lv : [τ] \\
+  Γ ⊢ e : Int
+}{
+  Γ ⊢ lv[e] : τ
 }
 \end{eqnarray*}
 
@@ -278,7 +295,7 @@ TODO definir $σ ⊢ fe ⇒ f$
 }{
   Γ ⊢ n : Int
 }
-&
+\\
 \irule{Const-Float}{
 }{
   Γ ⊢ f : Float
@@ -314,12 +331,80 @@ TODO definir $σ ⊢ fe ⇒ f$
 }{
   Γ ⊢ -e : τ
 }
-&
+\\
 \irule{Unop-Not}{
   op ∈ \{ \tilde, ! \}
   Γ ⊢ e : Int
 }{
   Γ ⊢ op e : Int
+}
+\\
+\irule{AddrOf}{
+  Γ ⊢ lv : τ
+}{
+  Γ ⊢ \&lv : τ*
+}
+\\
+\irule{AddrOfFun}{
+  Γ ⊢ f : σ \\
+  τ ≤ σ
+}{
+  Γ ⊢ \&lv : τ
+}
+\end{eqnarray*}
+
+\subsection{Fonctions}
+
+\[
+\irule{Fun}{
+  Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
+  Γ' ⊢ body(f) \\
+  Γ' ⊢ !ret : τ_r
+}{
+  Γ ⊢ f : Gen(\vec{τ} → τ_r, Γ)
+}
+\]
+
+\[
+\irule{Fun-Void}{
+  Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
+  Γ' ⊢ body(f)
+}{
+  Γ ⊢ f : Gen(\vec{τ} → ∅, Γ)
+}
+\]
+
+\subsection{Instructions}
+
+\begin{eqnarray*}
+\irule{Decl}{
+  Γ ⊕ \{x : τ\} ⊢ b
+}{
+  Γ ⊢ ↑x \{b\}
+}
+\\
+\irule{Assign}{
+  Γ ⊢ lv : τ \\
+  Γ ⊢ e  : τ
+}{
+  Γ ⊢ lv ← e
+}
+\\
+\irule{Fcall}{
+  Γ ⊢ lv : τ_{ret} \\
+  Γ ⊢ fe : σ \\
+  Γ ⊢ \vec{e} : \vec{τ} \\
+  (\vec{τ} → τ_r) ≤ σ
+}{
+  Γ ⊢ lv ← fe(\vec{e})
+}
+\\
+\irule{Fcall-Void}{
+  Γ ⊢ fe : σ \\
+  Γ ⊢ \vec{e} : \vec{τ} \\
+  (\vec{τ} → ∅) ≤ σ
+}{
+  Γ ⊢ ∅ ← fe(\vec{e})
 }
 \end{eqnarray*}
 
