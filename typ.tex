@@ -57,6 +57,7 @@ Les valeurs peuvent être :
 
 \begin{itemize}
 \item $n$ : un entier
+\item $f$ : un flottant
 \item $\&a$ : un pointeur vers l'adresse $a$
 \item $\&f$ : un pointeur vers la fonction $f$
 \end{itemize}
@@ -214,11 +215,26 @@ TODO definir $σ ⊢ fe ⇒ f$
 \subsection{Jugements}
 
 \begin{itemize}
+\item $⊢ P$ :
+  le programme $P$ est bien typé.
 \item $Γ ⊢ b$ :
   sous $Γ$, $b$ est bien typé.
 \item $Γ ⊢ e : τ$ :
   sous $Γ$, $e$ est typable en $τ$.
 \end{itemize}
+
+\subsection{Programme}
+
+\[
+\irule{Prog}{
+  Γ^0 = (\vec{σ}, \vec{τ}) \\
+  Γ^0 ⊢ \vec{f} : \vec{σ} \\
+  Γ^0 ⊢ \vec{x} : \vec{t} \\
+  Γ^0 ⊢ b
+}{
+  ⊢ (\vec{f}, \vec{x}, b)
+}
+\]
 
 \subsection{Flôt de contrôle}
 
