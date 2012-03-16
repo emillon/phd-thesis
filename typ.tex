@@ -1,9 +1,13 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
 
 \usepackage{mathpartir}
 \usepackage{syntax}
 \usepackage{amssymb}
+\usepackage{a4wide}
+
+\addtolength{\parskip}{\baselineskip}
 
 \input{defs.tex}
 \input{unicode.tex}
@@ -12,10 +16,14 @@
 
 \section{Syntaxe}
 
-\begin{minipage}{0.6\textwidth}
+La grammaire suivante définit un langage impératif. On suppose qu'on peut
+compiler un programme écrit en C vers ce langage.
+
 \begin{grammar}
 <programme> ::= ( fonctions , globales , <bloc> )
-
+\end{grammar}
+\begin{minipage}{0.4\textwidth}
+\begin{grammar}
     <expr> ::= <lval>
           \alt unop <expr>
           \alt <expr> binop <expr>
@@ -46,23 +54,78 @@
 \end{grammar}
 \end{minipage}
 
+Contrairement au langage C, le langage des expressions et des instructions est
+séparé. Par conséquence, l'évaluation des expressions peut se faire sans effet de
+bord.
+
 \section{Sémantique}
 
-Sémantique concrète : un état est constitué d'un point de contrôle $p$ et d'un
-état mémoire $σ$.
+On définit une sémantique opérationnelle à petits pas. Pour ce faire, on
+convertit le programme en son graphe de flôt de contrôle, qui va nous permettre
+de raisonner en terme de points de contrôle sur lesquels s'appuira la
+sémantique.
 
-\subsection{Valeurs}
+\subsection{Graphe de flôt de contrôle}
 
-Les valeurs peuvent être :
+Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
+celles qui définissent le flôt de contrôle (if, dowith, goto, forever) et celles
+qui définissent le flôt de données. Une première transformation va transformer
+chaque fonction en son graphe de flôt de contrôle, défini comme suit :
+
+\begin{itemize}
+\item
+  les nœuds sont des points de contrôle, qui représentent par exemple
+  l'adresse mémoire de l'instruction qui vient d'être exécutée.
+\item
+  les arêtes sont soit des instructions ``de données'' (affectation,
+  appel de fonction, déclaration), soit des conditions (ie une
+  expression).
+\end{itemize}
+
+Intuitivement, on peut "passer" d'un état à un autre soit en passant par une
+arête "condition" qui s'évalue à une valeur "vrai", soit en appliquand les
+effets de bord d'une arête "instruction".
+
+Dans la suite, on suppose qu'on a à notre disposition les jugements suivants :
+
+\begin{itemize}
+\item $\langle l, instr, l' \rangle$ :
+  on peut passer du point $l$ au point $l'$ en effectuant l'instruction $instr$.
+
+\item $\langle l, cond, l' \rangle$ :
+  on peut passer du point $l$ au point $l'$ si $cond$ s'évalue en une valeur entière
+  non nulle (comme en C).
+\end{itemize}
+
+\subsection{État mémoire}
+
+La mémoire interne de l'interpréteur est une correspondance entre l'ensemble des
+adresses (infini dénombrable) et l'ensemble des valeurs. Un état mémoire $σ$ est
+une fonction partielle de $Addr$ vers $Val$.
+
+Ces valeurs peuvent être de plusieurs formes (disjointes) :
 
 \begin{itemize}
 \item $n$ : un entier
 \item $f$ : un flottant
 \item $\&a$ : un pointeur vers l'adresse $a$
 \item $\&f$ : un pointeur vers la fonction $f$
+\item $Nil$ : un pointeur nul
+\item $\top$ : une valeur non initialisée
 \end{itemize}
 
+\subsection{Left values}
+
+La mémoire est organisée en adresses, mais pourtant dans le programme cette
+notion n'est pas directement visible. Les accès sont réalisés à travers des
+"left values".
+
 \subsection{Jugements}
+
+
+L'état de l'interpréteur est un couple $(l, σ)$, où $l$ est un point de contrôle
+et $σ$ un état mémoire.  La sémantique consiste en une fonction de transition
+$→$ entre ces couples.
 
 Les jugements ont les formes suivantes :
 
@@ -73,13 +136,6 @@ Les jugements ont les formes suivantes :
 
 \item $σ ⊢ e ⇒ v$ :
   l'expression e s'évalue en v.
-
-\item $<l, instr, l'>$ :
-  on peut passer du point l au point l' en effectuant
-  l'instruction instr.
-
-\item $<l, cond, l'>$ :
-  on peut passer du point l au point l' si cond est vraie.
 
 \item $(l, σ) → (l', σ')$ :
   permet de définir la fonction de transition principale
@@ -315,6 +371,16 @@ TODO definir $σ ⊢ fe ⇒ f$
 \irule{Const-Float}{
 }{
   Γ ⊢ f : Float
+}
+\\
+\irule{Const-Nil}{
+}{
+  Γ ⊢ Nil : τ*
+}
+\\
+\irule{Top}{
+}{
+  Γ ⊢ Top : τ
 }
 \\
 \irule{Op-Int}{
