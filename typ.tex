@@ -46,7 +46,7 @@ compiler un programme écrit en C vers ce langage.
            \alt <lval> $←$ funexp (args)
            \alt  $∅ ←$ funexp (args)
            \alt $↑$ nom \{ <bloc> \}
-           \alt if (<expr>) \{ <bloc> \}
+           \alt if (<expr>) \{ <bloc> \} else \{ <bloc> \}
            \alt \{ <bloc> \} label:
            \alt goto label
            \alt forever \{ <bloc> \}
@@ -330,9 +330,10 @@ et le bloc d'initialisation).
 &
 \irule{If}{
   Γ ⊢ e : Int \\
-  Γ ⊢ b
+  Γ ⊢ b_t \\
+  Γ ⊢ b_f
 }{
-  Γ ⊢ if (e) \{ b \}
+  Γ ⊢ if (e) \{ b_t \} else \{ b_f \}
 } \\
 \irule{Goto}{
 }{
