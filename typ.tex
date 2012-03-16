@@ -83,19 +83,12 @@ chaque fonction en son graphe de flôt de contrôle, défini comme suit :
 \end{itemize}
 
 Intuitivement, on peut "passer" d'un état à un autre soit en passant par une
-arête "condition" qui s'évalue à une valeur "vrai", soit en appliquand les
+arête "condition" qui s'évalue à une valeur "vrai", soit en appliquant les
 effets de bord d'une arête "instruction".
 
-Dans la suite, on suppose qu'on a à notre disposition les jugements suivants :
-
-\begin{itemize}
-\item $\langle l, instr, l' \rangle$ :
-  on peut passer du point $l$ au point $l'$ en effectuant l'instruction $instr$.
-
-\item $\langle l, cond, l' \rangle$ :
-  on peut passer du point $l$ au point $l'$ si $cond$ s'évalue en une valeur entière
-  non nulle (comme en C).
-\end{itemize}
+Dans la suite, on suppose qu'on a à notre disposition un ensemble de jugements :
+$\langle l, instr, l' \rangle$ qui signifie qu'on peut passer du point $l$ au
+point $l'$ en effectuant l'instruction $instr$.
 
 \subsection{État mémoire}
 
@@ -258,26 +251,48 @@ TODO definir $σ ⊢ fe ⇒ f$
 
 \subsection{Sémantique des conditions}
 
-\[ \irule{Cond}{
-  \langle l, e, l' \rangle \\
-  σ ⊢ e ⇒ n \\
-  n ≠ 0
+\begin{eqnarray*}
+\irule{If-True}{
+  \langle l, if(e) \{ i_t \} else \{ i_f \}, l' \rangle \\
+  σ ⊢ e : n \\
+  n ≠ 0 \\
+  \langle l_i, i_t, l_i' \rangle \\
+  (l_i, σ) → (l_i', σ')
 }{
-  (l, σ) → (l', σ)
-} \]
+  (l, σ) → (l', σ')
+}
+\\
+\irule{If-False}{
+  \langle l, if(e) \{ i_t \} else \{ i_f \}, l' \rangle \\
+  σ ⊢ e : 0 \\
+  \langle l_i, i_f, l_i' \rangle \\
+  (l_i, σ) → (l_i', σ')
+}{
+  (l, σ) → (l', σ')
+}
+\\
+\end{eqnarray*}
 
 \section{Typage}
 
-\subsection{Jugements}
+Dans cette section, on définit la notion de programme bien typé. L'analyse par
+typage permet de vérifier qu'à chaque expression on peut associer un type, et ce
+de manière cohérente entre plusieurs utilisations d'une variable.
 
-\begin{itemize}
-\item $⊢ P$ :
-  le programme $P$ est bien typé.
-\item $Γ ⊢ b$ :
-  sous $Γ$, $b$ est bien typé.
-\item $Γ ⊢ e : τ$ :
-  sous $Γ$, $e$ est typable en $τ$.
-\end{itemize}
+Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
+typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessaire
+à l'analyse, c'est à dire le type des fonctions et variables du programme.
+
+Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
+"sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
+typables et que les types sont en accord avec le flot de contrôle entre
+variables (par exemple, pour que l'instruction $lv ← e$ soit bien typée sous
+$Γ$, il faut que les types de $lv$ et de $e$ puissent avoir le même type sous
+$Γ$).
+
+Au niveau global, un programme P est bien typé (noté $⊢ P$) s'il existe un
+environnement permettant de typer ses composantes (les fonctions, les globales
+et le bloc d'initialisation).
 
 \subsection{Programme}
 
