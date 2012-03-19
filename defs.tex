@@ -1,1 +1,4 @@
 \newcommand{\irule}[3]{ \inferrule*[right=(#1)]{#2}{#3} }
+
+% Fix '::' -> ': :' when using babel
+\newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
