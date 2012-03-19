@@ -8,6 +8,12 @@
 
 \newcommand{\iIf}[3]{\textsc{if}~ #1 ~\textsc{then}~ #2 ~\textsc{else}~ #3}
 
+\newcommand{\tInt}{\textsc{Int}}
+\newcommand{\tFloat}{\textsc{Float}}
+\newcommand{\tVoid}{\textsc{Void}}
+
+\newcommand{\cNil}{\textsc{Nil}}
+
 \begin{document}
 
 \section{Syntaxe}
@@ -49,9 +55,9 @@ compiler un programme écrit en C vers ce langage.
 \end{grammarf}
 \end{minipage}
 
-TODO expliquer pourquoi un while expr ne suffit pas
+\todo{expliquer pourquoi un while expr ne suffit pas}
 
-TODO return expr
+\todo{return expr}
 
 Contrairement au langage C, le langage des expressions et des instructions est
 séparé. Par conséquence, l'évaluation des expressions peut se faire sans effet de
@@ -59,7 +65,7 @@ bord.
 
 \section{Sémantique}
 
-On définit une sémantique opérationnelle à petits pas. Pour ce faire, on
+On définit une sémantique opérationnelle à \todo{what} petits pas. Pour ce faire, on
 convertit le programme en son graphe de flôt de contrôle, qui va nous permettre
 de raisonner en terme de points de contrôle sur lesquels s'appuira la
 sémantique.
@@ -95,16 +101,14 @@ La mémoire interne de l'interpréteur est une correspondance entre l'ensemble d
 adresses (infini dénombrable) et l'ensemble des valeurs. Un état mémoire $σ$ est
 une fonction partielle de $Addr$ vers $Val$.
 
-Ces valeurs peuvent être de plusieurs formes (disjointes) :
+Ces valeurs peuvent être de plusieurs formes :
 
-\begin{itemize}
-\item $n$ : un entier
-\item $f$ : un flottant
-\item $\&a$ : un pointeur vers l'adresse $a$
-\item $\&f$ : un pointeur vers la fonction $f$
-\item $Nil$ : un pointeur nul
-\item $\top$ : une valeur non initialisée
-\end{itemize}
+\begin{align*}
+v   ::=~ & n, f, \cNil& \text{constantes}\\
+      |~ & \&a        & \text{pointeur vers l'adresse $a$}\\
+      |~ & \&f        & \text{pointeur vers la fonction $f$}\\
+      |~ & \top       & \text{valeur non initialisée}
+\end{align*}
 
 \subsection{Left values}
 
@@ -218,37 +222,39 @@ expressions à une left value si elles ont le même type.
 }
 \]
 
-\begin{minipage}{0.8\textwidth}
 Déclarer une variable, c'est rendre accessible dans un bloc une variable non
-initialisée, qui n'est plus accessible par la suite.
+initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
+traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
+on peut donc traverser l'instruction $↑x\{b\}$.
 
-Si on suppose qu'on peut traverser le bloc interne $b$ sous un $σ$ enrichi d'une
-nouvelle variable $x$, on peut donc traverser l'instruction $↑x\{b\}$.
-\end{minipage}
-\begin{minipage}{0.2\textwidth}
-\begin{tikzpicture}
-  [cfgnode/.style={draw,shape=circle}]
-  \node[cfgnode] (l) {$l$};
-  \node[cfgnode,right of=l, node distance=2.5cm] (lp) {$l'$};
-  \node[cfgnode,below of=l, xshift=5mm] (lb) {$l_b$};
-  \node[cfgnode,below of=lp, xshift=-5mm] (lbp) {$l_b'$};
-  \draw[->] (l)  to node[auto] {$↑x\{b\}$} (lp);
-  \draw[->] (lb) to node[auto] {$b$} (lbp);
-  \draw[dashed] (l) to (lb);
-  \draw[dashed] (lp) to (lbp);
-\end{tikzpicture}
-\end{minipage}
-
+\begin{minipage}{0.6\textwidth}
 \[
 \irule{Instr-Decl}{
   \langle l, ↑x \{ b \}, l' \rangle \\
-  σ' = σ ⊕ \{ x → \top \} \\
   \langle l_b, b, l_b' \rangle \\
+  σ' = σ ⊕ \{ x → \top \} \\
   (l_b, σ') → (l_b', σ'')
 }{
   (l, σ) → (l', σ'' \backslash x)
 }
 \]
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{tikzpicture}
+  [cfgnode/.style={draw,shape=circle},node distance=2cm]
+  \node[cfgnode] (l) {$l$};
+  \node[cfgnode,right of=l, node distance=4cm] (lp) {$l'$};
+  \node[cfgnode,below of=l, xshift=1cm] (lb) {$l_b$};
+  \node[cfgnode,below of=lp, xshift=-1cm] (lbp) {$l_b'$};
+  \draw[->] (l)  to node[auto] {$↑x\{b\}$} (lp);
+  \draw[->] (lb) to node[auto] {$b$} (lbp);
+  \draw[->,dashed] (l) to node[auto] {$⊕ \{ x → \top \}$}(lb);
+  \draw[->,dashed,swap] (lbp) to node[auto] {$\backslash x$} (lp);
+\end{tikzpicture}
+\end{minipage}
+
+TODO pour :
+
 \[
 \irule{Instr-Fcall}{
   \langle l, lv ← fe(\vec{e}), l' \rangle \\
@@ -279,8 +285,14 @@ TODO definir $σ ⊢ fe ⇒ f$
 
 \subsection{Sémantique des conditions}
 
+On utilise un encodage similaire à la déclaration. Tout d'abord, on évalue la
+condition dans un contexte $σ$. Si elle s'évalue en un entier non nul, et qu'une
+transition à travers le bloc $i_t$ est possible, alors on peut faire passer à
+travers le "if".
+
+\begin{minipage}{0.5\textwidth}
 \begin{tikzpicture}
-  [cfgnode/.style={draw,shape=circle}]
+  [cfgnode/.style={draw,shape=circle}, node distance=1.5cm]
   \node[cfgnode] (l) {$l$};
   \node[cfgnode,right of=l, node distance=4.5cm] (lp) {$l'$};
   \node[cfgnode,below of=l, xshift=5mm] (lt) {$l_t$};
@@ -290,13 +302,14 @@ TODO definir $σ ⊢ fe ⇒ f$
   \draw[->] (l)  to node[auto] {$\iIf{e}{i_t}{i_f}$} (lp);
   \draw[->] (lt) to node[auto] {$i_t$} (ltp);
   \draw[->] (lf) to node[auto] {$i_f$} (lfp);
-  \draw[dashed] (l) to (lt);
-  \draw[dashed] (ltp) to (lp);
-  \draw[dashed] (l) to (lf);
-  \draw[dashed] (lfp) to (lp);
+  \draw[->,dashed] (l) to node [auto,swap] {$≠0$} (lt);
+  \draw[->,dashed] (ltp) to (lp);
+  \draw[->,dashed] (l) to node [auto] {$0$} (lf);
+  \draw[->,dashed] (lfp) to (lp);
 \end{tikzpicture}
-
-\begin{eqnarray*}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\[
 \irule{If-True}{
   \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ n \\
@@ -306,7 +319,9 @@ TODO definir $σ ⊢ fe ⇒ f$
 }{
   (l, σ) → (l', σ')
 }
-\\
+\]
+
+\[
 \irule{If-False}{
   \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ 0 \\
@@ -315,14 +330,28 @@ TODO definir $σ ⊢ fe ⇒ f$
 }{
   (l, σ) → (l', σ')
 }
-\\
-\end{eqnarray*}
+\]
+\end{minipage}
 
 \section{Typage}
 
 Dans cette section, on définit la notion de programme bien typé. L'analyse par
 typage permet de vérifier qu'à chaque expression on peut associer un type, et ce
 de manière cohérente entre plusieurs utilisations d'une variable.
+
+Les types sont :
+
+\begin{align*}
+τ   ::=~ & \tInt, \tFloat         & \text{constantes}\\
+    |~   &  a                     & \text{variable}\\
+    |~   & (τ_1, …, τ_n) → τ_r    & \text{fonction}\\
+    |~   & (τ_1, …, τ_n) → \tVoid & \text{fonction}\\
+    |~   & [τ]                    & \text{tableau}\\
+    |~   & τ*                     & \text{pointeur}\\
+    |~   & \{ f_1:τ_1
+            ,    …
+            , f_n:τ_n \}          & \text{structure}
+\end{align*}
 
 Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
 typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessaire
@@ -338,8 +367,8 @@ $Γ$).
 \subsection{Programme}
 
 Au niveau global, un programme P est bien typé (noté $⊢ P$) s'il existe un
-environnement permettant de typer ses composantes (les fonctions, les globales
-et le bloc d'initialisation).
+environnement $Γ^0$ permettant de typer ses composantes (les fonctions, les
+globales et le bloc d'initialisation).
 
 \[
 \irule{Prog}{
@@ -357,9 +386,10 @@ et le bloc d'initialisation).
 Les règles suivantes permettent de définir les jugements $Γ ⊢ i$. En résumé, les
 instructions sont bien typées si leurs sous-instructions sont bien typées. La
 seule règle supplémentaire concerne la condition du $if$ qui doit être typée en
-$Int$.
+\tInt.
 
 \begin{eqnarray*}
+&
 \irule{Pass}{
 }{
   Γ ⊢ ε
@@ -372,6 +402,7 @@ $Int$.
   Γ ⊢ s;b
 }
 \\
+&
 \irule{Forever}{
   Γ ⊢ b
 }{
@@ -379,12 +410,13 @@ $Int$.
 }
 &
 \irule{If}{
-  Γ ⊢ e : Int \\
+  Γ ⊢ e : \tInt \\
   Γ ⊢ i_t \\
   Γ ⊢ i_f
 }{
   Γ ⊢ \iIf{e}{i_t}{i_f}
 } \\
+&
 \irule{Goto}{
 }{
   Γ ⊢ goto l
@@ -424,7 +456,7 @@ une expression, peut être typée.
 &
 \irule{Lv-Array}{
   Γ ⊢ lv : [τ] \\
-  Γ ⊢ e : Int
+  Γ ⊢ e : \tInt
 }{
   Γ ⊢ lv[e] : τ
 }
@@ -434,7 +466,7 @@ une expression, peut être typée.
 \begin{eqnarray*}
 \irule{Const-Int}{
 }{
-  Γ ⊢ n : Int
+  Γ ⊢ n : \tInt
 }
 \\
 \irule{Const-Float}{
@@ -449,10 +481,10 @@ une expression, peut être typée.
 \\
 \irule{Op-Int}{
   op ∈ \{+,-,×,/,\&,|,\&\&,||,⋘,⋙\} \\
-  Γ ⊢ e_1 : Int \\
-  Γ ⊢ e_2 : Int
+  Γ ⊢ e_1 : \tInt \\
+  Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1 op e_2 : Int
+  Γ ⊢ e_1 op e_2 : \tInt
 }
 \\
 \irule{Op-Float}{
@@ -465,14 +497,14 @@ une expression, peut être typée.
 \\
 \irule{Op-Cmp}{
   op ∈ \{=,≠,≤,≥,<,>\} \\
-  Γ ⊢ e_1 : Int \\
-  Γ ⊢ e_2 : Int
+  Γ ⊢ e_1 : \tInt \\
+  Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1 op e_2 : Int
+  Γ ⊢ e_1 op e_2 : \tInt
 }
 \\
 \irule{Unop-Minus}{
-  τ ∈ \{ Int, Float \} \\
+  τ ∈ \{ \tInt, Float \} \\
   Γ ⊢ e : τ
 }{
   Γ ⊢ -e : τ
@@ -480,9 +512,9 @@ une expression, peut être typée.
 \\
 \irule{Unop-Not}{
   op ∈ \{ \tilde, ! \}
-  Γ ⊢ e : Int
+  Γ ⊢ e : \tInt
 }{
-  Γ ⊢ op e : Int
+  Γ ⊢ op e : \tInt
 }
 \\
 \irule{AddrOf}{
