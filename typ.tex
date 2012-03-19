@@ -6,6 +6,8 @@
 
 \addtolength{\parskip}{\baselineskip}
 
+\newcommand{\iIf}[3]{\textsc{if}~ #1 ~\textsc{then}~ #2 ~\textsc{else}~ #3}
+
 \begin{document}
 
 \section{Syntaxe}
@@ -285,7 +287,7 @@ TODO definir $σ ⊢ fe ⇒ f$
   \node[cfgnode,below of=lp, xshift=-5mm] (ltp) {$l_t'$};
   \node[cfgnode,above of=l, xshift=5mm] (lf) {$l_f$};
   \node[cfgnode,above of=lp, xshift=-5mm] (lfp) {$l_f'$};
-  \draw[->] (l)  to node[auto] {$if(e)\{i_t\} else \{i_f\}$} (lp);
+  \draw[->] (l)  to node[auto] {$\iIf{e}{i_t}{i_f}$} (lp);
   \draw[->] (lt) to node[auto] {$i_t$} (ltp);
   \draw[->] (lf) to node[auto] {$i_f$} (lfp);
   \draw[dashed] (l) to (lt);
@@ -296,8 +298,8 @@ TODO definir $σ ⊢ fe ⇒ f$
 
 \begin{eqnarray*}
 \irule{If-True}{
-  \langle l, if(e) \{ i_t \} else \{ i_f \}, l' \rangle \\
-  σ ⊢ e : n \\
+  \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
+  σ ⊢ e ⇒ n \\
   n ≠ 0 \\
   \langle l_i, i_t, l_i' \rangle \\
   (l_i, σ) → (l_i', σ')
@@ -306,8 +308,8 @@ TODO definir $σ ⊢ fe ⇒ f$
 }
 \\
 \irule{If-False}{
-  \langle l, if(e) \{ i_t \} else \{ i_f \}, l' \rangle \\
-  σ ⊢ e : 0 \\
+  \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
+  σ ⊢ e ⇒ 0 \\
   \langle l_i, i_f, l_i' \rangle \\
   (l_i, σ) → (l_i', σ')
 }{
@@ -378,10 +380,10 @@ $Int$.
 &
 \irule{If}{
   Γ ⊢ e : Int \\
-  Γ ⊢ b_t \\
-  Γ ⊢ b_f
+  Γ ⊢ i_t \\
+  Γ ⊢ i_f
 }{
-  Γ ⊢ if (e) \{ b_t \} else \{ b_f \}
+  Γ ⊢ \iIf{e}{i_t}{i_f}
 } \\
 \irule{Goto}{
 }{
