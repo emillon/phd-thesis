@@ -1,16 +1,21 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
-\usepackage[french]{babel}
+\usepackage[frenchb]{babel}
 
 \usepackage{mathpartir}
 \usepackage{syntax}
 \usepackage{amssymb}
 \usepackage{a4wide}
+\usepackage{tikz}
 
 \addtolength{\parskip}{\baselineskip}
 
+
 \input{defs.tex}
 \input{unicode.tex}
+
+% Fix '::' -> ': :' when using babel
+\newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
 
 \begin{document}
 
@@ -19,11 +24,11 @@
 La grammaire suivante définit un langage impératif. On suppose qu'on peut
 compiler un programme écrit en C vers ce langage.
 
-\begin{grammar}
+\begin{grammarf}
 <programme> ::= ( fonctions , globales , <bloc> )
-\end{grammar}
+\end{grammarf}
 \begin{minipage}{0.4\textwidth}
-\begin{grammar}
+\begin{grammarf}
     <expr> ::= <lval>
           \alt unop <expr>
           \alt <expr> binop <expr>
@@ -35,10 +40,10 @@ compiler un programme écrit en C vers ce langage.
           \alt <lval> . champ
           \alt <lval> [ <expr> ]
           \alt * <expr>
-\end{grammar}
+\end{grammarf}
 \end{minipage}
 \begin{minipage}{0.4\textwidth}
-\begin{grammar}
+\begin{grammarf}
      <bloc> ::= <instr> ; <bloc>
            \alt $ε$
 
@@ -50,9 +55,12 @@ compiler un programme écrit en C vers ce langage.
            \alt \{ <bloc> \} label:
            \alt goto label
            \alt forever \{ <bloc> \}
-
-\end{grammar}
+\end{grammarf}
 \end{minipage}
+
+TODO expliquer pourquoi un while expr ne suffit pas
+
+TODO return expr
 
 Contrairement au langage C, le langage des expressions et des instructions est
 séparé. Par conséquence, l'évaluation des expressions peut se faire sans effet de
@@ -77,7 +85,7 @@ chaque fonction en son graphe de flôt de contrôle, défini comme suit :
   les nœuds sont des points de contrôle, qui représentent par exemple
   l'adresse mémoire de l'instruction qui vient d'être exécutée.
 \item
-  les arêtes sont soit des instructions ``de données'' (affectation,
+  les arêtes sont soit des instructions "de données" (affectation,
   appel de fonction, déclaration), soit des conditions (ie une
   expression).
 \end{itemize}
@@ -206,7 +214,10 @@ Les jugements ont les formes suivantes :
 
 \subsection{Sémantique des instructions}
 
-\begin{eqnarray*}
+La règle la plus simple concerne l'affectation : on peut affecter une
+expressions à une left value si elles ont le même type.
+
+\[
 \irule{Instr-Assign}{
   \langle l, lv ← e, l' \rangle \\
   σ ⊢ lv ⇒ a \\
@@ -214,7 +225,30 @@ Les jugements ont les formes suivantes :
 }{
   (l, σ) → (l', σ ⊕ \{ a → v \})
 }
-\\
+\]
+
+\begin{minipage}{0.8\textwidth}
+Déclarer une variable, c'est rendre accessible dans un bloc une variable non
+initialisée, qui n'est plus accessible par la suite.
+
+Si on suppose qu'on peut traverser le bloc interne $b$ sous un $σ$ enrichi d'une
+nouvelle variable $x$, on peut donc traverser l'instruction $↑x\{b\}$.
+\end{minipage}
+\begin{minipage}{0.2\textwidth}
+\begin{tikzpicture}
+  [cfgnode/.style={draw,shape=circle}]
+  \node[cfgnode] (l) {$l$};
+  \node[cfgnode,right of=l, node distance=2.5cm] (lp) {$l'$};
+  \node[cfgnode,below of=l, xshift=5mm] (lb) {$l_b$};
+  \node[cfgnode,below of=lp, xshift=-5mm] (lbp) {$l_b'$};
+  \draw[->] (l)  to node[auto] {$↑x\{b\}$} (lp);
+  \draw[->] (lb) to node[auto] {$b$} (lbp);
+  \draw[dashed] (l) to (lb);
+  \draw[dashed] (lp) to (lbp);
+\end{tikzpicture}
+\end{minipage}
+
+\[
 \irule{Instr-Decl}{
   \langle l, ↑x \{ b \}, l' \rangle \\
   σ' = σ ⊕ \{ x → \top \} \\
@@ -223,7 +257,8 @@ Les jugements ont les formes suivantes :
 }{
   (l, σ) → (l', σ'' \backslash x)
 }
-\\
+\]
+\[
 \irule{Instr-Fcall}{
   \langle l, lv ← fe(\vec{e}), l' \rangle \\
   σ ⊢ fe ⇒ f \\
@@ -235,7 +270,9 @@ Les jugements ont les formes suivantes :
 }{
   (l, σ) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\})
 }
-\\
+\]
+
+\[
 \irule{Instr-Fcall-Void}{
   \langle l, ∅ ← fe(\vec{e}), l' \rangle \\
   σ ⊢ fe ⇒ f \\
@@ -245,11 +282,28 @@ Les jugements ont les formes suivantes :
 }{
   (l, σ) → (l', σ'' \backslash args(f))
 }
-\end{eqnarray*}
+\]
 
 TODO definir $σ ⊢ fe ⇒ f$
 
 \subsection{Sémantique des conditions}
+
+\begin{tikzpicture}
+  [cfgnode/.style={draw,shape=circle}]
+  \node[cfgnode] (l) {$l$};
+  \node[cfgnode,right of=l, node distance=4.5cm] (lp) {$l'$};
+  \node[cfgnode,below of=l, xshift=5mm] (lt) {$l_t$};
+  \node[cfgnode,below of=lp, xshift=-5mm] (ltp) {$l_t'$};
+  \node[cfgnode,above of=l, xshift=5mm] (lf) {$l_f$};
+  \node[cfgnode,above of=lp, xshift=-5mm] (lfp) {$l_f'$};
+  \draw[->] (l)  to node[auto] {$if(e)\{i_t\} else \{i_f\}$} (lp);
+  \draw[->] (lt) to node[auto] {$i_t$} (ltp);
+  \draw[->] (lf) to node[auto] {$i_f$} (lfp);
+  \draw[dashed] (l) to (lt);
+  \draw[dashed] (ltp) to (lp);
+  \draw[dashed] (l) to (lf);
+  \draw[dashed] (lfp) to (lp);
+\end{tikzpicture}
 
 \begin{eqnarray*}
 \irule{If-True}{
@@ -290,11 +344,11 @@ variables (par exemple, pour que l'instruction $lv ← e$ soit bien typée sous
 $Γ$, il faut que les types de $lv$ et de $e$ puissent avoir le même type sous
 $Γ$).
 
+\subsection{Programme}
+
 Au niveau global, un programme P est bien typé (noté $⊢ P$) s'il existe un
 environnement permettant de typer ses composantes (les fonctions, les globales
 et le bloc d'initialisation).
-
-\subsection{Programme}
 
 \[
 \irule{Prog}{
@@ -308,6 +362,11 @@ et le bloc d'initialisation).
 \]
 
 \subsection{Flôt de contrôle}
+
+Les règles suivantes permettent de définir les jugements $Γ ⊢ i$. En résumé, les
+instructions sont bien typées si leurs sous-instructions sont bien typées. La
+seule règle supplémentaire concerne la condition du $if$ qui doit être typée en
+$Int$.
 
 \begin{eqnarray*}
 \irule{Pass}{
@@ -348,6 +407,9 @@ et le bloc d'initialisation).
 \end{eqnarray*}
 
 \subsection{Left values}
+
+On étend la relation de typage aux left values : chaque left value, vue comme
+une expression, peut être typée.
 
 \begin{eqnarray*}
 \irule{Lv-Var}{
