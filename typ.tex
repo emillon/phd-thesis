@@ -1,18 +1,10 @@
 \documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage[frenchb]{babel}
 
-\usepackage{mathpartir}
-\usepackage{syntax}
-\usepackage{amssymb}
-\usepackage{a4wide}
-\usepackage{tikz}
-
-\addtolength{\parskip}{\baselineskip}
-
-
+\input{pkg.tex}
 \input{defs.tex}
 \input{unicode.tex}
+
+\addtolength{\parskip}{\baselineskip}
 
 % Fix '::' -> ': :' when using babel
 \newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
