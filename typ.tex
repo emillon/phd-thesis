@@ -226,7 +226,7 @@ expressions à une left value si elles ont le même type.
   σ ⊢ lv ⇒ a \\
   σ ⊢ e ⇒ v
 }{
-  (l, σ, s) → (l', σ ⊕ \{ a → v \}, s)
+  (l, σ, s) → (l', σ [ a ↦ v ], s)
 }
 \]
 
