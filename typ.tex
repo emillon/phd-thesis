@@ -21,6 +21,11 @@
 La grammaire suivante définit un langage impératif. On suppose qu'on peut
 compiler un programme écrit en C vers ce langage.
 
+Un programme est un triplet $P = (\vec{f}, \vec{x}, b)$ constitué d'un ensemble
+de fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc
+sera exécuté au lancement du programme ; il peut par exemple contenir le code
+d'initialisation des variables globales et l'appel à la fonction principale.
+
 \begin{grammarf}
 <programme> ::= ( fonctions , globales , <bloc> )
 \end{grammarf}
@@ -46,7 +51,7 @@ compiler un programme écrit en C vers ce langage.
 
     <instr> ::= <lval> $←$ <expr>
            \alt <lval> $←$ funexp (args)
-           \alt  $∅ ←$ funexp (args)
+           \alt funexp (args)
            \alt $↑$ nom \{ <bloc> \}
            \alt if (<expr>) \{ <bloc> \} else \{ <bloc> \}
            \alt \{ <bloc> \} label:
@@ -81,12 +86,12 @@ Ces états sont constitués des composantes suivantes :
   imbriqués et leurs valeurs de retour.
 \end{itemize}
 
-\subsection{Graphe de flôt de contrôle}
+\subsection{Graphe de flot de contrôle}
 
 Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
-celles qui définissent le flôt de contrôle (if, dowith, goto, forever) et celles
-qui définissent le flôt de données. Une première transformation va transformer
-chaque fonction en son graphe de flôt de contrôle, défini comme suit :
+celles qui définissent le flot de contrôle (if, dowith, goto, forever) et celles
+qui définissent le flot de données. Une première transformation va transformer
+chaque fonction en son graphe de flot de contrôle, défini comme suit :
 
 \begin{itemize}
 \item
@@ -261,35 +266,25 @@ on peut donc traverser l'instruction $↑x\{b\}$.
 \end{tikzpicture}
 \end{minipage}
 
-TODO pour :
+\todo{fcall}
 
-\[
-\irule{Instr-Fcall}{
-  \langle l, lv ← fe(\vec{e}), l' \rangle \\
-  σ ⊢ fe ⇒ f \\
-  σ ⊢ \vec{e} ⇒ \vec{v} \\
-  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret → \top \} \\
-  (Entry(f), σ') → (Exit(f), σ'') \\
-  σ'' ⊢ !ret ⇒ v_{ret} \\
-  σ'' ⊢ lv ⇒ a
-}{
-  (l, σ, s) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\}, ?)
-}
-\]
+%TODO pour :
+%
+%\[
+%\irule{Instr-Fcall}{
+%  \langle l, lv ← fe(\vec{e}), l' \rangle \\
+%  σ ⊢ fe ⇒ f \\
+%  σ ⊢ \vec{e} ⇒ \vec{v} \\
+%  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret → \top \} \\
+%  (Entry(f), σ') → (Exit(f), σ'') \\
+%  σ'' ⊢ !ret ⇒ v_{ret} \\
+%  σ'' ⊢ lv ⇒ a
+%}{
+%  (l, σ, s) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\}, ?)
+%}
+%\]
 
-\[
-\irule{Instr-Fcall-Void}{
-  \langle l, ∅ ← fe(\vec{e}), l' \rangle \\
-  σ ⊢ fe ⇒ f \\
-  σ ⊢ \vec{e} ⇒ \vec{v} \\
-  σ' = σ ⊕ \{args(f)  = \vec{v}\} \\
-  (Entry(f), σ') → (Exit(f), σ'')
-}{
-  (l, σ, s) → (l', σ'' \backslash args(f), ?)
-}
-\]
-
-TODO definir $σ ⊢ fe ⇒ f$
+%TODO definir $σ ⊢ fe ⇒ f$
 
 \subsection{Sémantique des conditions}
 
@@ -347,30 +342,28 @@ Dans cette section, on définit la notion de programme bien typé. L'analyse par
 typage permet de vérifier qu'à chaque expression on peut associer un type, et ce
 de manière cohérente entre plusieurs utilisations d'une variable.
 
-Les types sont :
-
-\begin{align*}
-τ   ::=~ & \tInt, \tFloat         & \text{constantes}\\
-    |~   &  a                     & \text{variable}\\
-    |~   & (τ_1, …, τ_n) → τ_r    & \text{fonction}\\
-    |~   & (τ_1, …, τ_n) → \tVoid & \text{fonction}\\
-    |~   & [τ]                    & \text{tableau}\\
-    |~   & τ*                     & \text{pointeur}\\
-    |~   & \{ f_1:τ_1
-            ,    …
-            , f_n:τ_n \}          & \text{structure}
-\end{align*}
-
 Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
 typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessaire
 à l'analyse, c'est à dire le type des fonctions et variables du programme.
 
 Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
 "sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
-typables et que les types sont en accord avec le flot de contrôle entre
-variables (par exemple, pour que l'instruction $lv ← e$ soit bien typée sous
-$Γ$, il faut que les types de $lv$ et de $e$ puissent avoir le même type sous
-$Γ$).
+typables et que les types sont en accord avec le flot de données (par exemple,
+pour que l'instruction $lv ← e$ soit bien typée sous $Γ$, il faut que les types
+de $lv$ et de $e$ puissent avoir le même type sous $Γ$).
+
+Les types des valeurs sont :
+
+\begin{align*}
+τ   ::=~ & \tInt, \tFloat, \tVoid & \text{constantes}\\
+    |~   &  a                     & \text{variable}\\
+    |~   & (τ_1, …, τ_n) → τ_r    & \text{fonction}\\
+    |~   & [τ]                    & \text{tableau}\\
+    |~   & τ*                     & \text{pointeur}\\
+    |~   & \{ f_1:τ_1
+            ,    …
+            , f_n:τ_n \}          & \text{structure}
+\end{align*}
 
 \subsection{Schémas de type}
 
@@ -380,7 +373,7 @@ pour copier des tableaux d'entiers, mais aussi de flottants. On va donc associer
 un schéma de types à chaque fonction.
 
 \[
-σ ::= ∀ a_1 … a_n . τ
+  σ ::= ∀ \vec{a} . τ
 \]
 
 En associant un schéma de type $σ$ à une fonction $f$, on indique que la
@@ -404,7 +397,7 @@ globales et le bloc d'initialisation).
 }
 \]
 
-\subsection{Flôt de contrôle}
+\subsection{Flot de contrôle}
 
 Les règles suivantes permettent de définir les jugements $Γ ⊢ i$. En résumé, les
 instructions sont bien typées si leurs sous-instructions sont bien typées. La
@@ -494,12 +487,12 @@ une expression, peut être typée.
 \\
 \irule{Const-Float}{
 }{
-  Γ ⊢ f : Float
+  Γ ⊢ f : \tFloat
 }
 \\
 \irule{Const-Nil}{
 }{
-  Γ ⊢ Nil : τ*
+  Γ ⊢ \cNil : τ*
 }
 \\
 \irule{Op-Int}{
@@ -511,23 +504,24 @@ une expression, peut être typée.
 }
 \\
 \irule{Op-Float}{
-  op ∈ \{+,-,×,/\} \\
-  Γ ⊢ e_1 : Float \\
-  Γ ⊢ e_2 : Float
+  op ∈ \{+.,-.,×.,/.\} \\
+  Γ ⊢ e_1 : \tFloat \\
+  Γ ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1 op e_2 : Float
+  Γ ⊢ e_1 \mathrm{op}~ e_2 : \tFloat
 }
 \\
 \irule{Op-Cmp}{
   op ∈ \{=,≠,≤,≥,<,>\} \\
-  Γ ⊢ e_1 : \tInt \\
-  Γ ⊢ e_2 : \tInt
+  Γ ⊢ e_1 : τ \\
+  Γ ⊢ e_2 : τ \\
+  τ ∈ \{ \tInt, \tFloat \}
 }{
-  Γ ⊢ e_1 op e_2 : \tInt
+  Γ ⊢ e_1  \mathrm{op} e_2 : \tInt
 }
 \\
 \irule{Unop-Minus}{
-  τ ∈ \{ \tInt, Float \} \\
+  τ ∈ \{ \tInt, \tFloat \} \\
   Γ ⊢ e : τ
 }{
   Γ ⊢ -e : τ
@@ -556,6 +550,10 @@ une expression, peut être typée.
 
 \subsection{Fonctions}
 
+Pour typer une fonction, on commence par ajouter ses paramètres dans
+l'environnement de typage, et on type la définition de la fonction. Le type
+résultant est généralisé.
+
 \[
 \irule{Fun}{
   Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
@@ -563,15 +561,6 @@ une expression, peut être typée.
   Γ' ⊢ !ret : τ_r
 }{
   Γ ⊢ f : Gen(\vec{τ} → τ_r, Γ)
-}
-\]
-
-\[
-\irule{Fun-Void}{
-  Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
-  Γ' ⊢ body(f)
-}{
-  Γ ⊢ f : Gen(\vec{τ} → ∅, Γ)
 }
 \]
 
@@ -598,14 +587,6 @@ une expression, peut être typée.
   (\vec{τ} → τ_r) ≤ σ
 }{
   Γ ⊢ lv ← fe(\vec{e})
-}
-\\
-\irule{Fcall-Void}{
-  Γ ⊢ fe : σ \\
-  Γ ⊢ \vec{e} : \vec{τ} \\
-  (\vec{τ} → ∅) ≤ σ
-}{
-  Γ ⊢ ∅ ← fe(\vec{e})
 }
 \end{eqnarray*}
 
