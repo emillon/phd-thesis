@@ -361,15 +361,6 @@ Les types sont :
             , f_n:τ_n \}          & \text{structure}
 \end{align*}
 
-On va associer à chaque variable globale un type. Mais faire de même pourrait
-être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
-pour copier des tableaux d'entiers, mais aussi de flottants. On va donc associer
-un schéma de types à chaque fonction.
-
-\[
-σ ::= ∀ a_1 … a_n . τ
-\]
-
 Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
 typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessaire
 à l'analyse, c'est à dire le type des fonctions et variables du programme.
@@ -380,6 +371,21 @@ typables et que les types sont en accord avec le flot de contrôle entre
 variables (par exemple, pour que l'instruction $lv ← e$ soit bien typée sous
 $Γ$, il faut que les types de $lv$ et de $e$ puissent avoir le même type sous
 $Γ$).
+
+\subsection{Schémas de type}
+
+On va associer à chaque variable globale un type. Mais faire de même pourrait
+être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
+pour copier des tableaux d'entiers, mais aussi de flottants. On va donc associer
+un schéma de types à chaque fonction.
+
+\[
+σ ::= ∀ a_1 … a_n . τ
+\]
+
+En associant un schéma de type $σ$ à une fonction $f$, on indique que la
+fonction pourra être utilisée avec tout type $τ$ qui est une instanciation de
+$σ$.
 
 \subsection{Programme}
 
