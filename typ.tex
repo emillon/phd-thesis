@@ -65,10 +65,21 @@ bord.
 
 \section{Sémantique}
 
-On définit une sémantique opérationnelle à \todo{what} petits pas. Pour ce faire, on
-convertit le programme en son graphe de flôt de contrôle, qui va nous permettre
-de raisonner en terme de points de contrôle sur lesquels s'appuira la
-sémantique.
+On définit une sémantique opérationnelle à petits pas, sous forme d'une relation
+de transition (notée $→$) entre états de l'interpréteur.
+
+Ces états sont constitués des composantes suivantes :
+
+\begin{itemize}
+\item
+  un point de contrôle $l$ dans le programme. Ils sont issus d'une
+  première transformation en un graphe de flot de contrôle.
+\item
+  un état mémoire $σ$ qui associe à chaque variable une valeur.
+\item
+  une pile d'appels $s$ qui contient l'historique des appels de fonction
+  imbriqués et leurs valeurs de retour.
+\end{itemize}
 
 \subsection{Graphe de flôt de contrôle}
 
