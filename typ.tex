@@ -16,6 +16,55 @@
 
 \begin{document}
 
+\section{Prétraitement}
+
+Lors de l'écriture d'un compilateur, on a besoin d'un langage
+intermédiaire qui fasse l'intermédiaire entre \emph{frontend} et
+\emph{backend}. Avec ce langage, on doit pouvoir (facilement) réaliser
+les types d'opérations suivantes :
+
+\begin{itemize}
+\item
+  compiler ce langage vers un langage machine (interface avec le
+  \emph{backend}).
+\item
+  exprimer des transformations intermédiaires sur cette représentation
+  (analyses sémantiques, optimisations, etc).
+\end{itemize}
+À cause du premier point, un langage comme C est très séduisant, mais
+malheureusement il a de nombreux défauts qui font qu'il ne remplit pas
+le deuxième. Par exemple, certaines instructions sont ambiguës, et
+l'ensemble des opération n'est pas orthogonal (on peut faire la même
+chose de plusieurs manières).
+
+Pour pallier ce problème, une première solution peut être d'ajouter des
+contraintes au C intermédiaire manipulé pour en obtenir un sous-langage.
+De nombreux sous-ensembles ont été définis pour aller dans ce sens.
+
+\subsection{Critères}
+
+Il y a une grande variété de langages intermédiaires différents : certains sont
+plus adaptés comme support d'analyse statique, d'autres sont plutôt destinés à
+générer du code dans un compilateur.
+
+La question de l'interopérabilité est aussi importante pour l'ingéniérie :
+certains langages intermédiaires se présentent sous la forme d'une bibliothèque
+écrite dans un langage précis, alors que d'autres auront une représentation
+textuelle.
+
+Enfin, la maturité et la stabilité du langage intermédiaire doit être prise en
+compte : sans documentation ou outils utilisables, un langage si parfait soit il
+sera inutilisable.
+
+\subsection{Candidats}
+
+\paragraph{LLVM}\cite{llvm} est un backend de compilateur développé par Apple.
+Il se présente comme un concurrent direct de GCC et permet de compiler
+\href{http://lwn.net/Articles/411654/}{le noyau Linux} et la majeure
+partie de
+\href{http://lists.freebsd.org/pipermail/freebsd-current/2009-February/003743.html}{FreeBSD}
+et \href{http://lwn.net/Articles/485301/}{Debian}.
+
 \section{Syntaxe}
 
 La grammaire suivante définit un langage impératif. On suppose qu'on peut
@@ -57,12 +106,11 @@ d'initialisation des variables globales et l'appel à la fonction principale.
            \alt \{ <bloc> \} label:
            \alt goto label
            \alt forever \{ <bloc> \}
+           \alt return <expr>
 \end{grammarf}
 \end{minipage}
 
 \todo{expliquer pourquoi un while expr ne suffit pas}
-
-\todo{return expr}
 
 Contrairement au langage C, le langage des expressions et des instructions est
 séparé. Par conséquence, l'évaluation des expressions peut se faire sans effet de
