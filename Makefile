@@ -10,5 +10,8 @@ showpdf: $(NAME).pdf
 showdvi: $(NAME).dvi
 	xdvi $<
 
+regen-bib:
+	~/mkbib < $(NAME).tex > $(NAME).bib
+
 # Debian package: latex-make
 include /usr/include/LaTeX.mk
