@@ -14,6 +14,9 @@
 
 \newcommand{\cNil}{\textsc{Nil}}
 
+\newcommand{\ctonewspeak}{\textsc{c2newspeak}}
+\newcommand{\cpp}{\textsc{cpp}}
+
 \begin{document}
 
 \section{Prétraitement}
@@ -74,7 +77,8 @@ de générer du C, mais pas pratique. À la place, autant générer du "C--".
 \paragraph{Newspeak}\cite{npkSem} est un langage intermédiaire développé par
 EADS dans le but d'être analysé par interprétation abstraite \todo{proofread}.
 
-\paragraph{CMinor}
+\paragraph{CMinor} est utilisé au sein du projet Compcert.
+
 \paragraph{CIL}
 
 \section{Syntaxe}
@@ -127,6 +131,28 @@ d'initialisation des variables globales et l'appel à la fonction principale.
 Contrairement au langage C, le langage des expressions et des instructions est
 séparé. Par conséquence, l'évaluation des expressions peut se faire sans effet de
 bord.
+
+\section{Compilation}
+
+La compilation vers C est faite en trois étapes : prétraitement du code source,
+compilation de C prétraité vers Newspeak, puis compilation de Newspeak vers ce
+langage.
+
+\subsection{Prétraitement}
+
+\ctonewspeak travaillant uniquement sur du code prétraité (dans directives de
+préprocesseur), la première étape consiste donc à faire passer le code par \cpp.
+
+\subsection{C vers Newspeak}
+
+Cette passe est réalisée par l'utilitaire \ctonewspeak. L'essentiel de la
+compilation consiste à mettre à plat les définition de types, et à simplifier le
+flôt de contrôle. C en effet propose de nombreuses constructions ambigües ou
+redondantes.
+
+\subsection{Après Newspeak}
+
+\todo{...}
 
 \section{Sémantique}
 
