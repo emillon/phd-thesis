@@ -19,6 +19,10 @@
 
 \newcommand{\ctonewspeak}{\textsc{c2newspeak}}
 \newcommand{\cpp}{\textsc{cpp}}
+\newcommand{\newspeak}{\textsc{Newspeak}}
+
+\newcommand{\npkWhile}[1]{\textsc{While}(1)\{#1\}}
+\newcommand{\npkGoto}[1]{\textsc{Goto}~#1}
 
 \begin{document}
 
@@ -121,6 +125,21 @@ Cette passe est réalisée par l'utilitaire \ctonewspeak. L'essentiel de la
 compilation consiste à mettre à plat les définition de types, et à simplifier le
 flôt de contrôle. C en effet propose de nombreuses constructions ambigües ou
 redondantes.
+
+Au contraire, \newspeak \todo{comment faire pour que la commande ne prenne pas
+les espaces ?} propose un nombre réduit de constructions. Rappelons que le but
+de ce langage est de faciliter l'analyse statique : des constructions
+orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
+code lors de l'implémentation d'un analyseur.
+
+Par exemple, plutôt que de fournir une boucle while, une boucle do/while et une
+boucle for, \newspeak fournit une unique boucle \npkWhile{}. La sortie de boucle
+est compilée vers un \npkGoto{}, qui est toujours un saut vers l'avant
+(similaire à un "break" généralisé).
+
+La sémantique de \newspeak et la traduction de C vers Newspeak sont décrites
+dans \cite{npkSem}. En ce qui concerne l'élimination des sauts vers l'arrière,
+on peut se référer à \cite{goto}.
 
 \subsection{Après Newspeak}
 
