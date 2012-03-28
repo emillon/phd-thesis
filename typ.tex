@@ -94,40 +94,7 @@ de fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc
 sera exécuté au lancement du programme ; il peut par exemple contenir le code
 d'initialisation des variables globales et l'appel à la fonction principale.
 
-\begin{grammarf}
-<programme> ::= ( fonctions , globales , <bloc> )
-\end{grammarf}
-\begin{minipage}{0.4\textwidth}
-\begin{grammarf}
-    <expr> ::= <lval>
-          \alt unop <expr>
-          \alt <expr> binop <expr>
-          \alt cst
-          \alt \& <lval>
-          \alt \& fonction
-
-    <lval> ::= var
-          \alt <lval> . champ
-          \alt <lval> [ <expr> ]
-          \alt * <expr>
-\end{grammarf}
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\begin{grammarf}
-     <bloc> ::= <instr> ; <bloc>
-           \alt $ε$
-
-    <instr> ::= <lval> $←$ <expr>
-           \alt <lval> $←$ funexp (args)
-           \alt funexp (args)
-           \alt $↑$ nom \{ <bloc> \}
-           \alt if (<expr>) \{ <bloc> \} else \{ <bloc> \}
-           \alt \{ <bloc> \} label:
-           \alt goto label
-           \alt forever \{ <bloc> \}
-           \alt return <expr>
-\end{grammarf}
-\end{minipage}
+\input{fig/syntax.tex}
 
 \todo{expliquer pourquoi un while expr ne suffit pas}
 
@@ -141,70 +108,7 @@ La compilation vers C est faite en trois étapes : prétraitement du code source
 compilation de C prétraité vers Newspeak, puis compilation de Newspeak vers ce
 langage.
 
-% {{{
-
-\begin{tikzpicture}\shorthandoff{!}
-\tikzstyle{file}=[draw, shape=rectangle, node distance=2.2cm, minimum
-height=1cm, shade, top color=white,
-    bottom color=blue!50!black!20, draw=blue!40!black!60, very thick];
-
-\node [file] (c1) {\textcolor{black}{.c}};
-\node [file, below of=c1] (c2) {\textcolor{black}{.c}};
-\node [node distance=2.2cm, below of=c2] (c3) {};
-
-\node [file, minimum height=0, node distance=5mm, above of=c3,draw] (c3b) {.adb};
-\node [file, minimum height=0, node distance=5mm, below of=c3,draw] (c3s) {.ads};
-
-\path (c3b.north west) ++(-3mm,3mm) [draw,dotted] rectangle ($(c3s.south east)+(3mm,-3mm)$);
-
-\node [below of=c3, minimum height=3cm, node distance=2.2cm] (c4){};
-
-\node [file, right of=c1] (cc1) {\textcolor{black}{.c}};
-\node [file, right of=c2] (cc2) {\textcolor{black}{.c}};
-\node [node distance=2.2cm, right of=c3] (cc3) {};
-
-\node [below of=cc3, minimum height=3cm, node distance=2.2cm](cc4){};
-
-\draw[->] (c1) -- node[above] {{\tiny \tt gcc -E}} (cc1);
-\draw[->] (c2) -- (cc2);
-
-\node [file, right of=cc1] (no1) {\textcolor{black}{.no}};
-\node [file, right of=cc2] (no2) {\textcolor{black}{.no}};
-\node [file, right of=cc3] (no3) {\textcolor{black}{.no}};
-
-\node [below of=no3, minimum height=3cm, node distance=2.2cm](no4){};
-
-\draw[->] (cc1) -- node[above] {{\tiny \tt c2newspeak -c}} (no1);
-\draw[->] (cc2) --  (no2);
-
-\draw[->] ($ (c3b.north east)!0.5!(c3s.south east) + (3mm,0) $) -- node[above] {\tiny \tt ada2newspeak -c} (no3);
-
-
-\node [file, right of=no2] (npk) {\textcolor{black}{.npk}};
-
-\node [right of=no3, minimum height=3cm, node distance=2.2cm](npk2){};
-\node [right of=no4, minimum height=3cm, node distance=2.2cm](npk3){};
-
-\node[draw, ellipse, right of=no2, minimum height=3cm]{};
-
-\draw[->] (no1) -- node {} (npk);
-\draw[->] (no2) -- node[above] {{\tiny \tt c2newspeak}} (npk);
-\draw[->] (no3) -- node {} (npk);
-
-
-\node [file, right of=npk](warn) {\textcolor{black}{.warn}};
-
-\node [right of=npk3, node distance=3cm](analyser2){};
-
-\draw[->] (npk) -- node[above] {{\tiny \tt penjili}} (warn);
-
-\draw[->] (c4)   -- node[above, text depth=3pt] {\footnotesize Pr\'etraitement} (cc4);
-\draw[->] (cc4)  -- node[above, text depth=3pt] {\footnotesize Compilation} (no4);
-\draw[->] (no4)  -- node[above, text depth=3pt] {\footnotesize \'Edition de liens} (npk3);
-\draw[->] (npk3) -- node[above, text depth=3pt] {\footnotesize Analyse} (analyser2);
-\end{tikzpicture}
-
-% }}}
+\input{fig/compil-pipeline.tex}
 
 \subsection{Prétraitement}
 
@@ -407,17 +311,7 @@ on peut donc traverser l'instruction $↑x\{b\}$.
 \]
 \end{minipage}
 \begin{minipage}{0.4\textwidth}
-\begin{tikzpicture}
-  [cfgnode/.style={draw,shape=circle},node distance=2cm]
-  \node[cfgnode] (l) {$l$};
-  \node[cfgnode,right of=l, node distance=4cm] (lp) {$l'$};
-  \node[cfgnode,below of=l, xshift=1cm] (lb) {$l_b$};
-  \node[cfgnode,below of=lp, xshift=-1cm] (lbp) {$l_b'$};
-  \draw[->] (l)  to node[auto] {$↑x\{b\}$} (lp);
-  \draw[->] (lb) to node[auto] {$b$} (lbp);
-  \draw[->,dashed] (l) to node[auto] {$⊕ \{ x → \top \}$}(lb);
-  \draw[->,dashed,swap] (lbp) to node[auto] {$\backslash x$} (lp);
-\end{tikzpicture}
+\input{fig/sem-decl.tex}
 \end{minipage}
 
 \todo{fcall}
@@ -448,22 +342,7 @@ transition à travers le bloc $i_t$ est possible, alors on peut faire passer à
 travers le "if".
 
 \begin{minipage}{0.5\textwidth}
-\begin{tikzpicture}
-  [cfgnode/.style={draw,shape=circle}, node distance=1.5cm]
-  \node[cfgnode] (l) {$l$};
-  \node[cfgnode,right of=l, node distance=4.5cm] (lp) {$l'$};
-  \node[cfgnode,below of=l, xshift=5mm] (lt) {$l_t$};
-  \node[cfgnode,below of=lp, xshift=-5mm] (ltp) {$l_t'$};
-  \node[cfgnode,above of=l, xshift=5mm] (lf) {$l_f$};
-  \node[cfgnode,above of=lp, xshift=-5mm] (lfp) {$l_f'$};
-  \draw[->] (l)  to node[auto] {$\iIf{e}{i_t}{i_f}$} (lp);
-  \draw[->] (lt) to node[auto] {$i_t$} (ltp);
-  \draw[->] (lf) to node[auto] {$i_f$} (lfp);
-  \draw[->,dashed] (l) to node [auto,swap] {$≠0$} (lt);
-  \draw[->,dashed] (ltp) to (lp);
-  \draw[->,dashed] (l) to node [auto] {$0$} (lf);
-  \draw[->,dashed] (lfp) to (lp);
-\end{tikzpicture}
+\input{fig/sem-if.tex}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \[

@@ -1,0 +1,34 @@
+\begin{grammarf}
+<programme> ::= ( fonctions , globales , <bloc> )
+\end{grammarf}
+\begin{minipage}{0.4\textwidth}
+\begin{grammarf}
+    <expr> ::= <lval>
+          \alt unop <expr>
+          \alt <expr> binop <expr>
+          \alt cst
+          \alt \& <lval>
+          \alt \& fonction
+
+    <lval> ::= var
+          \alt <lval> . champ
+          \alt <lval> [ <expr> ]
+          \alt * <expr>
+\end{grammarf}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{grammarf}
+     <bloc> ::= <instr> ; <bloc>
+           \alt $ε$
+
+    <instr> ::= <lval> $←$ <expr>
+           \alt <lval> $←$ funexp (args)
+           \alt funexp (args)
+           \alt $↑$ nom \{ <bloc> \}
+           \alt if (<expr>) \{ <bloc> \} else \{ <bloc> \}
+           \alt \{ <bloc> \} label:
+           \alt goto label
+           \alt forever \{ <bloc> \}
+           \alt return <expr>
+\end{grammarf}
+\end{minipage}
