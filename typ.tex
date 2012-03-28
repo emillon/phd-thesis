@@ -163,9 +163,6 @@ Ces états sont constitués des composantes suivantes :
   première transformation en un graphe de flot de contrôle.
 \item
   un état mémoire $σ$ qui associe à chaque variable une valeur.
-\item
-  une pile d'appels $s$ qui contient l'historique des appels de fonction
-  imbriqués et leurs valeurs de retour.
 \end{itemize}
 
 \subsection{Graphe de flot de contrôle}
@@ -228,7 +225,7 @@ Les jugements ont les formes suivantes :
 \item $σ ⊢ e ⇒ v$ :
   l'expression e s'évalue en v.
 
-\item $(l, σ, s) → (l', σ', s')$ :
+\item $(l, σ) → (l', σ')$ :
   permet de définir la fonction de transition principale
 
 \end{itemize}
@@ -313,7 +310,7 @@ expressions à une left value si elles ont le même type.
   σ ⊢ lv ⇒ a \\
   σ ⊢ e ⇒ v
 }{
-  (l, σ, s) → (l', σ [ a ↦ v ], s)
+  (l, σ) → (l', σ [ a ↦ v ])
 }
 \]
 
@@ -328,9 +325,9 @@ on peut donc traverser l'instruction $↑x\{b\}$.
   \langle l, ↑x \{ b \}, l' \rangle \\
   \langle l_b, b, l_b' \rangle \\
   σ' = σ ⊕ \{ x → \top \} \\
-  (l_b, σ', s) → (l_b', σ'', s')
+  (l_b, σ', s) → (l_b', σ'')
 }{
-  (l, σ, s) → (l', σ'' \backslash x, s')
+  (l, σ) → (l', σ'' \backslash x)
 }
 \]
 \end{minipage}
@@ -352,7 +349,7 @@ on peut donc traverser l'instruction $↑x\{b\}$.
 %  σ'' ⊢ !ret ⇒ v_{ret} \\
 %  σ'' ⊢ lv ⇒ a
 %}{
-%  (l, σ, s) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\}, ?)
+%  (l, σ) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\}, ?)
 %}
 %\]
 
@@ -375,9 +372,9 @@ travers le "if".
   σ ⊢ e ⇒ n \\
   n ≠ 0 \\
   \langle l_i, i_t, l_i' \rangle \\
-  (l_i, σ, s) → (l_i', σ', s')
+  (l_i, σ) → (l_i', σ')
 }{
-  (l, σ) → (l', σ', s')
+  (l, σ) → (l', σ')
 }
 \]
 
@@ -386,9 +383,9 @@ travers le "if".
   \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ 0 \\
   \langle l_i, i_f, l_i' \rangle \\
-  (l_i, σ, s) → (l_i', σ', s')
+  (l_i, σ) → (l_i', σ')
 }{
-  (l, σ, s) → (l', σ', s')
+  (l, σ) → (l', σ')
 }
 \]
 \end{minipage}
