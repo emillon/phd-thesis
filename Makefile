@@ -13,5 +13,21 @@ showdvi: $(NAME).dvi
 regen-bib:
 	~/mkbib < $(NAME).tex > $(NAME).bib
 
+gen/%.pyg.tex: code/% gen
+	pygmentize -f latex -o $@ $<
+
+gen/pygments-style.tex: gen
+	pygmentize -f latex -S autumn > $@
+
+gen:
+	mkdir $@
+
+clean:: gen-clean
+
+gen-clean:
+	rm -rf gen/
+
+$(NAME).tex: gen/pygments-style.tex gen/struct-array.c.pyg.tex
+
 # Debian package: latex-make
 include /usr/include/LaTeX.mk
