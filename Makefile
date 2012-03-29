@@ -27,7 +27,16 @@ clean:: gen-clean
 gen-clean:
 	rm -rf gen/
 
-$(NAME).tex: gen/pygments-style.tex gen/struct-array.c.pyg.tex
+$(NAME).tex: gentex
+
+gentex: gen/pygments-style.tex
+
+CODESAMPLES=\
+	    struct-array.c \
+	    euclide.c \
+	    euclide-npk.c
+
+gentex: $(addprefix gen/, $(addsuffix .pyg.tex, $(CODESAMPLES)))
 
 # Debian package: latex-make
 include /usr/include/LaTeX.mk
