@@ -25,9 +25,9 @@
 
 \chapter{Cas d'étude}
 
-\input{gen/radeon-git.diff.pyg.tex}
+\insertcode{radeon-git.diff}
 
-\input{gen/radeon-buggy.c.pyg.tex}
+\insertcode{radeon-buggy.c}
 
 \chapter{Langage intermédiaire}
 
@@ -132,10 +132,10 @@ flôt de contrôle. C en effet propose de nombreuses constructions ambigües ou
 redondantes.
 
 \begin{minipage}{0.5\textwidth}
-\input{gen/euclide.c.pyg.tex}
+\insertcode{euclide.c}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-\input{gen/euclide-npk.c.pyg.tex}
+\insertcode{euclide-npk.c}
 \end{minipage}
 
 Au contraire, \newspeak{} propose un nombre réduit de constructions. Rappelons
@@ -157,7 +157,7 @@ l'arrière, on peut se référer à \cite{goto}.
 \newspeak{} a de nombreux avantages, mais pour une analyse par typage il est
 trop bas niveau. Par exemple, dans le code suivant
 
-\input{gen/struct-array.c.pyg.tex}
+\insertcode{struct-array.c}
 
 \section{Sémantique}
 
