@@ -33,6 +33,7 @@ gentex: gen/pygments-style.tex
 
 CODESAMPLES=\
 	    radeon-buggy.c \
+	    radeon-git.diff \
 	    struct-array.c \
 	    euclide.c \
 	    euclide-npk.c
