@@ -124,8 +124,8 @@
 
 \newcommand{\titlelogo}{
 \begin{tikzpicture}
- \draw(0,0) node {\includegraphics[width=4cm]{EADS_Logo.png}};
- \draw(6,0) node {\includegraphics[width=3cm]{logo-ens-cachan.png}};
+ %\draw(0,0) node {\includegraphics[width=4cm]{logo-eads.png}};
+ %\draw(6,0) node {\includegraphics[width=3cm]{logo-lip6.png}};
 \end{tikzpicture}
 }
 

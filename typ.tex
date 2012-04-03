@@ -12,7 +12,14 @@
 
 \addtolength{\parskip}{\baselineskip}
 
+\title{Titre}
+\author{Étienne Millon}
+
 \begin{document}
+
+\maketitle
+
+\tableofcontents
 
 \chapter{Introduction}
 
@@ -328,7 +335,7 @@ on peut donc traverser l'instruction $↑x\{b\}$.
 \irule{Instr-Decl}{
   \langle l, ↑x \{ b \}, l' \rangle \\
   \langle l_b, b, l_b' \rangle \\
-  σ' = σ ⊕ \{ x → \top \} \\
+  σ' = σ ⊕ \{ x ↦ \top \} \\
   (l_b, σ', s) → (l_b', σ'')
 }{
   (l, σ) → (l', σ'' \backslash x)
@@ -339,25 +346,21 @@ on peut donc traverser l'instruction $↑x\{b\}$.
 \input{fig/sem-decl.tex}
 \end{minipage}
 
-\todo{fcall}
-
-%TODO pour :
-%
-%\[
-%\irule{Instr-Fcall}{
-%  \langle l, lv ← fe(\vec{e}), l' \rangle \\
-%  σ ⊢ fe ⇒ f \\
-%  σ ⊢ \vec{e} ⇒ \vec{v} \\
-%  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret → \top \} \\
-%  (Entry(f), σ') → (Exit(f), σ'') \\
-%  σ'' ⊢ !ret ⇒ v_{ret} \\
-%  σ'' ⊢ lv ⇒ a
-%}{
-%  (l, σ) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\}, ?)
-%}
-%\]
-
-%TODO definir $σ ⊢ fe ⇒ f$
+\begin{minipage}{0.4\textwidth}
+\[
+\irule{Instr-Fcall}{
+  \langle l, lv ← fe(\vec{e}), l' \rangle \\
+  σ ⊢ fe ⇒ f \\
+  σ ⊢ \vec{e} ⇒ \vec{v} \\
+  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ ret(f) ↦ \top \} \\
+  (Entry(f), σ') → (Exit(f), σ'') \\
+  σ'' ⊢ ret(f) ⇒ v_{ret} \\
+  σ'' ⊢ lv ⇒ a
+}{
+  (l, σ) → (l', σ'' \backslash (args(f) \cup \{ret(f)\}) ⊕ \{ a ↦ v_{ret}\})
+}
+\]
+\end{minipage}
 
 \subsection{Sémantique des conditions}
 
@@ -616,7 +619,7 @@ résultant est généralisé.
 \irule{Fun}{
   Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
   Γ' ⊢ body(f) \\
-  Γ' ⊢ !ret : τ_r
+  Γ' ⊢ ret(f) : τ_r
 }{
   Γ ⊢ f : Gen(\vec{τ} → τ_r, Γ)
 }
