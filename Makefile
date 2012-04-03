@@ -32,6 +32,7 @@ $(NAME).tex: gentex
 gentex: gen/pygments-style.tex
 
 CODESAMPLES=\
+	    radeon-buggy.c \
 	    struct-array.c \
 	    euclide.c \
 	    euclide-npk.c
