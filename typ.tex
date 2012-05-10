@@ -17,638 +17,93 @@
 
 \begin{document}
 
-\maketitle
+%\maketitle
 
 \tableofcontents
 
-\chapter{Introduction}
+\chapterstar{Introduction}
+
+\part{Problématique}
+
+\chapter{Le langage C}
+
+\begin{itemize}
+\item Présentation du langage (ANSI C)
+\item Extensions GNU
+\item Difficultés d'analyse du langage
+\item Spécificités du code noyau
+\end{itemize}
+
+\chapter{Le noyau Linux}
+
+\begin{itemize}
+\item Rôle
+\item Isolation
+\item Appels système
+\end{itemize}
 
 \chapter{Cas d'étude}
 
-\insertcode{radeon-git.diff}
-
-\insertcode{radeon-buggy.c}
-
-\chapter{Langage intermédiaire}
-
-\section{Prétraitement}
-
-Lors de l'écriture d'un compilateur, on a besoin d'un langage
-intermédiaire qui fasse l'intermédiaire entre \emph{frontend} et
-\emph{backend}. Avec ce langage, on doit pouvoir (facilement) réaliser
-les types d'opérations suivantes :
-
 \begin{itemize}
-\item
-  compiler ce langage vers un langage machine (interface avec le
-  \emph{backend}).
-\item
-  exprimer des transformations intermédiaires sur cette représentation
-  (analyses sémantiques, optimisations, etc).
+\item Comment fonctionnent les appels systèmes
+\item Le \emph{Confused Deputy Problem}
 \end{itemize}
-À cause du premier point, un langage comme C est très séduisant, mais
-malheureusement il a de nombreux défauts qui font qu'il ne remplit pas
-le deuxième. Par exemple, certaines instructions sont ambiguës, et
-l'ensemble des opération n'est pas orthogonal (on peut faire la même
-chose de plusieurs manières).
 
-Pour pallier ce problème, une première solution peut être d'ajouter des
-contraintes au C intermédiaire manipulé pour en obtenir un sous-langage.
-De nombreux sous-ensembles ont été définis pour aller dans ce sens.
+\chapter{État de l'art}
 
-\subsection{Critères}
+\part{Analyse statique par typage}
 
-Il y a une grande variété de langages intermédiaires différents : certains sont
-plus adaptés comme support d'analyse statique, d'autres sont plutôt destinés à
-générer du code dans un compilateur.
+\chapter{Typage}
 
-La question de l'interopérabilité est aussi importante pour l'ingéniérie :
-certains langages intermédiaires se présentent sous la forme d'une bibliothèque
-écrite dans un langage précis, alors que d'autres auront une représentation
-textuelle.
+\section{Présentation et but}
+\section{Taxonomie}
 
-Enfin, la maturité et la stabilité du langage intermédiaire doit être prise en
-compte : sans documentation ou outils utilisables, un langage si parfait soit il
-sera inutilisable.
+\subsection{Statique, dynamique, mixte}
+\subsection{Fort, faible, sound}
+\subsection{Expressivité, garanties, types dépendants}
 
-\subsection{Candidats}
+\section{Exemples}
 
-\paragraph{LLVM}\cite{llvm-pres} est un backend de compilateur développé par
-Apple. Il se présente comme un concurrent direct de GCC et permet de compiler
-\href{http://lwn.net/Articles/411654/}{le noyau Linux} et la majeure partie de
-\href{http://lists.freebsd.org/pipermail/freebsd-current/2009-February/003743.html}{FreeBSD}
-et \href{http://lwn.net/Articles/485301/}{Debian}.
+\subsection{Faible dynamique : Perl}
+\subsection{Faible statique : C}
+\subsection{Fort dynamique : Python}
+\subsection{Fort statique : OCaml}
+\subsection{Fort statique à effets typés : Haskell}
+\subsection{Theorem prover : Coq}
 
-LLVM est à la base une bibliothèque C++, mais une forme sérialisée sous forme
-de fichier est également disponible.
+\chapter{Un premier système de types}
 
-\paragraph{Cminusminus}\cite{spjcmm} est un langage intermédiaire dont le but
-est similaire à LLVM : pour quelqu'un qui écrit un compilateur, il est séduisant
-de générer du C, mais pas pratique. À la place, autant générer du "C--".
+But : inférer
+\texttt{memcpy : Forall a . (a*, a*, size\_t) -\textgreater{} ()}
 
-\paragraph{Newspeak}\cite{npkSem} est un langage intermédiaire développé par
-EADS dans le but d'être analysé par interprétation abstraite \todo{proofread}.
-
-\paragraph{CMinor} est utilisé au sein du projet Compcert.
-
-\paragraph{CIL}
-
-\section{Syntaxe}
-
-La grammaire suivante définit un langage impératif. On suppose qu'on peut
-compiler un programme écrit en C vers ce langage.
-
-Un programme est un triplet $P = (\vec{f}, \vec{x}, b)$ constitué d'un ensemble
-de fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc
-sera exécuté au lancement du programme ; il peut par exemple contenir le code
-d'initialisation des variables globales et l'appel à la fonction principale.
-
-\input{fig/syntax.tex}
-
-\todo{expliquer pourquoi un while expr ne suffit pas}
-
-Contrairement au langage C, le langage des expressions et des instructions est
-séparé. Par conséquence, l'évaluation des expressions peut se faire sans effet de
-bord.
-
-\section{Compilation}
-
-La compilation vers C est faite en trois étapes : prétraitement du code source,
-compilation de C prétraité vers \newspeak{}, puis compilation de \newspeak{}
-vers ce langage.
-
-\input{fig/compil-pipeline.tex}
-
+\section{Chaîne de compilation}
 \subsection{Prétraitement}
+\subsection{Compilation (levée des ambigüités)}
+\subsection{Annotations}
+\section{Syntaxe}
+\section{Sémantique (opérationnelle, à petits pas)}
+\section{Règles de typage}
+\section{Limitations}
+\subsection{Programmes non typables}
+\subsection{Incohérences}
 
-\ctonewspeak{} travaillant uniquement sur du code prétraité (dans directives de
-préprocesseur), la première étape consiste donc à faire passer le code par \cpp.
-
-\subsection{C vers Newspeak}
-
-Cette passe est réalisée par l'utilitaire \ctonewspeak{}. L'essentiel de la
-compilation consiste à mettre à plat les définition de types, et à simplifier le
-flôt de contrôle. C en effet propose de nombreuses constructions ambigües ou
-redondantes.
-
-\begin{minipage}{0.5\textwidth}
-\insertcode{euclide.c}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\insertcode{euclide-npk.c}
-\end{minipage}
-
-Au contraire, \newspeak{} propose un nombre réduit de constructions. Rappelons
-que le but de ce langage est de faciliter l'analyse statique : des constructions
-orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
-code lors de l'implémentation d'un analyseur.
-
-Par exemple, plutôt que de fournir une boucle while, une boucle do/while et une
-boucle for, \newspeak{} fournit une unique boucle \npkWhile{}. La sortie de
-boucle est compilée vers un \npkGoto{}, qui est toujours un saut vers l'avant
-(similaire à un "break" généralisé).
-
-La sémantique de \newspeak{} et la traduction de C vers \newspeak{} sont
-décrites dans \cite{npkSem}. En ce qui concerne l'élimination des sauts vers
-l'arrière, on peut se référer à \cite{goto}.
-
-\subsection{Après Newspeak}
-
-\newspeak{} a de nombreux avantages, mais pour une analyse par typage il est
-trop bas niveau. Par exemple, dans le code suivant
-
-\insertcode{struct-array.c}
-
-\section{Sémantique}
-
-On définit une sémantique opérationnelle à petits pas, sous forme d'une relation
-de transition (notée $→$) entre états de l'interpréteur.
-
-Ces états sont constitués des composantes suivantes :
+\chapter{Ajout des qualificateurs}
 
 \begin{itemize}
-\item
-  un point de contrôle $l$ dans le programme. Ils sont issus d'une
-  première transformation en un graphe de flot de contrôle.
-\item
-  un état mémoire $σ$ qui associe à chaque variable une valeur.
+  \item Éditions et ajouts
+  \item Passage sur le cas d'étude
+  \item Propriété d'isolation mémoire
 \end{itemize}
 
-\subsection{Graphe de flot de contrôle}
+\chapter{Implantation}
 
-Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
-celles qui définissent le flot de contrôle (if, dowith, goto, forever) et celles
-qui définissent le flot de données. Une première transformation va transformer
-chaque fonction en son graphe de flot de contrôle, défini comme suit :
+\chapterstar{Conclusion}
 
 \begin{itemize}
-\item
-  les nœuds sont des points de contrôle, qui représentent par exemple
-  l'adresse mémoire de l'instruction qui vient d'être exécutée.
-\item
-  les arêtes sont soit des instructions "de données" (affectation,
-  appel de fonction, déclaration), soit des conditions (ie une
-  expression).
+  \item Limitations
+  \item Perspectives
 \end{itemize}
 
-Intuitivement, on peut "passer" d'un état à un autre soit en passant par une
-arête "condition" qui s'évalue à une valeur "vrai", soit en appliquant les
-effets de bord d'une arête "instruction".
-
-Dans la suite, on suppose qu'on a à notre disposition un ensemble de jugements :
-$\langle l, instr, l' \rangle$ qui signifie qu'on peut passer du point $l$ au
-point $l'$ en effectuant l'instruction $instr$.
-
-\subsection{État mémoire}
-
-La mémoire interne de l'interpréteur est une correspondance entre l'ensemble des
-adresses (infini dénombrable) et l'ensemble des valeurs. Un état mémoire $σ$ est
-une fonction partielle de $Addr$ vers $Val$.
-
-Ces valeurs peuvent être de plusieurs formes :
-
-\begin{align*}
-v   ::=~ & n, f, \cNil & \text{constantes}\\
-      |~ & \&a         & \text{pointeur vers l'adresse $a$}\\
-      |~ & \&f         & \text{pointeur vers la fonction $f$}\\
-      |~ & \top        & \text{valeur non initialisée}
-\end{align*}
-
-\todo{Pile d'appels}
-
-\subsection{Left values}
-
-La mémoire est organisée en adresses, mais pourtant dans le programme cette
-notion n'est pas directement visible. Les accès sont réalisés à travers des
-"left values".
-
-\subsection{Jugements}
-
-Les jugements ont les formes suivantes :
-
-\begin{itemize}
-
-\item $σ ⊢ lv ⇒ a$ :
-  la left-value lv correspond à l'adresse mémoire a.
-
-\item $σ ⊢ e ⇒ v$ :
-  l'expression e s'évalue en v.
-
-\item $(l, σ) → (l', σ')$ :
-  permet de définir la fonction de transition principale
-
-\end{itemize}
-
-\subsection{Sémantique des left-values}
-
-\begin{eqnarray*}
-\irule{Eval-Lv-Var}{
-  (v, a) ∈ σ
-}{
-  σ ⊢ v ⇒ a
-}
-&
-\irule{Eval-Lv-Deref}{
-  σ ⊢ e ⇒ \&a
-}{
-  σ ⊢ *e ⇒ a
-}
-\\
-\irule{Eval-Lv-Field}{
-  σ ⊢ lv ⇒ a
-}{
-  σ ⊢ lv.f ⇒ a + f
-}
-&
-\irule{Eval-Lv-Array}{
-  σ ⊢ lv ⇒ a \\
-  σ ⊢ e ⇒ n \\
-}{
-  σ ⊢ lv[e] ⇒ a + n
-}
-\end{eqnarray*}
-
-\subsection{Sémantique des expressions}
-
-\begin{eqnarray*}
-\irule{Eval-Cst}{
-}{
-  σ ⊢ c ⇒ c
-}
-&
-\irule{Eval-Lv}{
-  σ ⊢ lv ⇒ a \\
-  (a, v) ∈ σ
-}{
-  σ ⊢ lv ⇒ v
-}
-\\
-\irule{Eval-Unop}{
-  σ ⊢ e ⇒ v
-}{
-  σ ⊢ op e ⇒ \widehat{op} v
-}
-&
-\irule{Eval-Binop}{
-  σ ⊢ e_1 ⇒ v_1 \\
-  σ ⊢ e_2 ⇒ v_2
-}{
-  σ ⊢ e_1 op e_2 ⇒ v_1 \widehat{op} v_2
-}
-\\
-\irule{Eval-AddrOf}{
-  σ ⊢ lv ⇒ a
-}{
-  σ ⊢ \&lv ⇒ \&a
-}
-&
-\irule{Eval-AddrOfFun}{
-}{
-  σ ⊢ \&f ⇒ \&f
-}
-\end{eqnarray*}
-
-\subsection{Sémantique des instructions}
-
-La règle la plus simple concerne l'affectation : on peut affecter une
-expressions à une left value si elles ont le même type.
-
-\[
-\irule{Instr-Assign}{
-  \langle l, lv ← e, l' \rangle \\
-  σ ⊢ lv ⇒ a \\
-  σ ⊢ e ⇒ v
-}{
-  (l, σ) → (l', σ [ a ↦ v ])
-}
-\]
-
-Déclarer une variable, c'est rendre accessible dans un bloc une variable non
-initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
-traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
-on peut donc traverser l'instruction $↑x\{b\}$.
-
-\begin{minipage}{0.6\textwidth}
-\[
-\irule{Instr-Decl}{
-  \langle l, ↑x \{ b \}, l' \rangle \\
-  \langle l_b, b, l_b' \rangle \\
-  σ' = σ ⊕ \{ x ↦ \top \} \\
-  (l_b, σ', s) → (l_b', σ'')
-}{
-  (l, σ) → (l', σ'' \backslash x)
-}
-\]
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\input{fig/sem-decl.tex}
-\end{minipage}
-
-\begin{minipage}{0.4\textwidth}
-\[
-\irule{Instr-Fcall}{
-  \langle l, lv ← fe(\vec{e}), l' \rangle \\
-  σ ⊢ fe ⇒ f \\
-  σ ⊢ \vec{e} ⇒ \vec{v} \\
-  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ ret(f) ↦ \top \} \\
-  (Entry(f), σ') → (Exit(f), σ'') \\
-  σ'' ⊢ ret(f) ⇒ v_{ret} \\
-  σ'' ⊢ lv ⇒ a
-}{
-  (l, σ) → (l', σ'' \backslash (args(f) \cup \{ret(f)\}) ⊕ \{ a ↦ v_{ret}\})
-}
-\]
-\end{minipage}
-
-\subsection{Sémantique des conditions}
-
-On utilise un encodage similaire à la déclaration. Tout d'abord, on évalue la
-condition dans un contexte $σ$. Si elle s'évalue en un entier non nul, et qu'une
-transition à travers le bloc $i_t$ est possible, alors on peut faire passer à
-travers le "if".
-
-\begin{minipage}{0.5\textwidth}
-\input{fig/sem-if.tex}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\[
-\irule{If-True}{
-  \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
-  σ ⊢ e ⇒ n \\
-  n ≠ 0 \\
-  \langle l_i, i_t, l_i' \rangle \\
-  (l_i, σ) → (l_i', σ')
-}{
-  (l, σ) → (l', σ')
-}
-\]
-
-\[
-\irule{If-False}{
-  \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
-  σ ⊢ e ⇒ 0 \\
-  \langle l_i, i_f, l_i' \rangle \\
-  (l_i, σ) → (l_i', σ')
-}{
-  (l, σ) → (l', σ')
-}
-\]
-\end{minipage}
-
-\section{Typage}
-
-Dans cette section, on définit la notion de programme bien typé. L'analyse par
-typage permet de vérifier qu'à chaque expression on peut associer un type, et ce
-de manière cohérente entre plusieurs utilisations d'une variable.
-
-Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
-typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessaire
-à l'analyse, c'est à dire le type des fonctions et variables du programme.
-
-Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
-"sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
-typables et que les types sont en accord avec le flot de données (par exemple,
-pour que l'instruction $lv ← e$ soit bien typée sous $Γ$, il faut que les types
-de $lv$ et de $e$ puissent avoir le même type sous $Γ$).
-
-Les types des valeurs sont :
-
-\begin{align*}
-τ   ::=~ & \tInt, \tFloat, \tVoid & \text{constantes}\\
-    |~   &  a                     & \text{variable}\\
-    |~   & (τ_1, …, τ_n) → τ_r    & \text{fonction}\\
-    |~   & [τ]                    & \text{tableau}\\
-    |~   & τ*                     & \text{pointeur}\\
-    |~   & \{ f_1:τ_1
-            ,    …
-            , f_n:τ_n \}          & \text{structure}
-\end{align*}
-
-\subsection{Schémas de type}
-
-On va associer à chaque variable globale un type. Mais faire de même pourrait
-être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
-pour copier des tableaux d'entiers, mais aussi de flottants. On va donc associer
-un schéma de types à chaque fonction.
-
-\[
-  σ ::= ∀ \vec{a} . τ
-\]
-
-En associant un schéma de type $σ$ à une fonction $f$, on indique que la
-fonction pourra être utilisée avec tout type $τ$ qui est une instanciation de
-$σ$.
-
-\subsection{Programme}
-
-Au niveau global, un programme P est bien typé (noté $⊢ P$) s'il existe un
-environnement $Γ^0$ permettant de typer ses composantes (les fonctions, les
-globales et le bloc d'initialisation).
-
-\[
-\irule{Prog}{
-  Γ^0 = (\vec{σ}, \vec{τ}) \\
-  Γ^0 ⊢ \vec{f} : \vec{σ} \\
-  Γ^0 ⊢ \vec{x} : \vec{t} \\
-  Γ^0 ⊢ b
-}{
-  ⊢ (\vec{f}, \vec{x}, b)
-}
-\]
-
-\subsection{Flot de contrôle}
-
-Les règles suivantes permettent de définir les jugements $Γ ⊢ i$. En résumé, les
-instructions sont bien typées si leurs sous-instructions sont bien typées. La
-seule règle supplémentaire concerne la condition du $if$ qui doit être typée en
-\tInt.
-
-\begin{eqnarray*}
-&
-\irule{Pass}{
-}{
-  Γ ⊢ ε
-}
-&
-\irule{Seq}{
-  Γ ⊢ s \\
-  Γ ⊢ b
-}{
-  Γ ⊢ s;b
-}
-\\
-&
-\irule{Forever}{
-  Γ ⊢ b
-}{
-  Γ ⊢ forever \{ b \}
-}
-&
-\irule{If}{
-  Γ ⊢ e : \tInt \\
-  Γ ⊢ i_t \\
-  Γ ⊢ i_f
-}{
-  Γ ⊢ \iIf{e}{i_t}{i_f}
-} \\
-&
-\irule{Goto}{
-}{
-  Γ ⊢ goto l
-}
-&
-\irule{DoWith}{
-  Γ ⊢ b
-}{
-  Γ ⊢ \{ b \} l:
-}
-\end{eqnarray*}
-
-\subsection{Left values}
-
-On étend la relation de typage aux left values : chaque left value, vue comme
-une expression, peut être typée.
-
-\begin{eqnarray*}
-\irule{Lv-Var}{
-  (v, τ) ∈ Γ
-}{
-  Γ ⊢ v : τ
-}
-&
-\irule{Lv-Field}{
-  Γ ⊢ lv : τ_s \\
-  (f, τ_f) ∈ τ_s
-}{
-  Γ ⊢ lv.f : τ_f
-}
-\\
-\irule{Lv-Deref}{
-  Γ ⊢ e : τ*
-}{
-  Γ ⊢ *e : τ
-}
-&
-\irule{Lv-Array}{
-  Γ ⊢ lv : [τ] \\
-  Γ ⊢ e : \tInt
-}{
-  Γ ⊢ lv[e] : τ
-}
-\end{eqnarray*}
-
-\subsection{Expressions}
-\begin{eqnarray*}
-\irule{Const-Int}{
-}{
-  Γ ⊢ n : \tInt
-}
-\\
-\irule{Const-Float}{
-}{
-  Γ ⊢ f : \tFloat
-}
-\\
-\irule{Const-Nil}{
-}{
-  Γ ⊢ \cNil : τ*
-}
-\\
-\irule{Op-Int}{
-  op ∈ \{+,-,×,/,\&,|,\&\&,||,⋘,⋙\} \\
-  Γ ⊢ e_1 : \tInt \\
-  Γ ⊢ e_2 : \tInt
-}{
-  Γ ⊢ e_1 op e_2 : \tInt
-}
-\\
-\irule{Op-Float}{
-  op ∈ \{+.,-.,×.,/.\} \\
-  Γ ⊢ e_1 : \tFloat \\
-  Γ ⊢ e_2 : \tFloat
-}{
-  Γ ⊢ e_1 \mathrm{op}~ e_2 : \tFloat
-}
-\\
-\irule{Op-Cmp}{
-  op ∈ \{=,≠,≤,≥,<,>\} \\
-  Γ ⊢ e_1 : τ \\
-  Γ ⊢ e_2 : τ \\
-  τ ∈ \{ \tInt, \tFloat \}
-}{
-  Γ ⊢ e_1  \mathrm{op} e_2 : \tInt
-}
-\\
-\irule{Unop-Minus}{
-  τ ∈ \{ \tInt, \tFloat \} \\
-  Γ ⊢ e : τ
-}{
-  Γ ⊢ -e : τ
-}
-\\
-\irule{Unop-Not}{
-  op ∈ \{ \tilde, ! \}
-  Γ ⊢ e : \tInt
-}{
-  Γ ⊢ op e : \tInt
-}
-\\
-\irule{AddrOf}{
-  Γ ⊢ lv : τ
-}{
-  Γ ⊢ \&lv : τ*
-}
-\\
-\irule{AddrOfFun}{
-  Γ ⊢ f : σ \\
-  τ ≤ σ
-}{
-  Γ ⊢ \&lv : τ
-}
-\end{eqnarray*}
-
-\subsection{Fonctions}
-
-Pour typer une fonction, on commence par ajouter ses paramètres dans
-l'environnement de typage, et on type la définition de la fonction. Le type
-résultant est généralisé.
-
-\[
-\irule{Fun}{
-  Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
-  Γ' ⊢ body(f) \\
-  Γ' ⊢ ret(f) : τ_r
-}{
-  Γ ⊢ f : Gen(\vec{τ} → τ_r, Γ)
-}
-\]
-
-\subsection{Instructions}
-
-\begin{eqnarray*}
-\irule{Decl}{
-  Γ ⊕ \{x : τ\} ⊢ b
-}{
-  Γ ⊢ ↑x \{b\}
-}
-\\
-\irule{Assign}{
-  Γ ⊢ lv : τ \\
-  Γ ⊢ e  : τ
-}{
-  Γ ⊢ lv ← e
-}
-\\
-\irule{Fcall}{
-  Γ ⊢ lv : τ_{ret} \\
-  Γ ⊢ fe : σ \\
-  Γ ⊢ \vec{e} : \vec{τ} \\
-  (\vec{τ} → τ_r) ≤ σ
-}{
-  Γ ⊢ lv ← fe(\vec{e})
-}
-\end{eqnarray*}
-
-\bibliographystyle{alpha}
-\bibliography{typ}
+%\bibliographystyle{alpha}
+%\bibliography{typ}
 \end{document}
