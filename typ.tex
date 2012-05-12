@@ -25,31 +25,44 @@
 
 \part{Problématique}
 
-\chapter{Le langage C}
+\chapter{Isolation mémoire dans un système d'exploitation}
 
-\begin{itemize}
-\item Présentation du langage (ANSI C)
-\item Extensions GNU
-\item Difficultés d'analyse du langage
-\item Spécificités du code noyau
-\end{itemize}
+\section{Contexte}
 
-\chapter{Le noyau Linux}
+x86, 32 bits, Linux.
 
-\begin{itemize}
-\item Rôle
-\item Isolation
-\item Appels système
-\end{itemize}
+\section{Rôle d'un système d'exploitation}
+
+\cite{tanenbaum} Mémoire, processus, périphériques, fichiers.
+
+\section{Espace noyau, espace utilisateur}
+
+\section{Cas de Linux}
+
+\section{Appels système}
 
 \chapter{Cas d'étude}
 
-\begin{itemize}
-\item Comment fonctionnent les appels systèmes
-\item Le \emph{Confused Deputy Problem}
-\end{itemize}
+Confused Deputy Problem
+\cite{hardy88confused}
 
 \chapter{État de l'art}
+
+Analyse légère
+
+  sparse
+
+Analyse de valeurs
+
+  cousot 77+cousot 92
+
+Typage fort
+
+  qualifiers in haskell
+
+Qualificateurs de type
+
+  toute la série des cqual
 
 \part{Analyse statique par typage}
 
