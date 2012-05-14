@@ -108,11 +108,20 @@ $⊢ \text{memcpy} : ∀ a . (a^*, a^*, \text{size\_t}) → ()$
 \subsection{Programmes non typables}
 \subsection{Incohérences}
 
-\chapter{Ajout des qualificateurs}
+\chapter{Système avec le qualificateur "user"}
 
 \section{Éditions et ajouts}
 \section{Passage sur le cas d'étude}
+
 \section{Propriété d'isolation mémoire}
+
+Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
+ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
+
+\chapter{Système avec le qualificateur "sz"}
+
+\section{But}
+\section{Annotation de \texttt{string.h}}
 
 \chapter{Implantation}
 
