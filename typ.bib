@@ -1,3 +1,63 @@
+@inproceedings{Cousot77,
+    abstract = {A program denotes computations in some universe of objects.
+      Abstract interpretation of programs consists in using that denotation to
+        describe computations in another universe of abstract objects, so that
+        the results of abstract execution give some information on the actual
+        computations. An intuitive example (which we borrow from Sintzoff [72])
+        is the rule of signs. The text -1515 * 17 may be understood to denote
+        computations on the abstract universe {(+), (-), (±)} where the
+        semantics of arithmetic operators is defined by the rule of signs. The
+        abstract execution -1515 * 17 → -(+) * (+) → (-) * (+) → (-), proves
+        that -1515 * 17 is a negative number. Abstract interpretation is
+        concerned by a particular underlying structure of the usual universe of
+        computations (the sign, in our example). It gives a summary of some
+        facets of the actual executions of a program. In general this summary is
+        simple to obtain but inaccurate (e.g. -1515 + 17 → -(+) + (+) → (-) +
+            (+) → (±)). Despite its fundamentally incomplete results abstract
+        interpretation allows the programmer or the compiler to answer questions
+        which do not need full knowledge of program executions or which tolerate
+        an imprecise answer, (e.g. partial correctness proofs of programs
+            ignoring the termination problems, type checking, program
+            optimizations which are not carried in the absence of certainty
+            about their feasibility, …).},
+    address = {New York, NY, USA},
+    author = {Cousot, Patrick and Cousot, Radhia},
+    booktitle = {POPL '77: Proceedings of the 4th ACM SIGACT-SIGPLAN symposium on Principles of Programming Languages},
+    citeulike-article-id = {120466},
+    citeulike-linkout-0 = {http://portal.acm.org/citation.cfm?id=512973},
+    citeulike-linkout-1 = {http://dx.doi.org/10.1145/512950.512973},
+    doi = {10.1145/512950.512973},
+    location = {Los Angeles, California},
+    pages = {238--252},
+    posted-at = {2011-01-20 16:45:41},
+    priority = {0},
+    publisher = {ACM},
+    title = {{Abstract interpretation: a unified lattice model for static analysis of programs by construction or approximation of fixpoints}},
+    url = {http://dx.doi.org/10.1145/512950.512973},
+    year = {1977}
+}
+@article{Cousot92-1,
+   author =  {Cousot, P{.} and Cousot, R{.}},
+   title =   {Abstract Interpretation and Application to Logic Programs},
+   pages =   {103--179},
+   journal = {Journal of Logic Programming},
+   year =    1992,
+   volume =  13,
+   number =  {2--3},
+   note =    {{\footnotesize (The editor of Journal of Logic Programming{} has mistakenly published the
+              unreadable galley proof. For a correct version of this paper, see
+              \url{http://www.di.ens.fr/~cousot}.)}},
+}
+@inproceedings{cquk-usenix04,
+  author    = {Robert Johnson and
+               David Wagner},
+  title     = {Finding User/Kernel Pointer Bugs with Type Inference},
+  booktitle = {USENIX Security Symposium},
+  year      = {2004},
+  pages     = {119-134},
+  ee        = {http://www.usenix.org/publications/library/proceedings/sec04/tech/johnson.html},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
 @article{hardy88confused,
   author = {Norm Hardy},
   title = {The Confused Deputy (or why capabilities might have
@@ -10,6 +70,83 @@
   month = oct,
   url = {http://www.cis.upenn.edu/~KeyKOS/ConfusedDeputy.html}
 }
+@article{lightweight-static-capabilities,
+  author    = {Oleg Kiselyov and
+               Chung-chieh Shan},
+  title     = {Lightweight Static Capabilities},
+  journal   = {Electr. Notes Theor. Comput. Sci.},
+  volume    = {174},
+  number    = {7},
+  year      = {2007},
+  pages     = {79-104},
+  ee        = {http://dx.doi.org/10.1016/j.entcs.2006.10.039},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
+@inproceedings{LZ06a,
+    abstract = {{This paper presents an embedded security sublanguage for
+      enforcing information-flow policies in the standard Haskell programming
+        language. The sublanguage provides useful information-flow control
+        mechanisms including dynamic security lattices, run-time code privileges
+        and declassification, without modifying the base language. This design
+        avoids the redundant work of producing new languages, lowers the
+        threshold for adopting security-typed languages, and also provides great
+        flexibility and modularity for using security-policy frameworks. The
+        embedded security sublanguage is designed using a standard combinator
+        interface called arrows. Computations constructed in the sublanguage
+        have static and explicit control-flow components, making it possible to
+        implement information-flow control using static-analysis techniques at
+        run time, while providing strong security guarantees. This paper
+        presents a concrete Haskell implementation and an example application
+        demonstrating the proposed techniques.}},
+    address = {Washington, DC, USA},
+    author = {Li, Peng and Zdancewic, Steve},
+    booktitle = {Proceedings of the 19th IEEE Workshop on Computer Security Foundations (CSFW '06)},
+    citeulike-article-id = {1117685},
+    citeulike-linkout-0 = {http://portal.acm.org/citation.cfm?id=1155442.1155664},
+    citeulike-linkout-1 = {http://dx.doi.org/10.1109/CSFW.2006.13},
+    citeulike-linkout-2 = {http://ieeexplore.ieee.org/xpls/abs\_all.jsp?arnumber=1648705},
+    doi = {10.1109/CSFW.2006.13},
+    posted-at = {2011-01-24 15:03:34},
+    priority = {2},
+    publisher = {IEEE Computer Society},
+    title = {Encoding Information Flow in {Haskell}},
+    url = {http://dx.doi.org/10.1109/CSFW.2006.13},
+    year = {2006}
+}
+@inproceedings{pldi02,
+    address = {New York, NY, USA},
+    author = {Foster, Jeffrey S. and Terauchi, Tachio and Aiken, Alex},
+    booktitle = {PLDI '02: Proceedings of the ACM SIGPLAN 2002 Conference on Programming language design and implementation},
+    citeulike-article-id = {486652},
+    citeulike-linkout-0 = {http://portal.acm.org/citation.cfm?id=512531},
+    citeulike-linkout-1 = {http://dx.doi.org/10.1145/512529.512531},
+    doi = {10.1145/512529.512531},
+    isbn = {1581134630},
+    month = {May},
+    number = {5},
+    pages = {1--12},
+    posted-at = {2011-01-17 18:11:26},
+    priority = {2},
+    publisher = {ACM Press},
+    title = {{Flow-sensitive type qualifiers}},
+    url = {http://dx.doi.org/10.1145/512529.512531},
+    volume = {37},
+    year = {2002}
+}
+@inproceedings{pldi99,
+ author = {Foster, Jeffrey S. and F\"{a}hndrich, Manuel and Aiken, Alexander},
+ title = {A theory of type qualifiers},
+ booktitle = {Programming language design and implementation},
+ series = {PLDI '99},
+ year = {1999},
+ isbn = {1-58113-094-5},
+ location = {Atlanta, Georgia, United States},
+ pages = {192--203},
+ numpages = {12},
+ url = {http://doi.acm.org/10.1145/301618.301665},
+ doi = {http://doi.acm.org/10.1145/301618.301665},
+ acmid = {301665},
+} 
 @book{tanenbaum,
  author = {Tanenbaum, Andrew S.},
  title = {Modern Operating Systems},
@@ -18,4 +155,124 @@
  edition = {3rd},
  publisher = {Prentice Hall Press},
  address = {Upper Saddle River, NJ, USA},
+}
+@article{toplas-quals,
+ author = {Foster, Jeffrey S. and Johnson, Robert and Kodumal, John and Aiken, Alex},
+ title = {Flow-insensitive type qualifiers},
+ journal = {ACM Trans. Program. Lang. Syst.},
+ volume = {28},
+ issue = {6},
+ month = {November},
+ year = {2006},
+ issn = {0164-0925},
+ pages = {1035--1087},
+ numpages = {53},
+ url = {http://doi.acm.org/10.1145/1186632.1186635},
+ doi = {http://doi.acm.org/10.1145/1186632.1186635},
+ acmid = {1186635},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {Type qualifiers, const, constraints, security, static analysis, taint, types},
+} 
+@Misc{TorvaldsSparse,
+  author = {Linus Torvalds and Josh Triplett and Christopher Li},
+  title = {Sparse - a Semantic Parser for {C}},
+  howpublished = "\url{https://sparse.wiki.kernel.org/index.php/Main_Page}"
+}
+@book{UnderstandingTheLinuxKernel,
+    abstract = {{In order to thoroughly understand what makes Linux tick and why it works so
+well on a wide variety of systems, you need to delve deep into the heart of
+the kernel. The kernel handles all interactions between the CPU and the
+external world, and determines which programs will share processor time, in
+what order. It manages limited memory so well that hundreds of processes can
+share the system efficiently, and expertly organizes data transfers so that
+the CPU isn't kept waiting any longer than necessary for the relatively slow
+disks.
+
+The third edition of \_Understanding the Linux Kernel\_ takes you on a guided
+tour of the most significant data structures, algorithms, and programming
+tricks used in the kernel. Probing beyond superficial features, the authors
+offer valuable insights to people who want to know how things really work
+inside their machine. Important Intel-specific features are discussed.
+Relevant segments of code are dissected line by line. But the book covers more
+than just the functioning of the code; it explains the theoretical
+underpinnings of why Linux does things the way it does.
+
+This edition of the book covers Version 2.6, which has seen significant
+changes to nearly every kernel subsystem, particularly in the areas of memory
+management and block devices. The book focuses on the following topics:
+
+  * Memory management, including file buffering, process swapping, and Direct
+memory Access (DMA)
+
+  * The Virtual Filesystem layer and the Second and Third Extended Filesystems
+
+  * Process creation and scheduling
+
+  * Signals, interrupts, and the essential interfaces to device drivers
+
+  * Timing
+
+  * Synchronization within the kernel
+
+  * Interprocess Communication (IPC)
+
+  * Program execution
+
+\_Understanding the Linux Kernel\_ will acquaint you with all the inner workings
+of Linux, but it's more than just an academic exercise. You'll learn what
+conditions bring out Linux's best performance, and you'll see how it meets the
+challenge of providing good system response during process scheduling, file
+access, and memory management in a wide variety of environments. This book
+will help you make the most of your Linux system.}},
+    author = {Bovet, Daniel P. and Marco Cesati Ph},
+    citeulike-article-id = {3092957},
+    citeulike-linkout-0 = {http://www.amazon.ca/exec/obidos/redirect?tag=citeulike09-20\&amp;path=ASIN/0596005652},
+    citeulike-linkout-1 = {http://www.amazon.de/exec/obidos/redirect?tag=citeulike01-21\&amp;path=ASIN/0596005652},
+    citeulike-linkout-2 = {http://www.amazon.fr/exec/obidos/redirect?tag=citeulike06-21\&amp;path=ASIN/0596005652},
+    citeulike-linkout-3 = {http://www.amazon.jp/exec/obidos/ASIN/0596005652},
+    citeulike-linkout-4 = {http://www.amazon.co.uk/exec/obidos/ASIN/0596005652/citeulike00-21},
+    citeulike-linkout-5 = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0596005652},
+    citeulike-linkout-6 = {http://www.worldcat.org/isbn/0596005652},
+    citeulike-linkout-7 = {http://books.google.com/books?vid=ISBN0596005652},
+    citeulike-linkout-8 = {http://www.amazon.com/gp/search?keywords=0596005652\&index=books\&linkCode=qs},
+    citeulike-linkout-9 = {http://www.librarything.com/isbn/0596005652},
+    day = {17},
+    edition = {Third Edition},
+    howpublished = {Paperback},
+    isbn = {0596005652},
+    keywords = {kernel, linux},
+    month = nov,
+    posted-at = {2008-08-06 23:04:29},
+    priority = {2},
+    publisher = {O'Reilly Media},
+    title = {{Understanding the Linux Kernel, Third Edition}},
+    url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0596005652},
+    year = {2005}
+}
+
+@inproceedings{usenix01,
+    abstract = {{We present a new system for automatically detecting format
+      string security vulnerabilities in C programs using a constraint-based
+        type-inference engine. We describe new techniques for presenting the
+        results of such an analysis to the user in a form that makes bugs easier
+        to find and to fix. The system has been implemented and tested on
+        several real-world software packages. Our tests show that the system is
+        very effective, detecting several bugs previously unknown to the authors
+        and exhibiting a low rate of false positives in almost all cases. Many
+        of our techniques are applicable to additional classes of security
+        vulnerabilities, as well as other type-and constraint-based systems.}},
+    address = {Berkeley, CA, USA},
+    author = {Shankar, Umesh and Talwar, Kunal and Foster, Jeffrey S. and Wagner, David},
+    booktitle = {SSYM'01: Proceedings of the 10th conference on USENIX Security Symposium},
+    citeulike-article-id = {3048710},
+    citeulike-linkout-0 = {http://portal.acm.org/citation.cfm?id=1267628},
+    location = {Washington, D.C.},
+    pages = {16},
+    posted-at = {2011-01-17 18:12:27},
+    priority = {2},
+    publisher = {USENIX Association},
+    title = {{Detecting format string vulnerabilities with type qualifiers}},
+    url = {http://portal.acm.org/citation.cfm?id=1267628},
+    year = {2001}
 }
