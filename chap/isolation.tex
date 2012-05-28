@@ -135,7 +135,24 @@ SYSCALL_DEFINE0(getpid)
 
 Le mécanisme de couplage entre ces deux fonctions est le suivant :
 
-  - la fonction de la libc place les arguments éventuels de l'appel système dans
-    les registres.
-  - un numéro identifiant l'appel système est placé dans \eax.
-  - une interruption logicielle est déclenchée :
+\begin{itemize}
+\item
+  la fonction de la libc place les arguments éventuels de l'appel
+  système dans les registres.
+\item
+  un numéro identifiant l'appel système est placé dans \eax.
+\item
+  une interruption logicielle est déclenchée :
+  \begin{itemize}
+  \item
+    bla
+  \item
+    bla
+  \item
+    bla
+  \end{itemize}
+\item
+  l'exécution continue en \emph{ring} 0, à un point d'entrée prédéfini.
+\end{itemize}
+
+\todo{citer la doc intel}
