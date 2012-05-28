@@ -1,15 +1,53 @@
 \section{Contexte}
 
-x86, 32 bits, Linux.
-
-\cite{UnderstandingTheLinuxKernel}
+Une description plus détaillée de l'implantation de Linux peut être trouvée dans
+\cite{UnderstandingTheLinuxKernel}.
 
 \section{Rôle d'un système d'exploitation}
-
-\cite{tanenbaum} Mémoire, processus, périphériques, fichiers.
-
 \section{Espace noyau, espace utilisateur}
 
+\todo{OS = kernel ?}
+
+Le système d'exploitation est l'interface logicielle entre le matériel et les
+programmes qui vont s'exécuter sur un ordinateur. Pour une description détaillée
+de son rôle typique, le lecteur pourra se référer à \cite{tanenbaum}.
+
+Néanmoins on peut citer les rôles suivants :
+
+\begin{itemize}
+\item gestion des processus : un système d'exploitation peut permettre
+  d'exécuter plusieurs programme à la fois. Il faut alors orchestrer ces
+  différents processus et les séparer en terme de temps et de ressources
+  partagées.
+\item
+  gestion de la mémoire : chaque processus, en plus du noyau, doit disposer d'un
+  espace mémoire différent. C'est-à-dire qu'un processus ne doit pas pouvoir
+  interférer avec un autre.
+\item
+  gestion des périphériques : le noyau étant le seul code à s'exécuter en mode
+  privilégié, c'est lui qui doit communiquer avec les périphériques matériels.
+\item
+  abstractions : le noyau fournit au programmes une interface unifiée,
+  permettant de stocker des informations de la même manière sur un disque dur ou
+  une clef USB (alors que l'accès se déroulera de manière très différente en
+  pratique). C'est ici que la notion arbitraire de fichier sera définie, par exemple.
+\end{itemize}
+
 \section{Cas de Linux}
+
+Sous Linux, on retrouve cette séparation entre espace noyau et espace
+utilisateur. Cette section décrit l'implémentation de cette séparation dans le
+contexte suivant :
+
+\begin{itemize}
+\item l'architecture Intel x86
+\item un système 32 bits
+\item le noyau Linux
+\end{itemize}
+
+Sous d'autres architectures et d'autres systèmes d'exploitation, des mécanismes
+similaires existent, et ces travaux peuvent sans doute s'y appliquer.
+
+L'isolation est réalisée par le matériel :
 
 \section{Appels système}
