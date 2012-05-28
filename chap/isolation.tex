@@ -48,6 +48,43 @@ contexte suivant :
 Sous d'autres architectures et d'autres systèmes d'exploitation, des mécanismes
 similaires existent, et ces travaux peuvent sans doute s'y appliquer.
 
-L'isolation est réalisée par le matériel :
+L'isolation est réalisée par le matériel. Ce document présente le cas d'un
+système Intel 32 bits (x86), mais sous d'autres architectures des protections
+similaires existent.
+
+Le processeur permet d'exécuter des tâches selon plusieurs niveaux de privilège,
+aussi appellés \emph{rings} : du \emph{ring} 3, le moins privilégié, jusqu'au
+\emph{ring} 0, le plus privilégié. On peut configurer le processeur de manière à
+ce que les instructions privilégiées (accès aux ports d'entrée/sortie...) ne
+soient possibles qu'en \emph{ring 0}. Bien que 4 niveaux soient disponibles,
+Linux n'utilise que les \emph{rings} 0 et 3.
+
+Cela profite également au concept de mémoire virtuelle : comme différentes
+tâches vont avoir une vue de la mémoire différente, on peut réserver une zone de
+la mémoire aux tâches privilégiées.
+
+\begin{figure}
+
+\input{fig/rings.tex}
+
+\caption{Les différents \emph{rings}. Seul le \emph{ring} 0 a accès au hardware
+via des instructions privilégiées. Pour accéder aux fonctionnalités du noyau,
+les programmes utilisateur doivent passer par des appels système.}
+
+\label{fig:rings}
+\end{figure}
+
+\begin{figure}
+\centering
+\fbox{
+  \input{fig/memmap.tex}
+}
+
+\caption{L'espace d'adressage d'un processus. En gris clair, les zones
+accessibles à tous les niveaux de privilèges : code du programme, bibliothèques,
+tas, pile. En gris foncé, la mémoire du noyau, réservée au mode privilégié.}
+
+\label{fig:memmap}
+\end{figure}
 
 \section{Appels système}

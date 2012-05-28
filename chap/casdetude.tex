@@ -11,57 +11,13 @@ l'utilisateur, qui communiquent avec le noyau par l'interface restreinte des
 Pour assurer l'isolation, ces deux parties n'ont pas accès aux mêmes zones
 mémoire (cf. figure~\ref{fig:memmap}).
 
+\todo{figure copiée dans le chapitre isolation}
+
 % Figure memmap {{{l
 \begin{figure}
 \centering
 \fbox{
-\begin{tikzpicture}
-  [scale=0.7
-  ,user/.style={fill=black!20}
-  ,kernel/.style={fill=black!70}
-  ]
-
-  % Memory zone
-  %
-  % #1 - start
-  % #2 - end
-  % #3 - color
-  \newcommand{\mzone}[3]{
-    \path[#3] (#1,0) rectangle (#2,1);
-  }
-
-  % Address label
-  %
-  % #1 - x position
-  % #2 - text
-  \newcommand{\alabel}[2]{
-    \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \tt #2};
-
-  }
-
-  % exec
-  \mzone{0.5}{1}{user}
-
-  % lib
-  \mzone{2.5}{3.2}{user}
-
-  % stack
-  \mzone{3.7}{4}{user}
-
-  % stack
-  \mzone{5}{5.5}{user}
-
-  % kernel
-  \mzone{6}{8}{kernel}
-
-  % contour
-  \draw (0,0) rectangle (8,1);
-
-  \alabel{0}{0}
-  \alabel{6}{3 Go}
-  \alabel{8}{4 Go}
-
-\end{tikzpicture}
+  \input{fig/memmap.tex}
 }
 
 \caption{L'espace d'adressage d'un processus. En gris clair, les zones
