@@ -56,7 +56,7 @@ Le processeur permet d'exécuter des tâches selon plusieurs niveaux de privilè
 aussi appellés \emph{rings} : du \emph{ring} 3, le moins privilégié, jusqu'au
 \emph{ring} 0, le plus privilégié. On peut configurer le processeur de manière à
 ce que les instructions privilégiées (accès aux ports d'entrée/sortie...) ne
-soient possibles qu'en \emph{ring 0}. Bien que 4 niveaux soient disponibles,
+soient possibles qu'en \emph{ring} 0. Bien que 4 niveaux soient disponibles,
 Linux n'utilise que les \emph{rings} 0 et 3.
 
 Cela profite également au concept de mémoire virtuelle : comme différentes
@@ -212,3 +212,22 @@ RETURN VALUE
        ure (in which case errno is set appropriately).
 \end{verbatim}
 \begin{center}\rule{3in}{0.4pt}\end{center}
+
+Pour utiliser une telle fonction, l'utilisateur doit allouer lui même la
+mémoire, sur la pile par exemple :
+
+\begin{Verbatim}
+struct timeval tv;
+struct timezone tz;
+int z = gettimeofday(&tv, &tz);
+if (z == 0) {
+    printf( "tv.tv_sec = %ld\ntv.tv_usec = %ld\n"
+            "tz.tz_minuteswest = %d\ntz.tz_dsttime = %d\n",
+             tv.tv_sec, tv.tv_usec,
+             tz.tz_minuteswest, tz.tz_dsttime
+          );
+}
+\end{Verbatim}
+
+Notons que dans ce cas, c'est le noyau qui remplit la structure : le
+déréférencement se fait en \emph{ring} 0.
