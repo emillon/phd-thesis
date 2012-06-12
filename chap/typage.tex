@@ -1,5 +1,27 @@
 \section{Présentation et but}
+
+Au plus bas niveau d'abstraction, un ordinateur ne manipule que des nombres
+entiers \footnote{en allant plus loin on pourrait dire qu'il ne manipule que des
+suites de bits} : en langage machine, il n'y a pas de distinction entre une
+adresse et un nombre.
+
+Pourtant il est clair que certaines opérations n'ont pas de sens : par exemple,
+ajouter deux adresses, ou déréférencer le résultat d'une division sont des
+comportements qu'on voudrait pouvoir empêcher.
+
+En un mot, le but du typage est de classifier les objets et de restreindre les
+opérations possibles selon la classe d'un objet : "ne pas ajouter des pommes et
+des oranges".
+
+Le modèle qui permet cette classification est appelé \emph{système de types} et
+est en général constitué d'un ensemble de \emph{règles de typage}, comme "un
+entier plus un entier égale un entier".
+
 \section{Taxonomie}
+
+La définition d'un langage de programmation introduit la plupart du temps celle
+d'un système de types. Il y a donc de nombreux systèmes de types différents,
+dont nous pouvons donner une classification sommaire.
 
 \subsection{Statique, dynamique, mixte}
 \subsection{Fort, faible, sound}
