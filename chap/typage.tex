@@ -34,7 +34,7 @@ compilation (ou avant l'interprétation).
 
 La première est le typage \emph{dynamique}. Pour différencier les différents
 types de données, on ajoute une étiquette à chaque valeur. Dans tout le
-programme, on ne manipulera que des valeurs étiquettées :
+programme, on ne manipulera que des valeurs étiquetées :
 
 \begin{itemize}
 \item
@@ -82,7 +82,7 @@ programme se fera de manière plus rapide.
 Connaître les types à la compilation permet aussi de réaliser plus
 d'optimisations. Par exemple, en Python, considérons l'expression \texttt{y = x
 - x}. Sans information sur le type de \texttt{x}, aucune simplification n'est
-possible : l'implémentation de la différene sur ce type est une fonction
+possible : l'implémentation de la différence sur ce type est une fonction
 quelconque, sans propriétés particulières \emph{a priori}.
 
 Si au contraire, on sait que \texttt{x} est un entier, on peut en déduire que
@@ -138,7 +138,7 @@ Une première solution peut être de forcer des types concrets, c'est à dire
 qu'une même fonction ne pourra s'appliquer qu'à un seul type de données.
 
 Il est confortable pour le programmeur de n'avoir à écrire un algorithme qu'une
-seule fois, indépendemment du type des éléments considérés.
+seule fois, indépendamment du type des éléments considérés.
 
 \subsubsection{Polymorphisme universel}
 
@@ -177,6 +177,13 @@ variables quantifiées par des types quelconques).
 \subsubsection{Polymorphisme par sous-typage}
 
 \subsubsection{Polymorphisme par surcharge}
+
+Considérons l'opération d'addition : \texttt{+}. On peut considérer que certains
+types l'implémentent, et pas d'autres : ajouter deux flottants ou deux entiers a
+du sens, mais pas ajouter deux pointeurs.
+
+On dira que \texttt{+} est \emph{surchargé}. À chaque site d'appel, il faudra
+\emph{résoudre la surcharge} pour déterminer quelle fonction appeler.
 
 \subsubsection{Polymorphisme par coercition}
 
