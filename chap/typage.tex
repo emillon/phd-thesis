@@ -185,6 +185,21 @@ du sens, mais pas ajouter deux pointeurs.
 On dira que \texttt{+} est \emph{surchargé}. À chaque site d'appel, il faudra
 \emph{résoudre la surcharge} pour déterminer quelle fonction appeler.
 
+Cela rend l'inférence de types \todo{introduire l'inférence plus haut}
+impossible dans le cas général, puisque certaines constructions sont ambigües.
+
+Considérons le code Haskell suivant :
+
+\insertcode{showread.hs}
+
+\texttt{show} peut s'appliquer à toutes les valeurs de types "affichables" et
+renvoie une représentation textuelle. \texttt{read} réalise le contraire avec
+les types "lisibles".
+
+Lorsqu'on compose ces deux fonctions, le type de la valeur intermédiaire est
+capital puisqu'il détermine les instances de \texttt{show} et \texttt{read} à
+utiliser.
+
 \subsubsection{Polymorphisme par coercition}
 
 
