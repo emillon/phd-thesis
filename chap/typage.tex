@@ -64,11 +64,16 @@ A première vue, cela semble moins puissant que le typage dynamique : en effet,
 il existe des programmes qui s'exécuteront sans erreur de type mais sur lesquels
 le typage statique ne peut s'appliquer.
 
-\insertcode{non-typable.py}
+\begin{figure}
+  \insertcode{non-typable.py}
+  \caption{Fonction Python non typable statiquement.}
+  \label{fig:nontypage}
+\end{figure}
 
-Par une simple analyse de cas, on peut voir que si on fournit un booléen à
-\texttt{f}, elle retourne un entier. Mais selon la valeur de \texttt{b}, la
-variable \texttt{x} contiendra une valeur de type entier ou fonction.
+Dans la figure~\ref{fig:nontypable}, on peut voir par une simple analyse de cas
+que si on fournit un booléen à \texttt{f}, elle retourne un entier. Mais selon
+la valeur de \texttt{b}, la variable \texttt{x} contiendra une valeur de type
+entier ou fonction.
 
 Dans le cas où le typage statique est possible, les garanties sont en revanche
 plus importantes : les valeurs portées par une variable auront toujours le même
@@ -157,7 +162,7 @@ seule fois, indépendamment du type des éléments considérés.
   \label{fig:listrev}
 \end{figure}
 
-La fonction de la figure~\ref{fig:listrec} n'opère que sur la structure du type
+La fonction de la figure~\ref{fig:listrev} n'opère que sur la structure du type
 liste (en utilisant ses constructeurs \texttt{{[}{]}} et \texttt{(::)} ainsi que
 le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne sont pas manipulés
 à part pour les transférer dans le résultat.
