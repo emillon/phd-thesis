@@ -1,6 +1,6 @@
 \begin{tikzpicture}
-  [ ptype/.style={draw=black,shape=rectangle}
-  , child/.style={ptype, xshift=2cm}
+  [ ptype/.style={draw=black,shape=rectangle,minimum width=2.5cm}
+  , child/.style={ptype, xshift=4cm}
   , gen0/.style={       node distance=2cm}
   , gen1/.style={child, node distance=1cm}
   , gen2/.style={child, node distance=5mm}
@@ -10,7 +10,7 @@
   \node[ptype,below of=mono, gen0] (poly) {Poly};
   \node[above right of=poly, gen1] (univ)  {Universel};
   \node[above right of=univ, gen2] (param) {Paramétrique};
-  \node[below right of=univ, gen2] (inclu) {Inclusion};
+  \node[below right of=univ, gen2] (inclu) {Sous-typage};
   \node[below right of=poly, gen1] (adho)  {Ad-hoc};
   \node[above right of=adho, gen2] (over)  {Surcharge};
   \node[below right of=adho, gen2] (coer)  {Coercition};
