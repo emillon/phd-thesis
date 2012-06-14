@@ -55,9 +55,42 @@ valeur d'erreur, etc.
 
 \subsubsection{Typage statique}
 
-La seconde technique est le typage \emph{statique}.
+La seconde technique est le typage \emph{statique} : plutôt que de vérifier les
+types sur les données, on les vérifie à l'arrêt, sur les expressions. Cela
+implique par exemple que chaque variable doit contenir des valeurs d'un même
+type tout au long de sa vie.
+
+\todo{...}
+
+\subsubsection{Typage hybride ("stanamique")}
+
+Il est aussi possible de mélanger ces deux approches :
+
+\begin{itemize}
+\item
+  à la compilation, essayer d'obtenir les types les plus précis
+  possibles
+\item
+  pour les cas restants, insérer un test dynamique
+\end{itemize}
 
 \subsection{Fort, faible, sound}
+
+Un autre critère intéressant est la "force" du typage : est-ce qu'il peut
+induire des conversions de type implicites ?
+
+Prenons l'exemple de l'addition entre un entier $2$ et un flottant $3.14$. On
+peut le voir de plusieurs manières différentes :
+
+\begin{itemize}
+\item
+  un entier est un nombre décimal comme les autres : $2 = 2.00$. Donc
+  $2 + 3.14 = 2.00 + 3.14 = 5.14$.
+\item
+  $2$ est un entier, $3.14$ un flottant : ces deux types sont différents et
+  l'opération est impossible.
+\end{itemize}
+
 \subsection{Polymorphisme}
 \subsection{Expressivité, garanties, types dépendants}
 
