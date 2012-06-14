@@ -60,7 +60,34 @@ types sur les données, on les vérifie à l'arrêt, sur les expressions. Cela
 implique par exemple que chaque variable doit contenir des valeurs d'un même
 type tout au long de sa vie.
 
-\todo{...}
+A première vue, cela semble moins puissant que le typage dynamique : en effet,
+il existe des programmes qui s'exécuteront sans erreur de type mais sur lesquels
+le typage statique ne peut s'appliquer.
+
+\insertcode{non-typable.py}
+
+Par une simple analyse de cas, on peut voir que si on fournit un booléen à
+\texttt{f}, elle retourne un entier. Mais selon la valeur de \texttt{b}, la
+variable \texttt{x} contiendra une valeur de type entier ou fonction.
+
+Dans le cas où le typage statique est possible, les garanties sont en revanche
+plus importantes : les valeurs portées par une variable auront toujours le même
+type. Par voie de conséquence, la vérification dynamique de types réussira
+toujours : on peut donc la supprimer. Il est également possible de supprimer
+toutes les étiquettes de typage : on parle de \emph{type erasure}.
+
+Une conséquence heureuse de cette suppression est que l'exécution de ce
+programme se fera de manière plus rapide.
+
+Connaître les types à la compilation permet aussi de réaliser plus
+d'optimisations. Par exemple, en Python, considérons l'expression \texttt{y = x
+- x}. Sans information sur le type de \texttt{x}, aucune simplification n'est
+possible : l'implémentation de la différene sur ce type est une fonction
+quelconque, sans propriétés particulières \emph{a priori}.
+
+Si au contraire, on sait que \texttt{x} est un entier, on peut en déduire que
+\texttt{y = 0}, sans réaliser la soustraction (si c'était la seule utilisation
+de \texttt{x}, le calcul de \texttt{x} aurait alors pu être éliminé).
 
 \subsubsection{Typage hybride ("stanamique")}
 
@@ -110,13 +137,49 @@ Par exemple, quel doit être le type d'une fonction qui trie un tableau en place
 Une première solution peut être de forcer des types concrets, c'est à dire
 qu'une même fonction ne pourra s'appliquer qu'à un seul type de données.
 
+Il est confortable pour le programmeur de n'avoir à écrire un algorithme qu'une
+seule fois, indépendemment du type des éléments considérés.
+
+\subsubsection{Polymorphisme universel}
+
+% = {paramétrique, par inclusion}
+
+\subsubsection{Polymorphisme ad-hoc}
+
+% = {par surcharge, par coercition}
+
 \subsubsection{Polymorphisme paramétrique}
+
+Considérons la fonction de retournement de liste suivante :
+
+\insertcode{listrev.ml}
+
+Elle n'opère que sur la structure du type liste (en utilisant ses constructeurs
+\texttt{{[}{]}} et \texttt{(::)} ainsi que le filtrage) : les éléments de
+\texttt{lx} et \texttt{ly} ne sont pas manipulés à part pour les transférer dans
+le résultat.
+
+Moralement, cette fonction est donc indépendante du type de données contenu dans
+la liste : elle pourra agir sur des listes de n'importe quel type d'élément.
+
+Plutôt qu'un type, on peut lui donner un \emph{schéma de types} :
+
+\[
+  \textrm{append} : \forall a . a \textrm{list}
+                             -> a \textrm{list}
+                             -> a \textrm{list}
+\]
+
+Cela veut dire que \texttt{append} peut être utilisé avec n'importe quel type
+concret \texttt{a} en \emph{instanciant} ce schéma de type (en substituant les
+variables quantifiées par des types quelconques).
 
 \subsubsection{Polymorphisme par inclusion}
 
 \subsubsection{Polymorphisme par surcharge}
 
 \subsubsection{Polymorphisme par coercition}
+
 
 \subsection{Expressivité, garanties, types dépendants}
 

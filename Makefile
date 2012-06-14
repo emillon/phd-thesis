@@ -32,6 +32,8 @@ $(NAME).tex: gentex
 gentex: gen/pygments-style.tex
 
 CODESAMPLES=\
+	    listrev.ml \
+	    non-typable.py \
 	    radeon-buggy.c \
 	    radeon-git.diff \
 	    struct-array.c \
