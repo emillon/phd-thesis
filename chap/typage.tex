@@ -150,14 +150,17 @@ seule fois, indépendamment du type des éléments considérés.
 
 \subsubsection{Polymorphisme paramétrique}
 
-Considérons la fonction de retournement de liste suivante :
 
-\insertcode{listrev.ml}
+\begin{figure}
+  \insertcode{listrev.ml}
+  \caption{Fonction de retournement de liste en OCaml.}
+  \label{fig:listrev}
+\end{figure}
 
-Elle n'opère que sur la structure du type liste (en utilisant ses constructeurs
-\texttt{{[}{]}} et \texttt{(::)} ainsi que le filtrage) : les éléments de
-\texttt{lx} et \texttt{ly} ne sont pas manipulés à part pour les transférer dans
-le résultat.
+La fonction de la figure~\ref{fig:listrec} n'opère que sur la structure du type
+liste (en utilisant ses constructeurs \texttt{{[}{]}} et \texttt{(::)} ainsi que
+le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne sont pas manipulés
+à part pour les transférer dans le résultat.
 
 Moralement, cette fonction est donc indépendante du type de données contenu dans
 la liste : elle pourra agir sur des listes de n'importe quel type d'élément.
@@ -188,13 +191,16 @@ On dira que \texttt{+} est \emph{surchargé}. À chaque site d'appel, il faudra
 Cela rend l'inférence de types \todo{introduire l'inférence plus haut}
 impossible dans le cas général, puisque certaines constructions sont ambigües.
 
-Considérons le code Haskell suivant :
+\begin{figure}
+  \insertcode{showread.hs}
+  \caption{Cas d'ambigüité avec de la surcharge ad-hoc.}
+  \label{fig:showread}
+\end{figure}
 
-\insertcode{showread.hs}
-
-\texttt{show} peut s'appliquer à toutes les valeurs de types "affichables" et
-renvoie une représentation textuelle. \texttt{read} réalise le contraire avec
-les types "lisibles".
+Dans le code Haskell de la figure~\ref{fig:showread}, \texttt{show} peut
+s'appliquer à toutes les valeurs de types "affichables" et renvoie une
+représentation textuelle. \texttt{read} réalise le contraire avec les types
+"lisibles".
 
 Lorsqu'on compose ces deux fonctions, le type de la valeur intermédiaire est
 capital puisqu'il détermine les instances de \texttt{show} et \texttt{read} à
