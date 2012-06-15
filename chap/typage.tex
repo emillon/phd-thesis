@@ -155,7 +155,6 @@ seule fois, indépendamment du type des éléments considérés.
 
 \subsubsection{Polymorphisme paramétrique}
 
-
 \begin{figure}
   \insertcode{listrev.ml}
   \caption{Fonction de retournement de liste en OCaml.}
@@ -170,7 +169,7 @@ le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne sont pas manipul�
 Moralement, cette fonction est donc indépendante du type de données contenu dans
 la liste : elle pourra agir sur des listes de n'importe quel type d'élément.
 
-Plutôt qu'un type, on peut lui donner un \emph{schéma de types} :
+Plutôt qu'un type, on peut lui donner le \emph{schéma de types} suivant :
 
 \[
   \textrm{append} : \forall a . a \textrm{list}
@@ -178,11 +177,18 @@ Plutôt qu'un type, on peut lui donner un \emph{schéma de types} :
                              -> a \textrm{list}
 \]
 
-Cela veut dire que \texttt{append} peut être utilisé avec n'importe quel type
-concret \texttt{a} en \emph{instanciant} ce schéma de type (en substituant les
-variables quantifiées par des types quelconques).
+C'est à dire que \texttt{append} peut être utilisé avec n'importe quel type
+concret \texttt{a} en substituant les variables quantifiées (on parle d'
+\emph{instanciation}).
 
 \subsubsection{Polymorphisme par sous-typage}
+
+\todo{héritage,sous-typage,classe,méthode,héritage multiple,late binding,Liskov}
+
+Certains langages définissent la notion de sous-typage. C'est une relation
+d'ordre partiel sur les types, qui modélise la relation "est un". Chaque
+sous-classe peut redéfinir le comportement de chaque méthode de ses
+superclasses.
 
 \subsubsection{Polymorphisme par surcharge}
 
@@ -213,6 +219,17 @@ utiliser.
 
 \subsubsection{Polymorphisme par coercition}
 
+\subsubsection{Polymorphisme d'ordre supérieur}
+
+\begin{verbatim}
+g f = (f true, f 2)
+\end{verbatim}
+
+\[
+g : (\forall a . a -> a) -> (bool * int)
+\]
+
+Pas inférable (annotations nécessaires).
 
 \subsection{Expressivité, garanties, types dépendants}
 
