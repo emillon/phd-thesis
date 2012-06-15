@@ -33,7 +33,7 @@ gentex: gen/pygments-style.tex
 
 CODESAMPLES=\
 	    showread.hs \
-	    listrev.ml \
+	    listappend.ml \
 	    non-typable.py \
 	    radeon-buggy.c \
 	    radeon-git.diff \

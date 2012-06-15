@@ -11,23 +11,6 @@ l'utilisateur, qui communiquent avec le noyau par l'interface restreinte des
 Pour assurer l'isolation, ces deux parties n'ont pas accès aux mêmes zones
 mémoire (cf. figure~\ref{fig:memmap}).
 
-\todo{figure copiée dans le chapitre isolation}
-
-% Figure memmap {{{l
-\begin{figure}
-\centering
-\fbox{
-  \input{fig/memmap.tex}
-}
-
-\caption{L'espace d'adressage d'un processus. En gris clair, les zones
-accessibles à tous les niveaux de privilèges : code du programme, bibliothèques,
-tas, pile. En gris foncé, la mémoire du noyau, réservée au mode privilégié.}
-
-\label{fig:memmap}
-\end{figure}
-% }}}
-
 Si le code utilisateur tente d'accéder à la mémoire du noyau, une erreur sera
 déclenchée. En revanche, si cette écriture est faite au sein de l'implantation
 d'un appel système, il n'y aura pas d'erreur puisque le noyau a accès à toute la
