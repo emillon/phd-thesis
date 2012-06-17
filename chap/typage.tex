@@ -145,15 +145,26 @@ qu'une même fonction ne pourra s'appliquer qu'à un seul type de données.
 Il est confortable pour le programmeur de n'avoir à écrire un algorithme qu'une
 seule fois, indépendamment du type des éléments considérés.
 
+Il existe deux grandes classes de systèmes de types introduisant du
+polymorphisme.
+
 \subsubsection{Polymorphisme universel}
 
 % = {paramétrique, par inclusion}
+
+Le polymorphisme est dit universel si toute fonction générique peut s'appliquer
+à n'importe quel type.
 
 \subsubsection{Polymorphisme ad-hoc}
 
 % = {par surcharge, par coercition}
 
+Le polymorphisme est \emph{ad-hoc} si les fonctions génériques ne peuvent
+s'appliquer qu'à un ensemble de types prédéfini.
+
 \subsubsection{Polymorphisme paramétrique}
+
+\todo{Historique + citer le papier de Milner sur le polymorphisme}
 
 \begin{figure}
   \insertcode{listappend.ml}
