@@ -11,7 +11,7 @@ showdvi: $(NAME).dvi
 	xdvi $<
 
 regen-bib:
-	~/mkbib < $(NAME).tex > $(NAME).bib
+	cat $(NAME).tex chap/*.tex | ~/mkbib > $(NAME).bib
 
 gen/%.pyg.tex: code/% gen
 	pygmentize -f latex -o $@ $<
