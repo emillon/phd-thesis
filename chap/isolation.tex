@@ -53,9 +53,9 @@ Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
 depuis un périphérique amovible), ne sont pas effectuées en pratique de la même
 manière. C'est pourquoi le système d'exploitation fournit les notions de
 fichier, lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de
-haut niveau ("monter un lecteur", "ouvrir un fichier", "lire dans un fichier")
-et selon le type de lecteur, le système d'exploitation effectuera les actions
-appropriées.
+haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
+fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
+actions appropriées.
 
 
 
@@ -160,7 +160,7 @@ au matériel (c'était le but !). Pour qu'ils puissent interagir avec le systèm
 (afficher une sortie, écrire sur le disque...), le mécanisme des appels système
 est nécessaire. Il s'agit d'une interface de haut entre les \emph{rings} 3 et 0.
 Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
-"magiques" qui font appel au système d'exploitation pour effectuer des
+``magiques'' qui font appel au système d'exploitation pour effectuer des
 opérations.
 
 Prenons le cas de l'appel \texttt{getpid}, qui retourne le numéro de processus
