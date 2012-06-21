@@ -1,3 +1,68 @@
+Un ordinateur est un dispositif complexe, qui consiste en de nombreux niveaux
+d'abstraction.
+
+Au plus bas, il est constitué de nombreux composants matériels :
+micro-processeur, mémoire, et divers périphériques. Et au niveau de
+l'utilisateur, de dizaines de logiciels permettant d'effectuer toutes sortes de
+calculs et de communication.
+
+Au cours de l'histoire des systèmes informatiques, la manière de les programmer
+a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
+son intégralité : toute la mémoire pouvait être accédé, toutes les instructions
+pouvaient être utilisées.
+
+Néanmoins c'est un peu restrictif : si on est seul à utiliser un système, on est
+par définition... seul à pouvoir l'utiliser. Dans les années 70 \todo{vérifier},
+les premier systèmes multi-utilisateurs sont apparus, permettant à plusieurs
+utilisateurs \todo{redondance} d'utiliser le système en même temps.
+
+Il y a plusieurs types de partage :
+
+\begin{itemize}
+\item
+  d'une part, le partage \emph{temporel} : plusieurs programmes vont par
+  exemple utiliser le CPU les uns à la suite des autres.
+\item
+  d'autre part, le partage \emph{spatial} : chaque programme aura à sa
+  disposition une partie de la mémoire principale, ou du disque dur.
+\end{itemize}
+
+Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
+matériel, il faut s'assurer par exemple que les deux s'exécutent à peu près
+aussi souvent, ou que l'un ne puisse pas écrire dans la mémoire de l'autre. Ce
+sont des rôles du système d'exploitation.
+
+Cela passe donc par un certain bridage des possibilités du programme : plutôt
+que de le faire exécuter n'importe quel type d'instruction, il communique avec
+le système d'exploitation. Bien que cela ait l'air d'une limitation, c'est aussi
+bénéfique pour le programmeur puisque cela permet de définir des abstractions au
+niveau du noyau.
+
+Par exemple, si un programmeur veut copier des données depuis un CD-ROM vers la
+mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
+la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
+de \emph{frame} des données sur le disque, demander la lecture, puis déclencher
+une copie de la mémoire.
+
+Si dans un autre cas il voulait récupérer des données depuis une mémorette USB,
+il devrait interroger le bus USB, rechercher le bon numéro de périphérique, le
+bon \emph{endpoint} dans celui-ci, lui appliquer une commande de lecture au bon
+numéro de bloc, puis copier la mémoire.
+
+Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
+depuis un périphérique amovible), ne sont pas effectuées en pratique de la même
+manière. C'est pourquoi le système d'exploitation fournit les notions de
+fichier, lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de
+haut niveau ("monter un lecteur", "ouvrir un fichier", "lire dans un fichier")
+et selon le type de lecteur, le système d'exploitation effectuera les actions
+appropriées.
+
+
+
+
+
+
+
 \section{Contexte}
 
 Une description plus détaillée de l'implantation de Linux peut être trouvée dans
