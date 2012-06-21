@@ -1,10 +1,26 @@
 Un ordinateur est un dispositif complexe, qui consiste en de nombreux niveaux
 d'abstraction.
 
+\todo{citer Tanenbaum}
+
+\cite{tanenbaum}
+
+% Fig Archi {{{
+\todo{À vérifier / mettre à jour}
+
+\begin{figure}
+\centering
+\input{fig/archi-simplifiee.tex}
+\caption{Architecture simplifiée d'un ordinateur}
+\label{fig:archi-simplifiee}
+\end{figure}
+% }}}
+
 Au plus bas, il est constitué de nombreux composants matériels :
-micro-processeur, mémoire, et divers périphériques. Et au niveau de
-l'utilisateur, de dizaines de logiciels permettant d'effectuer toutes sortes de
-calculs et de communication.
+micro-processeur, mémoire, et divers périphériques
+(figure~\ref{fig:archi-simplifiee}). Et au niveau de l'utilisateur, de dizaines
+de logiciels permettant d'effectuer toutes sortes de calculs et de
+communication.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
@@ -12,20 +28,17 @@ son intégralité : toute la mémoire pouvait être accédé, toutes les instruc
 pouvaient être utilisées.
 
 Néanmoins c'est un peu restrictif : si on est seul à utiliser un système, on est
-par définition... seul à pouvoir l'utiliser. Dans les années 70 \todo{vérifier},
-les premier systèmes multi-utilisateurs sont apparus, permettant à plusieurs
-utilisateurs \todo{redondance} d'utiliser le système en même temps.
+par définition... seul à pouvoir l'utiliser. Dans la seconde moitié des années
+60, sont apparus les premiers systèmes "à temps partagé", permettant à plusieurs
+utilisateurs de travailler en même temps.
 
-Il y a plusieurs types de partage :
-
-\begin{itemize}
-\item
-  d'une part, le partage \emph{temporel} : plusieurs programmes vont par
-  exemple utiliser le CPU les uns à la suite des autres.
-\item
-  d'autre part, le partage \emph{spatial} : chaque programme aura à sa
-  disposition une partie de la mémoire principale, ou du disque dur.
-\end{itemize}
+Permettre l'exécution de plusieurs programmes en même temps est une idée
+révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
+resources de la machine doivent être aussi partagées entre les utilisateurs et
+les programmes. Par exemple, plusieurs programmes vont par exemple utiliser le
+CPU les uns à la suite des autres (partage \emph{temporel}) ; et chaque
+programme aura à sa disposition une partie de la mémoire principale, ou du
+disque dur (partage \emph{spatial}).
 
 Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
 matériel, il faut s'assurer par exemple que les deux s'exécutent à peu près
@@ -57,30 +70,8 @@ haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
 fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
 actions appropriées.
 
-\todo{À vérifier / mettre à jour}
-
-\begin{figure}
-\input{fig/archi-simplifiee.tex}
-\caption{Architecture simplifiée d'un ordinateur}
-\label{fig:archi-simplifiee}
-\end{figure}
-
-
-\section{Contexte}
-
-Une description plus détaillée de l'implantation de Linux peut être trouvée dans
-\cite{UnderstandingTheLinuxKernel}.
-
-\section{Rôle d'un système d'exploitation}
-\section{Espace noyau, espace utilisateur}
-
-\todo{OS = kernel ?}
-
-Le système d'exploitation est l'interface logicielle entre le matériel et les
-programmes qui vont s'exécuter sur un ordinateur. Pour une description détaillée
-de son rôle typique, le lecteur pourra se référer à \cite{tanenbaum}.
-
-Néanmoins on peut citer les rôles suivants :
+En résumé, un système d'exploitation est l''intermédiaire entre le logiciel et
+le matériel, et en particulier assure les rôles suivants :
 
 \begin{itemize}
 \item gestion des processus : un système d'exploitation peut permettre
@@ -100,6 +91,23 @@ Néanmoins on peut citer les rôles suivants :
   une clef USB (alors que l'accès se déroulera de manière très différente en
   pratique). C'est ici que la notion arbitraire de fichier sera définie, par exemple.
 \end{itemize}
+
+\section{Contexte}
+
+Une description plus détaillée de l'implantation de Linux peut être trouvée dans
+\cite{UnderstandingTheLinuxKernel}.
+
+\section{Rôle d'un système d'exploitation}
+\section{Espace noyau, espace utilisateur}
+
+\todo{OS = kernel ?}
+
+Le système d'exploitation est l'interface logicielle entre le matériel et les
+programmes qui vont s'exécuter sur un ordinateur. Pour une description détaillée
+de son rôle typique, le lecteur pourra se référer à 
+
+Néanmoins on peut citer les rôles suivants :
+
 
 \section{Cas de Linux}
 
