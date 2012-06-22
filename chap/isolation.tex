@@ -1,3 +1,5 @@
+\section{Rôle d'un système d'exploitation}
+
 Un ordinateur est un dispositif complexe, qui consiste en de nombreux niveaux
 d'abstraction.
 
@@ -73,82 +75,83 @@ actions appropriées.
 En résumé, un système d'exploitation est l''intermédiaire entre le logiciel et
 le matériel, et en particulier assure les rôles suivants :
 
-\begin{itemize}
-\item gestion des processus : un système d'exploitation peut permettre
-  d'exécuter plusieurs programme à la fois. Il faut alors orchestrer ces
-  différents processus et les séparer en terme de temps et de ressources
-  partagées.
-\item
-  gestion de la mémoire : chaque processus, en plus du noyau, doit disposer d'un
-  espace mémoire différent. C'est-à-dire qu'un processus ne doit pas pouvoir
-  interférer avec un autre.
-\item
-  gestion des périphériques : le noyau étant le seul code à s'exécuter en mode
-  privilégié, c'est lui qui doit communiquer avec les périphériques matériels.
-\item
-  abstractions : le noyau fournit au programmes une interface unifiée,
-  permettant de stocker des informations de la même manière sur un disque dur ou
-  une clef USB (alors que l'accès se déroulera de manière très différente en
-  pratique). C'est ici que la notion arbitraire de fichier sera définie, par exemple.
-\end{itemize}
+\paragraph{Gestion des processus} : un système d'exploitation peut permettre
+d'exécuter plusieurs programme à la fois. Il faut alors orchestrer ces
+différents processus et les séparer en terme de temps et de ressources
+partagées.
 
-\section{Contexte}
+\paragraph{Gestion de la mémoire} : chaque processus, en plus du noyau, doit
+disposer d'un espace mémoire différent. C'est-à-dire qu'un processus ne doit pas
+pouvoir interférer avec un autre.
 
-Une description plus détaillée de l'implantation de Linux peut être trouvée dans
-\cite{UnderstandingTheLinuxKernel}.
+\paragraph{Gestion des périphériques} : le noyau étant le seul code à s'exécuter
+en mode privilégié, c'est lui qui doit communiquer avec les périphériques
+matériels.
 
-\section{Rôle d'un système d'exploitation}
-\section{Espace noyau, espace utilisateur}
-
-\todo{OS = kernel ?}
-
-Le système d'exploitation est l'interface logicielle entre le matériel et les
-programmes qui vont s'exécuter sur un ordinateur. Pour une description détaillée
-de son rôle typique, le lecteur pourra se référer à 
-
-Néanmoins on peut citer les rôles suivants :
-
+\paragraph{Abstractions} : le noyau fournit au programmes une interface unifiée,
+permettant de stocker des informations de la même manière sur un disque dur ou
+une clef USB (alors que l'accès se déroulera de manière très différente en
+pratique). C'est ici que la notion arbitraire de fichier sera définie, par
+exemple.
 
 \section{Cas de Linux}
 
-Sous Linux, on retrouve cette séparation entre espace noyau et espace
-utilisateur. Cette section décrit l'implémentation de cette séparation dans le
-contexte suivant :
+Dans cette section, nous allons voir comment ses mécanismes sont implantés dans
+le noyau Linux. Une description plus détaillée pourra être trouvée dans
+\cite{UnderstandingTheLinuxKernel} par exemple.
 
-\begin{itemize}
-\item l'architecture Intel x86
-\item un système 32 bits
-\item le noyau Linux
-\end{itemize}
+Plus précisément, nous étudierons un noyau 2.6 sur architecture Intel x86 32
+bits. Sous d'autres architectures et d'autres systèmes d'exploitation, des
+mécanismes similaires existent, et ces travaux peuvent sans doute s'y appliquer.
 
-Sous d'autres architectures et d'autres systèmes d'exploitation, des mécanismes
-similaires existent, et ces travaux peuvent sans doute s'y appliquer.
+\subsection{Espace noyau, espace utilisateur}
 
-L'isolation est réalisée par le matériel. Ce document présente le cas d'un
-système Intel 32 bits (x86), mais sous d'autres architectures des protections
-similaires existent.
+\begin{figure}
+\input{fig/rings.tex}
+\caption{Les différents \emph{rings}. Seul le \emph{ring} 0 a accès au hardware
+via des instructions privilégiées. Pour accéder aux fonctionnalités du noyau,
+les programmes utilisateur doivent passer par des appels système.}
+\label{fig:rings}
+\end{figure}
 
-Le processeur permet d'exécuter des tâches selon plusieurs niveaux de privilège,
-aussi appellés \emph{rings} : du \emph{ring} 3, le moins privilégié, jusqu'au
-\emph{ring} 0, le plus privilégié. On peut configurer le processeur de manière à
-ce que les instructions privilégiées (accès aux ports d'entrée/sortie...) ne
-soient possibles qu'en \emph{ring} 0. Bien que 4 niveaux soient disponibles,
-Linux n'utilise que les \emph{rings} 0 et 3.
+La première protection nécessaire est d'isoler le système d'exploitation
+lui-même des programmes qu'il va permettre d'exécuter. Pour ce faire, Le
+processeur permet d'exécuter des tâches selon plusieurs niveaux de privilège,
+aussi appellés \emph{rings} (figure~\ref{fig:rings}) : du \emph{ring} 3, le
+moins privilégié, jusqu'au \emph{ring} 0, le plus privilégié. On peut configurer
+le processeur de manière à ce que les instructions privilégiées (accès aux ports
+d'entrée/sortie...) ne soient possibles qu'en \emph{ring} 0. Bien que 4 niveaux
+soient disponibles, Linux n'utilise que les \emph{rings} 0 et 3 : le noyau
+lui-même en \emph{ring} 0 et les processus utilisateur en \emph{ring} 3.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+  [every node/.style={node distance=2cm}]
+
+  \node (u1) {};
+
+  \node[right of=u1] (phy) {};
+
+  \node[right of=phy] (u2) {};
+
+  \draw (u1) rectangle ++(1,-6);
+  \draw (phy) rectangle ++(1,-6);
+  \draw (u2) rectangle ++(1,-6);
+\end{tikzpicture}
+\caption{Mécanisme de mémoire virtuelle.}
+\label{fig:memoire-virtuelle}
+\end{figure}
+
+En ce qui concerne la mémoire, les différentes tâches ont une vision différente
+de la mémoire physique : c'est-à-dire que deux tâches lisant à une même adresse
+peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
+(fig~\ref{fig:memoire-virtuelle}).
 
 Cela profite également au concept de mémoire virtuelle : comme différentes
 tâches vont avoir une vue de la mémoire différente, on peut réserver une zone de
 la mémoire aux tâches privilégiées.
 
-\begin{figure}
-
-\input{fig/rings.tex}
-
-\caption{Les différents \emph{rings}. Seul le \emph{ring} 0 a accès au hardware
-via des instructions privilégiées. Pour accéder aux fonctionnalités du noyau,
-les programmes utilisateur doivent passer par des appels système.}
-
-\label{fig:rings}
-\end{figure}
 
 \begin{figure}
 \centering
@@ -163,7 +166,7 @@ tas, pile. En gris foncé, la mémoire du noyau, réservée au mode privilégié
 \label{fig:memmap}
 \end{figure}
 
-\section{Appels système}
+\subsection{Appels système}
 
 Les programmes utilisateur s'exécutant en \emph{ring} 3, ils ne peuvent pas
 contenir d'instructions privilégiées, et donc ne peuvent pas accéder directement
