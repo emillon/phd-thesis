@@ -1,15 +1,6 @@
 \section{Rôle d'un système d'exploitation}
 
-Un ordinateur est un dispositif complexe, qui consiste en de nombreux niveaux
-d'abstraction.
-
-\todo{citer Tanenbaum}
-
-\cite{tanenbaum}
-
 % Fig Archi {{{
-\todo{À vérifier / mettre à jour}
-
 \begin{figure}
 \centering
 \input{fig/archi-simplifiee.tex}
@@ -18,11 +9,14 @@ d'abstraction.
 \end{figure}
 % }}}
 
-Au plus bas, il est constitué de nombreux composants matériels :
+Au plus bas, un ordinateur est constitué de nombreux composants matériels :
 micro-processeur, mémoire, et divers périphériques
 (figure~\ref{fig:archi-simplifiee}). Et au niveau de l'utilisateur, de dizaines
 de logiciels permettant d'effectuer toutes sortes de calculs et de
-communication.
+communication. Le système d'exploitation permet de faire l'interface entre ces
+niveaux d'abstraction. Dans ce chapitre nous allons voir son rôle et une
+implantation possible. Pour une description plus détaillée, on pourra se référer
+à l'ouvrage \cite{tanenbaum}.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
