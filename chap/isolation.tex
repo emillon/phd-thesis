@@ -148,11 +148,6 @@ de la mémoire physique : c'est-à-dire que deux tâches lisant à une même adr
 peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
 (fig~\ref{fig:memoire-virtuelle}).
 
-Cela profite également au concept de mémoire virtuelle : comme différentes
-tâches vont avoir une vue de la mémoire différente, on peut réserver une zone de
-la mémoire aux tâches privilégiées.
-
-
 \begin{figure}
 \centering
 \fbox{
@@ -172,8 +167,8 @@ Les programmes utilisateur s'exécutant en \emph{ring} 3, ils ne peuvent pas
 contenir d'instructions privilégiées, et donc ne peuvent pas accéder directement
 au matériel (c'était le but !). Pour qu'ils puissent interagir avec le système
 (afficher une sortie, écrire sur le disque...), le mécanisme des appels système
-est nécessaire. Il s'agit d'une interface de haut entre les \emph{rings} 3 et 0.
-Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
+est nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings}
+3 et 0. Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
 ``magiques'' qui font appel au système d'exploitation pour effectuer des
 opérations.
 
