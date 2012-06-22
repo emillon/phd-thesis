@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{int32} \PY{n+nf}{gcd}\PY{p}{(}\PY{n}{int32} \PY{n}{a}\PY{p}{,} \PY{n}{int32} \PY{n}{b}\PY{p}{)} \PY{p}{\PYZob{}}
+    \PY{k}{if} \PY{p}{(}\PY{n}{a} \PY{o}{=}\PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)} \PY{p}{\PYZob{}}
+      \PY{o}{!}\PY{k}{return} \PY{o}{=} \PY{n}{b\PYZus{}int32}\PY{p}{;}
+      \PY{k}{goto} \PY{n}{lbl0}\PY{p}{;}
+    \PY{p}{\PYZcb{}}
+    \PY{k}{while} \PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)} \PY{p}{\PYZob{}}
+        \PY{k}{if} \PY{p}{(}\PY{n}{b} \PY{o}{=}\PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)} \PY{p}{\PYZob{}}
+            \PY{k}{goto} \PY{n}{lbl1}\PY{p}{;}
+        \PY{p}{\PYZcb{}}
+        \PY{k}{if} \PY{p}{(}\PY{n}{a} \PY{o}{\PYZgt{}} \PY{n}{b}\PY{p}{)} \PY{p}{\PYZob{}}
+             \PY{n}{a} \PY{o}{=} \PY{n}{a} \PY{o}{-} \PY{n}{b}\PY{p}{;}
+        \PY{p}{\PYZcb{}} \PY{k}{else} \PY{p}{\PYZob{}}
+             \PY{n}{b} \PY{o}{=} \PY{n}{b} \PY{o}{-} \PY{n}{a}\PY{p}{;}
+        \PY{p}{\PYZcb{}}
+    \PY{p}{\PYZcb{}}
+    \PY{n+nl}{lbl1:}
+    \PY{n+nl}{lbl0:}
+    \PY{p}{;}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}

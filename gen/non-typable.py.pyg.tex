@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{f}\PY{p}{(}\PY{n}{b}\PY{p}{)}\PY{p}{:}
+    \PY{n}{x} \PY{o}{=} \PY{n+nb+bp}{None}
+    \PY{n}{r} \PY{o}{=} \PY{n+nb+bp}{None}
+    \PY{k}{if} \PY{n}{b}\PY{p}{:}
+        \PY{n}{x} \PY{o}{=} \PY{l+m+mi}{1}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n}{x} \PY{o}{=} \PY{k}{lambda} \PY{n}{y}\PY{p}{:} \PY{n}{y} \PY{o}{+} \PY{l+m+mi}{1}
+    \PY{n}{b} \PY{o}{=} \PY{o+ow}{not} \PY{n}{b}
+    \PY{k}{if} \PY{n}{b}\PY{p}{:}
+        \PY{n}{r} \PY{o}{=} \PY{n}{x} \PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n}{r} \PY{o}{=} \PY{n}{x} \PY{o}{+} \PY{l+m+mi}{1}
+    \PY{k}{return} \PY{n}{r}
+\end{Verbatim}

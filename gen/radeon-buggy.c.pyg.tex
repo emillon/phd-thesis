@@ -1,0 +1,116 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+cm}{/* from drivers/gpu/drm/radeon/radeon\PYZus{}kms.c */}
+\PY{k+kt}{int} \PY{n+nf}{radeon\PYZus{}info\PYZus{}ioctl}\PY{p}{(}\PY{k}{struct} \PY{n}{drm\PYZus{}device} \PY{o}{*}\PY{n}{dev}\PY{p}{,} \PY{k+kt}{void} \PY{o}{*}\PY{n}{data}\PY{p}{,} \PY{k}{struct} \PY{n}{drm\PYZus{}file} \PY{o}{*}\PY{n}{filp}\PY{p}{)}
+\PY{p}{\PYZob{}}
+	\PY{k}{struct} \PY{n}{radeon\PYZus{}device} \PY{o}{*}\PY{n}{rdev} \PY{o}{=} \PY{n}{dev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{dev\PYZus{}private}\PY{p}{;}
+	\PY{k}{struct} \PY{n}{drm\PYZus{}radeon\PYZus{}info} \PY{o}{*}\PY{n}{info}\PY{p}{;}
+	\PY{k}{struct} \PY{n}{radeon\PYZus{}mode\PYZus{}info} \PY{o}{*}\PY{n}{minfo} \PY{o}{=} \PY{o}{\PYZam{}}\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{mode\PYZus{}info}\PY{p}{;}
+	\PY{k+kt}{uint32\PYZus{}t} \PY{o}{*}\PY{n}{value\PYZus{}ptr}\PY{p}{;}
+	\PY{k+kt}{uint32\PYZus{}t} \PY{n}{value}\PY{p}{;}
+	\PY{k}{struct} \PY{n}{drm\PYZus{}crtc} \PY{o}{*}\PY{n}{crtc}\PY{p}{;}
+	\PY{k+kt}{int} \PY{n}{i}\PY{p}{,} \PY{n}{found}\PY{p}{;}
+
+	\PY{n}{info} \PY{o}{=} \PY{n}{data}\PY{p}{;}
+	\PY{n}{value\PYZus{}ptr} \PY{o}{=} \PY{p}{(}\PY{k+kt}{uint32\PYZus{}t} \PY{o}{*}\PY{p}{)}\PY{p}{(}\PY{p}{(}\PY{k+kt}{unsigned} \PY{k+kt}{long}\PY{p}{)}\PY{n}{info}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{value}\PY{p}{)}\PY{p}{;}
+	\PY{n}{value} \PY{o}{=} \PY{o}{*}\PY{n}{value\PYZus{}ptr}\PY{p}{;}
+	\PY{k}{switch} \PY{p}{(}\PY{n}{info}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{request}\PY{p}{)} \PY{p}{\PYZob{}}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}DEVICE\PYZus{}ID}:
+		\PY{n}{value} \PY{o}{=} \PY{n}{dev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{pci\PYZus{}device}\PY{p}{;}
+		\PY{k}{break}\PY{p}{;}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}NUM\PYZus{}GB\PYZus{}PIPES}:
+		\PY{n}{value} \PY{o}{=} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{num\PYZus{}gb\PYZus{}pipes}\PY{p}{;}
+		\PY{k}{break}\PY{p}{;}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}NUM\PYZus{}Z\PYZus{}PIPES}:
+		\PY{n}{value} \PY{o}{=} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{num\PYZus{}z\PYZus{}pipes}\PY{p}{;}
+		\PY{k}{break}\PY{p}{;}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}ACCEL\PYZus{}WORKING}:
+		\PY{c+cm}{/* xf86-video-ati 6.13.0 relies on this being false for evergreen */}
+		\PY{k}{if} \PY{p}{(}\PY{p}{(}\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{family} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{CHIP\PYZus{}CEDAR}\PY{p}{)} \PY{o}{\PYZam{}}\PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{family} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{CHIP\PYZus{}HEMLOCK}\PY{p}{)}\PY{p}{)}
+			\PY{n}{value} \PY{o}{=} \PY{n+nb}{false}\PY{p}{;}
+		\PY{k}{else}
+			\PY{n}{value} \PY{o}{=} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{accel\PYZus{}working}\PY{p}{;}
+		\PY{k}{break}\PY{p}{;}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}CRTC\PYZus{}FROM\PYZus{}ID}:
+		\PY{k}{for} \PY{p}{(}\PY{n}{i} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,} \PY{n}{found} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{;} \PY{n}{i} \PY{o}{\PYZlt{}} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{num\PYZus{}crtc}\PY{p}{;} \PY{n}{i}\PY{o}{+}\PY{o}{+}\PY{p}{)} \PY{p}{\PYZob{}}
+			\PY{n}{crtc} \PY{o}{=} \PY{p}{(}\PY{k}{struct} \PY{n}{drm\PYZus{}crtc} \PY{o}{*}\PY{p}{)}\PY{n}{minfo}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{crtcs}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{;}
+			\PY{k}{if} \PY{p}{(}\PY{n}{crtc} \PY{o}{\PYZam{}}\PY{o}{\PYZam{}} \PY{n}{crtc}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{base}\PY{p}{.}\PY{n}{id} \PY{o}{=}\PY{o}{=} \PY{n}{value}\PY{p}{)} \PY{p}{\PYZob{}}
+				\PY{k}{struct} \PY{n}{radeon\PYZus{}crtc} \PY{o}{*}\PY{n}{radeon\PYZus{}crtc} \PY{o}{=} \PY{n}{to\PYZus{}radeon\PYZus{}crtc}\PY{p}{(}\PY{n}{crtc}\PY{p}{)}\PY{p}{;}
+				\PY{n}{value} \PY{o}{=} \PY{n}{radeon\PYZus{}crtc}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{crtc\PYZus{}id}\PY{p}{;}
+				\PY{n}{found} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{;}
+				\PY{k}{break}\PY{p}{;}
+			\PY{p}{\PYZcb{}}
+		\PY{p}{\PYZcb{}}
+		\PY{k}{if} \PY{p}{(}\PY{o}{!}\PY{n}{found}\PY{p}{)} \PY{p}{\PYZob{}}
+			\PY{n}{DRM\PYZus{}DEBUG\PYZus{}KMS}\PY{p}{(}\PY{l+s}{"}\PY{l+s}{unknown crtc id \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{"}\PY{p}{,} \PY{n}{value}\PY{p}{)}\PY{p}{;}
+			\PY{k}{return} \PY{o}{-}\PY{n}{EINVAL}\PY{p}{;}
+		\PY{p}{\PYZcb{}}
+		\PY{k}{break}\PY{p}{;}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}ACCEL\PYZus{}WORKING2}:
+		\PY{n}{value} \PY{o}{=} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{accel\PYZus{}working}\PY{p}{;}
+		\PY{k}{break}\PY{p}{;}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}TILING\PYZus{}CONFIG}:
+		\PY{k}{if} \PY{p}{(}\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{family} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{CHIP\PYZus{}CEDAR}\PY{p}{)}
+			\PY{n}{value} \PY{o}{=} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{config}\PY{p}{.}\PY{n}{evergreen}\PY{p}{.}\PY{n}{tile\PYZus{}config}\PY{p}{;}
+		\PY{k}{else} \PY{k}{if} \PY{p}{(}\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{family} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{CHIP\PYZus{}RV770}\PY{p}{)}
+			\PY{n}{value} \PY{o}{=} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{config}\PY{p}{.}\PY{n}{rv770}\PY{p}{.}\PY{n}{tile\PYZus{}config}\PY{p}{;}
+		\PY{k}{else} \PY{k}{if} \PY{p}{(}\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{family} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{CHIP\PYZus{}R600}\PY{p}{)}
+			\PY{n}{value} \PY{o}{=} \PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{config}\PY{p}{.}\PY{n}{r600}\PY{p}{.}\PY{n}{tile\PYZus{}config}\PY{p}{;}
+		\PY{k}{else} \PY{p}{\PYZob{}}
+			\PY{n}{DRM\PYZus{}DEBUG\PYZus{}KMS}\PY{p}{(}\PY{l+s}{"}\PY{l+s}{tiling config is r6xx+ only!}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{"}\PY{p}{)}\PY{p}{;}
+			\PY{k}{return} \PY{o}{-}\PY{n}{EINVAL}\PY{p}{;}
+		\PY{p}{\PYZcb{}}
+	\PY{k}{case} \PY{n}{RADEON\PYZus{}INFO\PYZus{}WANT\PYZus{}HYPERZ}:
+		\PY{n}{mutex\PYZus{}lock}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{dev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{struct\PYZus{}mutex}\PY{p}{)}\PY{p}{;}
+		\PY{k}{if} \PY{p}{(}\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{hyperz\PYZus{}filp}\PY{p}{)}
+			\PY{n}{value} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{;}
+		\PY{k}{else} \PY{p}{\PYZob{}}
+			\PY{n}{rdev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{hyperz\PYZus{}filp} \PY{o}{=} \PY{n}{filp}\PY{p}{;}
+			\PY{n}{value} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{;}
+		\PY{p}{\PYZcb{}}
+		\PY{n}{mutex\PYZus{}unlock}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{dev}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{struct\PYZus{}mutex}\PY{p}{)}\PY{p}{;}
+		\PY{k}{break}\PY{p}{;}
+	\PY{n+nl}{default:}
+		\PY{n}{DRM\PYZus{}DEBUG\PYZus{}KMS}\PY{p}{(}\PY{l+s}{"}\PY{l+s}{Invalid request \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{"}\PY{p}{,} \PY{n}{info}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{request}\PY{p}{)}\PY{p}{;}
+		\PY{k}{return} \PY{o}{-}\PY{n}{EINVAL}\PY{p}{;}
+	\PY{p}{\PYZcb{}}
+	\PY{k}{if} \PY{p}{(}\PY{n}{DRM\PYZus{}COPY\PYZus{}TO\PYZus{}USER}\PY{p}{(}\PY{n}{value\PYZus{}ptr}\PY{p}{,} \PY{o}{\PYZam{}}\PY{n}{value}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{k+kt}{uint32\PYZus{}t}\PY{p}{)}\PY{p}{)}\PY{p}{)} \PY{p}{\PYZob{}}
+		\PY{n}{DRM\PYZus{}ERROR}\PY{p}{(}\PY{l+s}{"}\PY{l+s}{copy\PYZus{}to\PYZus{}user}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{"}\PY{p}{)}\PY{p}{;}
+		\PY{k}{return} \PY{o}{-}\PY{n}{EFAULT}\PY{p}{;}
+	\PY{p}{\PYZcb{}}
+	\PY{k}{return} \PY{l+m+mi}{0}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
+\PY{c+cm}{/* from drivers/gpu/drm/radeon/radeon\PYZus{}kms.c */}
+\PY{k}{struct} \PY{n}{drm\PYZus{}ioctl\PYZus{}desc} \PY{n}{radeon\PYZus{}ioctls\PYZus{}kms}\PY{p}{[}\PY{p}{]} \PY{o}{=} \PY{p}{\PYZob{}}
+	\PY{c+cm}{/* KMS */}
+	\PY{n}{DRM\PYZus{}IOCTL\PYZus{}DEF}\PY{p}{(}\PY{n}{DRM\PYZus{}RADEON\PYZus{}INFO}\PY{p}{,} \PY{n}{radeon\PYZus{}info\PYZus{}ioctl}\PY{p}{,} \PY{n}{DRM\PYZus{}AUTH}\PY{o}{|}\PY{n}{DRM\PYZus{}UNLOCKED}\PY{p}{)}
+\PY{p}{\PYZcb{}}\PY{p}{;}
+
+\PY{c+cm}{/* from drivers/gpu/drm/radeon/radeon\PYZus{}drv.c */}
+
+\PY{k}{static} \PY{k}{struct} \PY{n}{drm\PYZus{}driver} \PY{n}{kms\PYZus{}driver} \PY{o}{=} \PY{p}{\PYZob{}}
+	\PY{p}{.}\PY{n}{driver\PYZus{}features} \PY{o}{=}
+	    \PY{n}{DRIVER\PYZus{}USE\PYZus{}AGP} \PY{o}{|} \PY{n}{DRIVER\PYZus{}USE\PYZus{}MTRR} \PY{o}{|} \PY{n}{DRIVER\PYZus{}PCI\PYZus{}DMA} \PY{o}{|} \PY{n}{DRIVER\PYZus{}SG} \PY{o}{|}
+	    \PY{n}{DRIVER\PYZus{}HAVE\PYZus{}IRQ} \PY{o}{|} \PY{n}{DRIVER\PYZus{}HAVE\PYZus{}DMA} \PY{o}{|} \PY{n}{DRIVER\PYZus{}IRQ\PYZus{}SHARED} \PY{o}{|} \PY{n}{DRIVER\PYZus{}GEM}\PY{p}{,}
+	\PY{p}{.}\PY{n}{dev\PYZus{}priv\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,}
+	\PY{p}{.}\PY{n}{ioctls} \PY{o}{=} \PY{n}{radeon\PYZus{}ioctls\PYZus{}kms}\PY{p}{,}
+	\PY{p}{.}\PY{n}{name} \PY{o}{=} \PY{l+s}{"}\PY{l+s}{radeon}\PY{l+s}{"}\PY{p}{,}
+	\PY{p}{.}\PY{n}{desc} \PY{o}{=} \PY{l+s}{"}\PY{l+s}{ATI Radeon}\PY{l+s}{"}\PY{p}{,}
+	\PY{p}{.}\PY{n}{date} \PY{o}{=} \PY{l+s}{"}\PY{l+s}{20080528}\PY{l+s}{"}\PY{p}{,}
+	\PY{p}{.}\PY{n}{major} \PY{o}{=} \PY{l+m+mi}{2}\PY{p}{,}
+	\PY{p}{.}\PY{n}{minor} \PY{o}{=} \PY{l+m+mi}{6}\PY{p}{,}
+	\PY{p}{.}\PY{n}{patchlevel} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{;}
+
+\PY{c+cm}{/* from drivers/gpu/drm/drm\PYZus{}drv.c */}
+\PY{k+kt}{int} \PY{n+nf}{drm\PYZus{}init}\PY{p}{(}\PY{k}{struct} \PY{n}{drm\PYZus{}driver} \PY{o}{*}\PY{n}{driver}\PY{p}{)}
+\PY{p}{\PYZob{}}
+	\PY{n}{DRM\PYZus{}DEBUG}\PY{p}{(}\PY{l+s}{"}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{"}\PY{p}{)}\PY{p}{;}
+	\PY{n}{INIT\PYZus{}LIST\PYZus{}HEAD}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{driver}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{device\PYZus{}list}\PY{p}{)}\PY{p}{;}
+
+	\PY{k}{if} \PY{p}{(}\PY{n}{driver}\PY{o}{-}\PY{o}{\PYZgt{}}\PY{n}{driver\PYZus{}features} \PY{o}{\PYZam{}} \PY{n}{DRIVER\PYZus{}USE\PYZus{}PLATFORM\PYZus{}DEVICE}\PY{p}{)}
+		\PY{k}{return} \PY{n}{drm\PYZus{}platform\PYZus{}init}\PY{p}{(}\PY{n}{driver}\PY{p}{)}\PY{p}{;}
+	\PY{k}{else}
+		\PY{k}{return} \PY{n}{drm\PYZus{}pci\PYZus{}init}\PY{p}{(}\PY{n}{driver}\PY{p}{)}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}
