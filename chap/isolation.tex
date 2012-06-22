@@ -203,9 +203,10 @@ d'entrée prédéfini (\texttt{arch/x86/kernel/entry\_32.S},
 L'exécution reprend donc en \emph{ring} 0, avec une pile propre au processus.
 Les valeurs des registres ont été préservées : elles sont mises sur la pile du
 noyau. Le noyau examine le numéro d'appel système (toujours dans \eax) et
-appelle la fonction correspondante dans le tableau \texttt{sys\_call\_table} : les arguments sont en place sur la pile, comme dans le
-cas d'un appel de fonction ``classique''. La fonction, nommée
-\texttt{sys\_getpid}, peut donc être écrite en C.
+appelle la fonction correspondante dans le tableau \texttt{sys\_call\_table} :
+les arguments sont en place sur la pile, comme dans le cas d'un appel de
+fonction ``classique''. La fonction, nommée \texttt{sys\_getpid}, peut donc être
+écrite en C.
 
 Au retour de la fonction, la valeur de retour est placée à la place de \eax là
 où les registres ont été sauvegardés sur la pile noyau. L'instruction
