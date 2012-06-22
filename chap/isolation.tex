@@ -190,56 +190,31 @@ SYSCALL_DEFINE0(getpid)
 }
 \end{Verbatim}
 
-Le mécanisme de couplage entre ces deux fonctions est le suivant :
 
-\begin{itemize}
-\item
-  la fonction de la libc place les arguments éventuels de l'appel
-  système dans les registres.
-\item
-  un numéro identifiant l'appel système est placé dans \eax.
-\item
-  une interruption logicielle est déclenchée :
-\item
-  l'exécution continue en \emph{ring} 0, à un point d'entrée prédéfini.
-\item 
-  les registres sont placés sur la pile noyau
-\item
-  le noyau examine le numéro d'appel système (toujours dans \eax) et appelle la
-  fonction correspondante (les arguments sont en place sur la pile)
-\item
-  à la fin de la fonction, la valeur de retour est placé comme à l'habitude dans
-  \eax et un \texttt{iret} permet de repasser en mode utilisateur, juste après
-  l'appel système.
-\end{itemize}
 
-\todo{citer la doc intel}
+Le mécanisme de couplage entre ces deux fonctions est le suivant. Une
+explication plus détaillé est disponible dans la documentation d'Intel
+\cite{intelsys}.
 
-\cite{intelsys}
+Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
+système. C'est la fonction qui est directement appelée par le programme. Cette
+fonction commence par placer le numéro de l'appel système (noté
+\texttt{\_\_NR\_getpid}, valant 20 ici) dans \eax, puis les arguments éventuels
+dans les registres (\ebx, \ecx, \edx, \esi puis \edi). Une interruption
+logicielle est ensuite déclenchée (\texttt{int 0x80}) : étant donné la
+configuration du processeur, elle sera traitée en \emph{ring} 0, à un point
+d'entrée prédéfini (\texttt{arch/x86/kernel/entry\_32.S},
+\texttt{ENTRY(system\_call)}).
 
-Dans le cas d'un appel système qui ne fait que renvoyer un nombre, il n'y a pas
-de difficulté. En revanche, certains appels système (la majorité, en fait),
-remplissent une structure avec leurs résultats :
+L'exécution reprend donc en \emph{ring} 0, avec une pile propre au processus.
+Les valeurs des registres ont été préservées : elles sont mises sur la pile du
+noyau. Le noyau examine le numéro d'appel système (toujours dans \eax) et
+appelle la fonction correspondante dans le tableau \texttt{sys\_call\_table} : les arguments sont en place sur la pile, comme dans le
+cas d'un appel de fonction ``classique''. La fonction, nommée
+\texttt{sys\_getpid}, peut donc être écrite en C.
 
-\begin{Verbatim}
-int gettimeofday(struct timeval *tv, struct timezone *tz);
-\end{Verbatim}
-
-Pour utiliser une telle fonction, l'utilisateur doit allouer lui même la
-mémoire, sur la pile par exemple :
-
-\begin{Verbatim}
-struct timeval tv;
-struct timezone tz;
-int z = gettimeofday(&tv, &tz);
-if (z == 0) {
-    printf( "tv.tv_sec = %ld\ntv.tv_usec = %ld\n"
-            "tz.tz_minuteswest = %d\ntz.tz_dsttime = %d\n",
-             tv.tv_sec, tv.tv_usec,
-             tz.tz_minuteswest, tz.tz_dsttime
-          );
-}
-\end{Verbatim}
-
-Notons que dans ce cas, c'est le noyau qui remplit la structure : le
-déréférencement se fait en \emph{ring} 0.
+Au retour de la fonction, la valeur de retour est placée à la place de \eax là
+où les registres ont été sauvegardés sur la pile noyau. L'instruction
+\texttt{iret} permet de restaurer les registres et de repasser en mode
+utilisateur, juste après l'interruption. La fonction de la bibliothèque C peut
+alors retourner au programme appelant.

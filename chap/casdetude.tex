@@ -1,3 +1,37 @@
+
+
+
+Dans le cas d'un appel système qui ne fait que renvoyer un nombre, il n'y a pas
+de difficulté. En revanche, certains appels système (la majorité, en fait),
+remplissent une structure avec leurs résultats :
+
+\begin{Verbatim}
+int gettimeofday(struct timeval *tv, struct timezone *tz);
+\end{Verbatim}
+
+Pour utiliser une telle fonction, l'utilisateur doit allouer lui même la
+mémoire, sur la pile par exemple :
+
+\begin{Verbatim}
+struct timeval tv;
+struct timezone tz;
+int z = gettimeofday(&tv, &tz);
+if (z == 0) {
+    printf( "tv.tv_sec = %ld\ntv.tv_usec = %ld\n"
+            "tz.tz_minuteswest = %d\ntz.tz_dsttime = %d\n",
+             tv.tv_sec, tv.tv_usec,
+             tz.tz_minuteswest, tz.tz_dsttime
+          );
+}
+\end{Verbatim}
+
+Notons que dans ce cas, c'est le noyau qui remplit la structure : le
+déréférencement se fait en \emph{ring} 0.
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+
+
 \section{Description du problème}
 
 % But

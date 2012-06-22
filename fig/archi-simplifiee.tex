@@ -7,18 +7,18 @@
 
 \node[below of=cpu] (northb) {Northbridge};
 
-\node[right of=northb] (mem) {Mémoire};
-\node[left of=northb]  (agp) {AGP};
+\node[right of=northb, xshift=1cm] (mem) {Mémoire};
+\node[left of=northb, xshift=-1cm] (agp) {AGP};
 \node[below of=northb] (southb) {Southbridge};
 
-\node[below left of=southb, xshift=-1cm] (sata) {SATA};
-\node[below right of=southb, xshift=1cm] (usb)  {USB};
+\node[left of=southb, xshift=-1cm] (sata) {SATA};
+\node[right of=southb, xshift=1cm] (usb)  {USB};
 
-\node[below left of=sata]  (hdd)     {Disque dur};
-\node[below right of=sata] (cdrom)   {CD-ROM};
+\node[left of=sata]  (hdd)     {Disque dur};
+\node[below of=sata] (cdrom)   {CD-ROM};
 
-\node[below left of=usb]  (memo)    {Mémorette};
-\node[below right of=usb] (clavier) {Clavier};
+\node[below of=usb]  (memo)    {Mémorette};
+\node[right of=usb] (clavier) {Clavier};
 
 \draw (cpu) -- (northb);
 \draw (northb) -- (agp);
