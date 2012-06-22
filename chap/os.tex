@@ -30,7 +30,7 @@ utilisateurs de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
-resources de la machine doivent être aussi partagées entre les utilisateurs et
+ressources de la machine doivent être aussi partagées entre les utilisateurs et
 les programmes. Par exemple, plusieurs programmes vont par exemple utiliser le
 CPU les uns à la suite des autres (partage \emph{temporel}) ; et chaque
 programme aura à sa disposition une partie de la mémoire principale, ou du
@@ -111,7 +111,7 @@ les programmes utilisateur doivent passer par des appels système.}
 La première protection nécessaire est d'isoler le système d'exploitation
 lui-même des programmes qu'il va permettre d'exécuter. Pour ce faire, Le
 processeur permet d'exécuter des tâches selon plusieurs niveaux de privilège,
-aussi appellés \emph{rings} (figure~\ref{fig:rings}) : du \emph{ring} 3, le
+aussi appelés \emph{rings} (figure~\ref{fig:rings}) : du \emph{ring} 3, le
 moins privilégié, jusqu'au \emph{ring} 0, le plus privilégié. On peut configurer
 le processeur de manière à ce que les instructions privilégiées (accès aux ports
 d'entrée/sortie...) ne soient possibles qu'en \emph{ring} 0. Bien que 4 niveaux
