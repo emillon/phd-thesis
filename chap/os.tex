@@ -102,7 +102,7 @@ mécanismes similaires existent, et ces travaux peuvent sans doute s'y appliquer
 
 \begin{figure}
 \input{fig/rings.tex}
-\caption{Les différents \emph{rings}. Seul le \emph{ring} 0 a accès au hardware
+\caption{Les différents \emph{rings}. Seul le \ring{0} a accès au hardware
 via des instructions privilégiées. Pour accéder aux fonctionnalités du noyau,
 les programmes utilisateur doivent passer par des appels système.}
 \label{fig:rings}
@@ -111,12 +111,12 @@ les programmes utilisateur doivent passer par des appels système.}
 La première protection nécessaire est d'isoler le système d'exploitation
 lui-même des programmes qu'il va permettre d'exécuter. Pour ce faire, Le
 processeur permet d'exécuter des tâches selon plusieurs niveaux de privilège,
-aussi appelés \emph{rings} (figure~\ref{fig:rings}) : du \emph{ring} 3, le
-moins privilégié, jusqu'au \emph{ring} 0, le plus privilégié. On peut configurer
+aussi appelés \emph{rings} (figure~\ref{fig:rings}) : du \ring{3}, le
+moins privilégié, jusqu'au \ring{0}, le plus privilégié. On peut configurer
 le processeur de manière à ce que les instructions privilégiées (accès aux ports
-d'entrée/sortie...) ne soient possibles qu'en \emph{ring} 0. Bien que 4 niveaux
+d'entrée/sortie...) ne soient possibles qu'en \ring{0}. Bien que 4 niveaux
 soient disponibles, Linux n'utilise que les \emph{rings} 0 et 3 : le noyau
-lui-même en \emph{ring} 0 et les processus utilisateur en \emph{ring} 3.
+lui-même en \ring{0} et les processus utilisateur en \ring{3}.
 
 \begin{figure}
 \centering
@@ -157,7 +157,7 @@ tas, pile. En gris foncé, la mémoire du noyau, réservée au mode privilégié
 
 \subsection{Appels système}
 
-Les programmes utilisateur s'exécutant en \emph{ring} 3, ils ne peuvent pas
+Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas
 contenir d'instructions privilégiées, et donc ne peuvent pas accéder directement
 au matériel (c'était le but !). Pour qu'ils puissent interagir avec le système
 (afficher une sortie, écrire sur le disque...), le mécanisme des appels système
@@ -196,11 +196,11 @@ fonction commence par placer le numéro de l'appel système (noté
 \texttt{\_\_NR\_getpid}, valant 20 ici) dans \eax, puis les arguments éventuels
 dans les registres (\ebx, \ecx, \edx, \esi puis \edi). Une interruption
 logicielle est ensuite déclenchée (\texttt{int 0x80}) : étant donné la
-configuration du processeur, elle sera traitée en \emph{ring} 0, à un point
+configuration du processeur, elle sera traitée en \ring{0}, à un point
 d'entrée prédéfini (\texttt{arch/x86/kernel/entry\_32.S},
 \texttt{ENTRY(system\_call)}).
 
-L'exécution reprend donc en \emph{ring} 0, avec une pile propre au processus.
+L'exécution reprend donc en \ring{0}, avec une pile propre au processus.
 Les valeurs des registres ont été préservées : elles sont mises sur la pile du
 noyau. Le noyau examine le numéro d'appel système (toujours dans \eax) et
 appelle la fonction correspondante dans le tableau \texttt{sys\_call\_table} :
