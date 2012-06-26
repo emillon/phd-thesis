@@ -88,6 +88,34 @@ une clef USB (alors que l'accès se déroulera de manière très différente en
 pratique). C'est ici que la notion arbitraire de fichier sera définie, par
 exemple.
 
+\section{Architecture}
+
+Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
+une architecture Intel 32 bits.
+
+Au coeur du processeur, se trouve une ALU (\emph{Arithmetical \& Logical Unit},
+unité arithmétique et logique) qui peut réaliser des opérations comme
+l'addition, la soustraction ou le "ET" logique.
+
+Les opérandes peuvent être des registres, qui sont des petites zones de mémoire
+temporaire internes au processeur, ou une adresse mémoire \footnote{C'est une
+simplification : d'une part, toutes les combinaisons ne sont pas possibles, et
+d'autres part, des modes d'adressages plus complexes comme "la valeur à
+l'adresse égale à tel registre plus tel décalage"}.
+
+Les registres les plus courants sont nommés \eax, \ebx, \ecx, \edx, \esi, \edi.
+Ils peuvent être utilisés pour n'importe quel type d'opération, mais certains
+sont spécialisés. Par exemple il est plus efficace d'utiliser \eax en
+accumulateur, ou \ecx en compteur.
+
+\esp est le pointeur de pile (\emph{stack pointer}), qui a un rôle particulier
+dans les instructions \asminstr{push} et \asminstr{pop} décrites ci-dessous.
+
+\ebp est le pointeur de trame (\emph{frame pointer}) et sert de point de repère
+dans les appels de fonction. Ceci sera aussi expliqué.
+
+\eip est l'adresse de l'instruction courante.
+
 \section{Cas de Linux}
 
 Dans cette section, nous allons voir comment ses mécanismes sont implantés dans
