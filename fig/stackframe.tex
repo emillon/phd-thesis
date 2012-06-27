@@ -1,5 +1,8 @@
 \begin{tikzpicture}
-[stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=5cm}]
+[ stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=5cm}
+, bigbrace/.style={decorate,decoration={brace,amplitude=3mm}}
+]
+
   \path (0,0) node [stack] (gloc) {Locales de g}
   -- ++(0,-1) node [stack] (gebp) {ebp}
   -- ++(0,-1) node [stack] (gret) {@ret}
@@ -9,18 +12,51 @@
   -- ++(0,-1) node [stack] (fret) {@ret}
   -- ++(0,-1) node [stack] (fpar) {Params de f};
 
+  \draw [-latex] (gebp) -- ++(4, 0) |- (febp.5);
+  \draw [-latex] (febp.355) -- ++(1.5, 0) -- ++(0,-4);
+
   \draw [dashed] (fpar.south west) -- ++ (0,-2);
   \draw [dashed] (fpar.south east) -- ++ (0,-2);
   \draw [dashed] (gloc.north east) -- ++ (0,2);
   \draw [dashed] (gloc.north west) -- ++ (0,2);
 
-  \node at (5, -3) (ox) {};
+  \node at (5, 1) (ox) {};
 
-  \draw [-open triangle 60] (ox.center) -- ++ (0,2)  node [xshift=5mm] {Push};
-  \draw [-open triangle 60] (ox.center) -- ++ (0,-2) node [xshift=5mm] {Pop};
+  \node [text width=3cm] at (-0.8, 2)    {Adresses hautes (sens de \asminstr{push})};
+  \node [text width=3cm] at (-0.8, -8.5) {Adresses basses (sens de \asminstr{pop})};
 
-  \node at (8, -3) (oy) {};
+  \node [text width=3cm] at (-6, -3) (asmtext) {\tt
+    g:  ... \\
+    leave \\
+    ret \\
+    f:  ... \\
+    pushl \$2 \\
+    pushl \$4 \\
+    call g \\
+    addl \$8, \%esp \\
+    leave \\
+    ret \\
+    ... \\
+    call f\\
+    ...
+    };
 
-  \draw [-open triangle 60] (oy.center) -- ++ (0,2)  node [xshift=15mm] {Adresses basses};
-  \draw [-open triangle 60] (oy.center) -- ++ (0,-2) node [xshift=15mm] {Adresses hautes};
+  \draw [-*] (gret) -- ++ (-3, 0) |- ($ (asmtext.north west) + (2, -3.5) $);
+  \draw [-*] (fret) -- ++ (-3, 0) |- ($ (asmtext.north west) + (2, -6) $);
+
+  \draw [<-] (gebp.west) -- ++ (-0.5,0) node [xshift=-4mm] {\ebp};
+  \draw [<-] (gloc.west) -- ++ (-0.5,0) node [xshift=-4mm] {\esp};
+
+  \draw [<-] ($ (asmtext.north west) + (2, 0) $) -- ++ (0.5,0) node [xshift=3mm] {\eip};
+
+  \draw [bigbrace]
+        ($ (gloc.north east) + (3, 0) $)
+     -- node [auto,midway,xshift=3mm] {Cadre de g}
+        ($ (gpar.south east) + (3, 0) $);
+
+  \draw [bigbrace]
+        ($ (floc.north east) + (3, 0) $)
+     -- node [auto,midway,xshift=3mm] {Cadre de f}
+        ($ (fpar.south east) + (3, 0) $);
+
 \end{tikzpicture}
