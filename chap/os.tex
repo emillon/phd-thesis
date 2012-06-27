@@ -93,6 +93,8 @@ exemple.
 Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
 une architecture Intel 32 bits.
 
+\subsection{Processeur}
+
 Au coeur du processeur, se trouve une ALU (\emph{Arithmetical \& Logical Unit},
 unité arithmétique et logique) qui peut réaliser des opérations comme
 l'addition, la soustraction ou le "ET" logique.
@@ -115,6 +117,77 @@ dans les instructions \asminstr{push} et \asminstr{pop} décrites ci-dessous.
 dans les appels de fonction. Ceci sera aussi expliqué.
 
 \eip est l'adresse de l'instruction courante.
+
+\eflags est un registre de "fanions" (\emph{flags}), qui sont des indicateurs
+positionnés selon le résultat d'un calcul précédent.
+
+\subsection{Assembleur}
+
+Le processeur exécute une suite d'instructions. En voici quelques exemples.
+Syntaxe AT\&T (Linux).
+
+\begin{itemize}
+
+\item \texttt{mov src, dest} copie le contenu de \texttt{src} dans \texttt{dst}.
+
+\item \texttt{add src, dest} calcule la somme des contenus de \texttt{src} et
+  \texttt{dst} et place ce résultat dans \texttt{dst}. Il met à jour \eflags:
+  par exemple
+
+\item \texttt{push src} place \texttt{src} sur la pile, c'est à dire que cette
+  instruction décrémente le pointeur de pile \esp de la taille de \texttt{src},
+  puis place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp.
+
+\item \texttt{pop src} réalise l'opération inverse : elle charge le contenu de
+  la mémoire à l'adresse \esp dans \texttt{src} puis incrémente \esp de la
+  taille correspondante.
+
+\item \texttt{jmp addr} saute à l'adresse \texttt{addr} : c'est l'équivalent de
+  \texttt{mov addr, \%eip}.
+
+\item \texttt{call addr} sert aux appels de fonction : cela revient à
+  \texttt{push \%eip} puis \texttt{jmp addr}.
+
+\item \texttt{call addr} sert à revenir d'une fonction : c'est l'équivalent de
+  \texttt{pop \%eip}.
+
+\end{itemize}
+
+\todo{parler de modes d'adressage}
+
+\subsection{Appel de fonction et conventions d'appel}
+
+Au niveau de l'assembleur, il n'y a pas directement de notion de fonction ; mais
+\asminstr{call} et \asminstr{ret} permettent de sauvegarder et de restaurer une
+adresse de retour, ce qui permet de faire un saut et revenir à l'adresse initiale.
+Ce système permet déjà de créer des procédures, c'est-à-dire des fonctions sans
+arguments ni valeur de retour.
+
+Pour gérer ceux-ci, il faut que les deux morceaux (appelant et appelé) se
+mettent d'accord sur une convention d'appel commune. La convention utilisée sous
+GNU/Linux est appelée \emph{cdecl} et possède les caractéristiques suivantes :
+
+\begin{itemize}
+\item la valeur de retour d'une fonction est stockée dans \eax
+\item \eax, \ecx et \edx peuvent être écrasés sans avoir à les sauvegarder
+\item les arguments sont placés sur la pile (et enlevés) par l'appelant. Les
+  paramètres sont empilés de droite à gauche.
+\end{itemize}
+
+Pour accéder à ses paramètres, une fonction peut donc utiliser un adressage
+relatif à \esp. Cela peut fonctionner, mais cela complique les choses si elle
+contient aussi des variables locales. En effet, les variables locales sont
+placées sur la pile, au dessus des (c'est à dire, empliées après) paramètres,
+augmentant le décalage.
+
+La solution est d'utiliser un pointeur de trame toujours égal à une position
+fixe dans la pile (comme l'adresse de retour).
+
+\begin{figure}
+\input{fig/stackframe.tex}
+\caption{Enregistrement d'activation}
+\label{fig:stackframe}
+\end{figure}
 
 \section{Cas de Linux}
 

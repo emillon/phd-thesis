@@ -1,0 +1,26 @@
+\begin{tikzpicture}
+[stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=5cm}]
+  \path (0,0) node [stack] (gloc) {Locales de g}
+  -- ++(0,-1) node [stack] (gebp) {ebp}
+  -- ++(0,-1) node [stack] (gret) {@ret}
+  -- ++(0,-1) node [stack] (gpar) {Params de g}
+  -- ++(0,-1) node [stack] (floc) {Locales de f}
+  -- ++(0,-1) node [stack] (febp) {ebp}
+  -- ++(0,-1) node [stack] (fret) {@ret}
+  -- ++(0,-1) node [stack] (fpar) {Params de f};
+
+  \draw [dashed] (fpar.south west) -- ++ (0,-2);
+  \draw [dashed] (fpar.south east) -- ++ (0,-2);
+  \draw [dashed] (gloc.north east) -- ++ (0,2);
+  \draw [dashed] (gloc.north west) -- ++ (0,2);
+
+  \node at (5, -3) (ox) {};
+
+  \draw [-open triangle 60] (ox.center) -- ++ (0,2)  node [xshift=5mm] {Push};
+  \draw [-open triangle 60] (ox.center) -- ++ (0,-2) node [xshift=5mm] {Pop};
+
+  \node at (8, -3) (oy) {};
+
+  \draw [-open triangle 60] (oy.center) -- ++ (0,2)  node [xshift=15mm] {Adresses basses};
+  \draw [-open triangle 60] (oy.center) -- ++ (0,-2) node [xshift=15mm] {Adresses hautes};
+\end{tikzpicture}
