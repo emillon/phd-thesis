@@ -30,15 +30,18 @@
 \newcommand{\chapterstar}[1]{\chapter*{#1} \addcontentsline{toc}{chapter}{#1}}
 
 % Register names
-\newcommand{\eax}[0]{\textsc{eax}\xspace}
-\newcommand{\ebx}[0]{\textsc{ebx}\xspace}
-\newcommand{\ecx}[0]{\textsc{ecx}\xspace}
-\newcommand{\edx}[0]{\textsc{edx}\xspace}
-\newcommand{\esi}[0]{\textsc{esi}\xspace}
-\newcommand{\edi}[0]{\textsc{edi}\xspace}
-\newcommand{\ebp}[0]{\textsc{ebp}\xspace}
-\newcommand{\esp}[0]{\textsc{esp}\xspace}
-\newcommand{\eip}[0]{\textsc{eip}\xspace}
+\def\defreg#1{\expandafter\def\csname#1\endcsname{\textsc{#1}\xspace}}
+
+\defreg{eax}
+\defreg{ebx}
+\defreg{ecx}
+\defreg{edx}
+\defreg{esi}
+\defreg{edi}
+\defreg{ebp}
+\defreg{esp}
+\defreg{eip}
+\defreg{eflags}
 
 \newcommand{\ring}[1]{\emph{ring}~#1}
 
