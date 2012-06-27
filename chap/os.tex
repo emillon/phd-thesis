@@ -185,7 +185,18 @@ fixe dans la pile (comme l'adresse de retour).
 
 \begin{figure}
 \input{fig/stackframe.tex}
-\caption{Cadres de pile. La fonction f appelle la fonction g.}
+\caption[Cadres de pile]{
+  Cadres de pile.
+
+  Pour appeler \texttt{g(4,2)}, \texttt{f} empile les arguments de droite à
+  gauche. L'instruction \asminstr{call g} empile l'adresse suivante sur la pile
+  puis saute au début de \texttt{g}.
+
+  Au début de la fonction, les instructions \texttt{push \%ebp} et \texttt{mov
+  \%esp, \%ebp} sauvegardent l'ancienne valeur de \ebp et pointer \ebp à une
+  endroit fixe dans le cadre de pile.
+
+}
 \label{fig:stackframe}
 \end{figure}
 
