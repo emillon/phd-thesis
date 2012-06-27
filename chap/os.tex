@@ -214,9 +214,10 @@ mécanismes similaires existent, et ces travaux peuvent sans doute s'y appliquer
 
 \begin{figure}
 \input{fig/rings.tex}
-\caption{Les différents \emph{rings}. Seul le \ring{0} a accès au hardware
-via des instructions privilégiées. Pour accéder aux fonctionnalités du noyau,
-les programmes utilisateur doivent passer par des appels système.}
+\caption[Les différents \emph{rings}]{
+  Les différents \emph{rings}. Seul le \ring{0} a accès au hardware
+  via des instructions privilégiées. Pour accéder aux fonctionnalités du noyau,
+  les programmes utilisateur doivent passer par des appels système.}
 \label{fig:rings}
 \end{figure}
 
@@ -260,9 +261,10 @@ peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
   \input{fig/memmap.tex}
 }
 
-\caption{L'espace d'adressage d'un processus. En gris clair, les zones
-accessibles à tous les niveaux de privilèges : code du programme, bibliothèques,
-tas, pile. En gris foncé, la mémoire du noyau, réservée au mode privilégié.}
+\caption[Espace d'adressage d'un processus]{L'espace d'adressage d'un processus.
+En gris clair, les zones accessibles à tous les niveaux de privilèges : code du
+programme, bibliothèques, tas, pile. En gris foncé, la mémoire du noyau,
+réservée au mode privilégié.}
 
 \label{fig:memmap}
 \end{figure}
