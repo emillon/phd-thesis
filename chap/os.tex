@@ -192,9 +192,9 @@ Pour appeler \texttt{g(4,2)}, \texttt{f} empile les arguments de droite à
 gauche. L'instruction \asminstr{call g} empile l'adresse suivante sur la pile
 puis saute au début de \texttt{g}.
 
-Au début de la fonction, les instructions \texttt{push \%ebp} et \texttt{mov
-  \%esp, \%ebp} sauvegardent l'ancienne valeur de \ebp et pointer \ebp à une
-endroit fixe dans le cadre de pile.
+Au début de la fonction, les trois instructions permettent de sauvegarder l'ancienne valeur
+de \ebp, faire pointer \ebp à une endroit fixe dans le cadre de pile, puis
+allouer 8 octets de mémoire pour les variables locales.
 
 Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
 locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
