@@ -4,14 +4,14 @@
 , >=latex
 ]
 
-  \path (0,0) node [stack] (gloc) {Locales de g}
-  -- ++(0,-1) node [stack] (gebp) {}
-  -- ++(0,-1) node [stack] (gret) {Retour de g}
-  -- ++(0,-1) node [stack] (gpar) {Arguments de g}
-  -- ++(0,-1) node [stack] (floc) {Locales de f}
-  -- ++(0,-1) node [stack] (febp) {}
-  -- ++(0,-1) node [stack] (fret) {Retour de f}
-  -- ++(0,-1) node [stack] (fpar) {Arguments de f};
+  \path (0,0)   node [stack, minimum height=2cm] (gloc) {Locales de g}
+  -- ++(0,-1.5) node [stack] (gebp) {Cadre précédent}
+  -- ++(0,-1)   node [stack] (gret) {Retour de g}
+  -- ++(0,-1.5) node [stack, minimum height=2cm] (gpar) {Arguments de g}
+  -- ++(0,-1.5) node [stack] (floc) {Locales de f}
+  -- ++(0,-1)   node [stack] (febp) {Cadre précédent}
+  -- ++(0,-1)   node [stack] (fret) {Retour de f}
+  -- ++(0,-1)   node [stack] (fpar) {Arguments de f};
 
   \draw [->] (gebp) -- ++(4, 0) |- (febp.5);
   \draw [->] (febp.355) -- ++(1.5, 0) -- ++(0,-4);
@@ -23,8 +23,8 @@
 
   \node at (5, 1) (ox) {};
 
-  \node [text width=3cm] at (-0.8, 2)    {Adresses basses (sens de \asminstr{push})};
-  \node [text width=3cm] at (-0.8, -8.5) {Adresses hautes (sens de \asminstr{pop})};
+  \node [text width=3cm] at (-0.8, 2)   {Adresses basses (sens de \asminstr{push})};
+  \node [text width=3cm] at (-0.8, -10) {Adresses hautes (sens de \asminstr{pop})};
 
   \node [text width=3cm] at (-6, -3) (asmtext) {\tt
     g: push \%ebp \\
