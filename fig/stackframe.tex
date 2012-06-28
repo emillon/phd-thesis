@@ -1,19 +1,20 @@
 \begin{tikzpicture}
 [ stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=5cm}
 , bigbrace/.style={decorate,decoration={brace,amplitude=3mm}}
+, >=latex
 ]
 
   \path (0,0) node [stack] (gloc) {Locales de g}
-  -- ++(0,-1) node [stack] (gebp) {ebp}
-  -- ++(0,-1) node [stack] (gret) {@ret}
-  -- ++(0,-1) node [stack] (gpar) {Params de g}
+  -- ++(0,-1) node [stack] (gebp) {}
+  -- ++(0,-1) node [stack] (gret) {}
+  -- ++(0,-1) node [stack] (gpar) {Arguments de g}
   -- ++(0,-1) node [stack] (floc) {Locales de f}
-  -- ++(0,-1) node [stack] (febp) {ebp}
-  -- ++(0,-1) node [stack] (fret) {@ret}
-  -- ++(0,-1) node [stack] (fpar) {Params de f};
+  -- ++(0,-1) node [stack] (febp) {}
+  -- ++(0,-1) node [stack] (fret) {}
+  -- ++(0,-1) node [stack] (fpar) {Arguments de f};
 
-  \draw [-latex] (gebp) -- ++(4, 0) |- (febp.5);
-  \draw [-latex] (febp.355) -- ++(1.5, 0) -- ++(0,-4);
+  \draw [->] (gebp) -- ++(4, 0) |- (febp.5);
+  \draw [->] (febp.355) -- ++(1.5, 0) -- ++(0,-4);
 
   \draw [dashed] (fpar.south west) -- ++ (0,-2);
   \draw [dashed] (fpar.south east) -- ++ (0,-2);
@@ -52,10 +53,10 @@
   \draw [bigbrace]
         ($ (gloc.north east) + (3, 0) $)
      -- node [auto,midway,xshift=3mm] {Cadre de g}
-        ($ (gpar.south east) + (3, 0) $);
+        ($ (gpar.south east) + (3, 0.1) $);
 
   \draw [bigbrace]
-        ($ (floc.north east) + (3, 0) $)
+        ($ (floc.north east) + (3, -0.1) $)
      -- node [auto,midway,xshift=3mm] {Cadre de f}
         ($ (fpar.south east) + (3, 0) $);
 

@@ -186,15 +186,24 @@ fixe dans la pile (comme l'adresse de retour).
 \begin{figure}
 \input{fig/stackframe.tex}
 \caption[Cadres de pile]{
-  Cadres de pile.
+Cadres de pile.
 
-  Pour appeler \texttt{g(4,2)}, \texttt{f} empile les arguments de droite à
-  gauche. L'instruction \asminstr{call g} empile l'adresse suivante sur la pile
-  puis saute au début de \texttt{g}.
+Pour appeler \texttt{g(4,2)}, \texttt{f} empile les arguments de droite à
+gauche. L'instruction \asminstr{call g} empile l'adresse suivante sur la pile
+puis saute au début de \texttt{g}.
 
-  Au début de la fonction, les instructions \texttt{push \%ebp} et \texttt{mov
+Au début de la fonction, les instructions \texttt{push \%ebp} et \texttt{mov
   \%esp, \%ebp} sauvegardent l'ancienne valeur de \ebp et pointer \ebp à une
-  endroit fixe dans le cadre de pile.
+endroit fixe dans le cadre de pile.
+
+Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
+locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
+  \texttt{8(\%ebp)}, \texttt{12(\%ebp)}, etc.
+
+À la fin de la fonction, l'instruction \asminstr{leave} est équivalente à
+\texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
+de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
+la dépile et y saute.
 
 }
 \label{fig:stackframe}
