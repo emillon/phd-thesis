@@ -1,3 +1,35 @@
+On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
+au services du noyau. Ils forment donc une interface particulièrement sensible aux
+problèmes de sécurité.
+
+Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un
+côté, une interface pas assez fine serait trop restrictive et ne permettrait pas
+d'implémenter tout type de logiciel. De l'autre, une interface trop laxiste
+("écrire dans tel registre matériel") empêche toute isolation. Il faut donc
+trouver la bonne granularité.
+
+Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
+sein de certains types d'appels système.
+
+Il y a deux grands types d'appels systèmes : d'une part, ceux qui renvoient un
+simple nombre, comme \texttt{getpid} qui renvoie le numéro du processus
+appelant.
+
+\begin{Verbatim}
+int main(void)
+{
+    pid_t pid = getpid();
+    printf("%d\n", pid);
+}
+\end{Verbatim}
+
+Ici, pas de difficulté particulière : la communication entre le \ring{0} et le
+\ring{3} est faite uniquement à travers les registres, comme décrit dans le
+chapitre précédent.
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+
 
 
 
@@ -26,7 +58,7 @@ if (z == 0) {
 \end{Verbatim}
 
 Notons que dans ce cas, c'est le noyau qui remplit la structure : le
-déréférencement se fait en \emph{ring} 0.
+déréférencement se fait en \ring{0}.
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
@@ -64,10 +96,10 @@ figure~\ref{fig:radeon-bug}.
 \begin{figure}
   \insertcode{radeon-buggy.c}
 
-  \caption{Bug freedesktop.org \#29340. Le paramètre \texttt{data} provient de
-    l'espace utilisateur via un appel système. Un appelant malveillant peut se
-    servir de cette fonction pour lire la mémoire du noyau à travers le message
-    d'erreur.}
+  \caption[Bug freedesktop.org \#29340]{Bug freedesktop.org \#29340. Le
+  paramètre \texttt{data} provient de l'espace utilisateur via un appel système.
+  Un appelant malveillant peut se servir de cette fonction pour lire la mémoire
+  du noyau à travers le message d'erreur.}
 
   \label{fig:radeon-bug}
 \end{figure}
