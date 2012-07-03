@@ -20,7 +20,7 @@ height=1cm, shade, top color=white,
 
 \node [below of=cc3, minimum height=3cm, node distance=2.2cm](cc4){};
 
-\draw[->] (c1) -- node[above] {{\tiny \tt gcc -E}} (cc1);
+\draw[->] (c1) -- node[above] {{\tiny \ttfamily gcc -E}} (cc1);
 \draw[->] (c2) -- (cc2);
 
 \node [file, right of=cc1] (no1) {\textcolor{black}{.no}};
@@ -29,10 +29,10 @@ height=1cm, shade, top color=white,
 
 \node [below of=no3, minimum height=3cm, node distance=2.2cm](no4){};
 
-\draw[->] (cc1) -- node[above] {{\tiny \tt c2newspeak -c}} (no1);
+\draw[->] (cc1) -- node[above] {{\tiny \ttfamily c2newspeak -c}} (no1);
 \draw[->] (cc2) --  (no2);
 
-\draw[->] ($ (c3b.north east)!0.5!(c3s.south east) + (3mm,0) $) -- node[above] {\tiny \tt ada2newspeak -c} (no3);
+\draw[->] ($ (c3b.north east)!0.5!(c3s.south east) + (3mm,0) $) -- node[above] {\tiny \ttfamily ada2newspeak -c} (no3);
 
 
 \node [file, right of=no2] (npk) {\textcolor{black}{.npk}};
@@ -43,7 +43,7 @@ height=1cm, shade, top color=white,
 \node[draw, ellipse, right of=no2, minimum height=3cm]{};
 
 \draw[->] (no1) -- node {} (npk);
-\draw[->] (no2) -- node[above] {{\tiny \tt c2newspeak}} (npk);
+\draw[->] (no2) -- node[above] {{\tiny \ttfamily c2newspeak}} (npk);
 \draw[->] (no3) -- node {} (npk);
 
 
@@ -51,7 +51,7 @@ height=1cm, shade, top color=white,
 
 \node [right of=npk3, node distance=3cm](analyser2){};
 
-\draw[->] (npk) -- node[above] {{\tiny \tt penjili}} (warn);
+\draw[->] (npk) -- node[above] {{\tiny \ttfamily penjili}} (warn);
 
 \draw[->] (c4)   -- node[above, text depth=3pt] {\footnotesize Pr\'etraitement} (cc4);
 \draw[->] (cc4)  -- node[above, text depth=3pt] {\footnotesize Compilation} (no4);
