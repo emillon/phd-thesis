@@ -1,6 +1,6 @@
 \section{But}
 
-$⊢ \text{memcpy} : ∀ a . (a^*, a^*, \text{size\_t}) → ()$
+$⊢ \text{memcpy} : ∀ a . (a^*, a^*, \text{size\_t}) \rightarrow ()$
 
 \section{Chaîne de compilation}
 
@@ -64,7 +64,7 @@ bord.
 \section{Sémantique (opérationnelle, à petits pas)}
 
 On définit une sémantique opérationnelle à petits pas, sous forme d'une relation
-de transition (notée $→$) entre états de l'interpréteur.
+de transition (notée $\rightarrow$) entre états de l'interpréteur.
 
 Ces états sont constitués des composantes suivantes :
 
@@ -145,7 +145,7 @@ Les jugements ont les formes suivantes :
 \item $σ ⊢ e ⇒ v$ :
   l'expression e s'évalue en v.
 
-\item $(l, σ) → (l', σ')$ :
+\item $(l, σ) \rightarrow (l', σ')$ :
   permet de définir la fonction de transition principale
 
 \end{itemize}
@@ -226,28 +226,28 @@ expressions à une left value si elles ont le même type.
 
 \[
 \irule{Instr-Assign}{
-  \langle l, lv ← e, l' \rangle \\
+  \langle l, lv \leftarrow e, l' \rangle \\
   σ ⊢ lv ⇒ a \\
   σ ⊢ e ⇒ v
 }{
-  (l, σ) → (l', σ [ a ↦ v ])
+  (l, σ) \rightarrow (l', σ [ a ↦ v ])
 }
 \]
 
 Déclarer une variable, c'est rendre accessible dans un bloc une variable non
 initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
 traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
-on peut donc traverser l'instruction $↑x\{b\}$.
+on peut donc traverser l'instruction $\uparrow x\{b\}$.
 
 \begin{minipage}{0.6\textwidth}
 \[
 \irule{Instr-Decl}{
-  \langle l, ↑x \{ b \}, l' \rangle \\
+  \langle l, \uparrow x \{ b \}, l' \rangle \\
   \langle l_b, b, l_b' \rangle \\
-  σ' = σ ⊕ \{ x → \top \} \\
-  (l_b, σ', s) → (l_b', σ'')
+  σ' = σ ⊕ \{ x \rightarrow \top \} \\
+  (l_b, σ', s) \rightarrow (l_b', σ'')
 }{
-  (l, σ) → (l', σ'' \backslash x)
+  (l, σ) \rightarrow (l', σ'' \backslash x)
 }
 \]
 \end{minipage}
@@ -261,15 +261,15 @@ on peut donc traverser l'instruction $↑x\{b\}$.
 %
 %\[
 %\irule{Instr-Fcall}{
-%  \langle l, lv ← fe(\vec{e}), l' \rangle \\
+%  \langle l, lv \leftarrow fe(\vec{e}), l' \rangle \\
 %  σ ⊢ fe ⇒ f \\
 %  σ ⊢ \vec{e} ⇒ \vec{v} \\
-%  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret → \top \} \\
-%  (Entry(f), σ') → (Exit(f), σ'') \\
+%  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret \rightarrow \top \} \\
+%  (Entry(f), σ') \rightarrow (Exit(f), σ'') \\
 %  σ'' ⊢ !ret ⇒ v_{ret} \\
 %  σ'' ⊢ lv ⇒ a
 %}{
-%  (l, σ) → (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a → v_{ret}\}, ?)
+%  (l, σ) \rightarrow (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a \rightarrow v_{ret}\}, ?)
 %}
 %\]
 
@@ -292,9 +292,9 @@ travers le "if".
   σ ⊢ e ⇒ n \\
   n ≠ 0 \\
   \langle l_i, i_t, l_i' \rangle \\
-  (l_i, σ) → (l_i', σ')
+  (l_i, σ) \rightarrow (l_i', σ')
 }{
-  (l, σ) → (l', σ')
+  (l, σ) \rightarrow (l', σ')
 }
 \]
 
@@ -303,9 +303,9 @@ travers le "if".
   \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ 0 \\
   \langle l_i, i_f, l_i' \rangle \\
-  (l_i, σ) → (l_i', σ')
+  (l_i, σ) \rightarrow (l_i', σ')
 }{
-  (l, σ) → (l', σ')
+  (l, σ) \rightarrow (l', σ')
 }
 \]
 \end{minipage}
@@ -323,20 +323,20 @@ typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessai
 Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
 "sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
 typables et que les types sont en accord avec le flot de données (par exemple,
-pour que l'instruction $lv ← e$ soit bien typée sous $Γ$, il faut que les types
+pour que l'instruction $lv \leftarrow e$ soit bien typée sous $Γ$, il faut que les types
 de $lv$ et de $e$ puissent avoir le même type sous $Γ$).
 
 Les types des valeurs sont :
 
 \begin{align*}
-τ   ::=~ & \tInt, \tFloat, \tVoid & \text{constantes}\\
-    |~   &  a                     & \text{variable}\\
-    |~   & (τ_1, …, τ_n) → τ_r    & \text{fonction}\\
-    |~   & [τ]                    & \text{tableau}\\
-    |~   & τ*                     & \text{pointeur}\\
+τ   ::=~ & \tInt, \tFloat, \tVoid        & \text{constantes}\\
+    |~   &  a                            & \text{variable}\\
+    |~   & (τ_1, …, τ_n) \rightarrow τ_r & \text{fonction}\\
+    |~   & [τ]                           & \text{tableau}\\
+    |~   & τ*                            & \text{pointeur}\\
     |~   & \{ f_1:τ_1
             ,    …
-            , f_n:τ_n \}          & \text{structure}
+            , f_n:τ_n \}                 & \text{structure}
 \end{align*}
 
 \subsection{Schémas de type}
@@ -534,7 +534,7 @@ résultant est généralisé.
   Γ' ⊢ body(f) \\
   Γ' ⊢ !ret : τ_r
 }{
-  Γ ⊢ f : Gen(\vec{τ} → τ_r, Γ)
+  Γ ⊢ f : Gen(\vec{τ} \rightarrow τ_r, Γ)
 }
 \]
 
@@ -544,23 +544,23 @@ résultant est généralisé.
 \irule{Decl}{
   Γ ⊕ \{x : τ\} ⊢ b
 }{
-  Γ ⊢ ↑x \{b\}
+  Γ ⊢ \uparrow x \{b\}
 }
 \\
 \irule{Assign}{
   Γ ⊢ lv : τ \\
   Γ ⊢ e  : τ
 }{
-  Γ ⊢ lv ← e
+  Γ ⊢ lv \leftarrow e
 }
 \\
 \irule{Fcall}{
   Γ ⊢ lv : τ_{ret} \\
   Γ ⊢ fe : σ \\
   Γ ⊢ \vec{e} : \vec{τ} \\
-  (\vec{τ} → τ_r) ≤ σ
+  (\vec{τ} \rightarrow τ_r) ≤ σ
 }{
-  Γ ⊢ lv ← fe(\vec{e})
+  Γ ⊢ lv \leftarrow fe(\vec{e})
 }
 \end{eqnarray*}
 

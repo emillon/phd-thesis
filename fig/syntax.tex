@@ -21,10 +21,10 @@
      <bloc> ::= <instr> ; <bloc>
            \alt $ε$
 
-    <instr> ::= <lval> $←$ <expr>
-           \alt <lval> $←$ funexp (args)
+    <instr> ::= <lval> $\leftarrow$ <expr>
+           \alt <lval> $\leftarrow$ funexp (args)
            \alt funexp (args)
-           \alt $↑$ nom \{ <bloc> \}
+           \alt $\uparrow$ nom \{ <bloc> \}
            \alt if (<expr>) \{ <bloc> \} else \{ <bloc> \}
            \alt \{ <bloc> \} label:
            \alt goto label
