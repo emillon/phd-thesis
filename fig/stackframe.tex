@@ -1,19 +1,19 @@
 \begin{tikzpicture}
-[ stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=5cm}
+[ stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=3cm}
 , bigbrace/.style={decorate,decoration={brace,amplitude=3mm}}
 , >=latex
 ]
 
   \path (0,-8.5)   node [stack, minimum height=2cm] (gloc) {Locales de g}
-  -- ++(0,1.5) node [stack] (gebp) {Cadre précédent}
+  -- ++(0,1.5) node [stack] (gebp) {Ancien \ebp}
   -- ++(0,1)   node [stack] (gret) {Retour de g}
   -- ++(0,1.5) node [stack, minimum height=2cm] (gpar) {Arguments de g}
   -- ++(0,1.5) node [stack] (floc) {Locales de f}
-  -- ++(0,1)   node [stack] (febp) {Cadre précédent}
+  -- ++(0,1)   node [stack] (febp) {Ancien \ebp}
   -- ++(0,1)   node [stack] (fret) {Retour de f}
   -- ++(0,1)   node [stack] (fpar) {Arguments de f};
 
-  \draw [->] (gebp) -- ++(4, 0) |- (febp.355);
+  \draw [->] (gebp) -- ++(3, 0) |- (febp.355);
   \draw [->] (febp.5) -- ++(1.5, 0) -- ++(0,4);
 
   \draw [dashed] (fpar.north west) -- ++ (0,2);
@@ -23,8 +23,8 @@
 
   \node at (5, 1) (ox) {};
 
-  \node [text width=3cm] at (-0.8, 2)     {Adresses hautes (sens de \asminstr{pop})};
-  \node [text width=3cm] at (-0.8, -10.5) {Adresses basses (sens de \asminstr{push})};
+  \node [text width=3cm] at (-3, 2)     {Adresses hautes (sens de \asminstr{pop})};
+  \node [text width=3cm] at (-3, -10.5) {Adresses basses (sens de \asminstr{push})};
 
   \node [text width=3cm] at (-6, -3) (asmtext) {\ttfamily
     call f\\
@@ -54,13 +54,15 @@
   \draw [<-] ($ (asmtext.north west) + (2.5, -6.7) $) -- ++ (0.5,0) node [xshift=3mm] {\eip};
 
   \draw [bigbrace]
-        ($ (gpar.north east) + (3, -0.1) $)
+        ($ (gpar.north east) + (2, -0.1) $)
      -- node [auto,midway,xshift=3mm] {Cadre de g}
-        ($ (gloc.south east) + (3, 0) $);
+        ($ (gloc.south east) + (2, 0) $);
 
   \draw [bigbrace]
-        ($ (fpar.north east) + (3, 0) $)
+        ($ (fpar.north east) + (2, 0) $)
      -- node [auto,midway,xshift=3mm] {Cadre de f}
-        ($ (floc.south east) + (3, 0.1) $);
+        ($ (floc.south east) + (2, 0.1) $);
+
+  %\path  ($ (asmtext.north west) + (-0.5,2) $) rectangle (7,-12);
 
 \end{tikzpicture}

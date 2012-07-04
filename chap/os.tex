@@ -169,27 +169,7 @@ exemples suivants :
 
 \begin{figure} % {{{ fig:stackframe
 \input{fig/stackframe.tex}
-\caption[Cadres de pile]{
-Cadres de pile.
-
-Pour appeler \texttt{g(4,2)}, \texttt{f} empile les arguments de droite à
-gauche. L'instruction \asminstr{call g} empile l'adresse suivante sur la pile
-puis saute au début de \texttt{g}.
-
-Au début de la fonction, les trois instructions permettent de sauvegarder
-l'ancienne valeur de \ebp, faire pointer \ebp à une endroit fixe dans le cadre
-de pile, puis allouer 8 octets de mémoire pour les variables locales.
-
-Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
-locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
-  \texttt{8(\%ebp)}, \texttt{12(\%ebp)}, etc.
-
-À la fin de la fonction, l'instruction \asminstr{leave} est équivalente à
-\texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
-de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
-la dépile et y saute.
-
-}
+\caption[Cadres de pile]{ Cadres de pile. }
 \label{fig:stackframe}
 \end{figure} % }}}
 
@@ -216,9 +196,31 @@ contient aussi des variables locales. En effet, les variables locales sont
 placées sur la pile, au dessus des (c'est à dire, empliées après) paramètres,
 augmentant le décalage.
 
-La solution est d'utiliser un pointeur de trame toujours égal à une position
-fixe dans la pile (comme l'adresse de retour). Ce mécanisme est décrit dans la
-figure~\ref{fig:stackframe}.
+Pour simplifier, la pile est organisée en cadres logiques : chaque cadre
+correspond à un niveau dans la pile d'appels de fonctions. Si f appelle g, qui
+appelle h, il y aura dans l'ordre sur la pile le cadre de f, celui de g puis
+celui de h.
+
+Ces cadres sont chainés à l'aide du registre \ebp : à tout moment, \ebp contient
+l'adresse du cadre de l'appelant.
+
+Prenons exemple sur la figure~\ref{fig:stackframe} : pour appeler
+\texttt{g(4,2)}, \texttt{f} empile les arguments de droite à gauche.
+L'instruction \asminstr{call g} empile l'adresse suivante sur la pile puis saute
+au début de \texttt{g}.
+
+Au début de la fonction, les trois instructions permettent de sauvegarder
+l'ancienne valeur de \ebp, faire pointer \ebp à une endroit fixe dans le cadre
+de pile, puis allouer 8 octets de mémoire pour les variables locales.
+
+Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
+locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
+  \texttt{8(\%ebp)}, \texttt{12(\%ebp)}, etc.
+
+À la fin de la fonction, l'instruction \asminstr{leave} est équivalente à
+\texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
+de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
+la dépile et y saute.
 
 \subsection{Tâches, niveaux de privilèges}
 
