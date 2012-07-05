@@ -246,14 +246,6 @@ d'affecter des niveaux de privilège à ces tâches, en restreignant le type
 d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
 tâches de niveaux moins elevés.
 
-Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}) : le \ring{0} est le
-plus privilégié, le \ring{3} le moins privilégié. Dans l'exemple précédent, on
-pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
-alors que les autres tâches seraient en \ring{3}.
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-
 \begin{figure}
 \input{fig/rings.tex}
 \caption[Les différents \emph{rings}]{
@@ -263,21 +255,17 @@ alors que les autres tâches seraient en \ring{3}.
 \label{fig:rings}
 \end{figure}
 
-La première protection nécessaire est d'isoler le système d'exploitation
-lui-même des programmes qu'il va permettre d'exécuter. Pour ce faire, Le
-processeur permet d'exécuter des tâches selon plusieurs niveaux de privilège,
-aussi appelés \emph{rings} (figure~\ref{fig:rings}) : du \ring{3}, le
-moins privilégié, jusqu'au \ring{0}, le plus privilégié. On peut configurer
-le processeur de manière à ce que les instructions privilégiées (accès aux ports
-d'entrée/sortie...) ne soient possibles qu'en \ring{0}. Bien que 4 niveaux
-soient disponibles, Linux n'utilise que les \emph{rings} 0 et 3 : le noyau
-lui-même en \ring{0} et les processus utilisateur en \ring{3}.
+Il y a 4 niveaux de privilèges (nommés aussi \emph{rings} -
+figure~\ref{fig:rings}) : le \ring{0} est le plus privilégié, le \ring{3} le
+moins privilégié. Dans l'exemple précédent, on pourrait isoler l'ordonnanceur de
+processus en le faisant s'exécuter en \ring{0} alors que les autres tâches
+seraient en \ring{3}.
 
 \subsection{Mémoire virtuelle}
 
 À partir du moment où plusieurs processus s'exécutent de manière concurrente, un
 problème d'isolation se pose : si un processus peut lire dans la mémoire d'un
-autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut
+autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut en
 détourner l'exécution.
 
 \todo{defs : intégrité, confidentialité}
