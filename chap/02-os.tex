@@ -66,27 +66,30 @@ haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
 fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
 actions appropriées.
 
-En résumé, un système d'exploitation est l''intermédiaire entre le logiciel et
+En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
 le matériel, et en particulier assure les rôles suivants :
 
-\paragraph{Gestion des processus} : un système d'exploitation peut permettre
-d'exécuter plusieurs programme à la fois. Il faut alors orchestrer ces
-différents processus et les séparer en terme de temps et de ressources
-partagées.
-
-\paragraph{Gestion de la mémoire} : chaque processus, en plus du noyau, doit
-disposer d'un espace mémoire différent. C'est-à-dire qu'un processus ne doit pas
-pouvoir interférer avec un autre.
-
-\paragraph{Gestion des périphériques} : le noyau étant le seul code à s'exécuter
-en mode privilégié, c'est lui qui doit communiquer avec les périphériques
-matériels.
-
-\paragraph{Abstractions} : le noyau fournit au programmes une interface unifiée,
-permettant de stocker des informations de la même manière sur un disque dur ou
-une clef USB (alors que l'accès se déroulera de manière très différente en
-pratique). C'est ici que la notion arbitraire de fichier sera définie, par
-exemple.
+\begin{itemize}
+\item
+  Gestion des processus : un système d'exploitation peut permettre
+  d'exécuter plusieurs programmes à la fois. Il faut alors orchestrer
+  ces différents processus et les séparer en terme de temps et de
+  ressources partagées.
+\item
+  Gestion de la mémoire : chaque processus, en plus du noyau, doit
+  disposer d'un espace mémoire différent. C'est-à-dire qu'un processus
+  ne doit pas pouvoir interférer avec un autre.
+\item
+  Gestion des périphériques : le noyau étant le seul code à s'exécuter
+  en mode privilégié, c'est lui qui doit communiquer avec les
+  périphériques matériels.
+\item
+  Abstractions : le noyau fournit aux programmes une interface unifiée,
+  permettant de stocker des informations de la même manière sur un
+  disque dur ou une clef USB (alors que l'accès se déroulera de manière
+  très différente en pratique). C'est ici que la notion arbitraire de
+  fichier sera définie, par exemple.
+\end{itemize}
 
 \section{Architecture Intel}
 
@@ -141,9 +144,9 @@ exemples suivants :
 
 \begin{itemize}
 
-\item \texttt{mov src, dest} copie le contenu de \texttt{src} dans \texttt{dst}.
+\item \texttt{mov src, dst} copie le contenu de \texttt{src} dans \texttt{dst}.
 
-\item \texttt{add src, dest} calcule la somme des contenus de \texttt{src} et
+\item \texttt{add src, dst} calcule la somme des contenus de \texttt{src} et
   \texttt{dst} et place ce résultat dans \texttt{dst}.
 
 \item \texttt{push src} place \texttt{src} sur la pile, c'est à dire que cette
@@ -160,7 +163,7 @@ exemples suivants :
 \item \texttt{call addr} sert aux appels de fonction : cela revient à
   \texttt{push \%eip} puis \texttt{jmp addr}.
 
-\item \texttt{call addr} sert à revenir d'une fonction : c'est l'équivalent de
+\item \texttt{rest} sert à revenir d'une fonction : c'est l'équivalent de
   \texttt{pop \%eip}.
 
 \end{itemize}
@@ -169,27 +172,7 @@ exemples suivants :
 
 \begin{figure} % {{{ fig:stackframe
 \input{fig/stackframe.tex}
-\caption[Cadres de pile]{
-Cadres de pile.
-
-Pour appeler \texttt{g(4,2)}, \texttt{f} empile les arguments de droite à
-gauche. L'instruction \asminstr{call g} empile l'adresse suivante sur la pile
-puis saute au début de \texttt{g}.
-
-Au début de la fonction, les trois instructions permettent de sauvegarder
-l'ancienne valeur de \ebp, faire pointer \ebp à une endroit fixe dans le cadre
-de pile, puis allouer 8 octets de mémoire pour les variables locales.
-
-Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
-locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
-  \texttt{8(\%ebp)}, \texttt{12(\%ebp)}, etc.
-
-À la fin de la fonction, l'instruction \asminstr{leave} est équivalente à
-\texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
-de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
-la dépile et y saute.
-
-}
+\caption[Cadres de pile]{ Cadres de pile. }
 \label{fig:stackframe}
 \end{figure} % }}}
 
@@ -213,14 +196,37 @@ GNU/Linux est appelée \emph{cdecl} et possède les caractéristiques suivantes 
 Pour accéder à ses paramètres, une fonction peut donc utiliser un adressage
 relatif à \esp. Cela peut fonctionner, mais cela complique les choses si elle
 contient aussi des variables locales. En effet, les variables locales sont
-placées sur la pile, au dessus des (c'est à dire, empliées après) paramètres,
+placées sur la pile, au dessus des (c'est à dire, empilées après) paramètres,
 augmentant le décalage.
 
-La solution est d'utiliser un pointeur de trame toujours égal à une position
-fixe dans la pile (comme l'adresse de retour). Ce mécanisme est décrit dans la
-figure~\ref{fig:stackframe}.
+Pour simplifier, la pile est organisée en cadres logiques : chaque cadre
+correspond à un niveau dans la pile d'appels de fonctions. Si f appelle g, qui
+appelle h, il y aura dans l'ordre sur la pile le cadre de f, celui de g puis
+celui de h.
+
+Ces cadres sont chainés à l'aide du registre \ebp : à tout moment, \ebp contient
+l'adresse du cadre de l'appelant.
+
+Prenons exemple sur la figure~\ref{fig:stackframe} : pour appeler
+\texttt{g(4,2)}, \texttt{f} empile les arguments de droite à gauche.
+L'instruction \asminstr{call g} empile l'adresse de l'instruction suivante sur
+la pile puis saute au début de \texttt{g}.
+
+Au début de la fonction, les trois instructions permettent de sauvegarder
+l'ancienne valeur de \ebp, faire pointer \ebp à une endroit fixe dans le cadre
+de pile, puis allouer 8 octets de mémoire pour les variables locales.
+
+Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
+locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
+  \texttt{8(\%ebp)}, \texttt{12(\%ebp)}, etc.
+
+À la fin de la fonction, l'instruction \asminstr{leave} est équivalente à
+\texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
+de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
+la dépile et y saute.
 
 \subsection{Tâches, niveaux de privilèges}
+\label{sec:taches}
 
 Sans mécanisme particulier, le processeur exécuterait uniquement une suite
 d'instruction à la fois. Pour lui permettre d'exécuter plusieurs tâches, un
@@ -240,13 +246,6 @@ d'affecter des niveaux de privilège à ces tâches, en restreignant le type
 d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
 tâches de niveaux moins elevés.
 
-Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}) : le \ring{0} est le
-plus privilégié, le \ring{3} le moins privilégié. Dans l'exemple précédent, on
-pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
-alors que les autres tâches seraient en \ring{3}.
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
 \begin{figure}
 \input{fig/rings.tex}
 \caption[Les différents \emph{rings}]{
@@ -256,15 +255,36 @@ alors que les autres tâches seraient en \ring{3}.
 \label{fig:rings}
 \end{figure}
 
-La première protection nécessaire est d'isoler le système d'exploitation
-lui-même des programmes qu'il va permettre d'exécuter. Pour ce faire, Le
-processeur permet d'exécuter des tâches selon plusieurs niveaux de privilège,
-aussi appelés \emph{rings} (figure~\ref{fig:rings}) : du \ring{3}, le
-moins privilégié, jusqu'au \ring{0}, le plus privilégié. On peut configurer
-le processeur de manière à ce que les instructions privilégiées (accès aux ports
-d'entrée/sortie...) ne soient possibles qu'en \ring{0}. Bien que 4 niveaux
-soient disponibles, Linux n'utilise que les \emph{rings} 0 et 3 : le noyau
-lui-même en \ring{0} et les processus utilisateur en \ring{3}.
+Il y a 4 niveaux de privilèges (nommés aussi \emph{rings} -
+figure~\ref{fig:rings}) : le \ring{0} est le plus privilégié, le \ring{3} le
+moins privilégié. Dans l'exemple précédent, on pourrait isoler l'ordonnanceur de
+processus en le faisant s'exécuter en \ring{0} alors que les autres tâches
+seraient en \ring{3}.
+
+\subsection{Mémoire virtuelle}
+
+À partir du moment où plusieurs processus s'exécutent de manière concurrente, un
+problème d'isolation se pose : si un processus peut lire dans la mémoire d'un
+autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut en
+détourner l'exécution.
+
+\todo{defs : intégrité, confidentialité}
+
+Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
+différente de la mémoire : c'est à dire que vue de tâches différentes, une
+adresse contiendra une valeur différente.
+
+\begin{figure}
+\input{fig/pagetables.tex}
+\caption{Implémentation de la mémoire virtuelle}
+\label{fig:pagetables}
+\end{figure}
+
+Ce mécanisme est contrôlé par valeur du registre \crtrois : les 10 premiers bits
+d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse contenue dans
+\crtrois. À cet index, se trouve l'adresse d'une table de pages. Les 10 bits
+suivants de l'adresse sont un index dans cette page, donnant l'adresse d'une
+page de 4 kibi-octets (figure~\ref{fig:pagetables}).
 
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
@@ -311,6 +331,17 @@ Dans cette section, nous allons voir comment ses mécanismes sont implantés dan
 le noyau Linux. Une description plus détaillée pourra être trouvée dans
 \cite{UnderstandingTheLinuxKernel} par exemple.
 
+Deux rings sont utilisés : en \ring{0}, le code noyau et en \ring{3}, le code
+utilisateur.
+
+Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
+existe : elles s'exécutent l'une après l'autre, le changement s'effectuant sur
+interruptions.
+
+Pour faire appel aux services du noyau, le code utilisateur peut faire appel à
+des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
+doit donc avoir deux piles : une pile "unitisateur" qui sert pour l'application
+elle-même, et une pile "noyau" qui sert aux appels système.
 
 \subsection{Appels système}
 
@@ -344,7 +375,7 @@ SYSCALL_DEFINE0(getpid)
 
 
 Le mécanisme de couplage entre ces deux fonctions est le suivant. Une
-explication plus détaillé est disponible dans la documentation d'Intel
+explication plus détaillée est disponible dans la documentation d'Intel
 \cite{intelsys}.
 
 Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du

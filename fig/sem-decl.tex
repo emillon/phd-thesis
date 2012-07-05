@@ -4,8 +4,8 @@
   \node[cfgnode,right of=l, node distance=4cm] (lp) {$l'$};
   \node[cfgnode,below of=l, xshift=1cm] (lb) {$l_b$};
   \node[cfgnode,below of=lp, xshift=-1cm] (lbp) {$l_b'$};
-  \draw[->] (l)  to node[auto] {$↑x\{b\}$} (lp);
+  \draw[->] (l)  to node[auto] {$\uparrow x\{b\}$} (lp);
   \draw[->] (lb) to node[auto] {$b$} (lbp);
-  \draw[->,dashed] (l) to node[auto] {$⊕ \{ x → \top \}$}(lb);
+  \draw[->,dashed] (l) to node[auto] {$⊕ \{ x \rightarrow \top \}$}(lb);
   \draw[->,dashed,swap] (lbp) to node[auto] {$\backslash x$} (lp);
 \end{tikzpicture}

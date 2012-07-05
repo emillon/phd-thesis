@@ -1,13 +1,17 @@
-\documentclass[12pt]{phdthesis}
+\documentclass[a4paper,11pt,draft]{memoir}
 
 \input{pkg.tex}
 \input{defs.tex}
 \input{unicode.tex}
 
+\input{chapstyle.tex}
+
 \usetikzlibrary{calc}
 \usetikzlibrary{shapes}
 \usetikzlibrary{arrows}
 \usetikzlibrary{decorations.pathreplacing}
+
+\input{tikzdefs.tex}
 
 \usepackage{fancyvrb}
 \input{gen/pygments-style.tex}
@@ -15,7 +19,8 @@
 \floatstyle{boxed}
 \restylefloat{figure}
 
-\addtolength{\parskip}{\baselineskip}
+\isopage[12]
+\checkandfixthelayout
 
 \title{Titre}
 \author{Étienne Millon}
@@ -32,33 +37,35 @@
 
 \chapter{Introduction}
 
-\chapter{Rôle d'un système d'exploitation}
+\chapter{Systèmes d'exploitation}
 
-\input{chap/os.tex}
+\input{chap/02-os.tex}
 
 \chapter{Cas d'étude}
 
-\input{chap/casdetude.tex}
+\input{chap/03-casdetude.tex}
 
 \chapter{État de l'art}
 
-\input{chap/etatdelart.tex}
+\input{chap/04-etatdelart.tex}
 
 \part{Analyse statique par typage}
 
 \chapter{Typage}
 
-\input{chap/typage.tex}
+\input{chap/05-typage.tex}
 
 \chapter{Un premier système de types}
 
-\input{chap/typbase.tex}
+\input{chap/06-typbase.tex}
 
 \chapter{Système avec le qualificateur "user"}
 
-\input{chap/qualuser.tex}
+\input{chap/07-qualuser.tex}
 
 \chapter{Système avec le qualificateur "sz"}
+
+\input{chap/08-qualsz.tex}
 
 \chapter{Implantation}
 
