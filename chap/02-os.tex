@@ -226,6 +226,7 @@ de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
 la dépile et y saute.
 
 \subsection{Tâches, niveaux de privilèges}
+\label{sec:taches}
 
 Sans mécanisme particulier, le processeur exécuterait uniquement une suite
 d'instruction à la fois. Pour lui permettre d'exécuter plusieurs tâches, un
@@ -252,6 +253,7 @@ alors que les autres tâches seraient en \ring{3}.
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
+
 \begin{figure}
 \input{fig/rings.tex}
 \caption[Les différents \emph{rings}]{
@@ -270,6 +272,31 @@ le processeur de manière à ce que les instructions privilégiées (accès aux 
 d'entrée/sortie...) ne soient possibles qu'en \ring{0}. Bien que 4 niveaux
 soient disponibles, Linux n'utilise que les \emph{rings} 0 et 3 : le noyau
 lui-même en \ring{0} et les processus utilisateur en \ring{3}.
+
+\subsection{Mémoire virtuelle}
+
+À partir du moment où plusieurs processus s'exécutent de manière concurrente, un
+problème d'isolation se pose : si un processus peut lire dans la mémoire d'un
+autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut
+détourner l'exécution.
+
+\todo{defs : intégrité, confidentialité}
+
+Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
+différente de la mémoire : c'est à dire que vue de tâches différentes, une
+adresse contiendra une valeur différente.
+
+Ce mécanisme est contrôlé par valeur du registre \crtrois : les 10 premiers bits
+d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse contenue dans
+\crtrois. À cet index, se trouve l'adresse d'une table de pages. Les 10 bits
+suivants de l'adresse sont un index dans cette page, donnant l'adresse d'une
+page de 4 kibi-octets.
+
+\begin{figure}
+\input{fig/pagetables.tex}
+\caption{Implémentation de la mémoire virtuelle}
+\label{fig:pagetables}
+\end{figure}
 
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
@@ -316,6 +343,17 @@ Dans cette section, nous allons voir comment ses mécanismes sont implantés dan
 le noyau Linux. Une description plus détaillée pourra être trouvée dans
 \cite{UnderstandingTheLinuxKernel} par exemple.
 
+Deux rings sont utilisés : en \ring{0}, le code noyau et en \ring{3}, le code
+utilisateur.
+
+Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
+existe : elles s'exécutent l'une après l'autre, le changement s'effectuant sur
+interruptions.
+
+Pour faire appel aux services du noyau, le code utilisateur peut faire appel à
+des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
+doit donc avoir deux piles : une pile "unitisateur" qui sert pour l'application
+elle-même, et une pile "noyau" qui sert aux appels système.
 
 \subsection{Appels système}
 

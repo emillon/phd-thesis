@@ -1,0 +1,59 @@
+\begin{tikzpicture}
+[ bit/.style={ draw
+             , shape=rectangle
+             , minimum width=4mm
+             , minimum height=4mm
+             , node distance=4mm
+             }
+, pstuff/.style={ draw
+                , shape=rectangle
+                , node distance=1cm
+                , text width=2cm
+                , text centered
+                }
+, >=latex
+]
+
+\node [bit] (b31) {};
+
+% generate this ?
+\node [bit, right of=b31] (b30) {}; \node [bit, right of=b30] (b29) {}; \node [bit, right of=b29] (b28) {};
+\node [bit, right of=b28] (b27) {}; \node [bit, right of=b27] (b26) {}; \node [bit, right of=b26] (b25) {};
+\node [bit, right of=b25] (b24) {}; \node [bit, right of=b24] (b23) {}; \node [bit, right of=b23] (b22) {};
+\node [bit, right of=b22] (b21) {}; \node [bit, right of=b21] (b20) {}; \node [bit, right of=b20] (b19) {};
+\node [bit, right of=b19] (b18) {}; \node [bit, right of=b18] (b17) {}; \node [bit, right of=b17] (b16) {};
+\node [bit, right of=b16] (b15) {}; \node [bit, right of=b15] (b14) {}; \node [bit, right of=b14] (b13) {};
+\node [bit, right of=b13] (b12) {}; \node [bit, right of=b12] (b11) {}; \node [bit, right of=b11] (b10) {};
+\node [bit, right of=b10] (b9) {}; \node [bit, right of=b9] (b8) {}; \node [bit, right of=b8] (b7) {};
+\node [bit, right of=b7] (b6) {}; \node [bit, right of=b6] (b5) {}; \node [bit, right of=b5] (b4) {};
+\node [bit, right of=b4] (b3) {}; \node [bit, right of=b3] (b2) {}; \node [bit, right of=b2] (b1) {};
+\node [bit, right of=b1] (b0) {};
+
+\foreach \b in {0,11,12,21,22,31}
+    \node [above of=b\b, node distance=5mm] {\small \b};
+
+\newcommand{\mbrace}[3]{
+    \draw [bigbrace]                      ($ (b#1.south east) + (-0.1,-0.3) $)
+    -- node [midway, yshift=-2mm] (#3) {} ($ (b#2.south west) +  (0.1,-0.3) $);
+} % mbrace
+
+\mbrace{0}{11}{bpp};
+\mbrace{12}{21}{bpt};
+\mbrace{22}{31}{bpd};
+
+\node[pstuff, below of=bpd] (pd) {Répertoire de pages};
+\node[pstuff, below of=bpt] (pt) {Table de pages};
+\node[pstuff, below of=bpp] (pp) {Page de 4 Kio};
+
+\node[left of=pd, node distance=2cm] (cr) {\crtrois};
+
+\draw [->] (bpp) -- (pp);
+\draw [->] (bpt) -- (pt);
+\draw [->] (bpd) -- (pd);
+
+\draw [->] (cr) -- (pd);
+\draw [->] (pd) -- (pt);
+\draw [->] (pt) -- (pp);
+\draw [->] (pp) -- ++ (3,0);
+
+\end{tikzpicture}
