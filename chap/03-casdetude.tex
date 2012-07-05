@@ -37,12 +37,100 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 
 Dans le cas d'un appel système qui ne fait que renvoyer un nombre, il n'y a pas
 de difficulté. En revanche, certains appels système. remplissent une structure
-avec leurs résultats (figure~\ref{fig:appel-gettimeofday}).
+avec leurs résultats. C'est alors la responsabilité de l'appelant (le
+programmeur utilisateur) d'allouer une zone mémoire correcte pour contenir le
+résultat (figure~\ref{fig:appel-gettimeofday}).
+
+Puisque c'est le noyau qui implémente l'appel système, le déréférencement se
+déroule en \ring{0}. Il se pose alors le problème suivant : le noyau va pouvoir
+écrire à toute adresse fournie par l'utilisateur.
+
+% Fig memory zones (needed ?) {{{
+% Memory zone
+%
+% #1 - start
+% #2 - end
+% #3 - color
+\newcommand{\mzone}[3]{
+  \path[#3] (#1,0) rectangle (#2,1);
+}
+
+% Address label
+%
+% #1 - x position
+% #2 - text
+\newcommand{\alabel}[2]{
+  \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \ttfamily #2};
+
+}
+
+% Pointer
+%
+% #1 - start address
+% #2 - label
+\newcommand{\ptr}[2]{
+  \path [draw,open triangle 60-] (#1, -0.2) -- ++ (0,-0.5) node [below] {#2};
+}
+
+\newcommand{\memoryframe}[1]{%
+\begin{tikzpicture}
+  [user/.style={fill=green!40}
+  ,kernel/.style={fill=red!40}
+  ]
+
+  % exec
+  \mzone{0.5}{1}{user}
+
+  % lib
+  \mzone{2.5}{3.2}{user}
+
+  % stack
+  \mzone{3.7}{4}{user}
+
+  % stack
+  \mzone{5}{5.5}{user}
+
+  % kernel
+  \mzone{6}{8}{kernel}
+
+  % contour
+  \draw (0,0) rectangle (8,1);
+
+  \alabel{0}{0}
+  \alabel{6}{3 Go}
+  \alabel{8}{4 Go}
+
+  % User struct
+  \ifthenelse{#1=1}{\mzone{2.6}{3.1}{draw, fill=green}}{}
+  \ifthenelse{#1=1}{\ptr{2.6}{pu}}{}
+
+  \ifthenelse{#1=2}{\mzone{7}{7.5}{draw, fill=red}}{}
+  \ifthenelse{#1>1}{\ptr{7}{pk}}{}
+
+\end{tikzpicture}
+} % End of newcommand \memoryframe
+
+\begin{figure}
+    \subfloat[][]{
+        \memoryframe{1}
+    }
+
+    \subfloat[][]{
+        \memoryframe{2}
+    }
+
+    \subfloat[][]{
+        \memoryframe{3}
+    }
+\end{figure}
+
+% }}}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
 Notons que dans ce cas, c'est le noyau qui remplit la structure : le
 déréférencement se fait en \ring{0}.
+
 
 
 
