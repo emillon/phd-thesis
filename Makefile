@@ -39,6 +39,7 @@ snapshot:
 	make distclean
 	git checkout pdf
 	git merge master
+	make distclean
 	make
 	git commit -av -m snapshot
 	git checkout master
