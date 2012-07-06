@@ -35,5 +35,13 @@ CODESAMPLES=$(notdir $(wildcard code/*))
 
 gentex: $(addprefix gen/, $(addsuffix .pyg.tex, $(CODESAMPLES)))
 
+snapshot:
+	make distclean
+	git checkout pdf
+	git merge master
+	make
+	git commit -av -m snapshot
+	git checkout master
+
 # Debian package: latex-make
 include /usr/include/LaTeX.mk
