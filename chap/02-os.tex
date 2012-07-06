@@ -114,7 +114,36 @@ l'adresse de l'instruction courante.
 Les calculs sont décrits sous forme d'une suite d'instructions. Chaque
 instruction est composée d'une mnémonique et d'une liste d'opérandes. Les
 mnénoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
-un type d'opération à appliquer sur les opérandes.
+un type d'opération à appliquer sur les opérandes. Elle peut aussi être précédée
+d'une étiquette, qui correspondra à l'adresse de cette instruction.
+
+\shorthandoff{!}
+\begin{tikzpicture}
+  [bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
+  ,asmbox/.style={minimum height=1cm}
+  ]
+
+  \node[asmbox]              (lbl) {\asminstr{lbl:}};
+  \node[asmbox,right of=lbl] (mov) {\asminstr{mov}};
+  \node[asmbox,right of=mov] (op1) {\asminstr{\$4,}};
+  \node[asmbox,right of=op1] (op2) {\asminstr{\%ebx}};
+
+  \draw[bbr] (lbl.south west) -- (lbl.south east);
+  \draw[bbr] (mov.south west) -- (mov.south east);
+  \draw[bbr] (op1.south west) -- (op2.south east);
+
+  \coordinate (ops) at ($ (op1)!.5!(op2) $);
+
+  \node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
+  \node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
+  \node[below of=tmov, node distance=7mm] (tops) {Opérandes};
+
+  \draw[dashed] (tlbl) -| (lbl.south);
+  \draw[dashed] (tmov) -| (mov.south);
+  \draw[dashed] (tops) -| (ops.south);
+
+\end{tikzpicture}
+\shorthandon{!}
 
 Ces opérandes peuvent être de plusieurs types :
 
