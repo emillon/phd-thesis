@@ -4,15 +4,16 @@ responsabilités multiples. Dans ce chapitre, nous allons voir quel est son rôl
 et comment il peut être implémenté. Pour ce faire, nous étudierons l'exemple
 d'une architecture Intel 32 bits, et d'un noyau Linux 2.6.
 
+Pour une description plus détaillée des rôles d'un système d'exploitation ainsi
+que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbaum}.
+
 \section{Rôle d'un système d'exploitation}
 
-Au plus bas, un ordinateur est constitué de nombreux composants matériels :
-micro-processeur, mémoire, et divers périphériques. Et au niveau de
-l'utilisateur, de dizaines de logiciels permettant d'effectuer toutes sortes de
-calculs et de communication. Le système d'exploitation permet de faire
-l'interface entre ces niveaux d'abstraction. Dans ce chapitre nous allons voir
-son rôle et une implantation possible. Pour une description plus détaillée, on
-pourra se référer à l'ouvrage \cite{tanenbaum}.
+Un ordinateur est constitué de nombreux composants matériels : micro-processeur,
+mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, de
+dizaines de logiciels permettant d'effectuer toutes sortes de calculs et de
+communication. Le système d'exploitation permet de faire l'interface entre ces
+niveaux d'abstraction.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
@@ -21,8 +22,8 @@ pouvaient être utilisées.
 
 Néanmoins c'est un peu restrictif : si on est seul à utiliser un système, on est
 par définition... seul à pouvoir l'utiliser. Dans la seconde moitié des années
-60, sont apparus les premiers systèmes "à temps partagé", permettant à plusieurs
-utilisateurs de travailler en même temps.
+60, sont apparus les premiers systèmes ``à temps partagé'', permettant à
+plusieurs utilisateurs de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
@@ -46,12 +47,12 @@ niveau du noyau.
 Par exemple, si un programmeur veut copier des données depuis un CD-ROM vers la
 mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
 la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
-de \emph{frame} des données sur le disque, demander la lecture, puis déclencher
-une copie de la mémoire.
+de trame des données sur le disque, demander la lecture, puis déclencher une
+copie de la mémoire.
 
 Si dans un autre cas il voulait récupérer des données depuis une mémorette USB,
 il devrait interroger le bus USB, rechercher le bon numéro de périphérique, le
-bon \emph{endpoint} dans celui-ci, lui appliquer une commande de lecture au bon
+bon numéro de canal dans celui-ci, lui appliquer une commande de lecture au bon
 numéro de bloc, puis copier la mémoire.
 
 Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
