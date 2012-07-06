@@ -1,22 +1,19 @@
+Le système d'exploitation est le programme qui permet à un système
+d'informatique d'exécuter d'autre programmes. Son rôle est donc capital et ses
+responsabilités multiples. Dans ce chapitre, nous allons voir quel est son rôle,
+et comment il peut être implémenté. Pour ce faire, nous étudierons l'exemple
+d'une architecture Intel 32 bits, et d'un noyau Linux 2.6.
+
+Pour une description plus détaillée des rôles d'un système d'exploitation ainsi
+que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbaum}.
+
 \section{Rôle d'un système d'exploitation}
 
-% Fig Archi {{{
-\begin{figure}
-\centering
-\input{fig/archi-simplifiee.tex}
-\caption{Architecture simplifiée d'un ordinateur}
-\label{fig:archi-simplifiee}
-\end{figure}
-% }}}
-
-Au plus bas, un ordinateur est constitué de nombreux composants matériels :
-micro-processeur, mémoire, et divers périphériques
-(figure~\ref{fig:archi-simplifiee}). Et au niveau de l'utilisateur, de dizaines
-de logiciels permettant d'effectuer toutes sortes de calculs et de
+Un ordinateur est constitué de nombreux composants matériels : micro-processeur,
+mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, de
+dizaines de logiciels permettant d'effectuer toutes sortes de calculs et de
 communication. Le système d'exploitation permet de faire l'interface entre ces
-niveaux d'abstraction. Dans ce chapitre nous allons voir son rôle et une
-implantation possible. Pour une description plus détaillée, on pourra se référer
-à l'ouvrage \cite{tanenbaum}.
+niveaux d'abstraction.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
@@ -25,8 +22,8 @@ pouvaient être utilisées.
 
 Néanmoins c'est un peu restrictif : si on est seul à utiliser un système, on est
 par définition... seul à pouvoir l'utiliser. Dans la seconde moitié des années
-60, sont apparus les premiers systèmes "à temps partagé", permettant à plusieurs
-utilisateurs de travailler en même temps.
+60, sont apparus les premiers systèmes ``à temps partagé'', permettant à
+plusieurs utilisateurs de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
@@ -50,12 +47,12 @@ niveau du noyau.
 Par exemple, si un programmeur veut copier des données depuis un CD-ROM vers la
 mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
 la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
-de \emph{frame} des données sur le disque, demander la lecture, puis déclencher
-une copie de la mémoire.
+de trame des données sur le disque, demander la lecture, puis déclencher une
+copie de la mémoire.
 
 Si dans un autre cas il voulait récupérer des données depuis une mémorette USB,
 il devrait interroger le bus USB, rechercher le bon numéro de périphérique, le
-bon \emph{endpoint} dans celui-ci, lui appliquer une commande de lecture au bon
+bon numéro de canal dans celui-ci, lui appliquer une commande de lecture au bon
 numéro de bloc, puis copier la mémoire.
 
 Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
@@ -93,8 +90,12 @@ le matériel, et en particulier assure les rôles suivants :
 
 \section{Architecture Intel}
 
+L'implatation d'un système d'exploitation est très proche du matériel sur
+lequelle elle va s'exécuter. Pour étudier une implantation en particulier,
+voyons ce que permet le matériel lui-même.
+
 Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
-une architecture Intel 32 bits. Les morceaux de code seront écrit en syntaxe
+une architecture Intel 32 bits. Les exemples de code seront écrit en syntaxe
 AT\&T, celle que comprend l'assembleur GNU.
 
 \subsection{Assembleur}
@@ -113,7 +114,36 @@ l'adresse de l'instruction courante.
 Les calculs sont décrits sous forme d'une suite d'instructions. Chaque
 instruction est composée d'une mnémonique et d'une liste d'opérandes. Les
 mnénoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
-un type d'opération à appliquer sur les opérandes.
+un type d'opération à appliquer sur les opérandes. Elle peut aussi être précédée
+d'une étiquette, qui correspondra à l'adresse de cette instruction.
+
+\shorthandoff{!}
+\begin{tikzpicture}
+  [bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
+  ,asmbox/.style={minimum height=1cm}
+  ]
+
+  \node[asmbox]              (lbl) {\asminstr{lbl:}};
+  \node[asmbox,right of=lbl] (mov) {\asminstr{mov}};
+  \node[asmbox,right of=mov] (op1) {\asminstr{\$4,}};
+  \node[asmbox,right of=op1] (op2) {\asminstr{\%ebx}};
+
+  \draw[bbr] (lbl.south west) -- (lbl.south east);
+  \draw[bbr] (mov.south west) -- (mov.south east);
+  \draw[bbr] (op1.south west) -- (op2.south east);
+
+  \coordinate (ops) at ($ (op1)!.5!(op2) $);
+
+  \node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
+  \node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
+  \node[below of=tmov, node distance=7mm] (tops) {Opérandes};
+
+  \draw[dashed] (tlbl) -| (lbl.south);
+  \draw[dashed] (tmov) -| (mov.south);
+  \draw[dashed] (tops) -| (ops.south);
+
+\end{tikzpicture}
+\shorthandon{!}
 
 Ces opérandes peuvent être de plusieurs types :
 
@@ -168,7 +198,7 @@ exemples suivants :
 
 \end{itemize}
 
-\subsection{Appel de fonction et conventions d'appel}
+\subsection{Fonctions et conventions d'appel}
 
 \begin{figure} % {{{ fig:stackframe
 \input{fig/stackframe.tex}
