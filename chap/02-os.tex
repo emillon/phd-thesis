@@ -408,15 +408,24 @@ Le mécanisme de couplage entre ces deux fonctions est le suivant. Une
 explication plus détaillée est disponible dans la documentation d'Intel
 \cite{intelsys}.
 
+\subsubsection{Dans la libc}
+
 Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
 système. C'est la fonction qui est directement appelée par le programme. Cette
 fonction commence par placer le numéro de l'appel système (noté
 \texttt{\_\_NR\_getpid}, valant 20 ici) dans \eax, puis les arguments éventuels
 dans les registres (\ebx, \ecx, \edx, \esi puis \edi). Une interruption
-logicielle est ensuite déclenchée (\texttt{int 0x80}) : étant donné la
-configuration du processeur, elle sera traitée en \ring{0}, à un point
-d'entrée prédéfini (\texttt{arch/x86/kernel/entry\_32.S},
-\texttt{ENTRY(system\_call)}).
+logicielle est ensuite déclenchée (\texttt{int 0x80}).
+
+\subsubsection{Dans le handler d'interruption}
+
+Étant donné la configuration du processeur\footnote{Il est impropre de dire que
+le processeur est configuré -- tout dépend uniquement de l'état de certains
+registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
+Descriptor Tables}}, elle sera traitée en \ring{0}, à un point d'entrée
+prédéfini (\texttt{arch/x86/kernel/entry\_32.S}, \texttt{ENTRY(system\_call)}) :
+
+\insertcode{entry-syscall.s}
 
 L'exécution reprend donc en \ring{0}, avec une pile propre au processus.
 Les valeurs des registres ont été préservées : elles sont mises sur la pile du
