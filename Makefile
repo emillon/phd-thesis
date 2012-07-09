@@ -11,7 +11,7 @@ showdvi: $(NAME).dvi
 	xdvi $<
 
 regen-bib:
-	cat $(NAME).tex chap/*.tex | ~/mkbib > $(NAME).bib
+	cat $(NAME).tex chap/*.tex | perl scripts/extractbib.pl | sort -u | xargs cat > $(NAME).bib
 
 gen/%.pyg.tex: code/% gen
 	pygmentize -f latex -o $@ $<
