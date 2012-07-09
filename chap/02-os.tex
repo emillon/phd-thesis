@@ -298,8 +298,6 @@ problème d'isolation se pose : si un processus peut lire dans la mémoire d'un
 autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut en
 détourner l'exécution.
 
-\todo{defs : intégrité, confidentialité}
-
 Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
 différente de la mémoire : c'est à dire que vue de tâches différentes, une
 adresse contiendra une valeur différente.
@@ -311,10 +309,10 @@ adresse contiendra une valeur différente.
 \end{figure}
 
 Ce mécanisme est contrôlé par valeur du registre \crtrois : les 10 premiers bits
-d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse contenue dans
-\crtrois. À cet index, se trouve l'adresse d'une table de pages. Les 10 bits
-suivants de l'adresse sont un index dans cette page, donnant l'adresse d'une
-page de 4 kibioctets (figure~\ref{fig:pagetables}).
+d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse
+contenue dans \crtrois. À cet index, se trouve l'adresse d'une table de pages.
+Les 10 bits suivants de l'adresse sont un index dans cette page, donnant
+l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
@@ -340,21 +338,6 @@ de la mémoire physique : c'est-à-dire que deux tâches lisant à une même adr
 peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
 (fig~\ref{fig:memoire-virtuelle}).
 
-\begin{figure} % fig:memmap {{{
-\centering
-\fbox{
-  \input{fig/memmap.tex}
-}
-
-\caption[Espace d'adressage d'un processus]{L'espace d'adressage d'un processus.
-En gris clair, les zones accessibles à tous les niveaux de privilèges : code du
-programme, bibliothèques, tas, pile. En gris foncé, la mémoire du noyau,
-réservée au mode privilégié.}
-
-\label{fig:memmap}
-\end{figure}
-% }}}
-
 \section{Cas de Linux}
 
 Dans cette section, nous allons voir comment ses mécanismes sont implantés dans
@@ -370,8 +353,41 @@ interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur peut faire appel à
 des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
-doit donc avoir deux piles : une pile "utilisateur" qui sert pour l'application
-elle-même, et une pile "noyau" qui sert aux appels système.
+doit donc avoir deux piles : une pile ``utilisateur'' qui sert pour
+l'application elle-même, et une pile ``noyau'' qui sert aux appels système.
+
+\begin{figure} % fig:memmap {{{
+\centering
+\fbox{
+  \input{fig/memmap.tex}
+}
+
+\caption[Espace d'adressage d'un processus]{L'espace d'adressage d'un processus.
+En gris clair, les zones accessibles à tous les niveaux de privilèges : code du
+programme, bibliothèques, tas, pile. En gris foncé, la mémoire du noyau,
+réservée au mode privilégié.}
+
+\label{fig:memmap}
+\end{figure}
+% }}}
+
+Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}). Au moment de
+changer le processus en cours, l'ordonnanceur charge une valeur propre au
+nouveau processus dans \crtrois. Les adresses basses (inférieures à
+\texttt{PAGE\_OFFSET} = 3 Gio = \texttt{0xc0000000}) sont réservées à
+l'utilisateur. On y trouvera par exemple :
+
+\begin{itemize}
+\item le code du programme
+\item les données du programmes (variables globales)
+\item la pile utilisateur
+\item le tas (mémoire allouée par \texttt{malloc} et fonctions similaires)
+\item les bibliothèques partagées
+\end{itemize}
+
+Au dessus de \texttt{PAGE\_OFFSET}, se trouve la mémoire réservée au noyau.
+Cette zone contient le code du noyau, les piles noyau des processus, etc.
 
 \subsection{Appels système}
 
