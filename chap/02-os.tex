@@ -9,7 +9,7 @@ que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbau
 
 \section{Rôle d'un système d'exploitation}
 
-Un ordinateur est constitué de nombreux composants matériels : micro-processeur,
+Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
 mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, de
 dizaines de logiciels permettant d'effectuer toutes sortes de calculs et de
 communication. Le système d'exploitation permet de faire l'interface entre ces
@@ -21,9 +21,9 @@ son intégralité : toute la mémoire pouvait être accédé, toutes les instruc
 pouvaient être utilisées.
 
 Néanmoins c'est un peu restrictif : si on est seul à utiliser un système, on est
-par définition... seul à pouvoir l'utiliser. Dans la seconde moitié des années
-60, sont apparus les premiers systèmes ``à temps partagé'', permettant à
-plusieurs utilisateurs de travailler en même temps.
+par définition… seul à pouvoir l'utiliser. Dans la seconde moitié des années 60,
+sont apparus les premiers systèmes ``à temps partagé'', permettant à plusieurs
+utilisateurs de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
@@ -38,13 +38,13 @@ matériel, il faut s'assurer par exemple que les deux s'exécutent à peu près
 aussi souvent, ou que l'un ne puisse pas écrire dans la mémoire de l'autre. Ce
 sont des rôles du système d'exploitation.
 
-Cela passe donc par un certain bridage des possibilités du programme : plutôt
-que de le faire exécuter n'importe quel type d'instruction, il communique avec
-le système d'exploitation. Bien que cela ait l'air d'une limitation, c'est aussi
+Cela passe donc par une limitation des possibilités du programme : plutôt que de
+le faire exécuter n'importe quel type d'instruction, il communique avec le
+système d'exploitation. Bien que cela ait l'air d'une limitation, c'est aussi
 bénéfique pour le programmeur puisque cela permet de définir des abstractions au
 niveau du noyau.
 
-Par exemple, si un programmeur veut copier des données depuis un CD-ROM vers la
+Par exemple, si un programmeur veut copier des données depuis un cédérom vers la
 mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
 la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
 de trame des données sur le disque, demander la lecture, puis déclencher une
@@ -90,9 +90,9 @@ le matériel, et en particulier assure les rôles suivants :
 
 \section{Architecture Intel}
 
-L'implatation d'un système d'exploitation est très proche du matériel sur
-lequelle elle va s'exécuter. Pour étudier une implantation en particulier,
-voyons ce que permet le matériel lui-même.
+L'implantation d'un système d'exploitation est très proche du matériel sur
+lequel elle va s'exécuter. Pour étudier une implantation en particulier, voyons
+ce que permet le matériel lui-même.
 
 Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
 une architecture Intel 32 bits. Les exemples de code seront écrit en syntaxe
@@ -112,8 +112,8 @@ un rôle particulier dans les instructions \asminstr{push} et \asminstr{pop}.
 l'adresse de l'instruction courante.
 
 Les calculs sont décrits sous forme d'une suite d'instructions. Chaque
-instruction est composée d'une mnémonique et d'une liste d'opérandes. Les
-mnénoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
+instruction est composée d'un mnémonique et d'une liste d'opérandes. Les
+mnémoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
 un type d'opération à appliquer sur les opérandes. Elle peut aussi être précédée
 d'une étiquette, qui correspondra à l'adresse de cette instruction.
 
@@ -274,7 +274,7 @@ peut survenir à tout moment, on parle de multitâche préemptif.
 En plus de cet ordonnancement de processus, l'architecture Intel permet
 d'affecter des niveaux de privilège à ces tâches, en restreignant le type
 d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
-tâches de niveaux moins elevés.
+tâches de niveaux moins élevés.
 
 \begin{figure}
 \input{fig/rings.tex}
@@ -314,7 +314,7 @@ Ce mécanisme est contrôlé par valeur du registre \crtrois : les 10 premiers b
 d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse contenue dans
 \crtrois. À cet index, se trouve l'adresse d'une table de pages. Les 10 bits
 suivants de l'adresse sont un index dans cette page, donnant l'adresse d'une
-page de 4 kibi-octets (figure~\ref{fig:pagetables}).
+page de 4 kibioctets (figure~\ref{fig:pagetables}).
 
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
@@ -370,7 +370,7 @@ interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur peut faire appel à
 des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
-doit donc avoir deux piles : une pile "unitisateur" qui sert pour l'application
+doit donc avoir deux piles : une pile "utilisateur" qui sert pour l'application
 elle-même, et une pile "noyau" qui sert aux appels système.
 
 \subsection{Appels système}
@@ -385,9 +385,10 @@ est nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings}
 opérations.
 
 Voyons ce qui se passe derrière la magie apparente. Une explication plus
-détaillée est disponible dans la documentation d'Intel \cite{intelsys}.
+détaillée est disponible dans la documentation fournie par Intel
+\cite{intelsys}.
 
-\subsubsection{Dans la libc}
+\subsubsection{Dans la bibliothèque C}
 
 Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
 système. C'est la fonction qui est directement appelée par le programme. Cette
@@ -396,7 +397,7 @@ fonction commence par placer le numéro de l'appel système (noté
 dans les registres (\ebx, \ecx, \edx, \esi puis \edi). Une interruption
 logicielle est ensuite déclenchée (\texttt{int 0x80}).
 
-\subsubsection{Dans le handler d'interruption}
+\subsubsection{Dans la routine de traitement d'interruption}
 
 Étant donné la configuration du processeur\footnote{Il est impropre de dire que
 le processeur est configuré --- tout dépend uniquement de l'état de certains
@@ -425,7 +426,7 @@ On trouve cette fonction dans \texttt{kernel/timer.c} :
 \insertcode{syscall-definition.c}
 
 La macro \texttt{SYSCALL_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
-définit entre autres des points d'entrée pour les fonctionalités de débogage du
+définit entre autres des points d'entrée pour les fonctionnalités de débogage du
 noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
 conformément à la convention \emph{cdecl}.
 
