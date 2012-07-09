@@ -121,6 +121,7 @@ d'une étiquette, qui correspondra à l'adresse de cette instruction.
 \begin{tikzpicture}
   [bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
   ,asmbox/.style={minimum height=1cm}
+  ,dway/.style={dashed}
   ]
 
   \node[asmbox]              (lbl) {\asminstr{lbl:}};
@@ -132,15 +133,15 @@ d'une étiquette, qui correspondra à l'adresse de cette instruction.
   \draw[bbr] (mov.south west) -- (mov.south east);
   \draw[bbr] (op1.south west) -- (op2.south east);
 
-  \coordinate (ops) at ($ (op1)!.5!(op2) $);
+  \coordinate (ops) at ($ (op1.south west)!.5!(op2.south east) $);
 
   \node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
   \node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
   \node[below of=tmov, node distance=7mm] (tops) {Opérandes};
 
-  \draw[dashed] (tlbl) -| (lbl.south);
-  \draw[dashed] (tmov) -| (mov.south);
-  \draw[dashed] (tops) -| (ops.south);
+  \draw[dway] (tlbl) -| ($ (lbl.south) + (0, -0.3) $);
+  \draw[dway] (tmov) -| ($ (mov.south) + (0, -0.3) $);
+  \draw[dway] (tops) -| ($ (ops.south) + (0, -0.3) $);
 
 \end{tikzpicture}
 \shorthandon{!}
