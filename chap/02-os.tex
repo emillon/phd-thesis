@@ -395,14 +395,7 @@ A priori, rien de différent d'une fonction implantée directement en C. Par un
 processus détaillé ci-après, cette fonction va invoquer la fonction, suivante,
 définie dans le noyau (\texttt{kernel/timer.c}) :
 
-\begin{Verbatim}
-SYSCALL_DEFINE0(getpid)
-{
-        return task_tgid_vnr(current);
-}
-\end{Verbatim}
-
-
+\todo{...}
 
 Le mécanisme de couplage entre ces deux fonctions est le suivant. Une
 explication plus détaillée est disponible dans la documentation d'Intel
@@ -420,25 +413,43 @@ logicielle est ensuite déclenchée (\texttt{int 0x80}).
 \subsubsection{Dans le handler d'interruption}
 
 Étant donné la configuration du processeur\footnote{Il est impropre de dire que
-le processeur est configuré -- tout dépend uniquement de l'état de certains
+le processeur est configuré --- tout dépend uniquement de l'état de certains
 registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
-Descriptor Tables}}, elle sera traitée en \ring{0}, à un point d'entrée
-prédéfini (\texttt{arch/x86/kernel/entry\_32.S}, \texttt{ENTRY(system\_call)}) :
+Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
+prédéfini (\texttt{arch/x86/kernel/entry\_32.S}, \texttt{ENTRY(system\_call)}).
 
 \insertcode{entry-syscall.s}
 
-L'exécution reprend donc en \ring{0}, avec une pile propre au processus.
-Les valeurs des registres ont été préservées : elles sont mises sur la pile du
-noyau. Le noyau examine le numéro d'appel système (toujours dans \eax) et
-appelle la fonction correspondante dans le tableau \texttt{sys\_call\_table} :
-les arguments sont en place sur la pile, comme dans le cas d'un appel de
-fonction ``classique''. La fonction, nommée \texttt{sys\_getpid}, peut donc être
-écrite en C.
+L'exécution reprend donc en \ring{0}, avec dans \esp le pointeur de pile noyau
+du processus. Les valeurs des registres ont été préservées, la macro
+\texttt{SAVE\_ALL} les place sur la pile. Ensuite, à l'étiquette
+\texttt{syscall\_call}, le numéro d'appel système (toujours dans \eax) sert
+d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
+
+
+\subsubsection{Dans l'implémentation de l'appel système}
+
+Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
+fonction ``classique'', la convention d'appel \emph{cdecl} est respectée. La
+fonction implémentant l'appel système, nommée \texttt{sys\_getpid}, peut donc
+être écrite en C.
+
+On trouve cette fonction dans \texttt{kernel/timer.c} :
+
+\insertcode{syscall-definition.c}
+
+La macro \texttt{SYSCALL_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
+définit entre autres des points d'entrée pour les fonctionalités de débogage du
+noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
+conformément à la convention \emph{cdecl}.
+
+\subsubsection{Retour vers le ring 3}
 
 Au retour de la fonction, la valeur de retour est placée à la place de \eax là
-où les registres ont été sauvegardés sur la pile noyau. L'instruction
-\texttt{iret} permet de restaurer les registres et de repasser en mode
-utilisateur, juste après l'interruption. La fonction de la bibliothèque C peut
-alors retourner au programme appelant.
+où les registres ont été sauvegardés sur la pile noyau
+(\texttt{PT\_EFLAGS(\%esp)}). L'instruction \texttt{iret} (derrière la macro
+\texttt{INTERRUPT\_RETURN}) permet de restaurer les registres et de repasser en
+mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
+peut alors retourner au programme appelant.
 
 % vim: spelllang=fr
