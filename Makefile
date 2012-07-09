@@ -16,6 +16,9 @@ regen-bib:
 gen/%.pyg.tex: code/% gen
 	pygmentize -f latex -o $@ $<
 
+gen/%.pdf: fig/%.svg
+	inkscape -A $@ $<
+
 gen/pygments-style.tex: gen
 	pygmentize -f latex -S autumn > $@
 
@@ -34,6 +37,8 @@ gentex: gen/pygments-style.tex
 CODESAMPLES=$(notdir $(wildcard code/*))
 
 gentex: $(addprefix gen/, $(addsuffix .pyg.tex, $(CODESAMPLES)))
+
+gentex: gen/travaux.pdf
 
 snapshot:
 	make distclean
