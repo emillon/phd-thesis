@@ -384,22 +384,8 @@ est nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings}
 ``magiques'' qui font appel au système d'exploitation pour effectuer des
 opérations.
 
-Prenons le cas de l'appel \texttt{getpid}, qui retourne le numéro de processus
-courant. La bibliothèque C fournit une fonction du même nom :
-
-\begin{Verbatim}
-pid_t getpid(void);
-\end{Verbatim}
-
-A priori, rien de différent d'une fonction implantée directement en C. Par un
-processus détaillé ci-après, cette fonction va invoquer la fonction, suivante,
-définie dans le noyau (\texttt{kernel/timer.c}) :
-
-\todo{...}
-
-Le mécanisme de couplage entre ces deux fonctions est le suivant. Une
-explication plus détaillée est disponible dans la documentation d'Intel
-\cite{intelsys}.
+Voyons ce qui se passe derrière la magie apparente. Une explication plus
+détaillée est disponible dans la documentation d'Intel \cite{intelsys}.
 
 \subsubsection{Dans la libc}
 
