@@ -1,4 +1,4 @@
-\documentclass[a4paper,11pt,draft]{memoir}
+\documentclass[a4paper,11pt]{memoir}
 
 \input{pkg.tex}
 \input{defs.tex}
@@ -21,6 +21,8 @@
 
 \isopage[12]
 \checkandfixthelayout
+
+\setcounter{tocdepth}{2}
 
 \title{Titre}
 \author{Étienne Millon}
@@ -76,11 +78,11 @@
   \item Perspectives
 \end{itemize}
 
-\chapterstar{Liste des figures}
+%\chapterstar{Liste des figures}
 
 \listoffigures
 
-\chapterstar{Bibliographie}
+%\chapterstar{Bibliographie}
 
 \bibliographystyle{alpha}
 \bibliography{typ}

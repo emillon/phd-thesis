@@ -11,10 +11,13 @@ showdvi: $(NAME).dvi
 	xdvi $<
 
 regen-bib:
-	cat $(NAME).tex chap/*.tex | ~/mkbib > $(NAME).bib
+	cat $(NAME).tex chap/*.tex | perl scripts/extractbib.pl | sort -u | xargs cat > $(NAME).bib
 
 gen/%.pyg.tex: code/% gen
 	pygmentize -f latex -o $@ $<
+
+gen/%.pdf: fig/%.svg
+	inkscape -A $@ $<
 
 gen/pygments-style.tex: gen
 	pygmentize -f latex -S autumn > $@
@@ -35,10 +38,13 @@ CODESAMPLES=$(notdir $(wildcard code/*))
 
 gentex: $(addprefix gen/, $(addsuffix .pyg.tex, $(CODESAMPLES)))
 
+gentex: gen/travaux.pdf
+
 snapshot:
 	make distclean
 	git checkout pdf
 	git merge master
+	make distclean
 	make
 	git commit -av -m snapshot
 	git checkout master

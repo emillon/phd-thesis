@@ -9,7 +9,7 @@ que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbau
 
 \section{Rôle d'un système d'exploitation}
 
-Un ordinateur est constitué de nombreux composants matériels : micro-processeur,
+Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
 mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, de
 dizaines de logiciels permettant d'effectuer toutes sortes de calculs et de
 communication. Le système d'exploitation permet de faire l'interface entre ces
@@ -17,34 +17,33 @@ niveaux d'abstraction.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
-son intégralité : toute la mémoire pouvait être accédé, toutes les instructions
+son intégralité : toute la mémoire pouvait être accédée, toutes les instructions
 pouvaient être utilisées.
 
-Néanmoins c'est un peu restrictif : si on est seul à utiliser un système, on est
-par définition... seul à pouvoir l'utiliser. Dans la seconde moitié des années
-60, sont apparus les premiers systèmes ``à temps partagé'', permettant à
-plusieurs utilisateurs de travailler en même temps.
+Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à un utilisateur
+d'utiliser le système. Dans la seconde moitié des années 60, sont apparus les
+premiers systèmes ``à temps partagé'', permettant à plusieurs utilisateurs de
+travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
 ressources de la machine doivent être aussi partagées entre les utilisateurs et
-les programmes. Par exemple, plusieurs programmes vont par exemple utiliser le
-CPU les uns à la suite des autres (partage \emph{temporel}) ; et chaque
-programme aura à sa disposition une partie de la mémoire principale, ou du
-disque dur (partage \emph{spatial}).
+les programmes. Par exemple, plusieurs programmes vont utiliser le CPU les uns à
+la suite des autres (partage \emph{temporel}) ; et chaque programme aura à sa
+disposition une partie de la mémoire principale, ou du disque dur (partage
+\emph{spatial}).
 
 Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
-matériel, il faut s'assurer par exemple que les deux s'exécutent à peu près
-aussi souvent, ou que l'un ne puisse pas écrire dans la mémoire de l'autre. Ce
-sont des rôles du système d'exploitation.
+matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
+l'autre, ou que les deux utilisent la carte réseau les uns à la suite des
+autres. Ce sont des rôles du système d'exploitation.
 
-Cela passe donc par un certain bridage des possibilités du programme : plutôt
-que de le faire exécuter n'importe quel type d'instruction, il communique avec
-le système d'exploitation. Bien que cela ait l'air d'une limitation, c'est aussi
-bénéfique pour le programmeur puisque cela permet de définir des abstractions au
-niveau du noyau.
+Cela passe donc par une limitation des possibilités du programme : plutôt que de
+permettre n'importe quel type d'instruction, il communique avec le système
+d'exploitation. Celui-ci centralise donc les appels au matériel, ce qui permet
+d'abstraire certaines opérations.
 
-Par exemple, si un programmeur veut copier des données depuis un CD-ROM vers la
+Par exemple, si un programmeur veut copier des données depuis un cédérom vers la
 mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
 la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
 de trame des données sur le disque, demander la lecture, puis déclencher une
@@ -77,6 +76,9 @@ le matériel, et en particulier assure les rôles suivants :
   disposer d'un espace mémoire différent. C'est-à-dire qu'un processus
   ne doit pas pouvoir interférer avec un autre.
 \item
+  Gestion des fichiers : les processus peuvent accéder à une hiérarchie de
+  fichiers, indépendamment de la manière d'y accéder.
+\item
   Gestion des périphériques : le noyau étant le seul code à s'exécuter
   en mode privilégié, c'est lui qui doit communiquer avec les
   périphériques matériels.
@@ -84,19 +86,22 @@ le matériel, et en particulier assure les rôles suivants :
   Abstractions : le noyau fournit aux programmes une interface unifiée,
   permettant de stocker des informations de la même manière sur un
   disque dur ou une clef USB (alors que l'accès se déroulera de manière
-  très différente en pratique). C'est ici que la notion arbitraire de
-  fichier sera définie, par exemple.
+  très différente en pratique).
 \end{itemize}
 
 \section{Architecture Intel}
 
-L'implatation d'un système d'exploitation est très proche du matériel sur
-lequelle elle va s'exécuter. Pour étudier une implantation en particulier,
-voyons ce que permet le matériel lui-même.
+L'implantation d'un système d'exploitation est très proche du matériel sur
+lequel elle va s'exécuter. Pour étudier une implantation en particulier, voyons
+ce que permet le matériel lui-même.
 
 Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
 une architecture Intel 32 bits. Les exemples de code seront écrit en syntaxe
 AT\&T, celle que comprend l'assembleur GNU.
+
+La référence pour la description de l'assembleur Intel est la documentation du
+constructeur \cite{intelsys} ; une bonne explication de l'agencement dans la
+pile peut aussi être trouvée dans \cite{SmashingTheStack}.
 
 \subsection{Assembleur}
 
@@ -112,8 +117,8 @@ un rôle particulier dans les instructions \asminstr{push} et \asminstr{pop}.
 l'adresse de l'instruction courante.
 
 Les calculs sont décrits sous forme d'une suite d'instructions. Chaque
-instruction est composée d'une mnémonique et d'une liste d'opérandes. Les
-mnénoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
+instruction est composée d'un mnémonique et d'une liste d'opérandes. Les
+mnémoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
 un type d'opération à appliquer sur les opérandes. Elle peut aussi être précédée
 d'une étiquette, qui correspondra à l'adresse de cette instruction.
 
@@ -121,6 +126,7 @@ d'une étiquette, qui correspondra à l'adresse de cette instruction.
 \begin{tikzpicture}
   [bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
   ,asmbox/.style={minimum height=1cm}
+  ,dway/.style={dashed}
   ]
 
   \node[asmbox]              (lbl) {\asminstr{lbl:}};
@@ -132,15 +138,15 @@ d'une étiquette, qui correspondra à l'adresse de cette instruction.
   \draw[bbr] (mov.south west) -- (mov.south east);
   \draw[bbr] (op1.south west) -- (op2.south east);
 
-  \coordinate (ops) at ($ (op1)!.5!(op2) $);
+  \coordinate (ops) at ($ (op1.south west)!.5!(op2.south east) $);
 
   \node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
   \node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
   \node[below of=tmov, node distance=7mm] (tops) {Opérandes};
 
-  \draw[dashed] (tlbl) -| (lbl.south);
-  \draw[dashed] (tmov) -| (mov.south);
-  \draw[dashed] (tops) -| (ops.south);
+  \draw[dway] (tlbl) -| ($ (lbl.south) + (0, -0.3) $);
+  \draw[dway] (tmov) -| ($ (mov.south) + (0, -0.3) $);
+  \draw[dway] (tops) -| ($ (ops.south) + (0, -0.3) $);
 
 \end{tikzpicture}
 \shorthandon{!}
@@ -274,7 +280,7 @@ peut survenir à tout moment, on parle de multitâche préemptif.
 En plus de cet ordonnancement de processus, l'architecture Intel permet
 d'affecter des niveaux de privilège à ces tâches, en restreignant le type
 d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
-tâches de niveaux moins elevés.
+tâches de niveaux moins élevés.
 
 \begin{figure}
 \input{fig/rings.tex}
@@ -298,8 +304,6 @@ problème d'isolation se pose : si un processus peut lire dans la mémoire d'un
 autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut en
 détourner l'exécution.
 
-\todo{defs : intégrité, confidentialité}
-
 Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
 différente de la mémoire : c'est à dire que vue de tâches différentes, une
 adresse contiendra une valeur différente.
@@ -311,10 +315,10 @@ adresse contiendra une valeur différente.
 \end{figure}
 
 Ce mécanisme est contrôlé par valeur du registre \crtrois : les 10 premiers bits
-d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse contenue dans
-\crtrois. À cet index, se trouve l'adresse d'une table de pages. Les 10 bits
-suivants de l'adresse sont un index dans cette page, donnant l'adresse d'une
-page de 4 kibi-octets (figure~\ref{fig:pagetables}).
+d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse
+contenue dans \crtrois. À cet index, se trouve l'adresse d'une table de pages.
+Les 10 bits suivants de l'adresse sont un index dans cette page, donnant
+l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
@@ -340,6 +344,25 @@ de la mémoire physique : c'est-à-dire que deux tâches lisant à une même adr
 peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
 (fig~\ref{fig:memoire-virtuelle}).
 
+\section{Cas de Linux}
+
+Dans cette section, nous allons voir comment ses mécanismes sont implantés dans
+le noyau Linux. Une description plus détaillée pourra être trouvée dans
+\cite{UnderstandingTheLinuxKernel}, ou pour le cas de la mémoire virtuelle,
+\cite{LinuxVMM}.
+
+Deux rings sont utilisés : en \ring{0}, le code noyau et en \ring{3}, le code
+utilisateur.
+
+Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
+existe : elles s'exécutent l'une après l'autre, le changement s'effectuant sur
+interruptions.
+
+Pour faire appel aux services du noyau, le code utilisateur peut faire appel à
+des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
+doit donc avoir deux piles : une pile ``utilisateur'' qui sert pour
+l'application elle-même, et une pile ``noyau'' qui sert aux appels système.
+
 \begin{figure} % fig:memmap {{{
 \centering
 \fbox{
@@ -355,23 +378,23 @@ réservée au mode privilégié.}
 \end{figure}
 % }}}
 
-\section{Cas de Linux}
+Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}). Au moment de
+changer le processus en cours, l'ordonnanceur charge une valeur propre au
+nouveau processus dans \crtrois. Les adresses basses (inférieures à
+\texttt{PAGE\_OFFSET} = 3 Gio = \texttt{0xc0000000}) sont réservées à
+l'utilisateur. On y trouvera par exemple :
 
-Dans cette section, nous allons voir comment ses mécanismes sont implantés dans
-le noyau Linux. Une description plus détaillée pourra être trouvée dans
-\cite{UnderstandingTheLinuxKernel} par exemple.
+\begin{itemize}
+\item le code du programme
+\item les données du programmes (variables globales)
+\item la pile utilisateur
+\item le tas (mémoire allouée par \texttt{malloc} et fonctions similaires)
+\item les bibliothèques partagées
+\end{itemize}
 
-Deux rings sont utilisés : en \ring{0}, le code noyau et en \ring{3}, le code
-utilisateur.
-
-Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
-existe : elles s'exécutent l'une après l'autre, le changement s'effectuant sur
-interruptions.
-
-Pour faire appel aux services du noyau, le code utilisateur peut faire appel à
-des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
-doit donc avoir deux piles : une pile "unitisateur" qui sert pour l'application
-elle-même, et une pile "noyau" qui sert aux appels système.
+Au dessus de \texttt{PAGE\_OFFSET}, se trouve la mémoire réservée au noyau.
+Cette zone contient le code du noyau, les piles noyau des processus, etc.
 
 \subsection{Appels système}
 
@@ -384,52 +407,59 @@ est nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings}
 ``magiques'' qui font appel au système d'exploitation pour effectuer des
 opérations.
 
-Prenons le cas de l'appel \texttt{getpid}, qui retourne le numéro de processus
-courant. La bibliothèque C fournit une fonction du même nom :
-
-\begin{Verbatim}
-pid_t getpid(void);
-\end{Verbatim}
-
-A priori, rien de différent d'une fonction implantée directement en C. Par un
-processus détaillé ci-après, cette fonction va invoquer la fonction, suivante,
-définie dans le noyau (\texttt{kernel/timer.c}) :
-
-\begin{Verbatim}
-SYSCALL_DEFINE0(getpid)
-{
-        return task_tgid_vnr(current);
-}
-\end{Verbatim}
-
-
-
-Le mécanisme de couplage entre ces deux fonctions est le suivant. Une
-explication plus détaillée est disponible dans la documentation d'Intel
+Voyons ce qui se passe derrière la magie apparente. Une explication plus
+détaillée est disponible dans la documentation fournie par Intel
 \cite{intelsys}.
+
+\subsubsection{Dans la bibliothèque C}
 
 Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
 système. C'est la fonction qui est directement appelée par le programme. Cette
 fonction commence par placer le numéro de l'appel système (noté
 \texttt{\_\_NR\_getpid}, valant 20 ici) dans \eax, puis les arguments éventuels
 dans les registres (\ebx, \ecx, \edx, \esi puis \edi). Une interruption
-logicielle est ensuite déclenchée (\texttt{int 0x80}) : étant donné la
-configuration du processeur, elle sera traitée en \ring{0}, à un point
-d'entrée prédéfini (\texttt{arch/x86/kernel/entry\_32.S},
-\texttt{ENTRY(system\_call)}).
+logicielle est ensuite déclenchée (\texttt{int 0x80}).
 
-L'exécution reprend donc en \ring{0}, avec une pile propre au processus.
-Les valeurs des registres ont été préservées : elles sont mises sur la pile du
-noyau. Le noyau examine le numéro d'appel système (toujours dans \eax) et
-appelle la fonction correspondante dans le tableau \texttt{sys\_call\_table} :
-les arguments sont en place sur la pile, comme dans le cas d'un appel de
-fonction ``classique''. La fonction, nommée \texttt{sys\_getpid}, peut donc être
-écrite en C.
+\subsubsection{Dans la routine de traitement d'interruption}
+
+Étant donné la configuration du processeur\footnote{Il est impropre de dire que
+le processeur est configuré --- tout dépend uniquement de l'état de certains
+registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
+Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
+prédéfini (\texttt{arch/x86/kernel/entry\_32.S}, \texttt{ENTRY(system\_call)}).
+
+\insertcode{entry-syscall.s}
+
+L'exécution reprend donc en \ring{0}, avec dans \esp le pointeur de pile noyau
+du processus. Les valeurs des registres ont été préservées, la macro
+\texttt{SAVE\_ALL} les place sur la pile. Ensuite, à l'étiquette
+\texttt{syscall\_call}, le numéro d'appel système (toujours dans \eax) sert
+d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
+
+
+\subsubsection{Dans l'implémentation de l'appel système}
+
+Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
+fonction ``classique'', la convention d'appel \emph{cdecl} est respectée. La
+fonction implémentant l'appel système, nommée \texttt{sys\_getpid}, peut donc
+être écrite en C.
+
+On trouve cette fonction dans \texttt{kernel/timer.c} :
+
+\insertcode{syscall-definition.c}
+
+La macro \texttt{SYSCALL_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
+définit entre autres des points d'entrée pour les fonctionnalités de débogage du
+noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
+conformément à la convention \emph{cdecl}.
+
+\subsubsection{Retour vers le ring 3}
 
 Au retour de la fonction, la valeur de retour est placée à la place de \eax là
-où les registres ont été sauvegardés sur la pile noyau. L'instruction
-\texttt{iret} permet de restaurer les registres et de repasser en mode
-utilisateur, juste après l'interruption. La fonction de la bibliothèque C peut
-alors retourner au programme appelant.
+où les registres ont été sauvegardés sur la pile noyau
+(\texttt{PT\_EFLAGS(\%esp)}). L'instruction \texttt{iret} (derrière la macro
+\texttt{INTERRUPT\_RETURN}) permet de restaurer les registres et de repasser en
+mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
+peut alors retourner au programme appelant.
 
 % vim: spelllang=fr
