@@ -17,32 +17,31 @@ niveaux d'abstraction.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
-son intégralité : toute la mémoire pouvait être accédé, toutes les instructions
+son intégralité : toute la mémoire pouvait être accédée, toutes les instructions
 pouvaient être utilisées.
 
-Néanmoins c'est un peu restrictif : si on est seul à utiliser un système, on est
-par définition… seul à pouvoir l'utiliser. Dans la seconde moitié des années 60,
-sont apparus les premiers systèmes ``à temps partagé'', permettant à plusieurs
-utilisateurs de travailler en même temps.
+Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à un utilisateur
+d'utiliser le système. Dans la seconde moitié des années 60, sont apparus les
+premiers systèmes ``à temps partagé'', permettant à plusieurs utilisateurs de
+travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
 ressources de la machine doivent être aussi partagées entre les utilisateurs et
-les programmes. Par exemple, plusieurs programmes vont par exemple utiliser le
-CPU les uns à la suite des autres (partage \emph{temporel}) ; et chaque
-programme aura à sa disposition une partie de la mémoire principale, ou du
-disque dur (partage \emph{spatial}).
+les programmes. Par exemple, plusieurs programmes vont utiliser le CPU les uns à
+la suite des autres (partage \emph{temporel}) ; et chaque programme aura à sa
+disposition une partie de la mémoire principale, ou du disque dur (partage
+\emph{spatial}).
 
 Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
-matériel, il faut s'assurer par exemple que les deux s'exécutent à peu près
-aussi souvent, ou que l'un ne puisse pas écrire dans la mémoire de l'autre. Ce
-sont des rôles du système d'exploitation.
+matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
+l'autre, ou que les deux utilisent la carte réseau les uns à la suite des
+autres. Ce sont des rôles du système d'exploitation.
 
 Cela passe donc par une limitation des possibilités du programme : plutôt que de
 le faire exécuter n'importe quel type d'instruction, il communique avec le
-système d'exploitation. Bien que cela ait l'air d'une limitation, c'est aussi
-bénéfique pour le programmeur puisque cela permet de définir des abstractions au
-niveau du noyau.
+système d'exploitation. Celui-ci centralise donc les appels au matériel, ce qui
+permet d'abstraire certaines opérations.
 
 Par exemple, si un programmeur veut copier des données depuis un cédérom vers la
 mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
@@ -77,6 +76,9 @@ le matériel, et en particulier assure les rôles suivants :
   disposer d'un espace mémoire différent. C'est-à-dire qu'un processus
   ne doit pas pouvoir interférer avec un autre.
 \item
+  Gestion des fichiers : les processus peuvent accéder à une hiérarchie de
+  fichiers, indépendamment de la manière d'y accéder.
+\item
   Gestion des périphériques : le noyau étant le seul code à s'exécuter
   en mode privilégié, c'est lui qui doit communiquer avec les
   périphériques matériels.
@@ -84,8 +86,7 @@ le matériel, et en particulier assure les rôles suivants :
   Abstractions : le noyau fournit aux programmes une interface unifiée,
   permettant de stocker des informations de la même manière sur un
   disque dur ou une clef USB (alors que l'accès se déroulera de manière
-  très différente en pratique). C'est ici que la notion arbitraire de
-  fichier sera définie, par exemple.
+  très différente en pratique).
 \end{itemize}
 
 \section{Architecture Intel}
