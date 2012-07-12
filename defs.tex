@@ -27,7 +27,7 @@
 \newcommand{\insertcode}[1]{\input{gen/#1.pyg.tex}}
 
 % \chapter* + add to toc
-\newcommand{\chapterstar}[1]{\chapter*{#1} \addcontentsline{toc}{chapter}{#1}}
+%\newcommand{\chapterstar}[1]{\chapter*{#1} \addcontentsline{toc}{chapter}{#1}}
 
 % Register names
 \def\defreg#1{\expandafter\def\csname#1\endcsname{\textsc{#1}\xspace}}
@@ -54,3 +54,58 @@
     \includegraphics[width=5cm]{gen/travaux.pdf}
 \end{center}
 }
+
+% comes from the memoir manual {{{
+
+\newcommand*{\addtotextheight}[1]{%
+\twocolumn
+\addtolength{\textheight}{#1}%
+\onecolumn}
+
+%% for main body, bottom of text at 1in, footer below
+%% top of header at 1in, first text line double spaced
+%% below base of header
+\newlength{\linespace}
+\setlength{\linespace}{\baselineskip} % current equivalent of \onelineskip
+\setlength{\headheight}{\onelineskip}
+\setlength{\headsep}{\linespace}
+\addtolength{\headsep}{-\topskip}
+\setlength{\uppermargin}{1in}
+\addtolength{\uppermargin}{\headheight}
+\addtolength{\uppermargin}{\headsep}
+
+%% and for the bottom
+\setlength{\lowermargin}{1in}
+\setlength{\textheight}{\paperheight}
+
+\addtolength{\textheight}{-\uppermargin}
+\addtolength{\textheight}{-\lowermargin}
+%% footnote settings
+\setlength{\footskip}{\onelineskip}
+\setlength{\footnotesep}{\onelineskip}
+
+
+%% the fiddle lengths (..ta.. for title/approval page, others for prelims)
+\newlength{\toptafiddle} \setlength{\toptafiddle}{2\linespace}
+\newlength{\bottafiddle} \setlength{\bottafiddle}{0pt}
+\newlength{\topfiddle}
+\setlength{\topfiddle}{\toptafiddle}
+\newlength{\botfiddle}
+\setlength{\botfiddle}{\onelineskip}
+
+%%% general macro for Abstract, etc., headings
+\newcommand*{\pretoctitle}[1]{{\clearpage\centering \vspace*{-\topfiddle}#1\par}}
+
+%%% Start the ACKNOWLEDGEMENTS
+\newcommand{\asuacknowledgements}{\pretoctitle{ACKNOWLEDGEMENTS}}
+
+%%% Start the ABSTRACT
+\newcommand{\asuabstract}{ \addtotextheight{-\botfiddle} \pretoctitle{ABSTRACT}}
+
+\addtodef{\mainmatter}{\addtotextheight{\botfiddle}{}}
+
+%% make it easy to center any dedication
+\newcommand{\asudedication}[1]{%
+{\clearpage\mbox{}\vfill\centering #1 \par\vfill\clearpage}}
+
+% }}} /memoir
