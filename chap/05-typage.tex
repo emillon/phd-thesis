@@ -1,9 +1,9 @@
 \section{Présentation et but}
 
-Au plus bas niveau d'abstraction, un ordinateur ne manipule que des nombres
-entiers \footnote{en allant plus loin on pourrait dire qu'il ne manipule que des
-suites de bits} : en langage machine, il n'y a pas de distinction entre une
-adresse et un nombre.
+On a vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
+seules données qu'un ordinateur manipule sont des nombres. Selon les opérations
+effectuées, ils seront interprétés comme des entiers, des adresses mémoires, ou
+des caractères.
 
 Pourtant il est clair que certaines opérations n'ont pas de sens : par exemple,
 ajouter deux adresses, ou déréférencer le résultat d'une division sont des
@@ -34,20 +34,19 @@ compilation (ou avant l'interprétation).
 
 La première est le typage \emph{dynamique}. Pour différencier les différents
 types de données, on ajoute une étiquette à chaque valeur. Dans tout le
-programme, on ne manipulera que des valeurs étiquetées :
+programme, on ne manipulera que des valeurs étiquetées. Si on veut réaliser
+l'opération $(\hexa{00000001}, Int) + (\hexa{0000f000}, Int)$, on vérifie tout
+d'abord qu'on peut réaliser l'opération $+$ entre deux $Int$. Ensuite on réalise
+l'opération elle même, qu'on étiquette avec le type du résultat :
+$(\hexa{0000f001}, Int)$. Si au contraire on tente d'ajouter deux adresses
+$(\hexa{2e8d5a90}, Addr) + (\hexa{76a5e0ec}, Addr)$, la vérification échoue et
+l'opération s'arrête avec une erreur.
 
-\begin{itemize}
-\item
-  si on veut réaliser l'opération
-  $(0x00000001, Int) + (0x0000f000, Int)$, on vérifie tout d'abord qu'on
-  peut réaliser l'opération $+$ entre deux $Int$. Ensuite on réalise
-  l'opération elle même, qu'on étiquette avec le type du résultat :
-  $(0x0000f001, Int)$
-\item
-  si au contraire on tente d'ajouter deux adresses
-  $(0x2e8d5a90, Addr) + (0x76a5e0ec, Addr)$, la vérification échoue et
-  l'opération s'arrête avec une erreur.
-\end{itemize}
+\begin{figure}
+  \insertcode{typage-dynamique.py}
+  \caption{Session Python présentant le typage dynamique}
+  \label{fig:typage-dynamique}
+\end{figure}
 
 Il existe plusieurs techniques pour signaler les erreurs de typage dynamiques :
 arrêter l'exécution, lever une exception, convertir une opérande, utiliser une
@@ -174,7 +173,7 @@ s'appliquer qu'à un ensemble de types prédéfini.
 \end{figure}
 
 La fonction de la figure~\ref{fig:listappend} n'opère que sur la structure du type
-liste (en utilisant ses constructeurs \texttt{{[}{]}} et \texttt{(::)} ainsi que
+liste (en utilisant ses constructeurs \texttt{{[}{]}} et \listcons ainsi que
 le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne sont pas manipulés
 à part pour les transférer dans le résultat.
 
