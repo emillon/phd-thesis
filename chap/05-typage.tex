@@ -9,7 +9,7 @@ Perl\cite{perlCamelBook}.
 
 \section{Présentation et but}
 
-On a vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
+Nous avons vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
 seules données qu'un ordinateur manipule sont des nombres. Selon les opérations
 effectuées, ils seront interprétés comme des entiers, des adresses mémoires, ou
 des caractères.
@@ -59,7 +59,8 @@ l'opération s'arrête avec une erreur.
 
 Il existe plusieurs techniques pour signaler les erreurs de typage dynamiques :
 arrêter l'exécution, lever une exception, convertir une opérande, utiliser une
-valeur d'erreur, etc.
+valeur d'erreur, etc. Par exemple Python utilise des exceptions
+(fig~\ref{fig:typage-dynamique}).
 
 \subsubsection{Typage statique}
 
@@ -174,6 +175,8 @@ s'appliquer qu'à un ensemble de types prédéfini.
 
 \todo{Historique + citer le papier de Milner sur le polymorphisme}
 \cite{Milner78}
+
+\cite{PascalNoEscape}
 
 \begin{figure}
   \insertcode{listappend.ml}
