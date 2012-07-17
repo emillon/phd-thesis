@@ -53,12 +53,36 @@ l'opération s'arrête avec une erreur.
   \label{fig:typage-dynamique}
 \end{figure}
 
-Il existe plusieurs techniques pour signaler les erreurs de typage dynamiques :
-arrêter l'exécution, lever une exception, convertir une opérande, utiliser une
-valeur d'erreur, etc. Par exemple Python utilise des exceptions
-(fig~\ref{fig:typage-dynamique}).
+La figure~\ref{fig:typage-dynamique} est une session interactive Python qui
+illustre le typage dynamique. Chaque variable, en plus de sa valeur, possède une
+étiquette qui permet d'identifier le type de celle-ci. On peut accéder au type
+d'une valeur \texttt{x} avec la construction \texttt{type(x)}.
+
+Au moment de réaliser une opération comme \texttt{+}, l'interpréteur Python
+vérifie les types des opérandes : s'ils sont compatibles, il créé une valeur de
+résultat, et sinon il lève une exception. Il arrive parfois que l'opération soit
+possible, mais nécessite des conversions (cas \texttt{a+c}).
 
 \subsubsection{Typage statique}
+
+Le typage dynamique est simple à comprendre puisque toute les vérifications se
+font dans la sémantique dynamique (ie, à l'exécution). C'est à double tranchant:
+d'une part, cela permet d'être plus flexible, mais d'autre part, cela permet à
+des programmes manifestement incorrects d'être exécutés.
+
+\todo{illustration}
+
+En lisant le code source d'un tel programme, on peut se rendre compte qu'il y
+aura une erreur de type dynamique à l'exécution. Formaliser cette analyse
+statique revient à établir un système de types statique.
+
+\begin{definition}[Système de types]
+Un système de types est une méthode syntaxique tractable qui vise à prouver
+l'absence de certains comportements de programmes en classifiant leurs phrases
+selon le genre de valeurs qu'elles produisent. \cite{TAPL}
+\end{definition}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
 
 La seconde technique est le typage \emph{statique} : plutôt que de vérifier les
 types sur les données, on les vérifie à l'arrêt, sur les expressions. Cela
@@ -260,3 +284,5 @@ Pas inférable (annotations nécessaires).
 \subsection{Fort statique : OCaml}
 \subsection{Fort statique à effets typés : Haskell}
 \subsection{Theorem prover : Coq}
+
+% vim: spelllang=fr
