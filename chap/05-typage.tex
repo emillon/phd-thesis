@@ -83,7 +83,7 @@ possible (fig~\ref{fig:nontypable}) ; mais lorsqu'on peut conclure cela élimine
 la nécessité de faire les tests de type dynamiques car on a réalisé le typage
 \emph{statiquement}.
 
-Bien sûr, deviner n'est pas nécessaire : il faut formaliser cette analyse. Dans
+Bien sûr, deviner n'est pas suffisant : il faut formaliser cette analyse. Dans
 le cas dynamique, ce sont les fonctions elles-mêmes qui réalisent les tests de
 type et qui appliquent des règles comme "si les arguments ont pour type
 \texttt{int} alors la valeur de retour a pour type \texttt{int}" : la fonction
@@ -93,7 +93,7 @@ appliquant de proche en proche un ensemble de règles (liées uniquement au
 langage de programmation), on finit par associer à chaque sous-expression du
 programme un type.
 
-Pierce résume cette approche dans une définition volontairement très générale :
+Pierce résume cette approche dans cette définition très générale :
 
 \begin{definition}[Système de types]
 Un système de types est une méthode syntaxique tractable qui vise à prouver
