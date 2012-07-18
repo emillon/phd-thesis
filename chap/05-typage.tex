@@ -60,8 +60,13 @@ d'une valeur \texttt{x} avec la construction \texttt{type(x)}.
 
 Au moment de réaliser une opération comme \texttt{+}, l'interpréteur Python
 vérifie les types des opérandes : s'ils sont compatibles, il créé une valeur de
-résultat, et sinon il lève une exception. Il arrive parfois que l'opération soit
-possible, mais nécessite des conversions (cas \texttt{a+c}).
+résultat, et sinon il lève une exception.
+
+Comme l'implémentation elle-même des fonction a accès aux informations de type,
+elle peut faire des traitements particuliers. Par exemple, pour l'addition de
+\texttt{a} (de type entier) et de \texttt{c} (de type flottant), la fonction
+d'addition va d'abord convertir \texttt{a} en flottant, puis réaliser l'addition
+dans le domaine des flottants.
 
 \subsubsection{Typage statique}
 
@@ -72,9 +77,23 @@ des programmes manifestement incorrects d'être exécutés.
 
 \todo{illustration}
 
-En lisant le code source d'un tel programme, on peut se rendre compte qu'il y
-aura une erreur de type dynamique à l'exécution. Formaliser cette analyse
-statique revient à établir un système de types statique.
+On peut lire le code source d'un programme et essayer de "deviner" quels seront
+les types des différentes expressions. Dans certains cas, cela n'est pas
+possible (fig~\ref{fig:nontypable}) ; mais lorsqu'on peut conclure cela élimine
+la nécessité de faire les tests de type dynamiques car on a réalisé le typage
+\emph{statiquement}.
+
+Bien sûr, deviner n'est pas nécessaire : il faut formaliser cette analyse. Dans
+le cas dynamique, ce sont les fonctions elles-mêmes qui réalisent les tests de
+type et qui appliquent des règles comme "si les arguments ont pour type
+\texttt{int} alors la valeur de retour a pour type \texttt{int}" : la fonction
+qui réalise ce test sur les valeurs. Dans le cas statique, c'est le compilateur
+(ou l'interpréteur) qui réalise ce test sur les expressions non évaluées. En
+appliquant de proche en proche un ensemble de règles (liées uniquement au
+langage de programmation), on finit par associer à chaque sous-expression du
+programme un type.
+
+Pierce résume cette approche dans une définition volontairement très générale :
 
 \begin{definition}[Système de types]
 Un système de types est une méthode syntaxique tractable qui vise à prouver
