@@ -1,8 +1,8 @@
-Le système d'exploitation est le programme qui permet à un système
-d'informatique d'exécuter d'autre programmes. Son rôle est donc capital et ses
-responsabilités multiples. Dans ce chapitre, nous allons voir quel est son rôle,
-et comment il peut être implémenté. Pour ce faire, nous étudierons l'exemple
-d'une architecture Intel 32 bits, et d'un noyau Linux 2.6.
+Le système d'exploitation est le programme qui permet à un système informatique
+d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
+multiples. Dans ce chapitre, nous allons voir quel est son rôle, et comment il
+peut être implanté. Pour ce faire, nous étudierons l'exemple d'une architecture
+Intel 32 bits, et d'un noyau Linux 2.6.
 
 Pour une description plus détaillée des rôles d'un système d'exploitation ainsi
 que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbaum}.
@@ -10,9 +10,9 @@ que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbau
 \section{Rôle d'un système d'exploitation}
 
 Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
-mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, de
+mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, des
 dizaines de logiciels permettant d'effectuer toutes sortes de calculs et de
-communication. Le système d'exploitation permet de faire l'interface entre ces
+communications. Le système d'exploitation permet de faire l'interface entre ces
 niveaux d'abstraction.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
@@ -43,7 +43,7 @@ permettre n'importe quel type d'instruction, il communique avec le système
 d'exploitation. Celui-ci centralise donc les appels au matériel, ce qui permet
 d'abstraire certaines opérations.
 
-Par exemple, si un programmeur veut copier des données depuis un cédérom vers la
+Par exemple, si un programme veut copier des données depuis un cédérom vers la
 mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
 la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
 de trame des données sur le disque, demander la lecture, puis déclencher une
@@ -122,34 +122,36 @@ mnémoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
 un type d'opération à appliquer sur les opérandes. Elle peut aussi être précédée
 d'une étiquette, qui correspondra à l'adresse de cette instruction.
 
-\shorthandoff{!}
-\begin{tikzpicture}
-  [bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
-  ,asmbox/.style={minimum height=1cm}
-  ,dway/.style={dashed}
-  ]
+\begin{center}
+  \shorthandoff{!}
+  \begin{tikzpicture}
+    [bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
+    ,asmbox/.style={minimum height=1cm}
+    ,dway/.style={dashed}
+    ]
 
-  \node[asmbox]              (lbl) {\asminstr{lbl:}};
-  \node[asmbox,right of=lbl] (mov) {\asminstr{mov}};
-  \node[asmbox,right of=mov] (op1) {\asminstr{\$4,}};
-  \node[asmbox,right of=op1] (op2) {\asminstr{\%ebx}};
+    \node[asmbox]              (lbl) {\asminstr{lbl:}};
+    \node[asmbox,right of=lbl] (mov) {\asminstr{mov}};
+    \node[asmbox,right of=mov] (op1) {\asminstr{\$4,}};
+    \node[asmbox,right of=op1] (op2) {\asminstr{\%ebx}};
 
-  \draw[bbr] (lbl.south west) -- (lbl.south east);
-  \draw[bbr] (mov.south west) -- (mov.south east);
-  \draw[bbr] (op1.south west) -- (op2.south east);
+    \draw[bbr] (lbl.south west) -- (lbl.south east);
+    \draw[bbr] (mov.south west) -- (mov.south east);
+    \draw[bbr] (op1.south west) -- (op2.south east);
 
-  \coordinate (ops) at ($ (op1.south west)!.5!(op2.south east) $);
+    \coordinate (ops) at ($ (op1.south west)!.5!(op2.south east) $);
 
-  \node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
-  \node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
-  \node[below of=tmov, node distance=7mm] (tops) {Opérandes};
+    \node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
+    \node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
+    \node[below of=tmov, node distance=7mm] (tops) {Opérandes};
 
-  \draw[dway] (tlbl) -| ($ (lbl.south) + (0, -0.3) $);
-  \draw[dway] (tmov) -| ($ (mov.south) + (0, -0.3) $);
-  \draw[dway] (tops) -| ($ (ops.south) + (0, -0.3) $);
+    \draw[dway] (tlbl) -| ($ (lbl.south) + (0, -0.3) $);
+    \draw[dway] (tmov) -| ($ (mov.south) + (0, -0.3) $);
+    \draw[dway] (tops) -| ($ (ops.south) + (0, -0.3) $);
 
-\end{tikzpicture}
-\shorthandon{!}
+  \end{tikzpicture}
+  \shorthandon{!}
+\end{center}
 
 Ces opérandes peuvent être de plusieurs types :
 
@@ -310,7 +312,7 @@ adresse contiendra une valeur différente.
 
 \begin{figure}
 \input{fig/pagetables.tex}
-\caption{Implémentation de la mémoire virtuelle}
+\caption{Implantation de la mémoire virtuelle}
 \label{fig:pagetables}
 \end{figure}
 
@@ -437,12 +439,12 @@ du processus. Les valeurs des registres ont été préservées, la macro
 d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
 
 
-\subsubsection{Dans l'implémentation de l'appel système}
+\subsubsection{Dans l'implantation de l'appel système}
 
 Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
 fonction ``classique'', la convention d'appel \emph{cdecl} est respectée. La
-fonction implémentant l'appel système, nommée \texttt{sys\_getpid}, peut donc
-être écrite en C.
+fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc être
+écrite en C.
 
 On trouve cette fonction dans \texttt{kernel/timer.c} :
 

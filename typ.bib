@@ -1,3 +1,75 @@
+@techreport{AnsiC,
+    author = {{ISO}},
+    citeulike-article-id = {2515627},
+    citeulike-linkout-0 = {http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1124.pdf},
+    institution = {ISO/IEC},
+    keywords = {c-language, foundation},
+    number = {WG14 N1124},
+    posted-at = {2008-06-09 09:33:44},
+    priority = {0},
+    title = {{The ANSI C standard (C99)}},
+    url = {http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1124.pdf},
+    year = {1999}
+}
+
+@inproceedings{Astree04,
+author = "Laurent Mauborgne",
+title = "{ASTR\'EE}: Verification of Absence of Run-Time Error",
+booktitle = "Building the information Society (18th IFIP World Computer
+             Congress)",
+year = 2004,
+pages = "384--392",
+editor = "Ren{\'e} Jacquart",
+publisher = "Kluwer Academic Publishers",
+month = "Aug",
+organization = "The International Federation for Information Processing",
+}
+@inproceedings{Astree05,
+  author    = {Patrick Cousot and
+               Radhia Cousot and
+               J{\'e}r{\^o}me Feret and
+               Laurent Mauborgne and
+               Antoine Min{\'e} and
+               David Monniaux and
+               Xavier Rival},
+  title     = {The {ASTRE{\'E}} Analyzer},
+  booktitle = {ESOP},
+  year      = {2005},
+  pages     = {21-30},
+  ee        = {http://dx.doi.org/10.1007/978-3-540-31987-0_3},
+  crossref  = {DBLP:conf/esop/2005},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
+@proceedings{DBLP:conf/esop/2005,
+  editor    = {Shmuel Sagiv},
+  title     = {Programming Languages and Systems, 14th European Symposium
+               on Programming,ESOP 2005, Held as Part of the Joint European
+               Conferences on Theory and Practice of Software, ETAPS 2005,
+               Edinburgh, UK, April 4-8, 2005, Proceedings},
+  booktitle = {ESOP},
+  publisher = {Springer},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {3444},
+  year      = {2005},
+  isbn      = {3-540-25435-8},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
+@article{AstreeScale,
+  author    = {Patrick Cousot and
+               Radhia Cousot and
+               J{\'e}r{\^o}me Feret and
+               Laurent Mauborgne and
+               Antoine Min{\'e} and
+               Xavier Rival},
+  title     = {Why does Astr{\'e}e scale up?},
+  journal   = {Formal Methods in System Design},
+  volume    = {35},
+  number    = {3},
+  year      = {2009},
+  pages     = {229-264},
+  ee        = {http://dx.doi.org/10.1007/s10703-009-0089-6},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
 @inproceedings{cgs,
  author = {Venet, Arnaud and Brat, Guillaume},
  title = {Precise and efficient static array bound checking for large embedded C programs},
@@ -29,7 +101,7 @@
 }
 @inproceedings{coccinelle11,
   title = {Faults in {Linux}: Ten Years Later},
-  author = {Nicolas Palix and Ga\"l Thomas and Suman Saha and
+  author = {Nicolas Palix and Ga\"el Thomas and Suman Saha and
     Christophe Calv\`es and Julia Lawall and Gilles Muller},
   booktitle = {Sixteenth International Conference on Architectural Support
     for Programming Languages and Operating Systems (ASPLOS 2011)},
@@ -97,6 +169,17 @@
   ee        = {http://www.usenix.org/publications/library/proceedings/sec04/tech/johnson.html},
   bibsource = {DBLP, http://dblp.uni-trier.de}
 }
+@MISC{cssv,
+    author = {Nurit Dor and Michael Rodeh and Mooly Sagiv},
+    title = {{CSSV}: Towards a Realistic Tool for Statically Detecting All Buffer Overflows In {C}},
+    year = {2000}
+}
+@book{DAOC,
+ author = {Emmanuel Chailloux and Pascal Manoury and Bruno Pagano},
+ title = {Développement d'applications avec Objective CAML},
+ publisher = {O'Reilly},
+ year = 2003,
+}
 @INPROCEEDINGS{goto,
     author = {Ana Erosa and Laurie J. Hendren},
     title = {Taming Control Flow: A Structured Approach to Eliminating Goto Statements},
@@ -104,6 +187,19 @@
     year = {1994},
     pages = {229--240},
     publisher = {IEEE Computer Society Press}
+}
+@inproceedings{granger,
+ author = {Granger, Philippe},
+ title = {Improving the Results of Static Analyses Programs by Local Decreasing Iteration},
+ booktitle = {Proceedings of the 12th Conference on Foundations of Software Technology and Theoretical Computer Science},
+ year = {1992},
+ isbn = {3-540-56287-7},
+ pages = {68--79},
+ numpages = {12},
+ url = {http://dl.acm.org/citation.cfm?id=646830.707569},
+ acmid = {707569},
+ publisher = {Springer-Verlag},
+ address = {London, UK, UK},
 }
 @article{hardy88confused,
   author = {Norm Hardy},
@@ -117,9 +213,22 @@
   month = oct,
   url = {http://www.cis.upenn.edu/~KeyKOS/ConfusedDeputy.html}
 }
+@book{haskell98,
+  editor={Peyton Jones, Simon},
+  title={Haskell 98 Language and Libraries -- The Revised Report},
+  publisher={Cambridge University Press},
+  address={Cambridge, England},
+  year=2003,
+}
 @book{intelsys,
   author        = {{Intel Corporation}},
   title         = {{Intel\textsuperscript{\textregistered} 64 and IA-32 Architectures Software Developer's Manual}}
+}
+@BOOK{KandR,
+   AUTHOR  = "Kernighan, Brian W. and Ritchie, Dennis M.",
+   TITLE   = "{The C Programming Language Second Edition}",
+   PUBLISHER = "Prentice-Hall, Inc.",
+   YEAR = 1988
 }
 @article{lightweight-static-capabilities,
   author    = {Oleg Kiselyov and
@@ -172,6 +281,39 @@
     url = {http://dx.doi.org/10.1109/CSFW.2006.13},
     year = {2006}
 }
+@inproceedings{mdv10,
+    author = {Dumitru Ceară and Laurent Mounier and Marie-Laure Potet},
+    title     = {Taint Dependency Sequences: A Characterization of Insecure
+                Execution Paths Based on Input-Sensitive Cause Sequences},
+    booktitle = {ICST Workshops},
+    year      = {2010},
+}
+@article{Milner78,
+    abstract = {{The aim of this work is largely a practical one. A widely
+      employed style of programming, particularly in structure-processing
+        languages which impose no discipline of types, entails defining
+        procedures which work well on objects of a wide variety. We present a
+        formal type discipline for such polymorphic procedures in the context of
+        a simple programming language, and a compile time type-checking
+        algorithm }},
+    author = {Robin Milner},
+    citeulike-article-id = {134009},
+    citeulike-linkout-0 = {http://dx.doi.org/10.1016/0022-0000(78)90014-4},
+    citeulike-linkout-1 = {http://linkinghub.elsevier.com/retrieve/pii/0022-0000(78)90014-4},
+    citeulike-linkout-2 = {http://www.sciencedirect.com/science/article/B6WJ0-4B4YSKG-2D/2/64deca1176fc1a45585d3442521fec04},
+    doi = {10.1016/0022-0000(78)90014-4},
+    issn = {00220000},
+    journal = {Journal of Computer and System Sciences},
+    month = {December},
+    number = {3},
+    pages = {348--375},
+    posted-at = {2011-01-24 15:24:20},
+    priority = {2},
+    title = {{A theory of type polymorphism in programming}},
+    url = {http://dx.doi.org/10.1016/0022-0000(78)90014-4},
+    volume = {17},
+    year = {1978}
+}
 @TECHREPORT{newspeak,
   author = {Charles {H}ymans and Olivier {L}evillain},
   title = {{N}ewspeak, {D}oubleplussimple {M}inilang for {G}oodthinkful {S}tatic {A}nalysis of {C}},
@@ -180,6 +322,43 @@
   type = {Technical Note},
   number = {2008-IW-SE-00010-1}
 }
+@inproceedings{oakland10,
+        author = {Edward J. Schwartz and Thanassis Avgerinos and David Brumley},
+        title = {All You Ever Wanted to Know about Dynamic Taint
+                  Analysis and Forward Symbolic Execution (but might
+                  have been afraid to ask)},
+        booktitle = {Proceedings of the {IEEE} Symposium on Security and Privacy},
+        year = 2010
+}
+@manual{ocamlManual,
+  title = {The {Objective} {Caml} system, documentation and
+                  user's manual -- release 3.12},
+  author = {Xavier Leroy and Damien Doligez and Jacques Garrigue
+                  and Didier Rémy and Jérôme Vouillon},
+  organization = {INRIA},
+  month = aug,
+  year = 2010,
+  url = {http://caml.inria.fr/pub/docs/manual-ocaml/},
+  raweb = {foot}
+}
+@TechReport{PascalNoEscape,
+  author = {Kernighan, Brian W.},
+  title = {Why {P}ascal is Not My Favorite Programming Language},
+  institution = {AT\&T Bell Laboratories},
+  year = 1981,
+  month = apr,
+  url = {http://www.lysator.liu.se/c/bwk-on-pascal.html},
+}
+@book{perlCamelBook,
+ author = {Wall, Larry},
+ editor = {Loukides, Mike},
+ title = {Programming Perl},
+ year = {2000},
+ isbn = {0596000278},
+ edition = {3rd},
+ publisher = {O'Reilly \& Associates, Inc.},
+ address = {Sebastopol, CA, USA},
+} 
 @inproceedings{pldi02,
     address = {New York, NY, USA},
     author = {Foster, Jeffrey S. and Terauchi, Tachio and Aiken, Alex},
@@ -213,7 +392,24 @@
  url = {http://doi.acm.org/10.1145/301618.301665},
  doi = {http://doi.acm.org/10.1145/301618.301665},
  acmid = {301665},
-} 
+}
+@electronic{pythonSite,
+    citeulike-article-id = {4443666},
+    citeulike-linkout-0 = {http://www.python.org/},
+    keywords = {programming, website},
+    posted-at = {2009-04-30 00:16:07},
+    priority = {2},
+    title = {{Python Programming Language -- Official Website}},
+    url = {http://www.python.org/}
+}
+@book{rwh,
+ author = {O'Sullivan, Bryan and Goerzen, John and Stewart, Don},
+ title = {Real World Haskell},
+ year = {2008},
+ isbn = {0596514980, 9780596514983},
+ edition = {1st},
+ publisher = {O'Reilly Media, Inc.},
+}
 @Article{ SmashingTheStack,
   author = {Aleph One},
   title = {Smashing the Stack for Fun and Profit},
@@ -257,7 +453,7 @@
  publisher = {ACM},
  address = {New York, NY, USA},
  keywords = {Type qualifiers, const, constraints, security, static analysis, taint, types},
-} 
+}
 @Misc{TorvaldsSparse,
   author = {Linus Torvalds and Josh Triplett and Christopher Li},
   title = {Sparse - a Semantic Parser for {C}},

@@ -19,21 +19,41 @@
 \floatstyle{boxed}
 \restylefloat{figure}
 
+\setlist[itemize]{label=$\bullet$}
+
 \isopage[12]
 \checkandfixthelayout
 
 \setcounter{tocdepth}{2}
+
+%\theoremstyle{definition}
+\newtheorem{definition}{Définition}
 
 \title{Titre}
 \author{Étienne Millon}
 
 \begin{document}
 
-%\maketitle
+
+\frontmatter
+
+\maketitle
+
+\cleartorecto
+
+\asuabstract
+
+Abstract ici.
+
+\asuacknowledgements
+
+Remerciements
+
+\asudedication{Cassedédi}
 
 \tableofcontents
 
-\chapterstar{Introduction}
+\mainmatter
 
 \part{Problématique}
 
@@ -41,6 +61,7 @@
 
 \chapter{Systèmes d'exploitation}
 
+\label{cha:os}
 \input{chap/02-os.tex}
 
 \chapter{Cas d'étude}
@@ -71,12 +92,13 @@
 
 \chapter{Implantation}
 
-\chapterstar{Conclusion}
+\input{chap/09-implantation.tex}
 
-\begin{itemize}
-  \item Limitations
-  \item Perspectives
-\end{itemize}
+\chapter{Conclusion}
+
+\input{chap/10-conclusion.tex}
+
+\backmatter
 
 %\chapterstar{Liste des figures}
 
