@@ -39,13 +39,13 @@ compilation (ou avant l'interprétation).
 
 La première est le typage \emph{dynamique}. Pour différencier les différents
 types de données, on ajoute une étiquette à chaque valeur. Dans tout le
-programme, on ne manipulera que des valeurs étiquetées. Si on veut réaliser
-l'opération $(\hexa{00000001}, Int) + (\hexa{0000f000}, Int)$, on vérifie tout
-d'abord qu'on peut réaliser l'opération $+$ entre deux $Int$. Ensuite on réalise
-l'opération elle même, qu'on étiquette avec le type du résultat :
-$(\hexa{0000f001}, Int)$. Si au contraire on tente d'ajouter deux adresses
-$(\hexa{2e8d5a90}, Addr) + (\hexa{76a5e0ec}, Addr)$, la vérification échoue et
-l'opération s'arrête avec une erreur.
+programme, on ne manipulera que des valeurs étiquetées, c'est à dire des couples
+(donnée, nom de type). Si on veut réaliser l'opération $(\hexa{00000001}, Int) +
+(\hexa{0000f000}, Int)$, on vérifie tout d'abord qu'on peut réaliser l'opération
+$+$ entre deux $Int$. Ensuite on réalise l'opération elle même, qu'on étiquette
+avec le type du résultat : $(\hexa{0000f001}, Int)$. Si au contraire on tente
+d'ajouter deux adresses $(\hexa{2e8d5a90}, Addr) + (\hexa{76a5e0ec}, Addr)$, la
+vérification échoue et l'opération s'arrête avec une erreur.
 
 \begin{figure}
   \insertcode{typage-dynamique.py}
@@ -73,9 +73,7 @@ dans le domaine des flottants.
 Le typage dynamique est simple à comprendre puisque toute les vérifications se
 font dans la sémantique dynamique (ie, à l'exécution). C'est à double tranchant:
 d'une part, cela permet d'être plus flexible, mais d'autre part, cela permet à
-des programmes manifestement incorrects d'être exécutés.
-
-\todo{illustration}
+des programmes incorrects d'être exécutés.
 
 On peut lire le code source d'un programme et essayer de "deviner" quels seront
 les types des différentes expressions. Dans certains cas, cela n'est pas
@@ -93,7 +91,7 @@ appliquant de proche en proche un ensemble de règles (liées uniquement au
 langage de programmation), on finit par associer à chaque sous-expression du
 programme un type.
 
-Pierce résume cette approche dans cette définition très générale :
+Benjamin Pierce résume cette approche dans cette définition très générale :
 
 \begin{definition}[Système de types]
 Un système de types est une méthode syntaxique tractable qui vise à prouver
@@ -114,13 +112,15 @@ peut voir par une simple analyse de cas que si on fournit un booléen à
 \texttt{f}, elle retourne un entier. Mais selon la valeur de \texttt{b}, la
 variable \texttt{x} contiendra une valeur de type entier ou fonction.
 
-Dans le cas où le typage statique est possible, les garanties sont en revanche
-plus importantes : les valeurs portées par une variable auront toujours le même
-type. Par voie de conséquence, la vérification dynamique de types réussira
-toujours : on peut donc la supprimer. Il est également possible de supprimer
-toutes les étiquettes de typage : on parle de \emph{type erasure}. Une
-conséquence heureuse de cette suppression est que l'exécution de ce programme se
-fera de manière plus rapide.
+Même si cet exemple est construit artificiellement, il illustre le problème
+suivant : les types statiques demandent un certain effort et au programmeur et
+au compilateur. Mais Dans le cas où le typage statique est possible, les
+garanties sont importantes : les valeurs portées par une variable auront
+toujours le même type. Par voie de conséquence, la vérification dynamique de
+types réussira toujours, et on peut la supprimer. Il est également possible
+de supprimer toutes les étiquettes de typage : on parle de \emph{type erasure}.
+Une conséquence heureuse de cette suppression est que l'exécution de ce
+programme se fera de manière plus rapide.
 
 Connaître les types à la compilation permet aussi de réaliser plus
 d'optimisations. Par exemple, en Python, considérons l'expression \texttt{y = x
@@ -131,28 +131,27 @@ sait que \texttt{x} est un entier, on peut en déduire que \texttt{y = 0}, sans
 réaliser la soustraction (si c'était la seule utilisation de \texttt{x}, le
 calcul de \texttt{x} aurait alors pu être éliminé).
 
-\subsubsection{Typage hybride ("stanamique")}
-
-Il est aussi possible de mélanger ces deux approches : à la compilation, essayer
-d'obtenir les types les plus précis possibles ; et pour les cas restants,
-insérer un test dynamique.
-
 \subsection{Fort, faible, sound}
 
-Un autre critère intéressant est la "force" du typage : est-ce qu'il peut
-induire des conversions de type implicites ?
+\begin{figure}
+  \insertcode{cast.java}
+  \caption{Transtypage en Java}
+  \label{fig:javacast}
+\end{figure}
 
-Prenons l'exemple de l'addition entre un entier $2$ et un flottant $3.14$. On
-peut le voir de plusieurs manières différentes :
+Si un système de types statique permet d'éliminer totalement la nécessité de
+réaliser des tests de typage, on dit qu'il est \emph{fort}. Mais ce n'est que
+rarement le cas. En effet, il peut y avoir des constructions au sein du langage
+qui permettent de contourner le système de types, comme un opérateur de
+transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée :
 
-\begin{itemize}
-\item
-  un entier est un nombre décimal comme les autres : $2 = 2.00$. Donc
-  $2 + 3.14 = 2.00 + 3.14 = 5.14$.
-\item
-  $2$ est un entier, $3.14$ un flottant : ces deux types sont différents et
-  l'opération est impossible.
-\end{itemize}
+\begin{Verbatim}
+Exception in thread "main" java.lang.ClassCastException:
+    java.lang.Integer cannot be cast to java.lang.Float
+        at Cast.main(Cast.java:5)
+\end{Verbatim}
+
+\clearpage
 
 \subsection{Polymorphisme}
 
