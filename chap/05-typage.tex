@@ -101,58 +101,41 @@ l'absence de certains comportements de programmes en classifiant leurs phrases
 selon le genre de valeurs qu'elles produisent. \cite{TAPL}
 \end{definition}
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-La seconde technique est le typage \emph{statique} : plutôt que de vérifier les
-types sur les données, on les vérifie à l'arrêt, sur les expressions. Cela
-implique par exemple que chaque variable doit contenir des valeurs d'un même
-type tout au long de sa vie.
-
-A première vue, cela semble moins puissant que le typage dynamique : en effet,
-il existe des programmes qui s'exécuteront sans erreur de type mais sur lesquels
-le typage statique ne peut s'appliquer.
-
 \begin{figure}
   \insertcode{non-typable.py}
   \caption{Fonction Python non typable statiquement.}
   \label{fig:nontypable}
 \end{figure}
 
-Dans la figure~\ref{fig:nontypable}, on peut voir par une simple analyse de cas
-que si on fournit un booléen à \texttt{f}, elle retourne un entier. Mais selon
-la valeur de \texttt{b}, la variable \texttt{x} contiendra une valeur de type
-entier ou fonction.
+A première vue, cela semble moins puissant que le typage dynamique : en effet,
+il existe des programmes qui s'exécuteront sans erreur de type mais sur lesquels
+le typage statique ne peut s'appliquer. Dans la figure~\ref{fig:nontypable}, on
+peut voir par une simple analyse de cas que si on fournit un booléen à
+\texttt{f}, elle retourne un entier. Mais selon la valeur de \texttt{b}, la
+variable \texttt{x} contiendra une valeur de type entier ou fonction.
 
 Dans le cas où le typage statique est possible, les garanties sont en revanche
 plus importantes : les valeurs portées par une variable auront toujours le même
 type. Par voie de conséquence, la vérification dynamique de types réussira
 toujours : on peut donc la supprimer. Il est également possible de supprimer
-toutes les étiquettes de typage : on parle de \emph{type erasure}.
-
-Une conséquence heureuse de cette suppression est que l'exécution de ce
-programme se fera de manière plus rapide.
+toutes les étiquettes de typage : on parle de \emph{type erasure}. Une
+conséquence heureuse de cette suppression est que l'exécution de ce programme se
+fera de manière plus rapide.
 
 Connaître les types à la compilation permet aussi de réaliser plus
 d'optimisations. Par exemple, en Python, considérons l'expression \texttt{y = x
 - x}. Sans information sur le type de \texttt{x}, aucune simplification n'est
 possible : l'implémentation de la différence sur ce type est une fonction
-quelconque, sans propriétés particulières \emph{a priori}.
-
-Si au contraire, on sait que \texttt{x} est un entier, on peut en déduire que
-\texttt{y = 0}, sans réaliser la soustraction (si c'était la seule utilisation
-de \texttt{x}, le calcul de \texttt{x} aurait alors pu être éliminé).
+quelconque, sans propriétés particulières \emph{a priori}. Si au contraire, on
+sait que \texttt{x} est un entier, on peut en déduire que \texttt{y = 0}, sans
+réaliser la soustraction (si c'était la seule utilisation de \texttt{x}, le
+calcul de \texttt{x} aurait alors pu être éliminé).
 
 \subsubsection{Typage hybride ("stanamique")}
 
-Il est aussi possible de mélanger ces deux approches :
-
-\begin{itemize}
-\item
-  à la compilation, essayer d'obtenir les types les plus précis
-  possibles
-\item
-  pour les cas restants, insérer un test dynamique
-\end{itemize}
+Il est aussi possible de mélanger ces deux approches : à la compilation, essayer
+d'obtenir les types les plus précis possibles ; et pour les cas restants,
+insérer un test dynamique.
 
 \subsection{Fort, faible, sound}
 
