@@ -29,7 +29,9 @@
 %\theoremstyle{definition}
 \newtheorem{definition}{Définition}
 
-\title{Titre}
+\def\iffull#1{\if#1\relax\else}
+\title{ \bfseries\LARGE Analyse statique de logiciel système par typage statique fort\\%
+      {\mdseries\Large Application au noyau Linux}}
 \author{Étienne Millon}
 
 \begin{document}
@@ -41,58 +43,61 @@
 
 \cleartorecto
 
-\asuabstract
+%\asuabstract
 
-Abstract ici.
+%Abstract ici.
 
-\asuacknowledgements
+%\asuacknowledgements
 
-Remerciements
+%Remerciements
 
-\asudedication{Cassedédi}
+%\asudedication{Cassedédi}
 
 \tableofcontents
 
 \mainmatter
 
-\part{Problématique}
-
 \chapter{Introduction}
+\input{chap/01-intro.tex}
+
+\part{Méthodes formelles pour la sécurité}
 
 \chapter{Systèmes d'exploitation}
 
 \label{cha:os}
 \input{chap/02-os.tex}
 
-\chapter{Cas d'étude}
+\chapter{Typage}
 
-\input{chap/03-casdetude.tex}
+\input{chap/03-typage.tex}
 
 \chapter{État de l'art}
 
 \input{chap/04-etatdelart.tex}
 
-\part{Analyse statique par typage}
-
-\chapter{Typage}
-
-\input{chap/05-typage.tex}
+\part{Typage statique de langages impératifs}
 
 \chapter{Un premier système de types}
 
-\input{chap/06-typbase.tex}
+\input{chap/05-typbase.tex}
 
 \chapter{Système avec le qualificateur "user"}
 
-\input{chap/07-qualuser.tex}
+\input{chap/06-qualuser.tex}
 
 \chapter{Système avec le qualificateur "sz"}
 
-\input{chap/08-qualsz.tex}
+\input{chap/07-qualsz.tex}
+
+\part{Expérimentation}
 
 \chapter{Implantation}
 
-\input{chap/09-implantation.tex}
+\label{cha:implem}
+\input{chap/08-implantation.tex}
+
+\chapter{Étude de cas : un driver graphique}
+\input{chap/09-etudedecas.tex}
 
 \chapter{Conclusion}
 

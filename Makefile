@@ -46,6 +46,7 @@ snapshot:
 	git merge master
 	make distclean
 	make
+	git add gen/*
 	git commit -av -m snapshot
 	git checkout master
 

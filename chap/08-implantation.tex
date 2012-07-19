@@ -1,0 +1,132 @@
+\section{Langages intermédiaires}
+
+Le langage C \cite{KandR,AnsiC} a été conçu pour être une sorte d'assembleur
+portable, permettant décrire du code indépendamment de l'architecture sur
+laquelle il sera compilé. Historiquement, c'est il a permis de créer Unix, et
+ainsi de nombreux logiciels bas niveau sont écrits en C. En particulier, il
+existe des compilateurs de C vers les différents langages machine pour à peu
+près toutes les architectures.
+
+Lors de l'écriture d'un compilateur, on a besoin d'un langage intermédiaire qui
+fasse l'intermédiaire entre \emph{frontend} et \emph{backend}. Avec ce langage,
+on doit pouvoir (facilement) réaliser les types d'opérations suivantes :
+
+\begin{itemize}
+\item
+  compiler ce langage vers un langage machine (interface avec le
+  \emph{backend}).
+\item
+  exprimer des transformations intermédiaires sur cette représentation
+  (analyses sémantiques, optimisations, etc).
+\end{itemize}
+
+À cause du premier point, un langage comme C est très séduisant, mais
+malheureusement il a de nombreux défauts qui font qu'il ne remplit pas le
+deuxième. Par exemple, certaines instructions sont ambiguës, et l'ensemble des
+opération n'est pas orthogonal (on peut faire la même chose de plusieurs
+manières).
+
+Pour pallier ce problème, une première solution peut être d'ajouter des
+contraintes au C intermédiaire manipulé pour en obtenir un sous-langage. De
+nombreux sous-ensembles ont été définis pour aller dans ce sens.
+
+\subsubsection{Critères}
+
+Les critères à évaluer sont les suivants :
+
+\paragraph{Forme (textuel / langage d'implem)}
+
+Quelle est la représentation du langage ? Est-ce une bibliothèque (si oui, dans
+quel langage) a-t'il une forme textuelle (si oui, pour quels langages des
+\emph{parsers} existent ils).
+
+\paragraph{Maturité}
+
+\paragraph{Tools}
+
+\paragraph{Support}
+
+Le langage a-t'il ``fait ses preuves'' ? Est-il susceptible de changer ?
+
+\paragraph{Scope (analyse / compil)}
+
+Pour quel type d'utilisation a-t'il été conçu ?
+
+\paragraph{Expressivité}
+
+Peut-on compiler ``tout C'' ?
+
+\paragraph{Orthogonalité}
+
+\paragraph{Typage}
+
+\subsubsection{Langages}
+
+\paragraph{LLVM}
+
+LLVM\cite{llvm-pres} est un backend de compilateur développé par Apple.
+
+\paragraph{Cmm (Haskell)}
+
+\paragraph{Cmm (OCaml)}
+
+\paragraph{CIL}
+
+\paragraph{Clight}
+
+\paragraph{Cminor}
+
+\paragraph{Cminusminus}
+
+\cite{spjcmm}
+
+http://www.cminusminus.org/
+
+\paragraph{Newspeak}
+
+\section{Newspeak}
+
+\section{Chaîne de compilation}
+
+\begin{figure}
+  \input{fig/compil-pipeline.tex}
+  \caption{Compilation depuis Newspeak}
+  \label{fig:compil-npk}
+\end{figure}
+
+La compilation vers C est faite en trois étapes (figure~\ref{fig:compil-npk}) :
+prétraitement du code source, compilation de C prétraité vers \newspeak{}, puis
+compilation de \newspeak{} vers ce langage.
+
+\subsection{Prétraitement}
+
+\ctonewspeak{} travaillant uniquement sur du code prétraité (dans directives de
+préprocesseur), la première étape consiste donc à faire passer le code par \cpp.
+
+\subsection{Compilation (levée des ambigüités)}
+
+Cette passe est réalisée par l'utilitaire \ctonewspeak{}. L'essentiel de la
+compilation consiste à mettre à plat les définition de types, et à simplifier le
+flôt de contrôle. C en effet propose de nombreuses constructions ambigües ou
+redondantes.
+
+Au contraire, \newspeak{} propose un nombre réduit de constructions. Rappelons
+que le but de ce langage est de faciliter l'analyse statique : des constructions
+orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
+code lors de l'implémentation d'un analyseur.
+
+Par exemple, plutôt que de fournir une boucle while, une boucle do/while et une
+boucle for, \newspeak{} fournit une unique boucle \npkWhile{}. La sortie de
+boucle est compilée vers un \npkGoto{}, qui est toujours un saut vers l'avant
+(similaire à un "break" généralisé).
+
+La sémantique de \newspeak{} et la traduction de C vers \newspeak{} sont
+décrites dans \cite{newspeak}. En ce qui concerne l'élimination des sauts vers
+l'arrière, on peut se référer à \cite{goto}.
+
+\subsection{Annotations}
+
+\newspeak{} a de nombreux avantages, mais pour une analyse par typage il est
+trop bas niveau. Par exemple, dans le code suivant
+
+\input{gen/struct-array.c.pyg.tex}
