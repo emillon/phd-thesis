@@ -464,4 +464,139 @@ où les registres ont été sauvegardés sur la pile noyau
 mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
 peut alors retourner au programme appelant.
 
+\section{Sécurité des appels système}
+
+\wip{}
+
+On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
+au services du noyau. Ils forment donc une interface particulièrement sensible aux
+problèmes de sécurité.
+
+Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un
+côté, une interface pas assez fine serait trop restrictive et ne permettrait pas
+d'implémenter tout type de logiciel. De l'autre, une interface trop laxiste
+("écrire dans tel registre matériel") empêche toute isolation. Il faut donc
+trouver la bonne granularité.
+
+Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
+sein de certains types d'appels système.
+
+Il y a deux grands types d'appels systèmes : d'une part, ceux qui renvoient un
+simple nombre, comme \texttt{getpid} qui renvoie le numéro du processus
+appelant.
+
+\insertcode{appel-syscall-getpid.c}
+
+Ici, pas de difficulté particulière : la communication entre le \ring{0} et le
+\ring{3} est faite uniquement à travers les registres, comme décrit dans le
+chapitre précédent.
+
+Mais la plupart des appels systèmes communiquent de l'information de manière
+indirecte, à travers un pointeur. Ainsi la fonction \texttt{gettimeofday} a pour
+prototype :
+
+\begin{Verbatim}
+int gettimeofday(struct timeval *tv, struct timezone *tz);
+\end{Verbatim}
+
+\begin{figure}
+\insertcode{appel-syscall-gettimeofday.c}
+\caption{Appel de gettimeofday}
+\label{fig:appel-gettimeofday}
+\end{figure}
+
+Dans le cas d'un appel système qui ne fait que renvoyer un nombre, il n'y a pas
+de difficulté. En revanche, certains appels système. remplissent une structure
+avec leurs résultats. C'est alors la responsabilité de l'appelant (le
+programmeur utilisateur) d'allouer une zone mémoire correcte pour contenir le
+résultat (figure~\ref{fig:appel-gettimeofday}).
+
+Puisque c'est le noyau qui implémente l'appel système, le déréférencement se
+déroule en \ring{0}. Il se pose alors le problème suivant : le noyau va pouvoir
+écrire à toute adresse fournie par l'utilisateur.
+
+% Fig memory zones (needed ?) {{{
+% Memory zone
+%
+% #1 - start
+% #2 - end
+% #3 - color
+\newcommand{\mzone}[3]{
+  \path[#3] (#1,0) rectangle (#2,1);
+}
+
+% Address label
+%
+% #1 - x position
+% #2 - text
+\newcommand{\alabel}[2]{
+  \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \ttfamily #2};
+
+}
+
+% Pointer
+%
+% #1 - start address
+% #2 - label
+\newcommand{\ptr}[2]{
+  \path [draw,open triangle 60-] (#1, -0.2) -- ++ (0,-0.5) node [below] {#2};
+}
+
+\newcommand{\memoryframe}[1]{%
+\begin{tikzpicture}
+  [user/.style={fill=green!40}
+  ,kernel/.style={fill=red!40}
+  ]
+
+  % exec
+  \mzone{0.5}{1}{user}
+
+  % lib
+  \mzone{2.5}{3.2}{user}
+
+  % stack
+  \mzone{3.7}{4}{user}
+
+  % stack
+  \mzone{5}{5.5}{user}
+
+  % kernel
+  \mzone{6}{8}{kernel}
+
+  % contour
+  \draw (0,0) rectangle (8,1);
+
+  \alabel{0}{0}
+  \alabel{6}{3 Go}
+  \alabel{8}{4 Go}
+
+  % User struct
+  \ifthenelse{#1=1}{\mzone{2.6}{3.1}{draw, fill=green}}{}
+  \ifthenelse{#1=1}{\ptr{2.6}{pu}}{}
+
+  \ifthenelse{#1=2}{\mzone{7}{7.5}{draw, fill=red}}{}
+  \ifthenelse{#1>1}{\ptr{7}{pk}}{}
+
+\end{tikzpicture}
+} % End of newcommand \memoryframe
+
+\begin{figure}
+    \subfloat[][]{
+        \memoryframe{1}
+    }
+
+    \subfloat[][]{
+        \memoryframe{2}
+    }
+
+    \subfloat[][]{
+        \memoryframe{3}
+    }
+\end{figure}
+
+% }}}
+
+Notons que dans ce cas, c'est le noyau qui remplit la structure : le
+déréférencement se fait en \ring{0}.
+
 % vim: spelllang=fr
