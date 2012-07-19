@@ -7,7 +7,7 @@ Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
 typer :
 
 \[
-⊢ \text{memcpy} : ∀ a . (a^*, a^*, \text{size\_t}) \rightarrow ()
+⊢ \text{memcpy} : ∀ a . (a^*, a^*, \text{size\_t}) \rightarrow \tVoid
 \]
 
 La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
@@ -230,21 +230,21 @@ on peut donc traverser l'instruction $\uparrow x\{b\}$.
 
 \todo{fcall}
 
-%TODO pour :
-%
-%\[
-%\irule{Instr-Fcall}{
-%  \langle l, lv \leftarrow fe(\vec{e}), l' \rangle \\
-%  σ ⊢ fe ⇒ f \\
-%  σ ⊢ \vec{e} ⇒ \vec{v} \\
-%  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret \rightarrow \top \} \\
-%  (Entry(f), σ') \rightarrow (Exit(f), σ'') \\
-%  σ'' ⊢ !ret ⇒ v_{ret} \\
-%  σ'' ⊢ lv ⇒ a
-%}{
-%  (l, σ) \rightarrow (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a \rightarrow v_{ret}\}, ?)
-%}
-%\]
+TODO pour :
+
+\[
+\irule{Instr-Fcall}{
+  \langle l, lv \leftarrow fe(\vec{e}), l' \rangle \\
+  σ ⊢ fe ⇒ f \\
+  σ ⊢ \vec{e} ⇒ \vec{v} \\
+  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret \rightarrow \top \} \\
+  (Entry(f), σ') \rightarrow (Exit(f), σ'') \\
+  σ'' ⊢ !ret ⇒ v_{ret} \\
+  σ'' ⊢ lv ⇒ a
+}{
+  (l, σ) \rightarrow (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a \rightarrow v_{ret}\}, ?)
+}
+\]
 
 %TODO definir $σ ⊢ fe ⇒ f$
 
