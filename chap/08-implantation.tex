@@ -133,8 +133,43 @@ trop bas niveau. Par exemple, dans le code suivant
 
 \subsection{Implantation de l'algorithme de typage}
 
-L'inférence de types se fait par unification, en suivant les règles de typage.
+L'inférence de types se fait par unification. Commençons par étudier le cas du
+lambda-calcul simplement typé.
 
-\insertcode{ex-unif-c.c}
+\newcommand{\gramisa}[0]{::=}
+\newcommand{\gramor}[0]{|\hspace{3mm}}
 
-\insertcode{ex-unif-tpk.ml}
+\paragraph{Termes}
+
+\begin{align*}
+  t \gramisa & x       & \textrm{Variable} \\
+    \gramor  & λ x . t & \textrm{Abstraction} \\
+    \gramor  & t       & \textrm{Application} \\
+    \gramor  & n       & \textrm{Entier}
+\end{align*}
+
+\paragraph{Types}
+
+\begin{align*}
+  τ \gramisa &  \tInt          & \textrm{Entier}\\
+    \gramor  & τ \rightarrow τ & \textrm{Fonction}
+\end{align*}
+
+\paragraph{Contextes}
+
+\begin{align*}
+  Γ \gramisa & ε                 & \textrm{Contexte vide}\\
+    \gramor  & Γ[x \leftarrow τ] & \textrm{Extension}
+\end{align*}
+
+\paragraph{Règles}
+
+\begin{align*}
+\irule{Int}{ }{Γ⊢n:\tInt}
+&&
+\irule{Var}{x∈Γ \\ τ=Γ(x)}{Γ⊢x:τ}
+\\
+\irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
+&&
+\irule{Abs}{Γ[x \leftarrow τ_1]⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
+\end{align*}
