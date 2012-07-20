@@ -158,8 +158,8 @@ lambda-calcul simplement typé.
 \paragraph{Contextes}
 
 \begin{align*}
-  Γ \gramisa & ε                 & \textrm{Contexte vide}\\
-    \gramor  & Γ[x \leftarrow τ] & \textrm{Extension}
+  Γ \gramisa & ε     & \textrm{Contexte vide}\\
+    \gramor  & Γ,x:τ & \textrm{Extension}
 \end{align*}
 
 \paragraph{Règles}
@@ -171,5 +171,5 @@ lambda-calcul simplement typé.
 \\
 \irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
 &&
-\irule{Abs}{Γ[x \leftarrow τ_1]⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
+\irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
 \end{align*}
