@@ -173,3 +173,63 @@ lambda-calcul simplement typé.
 &&
 \irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
 \end{align*}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+L'inférence de types se fait par unification, en suivant les règles de typage.
+
+\insertcode{ex-unif-c.c}
+
+\insertcode{ex-unif-tpk.ml}
+
+\begin{figure}
+
+  \subfloat[][]{
+  \begin{tikzpicture}
+  \node               (var) {Var};
+  \node[right of=var] (ref) {ref};
+  \node[right of=ref, node distance=1.7cm] (u0) {Unknown 0};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (var);
+  \draw[->] (var) -- (ref);
+  \draw[->] (ref) -- (u0);
+  \end{tikzpicture}
+  }
+  \subfloat[][]{
+  \begin{tikzpicture}
+  \node               (var) {Var};
+  \node[right of=var] (ref) {ref};
+  \node[right of=ref, node distance=1.7cm] (u0) {Instanciated};
+  \node[right of=u0, node distance=1.7cm] (ii) {Int};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (var);
+  \draw[->] (var) -- (ref);
+  \draw[->] (ref) -- (u0);
+  \draw[->] (u0) -- (ii);
+  \end{tikzpicture}
+  }
+  \subfloat[][]{
+  \begin{tikzpicture}
+  \node               (var) {Int};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \node[right of=ptr] (pi) {Int};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (pi);
+  \end{tikzpicture}
+  }
+
+  \caption{Unification par partage}
+  \label{fig:unifpartage}
+
+\end{figure}
