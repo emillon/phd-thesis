@@ -13,6 +13,9 @@ showdvi: $(NAME).dvi
 regen-bib:
 	cat $(NAME).tex chap/*.tex | perl scripts/extractbib.pl | sort -u | xargs cat > $(NAME).bib
 
+gen/%.pycon.pyg.tex: code/%.pycon gen
+	pygmentize -f latex -l pycon -o $@ $<
+
 gen/%.pyg.tex: code/% gen
 	pygmentize -f latex -o $@ $<
 

@@ -130,3 +130,106 @@ l'arrière, on peut se référer à \cite{goto}.
 trop bas niveau. Par exemple, dans le code suivant
 
 \input{gen/struct-array.c.pyg.tex}
+
+\subsection{Implantation de l'algorithme de typage}
+
+L'inférence de types se fait par unification. Commençons par étudier le cas du
+lambda-calcul simplement typé.
+
+\newcommand{\gramisa}[0]{::=}
+\newcommand{\gramor}[0]{|\hspace{3mm}}
+
+\paragraph{Termes}
+
+\begin{align*}
+  t \gramisa & x       & \textrm{Variable} \\
+    \gramor  & λ x . t & \textrm{Abstraction} \\
+    \gramor  & t       & \textrm{Application} \\
+    \gramor  & n       & \textrm{Entier}
+\end{align*}
+
+\paragraph{Types}
+
+\begin{align*}
+  τ \gramisa &  \tInt          & \textrm{Entier}\\
+    \gramor  & τ \rightarrow τ & \textrm{Fonction}
+\end{align*}
+
+\paragraph{Contextes}
+
+\begin{align*}
+  Γ \gramisa & ε     & \textrm{Contexte vide}\\
+    \gramor  & Γ,x:τ & \textrm{Extension}
+\end{align*}
+
+\paragraph{Règles}
+
+\begin{align*}
+\irule{Int}{ }{Γ⊢n:\tInt}
+&&
+\irule{Var}{x∈Γ \\ τ=Γ(x)}{Γ⊢x:τ}
+\\
+\irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
+&&
+\irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
+\end{align*}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+L'inférence de types se fait par unification, en suivant les règles de typage.
+
+\insertcode{ex-unif-c.c}
+
+\insertcode{ex-unif-tpk.ml}
+
+\begin{figure}
+
+  \subfloat[][]{
+  \begin{tikzpicture}
+  \node               (var) {Var};
+  \node[right of=var] (ref) {ref};
+  \node[right of=ref, node distance=1.7cm] (u0) {Unknown 0};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (var);
+  \draw[->] (var) -- (ref);
+  \draw[->] (ref) -- (u0);
+  \end{tikzpicture}
+  }
+  \subfloat[][]{
+  \begin{tikzpicture}
+  \node               (var) {Var};
+  \node[right of=var] (ref) {ref};
+  \node[right of=ref, node distance=1.7cm] (u0) {Instanciated};
+  \node[right of=u0, node distance=1.7cm] (ii) {Int};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (var);
+  \draw[->] (var) -- (ref);
+  \draw[->] (ref) -- (u0);
+  \draw[->] (u0) -- (ii);
+  \end{tikzpicture}
+  }
+  \subfloat[][]{
+  \begin{tikzpicture}
+  \node               (var) {Int};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \node[right of=ptr] (pi) {Int};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (pi);
+  \end{tikzpicture}
+  }
+
+  \caption{Unification par partage}
+  \label{fig:unifpartage}
+
+\end{figure}
