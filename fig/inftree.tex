@@ -1,4 +1,4 @@
-\newcommand{\ppplus}[0]{+}
+\newcommand{\ppplus}[0]{\textrm{plus}}
 \irule
   {Abs}
   {
@@ -11,9 +11,9 @@
               { }
               {Γ^0, x:τ_1, y:τ_2 ⊢ y}
             \\
-            \inferrule*[right=(App),vdots=4em,leftskip=4em,rightskip=4em]
+            \inferrule*[right=(App),vdots=4em,leftskip=5em,rightskip=5em]
               {
-                \inferrule*[right=(Var), rightskip=5em]
+                \inferrule*[right=(Var), rightskip=6em]
                   { }
                   {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus}
                 \\
