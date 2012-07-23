@@ -142,17 +142,21 @@ lambda-calcul simplement typé.
 \paragraph{Termes}
 
 \begin{align*}
-  t \gramisa & x       & \textrm{Variable} \\
-    \gramor  & λ x . t & \textrm{Abstraction} \\
-    \gramor  & t       & \textrm{Application} \\
-    \gramor  & n       & \textrm{Entier}
+  t \gramisa & x              & \textrm{Variable} \\
+    \gramor  & λ x . t        & \textrm{Abstraction} \\
+    \gramor  & t              & \textrm{Application} \\
+    \gramor  & n              & \textrm{Entier} \\
+    \gramor  & (t, t)         & \textrm{Couple} \\
+    \gramor  & \textrm{fst} t & \textrm{Projection gauche} \\
+    \gramor  & \textrm{snd} t & \textrm{Projection droite}
 \end{align*}
 
 \paragraph{Types}
 
 \begin{align*}
   τ \gramisa &  \tInt          & \textrm{Entier}\\
-    \gramor  & τ \rightarrow τ & \textrm{Fonction}
+    \gramor  & τ \rightarrow τ & \textrm{Fonction} \\
+    \gramor  & τ \times τ      & \textrm{Produit}
 \end{align*}
 
 \paragraph{Contextes}
@@ -172,7 +176,19 @@ lambda-calcul simplement typé.
 \irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
 &&
 \irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
+\\
+\irule{Proj-g}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{fst} x:τ_1}
+&&
+\irule{Proj-d}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{snd} x:τ_2}
+\\
+\irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
 \end{align*}
+
+Ce système de types a une propriété particulièrement intéressante : chaque forme
+syntaxique (variable, abstraction, etc) est en conclusion d'exactement une règle
+de typage. Cela permet de toujours savoir quelle règle il faut appliquer. De la
+même manière qu'on peut déduire un analyseur syntaxique d'une grammaire LL, on
+peut facilement implanter un algorithme d'inférence de types.
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
