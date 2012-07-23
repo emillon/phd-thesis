@@ -1,0 +1,58 @@
+\irule
+  {Abs}
+  {
+    \irule
+      {Abs}
+      {
+        \inferrule*[right=(App)]
+          {
+            \inferrule*[right=(App),vdots=1.5em,leftskip=2em,rightskip=2em]
+              {
+                \inferrule*[right=(Var)]
+                  { }
+                  {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus}}
+                \\
+                \inferrule*[right=(App)]
+                  {
+                    \inferrule*[right=(App)]
+                      {
+                        \irule
+                          {Var}
+                          { }
+                          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} }
+                        \\
+                        \irule
+                          {Proj-G}
+                          {
+                            \irule
+                              {Var}
+                              { }
+                              {Γ^0, x:τ_1, y:τ_2 ⊢ x}
+                          }
+                          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{fst} x}
+                      }
+                      {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{fst} x) }
+                    \\
+                    \irule
+                      {Proj-D}
+                      {
+                        \irule
+                          {Var}
+                          { }
+                          {Γ^0, x:τ_1, y:τ_2 ⊢ x}
+                      }
+                      {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{snd} x}
+                  }
+                  {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{fst} x) (\textrm{snd} x) }
+              }
+              {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) }
+            \\
+            \inferrule*[right=(Var)]
+              { }
+              {Γ^0, x:τ_1, y:τ_2 ⊢ y}
+          }
+          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
+      }
+      {Γ^0, x:τ_1 ⊢ λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
+  }
+  {Γ^0 ⊢ λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }

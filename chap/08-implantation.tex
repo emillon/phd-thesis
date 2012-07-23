@@ -168,27 +168,33 @@ lambda-calcul simplement typé.
 
 \paragraph{Règles}
 
-\begin{align*}
+\begin{mathpar}
 \irule{Int}{ }{Γ⊢n:\tInt}
-&&
+\and
 \irule{Var}{x∈Γ \\ τ=Γ(x)}{Γ⊢x:τ}
-\\
+\and
 \irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
-&&
+\and
 \irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
-\\
+\and
 \irule{Proj-g}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{fst} x:τ_1}
-&&
+\and
 \irule{Proj-d}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{snd} x:τ_2}
-\\
+\and
 \irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
-\end{align*}
+\end{mathpar}
 
 Ce système de types a une propriété particulièrement intéressante : chaque forme
 syntaxique (variable, abstraction, etc) est en conclusion d'exactement une règle
 de typage. Cela permet de toujours savoir quelle règle il faut appliquer. De la
 même manière qu'on peut déduire un analyseur syntaxique d'une grammaire LL, on
-peut facilement implanter un algorithme d'inférence de types.
+peut facilement implanter un algorithme d'inférence de type.
+
+Déroulons un exemple.
+
+\[
+\input{fig/inftree.tex}
+\]
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
