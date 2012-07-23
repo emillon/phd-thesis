@@ -19,13 +19,13 @@
                 \\
                 \inferrule*[right=(App),vdots=3em,leftskip=5em,rightskip=3em]
                   {
-                    \inferrule*[right=(App), vdots=4em, rightskip=4em]
+                    \inferrule*[right=(App), vdots=4em, rightskip=5em]
                       {
-                        \inferrule*[right=(Var)]
+                        \inferrule*[right=(Var), rightskip=4em]
                           { }
                           {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus }
                         \\
-                        \inferrule*[right=(Proj-G)]
+                        \inferrule*[right=(Proj-G), vdots=3em, leftskip=4em]
                           {
                             \irule
                               {Var}
@@ -36,7 +36,7 @@
                       }
                       {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus (\textrm{fst} x) }
                     \\
-                    \inferrule*[right=(Proj-D), leftskip=4em]
+                    \inferrule*[right=(Proj-D), leftskip=5em, rightskip=4em]
                       {
                         \irule
                           {Var}
