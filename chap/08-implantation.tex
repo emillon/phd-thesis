@@ -134,12 +134,13 @@ trop bas niveau. Par exemple, dans le code suivant
 \subsection{Implantation de l'algorithme de typage}
 
 L'inférence de types se fait par unification. Commençons par étudier le cas du
-lambda-calcul simplement typé.
+lambda-calcul simplement typé (figure~\ref{fig:stlc}).
 
+\begin{figure}
 \newcommand{\gramisa}[0]{::=}
 \newcommand{\gramor}[0]{|\hspace{3mm}}
 
-\paragraph{Termes}
+Termes
 
 \begin{align*}
   t \gramisa & x              & \textrm{Variable} \\
@@ -151,7 +152,7 @@ lambda-calcul simplement typé.
     \gramor  & \textrm{snd} t & \textrm{Projection droite}
 \end{align*}
 
-\paragraph{Types}
+Types
 
 \begin{align*}
   τ \gramisa &  \tInt          & \textrm{Entier}\\
@@ -159,14 +160,14 @@ lambda-calcul simplement typé.
     \gramor  & τ \times τ      & \textrm{Produit}
 \end{align*}
 
-\paragraph{Contextes}
+Contextes
 
 \begin{align*}
   Γ \gramisa & ε     & \textrm{Contexte vide}\\
     \gramor  & Γ,x:τ & \textrm{Extension}
 \end{align*}
 
-\paragraph{Règles}
+Règles
 
 \begin{mathpar}
 \irule{Int}{ }{Γ⊢n:\tInt}
@@ -184,17 +185,39 @@ lambda-calcul simplement typé.
 \irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
 \end{mathpar}
 
+\caption{Lambda calcul simplement typé avec entiers et couples}
+\label{fig:stlc}
+
+\end{figure}
+
 Ce système de types a une propriété particulièrement intéressante : chaque forme
 syntaxique (variable, abstraction, etc) est en conclusion d'exactement une règle
 de typage. Cela permet de toujours savoir quelle règle il faut appliquer. De la
 même manière qu'on peut déduire un analyseur syntaxique d'une grammaire LL, on
 peut facilement implanter un algorithme d'inférence de type.
 
-Déroulons un exemple.
+Prenons l'exemple de la fonction suivante\footnote{ On suppose que \texttt{plus}
+est une fonction de l'environnement global qui a pour type $\tInt \rightarrow
+\tInt \rightarrow \tInt$.} :
 
+\[
+f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
+\]
+
+Informellement, on voit que puisque \texttt{fst} et \texttt{snd} sont appliqués
+à \texttt{x}, ce doit être un tuple. En outre on additionne ces deux composantes
+ensemble, donc elles doivent être de type \tInt (et le résultat aussi). Par le
+même argument, \texttt{y} doit aussi être de type \tInt. En conclusion,
+\texttt{x} est de type $\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc
+f est de type $\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt$.
+
+\begin{figure}
 \[
 \input{fig/inftree.tex}
 \]
+\caption{Arbre d'inférence : règles à utiliser}
+\label{gif:inftree-rules}
+\end{figure}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 

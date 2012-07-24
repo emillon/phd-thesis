@@ -1,4 +1,3 @@
-\newcommand{\ppplus}[0]{\textrm{plus}}
 \irule
   {Abs}
   {
@@ -15,7 +14,7 @@
               {
                 \inferrule*[right=(Var), rightskip=6em]
                   { }
-                  {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus}
+                  {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus}}
                 \\
                 \inferrule*[right=(App),vdots=3em,leftskip=5em,rightskip=3em]
                   {
@@ -23,7 +22,7 @@
                       {
                         \inferrule*[right=(Var), rightskip=4em]
                           { }
-                          {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus }
+                          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} }
                         \\
                         \inferrule*[right=(Proj-G), vdots=3em, leftskip=4em]
                           {
@@ -34,7 +33,7 @@
                           }
                           {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{fst} x}
                       }
-                      {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus (\textrm{fst} x) }
+                      {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{fst} x) }
                     \\
                     \inferrule*[right=(Proj-D), leftskip=5em, rightskip=4em]
                       {
@@ -45,12 +44,12 @@
                       }
                       {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{snd} x}
                   }
-                  {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus (\textrm{fst} x) (\textrm{snd} x) }
+                  {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{fst} x) (\textrm{snd} x) }
               }
-              {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus (\ppplus (\textrm{fst} x) (\textrm{snd} x)) }
+              {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) }
           }
-          {Γ^0, x:τ_1, y:τ_2 ⊢ \ppplus (\ppplus (\textrm{fst} x) (\textrm{snd} x)) y }
+          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
       }
-      {Γ^0, x:τ_1 ⊢ λy. \ppplus (\ppplus (\textrm{fst} x) (\textrm{snd} x)) y }
+      {Γ^0, x:τ_1 ⊢ λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
   }
-  {Γ^0 ⊢ λx.λy. \ppplus (\ppplus (\textrm{fst} x) (\textrm{snd} x)) y }
+  {Γ^0 ⊢ λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
