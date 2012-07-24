@@ -294,6 +294,7 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 \begin{figure} % fig:unifpartage {{{
 
   \subfloat[][]{
+  \label{fig:unifpartage:a}
   \begin{tikzpicture}
   \node               (var) {Var};
   \node[right of=var] (ref) {ref};
@@ -309,6 +310,7 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
   \end{tikzpicture}
   }
   \subfloat[][]{
+  \label{fig:unifpartage:b}
   \begin{tikzpicture}
   \node               (var) {Var};
   \node[right of=var] (ref) {ref};
@@ -326,6 +328,7 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
   \end{tikzpicture}
   }
   \subfloat[][]{
+  \label{fig:unifpartage:c}
   \begin{tikzpicture}
   \node               (var) {Int};
   \node[below of=var] (ptr) {Ptr};
@@ -345,6 +348,9 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 
 L'implémentation de cet algorithme utilise le partage est les références
 (figure~\ref{fig:unifpartage}).
+
+D'abord \ref{fig:unifpartage:a}, ensuite \ref{fig:unifpartage:b}, et enfin
+\ref{fig:unifpartage:c}.
 
 \insertcode{lambda-types.ml}
 
