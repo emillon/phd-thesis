@@ -1,3 +1,11 @@
+\def\gammaXY{\ensuremath{Γ_2}}
+\def\gammaX{\ensuremath{Γ_1}}
+\def\gammaOneDef{\ensuremath{Γ^0, x\disptypeL{\tInt \times \tInt}, y\disptypeL{\tInt}}}
+\def\gammaTwoDef{\ensuremath{Γ^0, x\disptypeL{\tInt \times \tInt}}}
+\def\termFst#1{\ensuremath{\textrm{fst}~x}}
+\def\termSnd#1{\ensuremath{\textrm{snd}~x}}
+\def\fstx{\termFst{x}}
+\def\sndx{\termSnd{x}}
 \irule
   {Abs}
   {
@@ -8,48 +16,74 @@
           {
             \inferrule*[right=(Var), rightskip=4em]
               { }
-              {Γ^0, x:τ_1, y:τ_2 ⊢ y}
+              {\gammaXY ⊢ y
+              \disptypeR{\tInt}
+              }
             \\
             \inferrule*[right=(App),vdots=4em,leftskip=5em,rightskip=5em]
               {
-                \inferrule*[right=(Var), rightskip=6em]
+                \inferrule*[right=(Var), leftskip=3em, rightskip=7em]
                   { }
-                  {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus}}
+                  {\gammaXY ⊢ \textrm{plus}
+                  \disptypeR{\tInt \rightarrow \tInt \rightarrow \tInt}
+                  }
                 \\
-                \inferrule*[right=(App),vdots=3em,leftskip=5em,rightskip=3em]
+                \inferrule*[right=(App),vdots=3em,leftskip=7em,rightskip=3em]
                   {
                     \inferrule*[right=(App), vdots=4em, rightskip=5em]
                       {
-                        \inferrule*[right=(Var), rightskip=4em]
+                        \inferrule*[right=(Var), rightskip=5em]
                           { }
-                          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} }
+                          {\gammaXY ⊢ \textrm{plus}
+                          \disptypeR{\tInt \rightarrow \tInt \rightarrow \tInt}
+                          }
                         \\
-                        \inferrule*[right=(Proj-G), vdots=3em, leftskip=4em]
+                        \inferrule*[right=(Proj-G), vdots=3em, leftskip=5em]
                           {
                             \irule
                               {Var}
                               { }
-                              {Γ^0, x:τ_1, y:τ_2 ⊢ x}
+                              {\gammaXY ⊢ x
+                              \disptypeR{\tInt \times \tInt}
+                              }
                           }
-                          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{fst} x}
+                          {\gammaXY ⊢ \fstx
+                          \disptypeR{\tInt}
+                          }
                       }
-                      {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{fst} x) }
+                      {\gammaXY ⊢ \textrm{plus} (\fstx)
+                      \disptypeR{\tInt \rightarrow \tInt}
+                      }
                     \\
                     \inferrule*[right=(Proj-D), leftskip=5em, rightskip=4em]
                       {
                         \irule
                           {Var}
                           { }
-                          {Γ^0, x:τ_1, y:τ_2 ⊢ x}
+                          {\gammaXY ⊢ x
+                          \disptypeR{\tInt \times \tInt}
+                          }
                       }
-                      {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{snd} x}
+                      {\gammaXY ⊢ \sndx
+                      \disptypeR{\tInt}
+                      }
                   }
-                  {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{fst} x) (\textrm{snd} x) }
+                  {\gammaXY ⊢ \textrm{plus} (\fstx) (\sndx)
+                  \disptypeR{\tInt}
+                  }
               }
-              {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) }
+              {\gammaXY ⊢ \textrm{plus} (\textrm{plus} (\fstx) (\sndx))
+              \disptypeR{\tInt \rightarrow \tInt}
+              }
           }
-          {Γ^0, x:τ_1, y:τ_2 ⊢ \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
+          {\gammaXY ⊢ \textrm{plus} (\textrm{plus} (\fstx) (\sndx)) y
+          \disptypeR{\tInt}
+          }
       }
-      {Γ^0, x:τ_1 ⊢ λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
+      {\gammaX ⊢ λy. \textrm{plus} (\textrm{plus} (\fstx) (\sndx)) y
+      \disptypeR{\tInt \rightarrow \tInt}
+      }
   }
-  {Γ^0 ⊢ λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y }
+  {Γ_0 ⊢ λx.λy. \textrm{plus} (\textrm{plus} (\fstx) (\sndx)) y
+  \disptypeR{\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt}
+  }

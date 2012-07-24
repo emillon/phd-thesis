@@ -137,11 +137,15 @@ Commençons par étudier le cas du lambda-calcul simplement typé
 (figure~\ref{fig:stlc}).
 
 \begin{figure}
-\newcommand{\gramisa}[0]{::=}
+\newcommand{\gramisa}[0]{::=~}
 \newcommand{\gramor}[0]{|\hspace{3mm}}
 
-Termes
+\newcommand{\gramlr}[2]{%
+  \begin{minipage}{0.2\textwidth}\raggedleft #1\end{minipage}
+  \begin{minipage}{0.8\textwidth}#2\end{minipage}
+  }
 
+\gramlr{Termes}{
 \begin{align*}
   t \gramisa & x              & \textrm{Variable} \\
     \gramor  & λ x . t        & \textrm{Abstraction} \\
@@ -151,24 +155,24 @@ Termes
     \gramor  & \textrm{fst} t & \textrm{Projection gauche} \\
     \gramor  & \textrm{snd} t & \textrm{Projection droite}
 \end{align*}
+}
 
-Types
-
+\gramlr{Types}{
 \begin{align*}
   τ \gramisa &  \tInt          & \textrm{Entier}\\
     \gramor  & τ \rightarrow τ & \textrm{Fonction} \\
     \gramor  & τ \times τ      & \textrm{Produit}
 \end{align*}
+}
 
-Contextes
-
+\gramlr{Contextes}{
 \begin{align*}
   Γ \gramisa & ε     & \textrm{Contexte vide}\\
     \gramor  & Γ,x:τ & \textrm{Extension}
 \end{align*}
+}
 
-Règles
-
+\gramlr{Règles}{
 \begin{mathpar}
 \irule{Int}{ }{Γ⊢n:\tInt}
 \and
@@ -184,6 +188,7 @@ Règles
 \and
 \irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
 \end{mathpar}
+}
 
 \caption{Lambda calcul simplement typé avec entiers et couples}
 \label{fig:stlc}
@@ -211,18 +216,33 @@ syntaxique (variable, abstraction, etc) est en conclusion d'exactement une règl
 de typage. Cela permet de toujours savoir quelle règle il faut appliquer.
 
 Partant du terme de conclusion, on peut donc en déduire un squelette d'arbre
-d'inférence (figure~\ref{fig:infree-rules}).
+d'inférence (figure~\ref{fig:inftree-rules})\footnote{Par souci de clarté, les
+prémisses des applications de \textsc{(Var)} ne sont pas notées.}
 
 De la
 même manière qu'on peut déduire un analyseur syntaxique d'une grammaire LL, on
 peut facilement implanter un algorithme d'inférence de type.
 
 \begin{figure}
+\def\disptypeL#1{}
+\def\disptypeR#1{}
+
 \[
 \input{fig/inftree.tex}
 \]
 \caption{Arbre d'inférence : règles à utiliser}
 \label{fig:inftree-rules}
+\end{figure}
+
+\begin{figure}
+\def\disptypeL#1{:#1}
+\def\disptypeR#1{:#1}
+
+\[
+\input{fig/inftree.tex}
+\]
+\caption{Arbre d'inférence complet}
+\label{fig:inftree-full}
 \end{figure}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
