@@ -235,6 +235,16 @@ clarté, les prémisses des applications de \textsc{(Var)} ne sont pas notées.}
 \label{fig:inftree-rules}
 \end{figure} % }}}
 
+\begin{figure} % {{{ Fig full tree
+\def\disptypeL#1{:#1}
+\def\disptypeR#1{:#1}
+
+\input{fig/inftree.tex}
+
+\caption{Arbre d'inférence complet}
+\label{fig:inftree-full}
+\end{figure} % }}}
+
 Une fois à cette étape, on peut donner un nom à chaque type inconnu : $τ_1, τ_2,
 \ldots$. L'utilisation qui en est faite permet de générer un ensemble de
 contraintes d'unification. Par exemple, pour chaque application de la règle
@@ -261,32 +271,19 @@ Une fois ces simplifications réalisées, les contraintes restantes sont d'une d
 formes suivantes :
 
 \begin{itemize}
-\item $τ_i = τ_j$
-\item $τ_i = x$ où $x$ est un type concret
-\item $x = τ_i$ où $x$ est un type concret
+\item
+  $τ_i = τ_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
+\item
+  $τ_i = τ_j$ avec $i \ne j$ : toutes les occurrences de $τ_j$ dans les autres
+  contraintes peuvent être remplacées par $τ_i$. \todo{occurs check peut etre?}
+\item
+  $τ_i = x$ (ou $x = τ_i$) où $x$ est un type concret : idem.
 \end{itemize}
 
-\begin{figure} % {{{ Fig full tree
-\def\disptypeL#1{:#1}
-\def\disptypeR#1{:#1}
+Une fois toutes les substitutions effectuées, on obtient un arbre de typage
+correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 
-\input{fig/inftree.tex}
-
-\caption{Arbre d'inférence complet}
-\label{fig:inftree-full}
-\end{figure} % }}}
-
-\wip{}
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-L'inférence de types se fait par unification, en suivant les règles de typage.
-
-\insertcode{ex-unif-c.c}
-
-\insertcode{ex-unif-tpk.ml}
-
-\begin{figure}
+\begin{figure} % fig:unifpartage {{{
 
   \subfloat[][]{
   \begin{tikzpicture}
@@ -336,4 +333,20 @@ L'inférence de types se fait par unification, en suivant les règles de typage.
   \caption{Unification par partage}
   \label{fig:unifpartage}
 
-\end{figure}
+\end{figure} % }}}
+
+L'implémentation de cet algorithme utilise le partage est les références
+(figure~\ref{fig:unifpartage}).
+
+\wip{}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+Le programme C suivant :
+
+\insertcode{ex-unif-c.c}
+
+est compilé ainsi en Tyspeak :
+
+\insertcode{ex-unif-tpk.ml}
+
