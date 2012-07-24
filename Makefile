@@ -19,7 +19,7 @@ gen/%.pycon.pyg.tex: code/%.pycon gen
 gen/%.pyg.tex: code/% gen
 	pygmentize -f latex -o $@ $<
 
-gen/%.pdf: fig/%.svg
+gen/%.pdf: fig/%.svg gen
 	inkscape -A $@ $<
 
 gen/pygments-style.tex: gen

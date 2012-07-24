@@ -74,7 +74,13 @@ LLVM\cite{llvm-pres} est un backend de compilateur développé par Apple.
 
 \paragraph{Clight}
 
+Utilisé dans Compcert (front-end)
+
+\cite{cfront}.
+
 \paragraph{Cminor}
+
+Utilisé dans Compcert (middle-end).
 
 \paragraph{Cminusminus}
 
@@ -83,6 +89,8 @@ LLVM\cite{llvm-pres} est un backend de compilateur développé par Apple.
 http://www.cminusminus.org/
 
 \paragraph{Newspeak}
+
+\cite{newspeak}
 
 \section{Newspeak}
 
@@ -133,58 +141,160 @@ trop bas niveau. Par exemple, dans le code suivant
 
 \subsection{Implantation de l'algorithme de typage}
 
-L'inférence de types se fait par unification. Commençons par étudier le cas du
-lambda-calcul simplement typé.
+Commençons par étudier le cas du lambda-calcul simplement typé
+(figure~\ref{fig:stlc}).
 
-\newcommand{\gramisa}[0]{::=}
+\begin{figure}
+\newcommand{\gramisa}[0]{::=~}
 \newcommand{\gramor}[0]{|\hspace{3mm}}
 
-\paragraph{Termes}
+\newcommand{\gramlr}[2]{%
+  \begin{minipage}{0.2\textwidth}\raggedleft #1\end{minipage}
+  \begin{minipage}{0.8\textwidth}#2\end{minipage}
+  }
 
+\gramlr{Termes}{
 \begin{align*}
-  t \gramisa & x       & \textrm{Variable} \\
-    \gramor  & λ x . t & \textrm{Abstraction} \\
-    \gramor  & t       & \textrm{Application} \\
-    \gramor  & n       & \textrm{Entier}
+  t \gramisa & x              & \textrm{Variable} \\
+    \gramor  & λ x . t        & \textrm{Abstraction} \\
+    \gramor  & t              & \textrm{Application} \\
+    \gramor  & n              & \textrm{Entier} \\
+    \gramor  & f              & \textrm{Flottant} \\
+    \gramor  & (t, t)         & \textrm{Couple} \\
+    \gramor  & \textrm{fst}~t & \textrm{Projection gauche} \\
+    \gramor  & \textrm{snd}~t & \textrm{Projection droite}
 \end{align*}
+}
 
-\paragraph{Types}
-
+\gramlr{Types}{
 \begin{align*}
   τ \gramisa &  \tInt          & \textrm{Entier}\\
-    \gramor  & τ \rightarrow τ & \textrm{Fonction}
+    \gramor  &  \tFloat        & \textrm{Flottant}\\
+    \gramor  & τ \rightarrow τ & \textrm{Fonction} \\
+    \gramor  & τ \times τ      & \textrm{Produit}
 \end{align*}
+}
 
-\paragraph{Contextes}
-
+\gramlr{Contextes}{
 \begin{align*}
   Γ \gramisa & ε     & \textrm{Contexte vide}\\
     \gramor  & Γ,x:τ & \textrm{Extension}
 \end{align*}
+}
 
-\paragraph{Règles}
-
-\begin{align*}
+\gramlr{Règles}{
+\begin{mathpar}
 \irule{Int}{ }{Γ⊢n:\tInt}
-&&
-\irule{Var}{x∈Γ \\ τ=Γ(x)}{Γ⊢x:τ}
-\\
+\and
+\irule{Float}{ }{Γ⊢f:\tFloat}
+\and
+\irule{Var}{x:τ∈Γ}{Γ⊢x:τ}
+\and
 \irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
-&&
+\and
 \irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
-\end{align*}
+\and
+\irule{Proj-g}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{fst}~x:τ_1}
+\and
+\irule{Proj-d}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{snd}~x:τ_2}
+\and
+\irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
+\end{mathpar}
+}
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
+\caption{Lambda calcul simplement typé avec entiers, flottants et couples}
+\label{fig:stlc}
 
-L'inférence de types se fait par unification, en suivant les règles de typage.
+\end{figure}
 
-\insertcode{ex-unif-c.c}
+Prenons l'exemple de la fonction suivante\footnote{ On suppose que \texttt{plus}
+est une fonction de l'environnement global qui a pour type $\tInt \rightarrow
+\tInt \rightarrow \tInt$.} :
 
-\insertcode{ex-unif-tpk.ml}
+\[
+f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
+\]
 
-\begin{figure}
+Informellement, on voit que puisque \texttt{fst} et \texttt{snd} sont appliqués
+à \texttt{x}, ce doit être un tuple. En outre on additionne ces deux composantes
+ensemble, donc elles doivent être de type \tInt (et le résultat aussi). Par le
+même argument, \texttt{y} doit aussi être de type \tInt. En conclusion,
+\texttt{x} est de type $\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc
+f est de type $\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt$.
+
+Mais comment faire pour implanter cette analyse ? En fait le système de types de
+la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque
+forme syntaxique (variable, abstraction, etc) est en conclusion d'exactement une
+règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer
+(c'est à rapprocher du fait qu'on peut déduire un analyseur syntaxique d'une
+grammaire LL)
+
+Partant du terme de conclusion ($f$), on peut donc en déduire un squelette
+d'arbre d'inférence (figure~\ref{fig:inftree-rules})\footnote{Par souci de
+clarté, les prémisses des applications de \textsc{(Var)} ne sont pas notées.}
+
+\begin{figure} % {{{ Fig règles
+\def\disptypeL#1{}
+\def\disptypeR#1{}
+
+\input{fig/inftree.tex}
+
+\caption{Arbre d'inférence : règles à utiliser}
+\label{fig:inftree-rules}
+\end{figure} % }}}
+
+\begin{figure} % {{{ Fig full tree
+\def\disptypeL#1{:#1}
+\def\disptypeR#1{:#1}
+
+\input{fig/inftree.tex}
+
+\caption{Arbre d'inférence complet}
+\label{fig:inftree-full}
+\end{figure} % }}}
+
+Une fois à cette étape, on peut donner un nom à chaque type inconnu : $τ_1, τ_2,
+\ldots$. L'utilisation qui en est faite permet de générer un ensemble de
+contraintes d'unification. Par exemple, pour chaque application de la règle
+\textsc{(App)} :
+
+\[
+\irule{App}{Γ⊢\ldots:τ_3 \\ Γ ⊢ \ldots : τ_1}{Γ ⊢ \ldots : τ_2}
+\]
+
+on doit déduire que $τ_3 = τ_1 \rightarrow τ_2$.
+
+Ici $=$ est à prendre comme une contrainte d'égalité : partant d'un ensemble de
+contraintes de la forme "type avec inconnue = type avec inconnue", on veut
+obtenir une substitution "inconnue -> type concret".
+
+Pour résoudre ces contraintes, on commence par les simplifier : si $τ_a
+\rightarrow τ_b = τ_c \rightarrow τ_d$, alors $τ_a = τ_c$ et $τ_b = τ_d$. De
+même si $τ_a \times τ_b = τ_c \times τ_d$. Au contraire, si $τ_a \rightarrow τ_b
+= τ_c \times τ_d$, il est impossible d'unifier les types et il faut abandonner
+l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = τ_1
+\rightarrow τ_2$ ou $\tInt = \tFloat$.
+
+Une fois ces simplifications réalisées, les contraintes restantes sont d'une des
+formes suivantes :
+
+\begin{itemize}
+\item
+  $τ_i = τ_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
+\item
+  $τ_i = τ_j$ avec $i \ne j$ : toutes les occurrences de $τ_j$ dans les autres
+  contraintes peuvent être remplacées par $τ_i$. \todo{occurs check peut etre?}
+\item
+  $τ_i = x$ (ou $x = τ_i$) où $x$ est un type concret : idem.
+\end{itemize}
+
+Une fois toutes les substitutions effectuées, on obtient un arbre de typage
+correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
+
+\begin{figure} % fig:unifpartage {{{
 
   \subfloat[][]{
+  \label{fig:unifpartage:a}
   \begin{tikzpicture}
   \node               (var) {Var};
   \node[right of=var] (ref) {ref};
@@ -200,6 +310,7 @@ L'inférence de types se fait par unification, en suivant les règles de typage.
   \end{tikzpicture}
   }
   \subfloat[][]{
+  \label{fig:unifpartage:b}
   \begin{tikzpicture}
   \node               (var) {Var};
   \node[right of=var] (ref) {ref};
@@ -217,6 +328,7 @@ L'inférence de types se fait par unification, en suivant les règles de typage.
   \end{tikzpicture}
   }
   \subfloat[][]{
+  \label{fig:unifpartage:c}
   \begin{tikzpicture}
   \node               (var) {Int};
   \node[below of=var] (ptr) {Ptr};
@@ -232,4 +344,25 @@ L'inférence de types se fait par unification, en suivant les règles de typage.
   \caption{Unification par partage}
   \label{fig:unifpartage}
 
-\end{figure}
+\end{figure} % }}}
+
+L'implémentation de cet algorithme utilise le partage est les références
+(figure~\ref{fig:unifpartage}).
+
+D'abord \ref{fig:unifpartage:a}, ensuite \ref{fig:unifpartage:b}, et enfin
+\ref{fig:unifpartage:c}.
+
+\insertcode{lambda-types.ml}
+
+\wip{}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+Le programme C suivant :
+
+\insertcode{ex-unif-c.c}
+
+est compilé ainsi en Tyspeak :
+
+\insertcode{ex-unif-tpk.ml}
+

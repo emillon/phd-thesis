@@ -70,6 +70,30 @@ organization = "The International Federation for Information Processing",
   ee        = {http://dx.doi.org/10.1007/s10703-009-0089-6},
   bibsource = {DBLP, http://dblp.uni-trier.de}
 }
+@inproceedings{cfront,
+  author = {Sandrine Blazy and Zaynah Dargaye and Xavier Leroy},
+  title = {Formal Verification of a {C} Compiler Front-End},
+  booktitle = {FM 2006: Int. Symp. on Formal Methods},
+  series = {Lecture Notes in Computer Science},
+  publisher = {Springer},
+  volume = 4085,
+  year = 2006,
+  pages = {460--475},
+  urllocal = {http://gallium.inria.fr/~xleroy/publi/cfront.pdf},
+  urlpublisher = {http://dx.doi.org/10.1007/11813040_31},
+  abstract = {This paper presents the formal verification of a compiler front-end
+that translates a subset of the C language into the Cminor
+intermediate language.  The semantics of the source and target
+languages as well as the translation between them have been written in
+the specification language of the Coq proof assistant. The proof of
+observational semantic equivalence between the source and generated
+code has been machine-checked using Coq.  An executable compiler was
+obtained by automatic extraction of executable Caml code from the Coq
+specification of the translator, combined with a certified compiler
+back-end generating PowerPC assembly code from Cminor, described in
+previous work.},
+  xtopic = {compcert}
+}
 @inproceedings{cgs,
  author = {Venet, Arnaud and Brat, Guillaume},
  title = {Precise and efficient static array bound checking for large embedded C programs},
