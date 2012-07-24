@@ -6,6 +6,7 @@
 \def\termSnd#1{\ensuremath{\textrm{snd}~x}}
 \def\fstx{\termFst{x}}
 \def\sndx{\termSnd{x}}
+\begin{mathpar}
 \irule
   {Abs}
   {
@@ -87,3 +88,6 @@
   {Γ_0 ⊢ λx.λy. \textrm{plus} (\textrm{plus} (\fstx) (\sndx)) y
   \disptypeR{\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt}
   }
+\end{mathpar}
+
+\[\gammaX = \gammaTwoDef \qquad \gammaXY = \gammaOneDef\]

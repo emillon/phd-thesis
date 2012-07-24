@@ -176,7 +176,7 @@ Commençons par étudier le cas du lambda-calcul simplement typé
 \begin{mathpar}
 \irule{Int}{ }{Γ⊢n:\tInt}
 \and
-\irule{Var}{x∈Γ \\ τ=Γ(x)}{Γ⊢x:τ}
+\irule{Var}{x:τ∈Γ}{Γ⊢x:τ}
 \and
 \irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
 \and
@@ -211,39 +211,54 @@ même argument, \texttt{y} doit aussi être de type \tInt. En conclusion,
 f est de type $\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt$.
 
 Mais comment faire pour implanter cette analyse ? En fait le système de types de
-la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque forme
-syntaxique (variable, abstraction, etc) est en conclusion d'exactement une règle
-de typage. Cela permet de toujours savoir quelle règle il faut appliquer.
+la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque
+forme syntaxique (variable, abstraction, etc) est en conclusion d'exactement une
+règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer
+(c'est à rapprocher du fait qu'on peut déduire un analyseur syntaxique d'une
+grammaire LL)
 
-Partant du terme de conclusion, on peut donc en déduire un squelette d'arbre
-d'inférence (figure~\ref{fig:inftree-rules})\footnote{Par souci de clarté, les
-prémisses des applications de \textsc{(Var)} ne sont pas notées.}
+Partant du terme de conclusion ($f$), on peut donc en déduire un squelette
+d'arbre d'inférence (figure~\ref{fig:inftree-rules})\footnote{Par souci de
+clarté, les prémisses des applications de \textsc{(Var)} ne sont pas notées.}
 
-De la
-même manière qu'on peut déduire un analyseur syntaxique d'une grammaire LL, on
-peut facilement implanter un algorithme d'inférence de type.
-
-\begin{figure}
+\begin{figure} % {{{ Fig règles
 \def\disptypeL#1{}
 \def\disptypeR#1{}
 
-\[
 \input{fig/inftree.tex}
-\]
+
 \caption{Arbre d'inférence : règles à utiliser}
 \label{fig:inftree-rules}
-\end{figure}
+\end{figure} % }}}
 
-\begin{figure}
+Une fois à cette étape, on peut donner un nom à chaque type inconnu : $τ_1, τ_2,
+\ldots$. L'utilisation qui en est faite permet de générer un ensemble de
+contraintes d'unification. Par exemple, pour chaque application de la règle
+\textsc{(App)} :
+
+\[
+\irule{App}{Γ⊢\ldots:τ_3 \\ Γ ⊢ \ldots : τ_1}{Γ ⊢ \ldots : τ_2}
+\]
+
+on doit déduire que $τ_3 = τ_1 \rightarrow τ_2$.
+
+Ici $=$ est à prendre comme une contrainte d'égalité : partant d'un ensemble de
+contraintes de la forme "type avec inconnue = type avec inconnue", on veut
+obtenir une substitution "inconnue -> type concret".
+
+Pour résoudre ces contraintes, on commence par les simplifier.
+
+\begin{figure} % {{{ Fig full tree
 \def\disptypeL#1{:#1}
 \def\disptypeR#1{:#1}
 
-\[
 \input{fig/inftree.tex}
-\]
+
 \caption{Arbre d'inférence complet}
 \label{fig:inftree-full}
-\end{figure}
+\end{figure} % }}}
+
+\wip{}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
