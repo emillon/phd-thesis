@@ -6,9 +6,9 @@ original de C tel que décrit dans \cite{AnsiC}.
 Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
 typer :
 
-\[
+\begin{mathpar}
 ⊢ \text{memcpy} : ∀ a . (a^*, a^*, \text{size\_t}) \rightarrow \tVoid
-\]
+\end{mathpar}
 
 La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
@@ -121,87 +121,87 @@ Les jugements ont les formes suivantes :
 
 \subsection{Sémantique des left-values}
 
-\begin{eqnarray*}
+\begin{mathpar}
 \irule{Eval-Lv-Var}{
   (v, a) ∈ σ
 }{
   σ ⊢ v ⇒ a
 }
-&
+\and
 \irule{Eval-Lv-Deref}{
   σ ⊢ e ⇒ \&a
 }{
   σ ⊢ *e ⇒ a
 }
-\\
+\and
 \irule{Eval-Lv-Field}{
   σ ⊢ lv ⇒ a
 }{
   σ ⊢ lv.f ⇒ a + f
 }
-&
+\and
 \irule{Eval-Lv-Array}{
   σ ⊢ lv ⇒ a \\
   σ ⊢ e ⇒ n \\
 }{
   σ ⊢ lv[e] ⇒ a + n
 }
-\end{eqnarray*}
+\end{mathpar}
 
 \subsection{Sémantique des expressions}
 
-\begin{eqnarray*}
+\begin{mathpar}
 \irule{Eval-Cst}{
 }{
   σ ⊢ c ⇒ c
 }
-&
+\and
 \irule{Eval-Lv}{
   σ ⊢ lv ⇒ a \\
   (a, v) ∈ σ
 }{
   σ ⊢ lv ⇒ v
 }
-\\
+\and
 \irule{Eval-Unop}{
   σ ⊢ e ⇒ v
 }{
-  σ ⊢ op e ⇒ \widehat{op} v
+  σ ⊢ \textrm{op}~e ⇒ \widehat{\textrm{op}}~v
 }
-&
+\and
 \irule{Eval-Binop}{
   σ ⊢ e_1 ⇒ v_1 \\
   σ ⊢ e_2 ⇒ v_2
 }{
-  σ ⊢ e_1 op e_2 ⇒ v_1 \widehat{op} v_2
+  σ ⊢ e_1~\textrm{op}~e_2 ⇒ v_1 \widehat{\textrm{op}}~v_2
 }
-\\
+\and
 \irule{Eval-AddrOf}{
   σ ⊢ lv ⇒ a
 }{
   σ ⊢ \&lv ⇒ \&a
 }
-&
+\and
 \irule{Eval-AddrOfFun}{
 }{
   σ ⊢ \&f ⇒ \&f
 }
-\end{eqnarray*}
+\end{mathpar}
 
 \subsection{Sémantique des instructions}
 
 La règle la plus simple concerne l'affectation : on peut affecter une
 expressions à une left value si elles ont le même type.
 
-\[
-\irule{Instr-Assign}{
-  \langle l, lv \leftarrow e, l' \rangle \\
-  σ ⊢ lv ⇒ a \\
-  σ ⊢ e ⇒ v
-}{
-  (l, σ) \rightarrow (l', σ [ a ↦ v ])
-}
-\]
+\begin{mathpar}
+  \irule{Instr-Assign}{
+    \langle l, lv \leftarrow e, l' \rangle \\
+    σ ⊢ lv ⇒ a \\
+    σ ⊢ e ⇒ v
+  }{
+    (l, σ) \rightarrow (l', σ [ a ↦ v ])
+  }
+\end{mathpar}
 
 Déclarer une variable, c'est rendre accessible dans un bloc une variable non
 initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
@@ -209,16 +209,16 @@ traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
 on peut donc traverser l'instruction $\uparrow x\{b\}$.
 
 \begin{minipage}{0.6\textwidth}
-\[
-\irule{Instr-Decl}{
-  \langle l, \uparrow x \{ b \}, l' \rangle \\
-  \langle l_b, b, l_b' \rangle \\
-  σ' = σ ⊕ \{ x \rightarrow \top \} \\
-  (l_b, σ', s) \rightarrow (l_b', σ'')
-}{
-  (l, σ) \rightarrow (l', σ'' \backslash x)
-}
-\]
+\begin{mathpar}
+  \irule{Instr-Decl}{
+    \langle l, \uparrow x \{ b \}, l' \rangle \\
+    \langle l_b, b, l_b' \rangle \\
+    σ' = σ ⊕ \{ x \rightarrow \top \} \\
+    (l_b, σ', s) \rightarrow (l_b', σ'')
+  }{
+    (l, σ) \rightarrow (l', σ'' \backslash x)
+  }
+\end{mathpar}
 \end{minipage}
 \begin{minipage}{0.4\textwidth}
 \input{fig/sem-decl.tex}
@@ -242,7 +242,7 @@ TODO pour :
 }
 \]
 
-%TODO definir $σ ⊢ fe ⇒ f$
+\todo{definir $σ ⊢ fe ⇒ f$}
 
 \subsection{Sémantique des conditions}
 
@@ -255,7 +255,7 @@ travers le "if".
 \input{fig/sem-if.tex}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-\[
+\begin{mathpar}
 \irule{If-True}{
   \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ n \\
@@ -265,9 +265,7 @@ travers le "if".
 }{
   (l, σ) \rightarrow (l', σ')
 }
-\]
-
-\[
+\and
 \irule{If-False}{
   \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ 0 \\
@@ -276,7 +274,7 @@ travers le "if".
 }{
   (l, σ) \rightarrow (l', σ')
 }
-\]
+\end{mathpar}
 \end{minipage}
 
 \section{Règles de typage}
@@ -347,97 +345,96 @@ instructions sont bien typées si leurs sous-instructions sont bien typées. La
 seule règle supplémentaire concerne la condition du $if$ qui doit être typée en
 \tInt.
 
-\begin{eqnarray*}
-&
+\begin{mathpar}
 \irule{Pass}{
 }{
   Γ ⊢ ε
 }
-&
+\and
 \irule{Seq}{
   Γ ⊢ s \\
   Γ ⊢ b
 }{
   Γ ⊢ s;b
 }
-\\
-&
+\and
 \irule{Forever}{
   Γ ⊢ b
 }{
   Γ ⊢ forever \{ b \}
 }
-&
+\and
 \irule{If}{
   Γ ⊢ e : \tInt \\
   Γ ⊢ i_t \\
   Γ ⊢ i_f
 }{
   Γ ⊢ \iIf{e}{i_t}{i_f}
-} \\
-&
+}
+\and
 \irule{Goto}{
 }{
   Γ ⊢ goto l
 }
-&
+\and
 \irule{DoWith}{
   Γ ⊢ b
 }{
   Γ ⊢ \{ b \} l:
 }
-\end{eqnarray*}
+\end{mathpar}
 
 \subsection{Left values}
 
 On étend la relation de typage aux left values : chaque left value, vue comme
 une expression, peut être typée.
 
-\begin{eqnarray*}
+\begin{mathpar}
 \irule{Lv-Var}{
   (v, τ) ∈ Γ
 }{
   Γ ⊢ v : τ
 }
-&
+\and
 \irule{Lv-Field}{
   Γ ⊢ lv : τ_s \\
   (f, τ_f) ∈ τ_s
 }{
   Γ ⊢ lv.f : τ_f
 }
-\\
+\and
 \irule{Lv-Deref}{
   Γ ⊢ e : τ*
 }{
   Γ ⊢ *e : τ
 }
-&
+\and
 \irule{Lv-Array}{
   Γ ⊢ lv : [τ] \\
   Γ ⊢ e : \tInt
 }{
   Γ ⊢ lv[e] : τ
 }
-\end{eqnarray*}
+\end{mathpar}
 
 \subsection{Expressions}
-\begin{eqnarray*}
+
+\begin{mathpar}
 \irule{Const-Int}{
 }{
   Γ ⊢ n : \tInt
 }
-\\
+\and
 \irule{Const-Float}{
 }{
   Γ ⊢ f : \tFloat
 }
-\\
+\and
 \irule{Const-Nil}{
 }{
   Γ ⊢ \cNil : τ*
 }
-\\
+\and
 \irule{Op-Int}{
   op ∈ \{+,-,×,/,\&,|,\&\&,||,⋘,⋙\} \\
   Γ ⊢ e_1 : \tInt \\
@@ -445,7 +442,7 @@ une expression, peut être typée.
 }{
   Γ ⊢ e_1 op e_2 : \tInt
 }
-\\
+\and
 \irule{Op-Float}{
   op ∈ \{+.,-.,×.,/.\} \\
   Γ ⊢ e_1 : \tFloat \\
@@ -453,7 +450,7 @@ une expression, peut être typée.
 }{
   Γ ⊢ e_1 \mathrm{op}~ e_2 : \tFloat
 }
-\\
+\and
 \irule{Op-Cmp}{
   op ∈ \{=,≠,≤,≥,<,>\} \\
   Γ ⊢ e_1 : τ \\
@@ -462,34 +459,34 @@ une expression, peut être typée.
 }{
   Γ ⊢ e_1  \mathrm{op} e_2 : \tInt
 }
-\\
+\and
 \irule{Unop-Minus}{
   τ ∈ \{ \tInt, \tFloat \} \\
   Γ ⊢ e : τ
 }{
   Γ ⊢ -e : τ
 }
-\\
+\and
 \irule{Unop-Not}{
   op ∈ \{ \tilde, ! \}
   Γ ⊢ e : \tInt
 }{
   Γ ⊢ op e : \tInt
 }
-\\
+\and
 \irule{AddrOf}{
   Γ ⊢ lv : τ
 }{
   Γ ⊢ \&lv : τ*
 }
-\\
+\and
 \irule{AddrOfFun}{
   Γ ⊢ f : σ \\
   τ ≤ σ
 }{
   Γ ⊢ \&lv : τ
 }
-\end{eqnarray*}
+\end{mathpar}
 
 \subsection{Fonctions}
 
@@ -509,20 +506,20 @@ résultant est généralisé.
 
 \subsection{Instructions}
 
-\begin{eqnarray*}
+\begin{mathpar}
 \irule{Decl}{
   Γ ⊕ \{x : τ\} ⊢ b
 }{
   Γ ⊢ \uparrow x \{b\}
 }
-\\
+\and
 \irule{Assign}{
   Γ ⊢ lv : τ \\
   Γ ⊢ e  : τ
 }{
   Γ ⊢ lv \leftarrow e
 }
-\\
+\and
 \irule{Fcall}{
   Γ ⊢ lv : τ_{ret} \\
   Γ ⊢ fe : σ \\
@@ -531,7 +528,7 @@ résultant est généralisé.
 }{
   Γ ⊢ lv \leftarrow fe(\vec{e})
 }
-\end{eqnarray*}
+\end{mathpar}
 
 \section{Limitations}
 \subsection{Programmes non typables}
