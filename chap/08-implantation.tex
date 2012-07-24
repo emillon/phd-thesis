@@ -250,7 +250,17 @@ Pour résoudre ces contraintes, on commence par les simplifier : si $τ_a
 \rightarrow τ_b = τ_c \rightarrow τ_d$, alors $τ_a = τ_c$ et $τ_b = τ_d$. De
 même si $τ_a \times τ_b = τ_c \times τ_d$. Au contraire, si $τ_a \rightarrow τ_b
 = τ_c \times τ_d$, il est impossible d'unifier les types et il faut abandonner
-l'inférence de types.
+l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = τ_1
+\rightarrow τ_2$ ou $\tInt = \tFloat$.
+
+Une fois ces simplifications réalisées, les contraintes restantes sont d'une des
+formes suivantes :
+
+\begin{itemize}
+\item $τ_i = τ_j$
+\item $τ_i = x$ où $x$ est un type concret
+\item $x = τ_i$ où $x$ est un type concret
+\end{itemize}
 
 \begin{figure} % {{{ Fig full tree
 \def\disptypeL#1{:#1}
