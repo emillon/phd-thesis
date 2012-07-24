@@ -133,8 +133,8 @@ trop bas niveau. Par exemple, dans le code suivant
 
 \subsection{Implantation de l'algorithme de typage}
 
-L'inférence de types se fait par unification. Commençons par étudier le cas du
-lambda-calcul simplement typé (figure~\ref{fig:stlc}).
+Commençons par étudier le cas du lambda-calcul simplement typé
+(figure~\ref{fig:stlc}).
 
 \begin{figure}
 \newcommand{\gramisa}[0]{::=}
@@ -190,12 +190,6 @@ Règles
 
 \end{figure}
 
-Ce système de types a une propriété particulièrement intéressante : chaque forme
-syntaxique (variable, abstraction, etc) est en conclusion d'exactement une règle
-de typage. Cela permet de toujours savoir quelle règle il faut appliquer. De la
-même manière qu'on peut déduire un analyseur syntaxique d'une grammaire LL, on
-peut facilement implanter un algorithme d'inférence de type.
-
 Prenons l'exemple de la fonction suivante\footnote{ On suppose que \texttt{plus}
 est une fonction de l'environnement global qui a pour type $\tInt \rightarrow
 \tInt \rightarrow \tInt$.} :
@@ -211,12 +205,24 @@ même argument, \texttt{y} doit aussi être de type \tInt. En conclusion,
 \texttt{x} est de type $\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc
 f est de type $\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt$.
 
+Mais comment faire pour implanter cette analyse ? En fait le système de types de
+la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque forme
+syntaxique (variable, abstraction, etc) est en conclusion d'exactement une règle
+de typage. Cela permet de toujours savoir quelle règle il faut appliquer.
+
+Partant du terme de conclusion, on peut donc en déduire un squelette d'arbre
+d'inférence (figure~\ref{fig:infree-rules}).
+
+De la
+même manière qu'on peut déduire un analyseur syntaxique d'une grammaire LL, on
+peut facilement implanter un algorithme d'inférence de type.
+
 \begin{figure}
 \[
 \input{fig/inftree.tex}
 \]
 \caption{Arbre d'inférence : règles à utiliser}
-\label{gif:inftree-rules}
+\label{fig:inftree-rules}
 \end{figure}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
