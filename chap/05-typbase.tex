@@ -26,26 +26,22 @@ d'initialisation des variables globales et l'appel à la fonction principale.
 
 \todo{expliquer pourquoi un while expr ne suffit pas}
 
-Contrairement au langage C, le langage des expressions et des instructions est
-séparé. Par conséquence, l'évaluation des expressions peut se faire sans effet de
-bord.
+La différence principale avec C est que les expressions sont sans effets de
+bords, donc que leur évaluation peut être faite sans modifier l'environnement.
 
-\section{Sémantique (opérationnelle, à petits pas)}
+\section{Sémantique}
 
-On définit une sémantique opérationnelle à petits pas, sous forme d'une relation
-de transition (notée $\rightarrow$) entre états de l'interpréteur.
+Dans cette section, nous définissons une sémantique pour ce langage impératif ;
+elle pourra servir à l'implantation d'un interpréteur et à raisonner de manière
+formelle sur les programme. Mathématiquement, cela consiste en la définition
+d'une relation de transition $\rightarrow$ entre états de l'interpréteur.
 
-Ces états sont constitués des composantes suivantes :
-
-\begin{itemize}
-\item
-  un point de contrôle $l$ dans le programme. Ils sont issus d'une
-  première transformation en un graphe de flot de contrôle.
-\item
-  un état mémoire $σ$ qui associe à chaque variable une valeur.
-\end{itemize}
+Un état est constitué d'une part d'un point de contrôle dans le programme
+(section~\ref{sec:cfg}, et d'autre part de l'état $σ$ de la mémoire
+(section~\ref{sec:sigma}).
 
 \subsection{Graphe de flot de contrôle}
+\label{sec:cfg}
 
 Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
 celles qui définissent le flot de contrôle (if, dowith, goto, forever) et celles
@@ -80,6 +76,7 @@ $\langle l, instr, l' \rangle$ qui signifie qu'on peut passer du point $l$ au
 point $l'$ en effectuant l'instruction $instr$.
 
 \subsection{État mémoire}
+\label{sec:sigma}
 
 La mémoire interne de l'interpréteur est une correspondance entre l'ensemble des
 adresses (infini dénombrable) et l'ensemble des valeurs. Un état mémoire $σ$ est
@@ -88,10 +85,12 @@ une fonction partielle de $Addr$ vers $Val$.
 Ces valeurs peuvent être de plusieurs formes :
 
 \begin{align*}
-v   ::=~ & n, f, \cNil & \text{constantes}\\
-      |~ & \&a         & \text{pointeur vers l'adresse $a$}\\
-      |~ & \&f         & \text{pointeur vers la fonction $f$}\\
-      |~ & \top        & \text{valeur non initialisée}
+v  \gramisa  & n           & \textrm{Entier}
+\\ \gramor   & f           & \textrm{Flottant}
+\\ \gramor   & \cNil       & \textrm{Pointeur nul}
+\\ \gramor   & \&a         & \textrm{Pointeur sur l'adresse $a$}
+\\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
+\\ \gramor   & \top        & \textrm{Valeur non initialisée}
 \end{align*}
 
 \todo{Pile d'appels}
@@ -436,7 +435,7 @@ une expression, peut être typée.
 }
 \and
 \irule{Op-Int}{
-  op ∈ \{+,-,×,/,\&,|,\&\&,||,⋘,⋙\} \\
+  op ∈ \{+,-,\times,/,\&,|,\&\&,||,⋘,⋙\} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
@@ -444,7 +443,7 @@ une expression, peut être typée.
 }
 \and
 \irule{Op-Float}{
-  op ∈ \{+.,-.,×.,/.\} \\
+  op ∈ \{+.,-.,\times.,/.\} \\
   Γ ⊢ e_1 : \tFloat \\
   Γ ⊢ e_2 : \tFloat
 }{
