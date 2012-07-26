@@ -1,34 +1,48 @@
-\begin{grammarf}
-<programme> ::= ( fonctions , globales , <bloc> )
-\end{grammarf}
-\begin{minipage}{0.4\textwidth}
-\begin{grammarf}
-    <expr> ::= <lval>
-          \alt unop <expr>
-          \alt <expr> binop <expr>
-          \alt cst
-          \alt \& <lval>
-          \alt \& fonction
+\gramlr{Programmes}{
+\begin{align*}
+P \gramisa & (\vec{f}, \vec{v}, b) & \textrm{Fonctions, globales, initialiseur}
+\end{align*}
+}
 
-    <lval> ::= var
-          \alt <lval> . champ
-          \alt <lval> [ <expr> ]
-          \alt * <expr>
-\end{grammarf}
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\begin{grammarf}
-     <bloc> ::= <instr> ; <bloc>
-           \alt $ε$
+\gramlr{Expressions}{
+\begin{align*}
+e  \gramisa & lv     & \textrm{Left-value}
+\\ \gramor  & op~e   & \textrm{Opération unaire}
+\\ \gramor  & e~op~e & \textrm{Opération binaire}
+\\ \gramor  & cst    & \textrm{Constante}
+\\ \gramor  & \& lv  & \textrm{Pointeur sur donnée}
+\\ \gramor  & \& f   & \textrm{Pointeur sur fonction}
+\end{align*}
+}
 
-    <instr> ::= <lval> $\leftarrow$ <expr>
-           \alt <lval> $\leftarrow$ funexp (args)
-           \alt funexp (args)
-           \alt $\uparrow$ nom \{ <bloc> \}
-           \alt if (<expr>) \{ <bloc> \} else \{ <bloc> \}
-           \alt \{ <bloc> \} label:
-           \alt goto label
-           \alt forever \{ <bloc> \}
-           \alt return <expr>
-\end{grammarf}
-\end{minipage}
+\gramlr{Left-values}{
+\begin{align*}
+lv \gramisa & var      & \textrm{Variable}
+\\ \gramor  & lv.champ & \textrm{Accès à un champ}
+\\ \gramor  & lv[e]    & \textrm{Accès à un tableau}
+\\ \gramor  & *e       & \textrm{Déréférencement}
+\end{align*}
+}
+
+\gramlr{Blocs}{
+\begin{align*}
+b  \gramisa & i ; b & \textrm{Séquence}
+\\ \gramor  & ε     & \textrm{Bloc vide}
+\end{align*}
+}
+
+\gramlr{Instructions}{
+\begin{align*}
+i  \gramisa & lv \leftarrow e             & \textrm{Affectation}
+\\ \gramor  & lv \leftarrow funexp (args) & \textrm{Appel de fonction}
+\\ \gramor  & funexp (args)               & \textrm{Appel de procédure}
+\\ \gramor  & \uparrow nom \{ b \}        & \textrm{Déclaration}
+\\ \gramor  & if (e) \{ b \} else \{ b \} & \textrm{Alternative}
+\\ \gramor  & \{ b \} label:              & \textrm{Nommage de bloc}
+\\ \gramor  & \npkGoto{label}             & \textrm{Saut en avant}
+\\ \gramor  & forever \{ b\}              & \textrm{Boucle infinie}
+\\ \gramor  & return e                    & \textrm{Retour de fonction}
+\end{align*}
+}
+
+\todo{Fonctions}

@@ -3,6 +3,13 @@
 % Fix '::' -> ': :' when using babel
 \newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
 
+\newcommand{\gramisa}[0]{::=~}
+\newcommand{\gramor}[0]{|\hspace{3mm}}
+
+\newcommand{\gramlr}[2]{%
+  \begin{minipage}{0.2\textwidth}\raggedleft #1\end{minipage}
+  \begin{minipage}{0.8\textwidth}#2\end{minipage}
+}
 
 % Syntax
 \newcommand{\iIf}[3]{\textsc{if}~ #1 ~\textsc{then}~ #2 ~\textsc{else}~ #3}

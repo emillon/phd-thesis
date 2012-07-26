@@ -145,13 +145,6 @@ Commençons par étudier le cas du lambda-calcul simplement typé
 (figure~\ref{fig:stlc}).
 
 \begin{figure}
-\newcommand{\gramisa}[0]{::=~}
-\newcommand{\gramor}[0]{|\hspace{3mm}}
-
-\newcommand{\gramlr}[2]{%
-  \begin{minipage}{0.2\textwidth}\raggedleft #1\end{minipage}
-  \begin{minipage}{0.8\textwidth}#2\end{minipage}
-  }
 
 \gramlr{Termes}{
 \begin{align*}
@@ -346,7 +339,7 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 
 \end{figure} % }}}
 
-L'implémentation de cet algorithme utilise le partage est les références
+L'implémentation de cet algorithme utilise le partage et les références
 (figure~\ref{fig:unifpartage}).
 
 D'abord \ref{fig:unifpartage:a}, ensuite \ref{fig:unifpartage:b}, et enfin
