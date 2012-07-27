@@ -146,54 +146,7 @@ Commençons par étudier le cas du lambda-calcul simplement typé
 
 \begin{figure}
 
-\gramlr{Termes}{
-\begin{align*}
-  t \gramisa & x              & \textrm{Variable} \\
-    \gramor  & λ x . t        & \textrm{Abstraction} \\
-    \gramor  & t              & \textrm{Application} \\
-    \gramor  & n              & \textrm{Entier} \\
-    \gramor  & f              & \textrm{Flottant} \\
-    \gramor  & (t, t)         & \textrm{Couple} \\
-    \gramor  & \textrm{fst}~t & \textrm{Projection gauche} \\
-    \gramor  & \textrm{snd}~t & \textrm{Projection droite}
-\end{align*}
-}
-
-\gramlr{Types}{
-\begin{align*}
-  τ \gramisa &  \tInt          & \textrm{Entier}\\
-    \gramor  &  \tFloat        & \textrm{Flottant}\\
-    \gramor  & τ \rightarrow τ & \textrm{Fonction} \\
-    \gramor  & τ \times τ      & \textrm{Produit}
-\end{align*}
-}
-
-\gramlr{Contextes}{
-\begin{align*}
-  Γ \gramisa & ε     & \textrm{Contexte vide}\\
-    \gramor  & Γ,x:τ & \textrm{Extension}
-\end{align*}
-}
-
-\gramlr{Règles}{
-\begin{mathpar}
-\irule{Int}{ }{Γ⊢n:\tInt}
-\and
-\irule{Float}{ }{Γ⊢f:\tFloat}
-\and
-\irule{Var}{x:τ∈Γ}{Γ⊢x:τ}
-\and
-\irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
-\and
-\irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
-\and
-\irule{Proj-g}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{fst}~x:τ_1}
-\and
-\irule{Proj-d}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{snd}~x:τ_2}
-\and
-\irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
-\end{mathpar}
-}
+\input{fig/lambda-simple.tex}
 
 \caption{Lambda calcul simplement typé avec entiers, flottants et couples}
 \label{fig:stlc}
@@ -281,6 +234,8 @@ formes suivantes :
   $τ_i = x$ (ou $x = τ_i$) où $x$ est un type concret : idem.
 \end{itemize}
 
+\todo{C'est faux}
+
 Une fois toutes les substitutions effectuées, on obtient un arbre de typage
 correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 
@@ -338,6 +293,9 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
   \label{fig:unifpartage}
 
 \end{figure} % }}}
+
+Plutôt que de modifier toutes les occurrences d'un type $τ_i$, on va affecter à
+$τ_i$ la valeur du nouveau type.
 
 L'implémentation de cet algorithme utilise le partage et les références
 (figure~\ref{fig:unifpartage}).
