@@ -7,9 +7,18 @@ ainsi de nombreux logiciels bas niveau sont écrits en C. En particulier, il
 existe des compilateurs de C vers les différents langages machine pour à peu
 près toutes les architectures.
 
+\begin{figure}
+
+  \input{fig/middle-end.tex}
+
+  \caption{Décomposition d'un compilateur : frontends, middle-end, back-ends}
+  \label{fig:middle-end}
+\end{figure}
+
 Lors de l'écriture d'un compilateur, on a besoin d'un langage intermédiaire qui
-fasse l'intermédiaire entre \emph{frontend} et \emph{backend}. Avec ce langage,
-on doit pouvoir (facilement) réaliser les types d'opérations suivantes :
+fasse l'intermédiaire entre \emph{frontend} et \emph{backend}
+(figure~\ref{fig:middle-end}). Avec ce langage, on doit pouvoir (facilement)
+réaliser les types d'opérations suivantes :
 
 \begin{itemize}
 \item
@@ -34,65 +43,66 @@ nombreux sous-ensembles ont été définis pour aller dans ce sens.
 
 Les critères à évaluer sont les suivants :
 
-\paragraph{Forme (textuel / langage d'implem)}
-
-Quelle est la représentation du langage ? Est-ce une bibliothèque (si oui, dans
-quel langage) a-t'il une forme textuelle (si oui, pour quels langages des
-\emph{parsers} existent ils).
-
-\paragraph{Maturité}
-
-\paragraph{Tools}
-
-\paragraph{Support}
-
-Le langage a-t'il ``fait ses preuves'' ? Est-il susceptible de changer ?
-
-\paragraph{Scope (analyse / compil)}
-
-Pour quel type d'utilisation a-t'il été conçu ?
-
-\paragraph{Expressivité}
-
-Peut-on compiler ``tout C'' ?
-
-\paragraph{Orthogonalité}
-
-\paragraph{Typage}
+\begin{itemize}
+\item
+  Forme (textuel / langage d'implem) : Quelle est la représentation du
+  langage? Est-ce une bibliothèque (si oui, dans quel langage) a-t'il
+  une forme textuelle (si oui, pour quels langages des \emph{parsers}
+  existent ils).
+\item
+  Maturité : Le langage a-t'il ``fait ses preuves'' ? Est-il susceptible
+  de changer ?
+\item
+  Tools
+\item
+  Support
+\item
+  Scope (analyse / compil) : pour quel type d'utilisation a-t'il été
+  conçu ?
+\item Expressivité : Peut-on compiler ``tout C'' ?
+\item Orthogonalité
+\item Typage
+\item Sémantique existante
+\end{itemize}
 
 \subsubsection{Langages}
 
-\paragraph{LLVM}
+\begin{itemize}
+\item
+  LLVM\cite{llvm-pres} : un backend de compilateur développé par Apple.
+\item
+  Cmm (Haskell) : cf.
+  \texttt{http://hackage.haskell.org/trac/ghc/wiki/Commentary/Compiler/CmmType}
+\item
+  Cmm (OCaml) : cf. \texttt{asmcomp/cmm.mli}
+\item
+  CIL\cite{NeculaCil} : cf. \texttt{www.cs.berkeley.edu/~necula/cil} puis
+  \texttt{kerneis.github.com/cil} utilisé par Frama-C, Compcert.
+\item
+  Clight\cite{cfront} : Utilisé dans Compcert (front-end)
+\item
+  Cminor, utilisé dans Compcert (middle-end).
+\item
+  Cminusminus \cite{spjcmm} http://www.cminusminus.org/
+\item
+  Newspeak\cite{newspeak}, décrit dans la section~\ref{sec:npk}.
+\end{itemize}
 
-LLVM\cite{llvm-pres} est un backend de compilateur développé par Apple.
-
-\paragraph{Cmm (Haskell)}
-
-\paragraph{Cmm (OCaml)}
-
-\paragraph{CIL}
-
-\paragraph{Clight}
-
-Utilisé dans Compcert (front-end)
-
-\cite{cfront}.
-
-\paragraph{Cminor}
-
-Utilisé dans Compcert (middle-end).
-
-\paragraph{Cminusminus}
-
-\cite{spjcmm}
-
-http://www.cminusminus.org/
-
-\paragraph{Newspeak}
-
-\cite{newspeak}
+\begin{tabular}{| l || l | l |}
+   \hline Nom           & Langage hôte    & Description
+\\ \hline LLVM          & C++             & \cite{llvm-pres}
+\\ \hline Cminusminus   & Texte           & \cite{spjcmm}
+\\ \hline Cmm (Haskell) & Texte / Haskell &
+\\ \hline Cmm (OCaml)   & OCaml           &
+\\ \hline CIL           & OCaml           & \cite{NeculaCil}
+\\ \hline Clight        & Coq             & \cite{cfront}
+\\ \hline Cminor        & Coq             &
+\\ \hline Newspeak      & Ocaml           & \cite{newspeak}
+\\ \hline
+\end{tabular}
 
 \section{Newspeak}
+\label{sec:npk}
 
 \section{Chaîne de compilation}
 
