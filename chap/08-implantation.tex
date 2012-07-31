@@ -81,23 +81,24 @@ Les critères à évaluer sont les suivants :
 \item
   Clight\cite{cfront} : Utilisé dans Compcert (front-end)
 \item
-  Cminor, utilisé dans Compcert (middle-end).
+  Cminor\cite{cminorSL}, utilisé dans Compcert (middle-end).
 \item
   Cminusminus \cite{spjcmm} http://www.cminusminus.org/
 \item
   Newspeak\cite{newspeak}, décrit dans la section~\ref{sec:npk}.
 \end{itemize}
 
-\begin{tabular}{| l || l | l |}
-   \hline Nom           & Langage hôte    & Description
-\\ \hline LLVM          & C++             & \cite{llvm-pres}
-\\ \hline Cminusminus   & Texte           & \cite{spjcmm}
-\\ \hline Cmm (Haskell) & Texte / Haskell &
-\\ \hline Cmm (OCaml)   & OCaml           &
-\\ \hline CIL           & OCaml           & \cite{NeculaCil}
-\\ \hline Clight        & Coq             & \cite{cfront}
-\\ \hline Cminor        & Coq             &
-\\ \hline Newspeak      & Ocaml           & \cite{newspeak}
+\begin{tabular}{| l || l | l | l | l |}
+   \hline Nom           & Langage hôte    & Description      & But                 & Sémantique
+\\ \hline C             & Texte           & \cite{AnsiC}     & Compilation         & Non
+\\ \hline LLVM          & C++             & \cite{llvm-pres} & Compilation         &
+\\ \hline Cminusminus   & Texte           & \cite{spjcmm}    & Compilation         &
+\\ \hline Cmm (Haskell) & Texte / Haskell &                  & Compilation         &
+\\ \hline Cmm (OCaml)   & OCaml           &                  & Compilation         &
+\\ \hline CIL           & OCaml           & \cite{NeculaCil} & Analyse             &
+\\ \hline Clight        & Coq             & \cite{cfront}    & Compilation         & Oui
+\\ \hline Cminor        & Coq             & \cite{cminorSL}  & Compilation/Analyse & Oui
+\\ \hline Newspeak      & Ocaml           & \cite{newspeak}  & Analyse             & Oui
 \\ \hline
 \end{tabular}
 
