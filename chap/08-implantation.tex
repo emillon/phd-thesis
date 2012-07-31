@@ -65,6 +65,8 @@ Les critères à évaluer sont les suivants :
 
 \begin{itemize}
 \item
+  GIMPLE\cite{gcc-gimple} : la représentation intermédiaire utilisée par GCC.
+\item
   LLVM\cite{llvm-pres} : un backend de compilateur développé par Apple.
 \item
   Cmm (Haskell) : cf.
@@ -84,19 +86,7 @@ Les critères à évaluer sont les suivants :
   Newspeak\cite{newspeak}, décrit dans la section~\ref{sec:npk}.
 \end{itemize}
 
-\begin{tabular}{| l || l | l | l | l | l |}
-\hline
-Nom           & Langage hôte    & Description      & But                 & Sémantique & Types \\ \hline \hline
-C             & Texte           & \cite{AnsiC}     & Compilation         & Non        & Oui   \\ \hline
-LLVM          & C++             & \cite{llvm-pres} & Compilation         &            & Oui   \\ \hline
-Cminusminus   & Texte           & \cite{spjcmm}    & Compilation         &            & Oui   \\ \hline
-Cmm (Haskell) & Texte / Haskell &                  & Compilation         &            &       \\ \hline
-Cmm (OCaml)   & OCaml           &                  & Compilation         &            &       \\ \hline
-CIL           & OCaml           & \cite{NeculaCil} & Analyse             &            &       \\ \hline
-Clight        & Coq             & \cite{cfront}    & Compilation/Analyse & Oui        & Oui   \\ \hline
-Cminor        & Coq             & \cite{cminorSL}  & Compilation/Analyse & Oui        & Oui   \\ \hline
-Newspeak      & Ocaml           & \cite{newspeak}  & Analyse             & Oui        & Oui   \\ \hline
-\end{tabular}
+\input{fig/il-features.tex}
 
 \section{Newspeak}
 \label{sec:npk}
