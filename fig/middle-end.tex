@@ -1,0 +1,28 @@
+\begin{tikzpicture}
+[>=latex]
+  \node (me) {Langage intermédiaire};
+  \node[ above left of=me, xshift=-4cm] (fe1) {Langage source 1};
+  \node[ below left of=me, xshift=-4cm] (fe2) {Langage source 2};
+  \node[above right of=me, xshift=4cm] (be1) {Langage destination 1};
+  \node[below right of=me, xshift=4cm] (be2) {Langage destination 2};
+
+  \draw[->] (fe1) -- (me);
+  \draw[->] (fe2) -- (me);
+
+  \draw[->] (me) -- (be1);
+  \draw[->] (me) -- (be2);
+
+  \path (me) edge [loop below] node {Optimisations, analyses} (me);
+
+  \coordinate (legbase) at ($ (me) + (0,-2cm) $);
+
+  \draw[bigbrace] (me.south east |- legbase)
+               to node [yshift=-5mm] {Middle-end}
+                  (me.south west |- legbase);
+  \draw[bigbrace] (me.south west |- legbase)
+               to node [yshift=-5mm]{Front-end}
+                  (fe2.south west |- legbase);
+  \draw[bigbrace] (be2.south east |- legbase)
+               to node [yshift=-5mm]{Back-end}
+                  (me.south east |- legbase);
+\end{tikzpicture}
