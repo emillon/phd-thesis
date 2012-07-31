@@ -1,0 +1,58 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{links}
+
+\RequirePackage{hyperref}
+\RequirePackage{xspace}
+%\RequirePackage{fontspec}
+
+\DeclareOption{bibcounter}{
+  \def\oldbibitem{}
+  \let\oldbibitem=\bibitem
+  \def\bibitem{\stepcounter{lnsc}\oldbibitem}
+}
+\ProcessOptions
+
+  \newcounter{lnsc}%
+
+%\def\nanchor#1{{\fontspec{DejaVu Sans}\selectfont⚓}\raisebox{0.5ex}{\scriptsize #1}}
+\def\nanchor#1{LNK:{\scriptsize #1}}
+
+\newwrite\lns\begingroup\catcode`\%=12\immediate\openout\lns=\jobname.lns\endgroup%
+
+
+\def\linkline#1#2#3{%
+  \refstepcounter{lnsc}%
+  \def\truc{[\nanchor{\arabic{lnsc}}]}%
+  \item[\truc]%
+  \label{link:#1}%
+  \href{#3}{#2%
+  {%
+    \def\oldt{~}%
+    \def~{\textasciitilde}\\%
+    {\footnotesize \textsf #3}
+    \def~{\oldt}%
+  }}%
+}
+
+\def\deflink#1#2#3{
+  {%
+    \def\oldt{~}%
+    \def~{\noexpand~}%
+    \immediate\write\lns{\noexpand\linkline{#1}{#2}{#3}}%
+    \def~{\oldt}%
+  }%
+}
+
+\def\link#1{%
+  \mbox{[\hyperref[link:#1]{\nanchor{\ref*{link:#1}}}]}\xspace%
+}
+
+\def\insertlinks{%
+  \immediate\write\lns{\string\endinput}%
+  \immediate\closeout\lns%
+  \begin{list}{[?]}{}
+  \input{\jobname.lns}
+  \end{list}
+}
+
+\endinput
