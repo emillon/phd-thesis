@@ -1,2 +1,10 @@
+Dans ce chapitre, nous présentons une autre extension au système de types du
+chapitre~\ref{cha:typbase}, similaire à celle du chapitre~\ref{cha:qualuser}.
+Il s'agit cette fois-ci de détecter les pointeurs sur caractères (\texttt{char
+*}) qui sont terminés par un caractère NUL et donc une chaîne C correcte. La
+bibliothèque C propose quantité de fonctions manipulant ces chaînes et appeler
+une fonction comme \texttt{strcpy} sur un pointeur quelconque est un problème de
+sécurité que nous cherchons à détecter.
+
 \section{But}
 \section{Annotation de \texttt{string.h}}
