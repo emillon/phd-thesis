@@ -96,6 +96,8 @@ middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
 \section{Newspeak}
 \label{sec:npk}
 
+\wip{}
+
 \section{Chaîne de compilation}
 
 \begin{figure}
@@ -170,19 +172,17 @@ est une fonction de l'environnement global qui a pour type $\tInt \rightarrow
 f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
 \]
 
-Informellement, on voit que puisque \texttt{fst} et \texttt{snd} sont appliqués
-à \texttt{x}, ce doit être un tuple. En outre on additionne ces deux composantes
-ensemble, donc elles doivent être de type \tInt (et le résultat aussi). Par le
-même argument, \texttt{y} doit aussi être de type \tInt. En conclusion,
-\texttt{x} est de type $\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc
-f est de type $\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt$.
+On voit que puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce
+doit être un tuple. En outre on additionne ces deux composantes ensemble, donc
+elles doivent être de type \tInt (et le résultat aussi). Par le même argument,
+\texttt{y} doit aussi être de type \tInt. En conclusion, \texttt{x} est de type
+$\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt
+\times \tInt \rightarrow \tInt \rightarrow \tInt$.
 
 Mais comment faire pour implanter cette analyse ? En fait le système de types de
 la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque
 forme syntaxique (variable, abstraction, etc) est en conclusion d'exactement une
-règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer
-(c'est à rapprocher du fait qu'on peut déduire un analyseur syntaxique d'une
-grammaire LL)
+règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer.
 
 Partant du terme de conclusion ($f$), on peut donc en déduire un squelette
 d'arbre d'inférence (figure~\ref{fig:inftree-rules})\footnote{Par souci de
@@ -219,9 +219,11 @@ contraintes d'unification. Par exemple, pour chaque application de la règle
 
 on doit déduire que $τ_3 = τ_1 \rightarrow τ_2$.
 
-Ici $=$ est à prendre comme une contrainte d'égalité : partant d'un ensemble de
-contraintes de la forme "type avec inconnue = type avec inconnue", on veut
-obtenir une substitution "inconnue -> type concret".
+\clearpage
+
+Ce signe $=$ est à prendre comme une contrainte d'égalité : partant d'un
+ensemble de contraintes de la forme "type avec inconnue = type avec inconnue",
+on veut obtenir une substitution "inconnue -> type concret".
 
 Pour résoudre ces contraintes, on commence par les simplifier : si $τ_a
 \rightarrow τ_b = τ_c \rightarrow τ_d$, alors $τ_a = τ_c$ et $τ_b = τ_d$. De
