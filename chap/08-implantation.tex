@@ -37,7 +37,7 @@ projets, des sous-ensembles de C ont été définis pour aller dans ce sens.
 
 \subsubsection{Langages}
 
-Les premiers candidats sont bien entendu les réprésentations intermédiaires
+Les premiers candidats sont bien entendu les représentations intermédiaires
 utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
 standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
 plupart des logiciels. En particulier, le noyau Linux repose fortement sur les
@@ -124,7 +124,7 @@ commentaires supprimés, les fichiers d'en-tête inclus, etc.
 
 Cette passe est réalisée par l'utilitaire \ctonewspeak{}. L'essentiel de la
 compilation consiste à mettre à plat les définition de types, et à simplifier le
-flôt de contrôle. C en effet propose de nombreuses constructions ambigües ou
+flot de contrôle. C en effet propose de nombreuses constructions ambigües ou
 redondantes.
 
 Au contraire, \newspeak{} propose un nombre réduit de constructions. Rappelons
@@ -132,10 +132,10 @@ que le but de ce langage est de faciliter l'analyse statique : des constructions
 orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
 code lors de l'implémentation d'un analyseur.
 
-Par exemple, plutôt que de fournir une boucle while, une boucle do/while et une
-boucle for, \newspeak{} fournit une unique boucle \npkWhile{}. La sortie de
-boucle est compilée vers un \npkGoto{}, qui est toujours un saut vers l'avant
-(similaire à un "break" généralisé).
+Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
+\emph{do/while} et une boucle for, \newspeak{} fournit une unique boucle
+\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}, qui est
+toujours un saut vers l'avant (similaire à un "break" généralisé).
 
 La sémantique de \newspeak{} et la traduction de C vers \newspeak{} sont
 décrites dans \cite{newspeak}. En ce qui concerne l'élimination des sauts vers
@@ -181,7 +181,7 @@ $\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt
 
 Mais comment faire pour implanter cette analyse ? En fait le système de types de
 la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque
-forme syntaxique (variable, abstraction, etc) est en conclusion d'exactement une
+forme syntaxique (variable, abstraction, etc) est en conclusion exactement d'une
 règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer.
 
 Partant du terme de conclusion ($f$), on peut donc en déduire un squelette
