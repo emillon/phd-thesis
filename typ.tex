@@ -3,8 +3,7 @@
 \input{pkg.tex}
 \input{defs.tex}
 \input{unicode.tex}
-
-\deflink{chantal}{Chantal Du Cantal}{http://www.cantal.com/~chantal/}
+\input{urls.tex}
 
 \input{chapstyle.tex}
 
@@ -46,15 +45,15 @@
 
 \cleartorecto
 
-%\asuabstract
+\asuabstract
 
-%Abstract ici.
+\input{abstract.tex}
 
-%\asuacknowledgements
+\asuacknowledgements
 
-%Remerciements
+\input{remerciements.tex}
 
-%\asudedication{Cassedédi}
+\asudedication{Cassedédi}
 
 \tableofcontents
 
@@ -78,8 +77,6 @@
 
 \input{chap/04-etatdelart.tex}
 
-\link{chantal}
-
 \part{Typage statique de langages impératifs}
 
 \chapter{Un premier système de types}
@@ -89,6 +86,7 @@
 
 \chapter{Système avec le qualificateur "user"}
 
+\label{cha:qualuser}
 \input{chap/06-qualuser.tex}
 
 \chapter{Système avec le qualificateur "sz"}
@@ -109,13 +107,19 @@
 
 \input{chap/10-conclusion.tex}
 
+\appendix
+
+\chapter{Code du noyau}
+
+\insertcode{radeon-buggy.c}
+
 \backmatter
 
 %\chapterstar{Liste des figures}
 
 \listoffigures
 
-%\chapterstar{Bibliographie}
+\chapter{Références web}
 
 \insertlinks
 

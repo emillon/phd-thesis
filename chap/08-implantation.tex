@@ -35,61 +35,68 @@ malheureusement sa sémantique est trop complexe et trop peu spécifiée. Il est
 donc judicieux d'utiliser un langage plus simple à cet effet. Dans de nombreux
 projets, des sous-ensembles de C ont été définis pour aller dans ce sens.
 
-\subsubsection{Critères}
-
-Les critères à évaluer sont les suivants :
-
-\begin{itemize}
-\item
-  Forme (textuel / langage d'implem) : Quelle est la représentation du
-  langage? Est-ce une bibliothèque (si oui, dans quel langage) a-t'il
-  une forme textuelle (si oui, pour quels langages des \emph{parsers}
-  existent ils).
-\item
-  Maturité : Le langage a-t'il ``fait ses preuves'' ? Est-il susceptible
-  de changer ?
-\item
-  Tools
-\item
-  Support
-\item
-  Scope (analyse / compil) : pour quel type d'utilisation a-t'il été
-  conçu ?
-\item Expressivité : Peut-on compiler ``tout C'' ?
-\item Orthogonalité
-\item Typage
-\item Sémantique existante
-\end{itemize}
-
 \subsubsection{Langages}
 
-\begin{itemize}
-\item
-  GIMPLE\cite{gcc-gimple} : la représentation intermédiaire utilisée par GCC.
-\item
-  LLVM\cite{llvm-pres} : un backend de compilateur développé par Apple.
-\item
-  Cmm (Haskell) : cf.
-  \texttt{http://hackage.haskell.org/trac/ghc/wiki/Commentary/Compiler/CmmType}
-\item
-  Cmm (OCaml) : cf. \texttt{asmcomp/cmm.mli}
-\item
-  CIL\cite{NeculaCil} : cf. \texttt{www.cs.berkeley.edu/~necula/cil} puis
-  \texttt{kerneis.github.com/cil} utilisé par Frama-C, Compcert.
-\item
-  Clight\cite{cfront} : Utilisé dans Compcert (front-end)
-\item
-  Cminor\cite{cminorSL}, utilisé dans Compcert (middle-end).
-\item
-  Cminusminus \cite{spjcmm} http://www.cminusminus.org/
-\item
-  Newspeak\cite{newspeak}, décrit dans la section~\ref{sec:npk}.
-\end{itemize}
+Les premiers candidats sont bien entendu les représentations intermédiaires
+utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
+standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
+plupart des logiciels. En particulier, le noyau Linux repose fortement sur les
+extensions GNU.
 
-\input{fig/il-features.tex}
+\paragraph{GCC} utilise une représentation interne nommée
+GIMPLE\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C, reposant
+sur de nombreuses macros afin de cacher les détails d'implémentation pouvant
+varier entre deux versions de GCC. Cette représentation étant réputée difficile
+à manipuler, le projet MELT\cite{gcc-melt} permet de générer une passe de
+compilation à partir d'un dialecte de Lisp.
+
+\paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
+puis sponsorisé Apple. À la différence de GCC, sa base de code est écrite en
+C++. Il utilise une représentation intermédiaire qui peut être manipulée soit
+sous forme d'une structure de données C++, soit d'un fichier de code-octet
+compact, soit sous forme textuelle.
+
+\paragraph{Objective Caml}\link{ocamlManual} utilise pour sa génération de code
+une représentation interne nommée Cmm, disponible dans les sources du
+compilateur sous le chemin \texttt{asmcomp/cmm.mli} (il s'agit donc d'une
+structure de données OCaml). Ce langage a l'avantage d'être très restreint, mais
+malheureusement il n'existe pas directement de traducteur permettant de compiler
+C vers Cmm.
+
+\paragraph{C--}\cite{spjcmm} \link{cmm}, dont le nom est inspiré du précédent,
+est un projet qui visait à unifier les langages intermédiaires utilisés par les
+compilateurs. L'idée est que si un front-end peut émettre du C-- (sous forme de
+texte), il est possible d'obtenir du code machine efficace. Le compilateur
+Haskell GHC utilise une représentation intermédiaire très similaire à C--.
+
+Comme le problème de construire une représentation intermédiaire adaptée à une
+analyse statique n'est pas nouveau, plusieurs projets ont déjà essayé d'y
+apporter une solution. Puisque qu'ils sont développés en parallèle des
+compilateurs, le support des extensions est en général moins important dans ces
+langages.
+
+\paragraph{CIL}\cite{NeculaCil} \link{kerneisCil} est une représentation en
+OCaml d'un programme C, développée depuis 2002. Grâce à un mécanisme de
+greffons, elle permet de prototyper rapidement des analyses statiques de
+programmes.
+
+\paragraph{Newspeak}\cite{newspeak} est un langage intermédiaire développé par
+EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
+interprétation abstraite. Il sera décrit plus en détails dans la
+section~\ref{sec:npk}.
+
+\paragraph{Compcert} est un projet qui vise à produire un compilateur certifié
+pour C. C'est à dire que le fait que les transformations conservent la
+sémantique est prouvé. Il utilise de nombreux langages intermédiaires, dont CIL.
+Pour le front-end, le langage se nomme Clight\cite{cfront}. Les passes de
+middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
+
+%\input{fig/il-features.tex}
 
 \section{Newspeak}
 \label{sec:npk}
+
+\wip{}
 
 \section{Chaîne de compilation}
 
@@ -100,6 +107,8 @@ Les critères à évaluer sont les suivants :
   \label{fig:compil-npk}
 \end{figure}
 
+\todo{Mettre à jour la figure}
+
 La compilation vers C est faite en trois étapes (figure~\ref{fig:compil-npk}) :
 prétraitement du code source, compilation de C prétraité vers \newspeak{}, puis
 compilation de \newspeak{} vers ce langage.
@@ -107,13 +116,15 @@ compilation de \newspeak{} vers ce langage.
 \subsection{Prétraitement}
 
 \ctonewspeak{} travaillant uniquement sur du code prétraité (dans directives de
-préprocesseur), la première étape consiste donc à faire passer le code par \cpp.
+préprocesseur), la première étape consiste donc à faire passer le code par \cpp:
+les macros sont développées, les constantes remplacées par leurs valeurs, les
+commentaires supprimés, les fichiers d'en-tête inclus, etc.
 
 \subsection{Compilation (levée des ambigüités)}
 
 Cette passe est réalisée par l'utilitaire \ctonewspeak{}. L'essentiel de la
 compilation consiste à mettre à plat les définition de types, et à simplifier le
-flôt de contrôle. C en effet propose de nombreuses constructions ambigües ou
+flot de contrôle. C en effet propose de nombreuses constructions ambigües ou
 redondantes.
 
 Au contraire, \newspeak{} propose un nombre réduit de constructions. Rappelons
@@ -121,10 +132,10 @@ que le but de ce langage est de faciliter l'analyse statique : des constructions
 orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
 code lors de l'implémentation d'un analyseur.
 
-Par exemple, plutôt que de fournir une boucle while, une boucle do/while et une
-boucle for, \newspeak{} fournit une unique boucle \npkWhile{}. La sortie de
-boucle est compilée vers un \npkGoto{}, qui est toujours un saut vers l'avant
-(similaire à un "break" généralisé).
+Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
+\emph{do/while} et une boucle for, \newspeak{} fournit une unique boucle
+\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}, qui est
+toujours un saut vers l'avant (similaire à un "break" généralisé).
 
 La sémantique de \newspeak{} et la traduction de C vers \newspeak{} sont
 décrites dans \cite{newspeak}. En ce qui concerne l'élimination des sauts vers
@@ -136,6 +147,8 @@ l'arrière, on peut se référer à \cite{goto}.
 trop bas niveau. Par exemple, dans le code suivant
 
 \input{gen/struct-array.c.pyg.tex}
+
+\wip{}
 
 \subsection{Implantation de l'algorithme de typage}
 
@@ -159,19 +172,17 @@ est une fonction de l'environnement global qui a pour type $\tInt \rightarrow
 f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
 \]
 
-Informellement, on voit que puisque \texttt{fst} et \texttt{snd} sont appliqués
-à \texttt{x}, ce doit être un tuple. En outre on additionne ces deux composantes
-ensemble, donc elles doivent être de type \tInt (et le résultat aussi). Par le
-même argument, \texttt{y} doit aussi être de type \tInt. En conclusion,
-\texttt{x} est de type $\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc
-f est de type $\tInt \times \tInt \rightarrow \tInt \rightarrow \tInt$.
+On voit que puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce
+doit être un tuple. En outre on additionne ces deux composantes ensemble, donc
+elles doivent être de type \tInt (et le résultat aussi). Par le même argument,
+\texttt{y} doit aussi être de type \tInt. En conclusion, \texttt{x} est de type
+$\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt
+\times \tInt \rightarrow \tInt \rightarrow \tInt$.
 
 Mais comment faire pour implanter cette analyse ? En fait le système de types de
 la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque
-forme syntaxique (variable, abstraction, etc) est en conclusion d'exactement une
-règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer
-(c'est à rapprocher du fait qu'on peut déduire un analyseur syntaxique d'une
-grammaire LL)
+forme syntaxique (variable, abstraction, etc) est en conclusion exactement d'une
+règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer.
 
 Partant du terme de conclusion ($f$), on peut donc en déduire un squelette
 d'arbre d'inférence (figure~\ref{fig:inftree-rules})\footnote{Par souci de
@@ -208,9 +219,11 @@ contraintes d'unification. Par exemple, pour chaque application de la règle
 
 on doit déduire que $τ_3 = τ_1 \rightarrow τ_2$.
 
-Ici $=$ est à prendre comme une contrainte d'égalité : partant d'un ensemble de
-contraintes de la forme "type avec inconnue = type avec inconnue", on veut
-obtenir une substitution "inconnue -> type concret".
+\clearpage
+
+Ce signe $=$ est à prendre comme une contrainte d'égalité : partant d'un
+ensemble de contraintes de la forme "type avec inconnue = type avec inconnue",
+on veut obtenir une substitution "inconnue -> type concret".
 
 Pour résoudre ces contraintes, on commence par les simplifier : si $τ_a
 \rightarrow τ_b = τ_c \rightarrow τ_d$, alors $τ_a = τ_c$ et $τ_b = τ_d$. De
