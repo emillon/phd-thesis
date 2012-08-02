@@ -7,4 +7,104 @@ une fonction comme \texttt{strcpy} sur un pointeur quelconque est un problème d
 sécurité que nous cherchons à détecter.
 
 \section{But}
+
+Le langage C ne fournit pas directement de type "chaîne de caractère". C'est au
+programmeur de les gérer via des pointeurs sur caractère (\texttt{char *}).
+
+En théorie le programmeur est libre de choisir une représentation : des chaînes
+préfixées par la longueur, une structure contenant la taille et un pointeur vers
+les données, ou encore une chaîne avec un terminateur comme 0.
+
+Néanmoins c'est ce dernier style qui est le plus idiomatique : par exemple, les
+littéraux de chaîne (\texttt{"comme ceci"}) ajoutent un octet nul à la fin. De
+plus, le standard décrit dans la bibliothèque d'exécution de nombreuses
+fonctions destinées à les manipuler --- c'est le fichier
+\texttt{\textless{}string.h\textgreater{}} (\cite{AnsiC} section 7.21).
+
+Ainsi la fonction \texttt{strcpy} a pour protoype :
+
+\begin{Verbatim}
+char *strcpy(char *dest, const char *src);
+\end{Verbatim}
+
+Elle réalise la copie de la chaîne pointée par \texttt{src} à l'endroit pointé
+par \texttt{dest}. Pour détecter la fin de la chaîne, cette fonction parcourt la
+mémoire jusqu'à trouver un caractère nul. Une implémentation naïve pourrait être:
+
+\begin{Verbatim}
+char *strcpy(char *dest, const char *src)
+{
+    int i;
+    for(i=0;src[i]!=0;i++) {
+      dest[i] = src[i];
+    }
+    return dest;
+}
+\end{Verbatim}
+
+Si un appelant utilise cette fonction avec un tampon sur la pile, cela peut
+poser un problème de sécurité :
+
+\begin{Verbatim}
+void f(char *src)
+{
+    char buf[100];
+    strcpy(buf, src);
+}
+\end{Verbatim}
+
+Si le pointeur \texttt{src} pointe sur une chaîne de longueur supérieure à 100
+(ou une zone mémoire qui n'est pas une chaîne et ne contient pas de 0), on a
+affaire à un débordement de pile, qui est le cas d'école de bug exploitable
+\cite{SmashingTheStack}.
+
+\wip{}
+
 \section{Annotation de \texttt{string.h}}
+
+\subsection{Fonctions de copie}
+
+\begin{itemize}
+\item memcpy
+\item memmove
+\item strcpy
+\item strncpy
+\end{itemize}
+
+\subsection{Fonctions de concaténation}
+
+\begin{itemize}
+\item strcat
+\item strncat
+\end{itemize}
+
+\subsection{Fonctions de comparaison}
+
+\begin{itemize}
+\item memcmp
+\item strcmp
+\item strncmp
+\item strcoll
+\item strxfrm
+\end{itemize}
+
+\subsection{Fonctions de recherche}
+
+\begin{itemize}
+\item memchr
+\item strchr
+\item strcspn
+\item strpbrk
+\item strrchr
+\item strspn
+\item strstr
+\item strtok
+\end{itemize}
+
+\subsection{Fonctions diverses}
+
+\begin{itemize}
+\item memset
+\item strerror
+\item strlen
+\end{itemize}
