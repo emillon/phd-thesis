@@ -42,8 +42,10 @@ char *strcpy(char *dest, const char *src)
 }
 \end{Verbatim}
 
-Si un appelant utilise cette fonction avec un tampon sur la pile, cela peut
-poser un problème de sécurité :
+La copie n'est arrêtée que lorsqu'un 0 est lu. Autrement dit, si quelqu'un
+contrôle la valeur pointée par \texttt{src}, il pourra écraser autant de données
+qu'il le désire. On est dans le cas d'école du débordement de tampon sur la pile
+tel que décrit dans \cite{SmashingTheStack}. Considérons la fonction suivante :
 
 \begin{Verbatim}
 void f(char *src)
@@ -54,11 +56,51 @@ void f(char *src)
 \end{Verbatim}
 
 Si le pointeur \texttt{src} pointe sur une chaîne de longueur supérieure à 100
-(ou une zone mémoire qui n'est pas une chaîne et ne contient pas de 0), on a
-affaire à un débordement de pile, qui est le cas d'école de bug exploitable
-\cite{SmashingTheStack}.
+(ou une zone mémoire qui n'est pas une chaîne et ne contient pas de 0), les
+valeurs placées sur la pile juste avant \texttt{buf} (à une adresse supérieure)
+seront écrasées. Avec les conventions d'appel habituelles, il s'agit de
+l'adresse de retour de la fonction. Un attaquant pourra donc détourner le flot
+d'exécution du programme.
 
-\wip{}
+Pour éviter ces cas de fonctions vulnérables, on peut introduire une distinction
+entre les pointeurs \texttt{char *} classiques (représentant l'adresse d'un
+caractère par exemple) et les pointeurs sur une chaîne terminée par un caractère
+nul.
+
+Dans certaines bases de code (la plus célèbre étant celle de Microsoft), une
+convention syntaxique est utilisée : les pointeurs vers des chaînes terminées
+par 0 ont un nom qui commence par \texttt{"sz"}, comme \texttt{"szUser"}. C'est
+pourquoi nous appellerons ce qualificateur de type \texttt{sz}.
+
+\section{Approche}
+
+Cette propriété est un peu différente de la séparation entre espace utilisateur
+et espace noyau modélisée dans le chapitre~\ref{cha:qualuser} : autant un pointeur
+reste contrôlé par l'utilisateur (ou sûr) toute sa vie, autant le fait d'être
+terminé par un octet nul dépend de l'ensemble de l'état mémoire. Il y a deux
+problèmes principaux à considérer.
+
+D'une part, l'\emph{aliasing} rend l'analyse difficile : si \texttt{p} et
+\texttt{q} pointent tous les deux vers une même zone mémoire, le fait de
+modifier l'un peut modifier l'autre. D'autre part, ce n'est pas parce qu'une
+fonction maintient l'invariant de terminaison, qu'elle le maintient à chaque
+instruction.
+
+On peut résoudre en partie le problème d'\emph{aliasing} en étant très
+conservateur, c'est à dire en sous-approximant l'ensemble des chaînes du
+programme (on traitera une chaîne légitime comme une chaîne non terminée,
+interdisant par excès de zèle les fonctions comme \texttt{strcpy}).
+
+Le second problème est plus délicat puisqu'il casse l'hypothèse habituelle que
+chaque variable conserve le même type au long de sa vie. Plusieurs techniques
+sont possibles pour contourner ce problème : la première est d'être encore une
+fois conservateur et d'interdire ces constructions (on ne pourrait alors
+analyser que les programmes ne manipulant les chaînes qu'à travers les fonctions
+de la bibliothèque standard). Une autre est d'insérer des annotations permettant
+de s'affranchir localement du système de types. Enfin, il est possible
+d'utiliser un système de types où les variables ont en plus d'un type, un
+automate d'états possible dépendant de la position dans le programme : c'est le
+concept de \emph{typestates}\cite{tse12-typestate}.
 
 \section{Annotation de \texttt{string.h}}
 
@@ -108,3 +150,5 @@ affaire à un débordement de pile, qui est le cas d'école de bug exploitable
 \item strerror
 \item strlen
 \end{itemize}
+
+% vim: spelllang=fr
