@@ -85,6 +85,7 @@ une fonction partielle de $Addr$ vers $Val$.
 
 Ces valeurs peuvent être de plusieurs formes :
 
+\gramlr{Valeurs}{
 \begin{align*}
 v  \gramisa  & n           & \textrm{Entier}
 \\ \gramor   & f           & \textrm{Flottant}
@@ -93,6 +94,7 @@ v  \gramisa  & n           & \textrm{Entier}
 \\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
 \\ \gramor   & \top        & \textrm{Valeur non initialisée}
 \end{align*}
+}
 
 \todo{Pile d'appels}
 
@@ -295,16 +297,18 @@ de $lv$ et de $e$ puissent avoir le même type sous $Γ$).
 
 Les types des valeurs sont :
 
+\gramlr{Types}{
 \begin{align*}
-τ   ::=~ & \tInt, \tFloat, \tVoid        & \text{constantes}\\
-    |~   &  a                            & \text{variable}\\
-    |~   & (τ_1, …, τ_n) \rightarrow τ_r & \text{fonction}\\
-    |~   & [τ]                           & \text{tableau}\\
-    |~   & τ*                            & \text{pointeur}\\
-    |~   & \{ f_1:τ_1
-            ,    …
-            , f_n:τ_n \}                 & \text{structure}
+τ  \gramisa & \tInt, \tFloat, \tVoid        & \text{Constante}
+\\ \gramor  &  a                            & \text{Variable}
+\\ \gramor  & (τ_1, …, τ_n) \rightarrow τ_r & \text{Fonction}
+\\ \gramor  & [τ]                           & \text{Tableau}
+\\ \gramor  & τ*                            & \text{Pointeur}
+\\ \gramor  & \{ f_1:τ_1
+              ,    …
+              , f_n:τ_n \}                  & \text{Structure}
 \end{align*}
+}
 
 \subsection{Schémas de type}
 
