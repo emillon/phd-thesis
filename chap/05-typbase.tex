@@ -44,7 +44,8 @@ Un état est constitué d'une part d'un point de contrôle dans le programme
 \label{sec:cfg}
 
 Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
-celles qui définissent le flot de contrôle (if, dowith, goto, forever) et celles
+celles qui définissent le flot de contrôle (\npkIf{$\cdot$}{$\cdot$}{$\cdot$},
+\npkDoWith{$\cdot$}{$\cdot$}, \npkGoto{$\cdot$}, \npkWhile{$\cdot$}) et celles
 qui définissent le flot de données. Une première transformation va transformer
 chaque fonction en son graphe de flot de contrôle, défini comme suit :
 
@@ -205,12 +206,12 @@ expressions à une left value si elles ont le même type.
 Déclarer une variable, c'est rendre accessible dans un bloc une variable non
 initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
 traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
-on peut donc traverser l'instruction $\uparrow x\{b\}$.
+on peut donc traverser l'instruction \npkDecl{x}{b}.
 
 \begin{minipage}{0.6\textwidth}
 \begin{mathpar}
   \irule{Instr-Decl}{
-    \langle l, \uparrow x \{ b \}, l' \rangle \\
+    \langle l, \npkDecl{x}{b}, l' \rangle \\
     \langle l_b, b, l_b' \rangle \\
     σ' = σ ⊕ \{ x \rightarrow \top \} \\
     (l_b, σ', s) \rightarrow (l_b', σ'')
@@ -248,7 +249,7 @@ TODO pour :
 On utilise un encodage similaire à la déclaration. Tout d'abord, on évalue la
 condition dans un contexte $σ$. Si elle s'évalue en un entier non nul, et qu'une
 transition à travers le bloc $i_t$ est possible, alors on peut faire passer à
-travers le "if".
+travers le "\textsc{If}".
 
 \begin{minipage}{0.5\textwidth}
 \input{fig/sem-if.tex}
@@ -256,7 +257,7 @@ travers le "if".
 \begin{minipage}{0.5\textwidth}
 \begin{mathpar}
 \irule{If-True}{
-  \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
+  \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ n \\
   n ≠ 0 \\
   \langle l_i, i_t, l_i' \rangle \\
@@ -266,7 +267,7 @@ travers le "if".
 }
 \and
 \irule{If-False}{
-  \langle l, \iIf{e}{i_t}{i_f}, l' \rangle \\
+  \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
   σ ⊢ e ⇒ 0 \\
   \langle l_i, i_f, l_i' \rangle \\
   (l_i, σ) \rightarrow (l_i', σ')
@@ -368,18 +369,18 @@ seule règle supplémentaire concerne la condition du $if$ qui doit être typée
   Γ ⊢ i_t \\
   Γ ⊢ i_f
 }{
-  Γ ⊢ \iIf{e}{i_t}{i_f}
+  Γ ⊢ \npkIf{e}{i_t}{i_f}
 }
 \and
 \irule{Goto}{
 }{
-  Γ ⊢ goto l
+  Γ ⊢ \npkGoto{l}
 }
 \and
 \irule{DoWith}{
   Γ ⊢ b
 }{
-  Γ ⊢ \{ b \} l:
+  Γ ⊢ \npkDoWith{b}{l}
 }
 \end{mathpar}
 
@@ -509,7 +510,7 @@ résultant est généralisé.
 \irule{Decl}{
   Γ ⊕ \{x : τ\} ⊢ b
 }{
-  Γ ⊢ \uparrow x \{b\}
+  Γ ⊢ \npkDecl{x}{b}
 }
 \and
 \irule{Assign}{
