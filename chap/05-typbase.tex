@@ -102,26 +102,33 @@ v  \gramisa  & n           & \textrm{Entier}
 
 La mémoire est organisée en adresses, mais pourtant dans le programme cette
 notion n'est pas directement visible. Les accès sont réalisés à travers des
-"left values".
+"left values". Dans le langage C, elles correspondent aux constructions qui
+peuvent se retrouver à gauche du signe "=" dans une affectation.
+
+Une left value est donc soit une variable (locale ou globale), soit l'accès à un
+indice d'une left value, soit l'accès à un champ d'une left value, soit le
+déréférencement d'une left value.
 
 \subsection{Jugements}
 
-Les jugements ont les formes suivantes :
+La sémantique concrète que nous définissons ici est constituée de jugements
+logiques. Le jugement principal est une relation de transition $\rightarrow$
+entre états de l'interpréteur : il sera donc noté $(l, σ) \rightarrow (l', σ')$.
 
-\begin{itemize}
+Pour aider à définir ces pas, il est nécessaire d'évaluer les expressions en
+fonction d'un certain état de la mémoire. On notera que dans l'état mémoire
+$σ$, l'expression $e$ produit la valeur $v$ en écrivant $σ ⊢ e ⇒ v$.
 
-\item $σ ⊢ lv ⇒ a$ :
-  la left-value lv correspond à l'adresse mémoire a.
-
-\item $σ ⊢ e ⇒ v$ :
-  l'expression e s'évalue en v.
-
-\item $(l, σ) \rightarrow (l', σ')$ :
-  permet de définir la fonction de transition principale
-
-\end{itemize}
+Enfin, les expressions font intervenir des left-values. Puisque les états
+mémoires sont définis en termes d'adresses, il faut faire la correspondance à
+l'aide d'un jugement $σ ⊢ lv ⇒ a$.
 
 \subsection{Sémantique des left-values}
+
+\todo{Addr / Value}
+
+Confusion : que mettre dans $σ$ : addr $\rightarrow$ value ou lv $\rightarrow$
+addr ? Il faut les 2.
 
 \begin{mathpar}
 \irule{Eval-Lv-Var}{
