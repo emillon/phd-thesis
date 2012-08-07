@@ -159,19 +159,35 @@ addr ? Il faut les 2.
 
 \subsection{Sémantique des expressions}
 
+Les expressions peuvent être évaluées en valeurs. Dans le cas où l'expression
+est une constante, c'est aussi le résultat.
+
 \begin{mathpar}
 \irule{Eval-Cst}{
 }{
   σ ⊢ c ⇒ c
 }
-\and
+\end{mathpar}
+
+Si l'expression est une left-value, on établit à quelle adresse elle correspond
+et on récupère dans l'état mémoire à quelle valeur celle-ci correspond.
+
+\begin{mathpar}
 \irule{Eval-Lv}{
   σ ⊢ lv ⇒ a \\
   (a, v) ∈ σ
 }{
   σ ⊢ lv ⇒ v
 }
-\and
+\end{mathpar}
+
+En ce qui concerne les opérations (unaires ou binaires), on commence par évaluer
+les opérandes. Le résultat est l'opération "concrète" sur les valeurs, notée
+$\widehat{\textrm{op}}$. Par exemple, pour la construction syntaxique $+$, on
+utilise l'addition sur les valeurs $\widehat{+}$ (c'est-à-dire l'addition
+usuelle).
+
+\begin{mathpar}
 \irule{Eval-Unop}{
   σ ⊢ e ⇒ v
 }{
@@ -184,16 +200,23 @@ addr ? Il faut les 2.
 }{
   σ ⊢ e_1~\textrm{op}~e_2 ⇒ v_1 \widehat{\textrm{op}}~v_2
 }
+\end{mathpar}
+
+Enfin, les adresses sont aussi des valeurs. Le cas des pointeurs sur fonction
+est direct puisque toutes les fonctions sont globales ; pour le cas des
+pointeurs sur données on commence par déterminer l'adresse de l'objet pointé
+depuis l'état mémoire.
+
+\begin{mathpar}
+\irule{Eval-AddrOfFun}{
+}{
+  σ ⊢ \&f ⇒ \&f
+}
 \and
 \irule{Eval-AddrOf}{
   σ ⊢ lv ⇒ a
 }{
   σ ⊢ \&lv ⇒ \&a
-}
-\and
-\irule{Eval-AddrOfFun}{
-}{
-  σ ⊢ \&f ⇒ \&f
 }
 \end{mathpar}
 
