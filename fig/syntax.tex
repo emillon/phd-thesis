@@ -36,12 +36,12 @@ b  \gramisa & i ; b & \textrm{Séquence}
 i  \gramisa & lv \leftarrow e             & \textrm{Affectation}
 \\ \gramor  & lv \leftarrow funexp (args) & \textrm{Appel de fonction}
 \\ \gramor  & funexp (args)               & \textrm{Appel de procédure}
-\\ \gramor  & \uparrow nom \{ b \}        & \textrm{Déclaration}
-\\ \gramor  & if (e) \{ b \} else \{ b \} & \textrm{Alternative}
-\\ \gramor  & \{ b \} label:              & \textrm{Nommage de bloc}
+\\ \gramor  & \npkDecl{nom}{b}            & \textrm{Déclaration}
+\\ \gramor  & \npkIf{e}{b}{b}             & \textrm{Alternative}
+\\ \gramor  & \npkDoWith{b}{label}        & \textrm{Nommage de bloc}
 \\ \gramor  & \npkGoto{label}             & \textrm{Saut en avant}
-\\ \gramor  & forever \{ b\}              & \textrm{Boucle infinie}
-\\ \gramor  & return e                    & \textrm{Retour de fonction}
+\\ \gramor  & \npkWhile{b}                & \textrm{Boucle infinie}
+\\ \gramor  & \npkReturn{e}               & \textrm{Retour de fonction}
 \end{align*}
 }
 

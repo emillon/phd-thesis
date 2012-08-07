@@ -11,13 +11,10 @@
   \begin{minipage}{0.8\textwidth}#2\end{minipage}
 }
 
-% Syntax
-\newcommand{\iIf}[3]{\textsc{if}~ #1 ~\textsc{then}~ #2 ~\textsc{else}~ #3}
-
 % Types
-\newcommand{\tInt}{\textsc{Int}}
-\newcommand{\tFloat}{\textsc{Float}}
-\newcommand{\tVoid}{\textsc{Void}}
+\newcommand{\tInt}{\textsc{Int}\xspace}
+\newcommand{\tFloat}{\textsc{Float}\xspace}
+\newcommand{\tVoid}{\textsc{Void}\xspace}
 
 % Constant
 \newcommand{\cNil}{\textsc{Nil}}
@@ -28,8 +25,12 @@
 \newcommand{\newspeak}{\textsc{Newspeak}}
 
 % Newspeak
+\newcommand{\npkDecl}[2]{\textsc{Decl}~#1 \{ #2 \}}
+\newcommand{\npkIf}[3]{\textsc{If}(#1) \{ #2 \} \textsc{Else} \{ #3 \}}
+\newcommand{\npkDoWith}[2]{\textsc{Do}\{ #1 \}\textsc{With}~#2:}
 \newcommand{\npkWhile}[1]{\textsc{While}(1)\{#1\}}
 \newcommand{\npkGoto}[1]{\textsc{Goto}~#1}
+\newcommand{\npkReturn}[1]{\textsc{Return}~#1}
 
 \newcommand{\insertcode}[1]{\input{gen/#1.pyg.tex}}
 

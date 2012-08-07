@@ -104,51 +104,123 @@ concept de \emph{typestates}\cite{tse12-typestate}.
 
 \section{Annotation de \texttt{string.h}}
 
+Une première étape est d'annoter l'ensemble des fonctions manipulant les chaînes
+de caractères.
+
 \subsection{Fonctions de copie}
 
-\begin{itemize}
-\item memcpy
-\item memmove
-\item strcpy
-\item strncpy
-\end{itemize}
+\paragraph{memcpy}
+
+\begin{Verbatim}
+void *memcpy(void *dest, const void *src, size_t n);
+\end{Verbatim}
+
+\paragraph{memmove}
+
+\begin{Verbatim}
+void *memmove(void *dest, const void *src, size_t n);
+\end{Verbatim}
+
+\paragraph{strcpy}
+
+\begin{Verbatim}
+char *strcpy(char *dest, const char *src);
+\end{Verbatim}
+
+\paragraph{strncpy}
+
+\begin{Verbatim}
+char *strncpy(char *dest, const char *src, size_t n);
+\end{Verbatim}
 
 \subsection{Fonctions de concaténation}
 
-\begin{itemize}
-\item strcat
-\item strncat
-\end{itemize}
+\paragraph{strcat}
+\begin{Verbatim}
+char *strcat(char *dest, const char *src);
+\end{Verbatim}
+\paragraph{strncat}
+\begin{Verbatim}
+char *strncat(char *dest, const char *src, size_t n);
+\end{Verbatim}
 
 \subsection{Fonctions de comparaison}
 
-\begin{itemize}
-\item memcmp
-\item strcmp
-\item strncmp
-\item strcoll
-\item strxfrm
-\end{itemize}
+\paragraph{memcmp}
+\begin{Verbatim}
+int memcmp(const void *s1, const void *s2, size_t n);
+\end{Verbatim}
+\paragraph{strcmp}
+\begin{Verbatim}
+int strcmp(const char *s1, const char *s2);
+\end{Verbatim}
+\paragraph{strncmp}
+\begin{Verbatim}
+int strncmp(const char *s1, const char *s2, size_t n);
+\end{Verbatim}
+\paragraph{strcoll}
+\begin{Verbatim}
+int strcoll(const char *s1, const char *s2);
+\end{Verbatim}
+\paragraph{strxfrm}
+\begin{Verbatim}
+size_t strxfrm(char *dest, const char *src, size_t n);
+\end{Verbatim}
 
 \subsection{Fonctions de recherche}
 
-\begin{itemize}
-\item memchr
-\item strchr
-\item strcspn
-\item strpbrk
-\item strrchr
-\item strspn
-\item strstr
-\item strtok
-\end{itemize}
+\paragraph{memchr}
+\begin{Verbatim}
+void *memchr(const void *s, int c, size_t n);
+\end{Verbatim}
+\paragraph{strchr}
+\begin{Verbatim}
+char *strchr(const char *s, int c);
+\end{Verbatim}
+\paragraph{strcspn}
+\begin{Verbatim}
+size_t strcspn(const char *s, const char *reject);
+\end{Verbatim}
+\paragraph{strpbrk}
+\begin{Verbatim}
+char *strpbrk(const char *s, const char *accept);
+\end{Verbatim}
+\paragraph{strrchr}
+\begin{Verbatim}
+char *strrchr(const char *s, int c);
+\end{Verbatim}
+\paragraph{strspn}
+\begin{Verbatim}
+size_t strspn(const char *s, const char *accept);
+\end{Verbatim}
+\paragraph{strstr}
+\begin{Verbatim}
+char *strstr(const char *haystack, const char *needle);
+\end{Verbatim}
+\paragraph{strtok}
+\begin{Verbatim}
+char *strtok(char *str, const char *delim);
+\end{Verbatim}
 
 \subsection{Fonctions diverses}
 
-\begin{itemize}
-\item memset
-\item strerror
-\item strlen
-\end{itemize}
+\paragraph{memset}
+\begin{Verbatim}
+void *memset(void *s, int c, size_t n);
+\end{Verbatim}
+\paragraph{strerror}
+\begin{Verbatim}
+char *strerror(int errnum);
+\end{Verbatim}
+\paragraph{strlen}
+\begin{Verbatim}
+size_t strlen(const char *s);
+\end{Verbatim}
+
+\section{Typage des primitives}
+
+\section{Extensions au système de types}
+
+\section{Résultats}
 
 % vim: spelllang=fr

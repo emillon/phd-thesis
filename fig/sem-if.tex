@@ -6,7 +6,7 @@
   \node[cfgnode,below of=lp, xshift=-5mm] (ltp) {$l_t'$};
   \node[cfgnode,above of=l, xshift=5mm] (lf) {$l_f$};
   \node[cfgnode,above of=lp, xshift=-5mm] (lfp) {$l_f'$};
-  \draw[->] (l)  to node[auto] {$\iIf{e}{i_t}{i_f}$} (lp);
+  \draw[->] (l)  to node[auto] {$\npkIf{e}{i_t}{i_f}$} (lp);
   \draw[->] (lt) to node[auto] {$i_t$} (ltp);
   \draw[->] (lf) to node[auto] {$i_f$} (lfp);
   \draw[->,dashed] (l) to node [auto,swap] {$≠0$} (lt);
