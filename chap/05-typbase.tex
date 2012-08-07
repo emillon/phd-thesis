@@ -329,44 +329,54 @@ Les types des valeurs sont :
 
 \gramlr{Types}{
 \begin{align*}
-τ  \gramisa & \tInt, \tFloat, \tVoid        & \text{Constante}
-\\ \gramor  &  a                            & \text{Variable}
-\\ \gramor  & (τ_1, …, τ_n) \rightarrow τ_r & \text{Fonction}
-\\ \gramor  & [τ]                           & \text{Tableau}
-\\ \gramor  & τ*                            & \text{Pointeur}
+τ  \gramisa & \tInt, \tFloat, \tVoid        & \textrm{Constante}
+\\ \gramor  &  a                            & \textrm{Variable}
+\\ \gramor  & (τ_1, …, τ_n) \rightarrow τ_r & \textrm{Fonction}
+\\ \gramor  & [τ]                           & \textrm{Tableau}
+\\ \gramor  & τ*                            & \textrm{Pointeur}
 \\ \gramor  & \{ f_1:τ_1
               ,    …
-              , f_n:τ_n \}                  & \text{Structure}
+              , f_n:τ_n \}                  & \textrm{Structure}
 \end{align*}
 }
 
-\subsection{Schémas de type}
+Et les environnements de typage :
+
+\gramlr{Environnements}{
+\begin{align*}
+Γ  \gramisa & ε     & \textrm{Environnement vide}
+\\ \gramor  & Γ,v:τ & \textrm{Ajout d'une variable}
+\end{align*}
+}
 
 On va associer à chaque variable globale un type. Mais faire de même pourrait
 être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
 pour copier des tableaux d'entiers, mais aussi de flottants. On va donc associer
 un schéma de types à chaque fonction.
 
-\[
-  σ ::= ∀ \vec{a} . τ
-\]
+\gramlr{Schémas}{
+\begin{align*}
+σ \gramisa & ∀ \vec{a} . τ
+\end{align*}
+}
 
 En associant un schéma de type $σ$ à une fonction $f$, on indique que la
 fonction pourra être utilisée avec tout type $τ$ qui est une instanciation de
 $σ$.
 
+\todo{Gen, inst}
+
 \subsection{Programme}
 
 Au niveau global, un programme P est bien typé (noté $⊢ P$) s'il existe un
-environnement $Γ^0$ permettant de typer ses composantes (les fonctions, les
+environnement $Γ = (\vec{σ}, \vec{τ})$ permettant de typer ses composantes (les fonctions, les
 globales et le bloc d'initialisation).
 
 \[
 \irule{Prog}{
-  Γ^0 = (\vec{σ}, \vec{τ}) \\
-  Γ^0 ⊢ \vec{f} : \vec{σ} \\
-  Γ^0 ⊢ \vec{x} : \vec{t} \\
-  Γ^0 ⊢ b
+  (\vec{σ}, \vec{τ}) ⊢ \vec{f} : \vec{σ} \\
+  (\vec{σ}, \vec{τ}) ⊢ \vec{x} : \vec{t} \\
+  (\vec{σ}, \vec{τ}) ⊢ b
 }{
   ⊢ (\vec{f}, \vec{x}, b)
 }
@@ -374,10 +384,8 @@ globales et le bloc d'initialisation).
 
 \subsection{Flot de contrôle}
 
-Les règles suivantes permettent de définir les jugements $Γ ⊢ i$. En résumé, les
-instructions sont bien typées si leurs sous-instructions sont bien typées. La
-seule règle supplémentaire concerne la condition du $if$ qui doit être typée en
-\tInt.
+Les règles suivantes permettent de définir les jugements $Γ ⊢ i$. De manière
+générale, les instructions sont bien typées si leurs sous-instructions sont bien typées.
 
 \begin{mathpar}
 \irule{Pass}{
@@ -398,14 +406,6 @@ seule règle supplémentaire concerne la condition du $if$ qui doit être typée
   Γ ⊢ forever \{ b \}
 }
 \and
-\irule{If}{
-  Γ ⊢ e : \tInt \\
-  Γ ⊢ i_t \\
-  Γ ⊢ i_f
-}{
-  Γ ⊢ \npkIf{e}{i_t}{i_f}
-}
-\and
 \irule{Goto}{
 }{
   Γ ⊢ \npkGoto{l}
@@ -418,10 +418,25 @@ seule règle supplémentaire concerne la condition du $if$ qui doit être typée
 }
 \end{mathpar}
 
+Dans le cas de la conditionnelle, il est en plus nécessaire de vérifier que la
+condition est un entier.
+
+\begin{mathpar}
+\irule{If}{
+  Γ ⊢ e : \tInt \\
+  Γ ⊢ i_t \\
+  Γ ⊢ i_f
+}{
+  Γ ⊢ \npkIf{e}{i_t}{i_f}
+}
+\end{mathpar}
+
 \subsection{Left values}
 
-On étend la relation de typage aux left values : chaque left value, vue comme
-une expression, peut être typée.
+On associe à chaque left-value un type, qui est aussi le type des valeurs que
+celle-ci peut contenir. Le cas des variables est direct : si un couple
+(variable, type) est dans l'environnement de typage, la variable possède ce
+type.
 
 \begin{mathpar}
 \irule{Lv-Var}{
@@ -429,18 +444,27 @@ une expression, peut être typée.
 }{
   Γ ⊢ v : τ
 }
-\and
+\end{mathpar}
+
+Si une expression a un type pointeur, en la déréférençant on obtient une valeur
+du type pointé.
+
+\begin{mathpar}
+\irule{Lv-Deref}{
+  Γ ⊢ e : τ*
+}{
+  Γ ⊢ *e : τ
+}
+\end{mathpar}
+
+\todo{accès à un élément d'un type composite}
+
+\begin{mathpar}
 \irule{Lv-Field}{
   Γ ⊢ lv : τ_s \\
   (f, τ_f) ∈ τ_s
 }{
   Γ ⊢ lv.f : τ_f
-}
-\and
-\irule{Lv-Deref}{
-  Γ ⊢ e : τ*
-}{
-  Γ ⊢ *e : τ
 }
 \and
 \irule{Lv-Array}{
@@ -452,6 +476,9 @@ une expression, peut être typée.
 \end{mathpar}
 
 \subsection{Expressions}
+
+Les constantes ont leurs types habituels. Notons que le pointeur nul (\cNil) a
+un type polymorphe.
 
 \begin{mathpar}
 \irule{Const-Int}{
@@ -468,52 +495,85 @@ une expression, peut être typée.
 }{
   Γ ⊢ \cNil : τ*
 }
-\and
+\end{mathpar}
+
+Un certain nombre d'opérations est possible sur le type \tInt.
+
+\begin{mathpar}
 \irule{Op-Int}{
-  op ∈ \{+,-,\times,/,\&,|,\&\&,||,⋘,⋙\} \\
+  \textrm{op} ∈ \{+,-,\times,/,\&,|,\&\&,||,⋘,⋙\} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1 op e_2 : \tInt
+  Γ ⊢ e_1 \textrm{op} e_2 : \tInt
 }
-\and
+\end{mathpar}
+
+De même sur \tFloat.
+
+\begin{mathpar}
 \irule{Op-Float}{
-  op ∈ \{+.,-.,\times.,/.\} \\
+  \textrm{op} ∈ \{+.,-.,\times.,/.\} \\
   Γ ⊢ e_1 : \tFloat \\
   Γ ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1 \mathrm{op}~ e_2 : \tFloat
+  Γ ⊢ e_1 \textrm{op}~ e_2 : \tFloat
 }
-\and
+\end{mathpar}
+
+Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
+\tInt ou \tFloat et renvoient un \tInt.
+
+\begin{mathpar}
 \irule{Op-Cmp}{
-  op ∈ \{=,≠,≤,≥,<,>\} \\
+  \textrm{op} ∈ \{=,≠,≤,≥,<,>\} \\
   Γ ⊢ e_1 : τ \\
   Γ ⊢ e_2 : τ \\
   τ ∈ \{ \tInt, \tFloat \}
 }{
-  Γ ⊢ e_1  \mathrm{op} e_2 : \tInt
+  Γ ⊢ e_1 \textrm{op} e_2 : \tInt
 }
-\and
+\end{mathpar}
+
+L'opérateur unaire $-$ peut être appliqué à un \tInt ou à un \tFloat.
+
+\begin{mathpar}
 \irule{Unop-Minus}{
   τ ∈ \{ \tInt, \tFloat \} \\
   Γ ⊢ e : τ
 }{
   Γ ⊢ -e : τ
 }
-\and
+\end{mathpar}
+
+Les opérateurs de négation unaires, en revanche, ne s'appliquent qu'aux
+entiers.
+
+\begin{mathpar}
 \irule{Unop-Not}{
-  op ∈ \{ \tilde, ! \}
+  \textrm{op} ∈ \{ \tilde, ! \}
   Γ ⊢ e : \tInt
 }{
-  Γ ⊢ op e : \tInt
+  Γ ⊢ \textrm{op} e : \tInt
 }
-\and
+\end{mathpar}
+
+On peut prendre l'adresse d'une left-value, et obtenir un pointeur vers
+celle-ci. Le type du résultat est un type pointeur vers le type de base.
+
+\begin{mathpar}
 \irule{AddrOf}{
   Γ ⊢ lv : τ
 }{
   Γ ⊢ \&lv : τ*
 }
-\and
+\end{mathpar}
+
+La règle concernant les pointeurs sur fonction est similaire, à ceci près que
+les fonctions ont des schémas de type. Un pointeur sur fonction peut donc avoir
+n'importe quelle instanciation de ce schéma.
+
+\begin{mathpar}
 \irule{AddrOfFun}{
   Γ ⊢ f : σ \\
   τ ≤ σ
