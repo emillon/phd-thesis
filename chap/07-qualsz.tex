@@ -31,29 +31,14 @@ Elle réalise la copie de la chaîne pointée par \texttt{src} à l'endroit poin
 par \texttt{dest}. Pour détecter la fin de la chaîne, cette fonction parcourt la
 mémoire jusqu'à trouver un caractère nul. Une implémentation naïve pourrait être:
 
-\begin{Verbatim}
-char *strcpy(char *dest, const char *src)
-{
-    int i;
-    for(i=0;src[i]!=0;i++) {
-      dest[i] = src[i];
-    }
-    return dest;
-}
-\end{Verbatim}
+\insertcode{strcpy.c}
 
 La copie n'est arrêtée que lorsqu'un 0 est lu. Autrement dit, si quelqu'un
 contrôle la valeur pointée par \texttt{src}, il pourra écraser autant de données
 qu'il le désire. On est dans le cas d'école du débordement de tampon sur la pile
 tel que décrit dans \cite{SmashingTheStack}. Considérons la fonction suivante :
 
-\begin{Verbatim}
-void f(char *src)
-{
-    char buf[100];
-    strcpy(buf, src);
-}
-\end{Verbatim}
+\insertcode{strcpy-caller.c}
 
 Si le pointeur \texttt{src} pointe sur une chaîne de longueur supérieure à 100
 (ou une zone mémoire qui n'est pas une chaîne et ne contient pas de 0), les
