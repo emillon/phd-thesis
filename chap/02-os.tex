@@ -399,6 +399,7 @@ Au dessus de \texttt{PAGE\_OFFSET}, se trouve la mémoire réservée au noyau.
 Cette zone contient le code du noyau, les piles noyau des processus, etc.
 
 \subsection{Appels système}
+\label{sec:impl-syscall}
 
 Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas
 contenir d'instructions privilégiées, et donc ne peuvent pas accéder directement
@@ -488,16 +489,8 @@ appelant.
 \insertcode{appel-syscall-getpid.c}
 
 Ici, pas de difficulté particulière : la communication entre le \ring{0} et le
-\ring{3} est faite uniquement à travers les registres, comme décrit dans le
-chapitre précédent.
-
-Mais la plupart des appels systèmes communiquent de l'information de manière
-indirecte, à travers un pointeur. Ainsi la fonction \texttt{gettimeofday} a pour
-prototype :
-
-\begin{Verbatim}
-int gettimeofday(struct timeval *tv, struct timezone *tz);
-\end{Verbatim}
+\ring{3} est faite uniquement à travers les registres, comme décrit dans la
+section~\ref{sec:impl-syscall}.
 
 \begin{figure}
 \insertcode{appel-syscall-gettimeofday.c}
@@ -505,98 +498,67 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 \label{fig:appel-gettimeofday}
 \end{figure}
 
-Dans le cas d'un appel système qui ne fait que renvoyer un nombre, il n'y a pas
-de difficulté. En revanche, certains appels système. remplissent une structure
-avec leurs résultats. C'est alors la responsabilité de l'appelant (le
-programmeur utilisateur) d'allouer une zone mémoire correcte pour contenir le
-résultat (figure~\ref{fig:appel-gettimeofday}).
+Mais la plupart des appels systèmes communiquent de l'information de manière
+indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
+espace d'adressage et passe un pointeur à l'appel système. Ce mécanisme est
+utilisé par exemple par la fonction \texttt{gettimeofday}
+(figure~\ref{fig:appel-gettimeofday}).
 
-Puisque c'est le noyau qui implémente l'appel système, le déréférencement se
-déroule en \ring{0}. Il se pose alors le problème suivant : le noyau va pouvoir
-écrire à toute adresse fournie par l'utilisateur.
-
-% Fig memory zones (needed ?) {{{
-% Memory zone
-%
-% #1 - start
-% #2 - end
-% #3 - color
-\newcommand{\mzone}[3]{
-  \path[#3] (#1,0) rectangle (#2,1);
-}
-
-% Address label
-%
-% #1 - x position
-% #2 - text
-\newcommand{\alabel}[2]{
-  \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \ttfamily #2};
-
-}
-
-% Pointer
-%
-% #1 - start address
-% #2 - label
-\newcommand{\ptr}[2]{
-  \path [draw,open triangle 60-] (#1, -0.2) -- ++ (0,-0.5) node [below] {#2};
-}
-
-\newcommand{\memoryframe}[1]{%
-\begin{tikzpicture}
-  [user/.style={fill=green!40}
-  ,kernel/.style={fill=red!40}
-  ]
-
-  % exec
-  \mzone{0.5}{1}{user}
-
-  % lib
-  \mzone{2.5}{3.2}{user}
-
-  % stack
-  \mzone{3.7}{4}{user}
-
-  % stack
-  \mzone{5}{5.5}{user}
-
-  % kernel
-  \mzone{6}{8}{kernel}
-
-  % contour
-  \draw (0,0) rectangle (8,1);
-
-  \alabel{0}{0}
-  \alabel{6}{3 Go}
-  \alabel{8}{4 Go}
-
-  % User struct
-  \ifthenelse{#1=1}{\mzone{2.6}{3.1}{draw, fill=green}}{}
-  \ifthenelse{#1=1}{\ptr{2.6}{pu}}{}
-
-  \ifthenelse{#1=2}{\mzone{7}{7.5}{draw, fill=red}}{}
-  \ifthenelse{#1>1}{\ptr{7}{pk}}{}
-
-\end{tikzpicture}
-} % End of newcommand \memoryframe
-
+\input{fig/mzones.tex} % Fig mzones {{{
 \begin{figure}
+    \centering
     \subfloat[][]{
+        \label{fig:mzone1}
         \memoryframe{1}
     }
 
     \subfloat[][]{
+        \label{fig:mzone2}
         \memoryframe{2}
     }
 
     \subfloat[][]{
+        \label{fig:mzone3}
         \memoryframe{3}
     }
+
+    \caption{Zones mémoire}
+    \label{fig:mzones}
+\end{figure} % }}}
+
+Considérons une implémentation naïve de cet appel système qui écrirait
+directement à l'adresse pointée. La figure~\ref{fig:mzone1} présente ce qui se
+passe lorsque le pointeur fourni est dans l'espace d'adressage du processus :
+c'est le cas d'utilisation normal et l'écriture est donc possible.
+
+Si l'utilisateur passe un pointeur dont la valeur est supérieure à
+\texttt{0xc0000000} (figure~\ref{fig:mzone2}), que se passe-t'il ? Comme le
+déréférencement est fait dans le code du noyau, il est également fait en
+\ring{0}, et va pouvoir être réalisé sans erreur : l'écriture se fait et
+potentiellement une structure importante du noyau est écrasée.
+
+Un utilisateur malicieux peut donc utiliser cet appel système pour écrire à
+n'importe quelle adresse dans l'espace d'adressage du noyau. Ce problème vient
+du fait que l'appel système utilise les privilèges du noyau au lieu de celui qui
+contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused
+Deputy Problem}\cite{hardy88confused}.
+
+La bonne solution est de tester dynamiquement la valeur du pointeur : si la
+valeur du pointeur est supérieure à \texttt{0xc0000000}, il faut indiquer une
+erreur avant d'écrire (figure~\ref{fig:mzone3}. Sinon, cela ne veut pas dire
+que le déréférencement se fera sans erreur, mais au moins le noyau est protégé.
+
+\begin{figure}
+  \insertcode{implem-gettime.c}
+  \caption{Implantation de l'appel système \texttt{gettimeofday}}
+  \label{fig:implem-gettime}
 \end{figure}
 
-% }}}
-
-Notons que dans ce cas, c'est le noyau qui remplit la structure : le
-déréférencement se fait en \ring{0}.
+Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
+fonction \texttt{access\_ok} réalise le test décrit précédemment. Les fonctions
+\texttt{copy\_from\_user} et \texttt{copy\_to\_user} réalisent une copie de la
+mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
+système \texttt{gettimeofday} fait appel à celle-ci
+(figure~\ref{fig:implem-gettime}).
 
 % vim: spelllang=fr
