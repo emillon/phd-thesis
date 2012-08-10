@@ -349,6 +349,9 @@ Et les environnements de typage :
 \end{align*}
 }
 
+L'ensemble des types possibles (défini inductivement ci-dessus) sera noté
+\textsc{Typ}, et l'ensemble des variables de type par \textsc{TypVar}.
+
 On va associer à chaque variable globale un type. Mais faire de même pourrait
 être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
 pour copier des tableaux d'entiers, mais aussi de flottants. On va donc associer
@@ -360,11 +363,72 @@ un schéma de types à chaque fonction.
 \end{align*}
 }
 
+Un schéma de types correspond à un ensemble de types. Prenons l'exemple de la
+fonction identité : elle a pour schéma de types $∀ a . a \rightarrow a$, ce qui
+signifie que pour chaque type $τ$, on peut l'utiliser avec le type $τ
+\rightarrow τ$.
+
+\begin{definition}[Substitution]
+Une substitution est une fonction partielle de \textsc{TypVar} dans
+\textsc{Typ}. Elle sera notée par exemple $s = \{ a ↦ \tInt, b ↦ (\tFloat
+\rightarrow \tInt)\}$.
+
+Le support d'une substition, noté $\textrm{Supp}(s)$, est son domaine de
+définition.
+
+On définit aussi l'application d'une substitution sur un type quelconque : si
+$s$ est une substitution, $\bar{s}$ est son extension définie par :
+
+\begin{align*}
+\bar{s}(a)   =~& s(a) & \textrm{si $a$ est une variable}  \\
+\bar{s}(c)   =~& c    & \textrm{si $c$ est une constante} \\
+\bar{s}([τ]) =~& [\bar{s}(τ)] & \\
+\bar{s}(τ*)  =~& \bar{s}(τ)*   & \\
+\bar{s}(τ_1, …, τ_n) \rightarrow τ_r =~& (\bar{s}(τ_1), …, \bar{s}(τ_n)) \rightarrow \bar{s}(τ_r) \\
+\bar{s}(\{ f_1:τ_1, … ,f_n:τ_n \}) =~& \{ f_1:\bar{s}(τ_1), …, f_n:\bar{s}(τ_n) \}
+\end{align*}
+
+Par souci de simplicité, on notera $s$ pour $\bar{s}$.
+\end{definition}
+
+\begin{definition}[Instanciation]
+Un schéma de types $σ = ∀ \vec{a} . τ$ peut être instancié en un type $μ$ s'il
+existe une substition $s$ telle que :
+
+\begin{itemize}
+\item $\textrm{Supp}(s) ⊆ \vec{a}$
+\item $s(τ) = μ$
+\end{itemize}
+
+On note alors $μ ≤ σ$.
+\end{definition}
+
+\begin{definition}[Variables libres]
+Les variables libres d'un type sont l'ensemble des variables de types qui
+apparaissent dans celui-ci :
+
+\begin{align*}
+\tFV{a}   =~& ∅    & \textrm{si $a$ est une variable}  \\
+\tFV{c}   =~& ∅    & \textrm{si $c$ est une constante} \\
+\tFV{[τ]} =~& \tFV{τ} & \\
+\tFV{τ*}  =~& \tFV{τ} & \\
+\tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n} ∪ \tFV{τ_r} \\
+\tFV{\{ f_1:τ_1, … ,f_n:τ_n \}} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n}
+\end{align*}
+\end{definition}
+
+\begin{definition}[Généralisation]
+La généralisation consiste à construire un schéma de type à partir d'un type, en
+quantifiant sur les variables libres :
+
+\[
+\textrm{Gen}(τ) = ∀ \vec{a} . τ \quad \textrm{où} \quad \vec{a} = \tFV{τ}
+\]
+\end{definition}
+
 En associant un schéma de type $σ$ à une fonction $f$, on indique que la
 fonction pourra être utilisée avec tout type $τ$ qui est une instanciation de
 $σ$.
-
-\todo{Gen, inst}
 
 \subsection{Programme}
 
