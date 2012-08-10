@@ -117,17 +117,35 @@ déréférencement d'une left value.
 
 \subsection{Jugements}
 
-La sémantique concrète que nous définissons ici est constituée de jugements
-logiques. Le jugement principal est une relation de transition $\rightarrow$
-entre états de l'interpréteur : il sera donc noté $(l, σ) \rightarrow (l', σ')$.
+La sémantique concrète repose sur des jugements logiques et des règles
+d'inférences, de la forme :
 
-Pour aider à définir ces pas, il est nécessaire d'évaluer les expressions en
-fonction d'un certain état de la mémoire. On notera que dans l'état mémoire
-$σ$, l'expression $e$ produit la valeur $v$ en écrivant $σ ⊢ e ⇒ v$.
+\[
+\irule{Nom}{P_1 \\ … \\ P_n}{C}
+\]
 
+Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
+la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
+
+\todo{Réordonner ces définitions}
+
+\begin{definition}[Correspondance left-values / adresses]
 Enfin, les expressions font intervenir des left-values. Puisque les états
 mémoires sont définis en termes d'adresses, il faut faire la correspondance à
 l'aide d'un jugement $σ ⊢ lv ⇒ a$.
+\end{definition}
+
+\begin{definition}[Évaluation d'une expression]
+Pour aider à définir ces pas, il est nécessaire d'évaluer les expressions en
+fonction d'un certain état de la mémoire. On notera que dans l'état mémoire
+$σ$, l'expression $e$ produit la valeur $v$ en écrivant $σ ⊢ e ⇒ v$.
+\end{definition}
+
+\begin{definition}[Fonction de transition]
+La sémantique concrète que nous définissons ici est constituée de jugements
+logiques. Le jugement principal est une relation de transition $\rightarrow$
+entre états de l'interpréteur : il sera donc noté $(l, σ) \rightarrow (l', σ')$.
+\end{definition}
 
 \subsection{Sémantique des left-values}
 
