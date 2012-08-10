@@ -1,24 +1,64 @@
-Analyse légère : Sparse \link{sparse}
+L'analyse statique de programmes est un sujet de recherche actif depuis
+l'apparition de la science informatique.
 
-Coccinelle \cite{coccinelle09} \cite{coccinelle11} \todo{lire coccinelle09}
+L'analyse la plus simple consiste à traiter un programme comme du texte, et à y
+rechercher des motifs dangereux. Ainsi, utiliser des outils comme \texttt{grep}
+permet parfois de trouver un grand nombre de vulnérabilités\cite{SpenderGrep}.
 
-Interprétation Abstraite : Cousot \cite{Cousot77,Cousot92-1},
+On peut continuer cette approche en recherchant des motifs mais en étant
+sensible à la syntaxe et au flot de contrôle du programme. Cette notion de
+\emph{semantic grep} est présente dans l'outil Coccinelle
+\cite{coccinelle09,coccinelle11} \todo{lire coccinelle09} : on peut définir des
+\emph{patches sémantiques} pour détecter ou modifier des constructions
+particulières.
+
+Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
+la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
+au code source. Un pointeur peut être décoré d'une annotation
+\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
+sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
+Sparse \link{sparse} peut être utilisé pour détecter les cas les plus simples
+d'erreurs.
+
+Ce système d'annotations sur les types a été formalisé sous le nom de
+\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
+qualificateurs (à la manière de \texttt{const}), et des règles de typage
+permettent d'établir des propriétés sur le programme. Ces analyses ont été
+implantée dans l'outil CQual
+\cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}. \todo{lister les
+applications}.
+
+L'interprétation abstraite est une technique d'analyse générique qui permet de
+simuler statiquement tous les comportements d'un programme Cousot
+\cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer les bornes
+de variations des variables pour s'assurer qu'aucun débordement de tableau n'est
+possible. Cette technique est très puissante mais possède plusieurs
+inconvénients. D'une part, pour réaliser une analyse interprocédurale il faut
+partir d'un point en particulier du programme (comme la fonction \texttt{main}).
+Cette hypothèse n'est pas facilement satisfaite dans un noyau de système
+d'exploitation, qui possède de nombreux points d'entrée. D'autre part,
+il est très difficile de faire passer à l'échelle un interpréteur abstrait
+\cite{AstreeScale,coverityBillion}.
+
+L'approche par typage, plus légère, est séduisante. Pour les différents enjeux
+des systèmes de types statiques, on pourra se référer à~\cite{TAPL}.
+
+
+Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un
+\emph{survey} des problèmes et techniques existantes peut être trouvé
+dans~\cite{sm-jsac03}.
+
+\wip{}
+
+Interprétation Abstraite :
     widening \cite{granger},
     CGS \cite{cgs},
-    Astrée : presentation\cite{Astree04,Astree05}, scaling \cite{AstreeScale}
-
-Typage fort \cite{TAPL}
+    Astrée : presentation\cite{Astree04,Astree05},
 
 Politiques de sécurité par les types : \cite{lightweight-static-capabilities,LZ06a}
-
-Qualificateurs de type : CQual \cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}
 
 Divers : Contracts \cite{cssv}, Taint sequences \cite{mdv10}, Dynamic taint analysis \cite{oakland10}, perl
 
 Frama-C ?
 
 CCurred ?
-
-REx : Coverity \cite{coverityBillion}
-
-survey : Language-based Information-Flow Security \cite{sm-jsac03}
