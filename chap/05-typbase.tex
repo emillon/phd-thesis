@@ -400,10 +400,10 @@ générale, les instructions sont bien typées si leurs sous-instructions sont b
   Γ ⊢ s;b
 }
 \and
-\irule{Forever}{
+\irule{While}{
   Γ ⊢ b
 }{
-  Γ ⊢ forever \{ b \}
+  Γ ⊢ \npkWhile{b}
 }
 \and
 \irule{Goto}{
