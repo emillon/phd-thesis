@@ -565,11 +565,11 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 
 \begin{mathpar}
 \irule{Op-Int}{
-  \textrm{op} ∈ \{+,-,\times,/,\&,|,\&\&,||,⋘,⋙\} \\
+  \textrm{op} ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1 \textrm{op} e_2 : \tInt
+  Γ ⊢ e_1~\textrm{op}~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -581,7 +581,7 @@ De même sur \tFloat.
   Γ ⊢ e_1 : \tFloat \\
   Γ ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1 \textrm{op}~ e_2 : \tFloat
+  Γ ⊢ e_1~\textrm{op}~e_2 : \tFloat
 }
 \end{mathpar}
 
@@ -595,7 +595,7 @@ Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
   Γ ⊢ e_2 : τ \\
   τ ∈ \{ \tInt, \tFloat \}
 }{
-  Γ ⊢ e_1 \textrm{op} e_2 : \tInt
+  Γ ⊢ e_1~\textrm{op}~e_2 : \tInt
 }
 \end{mathpar}
 
