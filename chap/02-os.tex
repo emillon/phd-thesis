@@ -467,8 +467,6 @@ peut alors retourner au programme appelant.
 
 \section{Sécurité des appels système}
 
-\wip{}
-
 On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
 au services du noyau. Ils forment donc une interface particulièrement sensible aux
 problèmes de sécurité.
@@ -560,5 +558,12 @@ fonction \texttt{access\_ok} réalise le test décrit précédemment. Les foncti
 mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
 système \texttt{gettimeofday} fait appel à celle-ci
 (figure~\ref{fig:implem-gettime}).
+
+Pour préserver la sécurité du noyau, il est donc nécessaire de vérifier la
+valeur de tous les pointeurs dont la valeur est contrôlée par l'utilisateur.
+Cette conclusion est assez contraignante, puisqu'il existe de nombreux endroits
+dans le noyau où des données proviennent de l'utilisateur. Il est donc
+raisonnable de vouloir vérifier automatiquement et statiquement l'absence de
+tels défauts.
 
 % vim: spelllang=fr
