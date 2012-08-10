@@ -41,8 +41,15 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 \cite{AstreeScale,coverityBillion}.
 
 L'approche par typage, plus légère, est séduisante. Pour les différents enjeux
-des systèmes de types statiques, on pourra se référer à~\cite{TAPL}.
+des systèmes de types statiques, on pourra se référer à~\cite{TAPL}. Il est
+possible d'encoder ce genre de propriétés dans un sytème de types, cf.
+\cite{lightweight-static-capabilities} et \cite{LZ06a}.
 
+On peut aller plus loin que les simples types et utiliser un langage de contrats:
+chaque fonction est annotée par des pré- et post-conditions sur la
+mémoire\cite{cssv}\todo{Hoare}.
+
+Du côté de l'analyse dynamique, \cite{oakland10}\todo{et Perl ?}.
 
 Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un
 \emph{survey} des problèmes et techniques existantes peut être trouvé
@@ -55,9 +62,7 @@ Interprétation Abstraite :
     CGS \cite{cgs},
     Astrée : presentation\cite{Astree04,Astree05},
 
-Politiques de sécurité par les types : \cite{lightweight-static-capabilities,LZ06a}
-
-Divers : Contracts \cite{cssv}, Taint sequences \cite{mdv10}, Dynamic taint analysis \cite{oakland10}, perl
+Divers : Taint sequences \cite{mdv10},
 
 Frama-C ?
 
