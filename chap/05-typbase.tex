@@ -22,6 +22,8 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \todo{Fonctions}
 
+\todo{Ajouter l'arithmétique des pointeurs + types}
+
 La figure~\ref{fig:syntx} définit un langage impératif. On suppose qu'on peut
 compiler un programme écrit en C vers ce langage.
 
@@ -32,8 +34,19 @@ d'initialisation des variables globales et l'appel à la fonction principale.
 
 \todo{expliquer pourquoi un while expr ne suffit pas}
 
-La différence principale avec C est que les expressions sont sans effets de
-bords, donc que leur évaluation peut être faite sans modifier l'environnement.
+
+Les différences principales avec C sont les suivantes :
+
+\begin{itemize}
+\item
+  le flôt de contrôle est simplifié : les seules constructions sont
+  l'alternative, la boucle infinie et le saut en avant.
+\item
+  les expressions sont sans effets de bords. En particulier, leur
+  évaluation peut être faite sans modifier l'environnement.
+\item
+  les opérateurs pour entiers et les flottants sont différenciées.
+\end{itemize}
 
 \section{Sémantique}
 
@@ -390,7 +403,8 @@ un schéma de types à chaque fonction.
 Un schéma de types correspond à un ensemble de types. Prenons l'exemple de la
 fonction identité : elle a pour schéma de types $∀ a . a \rightarrow a$, ce qui
 signifie que pour chaque type $τ$, on peut l'utiliser avec le type $τ
-\rightarrow τ$.
+\rightarrow τ$. Plus précisément, cela veut dire que puisque $a$ est quantifié,
+on peut le substituer par n'importe quel autre type :
 
 \begin{definition}[Substitution]
 Une substitution est une fonction partielle de \textsc{TypVar} dans
@@ -675,6 +689,8 @@ n'importe quelle instanciation de ce schéma.
 Pour typer une fonction, on commence par ajouter ses paramètres dans
 l'environnement de typage, et on type la définition de la fonction. Le type
 résultant est généralisé.
+
+\todo{Vérifier qu'il n'y a pas de problème entre polymorphisme et mutabilité}
 
 \[
 \irule{Fun}{
