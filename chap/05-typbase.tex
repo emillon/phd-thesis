@@ -381,10 +381,23 @@ Et les environnements de typage :
 
 \gramlr{Environnements}{
 \begin{align*}
-Γ  \gramisa & ε     & \textrm{Environnement vide}
-\\ \gramor  & Γ,v:τ & \textrm{Ajout d'une variable}
+Γ  \gramisa & (Γ_f, Γ_v) & \textrm{Fonctions, variables}
+\end{align*}
+
+\begin{align*}
+Γ_f  \gramisa & ε       & \textrm{Environnement vide}
+\\   \gramor  & Γ_f,g:σ & \textrm{Ajout d'une fonction}
+\end{align*}
+
+\begin{align*}
+Γ_v  \gramisa & ε       & \textrm{Environnement vide}
+\\   \gramor  & Γ_v,x:τ & \textrm{Ajout d'une variable}
 \end{align*}
 }
+
+Lorsque ce n'est pas ambigü, si $Γ=(Γ_f,Γ_v)$ on notera les extensions
+d'environnement $Γ,f:σ$ pour $((Γ_f,f:σ), Γ_v)$ et $Γ,x:τ$ pour
+$(Γ_f,(Γ_v,x:τ))$.
 
 L'ensemble des types possibles (défini inductivement ci-dessus) sera noté
 \textsc{Typ}, et l'ensemble des variables de type par \textsc{TypVar}.
