@@ -1,7 +1,7 @@
-Dans ce chapitre nous présentons un langage impératif permettant de modéliser
-C. Nous donnons sa syntaxe, une sémantique opérationelle ainsi qu'un
-système de types permettant d'obtenir plus de garanties que le système de typse
-original de C tel que décrit dans \cite{AnsiC}.
+Dans ce chapitre nous présentons un langage impératif permettant de modéliser C.
+Nous donnons sa syntaxe, une sémantique opérationelle ainsi qu'un système de
+types permettant d'obtenir plus de garanties que celui de C tel que décrit dans
+\cite{AnsiC}.
 
 Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
 typer :
@@ -14,7 +14,17 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \section{Syntaxe}
 
-La grammaire suivante définit un langage impératif. On suppose qu'on peut
+\begin{figure}
+\input{fig/syntax.tex}
+\caption{Syntaxe d'un langage impératif}
+\label{fig:syntx}
+\end{figure}
+
+\todo{Fonctions}
+
+\todo{Ajouter l'arithmétique des pointeurs + types}
+
+La figure~\ref{fig:syntx} définit un langage impératif. On suppose qu'on peut
 compiler un programme écrit en C vers ce langage.
 
 Un programme est un triplet $P = (\vec{f}, \vec{x}, b)$ constitué d'un ensemble
@@ -22,12 +32,21 @@ de fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc
 sera exécuté au lancement du programme ; il peut par exemple contenir le code
 d'initialisation des variables globales et l'appel à la fonction principale.
 
-\input{fig/syntax.tex}
-
 \todo{expliquer pourquoi un while expr ne suffit pas}
 
-La différence principale avec C est que les expressions sont sans effets de
-bords, donc que leur évaluation peut être faite sans modifier l'environnement.
+
+Les différences principales avec C sont les suivantes :
+
+\begin{itemize}
+\item
+  le flôt de contrôle est simplifié : les seules constructions sont
+  l'alternative, la boucle infinie et le saut en avant.
+\item
+  les expressions sont sans effets de bords. En particulier, leur
+  évaluation peut être faite sans modifier l'environnement.
+\item
+  les opérateurs pour entiers et les flottants sont différenciées.
+\end{itemize}
 
 \section{Sémantique}
 
@@ -54,7 +73,7 @@ chaque fonction en son graphe de flot de contrôle, défini comme suit :
   les nœuds sont des points de contrôle, qui représentent par exemple
   l'adresse mémoire de l'instruction qui vient d'être exécutée.
 \item
-  les arêtes sont soit des instructions "de données" (affectation,
+  les arêtes sont soit des instructions ``de données'' (affectation,
   appel de fonction, déclaration), soit des conditions (ie une
   expression).
 \end{itemize}
@@ -111,17 +130,35 @@ déréférencement d'une left value.
 
 \subsection{Jugements}
 
-La sémantique concrète que nous définissons ici est constituée de jugements
-logiques. Le jugement principal est une relation de transition $\rightarrow$
-entre états de l'interpréteur : il sera donc noté $(l, σ) \rightarrow (l', σ')$.
+La sémantique concrète repose sur des jugements logiques et des règles
+d'inférences, de la forme :
 
-Pour aider à définir ces pas, il est nécessaire d'évaluer les expressions en
-fonction d'un certain état de la mémoire. On notera que dans l'état mémoire
-$σ$, l'expression $e$ produit la valeur $v$ en écrivant $σ ⊢ e ⇒ v$.
+\[
+\irule{Nom}{P_1 \\ … \\ P_n}{C}
+\]
 
+Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
+la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
+
+\todo{Réordonner ces définitions}
+
+\begin{definition}[Correspondance left-values / adresses]
 Enfin, les expressions font intervenir des left-values. Puisque les états
 mémoires sont définis en termes d'adresses, il faut faire la correspondance à
 l'aide d'un jugement $σ ⊢ lv ⇒ a$.
+\end{definition}
+
+\begin{definition}[Évaluation d'une expression]
+Pour aider à définir ces pas, il est nécessaire d'évaluer les expressions en
+fonction d'un certain état de la mémoire. On notera que dans l'état mémoire
+$σ$, l'expression $e$ produit la valeur $v$ en écrivant $σ ⊢ e ⇒ v$.
+\end{definition}
+
+\begin{definition}[Fonction de transition]
+La sémantique concrète que nous définissons ici est constituée de jugements
+logiques. Le jugement principal est une relation de transition $\rightarrow$
+entre états de l'interpréteur : il sera donc noté $(l, σ) \rightarrow (l', σ')$.
+\end{definition}
 
 \subsection{Sémantique des left-values}
 
@@ -344,10 +381,27 @@ Et les environnements de typage :
 
 \gramlr{Environnements}{
 \begin{align*}
-Γ  \gramisa & ε     & \textrm{Environnement vide}
-\\ \gramor  & Γ,v:τ & \textrm{Ajout d'une variable}
+Γ  \gramisa & (Γ_f, Γ_v) & \textrm{Fonctions, variables}
+\end{align*}
+
+\begin{align*}
+Γ_f  \gramisa & ε       & \textrm{Environnement vide}
+\\   \gramor  & Γ_f,g:σ & \textrm{Ajout d'une fonction}
+\end{align*}
+
+\begin{align*}
+Γ_v  \gramisa & ε       & \textrm{Environnement vide}
+\\   \gramor  & Γ_v,x:τ & \textrm{Ajout d'une variable}
 \end{align*}
 }
+
+Lorsque ce n'est pas ambigü, si $Γ=(Γ_f,Γ_v)$ on notera les extensions
+d'environnement $Γ,f:σ$ pour $((Γ_f,f:σ), Γ_v)$ et $Γ,x:τ$ pour
+$(Γ_f,(Γ_v,x:τ))$. De même, on notera $(f, σ) ∈ (Γ_f, Γ_v)$ si $(f, σ) ∈ (Γ_f)$,
+ou $(x, τ) ∈ (Γ_f, Γ_v)$ si $(x, τ) ∈ (Γ_v)$.
+
+L'ensemble des types possibles (défini inductivement ci-dessus) sera noté
+\textsc{Typ}, et l'ensemble des variables de type par \textsc{TypVar}.
 
 On va associer à chaque variable globale un type. Mais faire de même pourrait
 être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
@@ -360,11 +414,73 @@ un schéma de types à chaque fonction.
 \end{align*}
 }
 
+Un schéma de types correspond à un ensemble de types. Prenons l'exemple de la
+fonction identité : elle a pour schéma de types $∀ a . a \rightarrow a$, ce qui
+signifie que pour chaque type $τ$, on peut l'utiliser avec le type $τ
+\rightarrow τ$. Plus précisément, cela veut dire que puisque $a$ est quantifié,
+on peut le substituer par n'importe quel autre type :
+
+\begin{definition}[Substitution]
+Une substitution est une fonction partielle de \textsc{TypVar} dans
+\textsc{Typ}. Elle sera notée par exemple $s = \{ a ↦ \tInt, b ↦ (\tFloat
+\rightarrow \tInt)\}$.
+
+Le support d'une substition, noté $\textrm{Supp}(s)$, est son domaine de
+définition.
+
+On définit aussi l'application d'une substitution sur un type quelconque : si
+$s$ est une substitution, $\bar{s}$ est son extension définie par :
+
+\begin{align*}
+\bar{s}(a)   =~& s(a) & \textrm{si $a$ est une variable}  \\
+\bar{s}(c)   =~& c    & \textrm{si $c$ est une constante} \\
+\bar{s}([τ]) =~& [\bar{s}(τ)] & \\
+\bar{s}(τ*)  =~& \bar{s}(τ)*   & \\
+\bar{s}(τ_1, …, τ_n) \rightarrow τ_r =~& (\bar{s}(τ_1), …, \bar{s}(τ_n)) \rightarrow \bar{s}(τ_r) \\
+\bar{s}(\{ f_1:τ_1, … ,f_n:τ_n \}) =~& \{ f_1:\bar{s}(τ_1), …, f_n:\bar{s}(τ_n) \}
+\end{align*}
+
+Par souci de simplicité, on notera $s$ pour $\bar{s}$.
+\end{definition}
+
+\begin{definition}[Instanciation]
+Un schéma de types $σ = ∀ \vec{a} . τ$ peut être instancié en un type $μ$ s'il
+existe une substition $s$ telle que :
+
+\begin{itemize}
+\item $\textrm{Supp}(s) ⊆ \vec{a}$
+\item $s(τ) = μ$
+\end{itemize}
+
+On note alors $μ ≤ σ$.
+\end{definition}
+
+\begin{definition}[Variables libres]
+Les variables libres d'un type sont l'ensemble des variables de types qui
+apparaissent dans celui-ci :
+
+\begin{align*}
+\tFV{a}   =~& ∅    & \textrm{si $a$ est une variable}  \\
+\tFV{c}   =~& ∅    & \textrm{si $c$ est une constante} \\
+\tFV{[τ]} =~& \tFV{τ} & \\
+\tFV{τ*}  =~& \tFV{τ} & \\
+\tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n} ∪ \tFV{τ_r} \\
+\tFV{\{ f_1:τ_1, … ,f_n:τ_n \}} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n}
+\end{align*}
+\end{definition}
+
+\begin{definition}[Généralisation]
+La généralisation consiste à construire un schéma de type à partir d'un type, en
+quantifiant sur les variables libres :
+
+\[
+\textrm{Gen}(τ) = ∀ \vec{a} . τ \quad \textrm{où} \quad \vec{a} = \tFV{τ}
+\]
+\end{definition}
+
 En associant un schéma de type $σ$ à une fonction $f$, on indique que la
 fonction pourra être utilisée avec tout type $τ$ qui est une instanciation de
 $σ$.
-
-\todo{Gen, inst}
 
 \subsection{Programme}
 
@@ -400,10 +516,10 @@ générale, les instructions sont bien typées si leurs sous-instructions sont b
   Γ ⊢ s;b
 }
 \and
-\irule{Forever}{
+\irule{While}{
   Γ ⊢ b
 }{
-  Γ ⊢ forever \{ b \}
+  Γ ⊢ \npkWhile{b}
 }
 \and
 \irule{Goto}{
@@ -501,11 +617,11 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 
 \begin{mathpar}
 \irule{Op-Int}{
-  \textrm{op} ∈ \{+,-,\times,/,\&,|,\&\&,||,⋘,⋙\} \\
+  \textrm{op} ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1 \textrm{op} e_2 : \tInt
+  Γ ⊢ e_1~\textrm{op}~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -517,7 +633,7 @@ De même sur \tFloat.
   Γ ⊢ e_1 : \tFloat \\
   Γ ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1 \textrm{op}~ e_2 : \tFloat
+  Γ ⊢ e_1~\textrm{op}~e_2 : \tFloat
 }
 \end{mathpar}
 
@@ -531,7 +647,7 @@ Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
   Γ ⊢ e_2 : τ \\
   τ ∈ \{ \tInt, \tFloat \}
 }{
-  Γ ⊢ e_1 \textrm{op} e_2 : \tInt
+  Γ ⊢ e_1~\textrm{op}~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -551,10 +667,10 @@ entiers.
 
 \begin{mathpar}
 \irule{Unop-Not}{
-  \textrm{op} ∈ \{ \tilde, ! \}
+  \textrm{op} ∈ \{ \textasciitilde, ! \} \\
   Γ ⊢ e : \tInt
 }{
-  Γ ⊢ \textrm{op} e : \tInt
+  Γ ⊢ \textrm{op}~e : \tInt
 }
 \end{mathpar}
 
@@ -587,6 +703,8 @@ n'importe quelle instanciation de ce schéma.
 Pour typer une fonction, on commence par ajouter ses paramètres dans
 l'environnement de typage, et on type la définition de la fonction. Le type
 résultant est généralisé.
+
+\todo{Vérifier qu'il n'y a pas de problème entre polymorphisme et mutabilité}
 
 \[
 \irule{Fun}{
