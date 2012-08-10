@@ -1,7 +1,7 @@
-Dans ce chapitre nous présentons un langage impératif permettant de modéliser
-C. Nous donnons sa syntaxe, une sémantique opérationelle ainsi qu'un
-système de types permettant d'obtenir plus de garanties que le système de typse
-original de C tel que décrit dans \cite{AnsiC}.
+Dans ce chapitre nous présentons un langage impératif permettant de modéliser C.
+Nous donnons sa syntaxe, une sémantique opérationelle ainsi qu'un système de
+types permettant d'obtenir plus de garanties que celui de C tel que décrit dans
+\cite{AnsiC}.
 
 Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
 typer :
@@ -14,15 +14,21 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \section{Syntaxe}
 
-La grammaire suivante définit un langage impératif. On suppose qu'on peut
+\begin{figure}
+\input{fig/syntax.tex}
+\caption{Syntaxe d'un langage impératif}
+\label{fig:syntx}
+\end{figure}
+
+\todo{Fonctions}
+
+La figure~\ref{fig:syntx} définit un langage impératif. On suppose qu'on peut
 compiler un programme écrit en C vers ce langage.
 
 Un programme est un triplet $P = (\vec{f}, \vec{x}, b)$ constitué d'un ensemble
 de fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc
 sera exécuté au lancement du programme ; il peut par exemple contenir le code
 d'initialisation des variables globales et l'appel à la fonction principale.
-
-\input{fig/syntax.tex}
 
 \todo{expliquer pourquoi un while expr ne suffit pas}
 
@@ -54,7 +60,7 @@ chaque fonction en son graphe de flot de contrôle, défini comme suit :
   les nœuds sont des points de contrôle, qui représentent par exemple
   l'adresse mémoire de l'instruction qui vient d'être exécutée.
 \item
-  les arêtes sont soit des instructions "de données" (affectation,
+  les arêtes sont soit des instructions ``de données'' (affectation,
   appel de fonction, déclaration), soit des conditions (ie une
   expression).
 \end{itemize}
