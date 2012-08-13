@@ -79,41 +79,45 @@
 
 \part{Typage statique de langages impératifs}
 
-\chapter{Un premier système de types}
+\chapter{Sémantique d'un langage impératif}
 
-\label{cha:typbase}
+\label{cha:lang}
 \input{chap/05-typbase.tex}
 
-\chapter{Système avec le qualificateur "user"}
+\chapter{Sémantique statique}
+
+\label{cha:typbase}
+\input{chap/06-typbase.tex}
+
+\chapter{Analyse de provenance des pointeurs}
 
 \label{cha:qualuser}
-\input{chap/06-qualuser.tex}
+\input{chap/07-qualuser.tex}
 
-\chapter{Système avec le qualificateur "sz"}
+\chapter{Analyse de terminaison des chaînes C}
 
-\input{chap/07-qualsz.tex}
+\input{chap/08-qualsz.tex}
 
 \part{Expérimentation}
 
 \chapter{Implantation}
 
 \label{cha:implem}
-\input{chap/08-implantation.tex}
+\input{chap/09-implantation.tex}
 
-\chapter{Étude de cas : un driver graphique}
-\input{chap/09-etudedecas.tex}
+\chapter{Étude de cas : un pilote de carte graphique}
+\input{chap/10-etudedecas.tex}
 
 \chapter{Conclusion}
 
-\input{chap/10-conclusion.tex}
+\input{chap/11-conclusion.tex}
 
 \appendix
 
-\chapter{Code du noyau}
+\chapter{Code du module noyau}
 
 \label{cha:code-noyau}
-
-\insertcode{radeon-buggy.c}
+\input{chap/a-codemodule.tex}
 
 \backmatter
 

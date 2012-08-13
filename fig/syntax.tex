@@ -9,9 +9,17 @@ P \gramisa & (\vec{f}, \vec{v}, b) & \textrm{Fonctions, globales, initialiseur}
 e  \gramisa & lv              & \textrm{Left-value}
 \\ \gramor  & \textrm{op}~e   & \textrm{Opération unaire}
 \\ \gramor  & e~\textrm{op}~e & \textrm{Opération binaire}
-\\ \gramor  & cst             & \textrm{Constante}
+\\ \gramor  & c               & \textrm{Constante}
 \\ \gramor  & \& lv           & \textrm{Pointeur sur donnée}
 \\ \gramor  & \& f            & \textrm{Pointeur sur fonction}
+\end{align*}
+}
+
+\gramlr{Constantes}{
+\begin{align*}
+c  \gramisa & n     & \textrm{Entier}
+\\ \gramor  & f     & \textrm{Flottant}
+\\ \gramor  & \cNil & \textrm{Pointeur nul}
 \end{align*}
 }
 
