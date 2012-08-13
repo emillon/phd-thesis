@@ -374,19 +374,11 @@ travers le "\textsc{If}".
 
 \section{Règles de typage}
 
+\subsection{Types}
+
 Dans cette section, on définit la notion de programme bien typé. L'analyse par
 typage permet de vérifier qu'à chaque expression on peut associer un type, et ce
 de manière cohérente entre plusieurs utilisations d'une variable.
-
-Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
-typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessaire
-à l'analyse, c'est à dire le type des fonctions et variables du programme.
-
-Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
-"sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
-typables en accord avec le flot de données (par exemple, pour que l'instruction
-$lv \leftarrow e$ soit bien typée sous $Γ$, il faut que les types de $lv$ et de
-$e$ puissent avoir le même type sous $Γ$).
 
 Les types des valeurs sont :
 
@@ -403,31 +395,10 @@ Les types des valeurs sont :
 \end{align*}
 }
 
-Et les environnements de typage :
-
-\gramlr{Environnements}{
-\begin{align*}
-Γ  \gramisa & (Γ_{fun}, Γ_{var}) & \textrm{Fonctions, variables}
-\end{align*}
-
-\begin{align*}
-Γ_{fun} \gramisa & ε       & \textrm{Environnement vide}
-\\      \gramor  & Γ_f,g:σ & \textrm{Ajout d'une fonction}
-\end{align*}
-
-\begin{align*}
-Γ_{var} \gramisa & ε       & \textrm{Environnement vide}
-\\       \gramor  & Γ_v,x:τ & \textrm{Ajout d'une variable}
-\end{align*}
-}
-
-Lorsque ce n'est pas ambigü, si $Γ=(Γ_{fun},Γ_{var})$ on notera les extensions
-d'environnement $Γ,f:σ$ pour $((Γ_{fun},f:σ), Γ_{var})$ et $Γ,x:τ$ pour
-$(Γ_{fun},(Γ_{var},x:τ))$. De même, on notera $(f, σ) ∈ Γ$ si $(f, σ) ∈
-Γ_{fun}$, ou $(x, τ) ∈ Γ$ si $(x, τ) ∈ Γ_{var}$.
-
 L'ensemble des types possibles (défini inductivement ci-dessus) sera noté
 \textsc{Typ}, et l'ensemble des variables de type par \textsc{VarTyp}.
+
+\subsection{Schémas de type}
 
 On va associer à chaque variable globale un type. Mais faire de même pourrait
 être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
@@ -443,8 +414,8 @@ un schéma de types à chaque fonction.
 Un schéma de types correspond à un ensemble de types. Prenons l'exemple de la
 fonction identité : elle a pour schéma de types $∀ a . a \rightarrow a$, ce qui
 signifie que pour chaque type $τ$, on peut l'utiliser avec le type $τ
-\rightarrow τ$. Plus précisément, cela veut dire que puisque $a$ est quantifié,
-on peut le substituer par n'importe quel autre type :
+\rightarrow τ$. Plus précisément, cela veut dire que puisque $a$ est quantifiée,
+on peut le substituer par n'importe quel autre type.
 
 \begin{definition}[Substitution]
 Une substitution est une fonction partielle de \textsc{VarTyp} dans
@@ -455,18 +426,18 @@ Le support d'une substition, noté $\textrm{Supp}(s)$, est son domaine de
 définition.
 
 On définit aussi l'application d'une substitution sur un type quelconque : si
-$s$ est une substitution, $\bar{s}$ est son extension définie par :
+$s$ est une substitution, $\overline{s}$ est son extension définie par :
 
 \begin{align*}
-\bar{s}(a)   =~& s(a) & \textrm{si $a$ est une variable}  \\
-\bar{s}(c)   =~& c    & \textrm{si $c$ est une constante} \\
-\bar{s}([τ]) =~& [\bar{s}(τ)] & \\
-\bar{s}(τ*)  =~& \bar{s}(τ)*   & \\
-\bar{s}(τ_1, …, τ_n) \rightarrow τ_r =~& (\bar{s}(τ_1), …, \bar{s}(τ_n)) \rightarrow \bar{s}(τ_r) \\
-\bar{s}(\{ f_1:τ_1, … ,f_n:τ_n \}) =~& \{ f_1:\bar{s}(τ_1), …, f_n:\bar{s}(τ_n) \}
+\overline{s}(a)   =~& s(a) & \textrm{si $a$ est une variable}  \\
+\overline{s}(c)   =~& c    & \textrm{si $c$ est une constante} \\
+\overline{s}([τ]) =~& [\overline{s}(τ)] & \\
+\overline{s}(τ*)  =~& \overline{s}(τ)*   & \\
+\overline{s}(τ_1, …, τ_n) \rightarrow τ_r =~& (\overline{s}(τ_1), …, \overline{s}(τ_n)) \rightarrow \overline{s}(τ_r) \\
+\overline{s}(\{ f_1:τ_1, … ,f_n:τ_n \}) =~& \{ f_1:\overline{s}(τ_1), …, f_n:\overline{s}(τ_n) \}
 \end{align*}
 
-Par souci de simplicité, on notera $s$ pour $\bar{s}$.
+Par souci de simplicité, on notera $s$ pour $\overline{s}$.
 \end{definition}
 
 \begin{definition}[Instanciation]
@@ -507,6 +478,58 @@ quantifiant sur les variables libres :
 En associant un schéma de type $σ$ à une fonction $f$, on indique que la
 fonction pourra être utilisée avec tout type $τ$ qui est une instanciation de
 $σ$.
+
+\subsection{Environnements de typage}
+
+Chaque jugement de typage est effectué dans un environnement de typage $Γ$
+particulier, qui contient le contexte nécessaire : ici, le type des fonctions et
+variables du programme.
+
+\gramlr{Environnements}{
+\begin{align*}
+Γ  \gramisa & (Γ_{fun}, Γ_{var}) & \textrm{Fonctions, variables}
+\end{align*}
+
+\begin{align*}
+Γ_{fun} \gramisa & ε           & \textrm{Environnement vide}
+\\      \gramor  & Γ_{fun},f:σ & \textrm{Ajout d'une fonction}
+\end{align*}
+
+\begin{align*}
+Γ_{var} \gramisa & ε           & \textrm{Environnement vide}
+\\      \gramor  & Γ_{var},v:τ & \textrm{Ajout d'une variable}
+\end{align*}
+}
+
+Lorsque ce n'est pas ambigü, si $Γ=(Γ_{fun},Γ_{var})$ on notera les extensions
+d'environnement $Γ,f:σ$ pour $((Γ_{fun},f:σ), Γ_{var})$ et $Γ,x:τ$ pour
+$(Γ_{fun},(Γ_{var},x:τ))$. De même, on notera $(f, σ) ∈ Γ$ si $(f, σ) ∈
+Γ_{fun}$, ou $(x, τ) ∈ Γ$ si $(x, τ) ∈ Γ_{var}$.
+
+\subsection{Jugements de typage}
+
+\begin{definition}[Jugement de typage]
+Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
+typable en $τ$".
+\end{definition}
+
+\begin{definition}[Bloc bien typé]
+Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
+"sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
+typables en accord avec le flot de données (par exemple, pour que l'instruction
+$lv \leftarrow e$ soit bien typée sous $Γ$, il faut que les types de $lv$ et de
+$e$ puissent avoir le même type sous $Γ$).
+\end{definition}
+
+\begin{definition}[Fonction bien typée]
+…
+\end{definition}
+
+\begin{definition}[Programme bien typé]
+Un programme $P$ est bien typé s'il existe un environnement $Γ$ permettant de bien
+typer toutes les composantes (fonctions, globales et bloc d'initialisation) d'un
+programme. On notera alors $⊢ P$.
+\end{definition}
 
 \subsection{Programme}
 
