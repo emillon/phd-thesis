@@ -384,9 +384,9 @@ typable en $τ$". Un environnement de typage $Γ$ contient le contexte nécessai
 
 Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
 "sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
-typables et que les types sont en accord avec le flot de données (par exemple,
-pour que l'instruction $lv \leftarrow e$ soit bien typée sous $Γ$, il faut que les types
-de $lv$ et de $e$ puissent avoir le même type sous $Γ$).
+typables en accord avec le flot de données (par exemple, pour que l'instruction
+$lv \leftarrow e$ soit bien typée sous $Γ$, il faut que les types de $lv$ et de
+$e$ puissent avoir le même type sous $Γ$).
 
 Les types des valeurs sont :
 
@@ -407,24 +407,24 @@ Et les environnements de typage :
 
 \gramlr{Environnements}{
 \begin{align*}
-Γ  \gramisa & (Γ_f, Γ_v) & \textrm{Fonctions, variables}
+Γ  \gramisa & (Γ_{fun}, Γ_{var}) & \textrm{Fonctions, variables}
 \end{align*}
 
 \begin{align*}
-Γ_f  \gramisa & ε       & \textrm{Environnement vide}
-\\   \gramor  & Γ_f,g:σ & \textrm{Ajout d'une fonction}
+Γ_{fun} \gramisa & ε       & \textrm{Environnement vide}
+\\      \gramor  & Γ_f,g:σ & \textrm{Ajout d'une fonction}
 \end{align*}
 
 \begin{align*}
-Γ_v  \gramisa & ε       & \textrm{Environnement vide}
-\\   \gramor  & Γ_v,x:τ & \textrm{Ajout d'une variable}
+Γ_{var} \gramisa & ε       & \textrm{Environnement vide}
+\\       \gramor  & Γ_v,x:τ & \textrm{Ajout d'une variable}
 \end{align*}
 }
 
-Lorsque ce n'est pas ambigü, si $Γ=(Γ_f,Γ_v)$ on notera les extensions
-d'environnement $Γ,f:σ$ pour $((Γ_f,f:σ), Γ_v)$ et $Γ,x:τ$ pour
-$(Γ_f,(Γ_v,x:τ))$. De même, on notera $(f, σ) ∈ (Γ_f, Γ_v)$ si $(f, σ) ∈ (Γ_f)$,
-ou $(x, τ) ∈ (Γ_f, Γ_v)$ si $(x, τ) ∈ (Γ_v)$.
+Lorsque ce n'est pas ambigü, si $Γ=(Γ_{fun},Γ_{var})$ on notera les extensions
+d'environnement $Γ,f:σ$ pour $((Γ_{fun},f:σ), Γ_{var})$ et $Γ,x:τ$ pour
+$(Γ_{fun},(Γ_{var},x:τ))$. De même, on notera $(f, σ) ∈ Γ$ si $(f, σ) ∈
+Γ_{fun}$, ou $(x, τ) ∈ Γ$ si $(x, τ) ∈ Γ_{var}$.
 
 L'ensemble des types possibles (défini inductivement ci-dessus) sera noté
 \textsc{Typ}, et l'ensemble des variables de type par \textsc{VarTyp}.
