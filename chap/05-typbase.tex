@@ -690,17 +690,25 @@ Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
 \tInt ou \tFloat et renvoient un \tInt.
 
 \begin{mathpar}
+\irule{Cmp-Num}
+  {τ ∈ \{ \tInt, \tFloat \}}
+  {\textsc{Comparable}(τ)}
+\and
+\irule{Cmp-Ptr}
+  { }
+  {\textsc{Comparable}(τ*)}
+\and
 \irule{Op-Cmp}{
   \textrm{op} ∈ \{=,≠,≤,≥,<,>\} \\
   Γ ⊢ e_1 : τ \\
   Γ ⊢ e_2 : τ \\
-  τ ∈ \{ \tInt, \tFloat \}
+  \textsc{Comparable}(τ)
 }{
   Γ ⊢ e_1~\textrm{op}~e_2 : \tInt
 }
 \end{mathpar}
 
-L'opérateur unaire $-$ peut être appliqué à un \tInt ou à un \tFloat.
+L'opérateur unaire "$-$" peut être appliqué à un \tInt ou à un \tFloat.
 
 \begin{mathpar}
 \irule{Unop-Minus}{
@@ -734,16 +742,16 @@ celle-ci. Le type du résultat est un type pointeur vers le type de base.
 }
 \end{mathpar}
 
-La règle concernant les pointeurs sur fonction est similaire, à ceci près que
-les fonctions ont des schémas de type. Un pointeur sur fonction peut donc avoir
-n'importe quelle instanciation de ce schéma.
+La règle concernant les pointeurs sur fonction est similaire, à ceci près qu'une
+fonction a un schéma de type, qu'il faut instancier afin d'obtenir un type
+pointeur.
 
 \begin{mathpar}
 \irule{AddrOfFun}{
   Γ ⊢ f : σ \\
   τ ≤ σ
 }{
-  Γ ⊢ \&lv : τ
+  Γ ⊢ \&f : τ
 }
 \end{mathpar}
 
