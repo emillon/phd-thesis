@@ -7,7 +7,7 @@ Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
 typer :
 
 \begin{mathpar}
-⊢ \text{memcpy} : ∀ a . (a^*, a^*, \text{size\_t}) \rightarrow \tVoid
+⊢ \text{memcpy} : ∀ a . (a^*, a^*, \tInt) \rightarrow \tVoid
 \end{mathpar}
 
 La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
@@ -27,13 +27,15 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 La figure~\ref{fig:syntx} définit un langage impératif. On suppose qu'on peut
 compiler un programme écrit en C vers ce langage.
 
-Un programme est un triplet $P = (\vec{f}, \vec{x}, b)$ constitué d'un ensemble
-de fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc
-sera exécuté au lancement du programme ; il peut par exemple contenir le code
+Un programme est un triplet $P = (\vec{f}, \vec{v}, b)$\footnote{ dans tout ce
+chapitre on utilise la notation des vecteur pour les collections ordonnées :
+$\vec{f} = (f_1, f_2, …, f_n)$, $\vec{v} = (v_1, v_2, …, v_p)$ (leur
+cardinalités ne sont pas forcément égales).} constitué d'un ensemble de
+fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc sera
+exécuté au lancement du programme ; il peut par exemple contenir le code
 d'initialisation des variables globales et l'appel à la fonction principale.
 
 \todo{expliquer pourquoi un while expr ne suffit pas}
-
 
 Les différences principales avec C sont les suivantes :
 
@@ -61,6 +63,8 @@ Un état est constitué d'une part d'un point de contrôle dans le programme
 
 \subsection{Graphe de flot de contrôle}
 \label{sec:cfg}
+
+\wip{}
 
 Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
 celles qui définissent le flot de contrôle (\npkIf{$\cdot$}{$\cdot$}{$\cdot$},
@@ -98,11 +102,7 @@ point $l'$ en effectuant l'instruction $instr$.
 \subsection{État mémoire}
 \label{sec:sigma}
 
-La mémoire interne de l'interpréteur est une correspondance entre l'ensemble des
-adresses (infini dénombrable) et l'ensemble des valeurs. Un état mémoire $σ$ est
-une fonction partielle de $Addr$ vers $Val$.
-
-Ces valeurs peuvent être de plusieurs formes :
+L'interpréteur défini ici manipule des valeurs :
 
 \gramlr{Valeurs}{
 \begin{align*}
@@ -115,6 +115,16 @@ v  \gramisa  & n           & \textrm{Entier}
 \end{align*}
 }
 
+On note l'ensemble des valeurs \textsc{Val}.
+
+\begin{definition}[État mémoire]
+L'interpréteur possède une mémoire, indexée par un ensemble d'adresses noté
+\textsc{Addr}. Un état mémoire $σ$ est une fonction partielle de \textsc{Addr}
+vers \textsc{Val}.
+\end{definition}
+
+\todo{Il faut une opération genre fromBytes}
+
 \todo{Pile d'appels}
 
 \subsection{Left values}
@@ -123,10 +133,6 @@ La mémoire est organisée en adresses, mais pourtant dans le programme cette
 notion n'est pas directement visible. Les accès sont réalisés à travers des
 "left values". Dans le langage C, elles correspondent aux constructions qui
 peuvent se retrouver à gauche du signe "=" dans une affectation.
-
-Une left value est donc soit une variable (locale ou globale), soit l'accès à un
-indice d'une left value, soit l'accès à un champ d'une left value, soit le
-déréférencement d'une left value.
 
 \subsection{Jugements}
 
@@ -139,6 +145,38 @@ d'inférences, de la forme :
 
 Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
 la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
+
+Certaines règles n'ont pas de prémisse : on parle alors d'axiome.
+
+\[
+\irule{Ax}{ }{A}
+\]
+
+Compte-tenu de la structure des règles, la preuve d'un jugement pourra donc être
+vue sous la forme d'un arbre :
+
+\[
+  \irule{r1}{
+    \irule{r2}
+          {
+            \irule{r3}
+              { }
+              {A_1}
+              \\
+            \irule{r4}
+              { }
+              {A_2}
+          }
+          {B_1}
+    \\
+    \irule{r5}
+      {
+        \irule{r6}
+          { }
+          {A_3}
+        }{B_2}
+      }{C}
+\]
 
 \todo{Réordonner ces définitions}
 
@@ -401,7 +439,7 @@ $(Γ_f,(Γ_v,x:τ))$. De même, on notera $(f, σ) ∈ (Γ_f, Γ_v)$ si $(f, σ)
 ou $(x, τ) ∈ (Γ_f, Γ_v)$ si $(x, τ) ∈ (Γ_v)$.
 
 L'ensemble des types possibles (défini inductivement ci-dessus) sera noté
-\textsc{Typ}, et l'ensemble des variables de type par \textsc{TypVar}.
+\textsc{Typ}, et l'ensemble des variables de type par \textsc{VarTyp}.
 
 On va associer à chaque variable globale un type. Mais faire de même pourrait
 être trop restrictif. En effet, une fonction comme memcpy peut être utilisée
@@ -421,7 +459,7 @@ signifie que pour chaque type $τ$, on peut l'utiliser avec le type $τ
 on peut le substituer par n'importe quel autre type :
 
 \begin{definition}[Substitution]
-Une substitution est une fonction partielle de \textsc{TypVar} dans
+Une substitution est une fonction partielle de \textsc{VarTyp} dans
 \textsc{Typ}. Elle sera notée par exemple $s = \{ a ↦ \tInt, b ↦ (\tFloat
 \rightarrow \tInt)\}$.
 
@@ -705,6 +743,8 @@ l'environnement de typage, et on type la définition de la fonction. Le type
 résultant est généralisé.
 
 \todo{Vérifier qu'il n'y a pas de problème entre polymorphisme et mutabilité}
+
+\todo{Notation vecteur}
 
 \[
 \irule{Fun}{
