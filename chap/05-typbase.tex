@@ -228,7 +228,7 @@ Dans le cas où l'expression est une constante, c'est directement le résultat.
 \begin{mathpar}
 \irule{Eval-Cst}{
 }{
-  σ ⊢ c ⇒ c
+  Γ, σ ⊢ c ⇒ c
 }
 \end{mathpar}
 
@@ -237,10 +237,10 @@ et on récupère dans l'état mémoire à quelle valeur celle-ci correspond.
 
 \begin{mathpar}
 \irule{Eval-Lv}{
-  σ ⊢ lv ⇒ a \\
+  Γ, σ ⊢ lv ↝ a \\
   (a, v) ∈ σ
 }{
-  σ ⊢ lv ⇒ v
+  Γ, σ ⊢ lv ⇒ v
 }
 \end{mathpar}
 
@@ -252,16 +252,16 @@ usuelle).
 
 \begin{mathpar}
 \irule{Eval-Unop}{
-  σ ⊢ e ⇒ v
+  Γ, σ ⊢ e ⇒ v
 }{
-  σ ⊢ \textrm{op}~e ⇒ \widehat{\textrm{op}}~v
+  Γ, σ ⊢ \textrm{op}~e ⇒ \widehat{\textrm{op}}~v
 }
 \and
 \irule{Eval-Binop}{
-  σ ⊢ e_1 ⇒ v_1 \\
-  σ ⊢ e_2 ⇒ v_2
+  Γ, σ ⊢ e_1 ⇒ v_1 \\
+  Γ, σ ⊢ e_2 ⇒ v_2
 }{
-  σ ⊢ e_1~\textrm{op}~e_2 ⇒ v_1 \widehat{\textrm{op}}~v_2
+  Γ, σ ⊢ e_1~\textrm{op}~e_2 ⇒ v_1~\widehat{\textrm{op}}~v_2
 }
 \end{mathpar}
 
@@ -273,13 +273,13 @@ depuis l'état mémoire.
 \begin{mathpar}
 \irule{Eval-AddrOfFun}{
 }{
-  σ ⊢ \&f ⇒ \&f
+  Γ, σ ⊢ \&f ⇒ \&f
 }
 \and
 \irule{Eval-AddrOf}{
-  σ ⊢ lv ⇒ a
+  Γ, σ ⊢ lv ↝ a
 }{
-  σ ⊢ \&lv ⇒ \&a
+  Γ, σ ⊢ \&lv ⇒ \&a
 }
 \end{mathpar}
 
@@ -291,10 +291,10 @@ expressions à une left value si elles ont le même type.
 \begin{mathpar}
   \irule{Instr-Assign}{
     \langle l, lv \leftarrow e, l' \rangle \\
-    σ ⊢ lv ⇒ a \\
-    σ ⊢ e ⇒ v
+    Γ, σ ⊢ lv ↝ a \\
+    Γ, σ ⊢ e ⇒ v
   }{
-    (l, σ) \rightarrow (l', σ [ a ↦ v ])
+    Γ ⊢ (l, σ) \rightarrow (l', σ [ a ↦ v ])
   }
 \end{mathpar}
 
@@ -309,9 +309,9 @@ on peut donc traverser l'instruction \npkDecl{x}{b}.
     \langle l, \npkDecl{x}{b}, l' \rangle \\
     \langle l_b, b, l_b' \rangle \\
     σ' = σ ⊕ \{ x \rightarrow \top \} \\
-    (l_b, σ', s) \rightarrow (l_b', σ'')
+    Γ ⊢ (l_b, σ', s) \rightarrow (l_b', σ'')
   }{
-    (l, σ) \rightarrow (l', σ'' \backslash x)
+    Γ ⊢ (l, σ) \rightarrow (l', σ'' \backslash x)
   }
 \end{mathpar}
 \end{minipage}
@@ -327,13 +327,13 @@ TODO pour :
 \irule{Instr-Fcall}{
   \langle l, lv \leftarrow fe(\vec{e}), l' \rangle \\
   σ ⊢ fe ⇒ f \\
-  σ ⊢ \vec{e} ⇒ \vec{v} \\
+  Γ, σ ⊢ \vec{e} ⇒ \vec{v} \\
   σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret \rightarrow \top \} \\
-  (Entry(f), σ') \rightarrow (Exit(f), σ'') \\
-  σ'' ⊢ !ret ⇒ v_{ret} \\
-  σ'' ⊢ lv ⇒ a
+  Γ ⊢ (Entry(f), σ') \rightarrow (Exit(f), σ'') \\
+  Γ, σ'' ⊢ !ret ⇒ v_{ret} \\
+  Γ, σ'' ⊢ lv ↝ a
 }{
-  (l, σ) \rightarrow (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a \rightarrow v_{ret}\}, ?)
+  Γ ⊢ (l, σ) \rightarrow (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a \rightarrow v_{ret}\}, ?)
 }
 \]
 
@@ -353,21 +353,21 @@ travers le "\textsc{If}".
 \begin{mathpar}
 \irule{If-True}{
   \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
-  σ ⊢ e ⇒ n \\
+  Γ, σ ⊢ e ⇒ n \\
   n ≠ 0 \\
   \langle l_i, i_t, l_i' \rangle \\
-  (l_i, σ) \rightarrow (l_i', σ')
+  Γ ⊢ (l_i, σ) \rightarrow (l_i', σ')
 }{
-  (l, σ) \rightarrow (l', σ')
+  Γ ⊢ (l, σ) \rightarrow (l', σ')
 }
 \and
 \irule{If-False}{
   \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
-  σ ⊢ e ⇒ 0 \\
+  Γ, σ ⊢ e ⇒ 0 \\
   \langle l_i, i_f, l_i' \rangle \\
-  (l_i, σ) \rightarrow (l_i', σ')
+  Γ ⊢ (l_i, σ) \rightarrow (l_i', σ')
 }{
-  (l, σ) \rightarrow (l', σ')
+  Γ ⊢ (l, σ) \rightarrow (l', σ')
 }
 \end{mathpar}
 \end{minipage}
