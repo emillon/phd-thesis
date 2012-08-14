@@ -59,8 +59,7 @@ Une substitution est une fonction partielle de \textsc{VarTyp} dans
 \textsc{Typ}. Elle sera notée par exemple $s = \{ a ↦ \tInt, b ↦ (\tFloat
 \rightarrow \tInt)\}$.
 
-Le support d'une substition, noté $\textrm{Supp}(s)$, est son domaine de
-définition.
+Le domaine de définition d'une substition est noté $\textrm{Dom}(s)$.
 
 On définit aussi l'application d'une substitution sur un type quelconque : si
 $s$ est une substitution, $\overline{s}$ est son extension définie par :
@@ -82,7 +81,7 @@ Un schéma de types $σ = ∀ \vec{a} . τ$ peut être instancié en un type $μ
 existe une substition $s$ telle que :
 
 \begin{itemize}
-\item $\textrm{Supp}(s) ⊆ \vec{a}$
+\item $\textrm{Dom}(s) ⊆ \vec{a}$
 \item $s(τ) = μ$
 \end{itemize}
 
