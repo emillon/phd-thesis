@@ -1,3 +1,14 @@
+Ici nous enrichissons le langage défini dans le chapitre~\ref{cha:lang} d'un
+système de types. Celui-ci permet d'obtenir plus de garanties que celui de C tel
+que décrit dans \cite{AnsiC}.
+
+Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
+typer :
+
+\begin{mathpar}
+⊢ \text{memcpy} : ∀ a . (a^*, a^*, \tInt) \rightarrow \tVoid
+\end{mathpar}
+
 \section{Règles de typage}
 
 \subsection{Types}
@@ -134,22 +145,32 @@ $(Γ_{fun},(Γ_{var},x:τ))$. De même, on notera $(f, σ) ∈ Γ$ si $(f, σ) �
 
 \subsection{Jugements de typage}
 
+Un des principes du typage est d'associer à chaque expression un type, qui
+décrit le genre des valeurs produites par l'évaluation de cette fonction.
+
 \begin{definition}[Jugement de typage]
 Un jugement de typage est de la forme $Γ ⊢ e : τ$ et se lit "sous $Γ$, $e$ est
 typable en $τ$".
 \end{definition}
 
+Les instructions et blocs, au contraire, n'ont pas de type.
+
 \begin{definition}[Bloc bien typé]
-Les instructions et blocs, au contraire, n'ont pas de type. On note $Γ ⊢ i$ pour
-"sous $Γ$, $i$ est bien typé", c'est à dire que ces sous expressions sont
-typables en accord avec le flot de données (par exemple, pour que l'instruction
-$lv \leftarrow e$ soit bien typée sous $Γ$, il faut que les types de $lv$ et de
-$e$ puissent avoir le même type sous $Γ$).
+On note $Γ ⊢ i$ pour "sous $Γ$, $i$ est bien typé", c'est à dire que ces sous
+expressions sont typables en accord avec le flot de données (par exemple, pour
+que l'instruction $lv \leftarrow e$ soit bien typée sous $Γ$, il faut que les
+types de $lv$ et de $e$ puissent avoir le même type sous $Γ$).
 \end{definition}
 
+Le cas des fonctions est particulier puisque celles-ci ont un schéma de types
+qui leur est associé.
+
 \begin{definition}[Fonction bien typée]
-…
+On note $Γ ⊢ f : σ$ le fait qu'une fonction $f$ est typable en un schéma $σ$ dans $Γ$.
 \end{definition}
+
+Enfin, la notion de programme bien typé est intrinsèque : elle se fait
+indépendemment d'un environnement externe.
 
 \begin{definition}[Programme bien typé]
 Un programme $P$ est bien typé s'il existe un environnement $Γ$ permettant de bien
@@ -313,7 +334,9 @@ De même sur \tFloat.
 \end{mathpar}
 
 Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
-\tInt ou \tFloat et renvoient un \tInt.
+"comparables". On introduit donc un jugement $\textsc{Comparable}(τ)$ qui est
+vrai pour les types \tInt, \tFloat et pointeurs. Les comparaisons renvoient
+alors un \tInt.
 
 \begin{mathpar}
 \irule{Cmp-Num}
@@ -403,20 +426,32 @@ résultant est généralisé.
 
 \subsection{Instructions}
 
+Pour typer une déclaration, il suffit de rajouter la variable avec n'importe
+quel type dans l'environnement de typage.
+
 \begin{mathpar}
 \irule{Decl}{
-  Γ ⊕ \{x : τ\} ⊢ b
+  Γ , x : τ ⊢ b
 }{
   Γ ⊢ \npkDecl{x}{b}
 }
-\and
+\end{mathpar}
+
+Une affectation est bien typée si elle faite entre une left-value et une
+expression de même type.
+
+\begin{mathpar}
 \irule{Assign}{
   Γ ⊢ lv : τ \\
   Γ ⊢ e  : τ
 }{
   Γ ⊢ lv \leftarrow e
 }
-\and
+\end{mathpar}
+
+\wip{}
+
+\begin{mathpar}
 \irule{Fcall}{
   Γ ⊢ lv : τ_{ret} \\
   Γ ⊢ fe : σ \\
