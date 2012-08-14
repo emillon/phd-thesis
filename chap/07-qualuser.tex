@@ -13,6 +13,34 @@ q  \gramisa & \textsc{Kernel} & \textrm{Donnée noyau (sûre)}
 \end{align*}
 }
 
+Ensuite,
+
+\gramlr{Types}{
+\begin{align*}
+τ  \gramisa & τ q* & \textrm{Pointeur qualifié}
+\\ \gramor  & …    & \textrm{Reste inchangé}
+\end{align*}
+}
+
+voire :
+
+\gramlr{Environnements}{
+\begin{align*}
+Γ  \gramisa & ε
+\\ \gramor  & Γ, x:τ~q
+\end{align*}
+}
+
+Règle de sûreté du déréférencement
+
+\begin{mathpar}
+\irule{Lv-Deref-Kernel}{
+  Γ ⊢ e : τ~\textsc{Kernel}*
+}{
+  Γ ⊢ *e : τ
+}
+\end{mathpar}
+
 \section{Propriété d'isolation mémoire}
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
