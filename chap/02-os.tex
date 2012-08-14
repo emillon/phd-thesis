@@ -11,7 +11,7 @@ que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbau
 
 Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
 mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, des
-dizaines de logiciels permettant d'effectuer toutes sortes de calculs et de
+dizaines de logiciels permettent d'effectuer toutes sortes de calculs et de
 communications. Le système d'exploitation permet de faire l'interface entre ces
 niveaux d'abstraction.
 
@@ -20,18 +20,18 @@ a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel da
 son intégralité : toute la mémoire pouvait être accédée, toutes les instructions
 pouvaient être utilisées.
 
-Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à un utilisateur
-d'utiliser le système. Dans la seconde moitié des années 60, sont apparus les
-premiers systèmes ``à temps partagé'', permettant à plusieurs utilisateurs de
-travailler en même temps.
+Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à une personne
+d'interagir avec le système. Dans la seconde moitié des années 60, sont apparus
+les premiers systèmes ``à temps partagé'', permettant à plusieurs utilisateurs
+de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
 ressources de la machine doivent être aussi partagées entre les utilisateurs et
-les programmes. Par exemple, plusieurs programmes vont utiliser le CPU les uns à
-la suite des autres (partage \emph{temporel}) ; et chaque programme aura à sa
-disposition une partie de la mémoire principale, ou du disque dur (partage
-\emph{spatial}).
+les programmes. Par exemple, plusieurs programmes vont utiliser le processeur
+les uns à la suite des autres (partage \emph{temporel}) ; et chaque programme
+aura à sa disposition une partie de la mémoire principale, ou du disque dur
+(partage \emph{spatial}).
 
 Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
 matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
@@ -49,7 +49,7 @@ la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
 de trame des données sur le disque, demander la lecture, puis déclencher une
 copie de la mémoire.
 
-Si dans un autre cas il voulait récupérer des données depuis une mémorette USB,
+Si dans un autre cas il désire récupérer des données depuis une mémorette USB,
 il devrait interroger le bus USB, rechercher le bon numéro de périphérique, le
 bon numéro de canal dans celui-ci, lui appliquer une commande de lecture au bon
 numéro de bloc, puis copier la mémoire.
@@ -65,6 +65,8 @@ actions appropriées.
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
 le matériel, et en particulier assure les rôles suivants :
 
+\todo{À affiner ou supprimer}
+
 \begin{itemize}
 \item
   Gestion des processus : un système d'exploitation peut permettre
@@ -79,9 +81,8 @@ le matériel, et en particulier assure les rôles suivants :
   Gestion des fichiers : les processus peuvent accéder à une hiérarchie de
   fichiers, indépendamment de la manière d'y accéder.
 \item
-  Gestion des périphériques : le noyau étant le seul code à s'exécuter
-  en mode privilégié, c'est lui qui doit communiquer avec les
-  périphériques matériels.
+  Gestion des périphériques : le noyau étant le seul code ayant des privilèges,
+  c'est lui qui doit communiquer avec les périphériques matériels.
 \item
   Abstractions : le noyau fournit aux programmes une interface unifiée,
   permettant de stocker des informations de la même manière sur un
@@ -92,11 +93,11 @@ le matériel, et en particulier assure les rôles suivants :
 \section{Architecture Intel}
 
 L'implantation d'un système d'exploitation est très proche du matériel sur
-lequel elle va s'exécuter. Pour étudier une implantation en particulier, voyons
-ce que permet le matériel lui-même.
+lequel il s'exécute. Pour étudier une implantation en particulier, voyons ce que
+permet le matériel lui-même.
 
 Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
-une architecture Intel 32 bits. Les exemples de code seront écrit en syntaxe
+une architecture Intel 32 bits. Les exemples de code seront écrits en syntaxe
 AT\&T, celle que comprend l'assembleur GNU.
 
 La référence pour la description de l'assembleur Intel est la documentation du
@@ -108,19 +109,43 @@ pile peut aussi être trouvée dans \cite{SmashingTheStack}.
 Pour faire des calculs, le processeur est composé de registres, qui sont des
 petites zones de mémoire interne, et peut accéder à la mémoire principale.
 
-Les registres principaux sont nommés \eax, \ebx, \ecx, \edx, \esi et \edi. Ils
-peuvent être utilisés pour n'importe quel type d'opération, mais certains sont
-spécialisés : par exemple il est plus efficace d'utiliser \eax en accumulateur,
-ou \ecx en compteur. \esp est le pointeur de pile (\emph{stack pointer}), qui a
-un rôle particulier dans les instructions \asminstr{push} et \asminstr{pop}.
-\ebp sert de point de repère dans les appels de fonction. \eip contient
-l'adresse de l'instruction courante.
+La mémoire principale contient divers types des données :
+
+\begin{itemize}
+\item le code des programmes à exécuter
+\item les données à disposition des programmes
+\item la pile d'appels
+\end{itemize}
+
+La pile d'appels est une zone de mémoire qui est notamment utilisée pour tenir
+une trace des calculs en cours. Par exemple, c'est ici que seront stockées les
+données propres à chaque fonction appelée : paramètres, adresse de retour et
+variables locales. La pile est manipulée par un pointeur de pile (\emph{stack
+pointer}), qui est l'adresse du "haut de la pile". On peut la manipuler en
+empilant des données (les placer au niveau du pointeur de pile et déplacer celui
+si) ou dépilant des données (déplacer le pointeur de pile dans l'autre sens et
+retourner la valeur présente à cet endroit).
+
+L'état du processeur est défini par la valeur de ses registres, qui sont des
+petites zones de mémoire interne (quelques bits chacuns). Par exemple, la valeur
+du pointeur de pile est stockée dans \esp. Le registre \ebp, couplé à \esp sert
+à adresser les variables locales et paramètres d'une fonction, comme ce sera
+expliqué dans la section~\ref{sec:convappel}.
+
+L'adresse de l'instruction courante est accessible dans le registre \eip.
+
+En plus de ces registres spéciaux, le processeur possède de nombreux registres
+génériques, qui peuvent être utilisés pour réaliser des calculs intermédiaires.
+Ils sont nommés \eax, \ebx, \ecx, \edx, \esi et \edi. Ils peuvent être utilisés
+pour n'importe quel type d'opération, mais certains sont spécialisés : par
+exemple il est plus efficace d'utiliser \eax en accumulateur, ou \ecx en
+compteur.
 
 Les calculs sont décrits sous forme d'une suite d'instructions. Chaque
 instruction est composée d'un mnémonique et d'une liste d'opérandes. Les
 mnémoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
-un type d'opération à appliquer sur les opérandes. Elle peut aussi être précédée
-d'une étiquette, qui correspondra à l'adresse de cette instruction.
+un type d'opération à appliquer sur les opérandes. L'instruction peut aussi être
+précédée d'une étiquette, qui correspondra à son adresse.
 
 \begin{center}
   \shorthandoff{!}
@@ -188,8 +213,8 @@ exemples suivants :
   \texttt{dst} et place ce résultat dans \texttt{dst}.
 
 \item \texttt{push src} place \texttt{src} sur la pile, c'est à dire que cette
-  instruction décrémente le pointeur de pile \esp de la taille de \texttt{src},
-  puis place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp.
+  instruction enlève au pointeur de pile \esp la taille de \texttt{src}, puis
+  place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp.
 
 \item \texttt{pop src} réalise l'opération inverse : elle charge le contenu de
   la mémoire à l'adresse \esp dans \texttt{src} puis incrémente \esp de la
@@ -207,12 +232,15 @@ exemples suivants :
 \end{itemize}
 
 \subsection{Fonctions et conventions d'appel}
+\label{sec:convappel}
 
 \begin{figure} % {{{ fig:stackframe
 \input{fig/stackframe.tex}
 \caption[Cadres de pile]{ Cadres de pile. }
 \label{fig:stackframe}
 \end{figure} % }}}
+
+\todo{Mettre des vrais nombres plutôt que du symbolique}
 
 Dans le langage d'assemblage, il n'y a pas de notion de fonction ; mais
 \asminstr{call} et \asminstr{ret} permettent de sauvegarder et de restaurer une
@@ -273,9 +301,9 @@ système de partage du temps existe.
 À des intervalles de temps réguliers, le système est programmé pour recevoir une
 interruption. C'est une condition exceptionnelle (au même titre qu'une division
 par zéro) qui fait sauter automatiquement le processeur dans une routine de
-traitement d'interruption. Si à cet endroit le code sauvegarde les registres et
-restaure un autre ensemble de registres, on peut exécuter plusieurs tâches de
-manière entrelacée. Si l'alternance est assez rapide, cela peut donner
+traitement d'interruption. À cet endroit le code peut sauvegarder les registres
+et restaurer un autre ensemble de registres, ce qui permet d'exécuter plusieurs
+tâches de manière entrelacée. Si l'alternance est assez rapide, cela peut donner
 l'illusion que les programmes s'exécutent en parallèle. Comme l'interruption
 peut survenir à tout moment, on parle de multitâche préemptif.
 
@@ -317,10 +345,10 @@ adresse contiendra une valeur différente.
 \end{figure}
 
 Ce mécanisme est contrôlé par valeur du registre \crtrois : les 10 premiers bits
-d'une adresse sont un index dans le répertoire de pages qui commence à l'adresse
-contenue dans \crtrois. À cet index, se trouve l'adresse d'une table de pages.
-Les 10 bits suivants de l'adresse sont un index dans cette page, donnant
-l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
+d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
+l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
+de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
+donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
@@ -341,14 +369,18 @@ l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 \label{fig:memoire-virtuelle}
 \end{figure} % }}}
 
+\todo{Faire cette figure}
+
 En ce qui concerne la mémoire, les différentes tâches ont une vision différente
 de la mémoire physique : c'est-à-dire que deux tâches lisant à une même adresse
 peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
 (fig~\ref{fig:memoire-virtuelle}).
 
+\todo{Redite qui n'apporte pas plus d'explication}
+
 \section{Cas de Linux}
 
-Dans cette section, nous allons voir comment ses mécanismes sont implantés dans
+Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
 le noyau Linux. Une description plus détaillée pourra être trouvée dans
 \cite{UnderstandingTheLinuxKernel}, ou pour le cas de la mémoire virtuelle,
 \cite{LinuxVMM}.
@@ -360,7 +392,7 @@ Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches
 existe : elles s'exécutent l'une après l'autre, le changement s'effectuant sur
 interruptions.
 
-Pour faire appel aux services du noyau, le code utilisateur peut faire appel à
+Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
 des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
 doit donc avoir deux piles : une pile ``utilisateur'' qui sert pour
 l'application elle-même, et une pile ``noyau'' qui sert aux appels système.
@@ -381,11 +413,13 @@ réservée au mode privilégié.}
 % }}}
 
 Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
-mémoire dans son espace d'adressage (figure~\ref{fig:memmap}). Au moment de
-changer le processus en cours, l'ordonnanceur charge une valeur propre au
-nouveau processus dans \crtrois. Les adresses basses (inférieures à
-\texttt{PAGE\_OFFSET} = 3 Gio = \texttt{0xc0000000}) sont réservées à
-l'utilisateur. On y trouvera par exemple :
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun
+un ensemble de tables de pages et une valeur de \crtrois associée. Au moment de
+changer le processus en cours, l'ordonnanceur charge donc le \crtrois du nouveau
+processus.
+
+Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
+\texttt{0xc0000000}) sont réservées à l'utilisateur. On y trouvera par exemple :
 
 \begin{itemize}
 \item le code du programme
@@ -400,6 +434,8 @@ Cette zone contient le code du noyau, les piles noyau des processus, etc.
 
 \subsection{Appels système}
 \label{sec:impl-syscall}
+
+\todo{clarifier encore tout ça}
 
 Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas
 contenir d'instructions privilégiées, et donc ne peuvent pas accéder directement

@@ -1,14 +1,8 @@
 Dans ce chapitre nous présentons un langage impératif permettant de modéliser C.
-Nous donnons sa syntaxe, une sémantique opérationelle ainsi qu'un système de
-types permettant d'obtenir plus de garanties que celui de C tel que décrit dans
-\cite{AnsiC}.
+Nous donnons sa syntaxe ainsi qu'une sémantique opérationelle.
 
-Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
-typer :
-
-\begin{mathpar}
-⊢ \text{memcpy} : ∀ a . (a^*, a^*, \tInt) \rightarrow \tVoid
-\end{mathpar}
+Ce langage servira de support aux systèmes de types décrits dans les
+chapitres~\ref{cha:typbase}, \ref{cha:qualuser} et \ref{cha:qualsz}.
 
 La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
@@ -54,7 +48,7 @@ Les différences principales avec C sont les suivantes :
 
 Dans cette section, nous définissons une sémantique pour ce langage impératif ;
 elle pourra servir à l'implantation d'un interpréteur et à raisonner de manière
-formelle sur les programme. Mathématiquement, cela consiste en la définition
+formelle sur les programmes. Mathématiquement, cela consiste en la définition
 d'une relation de transition $\rightarrow$ entre états de l'interpréteur.
 
 Un état est constitué d'une part d'un point de contrôle dans le programme
@@ -217,6 +211,13 @@ peuvent se retrouver à gauche du signe "=" dans une affectation.
 \end{mathpar}
 
 \subsection{Sémantique des expressions}
+
+Les expressions sont les constructions syntaxiques de base du langage. Étant
+donné un environnement et un état mémoire, on peut leur associer une valeur.
+
+Par exemple, dans l'environnement qui à la variable $x$ associe l'adresse $a$ et
+dans l'état mémoire qui à l'adresse $a$ associe la valeur $2$, l'expression $x +
+3$ s'évalue en $5$.
 
 \begin{definition}[Évaluation d'une expression]
   Sous un environnement $Γ$ et un état mémoire $σ$, une left-value peut
