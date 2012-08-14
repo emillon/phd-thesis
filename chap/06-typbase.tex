@@ -101,6 +101,20 @@ apparaissent dans celui-ci :
 \tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n} ∪ \tFV{τ_r} \\
 \tFV{\{ f_1:τ_1, … ,f_n:τ_n \}} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n}
 \end{align*}
+
+On étend cette définition aux schémas de types :
+
+\[
+\tFV{∀ \vec{a} . τ} = \tFV{τ} - \vec{a}
+\]
+
+ainsi qu'aux contextes de typage :
+
+\begin{align*}
+\tFV{ε} =& ∅ \\
+\tFV{Γ, x:τ} =& \tFV{Γ} \cup \tFV{τ} \\
+\tFV{Γ, f:σ} =& \tFV{Γ} \cup \tFV{σ}
+\end{align*}
 \end{definition}
 
 \begin{definition}[Généralisation]
@@ -108,7 +122,9 @@ La généralisation consiste à construire un schéma de type à partir d'un typ
 quantifiant sur les variables libres :
 
 \[
-\textrm{Gen}(τ) = ∀ \vec{a} . τ \quad \textrm{où} \quad \vec{a} = \tFV{τ}
+\textrm{Gen}(τ, Γ) = ∀ \vec{a} . τ
+\quad \textrm{où}
+\quad \vec{a} = \tFV{τ} - \tFV{Γ}
 \]
 \end{definition}
 
