@@ -87,42 +87,6 @@ k  \gramisa & \kPass          & \textrm{Terminaison}
 \end{align*}
 }
 
-\subsection{Sémantique}
-
-Relation :
-
-$Γ ⊢ (k, σ) → (k', σ')$
-
-Continuation initiale :
-
-$k_0 ((\vec{f},\vec{v},b)) = \kSeq{b}{\kPass}$
-
-Règles d'évaluation :
-
-\[
-\irule{Instr-Goto3-direct}
-{ }
-{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl}{k}, σ) → (k, σ) }
-\]
-
-\[
-\irule{Instr-Goto3-indirect}
-{ lbl ≠ lbl' }
-{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} . k, σ) }
-\]
-
-\[
-\irule{Instr-DoWith3}
-{ }
-{ Γ ⊢ (\npkDoWith{b}{lbl} . k, σ) → ( b . \kBlock{lbl}{k}) }
-\]
-
-\[
-\irule{Instr-While3}
-{ }
-{ Γ ⊢ (\npkWhile{b} . k, σ) → (b . \npkWhile{b} . k, σ) }
-\]
-
 \subsection{État mémoire}
 \label{sec:sigma}
 
@@ -314,18 +278,59 @@ depuis l'état mémoire.
 }
 \end{mathpar}
 
+\subsection{Relation}
+
+\begin{definition}[Pas de la sémantique]
+
+  La sémantique consiste en une relation de transition entre les états de
+  l'interpréteur. Celle-ci est faite sous un environnement $Γ$ qui associe des
+  adresses aux variables du programme.
+
+  On note un tel pas $Γ ⊢ (k, σ) → (k', σ')$.
+\end{definition}
+
+\begin{definition}[État initial]
+  $P = (\vec{f},\vec{v},b)$
+
+  $k_0 (P) = \kSeq{b}{\kPass}$
+
+  $σ_0(P) = $ toutes les globales à $\top$ (le bloc d'init contient les init à 0)
+
+  $Γ_0(P) = $ toutes les globales à une certaine adresse. ASLR etc.
+\end{definition}
+
+\begin{definition}[Exécution d'un programme]
+  $Γ_0 ⊢ (k_0(P), σ_0(P) → (\kPass, σ_f)$
+\end{definition}
+
+Dans la suite, on définit la relation de transition. Selon la forme de la
+continuation, deux grandes familles sont à distinguer : les instructions
+classiques et celles qui manipulent le flot de contrôle.
+
 \subsection{Sémantique des instructions}
 
-La règle la plus simple concerne l'affectation : on peut affecter une
-expressions à une left value si elles ont le même type.
+Si $i$ est une séquence, on la décompose. De même, les blocs vides peuvent être
+sautés :
+
+\begin{mathpar}
+  \irule{Instr-Seq}
+    { }
+    {Γ ⊢ ((i_1 ; i_2) . k, σ) → (i_1 . (i_2 . k), σ)}
+  \and
+  \irule{Instr-Skip}
+    { }
+    {Γ ⊢ (ε . k, σ) → (k, σ)}
+\end{mathpar}
+
+Si $i$ est une affectation, on évalue l'expression et on modifie l'état $σ$ en
+conséquence.
 
 \begin{mathpar}
   \irule{Instr-Assign}{
-    \langle l, lv \leftarrow e, l' \rangle \\
     Γ, σ ⊢ lv ↝ a \\
     Γ, σ ⊢ e ⇒ v
   }{
-    Γ ⊢ (l, σ) \rightarrow (l', σ [ a ↦ v ])
+    Γ ⊢ (lv \leftarrow e . k, σ) \rightarrow (k, σ [ a ↦ v ])
   }
 \end{mathpar}
 
@@ -333,6 +338,19 @@ Déclarer une variable, c'est rendre accessible dans un bloc une variable non
 initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
 traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
 on peut donc traverser l'instruction \npkDecl{x}{b}.
+
+\begin{mathpar}
+  \irule{Instr-Decl}
+    {
+      Γ' = ? \\
+      Γ' ⊢ (b . \kPass)
+    }
+    {
+      Γ ⊢ (\npkDecl{x}{b} . k, σ) → (k, σ')
+    }
+\end{mathpar}
+
+\todo{Il faut un kdecl}
 
 \begin{minipage}{0.6\textwidth}
 \begin{mathpar}
@@ -370,12 +388,61 @@ TODO pour :
 
 \todo{definir $σ ⊢ fe ⇒ f$}
 
-\subsection{Sémantique des conditions}
+\subsection{Sémantique du flot de contrôle}
 
-On utilise un encodage similaire à la déclaration. Tout d'abord, on évalue la
-condition dans un contexte $σ$. Si elle s'évalue en un entier non nul, et qu'une
-transition à travers le bloc $i_t$ est possible, alors on peut faire passer à
-travers le "\textsc{If}".
+Réaliser une boucle infinie revient à d'abord exécuter le bloc puis à exécuter à
+nouveau la boucle :
+
+\begin{mathpar}
+\irule{Instr-While}
+{ }
+{ Γ ⊢ (\npkWhile{b} . k, σ) → (b . \npkWhile{b} . k, σ) }
+\end{mathpar}
+
+La capture d'une sortie de bloc nommé est directe :
+
+\begin{mathpar}
+\irule{Instr-DoWith}
+{ }
+{ Γ ⊢ (\npkDoWith{b}{lbl} . k, σ) → ( b . \kBlock{lbl}{k}) }
+\end{mathpar}
+
+Pouer le saut, deux cas sont à considérer. Dans le premier cas, on sort du bloc
+le plus interne.
+
+\begin{mathpar}
+\irule{Instr-Goto-Int}
+{ }
+{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl}{k}, σ) → (k, σ) }
+\end{mathpar}
+
+Dans l'autre, on sort d'un bloc qui n'est pas final.
+
+\begin{mathpar}
+\irule{Instr-Goto-Ext}
+{ lbl ≠ lbl' }
+{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} . k, σ) }
+\end{mathpar}
+
+Pour la conditionnelle, on évalue la condition. Si elle s'évalue en un entier
+non nul, la suite est le bloc "vrai", sinon c'est le bloc "faux".
+
+\begin{mathpar}
+\irule{Instr-If-True}
+  { Γ, σ ⊢ e ⇒ n \\
+    n ≠ 0
+  }
+  {
+    Γ ⊢ (\npkIf{e}{i_t}{i_f} . k, σ) → (i_t . k, σ)
+  }
+\and
+\irule{Instr-If-False}
+  { Γ, σ ⊢ e ⇒ 0
+  }
+  {
+    Γ ⊢ (\npkIf{e}{i_t}{i_f} . k, σ) → (i_f . k, σ)
+  }
+\end{mathpar}
 
 \begin{minipage}{0.5\textwidth}
 \input{fig/sem-if.tex}
