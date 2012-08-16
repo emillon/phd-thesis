@@ -51,11 +51,11 @@ elle pourra servir à l'implantation d'un interpréteur et à raisonner de mani�
 formelle sur les programmes. Mathématiquement, cela consiste en la définition
 d'une relation de transition $\rightarrow$ entre états de l'interpréteur.
 
-Un état est constitué d'une part d'un point de contrôle dans le programme
-(section~\ref{sec:cfg}, et d'autre part de l'état $σ$ de la mémoire
-(section~\ref{sec:sigma}).
+Un état est constitué d'une part d'une continuation (section~\ref{sec:cont}, et
+d'autre part de l'état $σ$ de la mémoire (section~\ref{sec:sigma}).
 
 \subsection{Continuations}
+\label{sec:cont}
 
 Emprunté à Blazy et Appel\cite{cminorSL}.
 
@@ -87,12 +87,7 @@ k  \gramisa & \kPass          & \textrm{Terminaison}
 \end{align*}
 }
 
-\subsection{État de l'interpréteur}
-
-L'état de l'interpréteur est constitué d'une continuation $k$ qui capture le flot de
-contrôle, et d'un état mémoire $σ$ qui capture l'état des données.
-
-\subsection{Jugement}
+\subsection{Sémantique}
 
 Relation :
 
@@ -127,44 +122,6 @@ Règles d'évaluation :
 { }
 { Γ ⊢ (\npkWhile{b} . k, σ) → (b . \npkWhile{b} . k, σ) }
 \]
-
-\subsection{Graphe de flot de contrôle}
-\label{sec:cfg}
-
-\wip{}
-
-Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
-celles qui définissent le flot de contrôle (\npkIf{$\cdot$}{$\cdot$}{$\cdot$},
-\npkDoWith{$\cdot$}{$\cdot$}, \npkGoto{$\cdot$}, \npkWhile{$\cdot$}) et celles
-qui définissent le flot de données. Une première transformation va transformer
-chaque fonction en son graphe de flot de contrôle, défini comme suit :
-
-\begin{itemize}
-\item
-  les nœuds sont des points de contrôle, qui représentent par exemple
-  l'adresse mémoire de l'instruction qui vient d'être exécutée.
-\item
-  les arêtes sont soit des instructions ``de données'' (affectation,
-  appel de fonction, déclaration), soit des conditions (ie une
-  expression).
-\end{itemize}
-
-\begin{minipage}{0.5\textwidth}
-\input{gen/euclide.c.pyg.tex}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\input{gen/euclide-npk.c.pyg.tex}
-\end{minipage}
-
-\input{fig/euclide.tex}
-
-Intuitivement, on peut "passer" d'un état à un autre soit en passant par une
-arête "condition" qui s'évalue à une valeur "vrai", soit en appliquant les
-effets de bord d'une arête "instruction".
-
-Dans la suite, on suppose qu'on a à notre disposition un ensemble de jugements :
-$\langle l, instr, l' \rangle$ qui signifie qu'on peut passer du point $l$ au
-point $l'$ en effectuant l'instruction $instr$.
 
 \subsection{État mémoire}
 \label{sec:sigma}
