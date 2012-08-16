@@ -108,35 +108,49 @@ $Γ, k ⊢ (b, σ) → (b', σ')$
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
+Emprunté à Blazy et Appel\cite{cminorSL}
+
 \gramlr{Continuations}{
 \begin{align*}
-k  \gramisa &  k_{pass}       & \textrm{Identité}
-\\ \gramor  &  k_{blk}  (b)   & \textrm{Exécution}
-\\ \gramor  &  k_{jump} (lbl) & \textrm{Saut}
+k  \gramisa &  k_{pass}          & \textrm{Identité}
+\\ \gramor  &  k_{seq}  (b,k)    & \textrm{Séquence}
+\\ \gramor  &  k_{blk}  (lbl,k)  & \textrm{Nommage de bloc}
+\\ \gramor  &  k_{goto} (lbl)    & \textrm{Saut}
 \end{align*}
 }
 
-$Γ ⊢ (b, k, σ) → (b', k', σ')$
+Relation :
+
+$Γ ⊢ (k, σ) → (k', σ')$
+
+Continuation initiale :
+
+$k_0 ((\vec{f},\vec{v},b)) = k_{seq} (b, k_{pass})$
+
+Règles d'évaluation :
 
 \[
-\irule{Instr-Goto2}
-{(lbl, b') ∈ k}
-{Γ, k ⊢ (\npkGoto{lbl} :: b, σ) → (b', σ)}
-\]
-
-
-\[
-\irule{Instr-DoWith2}
-{Γ, k [lbl ↦ b'] ⊢ (b, σ) → ([], σ')}
-{Γ, k ⊢ (\npkDoWith{b}{lbl} :: b', σ) → (b', σ')}
-\]
-
-\todo{doesn't work either, eg if inner block escapes}
-
-\[
-\irule{Instr-While2}
+\irule{Instr-Goto3-direct}
 { }
-{Γ ⊢ (\npkWhile{b} :: b', k, σ) → (b @ \npkWhile{b}, k, σ)}
+{ Γ ⊢ ( k_{goto}  (lbl) . … . k_{blk} (lbl, k), σ) → (k, σ) }
+\]
+
+\[
+\irule{Instr-Goto3-indirect}
+{ lbl ≠ lbl' }
+{ Γ ⊢ ( k_{goto} (lbl) . … . k_{blk} (lbl', k), σ) → (k_{goto} (lbl) . k, σ) }
+\]
+
+\[
+\irule{Instr-DoWith3}
+{ }
+{ Γ ⊢ (\npkDoWith{b}{lbl} . k, σ) → ( b . k_{blk}(lbl, k)) }
+\]
+
+\[
+\irule{Instr-While3}
+{ }
+{ Γ ⊢ (\npkWhile{b} . k, σ) → (b . \npkWhile{b} . k, σ) }
 \]
 
 \subsection{Graphe de flot de contrôle}
