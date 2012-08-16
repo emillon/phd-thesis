@@ -55,6 +55,90 @@ Un état est constitué d'une part d'un point de contrôle dans le programme
 (section~\ref{sec:cfg}, et d'autre part de l'état $σ$ de la mémoire
 (section~\ref{sec:sigma}).
 
+\subsection{État de l'interpréteur}
+
+$Γ ⊢ (b, k, σ) → (b', k', σ')$
+
+\[
+\irule{Instr-Goto}
+{(lbl, b') ∈ k}
+{Γ ⊢ (\npkGoto{lbl} :: b, k, σ) → (b', k \backslash lbl, σ)}
+\]
+
+\[
+\irule{Instr-DoWith}
+{ }
+{Γ ⊢ (\npkDoWith{b}{lbl} :: b', k, σ) → (b@b', k [lbl ↦ b'], σ)}
+\]
+
+\todo{not exactly for dowith}
+
+\[
+\irule{Instr-While}
+{ }
+{Γ ⊢ (\npkWhile{b} :: b', k, σ) → (b @ \npkWhile{b}, k, σ)}
+\]
+
+\todo{add b' at the end ?}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+$Γ, k ⊢ (b, σ) → (b', σ')$
+
+\[
+\irule{Instr-Goto2}
+{(lbl, b') ∈ k}
+{Γ, k ⊢ (\npkGoto{lbl} :: b, σ) → (b', σ)}
+\]
+
+
+\[
+\irule{Instr-DoWith2}
+{Γ, k [lbl ↦ b'] ⊢ (b, σ) → ([], σ')}
+{Γ, k ⊢ (\npkDoWith{b}{lbl} :: b', σ) → (b', σ')}
+\]
+
+\todo{doesn't work either, eg if inner block escapes}
+
+\[
+\irule{Instr-While2}
+{ }
+{Γ, k ⊢ (\npkWhile{b} :: b', σ) → (b @ \npkWhile{b}, σ)}
+\]
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+\gramlr{Continuations}{
+\begin{align*}
+k  \gramisa &  k_{pass}       & \textrm{Identité}
+\\ \gramor  &  k_{blk}  (b)   & \textrm{Exécution}
+\\ \gramor  &  k_{jump} (lbl) & \textrm{Saut}
+\end{align*}
+}
+
+$Γ ⊢ (b, k, σ) → (b', k', σ')$
+
+\[
+\irule{Instr-Goto2}
+{(lbl, b') ∈ k}
+{Γ, k ⊢ (\npkGoto{lbl} :: b, σ) → (b', σ)}
+\]
+
+
+\[
+\irule{Instr-DoWith2}
+{Γ, k [lbl ↦ b'] ⊢ (b, σ) → ([], σ')}
+{Γ, k ⊢ (\npkDoWith{b}{lbl} :: b', σ) → (b', σ')}
+\]
+
+\todo{doesn't work either, eg if inner block escapes}
+
+\[
+\irule{Instr-While2}
+{ }
+{Γ ⊢ (\npkWhile{b} :: b', k, σ) → (b @ \npkWhile{b}, k, σ)}
+\]
+
 \subsection{Graphe de flot de contrôle}
 \label{sec:cfg}
 
