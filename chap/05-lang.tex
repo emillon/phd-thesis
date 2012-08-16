@@ -112,10 +112,10 @@ Emprunté à Blazy et Appel\cite{cminorSL}
 
 \gramlr{Continuations}{
 \begin{align*}
-k  \gramisa &  k_{pass}          & \textrm{Identité}
-\\ \gramor  &  k_{seq}  (b,k)    & \textrm{Séquence}
-\\ \gramor  &  k_{blk}  (lbl,k)  & \textrm{Nommage de bloc}
-\\ \gramor  &  k_{goto} (lbl)    & \textrm{Saut}
+k  \gramisa & \kPass          & \textrm{Identité}
+\\ \gramor  & \kSeq{b}{k}     & \textrm{Séquence}
+\\ \gramor  & \kBlock{lbl}{k} & \textrm{Nommage de bloc}
+\\ \gramor  & \kGoto{lbl}     & \textrm{Saut}
 \end{align*}
 }
 
@@ -125,26 +125,26 @@ $Γ ⊢ (k, σ) → (k', σ')$
 
 Continuation initiale :
 
-$k_0 ((\vec{f},\vec{v},b)) = k_{seq} (b, k_{pass})$
+$k_0 ((\vec{f},\vec{v},b)) = \kSeq{b}{\kPass}$
 
 Règles d'évaluation :
 
 \[
 \irule{Instr-Goto3-direct}
 { }
-{ Γ ⊢ ( k_{goto}  (lbl) . … . k_{blk} (lbl, k), σ) → (k, σ) }
+{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl}{k}, σ) → (k, σ) }
 \]
 
 \[
 \irule{Instr-Goto3-indirect}
 { lbl ≠ lbl' }
-{ Γ ⊢ ( k_{goto} (lbl) . … . k_{blk} (lbl', k), σ) → (k_{goto} (lbl) . k, σ) }
+{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} . k, σ) }
 \]
 
 \[
 \irule{Instr-DoWith3}
 { }
-{ Γ ⊢ (\npkDoWith{b}{lbl} . k, σ) → ( b . k_{blk}(lbl, k)) }
+{ Γ ⊢ (\npkDoWith{b}{lbl} . k, σ) → ( b . \kBlock{lbl}{k}) }
 \]
 
 \[
