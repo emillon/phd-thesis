@@ -55,69 +55,44 @@ Un état est constitué d'une part d'un point de contrôle dans le programme
 (section~\ref{sec:cfg}, et d'autre part de l'état $σ$ de la mémoire
 (section~\ref{sec:sigma}).
 
-\subsection{État de l'interpréteur}
+\subsection{Continuations}
 
-$Γ ⊢ (b, k, σ) → (b', k', σ')$
+Emprunté à Blazy et Appel\cite{cminorSL}.
 
-\[
-\irule{Instr-Goto}
-{(lbl, b') ∈ k}
-{Γ ⊢ (\npkGoto{lbl} :: b, k, σ) → (b', k \backslash lbl, σ)}
-\]
+Pour représenter le flot de contrôle dans la sémantique, plusieurs choix sont
+possibles. L'un est d'établir un graphe de flot de contrôle explicite et de
+raisonner en termes de points de contrôle. Celui que nous retenons consiste à
+voir l'exécution du programme en terme de continuations. Une continuation
+capture ce qu'il "reste à faire" pour terminer l'exécution d'un programme.
 
-\[
-\irule{Instr-DoWith}
-{ }
-{Γ ⊢ (\npkDoWith{b}{lbl} :: b', k, σ) → (b@b', k [lbl ↦ b'], σ)}
-\]
+Dans le cas le plus simple, il n'y a rien à faire (si le bloc d'initialisation
+est vide par exemple ; ce sera aussi le cas de base de la plupart des autres
+continuations). Cette continuation sera notée \kPass.
 
-\todo{not exactly for dowith}
+Il est aussi possible d'avoir à exécuter une instruction avant de passer à une
+autre continuation. Cette séquence sera notée \kSeq{i}{k}.
 
-\[
-\irule{Instr-While}
-{ }
-{Γ ⊢ (\npkWhile{b} :: b', k, σ) → (b @ \npkWhile{b}, k, σ)}
-\]
-
-\todo{add b' at the end ?}
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-$Γ, k ⊢ (b, σ) → (b', σ')$
-
-\[
-\irule{Instr-Goto2}
-{(lbl, b') ∈ k}
-{Γ, k ⊢ (\npkGoto{lbl} :: b, σ) → (b', σ)}
-\]
-
-
-\[
-\irule{Instr-DoWith2}
-{Γ, k [lbl ↦ b'] ⊢ (b, σ) → ([], σ')}
-{Γ, k ⊢ (\npkDoWith{b}{lbl} :: b', σ) → (b', σ')}
-\]
-
-\todo{doesn't work either, eg if inner block escapes}
-
-\[
-\irule{Instr-While2}
-{ }
-{Γ, k ⊢ (\npkWhile{b} :: b', σ) → (b @ \npkWhile{b}, σ)}
-\]
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-Emprunté à Blazy et Appel\cite{cminorSL}
+Le flot de contrôle intraprocédural est uniquement réduit au saut en avant : on
+peut nommer un bloc, et sauter à la sortie de celui-ci. Le saut en lui-même est
+donc une continuation, noté \kGoto{lbl}. Pour retrouver à quelle continuation
+cette étiquette correspond, il faut un moyen de capturer une continuation en la
+nommant, ce qui sera noté \kBlock{lbl}{k}.
 
 \gramlr{Continuations}{
 \begin{align*}
-k  \gramisa & \kPass          & \textrm{Identité}
-\\ \gramor  & \kSeq{b}{k}     & \textrm{Séquence}
-\\ \gramor  & \kBlock{lbl}{k} & \textrm{Nommage de bloc}
+k  \gramisa & \kPass          & \textrm{Terminaison}
+\\ \gramor  & \kSeq{i}{k}     & \textrm{Séquence}
+\\ \gramor  & \kBlock{lbl}{k} & \textrm{Sortie de bloc nommé}
 \\ \gramor  & \kGoto{lbl}     & \textrm{Saut}
 \end{align*}
 }
+
+\subsection{État de l'interpréteur}
+
+L'état de l'interpréteur est constitué d'une continuation $k$ qui capture le flot de
+contrôle, et d'un état mémoire $σ$ qui capture l'état des données.
+
+\subsection{Jugement}
 
 Relation :
 
