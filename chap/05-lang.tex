@@ -137,16 +137,17 @@ nommant, ce qui sera noté \kBlock{lbl}{k}.
 
 Enfin, le flot de contrôle interprocédural est similaire : l'appel d'une
 fonction $f$ avec les arguments $\vec{v}$ et recevant l'adresse de retour dans
-$a$ est noté $\kCall{f}{\vec{v}}{a}$ ; et le retour d'une fonction est \kRet{v}.
+$a$ est noté $\kCall{f}{\vec{v}}{a}{k}$ ; et le retour d'une fonction est
+\kRet{v}.
 
 \gramlr{Continuations}{
 \begin{align*}
-k  \gramisa & \kPass                & \textrm{Terminaison}
-\\ \gramor  & \kSeq{i}{k}           & \textrm{Séquence}
-\\ \gramor  & \kBlock{lbl}{k}       & \textrm{Sortie de bloc nommé}
-\\ \gramor  & \kGoto{lbl}           & \textrm{Saut}
-\\ \gramor  & \kCall{f}{\vec{v}}{a} & \textrm{Appel de fonction}
-\\ \gramor  & \kRet{v}              & \textrm{Retour de fonction}
+k  \gramisa & \kPass                   & \textrm{Terminaison}
+\\ \gramor  & \kSeq{i}{k}              & \textrm{Séquence}
+\\ \gramor  & \kBlock{lbl}{k}          & \textrm{Sortie de bloc nommé}
+\\ \gramor  & \kGoto{lbl}              & \textrm{Saut}
+\\ \gramor  & \kCall{f}{\vec{v}}{a}{k} & \textrm{Appel de fonction}
+\\ \gramor  & \kRet{v}                 & \textrm{Retour de fonction}
 \end{align*}
 }
 
@@ -439,7 +440,7 @@ continuation courante par $\kRet{v}$.
 
 L'appel de fonction se fait en deux étapes : tout d'abord, quand on rencontre un
 appel de fonction, on évalue les arguments et la left-value de retour et on
-construit une continuation $\kCall{f}{\vec{v}}{a}$, qui remplace la continuation
+construit une continuation $\kCall{f}{\vec{v}}{a}{k}$, qui remplace la continuation
 courante.
 
 \begin{mathpar}
@@ -447,12 +448,12 @@ courante.
     { Γ, σ ⊢ lv ↝ a
    \\ Γ, σ ⊢ \vec{e} ⇒ \vec{v}
     }
-    { Γ ⊢ (lv ← f(\vec{e}) \cdot k, σ) → (\kCall{f}{\vec{v}}{a} \cdot k, σ) }
+    { Γ ⊢ (lv ← f(\vec{e}) \cdot k, σ) → (\kCall{f}{\vec{v}}{a}{k}, σ) }
   \and
   \irule{Instr-Kcall}
     { Γ' = ? \\
       σ' = σ + \{ \vec{params}(f) := \vec{v} \} \\
       Γ' ⊢ (k_{0}(f), σ') → (\kRet{v}, σ'')
     }
-    { Γ ⊢ (\kCall{f}{\vec{v}}{a} \cdot k, σ) → (k, σ'' [ a := v_r ]) }
+    { Γ ⊢ (\kCall{f}{\vec{v}}{a}{k}, σ) → (k, σ'' [ a := v_r ]) }
 \end{mathpar}
