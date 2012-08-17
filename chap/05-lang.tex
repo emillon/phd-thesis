@@ -450,11 +450,17 @@ courante.
    \\ Γ, σ ⊢ \vec{e} ⇒ \vec{v}
     }
     { Γ ⊢ (lv ← f(\vec{e}) \cdot k, σ) → (\kCall{f}{\vec{v}}{a}{k}, σ) }
-  \and
+\end{mathpar}
+
+Pour évaluer celle-ci, on évalue le corps de la fonction dans un environnement
+enrichi des paramètres de la fonction, jusqu'à ce que sa continuation soit
+$\kRet{\cdot}$.
+
+\begin{mathpar}
   \irule{Instr-Kcall}
     { Γ' = ? \\
       σ' = σ + \{ \vec{params}(f) := \vec{v} \} \\
-      Γ' ⊢ (k_{0}(f), σ') → (\kRet{v}, σ'')
+      Γ' ⊢ (k_{0}(f), σ') → (\kRet{v_r}, σ'')
     }
     { Γ ⊢ (\kCall{f}{\vec{v}}{a}{k}, σ) → (k, σ'' [ a := v_r ]) }
 \end{mathpar}
