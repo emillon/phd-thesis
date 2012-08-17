@@ -97,8 +97,8 @@ apparaissent dans celui-ci :
 \tFV{c}   =~& ∅    & \textrm{si $c$ est une constante} \\
 \tFV{[τ]} =~& \tFV{τ} & \\
 \tFV{τ*}  =~& \tFV{τ} & \\
-\tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n} ∪ \tFV{τ_r} \\
-\tFV{\{ f_1:τ_1, … ,f_n:τ_n \}} =~& \tFV{τ_1} ∪ … ∪ \tFV{τ_n}
+\tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \bigcup_{i=1}^n \tFV{τ_i} ∪ \tFV{τ_r} \\
+\tFV{\{ f_1:τ_1, … ,f_n:τ_n \}} =~& \bigcup_{i=1}^n \tFV{τ_i}
 \end{align*}
 
 On étend cette définition aux schémas de types :
