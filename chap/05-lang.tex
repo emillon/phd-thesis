@@ -14,14 +14,12 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 \label{fig:syntx}
 \end{figure}
 
-\todo{Fonctions}
-
 \todo{Ajouter l'arithmétique des pointeurs + types}
 
 La figure~\ref{fig:syntx} définit un langage impératif. On suppose qu'on peut
 compiler un programme écrit en C vers ce langage.
 
-Un programme est un triplet $P = (\vec{f}, \vec{v}, b)$\footnote{ dans tout ce
+Un programme est un triplet $P = (\vec{f}, \vec{v}, b)$\footnote{Dans tout ce
 chapitre on utilise la notation des vecteur pour les collections ordonnées :
 $\vec{f} = (f_1, f_2, …, f_n)$, $\vec{v} = (v_1, v_2, …, v_p)$ (leur
 cardinalités ne sont pas forcément égales).} constitué d'un ensemble de
@@ -51,86 +49,9 @@ elle pourra servir à l'implantation d'un interpréteur et à raisonner de mani�
 formelle sur les programmes. Mathématiquement, cela consiste en la définition
 d'une relation de transition $\rightarrow$ entre états de l'interpréteur.
 
-Un état est constitué d'une part d'une continuation (section~\ref{sec:cont}, et
-d'autre part de l'état $σ$ de la mémoire (section~\ref{sec:sigma}).
-
-\subsection{Continuations}
-\label{sec:cont}
-
-Emprunté à Blazy et Appel\cite{cminorSL}.
-
-Pour représenter le flot de contrôle dans la sémantique, plusieurs choix sont
-possibles. L'un est d'établir un graphe de flot de contrôle explicite et de
-raisonner en termes de points de contrôle. Celui que nous retenons consiste à
-voir l'exécution du programme en terme de continuations. Une continuation
-capture ce qu'il "reste à faire" pour terminer l'exécution d'un programme.
-
-Dans le cas le plus simple, il n'y a rien à faire (si le bloc d'initialisation
-est vide par exemple ; ce sera aussi le cas de base de la plupart des autres
-continuations). Cette continuation sera notée \kPass.
-
-Il est aussi possible d'avoir à exécuter une instruction avant de passer à une
-autre continuation. Cette séquence sera notée \kSeq{i}{k}.
-
-Le flot de contrôle intraprocédural est uniquement réduit au saut en avant : on
-peut nommer un bloc, et sauter à la sortie de celui-ci. Le saut en lui-même est
-donc une continuation, noté \kGoto{lbl}. Pour retrouver à quelle continuation
-cette étiquette correspond, il faut un moyen de capturer une continuation en la
-nommant, ce qui sera noté \kBlock{lbl}{k}.
-
-Enfin, le flot de contrôle interprocédural est similaire : l'appel d'une
-fonction $f$ avec les arguments $\vec{v}$ et recevant l'adresse de retour dans
-$a$ est noté $\kCall{f}{\vec{v}}{a}$ ; et le retour d'une fonction est \kRet{v}.
-
-\gramlr{Continuations}{
-\begin{align*}
-k  \gramisa & \kPass                & \textrm{Terminaison}
-\\ \gramor  & \kSeq{i}{k}           & \textrm{Séquence}
-\\ \gramor  & \kBlock{lbl}{k}       & \textrm{Sortie de bloc nommé}
-\\ \gramor  & \kGoto{lbl}           & \textrm{Saut}
-\\ \gramor  & \kCall{f}{\vec{v}}{a} & \textrm{Appel de fonction}
-\\ \gramor  & \kRet{v}              & \textrm{Retour de fonction}
-\end{align*}
-}
-
-\subsection{État mémoire}
-\label{sec:sigma}
-
-L'interpréteur défini ici manipule des valeurs :
-
-\gramlr{Valeurs}{
-\begin{align*}
-v  \gramisa  & n           & \textrm{Entier}
-\\ \gramor   & f           & \textrm{Flottant}
-\\ \gramor   & \cNil       & \textrm{Pointeur nul}
-\\ \gramor   & \&a         & \textrm{Pointeur sur l'adresse $a$}
-\\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
-\\ \gramor   & \top        & \textrm{Valeur non initialisée}
-\end{align*}
-}
-
-On note l'ensemble des valeurs \textsc{Val}.
-
-\begin{definition}[État mémoire]
-L'interpréteur possède une mémoire, indexée par un ensemble d'adresses noté
-\textsc{Addr}. Un état mémoire $σ$ est une fonction partielle de \textsc{Addr}
-vers \textsc{Val}.
-\end{definition}
-
-\todo{Il faut une opération genre fromBytes}
-
-\todo{Pile d'appels}
-
-\begin{definition}[Fonction de transition]
-La sémantique concrète que nous définissons ici est constituée de jugements
-logiques. Le jugement principal est une relation de transition $\rightarrow$
-entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow (l', σ')$.
-\end{definition}
-
-\subsection{Jugements}
-
-La sémantique concrète repose sur des jugements logiques et des règles
-d'inférences, de la forme :
+Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
+de présenter l'induction explicitement, elle est représentée par des jugements
+logiques et des règles d'inférences, de la forme :
 
 \[
 \irule{Nom}{P_1 \\ … \\ P_n}{C}
@@ -139,7 +60,7 @@ d'inférences, de la forme :
 Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
 la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
 
-Certaines règles n'ont pas de prémisse : on parle alors d'axiome.
+Certaines règles n'ont pas de prémisse, ce sont des axiomes :
 
 \[
 \irule{Ax}{ }{A}
@@ -171,7 +92,90 @@ vue sous la forme d'un arbre :
       }{C}
 \]
 
-\subsection{Sémantique des left-values}
+La relation de transition est faite entre états de l'interpréteur, , constitués
+d'une part d'une continuation (section~\ref{sec:cont}, et d'autre part d'un
+l'état $σ$ de la mémoire (section~\ref{sec:sigma}). Cette présentation est
+proche de la sémantique de CMinor décrite dans\cite{cminorSL}
+
+\begin{definition}[Pas de la sémantique]
+  La sémantique consiste en une relation de transition entre les états de
+  l'interpréteur. Celle-ci est faite sous un environnement $Γ$ qui associe des
+  adresses aux variables du programme.
+
+  On note un tel pas $Γ ⊢ (k, σ) → (k', σ')$.
+\end{definition}
+
+\section{Continuations}
+\label{sec:cont}
+
+Pour représenter le flot de contrôle dans la sémantique, plusieurs choix sont
+possibles. L'un est d'établir un graphe de flot de contrôle explicite et de
+raisonner en termes de points de contrôle. Celui que nous retenons consiste à
+voir l'exécution du programme en terme de continuations. Une continuation
+capture ``ce qu'il reste à faire'' pour terminer l'exécution d'un programme.
+
+Dans le cas le plus simple, il n'y a rien à faire (si le bloc d'initialisation
+est vide par exemple ; ce sera aussi le cas de base de la plupart des autres
+continuations). Cette continuation sera notée \kPass.
+
+Il est aussi possible d'avoir à exécuter une instruction avant de passer à une
+autre continuation. Cette séquence sera notée \kSeq{i}{k} (ou en notation
+infixe, $i . k$.
+
+Le flot de contrôle intraprocédural est uniquement réduit au saut en avant : on
+peut nommer un bloc, et sauter à la sortie de celui-ci. Le saut en lui-même est
+donc une continuation, noté \kGoto{lbl}. Pour retrouver à quelle continuation
+cette étiquette correspond, il faut un moyen de capturer une continuation en la
+nommant, ce qui sera noté \kBlock{lbl}{k}.
+
+Enfin, le flot de contrôle interprocédural est similaire : l'appel d'une
+fonction $f$ avec les arguments $\vec{v}$ et recevant l'adresse de retour dans
+$a$ est noté $\kCall{f}{\vec{v}}{a}$ ; et le retour d'une fonction est \kRet{v}.
+
+\gramlr{Continuations}{
+\begin{align*}
+k  \gramisa & \kPass                & \textrm{Terminaison}
+\\ \gramor  & \kSeq{i}{k}           & \textrm{Séquence}
+\\ \gramor  & \kBlock{lbl}{k}       & \textrm{Sortie de bloc nommé}
+\\ \gramor  & \kGoto{lbl}           & \textrm{Saut}
+\\ \gramor  & \kCall{f}{\vec{v}}{a} & \textrm{Appel de fonction}
+\\ \gramor  & \kRet{v}              & \textrm{Retour de fonction}
+\end{align*}
+}
+
+\section{État mémoire}
+\label{sec:sigma}
+
+L'interpréteur défini ici manipule des valeurs :
+
+\gramlr{Valeurs}{
+\begin{align*}
+v  \gramisa  & n           & \textrm{Entier}
+\\ \gramor   & f           & \textrm{Flottant}
+\\ \gramor   & \cNil       & \textrm{Pointeur nul}
+\\ \gramor   & \&a         & \textrm{Pointeur sur l'adresse $a$}
+\\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
+\\ \gramor   & \top        & \textrm{Valeur non initialisée}
+\end{align*}
+}
+
+On note l'ensemble des valeurs \textsc{Val}.
+
+\begin{definition}[État mémoire]
+L'interpréteur possède une mémoire, indexée par un ensemble d'adresses noté
+\textsc{Addr}. Un état mémoire $σ$ est une fonction partielle de \textsc{Addr}
+vers \textsc{Val}.
+\end{definition}
+
+\todo{Il faut une opération genre fromBytes}
+
+\begin{definition}[Fonction de transition]
+La sémantique concrète que nous définissons ici est constituée de jugements
+logiques. Le jugement principal est une relation de transition $\rightarrow$
+entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow (l', σ')$.
+\end{definition}
+
+\section{Sémantique des left-values}
 
 La mémoire est organisée en adresses, mais pourtant dans le programme cette
 notion n'est pas directement visible. Les accès sont réalisés à travers des
@@ -210,7 +214,7 @@ peuvent se retrouver à gauche du signe "=" dans une affectation.
 }
 \end{mathpar}
 
-\subsection{Sémantique des expressions}
+\section{Sémantique des expressions}
 
 Les expressions sont les constructions syntaxiques de base du langage. Étant
 donné un environnement et un état mémoire, on peut leur associer une valeur.
@@ -284,16 +288,7 @@ depuis l'état mémoire.
 }
 \end{mathpar}
 
-\subsection{Relation}
-
-\begin{definition}[Pas de la sémantique]
-
-  La sémantique consiste en une relation de transition entre les états de
-  l'interpréteur. Celle-ci est faite sous un environnement $Γ$ qui associe des
-  adresses aux variables du programme.
-
-  On note un tel pas $Γ ⊢ (k, σ) → (k', σ')$.
-\end{definition}
+\section{État initial}
 
 \begin{definition}[État initial]
   $P = (\vec{f},\vec{v},b)$
@@ -313,7 +308,7 @@ Dans la suite, on définit la relation de transition. Selon la forme de la
 continuation, deux grandes familles sont à distinguer : les instructions
 classiques et celles qui manipulent le flot de contrôle.
 
-\subsection{Sémantique des instructions}
+\section{Sémantique des instructions}
 
 Si $i$ est une séquence, on la décompose. De même, les blocs vides peuvent être
 sautés :
@@ -413,7 +408,7 @@ TODO pour :
 
 \todo{definir $σ ⊢ fe ⇒ f$}
 
-\subsection{Sémantique du flot de contrôle}
+\section{Sémantique du flot de contrôle}
 
 Réaliser une boucle infinie revient à d'abord exécuter le bloc puis à exécuter à
 nouveau la boucle :
