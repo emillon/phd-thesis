@@ -175,6 +175,36 @@ logiques. Le jugement principal est une relation de transition $\rightarrow$
 entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow (l', σ')$.
 \end{definition}
 
+\section{Interprétation}
+
+\begin{definition}[État initial]
+
+  Pour un programme $P = (\vec{f},\vec{v},b)$, on définit sa continuation
+  initiale comme étant celle qui exécute son bloc d'initialisation : $k_0 (P) =
+  \kSeq{b}{\kPass}$.
+
+  L'environnement initial $Γ_0(P)$ associe chaque globales à une certaine adresse.
+
+  Enfin, l'état mémoire initial laisse toutes les variables globales non
+  initialisées :
+
+  \[ σ_0(P) = \{ v_i ↦ \top \} \]
+
+\end{definition}
+
+\begin{definition}[Exécution d'un programme]
+
+  L'exécution d'un programme $P$ résulte en un état mémoire final $σ_f$ si :
+
+  \[ Γ_0(P) ⊢ (k_0(P), σ_0(P) → (\kPass, σ_f) \]
+
+\end{definition}
+
+Dans la suite, on définit la relation de transition. Selon la forme de la
+continuation, deux grandes familles sont à distinguer : les instructions
+classiques et celles qui manipulent le flot de contrôle.
+
+
 \section{Sémantique des left-values}
 
 La mémoire est organisée en adresses, mais pourtant dans le programme cette
@@ -287,26 +317,6 @@ depuis l'état mémoire.
   Γ, σ ⊢ \&lv ⇒ \&a
 }
 \end{mathpar}
-
-\section{État initial}
-
-\begin{definition}[État initial]
-  $P = (\vec{f},\vec{v},b)$
-
-  $k_0 (P) = \kSeq{b}{\kPass}$
-
-  $σ_0(P) = $ toutes les globales à $\top$ (le bloc d'init contient les init à 0)
-
-  $Γ_0(P) = $ toutes les globales à une certaine adresse. ASLR etc.
-\end{definition}
-
-\begin{definition}[Exécution d'un programme]
-  $Γ_0 ⊢ (k_0(P), σ_0(P) → (\kPass, σ_f)$
-\end{definition}
-
-Dans la suite, on définit la relation de transition. Selon la forme de la
-continuation, deux grandes familles sont à distinguer : les instructions
-classiques et celles qui manipulent le flot de contrôle.
 
 \section{Sémantique des instructions}
 
