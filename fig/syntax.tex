@@ -4,42 +4,9 @@ P \gramisa & (\vec{f}, \vec{v}, b) & \textrm{Fonctions, globales, initialiseur}
 \end{align*}
 }
 
-\gramlr{Expressions}{
+\gramlr{Fonctions}{
 \begin{align*}
-e  \gramisa & lv              & \textrm{Left-value}
-\\ \gramor  & \textrm{op}~e   & \textrm{Opération unaire}
-\\ \gramor  & e~\textrm{op}~e & \textrm{Opération binaire}
-\\ \gramor  & c               & \textrm{Constante}
-\\ \gramor  & \& lv           & \textrm{Pointeur sur donnée}
-\\ \gramor  & \& f            & \textrm{Pointeur sur fonction}
-\end{align*}
-}
-
-\gramlr{Constantes}{
-\begin{align*}
-c  \gramisa & n     & \textrm{Entier}
-\\ \gramor  & f     & \textrm{Flottant}
-\\ \gramor  & \cNil & \textrm{Pointeur nul}
-\end{align*}
-}
-
-\gramlr{Opérateurs}{
-\begin{align*}
-\textrm{op} \gramisa & +,-,\times,/                  & \textrm{Arithmétique entière}
-\\          \gramor  & +.,-.,\times.,/.              & \textrm{Arithmétique flottante}
-\\          \gramor  & =,≠,≤,≥,<,>                   & \textrm{Comparaisons}
-\\          \gramor  & \&,|,\opxor,\textasciitilde{} & \textrm{Opérateurs bit à bit}
-\\          \gramor  & \&\&,||,!                     & \textrm{Opérateurs logiques}
-\\          \gramor  & ⋘, ⋙                          & \textrm{Décalages}
-\end{align*}
-}
-
-\gramlr{Left-values}{
-\begin{align*}
-lv \gramisa & var      & \textrm{Variable}
-\\ \gramor  & lv.champ & \textrm{Accès à un champ}
-\\ \gramor  & lv[e]    & \textrm{Accès à un tableau}
-\\ \gramor  & *e       & \textrm{Déréférencement}
+f \gramisa & (\vec{v}, b) & \textrm{Paramètres, corps}
 \end{align*}
 }
 

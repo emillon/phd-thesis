@@ -10,18 +10,23 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \begin{figure}
 \input{fig/syntax.tex}
-\caption{Syntaxe d'un langage impératif}
+\caption{Syntaxe d'un langage impératif - instructions}
 \label{fig:syntx}
 \end{figure}
 
-\todo{Fonctions}
+\begin{figure}
+\input{fig/syntax-data.tex}
+\caption{Syntaxe - expressions}
+\label{fig:syntx-data}
+\end{figure}
 
 \todo{Ajouter l'arithmétique des pointeurs + types}
 
-La figure~\ref{fig:syntx} définit un langage impératif. On suppose qu'on peut
-compiler un programme écrit en C vers ce langage.
+Les figures~\ref{fig:syntx} et \ref{fig:syntx-data} définissent un langage
+impératif. On suppose qu'on peut compiler un programme écrit en C vers ce
+langage.
 
-Un programme est un triplet $P = (\vec{f}, \vec{v}, b)$\footnote{ dans tout ce
+Un programme est un triplet $P = (\vec{f}, \vec{v}, b)$\footnote{Dans tout ce
 chapitre on utilise la notation des vecteur pour les collections ordonnées :
 $\vec{f} = (f_1, f_2, …, f_n)$, $\vec{v} = (v_1, v_2, …, v_p)$ (leur
 cardinalités ne sont pas forcément égales).} constitué d'un ensemble de
@@ -35,7 +40,7 @@ Les différences principales avec C sont les suivantes :
 
 \begin{itemize}
 \item
-  le flôt de contrôle est simplifié : les seules constructions sont
+  le flot de contrôle est simplifié : les seules constructions sont
   l'alternative, la boucle infinie et le saut en avant.
 \item
   les expressions sont sans effets de bords. En particulier, leur
@@ -51,86 +56,9 @@ elle pourra servir à l'implantation d'un interpréteur et à raisonner de mani�
 formelle sur les programmes. Mathématiquement, cela consiste en la définition
 d'une relation de transition $\rightarrow$ entre états de l'interpréteur.
 
-Un état est constitué d'une part d'un point de contrôle dans le programme
-(section~\ref{sec:cfg}, et d'autre part de l'état $σ$ de la mémoire
-(section~\ref{sec:sigma}).
-
-\subsection{Graphe de flot de contrôle}
-\label{sec:cfg}
-
-\wip{}
-
-Dans la syntaxe ci-dessus, on peut classifier les instructions en deux familles:
-celles qui définissent le flot de contrôle (\npkIf{$\cdot$}{$\cdot$}{$\cdot$},
-\npkDoWith{$\cdot$}{$\cdot$}, \npkGoto{$\cdot$}, \npkWhile{$\cdot$}) et celles
-qui définissent le flot de données. Une première transformation va transformer
-chaque fonction en son graphe de flot de contrôle, défini comme suit :
-
-\begin{itemize}
-\item
-  les nœuds sont des points de contrôle, qui représentent par exemple
-  l'adresse mémoire de l'instruction qui vient d'être exécutée.
-\item
-  les arêtes sont soit des instructions ``de données'' (affectation,
-  appel de fonction, déclaration), soit des conditions (ie une
-  expression).
-\end{itemize}
-
-\begin{minipage}{0.5\textwidth}
-\input{gen/euclide.c.pyg.tex}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\input{gen/euclide-npk.c.pyg.tex}
-\end{minipage}
-
-\input{fig/euclide.tex}
-
-Intuitivement, on peut "passer" d'un état à un autre soit en passant par une
-arête "condition" qui s'évalue à une valeur "vrai", soit en appliquant les
-effets de bord d'une arête "instruction".
-
-Dans la suite, on suppose qu'on a à notre disposition un ensemble de jugements :
-$\langle l, instr, l' \rangle$ qui signifie qu'on peut passer du point $l$ au
-point $l'$ en effectuant l'instruction $instr$.
-
-\subsection{État mémoire}
-\label{sec:sigma}
-
-L'interpréteur défini ici manipule des valeurs :
-
-\gramlr{Valeurs}{
-\begin{align*}
-v  \gramisa  & n           & \textrm{Entier}
-\\ \gramor   & f           & \textrm{Flottant}
-\\ \gramor   & \cNil       & \textrm{Pointeur nul}
-\\ \gramor   & \&a         & \textrm{Pointeur sur l'adresse $a$}
-\\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
-\\ \gramor   & \top        & \textrm{Valeur non initialisée}
-\end{align*}
-}
-
-On note l'ensemble des valeurs \textsc{Val}.
-
-\begin{definition}[État mémoire]
-L'interpréteur possède une mémoire, indexée par un ensemble d'adresses noté
-\textsc{Addr}. Un état mémoire $σ$ est une fonction partielle de \textsc{Addr}
-vers \textsc{Val}.
-\end{definition}
-
-\todo{Il faut une opération genre fromBytes}
-
-\todo{Pile d'appels}
-
-\begin{definition}[Fonction de transition]
-La sémantique concrète que nous définissons ici est constituée de jugements
-logiques. Le jugement principal est une relation de transition $\rightarrow$
-entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow (l', σ')$.
-\end{definition}
-
-\subsection{Jugements}
-
-La sémantique concrète repose sur des jugements logiques et des règles
-d'inférences, de la forme :
+Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
+de présenter l'induction explicitement, elle est représentée par des jugements
+logiques et des règles d'inférences, de la forme :
 
 \[
 \irule{Nom}{P_1 \\ … \\ P_n}{C}
@@ -139,7 +67,7 @@ d'inférences, de la forme :
 Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
 la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
 
-Certaines règles n'ont pas de prémisse : on parle alors d'axiome.
+Certaines règles n'ont pas de prémisse, ce sont des axiomes :
 
 \[
 \irule{Ax}{ }{A}
@@ -171,7 +99,122 @@ vue sous la forme d'un arbre :
       }{C}
 \]
 
-\subsection{Sémantique des left-values}
+La relation de transition est faite entre états de l'interpréteur, , constitués
+d'une part d'une continuation (section~\ref{sec:cont}, et d'autre part d'un
+l'état $σ$ de la mémoire (section~\ref{sec:sigma}). Cette présentation est
+proche de la sémantique de CMinor décrite dans\cite{cminorSL}
+
+\begin{definition}[Relation de transition]
+  La sémantique consiste en une relation de transition entre les états de
+  l'interpréteur. Celle-ci est faite sous un environnement $Γ$ qui associe des
+  adresses aux variables du programme.
+
+  On note un tel pas $Γ ⊢ (k, σ) → (k', σ')$.
+\end{definition}
+
+\section{Continuations}
+\label{sec:cont}
+
+Pour représenter le flot de contrôle dans la sémantique, plusieurs choix sont
+possibles. L'un est d'établir un graphe de flot de contrôle explicite et de
+raisonner en termes de points de contrôle. Celui que nous retenons consiste à
+voir l'exécution du programme en terme de continuations. Une continuation
+capture ``ce qu'il reste à faire'' pour terminer l'exécution d'un programme.
+
+Dans le cas le plus simple, il n'y a rien à faire (si le bloc d'initialisation
+est vide par exemple ; ce sera aussi le cas de base de la plupart des autres
+continuations). Cette continuation sera notée \kPass.
+
+Il est aussi possible d'avoir à exécuter une instruction avant de passer à une
+autre continuation. Cette séquence sera notée \kSeq{i}{k} (ou en notation
+infixe, $i \cdot k$.
+
+Le flot de contrôle intraprocédural est uniquement réduit au saut en avant : on
+peut nommer un bloc, et sauter à la sortie de celui-ci. Le saut en lui-même est
+donc une continuation, noté \kGoto{lbl}. Pour retrouver à quelle continuation
+cette étiquette correspond, il faut un moyen de capturer une continuation en la
+nommant, ce qui sera noté \kBlock{lbl}{k}.
+
+Enfin, le flot de contrôle interprocédural est similaire : l'appel d'une
+fonction $f$ avec les arguments $\vec{v}$ et recevant l'adresse de retour dans
+$a$ est noté $\kCall{f}{\vec{v}}{a}{k}$ ; et le retour d'une fonction est
+\kRet{v}.
+
+\gramlr{Continuations}{
+\begin{align*}
+k  \gramisa & \kPass                   & \textrm{Terminaison}
+\\ \gramor  & \kSeq{i}{k}              & \textrm{Séquence}
+\\ \gramor  & \kBlock{lbl}{k}          & \textrm{Sortie de bloc nommé}
+\\ \gramor  & \kGoto{lbl}              & \textrm{Saut}
+\\ \gramor  & \kCall{f}{\vec{v}}{a}{k} & \textrm{Appel de fonction}
+\\ \gramor  & \kRet{v}                 & \textrm{Retour de fonction}
+\end{align*}
+}
+
+\section{État mémoire}
+\label{sec:sigma}
+
+L'interpréteur défini ici manipule des valeurs :
+
+\gramlr{Valeurs}{
+\begin{align*}
+v  \gramisa  & n           & \textrm{Entier}
+\\ \gramor   & f           & \textrm{Flottant}
+\\ \gramor   & \cNil       & \textrm{Pointeur nul}
+\\ \gramor   & \&a         & \textrm{Pointeur sur l'adresse $a$}
+\\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
+\\ \gramor   & \top        & \textrm{Valeur non initialisée}
+\end{align*}
+}
+
+On note l'ensemble des valeurs \textsc{Val}.
+
+\begin{definition}[État mémoire]
+L'interpréteur possède une mémoire, indexée par un ensemble d'adresses noté
+\textsc{Addr}. Un état mémoire $σ$ est une fonction partielle de \textsc{Addr}
+vers \textsc{Val}.
+\end{definition}
+
+\todo{Il faut une opération genre fromBytes}
+
+\begin{definition}[Fonction de transition]
+La sémantique concrète que nous définissons ici est constituée de jugements
+logiques. Le jugement principal est une relation de transition $\rightarrow$
+entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow (l', σ')$.
+\end{definition}
+
+\section{Interprétation}
+
+\begin{definition}[État initial]
+
+  Pour un programme $P = (\vec{f},\vec{v},b)$, on définit sa continuation
+  initiale comme étant celle qui exécute son bloc d'initialisation : $k_0 (P) =
+  \kSeq{b}{\kPass}$.
+
+  L'environnement initial $Γ_0(P)$ associe à chaque globale à une certaine
+  adresse.
+
+  Enfin, l'état mémoire initial laisse toutes les variables globales non
+  initialisées :
+
+  \[ σ_0(P) = \{ v_i ↦ \top \} \]
+
+\end{definition}
+
+\begin{definition}[Exécution d'un programme]
+
+  L'exécution d'un programme $P$ résulte en un état mémoire final $σ_f$ si :
+
+  \[ Γ_0(P) ⊢ (k_0(P), σ_0(P) → (\kPass, σ_f) \]
+
+\end{definition}
+
+Dans la suite, on définit la relation de transition. Selon la forme de la
+continuation, deux grandes familles sont à distinguer : les instructions
+classiques et celles qui manipulent le flot de contrôle.
+
+
+\section{Sémantique des left-values}
 
 La mémoire est organisée en adresses, mais pourtant dans le programme cette
 notion n'est pas directement visible. Les accès sont réalisés à travers des
@@ -210,7 +253,7 @@ peuvent se retrouver à gauche du signe "=" dans une affectation.
 }
 \end{mathpar}
 
-\subsection{Sémantique des expressions}
+\section{Sémantique des expressions}
 
 Les expressions sont les constructions syntaxiques de base du langage. Étant
 donné un environnement et un état mémoire, on peut leur associer une valeur.
@@ -284,18 +327,30 @@ depuis l'état mémoire.
 }
 \end{mathpar}
 
-\subsection{Sémantique des instructions}
+\section{Sémantique des instructions}
 
-La règle la plus simple concerne l'affectation : on peut affecter une
-expressions à une left value si elles ont le même type.
+Si $i$ est une séquence, on la décompose. De même, les blocs vides peuvent être
+sautés :
+
+\begin{mathpar}
+  \irule{Instr-Seq}
+    { }
+    {Γ ⊢ ((i_1 ; i_2) \cdot k, σ) → (i_1 \cdot (i_2 \cdot k), σ)}
+  \and
+  \irule{Instr-Skip}
+    { }
+    {Γ ⊢ (ε \cdot k, σ) → (k, σ)}
+\end{mathpar}
+
+Si $i$ est une affectation, on évalue l'expression et on modifie l'état $σ$ en
+conséquence.
 
 \begin{mathpar}
   \irule{Instr-Assign}{
-    \langle l, lv \leftarrow e, l' \rangle \\
     Γ, σ ⊢ lv ↝ a \\
     Γ, σ ⊢ e ⇒ v
   }{
-    Γ ⊢ (l, σ) \rightarrow (l', σ [ a ↦ v ])
+    Γ ⊢ (lv \leftarrow e \cdot k, σ) \rightarrow (k, σ [ a ↦ v ])
   }
 \end{mathpar}
 
@@ -304,71 +359,108 @@ initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
 traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
 on peut donc traverser l'instruction \npkDecl{x}{b}.
 
-\begin{minipage}{0.6\textwidth}
 \begin{mathpar}
-  \irule{Instr-Decl}{
-    \langle l, \npkDecl{x}{b}, l' \rangle \\
-    \langle l_b, b, l_b' \rangle \\
-    σ' = σ ⊕ \{ x \rightarrow \top \} \\
-    Γ ⊢ (l_b, σ', s) \rightarrow (l_b', σ'')
-  }{
-    Γ ⊢ (l, σ) \rightarrow (l', σ'' \backslash x)
+  \irule{Instr-Decl}
+    {
+      Γ' = ? \\
+      Γ' ⊢ (b . \kPass)
+    }
+    {
+      Γ ⊢ (\npkDecl{x}{b} \cdot k, σ) → (k, σ')
+    }
+\end{mathpar}
+
+\todo{Il faut un kdecl}
+
+\section{Flot de contrôle intraprocédural}
+
+Réaliser une boucle infinie revient à d'abord exécuter le bloc puis à exécuter à
+nouveau la boucle :
+
+\begin{mathpar}
+\irule{Instr-While}
+{ }
+{ Γ ⊢ (\npkWhile{b} \cdot k, σ) → (b . \npkWhile{b} \cdot k, σ) }
+\end{mathpar}
+
+La capture d'une sortie de bloc nommé est directe :
+
+\begin{mathpar}
+\irule{Instr-DoWith}
+{ }
+{ Γ ⊢ (\npkDoWith{b}{lbl} \cdot k, σ) → ( b \cdot \kBlock{lbl}{k}) }
+\end{mathpar}
+
+Pouer le saut, deux cas sont à considérer. Dans le premier cas, on sort du bloc
+le plus interne ; dans l'autre, on sort d'un bloc qui n'est pas final.
+
+\begin{mathpar}
+\irule{Instr-Goto-Int}
+{ }
+{ Γ ⊢ ( \kGoto{lbl} \cdot … \cdot \kBlock{lbl}{k}, σ) → (k, σ) }
+\and
+\irule{Instr-Goto-Ext}
+{ lbl ≠ lbl' }
+{ Γ ⊢ ( \kGoto{lbl} \cdot … \cdot \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} \cdot k, σ) }
+\end{mathpar}
+
+Pour la conditionnelle, on évalue la condition. Si elle s'évalue en un entier
+non nul, la suite est le bloc "vrai", sinon c'est le bloc "faux".
+
+\begin{mathpar}
+\irule{Instr-If-True}
+  { Γ, σ ⊢ e ⇒ n \\
+    n ≠ 0
+  }
+  {
+    Γ ⊢ (\npkIf{e}{i_t}{i_f} \cdot k, σ) → (i_t \cdot k, σ)
+  }
+\and
+\irule{Instr-If-False}
+  { Γ, σ ⊢ e ⇒ 0
+  }
+  {
+    Γ ⊢ (\npkIf{e}{i_t}{i_f} \cdot k, σ) → (i_f \cdot k, σ)
   }
 \end{mathpar}
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\input{fig/sem-decl.tex}
-\end{minipage}
 
-\todo{fcall}
+\section{Appel de fonctions}
 
-TODO pour :
+Pour $f = (\vec{v}, b)$, on note $k_0(f) = b \cdot \kPass$ et $\vec{params}(f) =
+\vec{v}$.
 
-\[
-\irule{Instr-Fcall}{
-  \langle l, lv \leftarrow fe(\vec{e}), l' \rangle \\
-  σ ⊢ fe ⇒ f \\
-  Γ, σ ⊢ \vec{e} ⇒ \vec{v} \\
-  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret \rightarrow \top \} \\
-  Γ ⊢ (Entry(f), σ') \rightarrow (Exit(f), σ'') \\
-  Γ, σ'' ⊢ !ret ⇒ v_{ret} \\
-  Γ, σ'' ⊢ lv ↝ a
-}{
-  Γ ⊢ (l, σ) \rightarrow (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a \rightarrow v_{ret}\}, ?)
-}
-\]
+Pour une instruction \npkReturn{e}, on évalue l'expression en une valeur $v$ et
+on remplace la continuation courante par $\kRet{v}$.
 
-\todo{definir $σ ⊢ fe ⇒ f$}
-
-\subsection{Sémantique des conditions}
-
-On utilise un encodage similaire à la déclaration. Tout d'abord, on évalue la
-condition dans un contexte $σ$. Si elle s'évalue en un entier non nul, et qu'une
-transition à travers le bloc $i_t$ est possible, alors on peut faire passer à
-travers le "\textsc{If}".
-
-\begin{minipage}{0.5\textwidth}
-\input{fig/sem-if.tex}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
 \begin{mathpar}
-\irule{If-True}{
-  \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
-  Γ, σ ⊢ e ⇒ n \\
-  n ≠ 0 \\
-  \langle l_i, i_t, l_i' \rangle \\
-  Γ ⊢ (l_i, σ) \rightarrow (l_i', σ')
-}{
-  Γ ⊢ (l, σ) \rightarrow (l', σ')
-}
-\and
-\irule{If-False}{
-  \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
-  Γ, σ ⊢ e ⇒ 0 \\
-  \langle l_i, i_f, l_i' \rangle \\
-  Γ ⊢ (l_i, σ) \rightarrow (l_i', σ')
-}{
-  Γ ⊢ (l, σ) \rightarrow (l', σ')
-}
+  \irule{Instr-Return}
+    { Γ, σ ⊢ e ⇒ v }
+    { Γ ⊢ (\npkReturn{e} \cdot k, σ) → (\kRet{v}, σ)
+    }
 \end{mathpar}
-\end{minipage}
+
+L'appel de fonction se fait en deux étapes : tout d'abord, quand on rencontre un
+appel de fonction, on évalue les arguments et la left-value de retour et on
+construit une continuation $\kCall{f}{\vec{v}}{a}{k}$, qui remplace la continuation
+courante.
+
+\begin{mathpar}
+  \irule{Instr-Fcall}
+    { Γ, σ ⊢ lv ↝ a
+   \\ Γ, σ ⊢ \vec{e} ⇒ \vec{v}
+    }
+    { Γ ⊢ (lv ← f(\vec{e}) \cdot k, σ) → (\kCall{f}{\vec{v}}{a}{k}, σ) }
+\end{mathpar}
+
+Pour évaluer celle-ci, on évalue le corps de la fonction dans un environnement
+enrichi des paramètres de la fonction, jusqu'à ce que sa continuation soit
+$\kRet{\cdot}$.
+
+\begin{mathpar}
+  \irule{Instr-Kcall}
+    { Γ' = ? \\
+      σ' = σ + \{ \vec{params}(f) := \vec{v} \} \\
+      Γ' ⊢ (k_{0}(f), σ') → (\kRet{v_r}, σ'')
+    }
+    { Γ ⊢ (\kCall{f}{\vec{v}}{a}{k}, σ) → (k, σ'' [ a := v_r ]) }
+\end{mathpar}
