@@ -383,15 +383,16 @@ nouveau la boucle :
 { Γ ⊢ (\npkWhile{b} \cdot k, σ) → (b . \npkWhile{b} \cdot k, σ) }
 \end{mathpar}
 
-La capture d'une sortie de bloc nommé est directe :
+La capture d'une sortie de bloc nommé consiste à remplacer la continuation en
+cours par une continuation $\kBlock{\cdot}{\cdot}$.
 
 \begin{mathpar}
 \irule{Instr-DoWith}
 { }
-{ Γ ⊢ (\npkDoWith{b}{lbl} \cdot k, σ) → ( b \cdot \kBlock{lbl}{k}) }
+{ Γ ⊢ ((\npkDoWith{b}{lbl}) \cdot k, σ) → ( b \cdot \kBlock{lbl}{k}) }
 \end{mathpar}
 
-Pouer le saut, deux cas sont à considérer. Dans le premier cas, on sort du bloc
+Pour le saut, deux cas sont à considérer. Dans le premier cas, on sort du bloc
 le plus interne ; dans l'autre, on sort d'un bloc qui n'est pas final.
 
 \begin{mathpar}
