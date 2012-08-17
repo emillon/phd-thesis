@@ -120,7 +120,7 @@ continuations). Cette continuation sera notée \kPass.
 
 Il est aussi possible d'avoir à exécuter une instruction avant de passer à une
 autre continuation. Cette séquence sera notée \kSeq{i}{k} (ou en notation
-infixe, $i . k$.
+infixe, $i \cdot k$.
 
 Le flot de contrôle intraprocédural est uniquement réduit au saut en avant : on
 peut nommer un bloc, et sauter à la sortie de celui-ci. Le saut en lui-même est
@@ -316,11 +316,11 @@ sautés :
 \begin{mathpar}
   \irule{Instr-Seq}
     { }
-    {Γ ⊢ ((i_1 ; i_2) . k, σ) → (i_1 . (i_2 . k), σ)}
+    {Γ ⊢ ((i_1 ; i_2) \cdot k, σ) → (i_1 \cdot (i_2 \cdot k), σ)}
   \and
   \irule{Instr-Skip}
     { }
-    {Γ ⊢ (ε . k, σ) → (k, σ)}
+    {Γ ⊢ (ε \cdot k, σ) → (k, σ)}
 \end{mathpar}
 
 Si $i$ est une affectation, on évalue l'expression et on modifie l'état $σ$ en
@@ -331,7 +331,7 @@ conséquence.
     Γ, σ ⊢ lv ↝ a \\
     Γ, σ ⊢ e ⇒ v
   }{
-    Γ ⊢ (lv \leftarrow e . k, σ) \rightarrow (k, σ [ a ↦ v ])
+    Γ ⊢ (lv \leftarrow e \cdot k, σ) \rightarrow (k, σ [ a ↦ v ])
   }
 \end{mathpar}
 
@@ -347,7 +347,7 @@ on peut donc traverser l'instruction \npkDecl{x}{b}.
       Γ' ⊢ (b . \kPass)
     }
     {
-      Γ ⊢ (\npkDecl{x}{b} . k, σ) → (k, σ')
+      Γ ⊢ (\npkDecl{x}{b} \cdot k, σ) → (k, σ')
     }
 \end{mathpar}
 
@@ -361,7 +361,7 @@ nouveau la boucle :
 \begin{mathpar}
 \irule{Instr-While}
 { }
-{ Γ ⊢ (\npkWhile{b} . k, σ) → (b . \npkWhile{b} . k, σ) }
+{ Γ ⊢ (\npkWhile{b} \cdot k, σ) → (b . \npkWhile{b} \cdot k, σ) }
 \end{mathpar}
 
 La capture d'une sortie de bloc nommé est directe :
@@ -369,7 +369,7 @@ La capture d'une sortie de bloc nommé est directe :
 \begin{mathpar}
 \irule{Instr-DoWith}
 { }
-{ Γ ⊢ (\npkDoWith{b}{lbl} . k, σ) → ( b . \kBlock{lbl}{k}) }
+{ Γ ⊢ (\npkDoWith{b}{lbl} \cdot k, σ) → ( b \cdot \kBlock{lbl}{k}) }
 \end{mathpar}
 
 Pouer le saut, deux cas sont à considérer. Dans le premier cas, on sort du bloc
@@ -378,11 +378,11 @@ le plus interne ; dans l'autre, on sort d'un bloc qui n'est pas final.
 \begin{mathpar}
 \irule{Instr-Goto-Int}
 { }
-{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl}{k}, σ) → (k, σ) }
+{ Γ ⊢ ( \kGoto{lbl} \cdot … \cdot \kBlock{lbl}{k}, σ) → (k, σ) }
 \and
 \irule{Instr-Goto-Ext}
 { lbl ≠ lbl' }
-{ Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} . k, σ) }
+{ Γ ⊢ ( \kGoto{lbl} \cdot … \cdot \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} \cdot k, σ) }
 \end{mathpar}
 
 Pour la conditionnelle, on évalue la condition. Si elle s'évalue en un entier
@@ -394,14 +394,14 @@ non nul, la suite est le bloc "vrai", sinon c'est le bloc "faux".
     n ≠ 0
   }
   {
-    Γ ⊢ (\npkIf{e}{i_t}{i_f} . k, σ) → (i_t . k, σ)
+    Γ ⊢ (\npkIf{e}{i_t}{i_f} \cdot k, σ) → (i_t \cdot k, σ)
   }
 \and
 \irule{Instr-If-False}
   { Γ, σ ⊢ e ⇒ 0
   }
   {
-    Γ ⊢ (\npkIf{e}{i_t}{i_f} . k, σ) → (i_f . k, σ)
+    Γ ⊢ (\npkIf{e}{i_t}{i_f} \cdot k, σ) → (i_f \cdot k, σ)
   }
 \end{mathpar}
 
@@ -412,16 +412,16 @@ non nul, la suite est le bloc "vrai", sinon c'est le bloc "faux".
     { Γ, σ ⊢ lv ↝ a
    \\ Γ, σ ⊢ \vec{e} ⇒ \vec{v}
     }
-    { Γ ⊢ (lv ← f(\vec{e}) . k, σ) → (\kCall{f}{\vec{v}}{a} . k, σ) }
+    { Γ ⊢ (lv ← f(\vec{e}) \cdot k, σ) → (\kCall{f}{\vec{v}}{a} \cdot k, σ) }
   \and
   \irule{Instr-Kcall}
     { Γ' = ? \\
       Γ' ⊢ (k_{0}(f), σ) → (\kRet{v}, σ')
     }
-    { Γ ⊢ (\kCall{f}{\vec{v}}{a} . k, σ) → (k, σ' [ a := v_r ]) }
+    { Γ ⊢ (\kCall{f}{\vec{v}}{a} \cdot k, σ) → (k, σ' [ a := v_r ]) }
   \and
   \irule{Instr-Return}
     { Γ, σ ⊢ e ⇒ v }
-    { Γ ⊢ (\npkReturn{e} . k, σ) → (\kRet{v}, σ)
+    { Γ ⊢ (\npkReturn{e} \cdot k, σ) → (\kRet{v}, σ)
     }
 \end{mathpar}
