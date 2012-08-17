@@ -33,7 +33,7 @@ Les différences principales avec C sont les suivantes :
 
 \begin{itemize}
 \item
-  le flôt de contrôle est simplifié : les seules constructions sont
+  le flot de contrôle est simplifié : les seules constructions sont
   l'alternative, la boucle infinie et le saut en avant.
 \item
   les expressions sont sans effets de bords. En particulier, leur
@@ -97,7 +97,7 @@ d'une part d'une continuation (section~\ref{sec:cont}, et d'autre part d'un
 l'état $σ$ de la mémoire (section~\ref{sec:sigma}). Cette présentation est
 proche de la sémantique de CMinor décrite dans\cite{cminorSL}
 
-\begin{definition}[Pas de la sémantique]
+\begin{definition}[Relation de transition]
   La sémantique consiste en une relation de transition entre les états de
   l'interpréteur. Celle-ci est faite sous un environnement $Γ$ qui associe des
   adresses aux variables du programme.
@@ -353,62 +353,7 @@ on peut donc traverser l'instruction \npkDecl{x}{b}.
 
 \todo{Il faut un kdecl}
 
-\begin{mathpar}
-  \irule{Instr-Fcall}
-    { Γ, σ ⊢ lv ↝ a
-   \\ Γ, σ ⊢ \vec{e} ⇒ \vec{v}
-    }
-    { Γ ⊢ (lv ← f(\vec{e}) . k, σ) → (\kCall{f}{\vec{v}}{a} . k, σ) }
-  \and
-  \irule{Instr-Kcall}
-    { Γ' = ? \\
-      Γ' ⊢ (k_{0}(f), σ) → (\kRet{v}, σ')
-    }
-    { Γ ⊢ (\kCall{f}{\vec{v}}{a} . k, σ) → (k, σ' [ a := v_r ]) }
-  \and
-  \irule{Instr-Return}
-    { Γ, σ ⊢ e ⇒ v }
-    { Γ ⊢ (\npkReturn{e} . k, σ) → (\kRet{v}, σ)
-    }
-\end{mathpar}
-
-\begin{minipage}{0.6\textwidth}
-\begin{mathpar}
-  \irule{Instr-Decl}{
-    \langle l, \npkDecl{x}{b}, l' \rangle \\
-    \langle l_b, b, l_b' \rangle \\
-    σ' = σ ⊕ \{ x \rightarrow \top \} \\
-    Γ ⊢ (l_b, σ', s) \rightarrow (l_b', σ'')
-  }{
-    Γ ⊢ (l, σ) \rightarrow (l', σ'' \backslash x)
-  }
-\end{mathpar}
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\input{fig/sem-decl.tex}
-\end{minipage}
-
-\todo{fcall}
-
-TODO pour :
-
-\[
-\irule{Instr-Fcall}{
-  \langle l, lv \leftarrow fe(\vec{e}), l' \rangle \\
-  σ ⊢ fe ⇒ f \\
-  Γ, σ ⊢ \vec{e} ⇒ \vec{v} \\
-  σ' = σ ⊕ \{args(f) = \vec{v}\} ⊕ \{ !ret \rightarrow \top \} \\
-  Γ ⊢ (Entry(f), σ') \rightarrow (Exit(f), σ'') \\
-  Γ, σ'' ⊢ !ret ⇒ v_{ret} \\
-  Γ, σ'' ⊢ lv ↝ a
-}{
-  Γ ⊢ (l, σ) \rightarrow (l', σ'' \backslash (args(f) \cup \{!ret\}) ⊕ \{ a \rightarrow v_{ret}\}, ?)
-}
-\]
-
-\todo{definir $σ ⊢ fe ⇒ f$}
-
-\section{Sémantique du flot de contrôle}
+\section{Flot de contrôle intraprocédural}
 
 Réaliser une boucle infinie revient à d'abord exécuter le bloc puis à exécuter à
 nouveau la boucle :
@@ -428,17 +373,13 @@ La capture d'une sortie de bloc nommé est directe :
 \end{mathpar}
 
 Pouer le saut, deux cas sont à considérer. Dans le premier cas, on sort du bloc
-le plus interne.
+le plus interne ; dans l'autre, on sort d'un bloc qui n'est pas final.
 
 \begin{mathpar}
 \irule{Instr-Goto-Int}
 { }
 { Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl}{k}, σ) → (k, σ) }
-\end{mathpar}
-
-Dans l'autre, on sort d'un bloc qui n'est pas final.
-
-\begin{mathpar}
+\and
 \irule{Instr-Goto-Ext}
 { lbl ≠ lbl' }
 { Γ ⊢ ( \kGoto{lbl} . … . \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} . k, σ) }
@@ -464,28 +405,23 @@ non nul, la suite est le bloc "vrai", sinon c'est le bloc "faux".
   }
 \end{mathpar}
 
-\begin{minipage}{0.5\textwidth}
-\input{fig/sem-if.tex}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
+\section{Appel de fonctions}
+
 \begin{mathpar}
-\irule{If-True}{
-  \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
-  Γ, σ ⊢ e ⇒ n \\
-  n ≠ 0 \\
-  \langle l_i, i_t, l_i' \rangle \\
-  Γ ⊢ (l_i, σ) \rightarrow (l_i', σ')
-}{
-  Γ ⊢ (l, σ) \rightarrow (l', σ')
-}
-\and
-\irule{If-False}{
-  \langle l, \npkIf{e}{i_t}{i_f}, l' \rangle \\
-  Γ, σ ⊢ e ⇒ 0 \\
-  \langle l_i, i_f, l_i' \rangle \\
-  Γ ⊢ (l_i, σ) \rightarrow (l_i', σ')
-}{
-  Γ ⊢ (l, σ) \rightarrow (l', σ')
-}
+  \irule{Instr-Fcall}
+    { Γ, σ ⊢ lv ↝ a
+   \\ Γ, σ ⊢ \vec{e} ⇒ \vec{v}
+    }
+    { Γ ⊢ (lv ← f(\vec{e}) . k, σ) → (\kCall{f}{\vec{v}}{a} . k, σ) }
+  \and
+  \irule{Instr-Kcall}
+    { Γ' = ? \\
+      Γ' ⊢ (k_{0}(f), σ) → (\kRet{v}, σ')
+    }
+    { Γ ⊢ (\kCall{f}{\vec{v}}{a} . k, σ) → (k, σ' [ a := v_r ]) }
+  \and
+  \irule{Instr-Return}
+    { Γ, σ ⊢ e ⇒ v }
+    { Γ ⊢ (\npkReturn{e} . k, σ) → (\kRet{v}, σ)
+    }
 \end{mathpar}
-\end{minipage}
