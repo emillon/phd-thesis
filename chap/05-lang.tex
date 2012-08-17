@@ -191,7 +191,8 @@ entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow
   initiale comme étant celle qui exécute son bloc d'initialisation : $k_0 (P) =
   \kSeq{b}{\kPass}$.
 
-  L'environnement initial $Γ_0(P)$ associe chaque globales à une certaine adresse.
+  L'environnement initial $Γ_0(P)$ associe à chaque globale à une certaine
+  adresse.
 
   Enfin, l'état mémoire initial laisse toutes les variables globales non
   initialisées :
@@ -428,8 +429,8 @@ non nul, la suite est le bloc "vrai", sinon c'est le bloc "faux".
 Pour $f = (\vec{v}, b)$, on note $k_0(f) = b \cdot \kPass$ et $\vec{params}(f) =
 \vec{v}$.
 
-Pour une instruction \npkReturn{e}, on évalue l'expression en une valeur $v$ et on remplace la
-continuation courante par $\kRet{v}$.
+Pour une instruction \npkReturn{e}, on évalue l'expression en une valeur $v$ et
+on remplace la continuation courante par $\kRet{v}$.
 
 \begin{mathpar}
   \irule{Instr-Return}
