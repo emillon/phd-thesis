@@ -78,12 +78,18 @@ donc une continuation, noté \kGoto{lbl}. Pour retrouver à quelle continuation
 cette étiquette correspond, il faut un moyen de capturer une continuation en la
 nommant, ce qui sera noté \kBlock{lbl}{k}.
 
+Enfin, le flot de contrôle interprocédural est similaire : l'appel d'une
+fonction $f$ avec les arguments $\vec{v}$ et recevant l'adresse de retour dans
+$a$ est noté $\kCall{f}{\vec{v}}{a}$ ; et le retour d'une fonction est \kRet{v}.
+
 \gramlr{Continuations}{
 \begin{align*}
-k  \gramisa & \kPass          & \textrm{Terminaison}
-\\ \gramor  & \kSeq{i}{k}     & \textrm{Séquence}
-\\ \gramor  & \kBlock{lbl}{k} & \textrm{Sortie de bloc nommé}
-\\ \gramor  & \kGoto{lbl}     & \textrm{Saut}
+k  \gramisa & \kPass                & \textrm{Terminaison}
+\\ \gramor  & \kSeq{i}{k}           & \textrm{Séquence}
+\\ \gramor  & \kBlock{lbl}{k}       & \textrm{Sortie de bloc nommé}
+\\ \gramor  & \kGoto{lbl}           & \textrm{Saut}
+\\ \gramor  & \kCall{f}{\vec{v}}{a} & \textrm{Appel de fonction}
+\\ \gramor  & \kRet{v}              & \textrm{Retour de fonction}
 \end{align*}
 }
 
@@ -351,6 +357,25 @@ on peut donc traverser l'instruction \npkDecl{x}{b}.
 \end{mathpar}
 
 \todo{Il faut un kdecl}
+
+\begin{mathpar}
+  \irule{Instr-Fcall}
+    { Γ, σ ⊢ lv ↝ a
+   \\ Γ, σ ⊢ \vec{e} ⇒ \vec{v}
+    }
+    { Γ ⊢ (lv ← f(\vec{e}) . k, σ) → (\kCall{f}{\vec{v}}{a} . k, σ) }
+  \and
+  \irule{Instr-Kcall}
+    { Γ' = ? \\
+      Γ' ⊢ (k_{0}(f), σ) → (\kRet{v}, σ')
+    }
+    { Γ ⊢ (\kCall{f}{\vec{v}}{a} . k, σ) → (k, σ' [ a := v_r ]) }
+  \and
+  \irule{Instr-Return}
+    { Γ, σ ⊢ e ⇒ v }
+    { Γ ⊢ (\npkReturn{e} . k, σ) → (\kRet{v}, σ)
+    }
+\end{mathpar}
 
 \begin{minipage}{0.6\textwidth}
 \begin{mathpar}
