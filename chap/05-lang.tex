@@ -127,13 +127,14 @@ continuations). Cette continuation sera notée \kPass.
 
 Il est aussi possible d'avoir à exécuter une instruction avant de passer à une
 autre continuation. Cette séquence sera notée \kSeq{i}{k} (ou en notation
-infixe, $i \cdot k$).
+infixe, $i \cdot k$, avec la convention $i_1 \cdot i_2 \cdot k = i_1 \cdot (i_2
+\cdot k) $).
 
 Le flot de contrôle intraprocédural est uniquement réduit au saut en avant : on
-peut nommer un bloc, et sauter à la sortie de celui-ci. Le saut en lui-même est
-donc une continuation, noté \kGoto{lbl}. Pour retrouver à quelle continuation
-cette étiquette correspond, il faut un moyen de capturer une continuation en la
-nommant, ce qui sera noté \kBlock{lbl}{k}.
+peut nommer un bloc, et sauter à la sortie de celui-ci. Il faut donc pouvoir
+capturer la continuation qui correspond à la sortie de ce bloc. Ce sera noté
+$\kBlock{lbl}{k}$. Le saut en lui-même est une simple instruction, notée
+$\npkGoto{lbl}$.
 
 Enfin, le flot de contrôle interprocédural est similaire : l'appel d'une
 fonction $f$ avec les arguments $\vec{v}$ et recevant l'adresse de retour dans
@@ -145,11 +146,14 @@ $a$ est noté $\kCall{f}{\vec{v}}{a}{k}$ ; et le retour d'une fonction est
 k  \gramisa & \kPass                   & \textrm{Terminaison}
 \\ \gramor  & \kSeq{i}{k}              & \textrm{Séquence}
 \\ \gramor  & \kBlock{lbl}{k}          & \textrm{Sortie de bloc nommé}
-\\ \gramor  & \kGoto{lbl}              & \textrm{Saut}
 \\ \gramor  & \kCall{f}{\vec{v}}{a}{k} & \textrm{Appel de fonction}
 \\ \gramor  & \kRet{v}                 & \textrm{Retour de fonction}
 \end{align*}
 }
+
+Parmi celles-ci, il y a deux cas de base (de terminaison) : \kPass et
+$\kRet{\cdot}$. Le premier servira à terminer le bloc d'initialisation et le
+second les corps de fonction.
 
 \section{État mémoire}
 \label{sec:sigma}
@@ -398,11 +402,11 @@ le plus interne ; dans l'autre, on sort d'un bloc qui n'est pas final.
 \begin{mathpar}
 \irule{Instr-Goto-Int}
 { }
-{ Γ ⊢ ( \kGoto{lbl} \cdot … \cdot \kBlock{lbl}{k}, σ) → (k, σ) }
+{ Γ ⊢ ( \npkGoto{lbl} \cdot … \cdot \kBlock{lbl}{k}, σ) → (k, σ) }
 \and
 \irule{Instr-Goto-Ext}
 { lbl ≠ lbl' }
-{ Γ ⊢ ( \kGoto{lbl} \cdot … \cdot \kBlock{lbl'}{k}, σ) → (\kGoto{lbl} \cdot k, σ) }
+{ Γ ⊢ ( \npkGoto{lbl} \cdot … \cdot \kBlock{lbl'}{k}, σ) → (\npkGoto{lbl} \cdot k, σ) }
 \end{mathpar}
 
 Pour la conditionnelle, on évalue la condition. Si elle s'évalue en un entier
@@ -465,3 +469,70 @@ $\kRet{\cdot}$.
     }
     { Γ ⊢ (\kCall{f}{\vec{v}}{a}{k}, σ) → (k, σ'' [ a := v_r ]) }
 \end{mathpar}
+
+\section{Programmes bien formés}
+
+La syntaxe décrite ci-dessus ne permet pas de donner du sens à tous les
+programmes : par exemple les programmes suivants ne peut pas être évalué.
+
+\begin{Verbatim}
+{
+  Goto l1
+}
+\end{Verbatim}
+
+\begin{Verbatim}
+{
+  Do {
+    Goto l2
+  } With l1:
+}
+\end{Verbatim}
+
+\begin{Verbatim}
+f(x) {
+  Goto l1
+}
+
+{
+  Do {
+    f(1)
+  } With l1:
+}
+\end{Verbatim}
+
+\begin{Verbatim}
+{
+  Return 0
+}
+\end{Verbatim}
+
+Dans le premier cas la continuation est $\npkGoto{l1} \cdot \kPass$, et aucune
+règle d'évaluation ne permet de la réduire : les seules possibilités pour une
+continuation de la forme $\npkGoto{l} \cdot k$ sont lorsque $k = … \cdot … \cdot
+\kBlock{l'}{k'}$. Syntaxiquement, c'est un problème de visibilité : au niveau
+d'un $\npkGoto{l}$, l'étiquette $l$ doit être visible.
+
+Définissons cette notion de visibilité.
+
+\begin{mathpar}
+\irule{WF-Empty}
+  { }
+  {∅ ‣ b}
+\and
+\irule{WF-DoWith}
+  {L,lbl ‣ b}
+  {L ‣ \npkDoWith{lbl}{b}}
+\end{mathpar}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+Il y a deux règles à respecter :
+
+\begin{itemize}
+\item
+  les étiquettes des instructions $\npkGoto{\cdot}$ sont visibles
+\item
+  le bloc d'initialisation ne contient pas d'instruction
+  $\npkReturn{\cdot}$
+\end{itemize}
