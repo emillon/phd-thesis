@@ -534,22 +534,29 @@ f(x) {
   \label{fig:progmf}
 \end{figure}
 
+
+
 Dans le premier cas la continuation est $\npkGoto{l1} \cdot \kPass$, et aucune
 règle d'évaluation ne permet de la réduire : les seules possibilités pour une
 continuation de la forme $\npkGoto{l} \cdot k$ sont lorsque $k = … \cdot … \cdot
 \kBlock{l'}{k'}$. Syntaxiquement, c'est un problème de visibilité : au niveau
 d'un $\npkGoto{l}$, l'étiquette $l$ doit être visible.
 
-Définissons cette notion de visibilité.
-
 \begin{mathpar}
-\irule{WF-Empty}
-  { }
-  {∅ ‣ b}
-\and
-\irule{WF-DoWith}
-  {L,lbl ‣ b}
-  {L ‣ \npkDoWith{lbl}{b}}
+\irule{WF-Prog}
+  { WF(\vec{f} \\
+    NoRet(b)
+  }
+  {WF((\vec{f}, \vec{v}, b))}
+\and \irule{WF-Func}{ ∅ ‣ body(f) }{ WF(f) }
+\and \irule{WF-Set}{ }{ L ‣ lv \leftarrow e}
+\and \irule{WF-Fcall}{ }{ L ‣ lv \leftarrow funexp (args)}
+\and \irule{WF-Return}{ }{ L ‣ \npkReturn{e}}
+\and \irule{WF-While}{L ‣ b}{L ‣ \npkWhile{b}}
+\and \irule{WF-Decl}{L ‣ b}{L ‣ \npkDecl{nom}{b}}
+\and \irule{WF-If}{L ‣ b_1 \\ L ‣ b_2}{L ‣ \npkIf{e}{b_1}{b_2}}
+\and \irule{WF-DoWith}{L,lbl ‣ b}{L ‣ \npkDoWith{b}{lbl}}
+\and \irule{WF-Goto}{lbl ∈ L}{L ‣ \npkGoto{lbl}}
 \end{mathpar}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
