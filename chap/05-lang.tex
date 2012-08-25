@@ -475,20 +475,38 @@ $\kRet{\cdot}$.
 La syntaxe décrite ci-dessus ne permet pas de donner du sens à tous les
 programmes : par exemple les programmes suivants ne peut pas être évalué.
 
+\newsavebox{\progmfa}
+
+\begin{figure}
+    \centering
+
+\begin{SubFloat}{Saut vers une étiquette inexistante}
+\begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 {
   Goto l1
 }
 \end{Verbatim}
-
+\end{minipage}
+\end{SubFloat}
+\begin{SubFloat}{Saut vers une étiquette non visible}
+\begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 {
   Do {
     Goto l2
   } With l1:
+  Do {
+  } With l2:
 }
 \end{Verbatim}
+\end{minipage}
+\end{SubFloat}
 
+\vspace{1cm}
+
+\begin{SubFloat}{Saut interprocédural}
+\begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 f(x) {
   Goto l1
@@ -500,12 +518,21 @@ f(x) {
   } With l1:
 }
 \end{Verbatim}
-
+\end{minipage}
+\end{SubFloat}
+\begin{SubFloat}{Retour dans bloc d'initialisation}
+\begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 {
   Return 0
 }
 \end{Verbatim}
+\end{minipage}
+\end{SubFloat}
+
+  \caption{Programmes mal formés}
+  \label{fig:progmf}
+\end{figure}
 
 Dans le premier cas la continuation est $\npkGoto{l1} \cdot \kPass$, et aucune
 règle d'évaluation ne permet de la réduire : les seules possibilités pour une
