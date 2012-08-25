@@ -542,13 +542,16 @@ continuation de la forme $\npkGoto{l} \cdot k$ sont lorsque $k = … \cdot … \
 \kBlock{l'}{k'}$. Syntaxiquement, c'est un problème de visibilité : au niveau
 d'un $\npkGoto{l}$, l'étiquette $l$ doit être visible.
 
+\def\WF#1{\textsc{wf}(#1)}
+\def\NORET#1{\textsc{NoRet}(#1)}
+
 \begin{mathpar}
 \irule{WF-Prog}
-  { WF(\vec{f} \\
-    NoRet(b)
+  { \WF{\vec{f}} \\
+    \NORET{b}
   }
-  {WF((\vec{f}, \vec{v}, b))}
-\and \irule{WF-Func}{ ∅ ‣ body(f) }{ WF(f) }
+  {\WF{(\vec{f}, \vec{v}, b)}}
+\and \irule{WF-Func}{ ∅ ‣ body(f) }{ \WF{f} }
 \and \irule{WF-Set}{ }{ L ‣ lv \leftarrow e}
 \and \irule{WF-Fcall}{ }{ L ‣ lv \leftarrow funexp (args)}
 \and \irule{WF-Return}{ }{ L ‣ \npkReturn{e}}
@@ -557,6 +560,14 @@ d'un $\npkGoto{l}$, l'étiquette $l$ doit être visible.
 \and \irule{WF-If}{L ‣ b_1 \\ L ‣ b_2}{L ‣ \npkIf{e}{b_1}{b_2}}
 \and \irule{WF-DoWith}{L,lbl ‣ b}{L ‣ \npkDoWith{b}{lbl}}
 \and \irule{WF-Goto}{lbl ∈ L}{L ‣ \npkGoto{lbl}}
+
+\and \irule{NR-Set}{\NORET{b}}{ \NORET{lv \leftarrow e;b}}
+\and \irule{NR-Fcall}{\NORET{b}}{lv \leftarrow funexp (args);b}
+\and \irule{NR-While}{\NORET{b_1} \\ \NORET{b_2}}{\npkWhile{b_1};b_2}
+\and \irule{NR-Decl}{ \NORET{b_1} \\ \NORET{b_2}}{\npkDecl{nom}{b_1};b_2}
+\and \irule{NR-If}{ \NORET{b_1} \\ \NORET{b_2} \\ \NORET{b_3}}{\npkIf{e}{b_1}{b_2};b_3}
+\and \irule{NR-DoWith}{ \NORET{b_1} \\ \NORET{b_2}}{\npkDoWith{b_1}{lbl};b_2}
+\and \irule{NR-Goto}{ \NORET{b} }{\npkGoto{lbl};b}
 \end{mathpar}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
