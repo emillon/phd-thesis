@@ -213,10 +213,9 @@ entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow
 
 \end{definition}
 
-Dans la suite, on définit la relation de transition. Selon la forme de la
-continuation, deux grandes familles sont à distinguer : les instructions
-classiques et celles qui manipulent le flot de contrôle.
-
+Dans la suite on définit la sémantique des left-values et des expressions. À cause des
+opérateurs de déréférencement, il est nécessaire de les définir de manière
+mutuellement récursive.
 
 \section{Sémantique des left-values}
 
@@ -225,24 +224,39 @@ notion n'est pas directement visible. Les accès sont réalisés à travers des
 "left values". Dans le langage C, elles correspondent aux constructions qui
 peuvent se retrouver à gauche du signe ``='' dans une affectation.
 
-\begin{definition}[Correspondance left-values / adresses]
+\begin{definition}[Adresse effective]
   Sous un environnement $Γ$ et un état mémoire $σ$, une left-value peut
-  correspondre à une adresse $a$. Ceci sera noté $Γ, σ ⊢ lv ↝ a$.
+  correspondre à une adresse $a$. On dit que $a$ est l'adresse effective de
+  $lv$, ce que l'on notera :
+
+  \[ Γ, σ ⊢ lv ↝ a \]
 \end{definition}
+
+L'environnement $Γ$ contient les adresses des variables du programme. Pour une
+left-value qui est une variable, le résultat est donc directement présent dans
+$Γ$:
 
 \begin{mathpar}
 \irule{Eval-Lv-Var}{
-  (v, a) ∈ σ
+  (v, a) ∈ Γ
 }{
   Γ, σ ⊢ v ↝ a
 }
-\and
+\end{mathpar}
+
+Dans le cas du déréférencement, il faut évaluer la valeur du pointeur (cette
+opération est détaillée dans la section~\ref{sec:sem-expr}). Si celle ci est une
+adresse, c'est l'adresse effective du déréférencement.
+
+\begin{mathpar}
 \irule{Eval-Lv-Deref}{
   Γ, σ ⊢ e ⇒ \&a
 }{
   Γ, σ ⊢ *e ↝ a
 }
-\and
+\end{mathpar}
+
+\begin{mathpar}
 \irule{Eval-Lv-Field}{
   Γ, σ ⊢ lv ↝ a
 }{
@@ -258,6 +272,7 @@ peuvent se retrouver à gauche du signe ``='' dans une affectation.
 \end{mathpar}
 
 \section{Sémantique des expressions}
+\label{sec:sem-expr}
 
 Les expressions sont les constructions syntaxiques de base du langage. Étant
 donné un environnement et un état mémoire, on peut leur associer une valeur.
@@ -267,8 +282,10 @@ dans l'état mémoire qui à l'adresse $a$ associe la valeur $2$, l'expression $
 3$ s'évalue en $5$.
 
 \begin{definition}[Évaluation d'une expression]
-  Sous un environnement $Γ$ et un état mémoire $σ$, une left-value peut
-  produire une valeur $v$. Ceci sera noté $Γ, σ ⊢ e ⇒ v$.
+  Sous un environnement $Γ$ et un état mémoire $σ$, une expression $e$ peut
+  produire une valeur $v$. On notera :
+
+  \[ Γ, σ ⊢ e ⇒ v \]
 \end{definition}
 
 Dans le cas où l'expression est une constante, c'est directement le résultat.
@@ -332,6 +349,10 @@ depuis l'état mémoire.
 \end{mathpar}
 
 \section{Sémantique des instructions}
+
+On définit ici la relation de transition $→$. Selon la forme de la continuation,
+deux grandes familles sont à distinguer : les instructions classiques et celles
+qui manipulent le flot de contrôle.
 
 Si $i$ est une séquence, on la décompose. De même, les blocs vides peuvent être
 sautés :
