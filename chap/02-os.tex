@@ -121,7 +121,7 @@ La pile d'appels est une zone de mémoire qui est notamment utilisée pour tenir
 une trace des calculs en cours. Par exemple, c'est ici que seront stockées les
 données propres à chaque fonction appelée : paramètres, adresse de retour et
 variables locales. La pile est manipulée par un pointeur de pile (\emph{stack
-pointer}), qui est l'adresse du "haut de la pile". On peut la manipuler en
+pointer}), qui est l'adresse du ``haut de la pile''. On peut la manipuler en
 empilant des données (les placer au niveau du pointeur de pile et déplacer celui
 si) ou dépilant des données (déplacer le pointeur de pile dans l'autre sens et
 retourner la valeur présente à cet endroit).
@@ -510,8 +510,8 @@ problèmes de sécurité.
 Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un
 côté, une interface pas assez fine serait trop restrictive et ne permettrait pas
 d'implémenter tout type de logiciel. De l'autre, une interface trop laxiste
-("écrire dans tel registre matériel") empêche toute isolation. Il faut donc
-trouver la bonne granularité.
+(``écrire dans tel registre matériel'') empêche toute isolation. Il faut
+donc trouver la bonne granularité.
 
 Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
 sein de certains types d'appels système.
