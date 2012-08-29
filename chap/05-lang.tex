@@ -568,13 +568,39 @@ TODO \ref{fig:progmf-d}
 \def\WF#1{\textsc{wf}(#1)}
 \def\NORET#1{\textsc{NoRet}(#1)}
 
+Un programme est bien formé si les trois conditions suivantes sont
+présentes:
+
+\begin{itemize}
+\item
+  chacune des fonctions du programme est bien formée.
+\item
+  le bloc d'initialisation est bien formé
+\item
+  ce dernier ne contient pas d'instruction
+  $\npkReturn{\cdot}$.
+\end{itemize}
+
+En outre, une fonction est bien formée si son corps l'est.
+
 \begin{mathpar}
 \irule{WF-Prog}
   { \WF{\vec{f}} \\
+    \WF{b} \\
     \NORET{b}
   }
   {\WF{(\vec{f}, \vec{v}, b)}}
-\and \irule{WF-Func}{ ∅ ‣ body(f) }{ \WF{f} }
+\and
+\irule{WF-Func}{ \WF{body(f)} }{ \WF{f} }
+\end{mathpar}
+
+La notion de bloc bien formé repose sur la portée des étiquettes : par exemple, une
+instruction $\npkGoto{\cdot}$ est formée si son étiquette est dans l'ensemble
+des étiquettes visibles. On note $L ‣ b$ si $b$ est bien formé avec un ensemble
+d'étiquettes visibles $L$.
+
+\begin{mathpar}
+     \irule{WF-Blk}{ ∅ ‣ b }{ \WF{b} }
 \and \irule{WF-Set}{ }{ L ‣ lv \leftarrow e}
 \and \irule{WF-Fcall}{ }{ L ‣ lv \leftarrow funexp (args)}
 \and \irule{WF-Return}{ }{ L ‣ \npkReturn{e}}
