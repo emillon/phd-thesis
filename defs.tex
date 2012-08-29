@@ -29,7 +29,7 @@
 \newcommand{\newspeak}{\textsc{Newspeak}}
 
 % Newspeak
-\newcommand{\npkDecl}[2]{\textsc{Decl}(#1) \{ #2 \}}
+\newcommand{\npkDecl}[2]{\textsc{Decl}~(#1) \{ #2 \}}
 \newcommand{\npkIf}[3]{\textsc{If}(#1) \{ #2 \} \textsc{Else} \{ #3 \}}
 \newcommand{\npkDoWith}[2]{\textsc{Do}\{ #1 \}\textsc{With}~#2:}
 \newcommand{\npkWhile}[1]{\textsc{While}(1)\{#1\}}
@@ -37,12 +37,15 @@
 \newcommand{\npkReturn}[1]{\textsc{Return}~#1}
 
 % Continuations
-\def\kPass{\textsc{Kpass}}
+\def\kPass{\textsc{Kpass}\xspace}
 \def\kSeq#1#2{\textsc{Kseq}(#1, #2)}
 \def\kBlock#1#2{\textsc{Kblock}(#1, #2)}
-\def\kGoto#1{\textsc{Kgoto}(#1)}
 \def\kCall#1#2#3#4{\textsc{Kcall}(#1, #2, #3, #4)}
 \def\kRet#1{\textsc{Kret}(#1)}
+
+% Functions with placeholders
+\def\phx#1{\ensuremath{#1{\cdot}}}
+\def\phxx#1{\ensuremath{#1{\cdot}{\cdot}}}
 
 \newcommand{\insertcode}[1]{\input{gen/#1.pyg.tex}}
 
@@ -85,6 +88,25 @@
 
 % Debug tikz bounding box
 \def\drawbb{\draw[thick] (current bounding box.south west) rectangle (current bounding box.north east);}
+
+% SubFloat + verbatim
+\makeatletter
+\newbox\sf@box
+\newenvironment{SubFloat}[2][]%
+{\def\sf@one{#1}%
+\def\sf@two{#2}%
+\setbox\sf@box\hbox
+\bgroup}%
+{ \egroup
+\ifx\@empty\sf@two\@empty\relax
+\def\sf@two{\@empty}
+\fi
+\ifx\@empty\sf@one\@empty\relax
+\subfloat[\sf@two]{\box\sf@box}%
+\else
+\subfloat[\sf@one][\sf@two]{\box\sf@box}%
+\fi}
+\makeatother
 
 % comes from the memoir manual {{{
 
