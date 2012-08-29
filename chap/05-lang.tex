@@ -599,24 +599,69 @@ instruction $\npkGoto{\cdot}$ est formée si son étiquette est dans l'ensemble
 des étiquettes visibles. On note $L ‣ b$ si $b$ est bien formé avec un ensemble
 d'étiquettes visibles $L$.
 
+Ainsi, un bloc est bien formé s'il est bien formé avec aucune étiquette visible.
+
 \begin{mathpar}
-     \irule{WF-Blk}{ ∅ ‣ b }{ \WF{b} }
-\and \irule{WF-Set}{ }{ L ‣ lv \leftarrow e}
+\irule{WF-Blk}{ ∅ ‣ b }{ \WF{b} }
+\end{mathpar}
+
+La structure en séquence ne modifie pas le fait d'être bien formé :
+l'instruction vide est toujours bien formée, et pour une séquence, il est
+équivalent que l'instruction de tête et la suite d'instructions de queue soient
+bien formées sous le même ensemble d'étiquettes.
+
+\begin{mathpar}
+     \irule{WF-Pass}{ }{ L ‣ ε }
+\and \irule{WF-Seq}{ L ‣ i \\ L ‣ b }{ L ‣ i;b }
+\end{mathpar}
+
+Les instructions simples (ne contenant pas d'étiquette ou d'autre bloc) sont
+toujours bien formées.
+
+\begin{mathpar}
+     \irule{WF-Set}{ }{ L ‣ lv \leftarrow e}
 \and \irule{WF-Fcall}{ }{ L ‣ lv \leftarrow funexp (args)}
 \and \irule{WF-Return}{ }{ L ‣ \npkReturn{e}}
-\and \irule{WF-While}{L ‣ b}{L ‣ \npkWhile{b}}
+\end{mathpar}
+
+Les instructions contenant d'autres blocs sont bien formées lorsque leurs
+sous-blocs sont bien formés.
+
+\begin{mathpar}
+     \irule{WF-While}{L ‣ b}{L ‣ \npkWhile{b}}
 \and \irule{WF-Decl}{L ‣ b}{L ‣ \npkDecl{nom}{b}}
 \and \irule{WF-If}{L ‣ b_1 \\ L ‣ b_2}{L ‣ \npkIf{e}{b_1}{b_2}}
-\and \irule{WF-DoWith}{L,lbl ‣ b}{L ‣ \npkDoWith{b}{lbl}}
-\and \irule{WF-Goto}{lbl ∈ L}{L ‣ \npkGoto{lbl}}
+\end{mathpar}
 
-\and \irule{NR-Set}{\NORET{b}}{ \NORET{lv \leftarrow e;b}}
-\and \irule{NR-Fcall}{\NORET{b}}{lv \leftarrow funexp (args);b}
-\and \irule{NR-While}{\NORET{b_1} \\ \NORET{b_2}}{\npkWhile{b_1};b_2}
-\and \irule{NR-Decl}{ \NORET{b_1} \\ \NORET{b_2}}{\npkDecl{nom}{b_1};b_2}
-\and \irule{NR-If}{ \NORET{b_1} \\ \NORET{b_2} \\ \NORET{b_3}}{\npkIf{e}{b_1}{b_2};b_3}
-\and \irule{NR-DoWith}{ \NORET{b_1} \\ \NORET{b_2}}{\npkDoWith{b_1}{lbl};b_2}
-\and \irule{NR-Goto}{ \NORET{b} }{\npkGoto{lbl};b}
+Un bloc $\npkDoWith{\cdot}{\cdot}$ est bien formé si son bloc interne est bien
+formé; mais sous un ensemble d'étiquettes étendu du nouveau label, puisque ceci
+y est visible.
+
+\begin{mathpar}
+\irule{WF-DoWith}{L,lbl ‣ b}{L ‣ \npkDoWith{b}{lbl}}
+\end{mathpar}
+
+Enfin, un $\npkGoto{\cdot}$ est bien formé sous un ensemble d'étiquettes
+contenant sa destination.
+
+\begin{mathpar}
+\irule{WF-Goto}{lbl ∈ L}{L ‣ \npkGoto{lbl}}
+\end{mathpar}
+
+La définition de ce qu'est un bloc $b$ sans instruction $\npkReturn{\cdot}$
+(noté $\NORET{b}$) est plus simple : c'est la définition récursive des blocs, en
+omettant le cas de base $\npkReturn{\cdot}$.
+
+\begin{mathpar}
+     \irule{NR-Pass}{ }{ \NORET{ε} }
+\and \irule{NR-Seq}{\NORET{i} \\ \NORET{b}}{ \NORET{i;b} }
+\and \irule{NR-Set}{ }{ \NORET{lv \leftarrow e}}
+\and \irule{NR-Fcall}{ }{lv \leftarrow funexp (args)}
+\and \irule{NR-While}{\NORET{b}}{\npkWhile{b}}
+\and \irule{NR-Decl}{ \NORET{b} }{\npkDecl{nom}{b}}
+\and \irule{NR-If}{ \NORET{b_t} \\ \NORET{b_f} }{\npkIf{e}{b_t}{b_f}}
+\and \irule{NR-DoWith}{ \NORET{b} }{\npkDoWith{b}{lbl}}
+\and \irule{NR-Goto}{ }{\npkGoto{lbl}}
 \end{mathpar}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
