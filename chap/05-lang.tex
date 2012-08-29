@@ -496,22 +496,14 @@ $\kRet{\cdot}$.
 La syntaxe décrite ci-dessus ne permet pas de donner du sens à tous les
 programmes : par exemple les programmes suivants ne peut pas être évalués.
 
-\ref{fig:progmf-a}
-
-\ref{fig:progmf-b}
-
-\ref{fig:progmf-c}
-
-\ref{fig:progmf-d}
-
-\begin{figure}
+\begin{figure} % Fig Progs mal formés{{{
     \centering
 
 \begin{SubFloat}{\label{fig:progmf-a}Saut vers une étiquette inexistante}
 \begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 {
-  Goto l1
+  Goto a
 }
 \end{Verbatim}
 \end{minipage}
@@ -521,10 +513,10 @@ programmes : par exemple les programmes suivants ne peut pas être évalués.
 \begin{Verbatim}
 {
   Do {
-    Goto l2
-  } With l1:
+    Goto b
+  } With a:
   Do {
-  } With l2:
+  } With b:
 }
 \end{Verbatim}
 \end{minipage}
@@ -536,13 +528,13 @@ programmes : par exemple les programmes suivants ne peut pas être évalués.
 \begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 f(x) {
-  Goto l1
+  Goto a
 }
 
 {
   Do {
     f(1)
-  } With l1:
+  } With a:
 }
 \end{Verbatim}
 \end{minipage}
@@ -559,15 +551,19 @@ f(x) {
 
   \caption{Programmes mal formés}
   \label{fig:progmf}
-\end{figure}
+\end{figure} % }}}
 
+Dans le cas de la figure~\ref{fig:progmf-a} la continuation est $\npkGoto{a}
+\cdot \kPass$, et aucune règle d'évaluation ne permet de la réduire : les seules
+possibilités pour une continuation de la forme $\npkGoto{l} \cdot k$ sont
+lorsque $k = … \cdot … \cdot \kBlock{l'}{k'}$. Syntaxiquement, c'est un problème
+de visibilité : au niveau d'un $\npkGoto{l}$, l'étiquette $l$ doit être visible.
 
+TODO \ref{fig:progmf-b}
 
-Dans le premier cas la continuation est $\npkGoto{l1} \cdot \kPass$, et aucune
-règle d'évaluation ne permet de la réduire : les seules possibilités pour une
-continuation de la forme $\npkGoto{l} \cdot k$ sont lorsque $k = … \cdot … \cdot
-\kBlock{l'}{k'}$. Syntaxiquement, c'est un problème de visibilité : au niveau
-d'un $\npkGoto{l}$, l'étiquette $l$ doit être visible.
+TODO \ref{fig:progmf-c}
+
+TODO \ref{fig:progmf-d}
 
 \def\WF#1{\textsc{wf}(#1)}
 \def\NORET#1{\textsc{NoRet}(#1)}
