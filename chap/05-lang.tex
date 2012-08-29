@@ -494,14 +494,20 @@ $\kRet{\cdot}$.
 \section{Programmes bien formés}
 
 La syntaxe décrite ci-dessus ne permet pas de donner du sens à tous les
-programmes : par exemple les programmes suivants ne peut pas être évalué.
+programmes : par exemple les programmes suivants ne peut pas être évalués.
 
-\newsavebox{\progmfa}
+\ref{fig:progmf-a}
+
+\ref{fig:progmf-b}
+
+\ref{fig:progmf-c}
+
+\ref{fig:progmf-d}
 
 \begin{figure}
     \centering
 
-\begin{SubFloat}{Saut vers une étiquette inexistante}
+\begin{SubFloat}{\label{fig:progmf-a}Saut vers une étiquette inexistante}
 \begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 {
@@ -510,7 +516,7 @@ programmes : par exemple les programmes suivants ne peut pas être évalué.
 \end{Verbatim}
 \end{minipage}
 \end{SubFloat}
-\begin{SubFloat}{Saut vers une étiquette non visible}
+\begin{SubFloat}{\label{fig:progmf-b}Saut vers une étiquette non visible}
 \begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 {
@@ -526,7 +532,7 @@ programmes : par exemple les programmes suivants ne peut pas être évalué.
 
 \vspace{1cm}
 
-\begin{SubFloat}{Saut interprocédural}
+\begin{SubFloat}{\label{fig:progmf-c}Saut interprocédural}
 \begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 f(x) {
@@ -541,7 +547,7 @@ f(x) {
 \end{Verbatim}
 \end{minipage}
 \end{SubFloat}
-\begin{SubFloat}{Retour dans bloc d'initialisation}
+\begin{SubFloat}{\label{fig:progmf-d}Retour dans bloc d'initialisation}
 \begin{minipage}[b]{0.4\linewidth}
 \begin{Verbatim}
 {
