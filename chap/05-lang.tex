@@ -152,7 +152,7 @@ k  \gramisa & \kPass                   & \textrm{Terminaison}
 }
 
 Parmi celles-ci, il y a deux cas de base (de terminaison) : \kPass et
-$\kRet{\cdot}$. Le premier servira à terminer le bloc d'initialisation et le
+\phx{\kRet}. Le premier servira à terminer le bloc d'initialisation et le
 second les corps de fonction.
 
 \section{État mémoire}
@@ -409,7 +409,7 @@ nouveau la boucle :
 \end{mathpar}
 
 La capture d'une sortie de bloc nommé consiste à remplacer la continuation en
-cours par une continuation $\kBlock{\cdot}{\cdot}$.
+cours par une continuation \phxx{\kBlock}.
 
 \begin{mathpar}
 \irule{Instr-DoWith}
@@ -480,7 +480,7 @@ courante.
 
 Pour évaluer celle-ci, on évalue le corps de la fonction dans un environnement
 enrichi des paramètres de la fonction, jusqu'à ce que sa continuation soit
-$\kRet{\cdot}$.
+\phx{\kRet}.
 
 \begin{mathpar}
   \irule{Instr-Kcall}
@@ -578,7 +578,7 @@ présentes:
   le bloc d'initialisation est bien formé
 \item
   ce dernier ne contient pas d'instruction
-  $\npkReturn{\cdot}$.
+  \phx{\npkReturn}.
 \end{itemize}
 
 En outre, une fonction est bien formée si son corps l'est.
@@ -594,8 +594,8 @@ En outre, une fonction est bien formée si son corps l'est.
 \irule{WF-Func}{ \WF{body(f)} }{ \WF{f} }
 \end{mathpar}
 
-La notion de bloc bien formé repose sur la portée des étiquettes : par exemple, une
-instruction $\npkGoto{\cdot}$ est formée si son étiquette est dans l'ensemble
+La notion de bloc bien formé repose sur la portée des étiquettes : par exemple,
+une instruction \phx{\npkGoto} est formée si son étiquette est dans l'ensemble
 des étiquettes visibles. On note $L ‣ b$ si $b$ est bien formé avec un ensemble
 d'étiquettes visibles $L$.
 
@@ -633,24 +633,24 @@ sous-blocs sont bien formés.
 \and \irule{WF-If}{L ‣ b_1 \\ L ‣ b_2}{L ‣ \npkIf{e}{b_1}{b_2}}
 \end{mathpar}
 
-Un bloc $\npkDoWith{\cdot}{\cdot}$ est bien formé si son bloc interne est bien
-formé; mais sous un ensemble d'étiquettes étendu du nouveau label, puisque ceci
-y est visible.
+Un bloc \phxx{\npkDoWith} est bien formé si son bloc interne est bien formé;
+mais sous un ensemble d'étiquettes étendu du nouveau label, puisque ceci y est
+visible.
 
 \begin{mathpar}
 \irule{WF-DoWith}{L,lbl ‣ b}{L ‣ \npkDoWith{b}{lbl}}
 \end{mathpar}
 
-Enfin, un $\npkGoto{\cdot}$ est bien formé sous un ensemble d'étiquettes
-contenant sa destination.
+Enfin, un \phx{\npkGoto} est bien formé sous un ensemble d'étiquettes contenant
+sa destination.
 
 \begin{mathpar}
 \irule{WF-Goto}{lbl ∈ L}{L ‣ \npkGoto{lbl}}
 \end{mathpar}
 
-La définition de ce qu'est un bloc $b$ sans instruction $\npkReturn{\cdot}$
-(noté $\NORET{b}$) est plus simple : c'est la définition récursive des blocs, en
-omettant le cas de base $\npkReturn{\cdot}$.
+La définition de ce qu'est un bloc $b$ sans instruction \phx{\npkReturn} (noté
+$\NORET{b}$) est plus simple : c'est la définition récursive des blocs, en
+omettant le cas de base \phx{\npkReturn}.
 
 \begin{mathpar}
      \irule{NR-Pass}{ }{ \NORET{ε} }
@@ -670,8 +670,8 @@ Il y a deux règles à respecter :
 
 \begin{itemize}
 \item
-  les étiquettes des instructions $\npkGoto{\cdot}$ sont visibles
+  les étiquettes des instructions \phx{\npkGoto} sont visibles
 \item
   le bloc d'initialisation ne contient pas d'instruction
-  $\npkReturn{\cdot}$
+  \phx{\npkReturn}
 \end{itemize}
