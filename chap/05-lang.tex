@@ -666,15 +666,3 @@ omettant le cas de base \phx{\npkReturn}.
 \and \irule{NR-DoWith}{ \NORET{b} }{\npkDoWith{b}{lbl}}
 \and \irule{NR-Goto}{ }{\npkGoto{lbl}}
 \end{mathpar}
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-Il y a deux règles à respecter :
-
-\begin{itemize}
-\item
-  les étiquettes des instructions \phx{\npkGoto} sont visibles
-\item
-  le bloc d'initialisation ne contient pas d'instruction
-  \phx{\npkReturn}
-\end{itemize}
