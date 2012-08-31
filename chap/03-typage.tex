@@ -17,10 +17,10 @@ sens: par exemple, ajouter deux adresses, ou déréférencer le résultat d'une
 division sont des comportements qu'on voudrait pouvoir empêcher.
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
-opérations possibles selon la classe d'un objet : "ne pas ajouter des pommes et
-des oranges". Le modèle qui permet cette classification est appelé \emph{système
-de types} et est en général constitué d'un ensemble de \emph{règles de typage},
-comme "un entier plus un entier égale un entier".
+opérations possibles selon la classe d'un objet : ``ne pas ajouter des pommes et
+des oranges''. Le modèle qui permet cette classification est appelé
+\emph{système de types} et est en général constitué d'un ensemble de
+\emph{règles de typage}, comme ``un entier plus un entier égale un entier''.
 
 \section{Taxonomie}
 
@@ -75,18 +75,19 @@ font dans la sémantique dynamique (ie, à l'exécution). C'est à double tranch
 d'une part, cela permet d'être plus flexible, mais d'autre part, cela permet à
 des programmes incorrects d'être exécutés.
 
-On peut lire le code source d'un programme et essayer de "deviner" quels seront
-les types des différentes expressions. Dans certains cas, cela n'est pas
+On peut lire le code source d'un programme et essayer de ``deviner'' quels
+seront les types des différentes expressions. Dans certains cas, cela n'est pas
 possible (fig~\ref{fig:nontypable}) ; mais lorsqu'on peut conclure cela élimine
 la nécessité de faire les tests de type dynamiques car on a réalisé le typage
 \emph{statiquement}.
 
 Bien sûr, deviner n'est pas suffisant : il faut formaliser cette analyse. Dans
 le cas dynamique, ce sont les fonctions elles-mêmes qui réalisent les tests de
-type et qui appliquent des règles comme "si les arguments ont pour type
-\texttt{int} alors la valeur de retour a pour type \texttt{int}" : la fonction
-qui réalise ce test sur les valeurs. Dans le cas statique, c'est le compilateur
-(ou l'interpréteur) qui réalise ce test sur les expressions non évaluées. En
+type et qui appliquent des règles comme ``si les arguments ont pour type
+\texttt{int} alors la valeur de retour a pour type \texttt{int}'' : la
+fonction qui réalise ce test sur les valeurs. Dans le cas statique,
+c'est le compilateur (ou l'interpréteur) qui réalise ce test sur les
+expressions non évaluées. En
 appliquant de proche en proche un ensemble de règles (liées uniquement au
 langage de programmation), on finit par associer à chaque sous-expression du
 programme un type.
