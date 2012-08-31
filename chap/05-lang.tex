@@ -559,9 +559,12 @@ possibilités pour une continuation de la forme $\npkGoto{l} \cdot k$ sont
 lorsque $k = … \cdot … \cdot \kBlock{l'}{k'}$. Syntaxiquement, c'est un problème
 de visibilité : au niveau d'un $\npkGoto{l}$, l'étiquette $l$ doit être visible.
 
-TODO \ref{fig:progmf-b}
+Ce problème existe aussi dans la figure~\ref{fig:progmf-b} : l'étiquette $b$
+existe, mais n'est pas visible au moment de $\npkGoto{b}$ (où seule $a$ l'est).
 
-TODO \ref{fig:progmf-c}
+La visibilité concerne les blocs, mais pas les fonctions. Cela implique qu'on ne
+peut pas sauter entre plusieurs fonctions, comme dans la
+figure~\ref{fig:progmf-c}.
 
 TODO \ref{fig:progmf-d}
 
