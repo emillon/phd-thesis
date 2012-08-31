@@ -372,15 +372,13 @@ alors un \tInt.
 }
 \end{mathpar}
 
-L'opérateur unaire "$-$" peut être appliqué à un \tInt ou à un \tFloat.
+Les opérateurs unaires de négations "$-$" et "$-.$" s'appliquent respectivement
+aux \tInt et aux \tFloat.
 
 \begin{mathpar}
-\irule{Unop-Minus}{
-  τ ∈ \{ \tInt, \tFloat \} \\
-  Γ ⊢ e : τ
-}{
-  Γ ⊢ -e : τ
-}
+\irule{Unop-Minus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ - e : \tInt }
+\and
+\irule{Unop-Minus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ -. e : \tFloat }
 \end{mathpar}
 
 Les opérateurs de négation unaires, en revanche, ne s'appliquent qu'aux
