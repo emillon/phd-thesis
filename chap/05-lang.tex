@@ -566,7 +566,10 @@ La visibilité concerne les blocs, mais pas les fonctions. Cela implique qu'on n
 peut pas sauter entre plusieurs fonctions, comme dans la
 figure~\ref{fig:progmf-c}.
 
-TODO \ref{fig:progmf-d}
+La figure~\ref{fig:progmf-d} illustre un autre problème : le bloc
+d'initialisation ne doit pas contenir d'instruction \phx{\npkReturn}. En effet,
+dans ce cas la continuation devient $\kRet{0}$ et ne permet pas de terminer
+l'évaluation du programme en obtenant une continuation $\kPass$.
 
 Un programme est bien formé si les trois conditions suivantes sont
 présentes:
