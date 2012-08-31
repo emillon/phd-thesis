@@ -2,5 +2,5 @@
 \PY{k}{let} \PY{k}{rec} \PY{n}{append} \PY{n}{lx} \PY{n}{ly} \PY{o}{=}
   \PY{k}{match} \PY{n}{lx} \PY{k}{with}
     \PY{o}{|}  \PY{n+nb+bp}{[]}   \PY{o}{-\PYZgt{}} \PY{n}{ly}
-    \PY{o}{|} \PY{n}{x}\PY{o}{::}\PY{n}{xs} \PY{o}{-\PYZgt{}} \PY{n}{x}\PY{o}{::}\PY{n}{append} \PY{n}{lx} \PY{n}{ly}
+    \PY{o}{|} \PY{n}{x}\PY{o}{::}\PY{n}{xs} \PY{o}{-\PYZgt{}} \PY{n}{x}\PY{o}{::}\PY{n}{append} \PY{n}{xs} \PY{n}{ly}
 \end{Verbatim}
