@@ -47,6 +47,8 @@ Les différences principales avec C sont les suivantes :
   évaluation peut être faite sans modifier l'environnement.
 \item
   les opérateurs pour entiers et les flottants sont différenciées.
+\item
+  toutes les variables locales sont ``remontées'' en début de fonction.
 \end{itemize}
 
 \section{Sémantique}
@@ -379,24 +381,6 @@ conséquence.
   }
 \end{mathpar}
 
-Déclarer une variable, c'est rendre accessible dans un bloc une variable non
-initialisée, qui n'est plus accessible par la suite : Si on suppose qu'on peut
-traverser le bloc interne $b$ sous un $σ$ enrichi d'une nouvelle variable $x$,
-on peut donc traverser l'instruction \npkDecl{x}{b}.
-
-\begin{mathpar}
-  \irule{Instr-Decl}
-    {
-      Γ' = ? \\
-      Γ' ⊢ (b . \kPass)
-    }
-    {
-      Γ ⊢ (\npkDecl{x}{b} \cdot k, σ) → (k, σ')
-    }
-\end{mathpar}
-
-\todo{Il faut un kdecl}
-
 \section{Flot de contrôle intraprocédural}
 
 Réaliser une boucle infinie revient à d'abord exécuter le bloc puis à exécuter à
@@ -632,7 +616,6 @@ sous-blocs sont bien formés.
 
 \begin{mathpar}
      \irule{WF-While}{L ‣ b}{L ‣ \npkWhile{b}}
-\and \irule{WF-Decl}{L ‣ b}{L ‣ \npkDecl{nom}{b}}
 \and \irule{WF-If}{L ‣ b_1 \\ L ‣ b_2}{L ‣ \npkIf{e}{b_1}{b_2}}
 \end{mathpar}
 
@@ -661,7 +644,6 @@ omettant le cas de base \phx{\npkReturn}.
 \and \irule{NR-Set}{ }{ \NORET{lv \leftarrow e}}
 \and \irule{NR-Fcall}{ }{lv \leftarrow funexp (args)}
 \and \irule{NR-While}{\NORET{b}}{\npkWhile{b}}
-\and \irule{NR-Decl}{ \NORET{b} }{\npkDecl{nom}{b}}
 \and \irule{NR-If}{ \NORET{b_t} \\ \NORET{b_f} }{\npkIf{e}{b_t}{b_f}}
 \and \irule{NR-DoWith}{ \NORET{b} }{\npkDoWith{b}{lbl}}
 \and \irule{NR-Goto}{ }{\npkGoto{lbl}}

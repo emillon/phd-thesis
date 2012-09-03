@@ -419,13 +419,13 @@ pointeur.
 
 \subsection{Fonctions}
 
-Pour typer une fonction, on commence par ajouter ses paramètres dans
-l'environnement de typage, et on type la définition de la fonction. Le type
-résultant est généralisé.
+Pour typer une fonction, on commence par ajouter ses paramètres et ses variables
+locales dans l'environnement de typage, et on type la définition de la fonction.
+Le type résultant est généralisé.
 
 \[
 \irule{Fun}{
-  Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
+  Γ' = Γ ⊕ \{ args(f) = \vec{τ}, loc(f) = \vec{τ_v} \} \\
   Γ' ⊢ body(f) \\
   Γ' ⊢ !ret : τ_r
 }{
@@ -434,17 +434,6 @@ résultant est généralisé.
 \]
 
 \subsection{Instructions}
-
-Pour typer une déclaration, il suffit de rajouter la variable avec n'importe
-quel type dans l'environnement de typage.
-
-\begin{mathpar}
-\irule{Decl}{
-  Γ , x : τ ⊢ b
-}{
-  Γ ⊢ \npkDecl{x}{b}
-}
-\end{mathpar}
 
 Une affectation est bien typée si elle faite entre une left-value et une
 expression de même type.
