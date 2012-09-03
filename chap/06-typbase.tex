@@ -93,8 +93,8 @@ Les variables libres d'un type sont l'ensemble des variables de types qui
 apparaissent dans celui-ci :
 
 \begin{align*}
-\tFV{a}   =~& ∅    & \textrm{si $a$ est une variable}  \\
-\tFV{c}   =~& ∅    & \textrm{si $c$ est une constante} \\
+\tFV{a}   =~& \{a\} & \textrm{si $a$ est une variable}  \\
+\tFV{c}   =~& ∅     & \textrm{si $c$ est une constante} \\
 \tFV{[τ]} =~& \tFV{τ} & \\
 \tFV{τ*}  =~& \tFV{τ} & \\
 \tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \bigcup_{i=1}^n \tFV{τ_i} ∪ \tFV{τ_r} \\
@@ -419,17 +419,13 @@ pointeur.
 
 \subsection{Fonctions}
 
-Pour typer une fonction, on commence par ajouter ses paramètres dans
-l'environnement de typage, et on type la définition de la fonction. Le type
-résultant est généralisé.
-
-\todo{Vérifier qu'il n'y a pas de problème entre polymorphisme et mutabilité}
-
-\todo{Notation vecteur}
+Pour typer une fonction, on commence par ajouter ses paramètres et ses variables
+locales dans l'environnement de typage, et on type la définition de la fonction.
+Le type résultant est généralisé.
 
 \[
 \irule{Fun}{
-  Γ' = Γ ⊕ \{ args(f) = \vec{τ} \} \\
+  Γ' = Γ ⊕ \{ args(f) = \vec{τ}, loc(f) = \vec{τ_v} \} \\
   Γ' ⊢ body(f) \\
   Γ' ⊢ !ret : τ_r
 }{
@@ -438,17 +434,6 @@ résultant est généralisé.
 \]
 
 \subsection{Instructions}
-
-Pour typer une déclaration, il suffit de rajouter la variable avec n'importe
-quel type dans l'environnement de typage.
-
-\begin{mathpar}
-\irule{Decl}{
-  Γ , x : τ ⊢ b
-}{
-  Γ ⊢ \npkDecl{x}{b}
-}
-\end{mathpar}
 
 Une affectation est bien typée si elle faite entre une left-value et une
 expression de même type.

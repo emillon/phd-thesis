@@ -6,7 +6,7 @@ P \gramisa & (\vec{f}, \vec{v}, b) & \textrm{Fonctions, globales, initialiseur}
 
 \gramlr{Fonctions}{
 \begin{align*}
-f \gramisa & (\vec{v}, b) & \textrm{Paramètres, corps}
+f \gramisa & (\vec{v_p}, \vec{v_l}, b) & \textrm{Paramètres, locales, corps}
 \end{align*}
 }
 
@@ -22,7 +22,6 @@ b  \gramisa & i ; b & \textrm{Séquence}
 i  \gramisa & lv \leftarrow e             & \textrm{Affectation}
 \\ \gramor  & lv \leftarrow funexp (args) & \textrm{Appel de fonction}
 \\ \gramor  & funexp (args)               & \textrm{Appel de procédure}
-\\ \gramor  & \npkDecl{nom}{b}            & \textrm{Déclaration}
 \\ \gramor  & \npkIf{e}{b}{b}             & \textrm{Alternative}
 \\ \gramor  & \npkDoWith{b}{label}        & \textrm{Nommage de bloc}
 \\ \gramor  & \npkGoto{label}             & \textrm{Saut en avant}
