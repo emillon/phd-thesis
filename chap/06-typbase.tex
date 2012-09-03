@@ -93,8 +93,8 @@ Les variables libres d'un type sont l'ensemble des variables de types qui
 apparaissent dans celui-ci :
 
 \begin{align*}
-\tFV{a}   =~& ∅    & \textrm{si $a$ est une variable}  \\
-\tFV{c}   =~& ∅    & \textrm{si $c$ est une constante} \\
+\tFV{a}   =~& \{a\} & \textrm{si $a$ est une variable}  \\
+\tFV{c}   =~& ∅     & \textrm{si $c$ est une constante} \\
 \tFV{[τ]} =~& \tFV{τ} & \\
 \tFV{τ*}  =~& \tFV{τ} & \\
 \tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \bigcup_{i=1}^n \tFV{τ_i} ∪ \tFV{τ_r} \\
