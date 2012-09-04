@@ -328,11 +328,11 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 
 \begin{mathpar}
 \irule{Op-Int}{
-  \textrm{op} ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
+  \opsymb ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1~\textrm{op}~e_2 : \tInt
+  Γ ⊢ e_1~\opsymb~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -340,11 +340,11 @@ De même sur \tFloat.
 
 \begin{mathpar}
 \irule{Op-Float}{
-  \textrm{op} ∈ \{+.,-.,\times.,/.\} \\
+  \opsymb ∈ \{+.,-.,\times.,/.\} \\
   Γ ⊢ e_1 : \tFloat \\
   Γ ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1~\textrm{op}~e_2 : \tFloat
+  Γ ⊢ e_1~\opsymb~e_2 : \tFloat
 }
 \end{mathpar}
 
@@ -363,12 +363,12 @@ alors un \tInt.
   {\textsc{Comparable}(τ*)}
 \and
 \irule{Op-Cmp}{
-  \textrm{op} ∈ \{=,≠,≤,≥,<,>\} \\
+  \opsymb ∈ \{=,≠,≤,≥,<,>\} \\
   Γ ⊢ e_1 : τ \\
   Γ ⊢ e_2 : τ \\
   \textsc{Comparable}(τ)
 }{
-  Γ ⊢ e_1~\textrm{op}~e_2 : \tInt
+  Γ ⊢ e_1~\opsymb~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -386,10 +386,10 @@ entiers.
 
 \begin{mathpar}
 \irule{Unop-Not}{
-  \textrm{op} ∈ \{ \sim, ! \} \\
+  \opsymb ∈ \{ \sim, ! \} \\
   Γ ⊢ e : \tInt
 }{
-  Γ ⊢ \textrm{op}~e : \tInt
+  Γ ⊢ \opsymb~e : \tInt
 }
 \end{mathpar}
 

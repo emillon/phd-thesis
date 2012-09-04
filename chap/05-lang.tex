@@ -309,7 +309,7 @@ et on récupère dans l'état mémoire à quelle valeur celle-ci correspond.
 
 En ce qui concerne les opérations (unaires ou binaires), on commence par évaluer
 les opérandes. Le résultat est l'opération "concrète" sur les valeurs, notée
-$\widehat{\textrm{op}}$. Par exemple, pour la construction syntaxique $+$, on
+$\widehat{\opsymb}$. Par exemple, pour la construction syntaxique $+$, on
 utilise l'addition sur les valeurs $\widehat{+}$ (c'est-à-dire l'addition
 usuelle).
 
@@ -317,14 +317,14 @@ usuelle).
 \irule{Eval-Unop}{
   Γ, σ ⊢ e ⇒ v
 }{
-  Γ, σ ⊢ \textrm{op}~e ⇒ \widehat{\textrm{op}}~v
+  Γ, σ ⊢ \opsymb~e ⇒ \widehat{\opsymb}~v
 }
 \and
 \irule{Eval-Binop}{
   Γ, σ ⊢ e_1 ⇒ v_1 \\
   Γ, σ ⊢ e_2 ⇒ v_2
 }{
-  Γ, σ ⊢ e_1~\textrm{op}~e_2 ⇒ v_1~\widehat{\textrm{op}}~v_2
+  Γ, σ ⊢ e_1~\opsymb~e_2 ⇒ v_1~\widehat{\opsymb}~v_2
 }
 \end{mathpar}
 
