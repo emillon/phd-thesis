@@ -1,7 +1,10 @@
 \newcommand{\irule}[3]{ \inferrule*[right=(#1)]{#2}{#3} }
+\def\iaxiom#1#2{\irule{#1}{ }{#2}}
 
 % Fix '::' -> ': :' when using babel
 \newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
+
+\def\opsymb{\diamond\xspace}
 
 \newcommand{\gramisa}[0]{::=~}
 \newcommand{\gramor}[0]{|\hspace{3mm}}

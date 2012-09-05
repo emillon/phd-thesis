@@ -51,7 +51,7 @@ Les différences principales avec C sont les suivantes :
   toutes les variables locales sont ``remontées'' en début de fonction.
 \end{itemize}
 
-\section{Sémantique}
+\section{Notations de logique}
 
 Dans cette section, nous définissons une sémantique pour ce langage impératif ;
 elle pourra servir à l'implantation d'un interpréteur et à raisonner de manière
@@ -72,7 +72,7 @@ la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
 Certaines règles n'ont pas de prémisse, ce sont des axiomes :
 
 \[
-\irule{Ax}{ }{A}
+\iaxiom{Ax}{A}
 \]
 
 Compte-tenu de la structure des règles, la preuve d'un jugement pourra donc être
@@ -82,24 +82,20 @@ vue sous la forme d'un arbre :
   \irule{r1}{
     \irule{r2}
           {
-            \irule{r3}
-              { }
-              {A_1}
+            \iaxiom{r3}{A_1}
               \\
-            \irule{r4}
-              { }
-              {A_2}
+            \iaxiom{r4}{A_2}
           }
           {B_1}
     \\
     \irule{r5}
       {
-        \irule{r6}
-          { }
-          {A_3}
-        }{B_2}
+        \iaxiom{r6} {A_3}
+      }{B_2}
       }{C}
 \]
+
+\section{Sémantique}
 
 La relation de transition est faite entre états de l'interpréteur, , constitués
 d'une part d'une continuation (section~\ref{sec:cont}, et d'autre part d'un
@@ -313,7 +309,7 @@ et on récupère dans l'état mémoire à quelle valeur celle-ci correspond.
 
 En ce qui concerne les opérations (unaires ou binaires), on commence par évaluer
 les opérandes. Le résultat est l'opération "concrète" sur les valeurs, notée
-$\widehat{\textrm{op}}$. Par exemple, pour la construction syntaxique $+$, on
+$\widehat{\opsymb}$. Par exemple, pour la construction syntaxique $+$, on
 utilise l'addition sur les valeurs $\widehat{+}$ (c'est-à-dire l'addition
 usuelle).
 
@@ -321,14 +317,14 @@ usuelle).
 \irule{Eval-Unop}{
   Γ, σ ⊢ e ⇒ v
 }{
-  Γ, σ ⊢ \textrm{op}~e ⇒ \widehat{\textrm{op}}~v
+  Γ, σ ⊢ \opsymb~e ⇒ \widehat{\opsymb}~v
 }
 \and
 \irule{Eval-Binop}{
   Γ, σ ⊢ e_1 ⇒ v_1 \\
   Γ, σ ⊢ e_2 ⇒ v_2
 }{
-  Γ, σ ⊢ e_1~\textrm{op}~e_2 ⇒ v_1~\widehat{\textrm{op}}~v_2
+  Γ, σ ⊢ e_1~\opsymb~e_2 ⇒ v_1~\widehat{\opsymb}~v_2
 }
 \end{mathpar}
 
@@ -360,12 +356,10 @@ Si $i$ est une séquence, on la décompose. De même, les blocs vides peuvent ê
 sautés :
 
 \begin{mathpar}
-  \irule{Instr-Seq}
-    { }
+  \iaxiom{Instr-Seq}
     {Γ ⊢ ((i_1 ; i_2) \cdot k, σ) → (i_1 \cdot (i_2 \cdot k), σ)}
   \and
-  \irule{Instr-Skip}
-    { }
+  \iaxiom{Instr-Skip}
     {Γ ⊢ (ε \cdot k, σ) → (k, σ)}
 \end{mathpar}
 
@@ -387,27 +381,24 @@ Réaliser une boucle infinie revient à d'abord exécuter le bloc puis à exécu
 nouveau la boucle :
 
 \begin{mathpar}
-\irule{Instr-While}
-{ }
-{ Γ ⊢ (\npkWhile{b} \cdot k, σ) → (b . \npkWhile{b} \cdot k, σ) }
+\iaxiom{Instr-While}
+  { Γ ⊢ (\npkWhile{b} \cdot k, σ) → (b . \npkWhile{b} \cdot k, σ) }
 \end{mathpar}
 
 La capture d'une sortie de bloc nommé consiste à remplacer la continuation en
 cours par une continuation \phxx{\kBlock}.
 
 \begin{mathpar}
-\irule{Instr-DoWith}
-{ }
-{ Γ ⊢ ((\npkDoWith{b}{lbl}) \cdot k, σ) → ( b \cdot \kBlock{lbl}{k}) }
+\iaxiom{Instr-DoWith}
+  { Γ ⊢ ((\npkDoWith{b}{lbl}) \cdot k, σ) → ( b \cdot \kBlock{lbl}{k}) }
 \end{mathpar}
 
 Pour le saut, deux cas sont à considérer. Dans le premier cas, on sort du bloc
 le plus interne ; dans l'autre, on sort d'un bloc qui n'est pas final.
 
 \begin{mathpar}
-\irule{Instr-Goto-Int}
-{ }
-{ Γ ⊢ ( \npkGoto{lbl} \cdot … \cdot \kBlock{lbl}{k}, σ) → (k, σ) }
+\iaxiom{Instr-Goto-Int}
+  { Γ ⊢ ( \npkGoto{lbl} \cdot … \cdot \kBlock{lbl}{k}, σ) → (k, σ) }
 \and
 \irule{Instr-Goto-Ext}
 { lbl ≠ lbl' }
@@ -598,7 +589,7 @@ l'instruction vide est toujours bien formée, et pour une séquence, il est
 bien formées sous le même ensemble d'étiquettes.
 
 \begin{mathpar}
-     \irule{WF-Pass}{ }{ L ‣ ε }
+     \iaxiom{WF-Pass}{ L ‣ ε }
 \and \irule{WF-Seq}{ L ‣ i \\ L ‣ b }{ L ‣ i;b }
 \end{mathpar}
 
@@ -606,9 +597,9 @@ Les instructions simples (ne contenant pas d'étiquette ou d'autre bloc) sont
 toujours bien formées.
 
 \begin{mathpar}
-     \irule{WF-Set}{ }{ L ‣ lv \leftarrow e}
-\and \irule{WF-Fcall}{ }{ L ‣ lv \leftarrow funexp (args)}
-\and \irule{WF-Return}{ }{ L ‣ \npkReturn{e}}
+     \iaxiom{WF-Set}{ L ‣ lv \leftarrow e}
+\and \iaxiom{WF-Fcall}{ L ‣ lv \leftarrow funexp (args)}
+\and \iaxiom{WF-Return}{ L ‣ \npkReturn{e}}
 \end{mathpar}
 
 Les instructions contenant d'autres blocs sont bien formées lorsque leurs
@@ -639,12 +630,12 @@ $\NORET{b}$) est plus simple : c'est la définition récursive des blocs, en
 omettant le cas de base \phx{\npkReturn}.
 
 \begin{mathpar}
-     \irule{NR-Pass}{ }{ \NORET{ε} }
+     \iaxiom{NR-Pass}{ \NORET{ε} }
 \and \irule{NR-Seq}{\NORET{i} \\ \NORET{b}}{ \NORET{i;b} }
-\and \irule{NR-Set}{ }{ \NORET{lv \leftarrow e}}
-\and \irule{NR-Fcall}{ }{lv \leftarrow funexp (args)}
+\and \iaxiom{NR-Set}{ \NORET{lv \leftarrow e}}
+\and \iaxiom{NR-Fcall}{lv \leftarrow funexp (args)}
 \and \irule{NR-While}{\NORET{b}}{\npkWhile{b}}
 \and \irule{NR-If}{ \NORET{b_t} \\ \NORET{b_f} }{\npkIf{e}{b_t}{b_f}}
 \and \irule{NR-DoWith}{ \NORET{b} }{\npkDoWith{b}{lbl}}
-\and \irule{NR-Goto}{ }{\npkGoto{lbl}}
+\and \iaxiom{NR-Goto}{\npkGoto{lbl}}
 \end{mathpar}
