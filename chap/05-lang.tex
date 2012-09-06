@@ -176,7 +176,7 @@ L'interpréteur défini ici manipule des valeurs :
 v  \gramisa  & n           & \textrm{Entier}
 \\ \gramor   & f           & \textrm{Flottant}
 \\ \gramor   & \cNil       & \textrm{Pointeur nul}
-\\ \gramor   & \&a         & \textrm{Pointeur sur l'adresse $a$}
+\\ \gramor   & a           & \textrm{Pointeur sur l'adresse $a$}
 \\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
 \\ \gramor   & \top        & \textrm{Valeur non initialisée}
 \end{align*}
@@ -261,7 +261,7 @@ adresse, c'est l'adresse effective du déréférencement.
 
 \begin{mathpar}
 \irule{Eval-Lv-Deref}{
-  Γ, σ ⊢ e ⇒ \&a
+  Γ, σ ⊢ e ⇒ a
 }{
   Γ, σ ⊢ *e ↝ a
 }
@@ -355,7 +355,7 @@ depuis l'état mémoire.
 \irule{Eval-AddrOf}{
   Γ, σ ⊢ lv ↝ a
 }{
-  Γ, σ ⊢ \&lv ⇒ \&a
+  Γ, σ ⊢ \&lv ⇒ a
 }
 \end{mathpar}
 
