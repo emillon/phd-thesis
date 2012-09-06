@@ -110,6 +110,19 @@ proche de la sémantique de CMinor décrite dans\cite{cminorSL}
   On note un tel pas $Γ ⊢ (k, σ) → (k', σ')$.
 \end{definition}
 
+\section{Modèle mémoire}
+
+La sémantique permet de définir formellement comment s'exécute un programme. En
+particulier, elle permet d'exprimer comment se comporte la mémoire d'un
+interpréteur.
+
+En pratique, la mémoire d'un ordinateur de type PC est similaire à un grand
+tableau d'octets (cf. chapitre~\ref{cha:os}). On pourrait alors poser
+$\textsc{Mem} = [0;2^{32} - 1] → [0;2^8 - 1]$ ; mais cette formalisation ne
+fait aucune hypothèse sur la représentation en mémoire des données. En pratique,
+les données sont regroupées en groupes de variables de tailles variées : un
+entier prendra par exemple 4 octets.
+
 \section{Continuations}
 \label{sec:cont}
 
