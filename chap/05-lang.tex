@@ -97,7 +97,7 @@ vue sous la forme d'un arbre :
 
 \section{Sémantique}
 
-La relation de transition est faite entre états de l'interpréteur, , constitués
+La relation de transition est faite entre états de l'interpréteur, constitués
 d'une part d'une continuation (section~\ref{sec:cont}, et d'autre part d'un
 l'état $σ$ de la mémoire (section~\ref{sec:sigma}). Cette présentation est
 proche de la sémantique de CMinor décrite dans\cite{cminorSL}
@@ -108,6 +108,63 @@ proche de la sémantique de CMinor décrite dans\cite{cminorSL}
   adresses aux variables du programme.
 
   On note un tel pas $Γ ⊢ (k, σ) → (k', σ')$.
+\end{definition}
+
+\section{État mémoire}
+\label{sec:sigma}
+
+La sémantique permet de définir formellement comment s'exécute un programme. En
+particulier, elle permet d'exprimer comment se comporte la mémoire d'un
+interpréteur.
+
+En pratique, la mémoire d'un ordinateur de type PC est similaire à un grand
+tableau d'octets (cf. chapitre~\ref{cha:os}). On pourrait alors poser
+$\textsc{Mem} = [0;2^{32} - 1] → [0;2^8 - 1]$ ; mais cette formalisation ne
+fait aucune hypothèse sur la représentation en mémoire des données. En pratique,
+les données sont regroupées en groupes de variables de tailles variées : si un
+entier prend 4 octets, un tableau de 100 entiers prendra 400 octets.
+
+Nous présentons deux représentations de la mémoire : une permettant de manipuler
+des valeurs de haut niveau, comme des entiers, des flottants et des pointeurs.
+La seconde quand à elle, consiste en des suites d'octets. Cette distinction
+permet de distinguer les opérations entre valeurs, et les opérations de
+stockage et de chargement.
+
+\subsection{Valeurs}
+
+\gramlr{Valeurs}{
+\begin{align*}
+v  \gramisa  & n           & \textrm{Entier}
+\\ \gramor   & f           & \textrm{Flottant}
+\\ \gramor   & \cNil       & \textrm{Pointeur nul}
+\\ \gramor   & a           & \textrm{Pointeur sur l'adresse $a$}
+\\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
+\\ \gramor   & \top        & \textrm{Valeur non initialisée}
+\end{align*}
+}
+
+
+On note l'ensemble de ces valeurs \sVal.
+
+\subsection{Stockage et chargement mémoire}
+
+Le stockage consiste en une fonction de conversion $\textrm{Inj} ∈ \sVal →
+\sByte^*$, où \sByte* désigne l'ensemble des mots (suites finies) de \sByte.
+
+Le chargement est une fonction $\textrm{Proj} ∈ \sByte^* → \powerset{\sVal}$.
+
+\begin{definition}[État mémoire]
+L'interpréteur possède une mémoire, indexée par un ensemble d'adresses noté
+\textsc{Addr}. Un état mémoire $σ$ est une fonction partielle de \textsc{Addr}
+vers \textsc{Val}.
+\end{definition}
+
+\todo{Il faut une opération genre fromBytes}
+
+\begin{definition}[Fonction de transition]
+La sémantique concrète que nous définissons ici est constituée de jugements
+logiques. Le jugement principal est une relation de transition $\rightarrow$
+entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow (l', σ')$.
 \end{definition}
 
 \section{Continuations}
@@ -152,38 +209,6 @@ k  \gramisa & \kPass                   & \textrm{Terminaison}
 Parmi celles-ci, il y a deux cas de base (de terminaison) : \kPass et
 \phx{\kRet}. Le premier servira à terminer le bloc d'initialisation et le
 second les corps de fonction.
-
-\section{État mémoire}
-\label{sec:sigma}
-
-L'interpréteur défini ici manipule des valeurs :
-
-\gramlr{Valeurs}{
-\begin{align*}
-v  \gramisa  & n           & \textrm{Entier}
-\\ \gramor   & f           & \textrm{Flottant}
-\\ \gramor   & \cNil       & \textrm{Pointeur nul}
-\\ \gramor   & \&a         & \textrm{Pointeur sur l'adresse $a$}
-\\ \gramor   & \&f         & \textrm{Pointeur sur la fonction $f$}
-\\ \gramor   & \top        & \textrm{Valeur non initialisée}
-\end{align*}
-}
-
-On note l'ensemble des valeurs \textsc{Val}.
-
-\begin{definition}[État mémoire]
-L'interpréteur possède une mémoire, indexée par un ensemble d'adresses noté
-\textsc{Addr}. Un état mémoire $σ$ est une fonction partielle de \textsc{Addr}
-vers \textsc{Val}.
-\end{definition}
-
-\todo{Il faut une opération genre fromBytes}
-
-\begin{definition}[Fonction de transition]
-La sémantique concrète que nous définissons ici est constituée de jugements
-logiques. Le jugement principal est une relation de transition $\rightarrow$
-entre états de l'interpréteur : il sera donc noté $Γ ⊢ (l, σ) \rightarrow (l', σ')$.
-\end{definition}
 
 \section{Interprétation}
 
@@ -248,7 +273,7 @@ adresse, c'est l'adresse effective du déréférencement.
 
 \begin{mathpar}
 \irule{Eval-Lv-Deref}{
-  Γ, σ ⊢ e ⇒ \&a
+  Γ, σ ⊢ e ⇒ a
 }{
   Γ, σ ⊢ *e ↝ a
 }
@@ -342,7 +367,7 @@ depuis l'état mémoire.
 \irule{Eval-AddrOf}{
   Γ, σ ⊢ lv ↝ a
 }{
-  Γ, σ ⊢ \&lv ⇒ \&a
+  Γ, σ ⊢ \&lv ⇒ a
 }
 \end{mathpar}
 

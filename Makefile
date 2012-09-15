@@ -46,7 +46,7 @@ gentex: gen/travaux.pdf
 snapshot:
 	make distclean
 	git checkout pdf
-	git merge master
+	git merge --no-edit master
 	make distclean
 	make
 	git add gen/*

@@ -240,7 +240,7 @@ formes suivantes :
   $τ_i = τ_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
 \item
   $τ_i = τ_j$ avec $i \ne j$ : toutes les occurrences de $τ_j$ dans les autres
-  contraintes peuvent être remplacées par $τ_i$. \todo{occurs check peut etre?}
+  contraintes peuvent être remplacées par $τ_i$.
 \item
   $τ_i = x$ (ou $x = τ_i$) où $x$ est un type concret : idem.
 \end{itemize}
@@ -249,6 +249,8 @@ formes suivantes :
 
 Une fois toutes les substitutions effectuées, on obtient un arbre de typage
 correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
+
+\clearpage
 
 \begin{figure} % fig:unifpartage {{{
 
@@ -316,16 +318,25 @@ D'abord \ref{fig:unifpartage:a}, ensuite \ref{fig:unifpartage:b}, et enfin
 
 \insertcode{lambda-types.ml}
 
-\wip{}
-
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
-Le programme C suivant :
+\begin{figure} % fig:exunif {{{
 
-\insertcode{ex-unif-c.c}
+  \insertcode{ex-unif-c.c}
 
-est compilé ainsi en Tyspeak :
+  \caption{Compilation d'un programme C - avant}
+  \label{fig:exunif:c}
+\end{figure}
 
-\insertcode{ex-unif-tpk.ml}
+\begin{figure}
+
+  \insertcode{ex-unif-tpk.ml}
+
+  \caption{Compilation d'un programme C - après}
+  \label{fig:exunif:tpk}
+\end{figure} % }}}
+
+Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
+(figure~\ref{fig:exunif:tpk}).
 
 % vim: spelllang=fr
