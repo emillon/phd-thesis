@@ -445,7 +445,9 @@ t2 : Var_type -> Instanciated -> Ptr
 \end{Verbatim}
 
 L'essence de l'algorithme d'inférence se situe donc dans 2 fonctions. D'une
-part, `typeof`
+part, \texttt{unify} qui réalise l'unification des types grâce à au partage des
+références. D'autre part, la \texttt{typeof} qui encode les règles de typage
+elles-mêmes et les applique à l'aide de \texttt{unify}.
 
 \clearpage
 
