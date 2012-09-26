@@ -412,7 +412,7 @@ représentations des types afin de les rendre égales. L'implantation de
 la référence dans t2 vers t1.
 
 \begin{Verbatim}
-t1 : Var_type -> Unknown 0
+t1 : Var_type -> ref -> Unknown 0
         ^
         |
         +-------------------------+
@@ -436,7 +436,7 @@ l'unification doit se faire entre t1 et \texttt{Const\_type Int\_type} : cela
 mute la référence derrière t1.
 
 \begin{Verbatim}
-t1 : Var_type -> Instanciated -> Const_type -> Int_type
+t1 : Var_type -> ref -> Instanciated -> Const_type -> Int_type
         ^
         |
         +-------------------------+
@@ -457,9 +457,42 @@ Celle-ci prend en entrée deux types $t_1$ et $t_2$. À l'issue de l'exécution 
 \texttt{unify}, ces deux types doivent pouvoir être considérés comme égaux. Si
 ce n'est pas possible, une erreur sera levée.
 
+La première étape est de réduire ces deux types, c'est à dire à transformer les
+constructions \texttt{Var (ref (Instanciated t))} en \texttt{t}.
 
+Ensuite, cela dépend des formes qu'ont les types réduits :
 
+\begin{itemize}
 
+\item si les deux types sont inconnus (de la forme \texttt{Var (ref
+(Instanciated t))}), on fait pointer l'une des deux références vers le premier
+type. Notons que cela créé un type de la forme \texttt{Var (ref (Instanciated
+(Var (ref (Unknown n)))))} qui sera réduit lors d'une prochaine étape
+d'unification.
+
+\item si un type est inconnu et pas l'autre, il faut de la même manière affecter la
+référence. Mais en faisant ça inconditionnellement, cela peut poser problème :
+par exemple en tentant d'unifier \texttt{a} avec \texttt{Ptr(a)} on pourrait
+créer un cycle dans le graphe :
+
+\begin{Verbatim}
+Ptr -> Var -> ref -> Instanciated
+ ^                         |
+ +-------------------------+
+\end{Verbatim}
+
+Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
+pas présent dans le type à affecter.
+
+\item si les deux types sont des types de base (comme \tInt ou \tFloat), on ne
+fait rien s'ils sont égaux ; l'algorithme échoue sinon.
+
+\item si les deux types sont des constructeurs de type, il faut que les
+constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
+
+\item TODO sous typage pour les structures
+
+\end{itemize}
 
 
 TODO :
