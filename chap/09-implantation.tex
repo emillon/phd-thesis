@@ -449,6 +449,19 @@ part, \texttt{unify} qui réalise l'unification des types grâce à au partage d
 références. D'autre part, la \texttt{typeof} qui encode les règles de typage
 elles-mêmes et les applique à l'aide de \texttt{unify}.
 
+\subsection{Algorithme d'unification}
+
+Voici une implantation de la fonction \texttt{unify}.
+
+Celle-ci prend en entrée deux types $t_1$ et $t_2$. À l'issue de l'exécution de
+\texttt{unify}, ces deux types doivent pouvoir être considérés comme égaux. Si
+ce n'est pas possible, une erreur sera levée.
+
+
+
+
+
+
 TODO :
 
 \begin{itemize}
