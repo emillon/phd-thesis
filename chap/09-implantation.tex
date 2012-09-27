@@ -328,11 +328,7 @@ Prenons l'exemple de la figure~\ref{fig:exunif:c} et typons-le "à la main". On
 commence par oublier toutes les étiquettes de type présentes dans le programme.
 Celui-ci devient alors :
 
-\begin{Verbatim}
-var x, p;
-p = &x;
-x = 0;
-\end{Verbatim}
+\insertcode{exunif-code.c}
 
 La premiere ligne introduit deux variables. On peut noter leurs types respectifs
 (inconnus pour le moment) $t_1$ et $t_2$. La première affectation \texttt{p =
@@ -352,54 +348,24 @@ constructeur Var permet d'exprimer les variables de types (inconnues ou non).
 Celles-ci sont numérotées par un int, on suppose avoir à disposition deux
 fonctions manipulant un compteur global d'inconnues.
 
-\begin{Verbatim}
-module Counter : sig
-  val reset_unknowns : unit -> unit
-  val new_unknown : unit -> int
-end
-\end{Verbatim}
+\insertcode{exunif-counter.ml}
 
 De plus, on a un module gérant les environnements de typage. Il pourra être
 implanté avec des listes d'association ou des tables de hachage, par exemple. Sa
 signature est :
 
-\begin{Verbatim}
-module Env : sig
-  type t
-
-  (* Construction *)
-  val empty : t
-  val extend : ml_ident -> ml_type -> t -> t
-
-  (* Interrogation *)
-  val get : ml_ident -> t -> ml_type option
-end
-\end{Verbatim}
+\insertcode{exunif-env.ml}
 
 Reprenons l'exemple précédent. Partant d'un environnement vide (Env.empty), on
 commence par l'étendre de deux variables. Comme on n'a aucune information, il
 fait allouer des nouveaux noms d'inconnues (qui correspondent à $t_1$ et $t_2$):
 
-\begin{Verbatim}
-let t1 = Var_type (Unknown (new_unknown ())) in
-let t2 = Var_type (Unknown (new_unknown ())) in
-let env =
-  Env.extend "p" t2
-    (Env.extend "x" t1
-      Env.empty
-    ) in
-\end{Verbatim}
+\insertcode{exunif-1.ml}
 
 La première instruction indique que les deux côtés de l'affectation doivent
 avoir le même type.
 
-\begin{Verbatim}
-let lhs1 = Lv_var "p"
-and rhs1 = AddrOf (Exp_var "x") in
-let t_lhs1 = typeof lhs1 env
-and t_rhs1 = typeof rhs1 env in
-unify t_lhs1 t_rhs1;
-\end{Verbatim}
+\insertcode{exunif-2.ml}
 
 \begin{figure}
   \centering
@@ -444,13 +410,7 @@ la référence dans t2 vers t1 (figure~\ref{fig:unifsharing}).
 
 Enfin, la seconde affectation se déroule à peu près de la même manière.
 
-\begin{Verbatim}
-let lhs2 = Lv_deref (Lv_var "p")
-and rhs2 = Exp_int 0 in
-let t_lhs2 = typeof lhs2 env
-and t_rhs2 = typeof rhs2 env in
-unify t_lhs2 t_rhs2;
-\end{Verbatim}
+\insertcode{exunif-3.ml}
 
 Ici \texttt{typeof lhs2 env} est identique à \texttt{Ptr\_type (Env.get "p"
 env)} et \texttt{typeof lhs2 env} à \texttt{Const\_type Int\_type}. Et dans cas,
