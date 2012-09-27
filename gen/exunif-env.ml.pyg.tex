@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{module} \PY{n+nc}{Env} \PY{o}{:} \PY{k}{sig}
+  \PY{k}{type} \PY{n}{t}
+
+  \PY{c}{(*}\PY{c}{ Construction }\PY{c}{*)}
+  \PY{k}{val} \PY{n}{empty} \PY{o}{:} \PY{n}{t}
+  \PY{k}{val} \PY{n}{extend} \PY{o}{:} \PY{n}{ml\PYZus{}ident} \PY{o}{-\PYZgt{}} \PY{n}{ml\PYZus{}type} \PY{o}{-\PYZgt{}} \PY{n}{t} \PY{o}{-\PYZgt{}} \PY{n}{t}
+
+  \PY{c}{(*}\PY{c}{ Interrogation }\PY{c}{*)}
+  \PY{k}{val} \PY{n}{get} \PY{o}{:} \PY{n}{ml\PYZus{}ident} \PY{o}{-\PYZgt{}} \PY{n}{t} \PY{o}{-\PYZgt{}} \PY{n}{ml\PYZus{}type} \PY{n}{option}
+\PY{k}{end}
+\end{Verbatim}

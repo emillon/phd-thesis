@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{let} \PY{n}{lhs2} \PY{o}{=} \PY{n+nc}{Lv\PYZus{}deref} \PY{o}{(}\PY{n+nc}{Lv\PYZus{}var} \PY{l+s+s2}{"}\PY{l+s+s2}{p}\PY{l+s+s2}{"}\PY{o}{)}
+\PY{o+ow}{and} \PY{n}{rhs2} \PY{o}{=} \PY{n+nc}{Exp\PYZus{}int} \PY{l+m+mi}{0} \PY{k}{in}
+\PY{k}{let} \PY{n}{t\PYZus{}lhs2} \PY{o}{=} \PY{n}{typeof} \PY{n}{lhs2} \PY{n}{env}
+\PY{o+ow}{and} \PY{n}{t\PYZus{}rhs2} \PY{o}{=} \PY{n}{typeof} \PY{n}{rhs2} \PY{n}{env} \PY{k}{in}
+\PY{n}{unify} \PY{n}{t\PYZus{}lhs2} \PY{n}{t\PYZus{}rhs2}\PY{o}{;}
+\end{Verbatim}
