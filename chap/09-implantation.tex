@@ -401,6 +401,37 @@ and t_rhs1 = typeof rhs1 env in
 unify t_lhs1 t_rhs1;
 \end{Verbatim}
 
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    [scale=2.3]
+
+    \node at (0,  0) (n0a) {t1:};
+    \node at (0, -1) (n0b) {t2:};
+
+    \node at (1,  0) (n1a) {Var\_type};
+    \node at (2,  0) (n2a) {ref};
+    \node at (3,  0) (n3a) {Unknown 0};
+
+    \node at (1, -1) (n1b) {Var\_type};
+    \node at (2, -1) (n2b) {ref};
+    \node at (3, -1) (n3b) {Instanciated};
+    \node at (4, -1) (n4b) {Ptr};
+
+    \draw [->] (n1a) -- (n2a);
+    \draw [->] (n2a) -- (n3a);
+
+    \draw [->] (n1b) -- (n2b);
+    \draw [->] (n2b) -- (n3b);
+    \draw [->] (n3b) -- (n4b);
+
+    \draw [->] (n4b) -- ++ (0, 0.5) -| (n1a);
+
+  \end{tikzpicture}
+  \caption{Unification : partage}
+  \label{fig:unifsharing}
+\end{figure}
+
 Ici il se passe plusieurs choses intéréssantes. D'une part nous faisont appel à
 une fonction externe typeof qui retourne le type d'une expression sous un
 environnement (dans une implantation complète il s'agirait d'un appel récursif).
@@ -409,16 +440,7 @@ et \texttt{typeof rhs1 env} à \texttt{Ptr\_type t1}. L'autre aspect intéressan
 est la dernière ligne : la fonction \texttt{unify} va modifier en place les
 représentations des types afin de les rendre égales. L'implantation de
 \texttt{unify} sera décrite plus tard. Dans ce cas précis, elle va faire pointer
-la référence dans t2 vers t1.
-
-\begin{Verbatim}
-t1 : Var_type -> ref -> Unknown 0
-        ^
-        |
-        +-------------------------+
-                                  |
-t2 : Var_type -> Instanciated -> Ptr
-\end{Verbatim}
+la référence dans t2 vers t1 (figure~\ref{fig:unifsharing}).
 
 Enfin, la seconde affectation se déroule à peu près de la même manière.
 
@@ -433,16 +455,41 @@ unify t_lhs2 t_rhs2;
 Ici \texttt{typeof lhs2 env} est identique à \texttt{Ptr\_type (Env.get "p"
 env)} et \texttt{typeof lhs2 env} à \texttt{Const\_type Int\_type}. Et dans cas,
 l'unification doit se faire entre t1 et \texttt{Const\_type Int\_type} : cela
-mute la référence derrière t1.
+mute la référence derrière t1 (figure~\ref{fig:typeunifref}).
 
-\begin{Verbatim}
-t1 : Var_type -> ref -> Instanciated -> Const_type -> Int_type
-        ^
-        |
-        +-------------------------+
-                                  |
-t2 : Var_type -> Instanciated -> Ptr
-\end{Verbatim}
+\begin{figure}
+  \begin{tikzpicture}
+    [scale=2.3]
+
+    \node at (0,  0) (n0a) {t1:};
+    \node at (0, -1) (n0b) {t2:};
+
+    \node at (1,  0) (n1a) {Var\_type};
+    \node at (2,  0) (n2a) {ref};
+    \node at (3,  0) (n3a) {Instanciated};
+    \node at (4,  0) (n4a) {Const\_type};
+    \node at (5,  0) (n5a) {Int\_type};
+
+    \node at (1, -1) (n1b) {Var\_type};
+    \node at (2, -1) (n2b) {ref};
+    \node at (3, -1) (n3b) {Instanciated};
+    \node at (4, -1) (n4b) {Ptr};
+
+    \draw [->] (n1a) -- (n2a);
+    \draw [->] (n2a) -- (n3a);
+    \draw [->] (n3a) -- (n4a);
+    \draw [->] (n4a) -- (n5a);
+
+    \draw [->] (n1b) -- (n2b);
+    \draw [->] (n2b) -- (n3b);
+    \draw [->] (n3b) -- (n4b);
+
+    \draw [->] (n4b) -- ++ (0, 0.5) -| (n1a);
+
+  \end{tikzpicture}
+  \caption{Unification par mutation de références}
+  \label{fig:typeunifref}
+\end{figure}
 
 L'essence de l'algorithme d'inférence se situe donc dans 2 fonctions. D'une
 part, \texttt{unify} qui réalise l'unification des types grâce à au partage des
@@ -462,6 +509,29 @@ constructions \texttt{Var (ref (Instanciated t))} en \texttt{t}.
 
 Ensuite, cela dépend des formes qu'ont les types réduits :
 
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    [every node/.style={node distance=2cm}
+    ,>=latex
+    ]
+
+    \node (n1) {Ptr};
+    \node[right of=n1] (n2) {Var};
+    \node[right of=n2] (n3) {ref};
+    \node[right of=n3] (n4) {Instanciated};
+
+    \draw [->] (n1) -- (n2);
+    \draw [->] (n2) -- (n3);
+    \draw [->] (n3) -- (n4);
+
+    \draw [->] (n4) -- ++ (0, -1cm) -| (n1);
+
+  \end{tikzpicture}
+  \caption{Cycle dans le graphe de types}
+  \label{fig:typecycle}
+\end{figure}
+
 \begin{itemize}
 
 \item si les deux types sont inconnus (de la forme \texttt{Var (ref
@@ -473,14 +543,7 @@ d'unification.
 \item si un type est inconnu et pas l'autre, il faut de la même manière affecter la
 référence. Mais en faisant ça inconditionnellement, cela peut poser problème :
 par exemple en tentant d'unifier \texttt{a} avec \texttt{Ptr(a)} on pourrait
-créer un cycle dans le graphe :
-
-\begin{Verbatim}
-Ptr -> Var -> ref -> Instanciated
- ^                         |
- +-------------------------+
-\end{Verbatim}
-
+créer un cycle dans le graphe (figure~\ref{fig:typecycle}).
 Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
 pas présent dans le type à affecter.
 
