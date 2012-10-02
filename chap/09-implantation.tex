@@ -507,11 +507,13 @@ créer un cycle dans le graphe (figure~\ref{fig:typecycle}).
 Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
 pas présent dans le type à affecter.
 
-\item si les deux types sont des types de base (comme \tInt ou \tFloat), on ne
-fait rien s'ils sont égaux ; l'algorithme échoue sinon.
+\item si les deux types sont des types de base (comme \tInt ou \tFloat) égaux,
+on ne fait rien.
 
 \item si les deux types sont des constructeurs de type, il faut que les
 constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
+
+\item dans les autres cas, l'algorithme échoue.
 
 \item TODO sous typage pour les structures
 
