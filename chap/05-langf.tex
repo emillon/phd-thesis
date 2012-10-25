@@ -41,16 +41,16 @@ Cas var :
 
 \[
   \irule{Exp-Var}
-  {(x, c) ∈ m}
-  {(m, x) → (m, c)}
+  {(x, v) ∈ m}
+  {(m, x) → (m, v)}
 \]
 
 Cas op :
 
 \[
   \irule{Exp-UnOp}
-  {(m, e) → (m', c) \\ c' = \widehat{\opsymb}~c}
-  {(m, \opsymb~e) → (m', c') }
+  {(m, e) → (m', v) \\ v' = \widehat{\opsymb}~v}
+  {(m, \opsymb~e) → (m', v') }
 \]
 
 À chaque opérateur $\opsymb$, correspond un opérateur sémantique
@@ -59,12 +59,12 @@ $\widehat{+}$ est l'addition classique entre entiers.
 
 \[
   \irule{Exp-BinOp}
-  {(m, e_1) → (m', c_1) \\
-   (m', e_2) → (m'', c_2) \\
-   c' = c_1~\widehat{\opsymb}~c_2
+  {(m, e_1) → (m', v_1) \\
+   (m', e_2) → (m'', v_2) \\
+   v' = v_1~\widehat{\opsymb}~v_2
   }
   {
-    (m, e_1~\opsymb~e_2) → (m'', c')
+    (m, e_1~\opsymb~e_2) → (m'', v')
   }
 \]
 
@@ -106,8 +106,6 @@ Instructions
 \]
 
 \begin{itemize}
-\item
-  split de cst / val
 \item
   ajout des adresses
 \item
