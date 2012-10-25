@@ -1,0 +1,80 @@
+On définit ici un langage impératif.
+
+\begin{Verbatim}
+cst ::= int
+        float
+
+exp ::= cst
+        var
+        op exp
+        exp op exp
+        addrOf var
+        fun (exp1, ..., expn)
+\end{Verbatim}
+
+\begin{Verbatim}
+instr ::= pass
+          instr;instr
+          var <- exp
+          if (exp) then instr else instr
+          while(exp) { instr }
+\end{Verbatim}
+
+états de l'interpréteur d'exp :
+
+(m, e)
+
+et réduction de l'exp (fin en int ou float).
+
+\begin{Verbatim}
+m ::= empty
+      var -> cst ; m
+\end{Verbatim}
+
+Réduction :
+
+(m, e) -> (m', e')
+
+Cas cst terminal.
+
+Cas var :
+
+\[
+  \irule{Exp-Var}
+  {(x, c) ∈ m}
+  {(m, x) → (m, c)}
+\]
+
+Cas op :
+
+\[
+  \irule{Exp-UnOp}
+  {(m, e) → (m', c) \\ c' = \widehat{\opsymb}~c}
+  {(m, \opsymb~e) → (m', c') }
+\]
+
+À chaque opérateur $\opsymb$, correspond un opérateur sémantique
+$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
+$\widehat{+}$ est l'addition classique entre entiers.
+
+\[
+  \irule{Exp-BinOp}
+  {(m, e_1) → (m', c_1) \\
+   (m', e_2) → (m'', c_2) \\
+   c' = c_1~\widehat{\opsymb}~c_2
+  }
+  {
+    (m, e_1~\opsymb~e_2) → (m'', c')
+  }
+\]
+
+\begin{itemize}
+\item
+  split de cst / val
+\item
+  ajout des adresses
+\item
+  declaration
+\item
+  champs de records
+\end{itemize}
