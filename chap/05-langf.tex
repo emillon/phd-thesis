@@ -78,13 +78,13 @@ programme.
   \gramlr{Pile}{
     \begin{align*}
       s \gramisa & []                                   & \textrm{Pile vide}
-      \\ \gramor & \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \} :: s & \textrm{Ajout d'un cadre}
+      \\ \gramor & \{ x_1 ; … ; x_n \} :: s & \textrm{Ajout d'un cadre}
     \end{align*}
   }
 
   \gramlr{État mémoire}{
     \begin{align*}
-      m \gramisa & (s, \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}) & \textrm{Pile, globales}
+      m \gramisa & (s, \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\}) & \textrm{Pile, globales, valeurs}
     \end{align*}
   }
 
@@ -101,13 +101,33 @@ qu'aux variables globales :
   $s$ ou (si elle existe) dans la tête de pile de $s$.
 \end{definition}
 
-\[
-  (x, v) ∈ m
-\]
 
-\[
-  m[x ↦ v]
-\]
+\begin{definition}[Recherche de variable]
+
+  \[
+    \textrm{VarLookup} (x, (s, g)) =
+      \begin{cases}
+        x      & \mbox{si } x ∈ g \\
+      (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
+                 \mbox{ avec } x ∈ f \\
+      (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
+                 \mbox{ avec } \textrm{VarLookup} (x, (s, g, e)) = (n, x)
+      \end{cases}
+  \]
+
+\end{definition}
+
+\begin{definition}[Manipulations des états mémoire]
+
+  On note $(a, v) ∈ m$ si blabla.
+
+  Par extension, $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a = \textrm{VarLookup}(x, m)$.
+
+  On note $m[a ↦ v]$ le blabla.
+
+  On étend de même cette notation pour $m[x ↦ v]$.
+\end{definition}
+
 
 \begin{definition}[Manipulations de pile]
 
@@ -122,21 +142,6 @@ qu'aux variables globales :
   \]
 
   + extension aux $m$.
-
-\end{definition}
-
-\begin{definition}[Recherche de variable]
-
-  \[
-    \textrm{VarLookup} (x, (s, g)) =
-      \begin{cases}
-        x      & \mbox{si } x ∈ g \\
-      (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
-                 \mbox{ avec } x ∈ f \\
-      (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
-                 \mbox{ avec } \textrm{VarLookup} (x, (s, g)) = (n, x)
-      \end{cases}
-  \]
 
 \end{definition}
 
