@@ -24,6 +24,23 @@ instr ::= pass
 
 (m, e)
 
+m supporte :
+
+\[
+  (x, v) ∈ m
+\]
+
+\[
+  m[x ↦ v]
+\]
+
+Stack frames :
+
+\begin{Verbatim}
+s :: { x_1 |-> v_1 ; ... ; x_n |-> v_n } :: s
+     []
+\end{Verbatim}
+
 et réduction de l'exp (fin en int ou float).
 
 \begin{Verbatim}
@@ -77,6 +94,8 @@ On définit l'extension des stackframes
 \[
   \mathrm{Pop}(f~::~s) = s
 \]
+
+et extension aux m
 
 \[
   \irule{Call}
