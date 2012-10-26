@@ -18,6 +18,7 @@ On définit ici un langage impératif.
       \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
       \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
       \\ \gramor & \& x            & \textrm{Pointeur}
+      \\ \gramor & * e             & \textrm{Déréférencement}
       \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
     \end{align*}
   }
@@ -155,10 +156,24 @@ $\widehat{+}$ est l'addition classique entre entiers.
   }
 \end{mathpar}
 
+Adresse :
+
 \begin{mathpar}
   \irule{Exp-AddrOf}
     {a = \textrm{VarLookup} (x, m)}
     {(m, \&x) → (m, a)}
+\end{mathpar}
+
+Déréférencement :
+
+\begin{mathpar}
+  \irule{Exp-AddrOf}
+    { (m, e) → (m', a) \\
+      (a, v) ∈ m'
+    }
+    {
+      (m, *e) → (m', v)
+    }
 \end{mathpar}
 
 Appel de fonction :
