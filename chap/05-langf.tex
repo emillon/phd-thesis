@@ -164,8 +164,8 @@ Cas op :
 
 \begin{mathpar}
   \irule{Exp-UnOp}
-  {(m, e) → (m', v) \\ v' = \widehat{\opsymb}~v}
-  {(m, \opsymb~e) → (m', v') }
+  {(m, e) → (m', v)}
+  {(m, \opsymb~e) → (m', \widehat{\opsymb}~v)}
 \end{mathpar}
 
 À chaque opérateur $\opsymb$, correspond un opérateur sémantique
@@ -175,12 +175,9 @@ $\widehat{+}$ est l'addition classique entre entiers.
 \begin{mathpar}
   \irule{Exp-BinOp}
   {(m, e_1) → (m', v_1) \\
-   (m', e_2) → (m'', v_2) \\
-   v' = v_1~\widehat{\opsymb}~v_2
+   (m', e_2) → (m'', v_2)
   }
-  {
-    (m, e_1~\opsymb~e_2) → (m'', v')
-  }
+  {(m, e_1~\opsymb~e_2) → (m'', v_1~\widehat{\opsymb}~v_2)}
 \end{mathpar}
 
 Adresse :
