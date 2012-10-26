@@ -1,30 +1,82 @@
 On définit ici un langage impératif.
 
-\begin{Verbatim}
-cst ::= int
-        float
+\section{Syntaxe}
 
-exp ::= cst
-        var
-        op exp
-        exp op exp
-        addrOf var
-        fun (exp1, ..., expn)
-\end{Verbatim}
+\begin{figure}
 
-\begin{Verbatim}
-instr ::= pass
-          instr;instr
-          var <- exp
-          if (exp) then instr else instr
-          while(exp) { instr }
-\end{Verbatim}
+  \gramlr{Constantes}{
+    \begin{align*}
+      c \gramisa & i & \textrm{Entier}
+      \\ \gramor & f & \textrm{Flottant}
+    \end{align*}
+  }
 
-états de l'interpréteur d'exp :
+  \gramlr{Expressions}{
+    \begin{align*}
+      e \gramisa & c               & \textrm{Constante}
+      \\ \gramor & x               & \textrm{Variable}
+      \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
+      \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
+      \\ \gramor & \& x            & \textrm{Pointeur}
+      \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
+    \end{align*}
+  }
 
-(m, e)
+  \gramlr{Instructions}{
+    \begin{align*}
+      i \gramisa & \iPass        & \textrm{Instruction vide}
+      \\ \gramor & i;i           & \textrm{Séquence}
+      \\ \gramor & x ← e         & \textrm{Affectation}
+      \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
+      \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
+      \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
+    \end{align*}
+  }
 
-m supporte :
+  \gramlr{Fonctions}{
+    \begin{align*}
+      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps et arguments}
+    \end{align*}
+  }
+
+  \caption{Syntaxe}
+  \label{fig:stx}
+\end{figure}
+
+\section{État mémoire}
+
+\begin{figure}
+
+  \gramlr{Valeurs}{
+    \begin{align*}
+      v \gramisa & c & \textrm{Constante}
+      \\ \gramor & a & \textrm{Adresse}
+    \end{align*}
+  }
+
+  \gramlr{Adresses}{
+    \begin{align*}
+      a \gramisa & (n, x) & \textrm{Variable locale}
+      \\ \gramor & x      & \textrm{Variable globale}
+    \end{align*}
+  }
+
+  \gramlr{Pile}{
+    \begin{align*}
+      s \gramisa & []                                   & \textrm{Pile vide}
+      \\ \gramor & \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \} :: s & \textrm{Ajout d'un cadre}
+    \end{align*}
+  }
+
+  \gramlr{État mémoire}{
+    \begin{align*}
+      m \gramisa (s, \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}) & \textrm{Pile, globales}
+    \end{align*}
+  }
+
+  \caption{Interpréteur}
+  \label{fig:interp}
+\end{figure}
 
 \[
   (x, v) ∈ m
@@ -34,58 +86,6 @@ m supporte :
   m[x ↦ v]
 \]
 
-Stack frames :
-
-\begin{Verbatim}
-s :: { x_1 |-> v_1 ; ... ; x_n |-> v_n } :: s
-     []
-\end{Verbatim}
-
-et réduction de l'exp (fin en int ou float).
-
-\begin{Verbatim}
-m ::= empty
-      var -> cst ; m
-\end{Verbatim}
-
-Réduction :
-
-(m, e) -> (m', e')
-
-Cas cst terminal.
-
-Cas var :
-
-\[
-  \irule{Exp-Var}
-  {(x, v) ∈ m}
-  {(m, x) → (m, v)}
-\]
-
-Cas op :
-
-\[
-  \irule{Exp-UnOp}
-  {(m, e) → (m', v) \\ v' = \widehat{\opsymb}~v}
-  {(m, \opsymb~e) → (m', v') }
-\]
-
-À chaque opérateur $\opsymb$, correspond un opérateur sémantique
-$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
-$\widehat{+}$ est l'addition classique entre entiers.
-
-\[
-  \irule{Exp-BinOp}
-  {(m, e_1) → (m', v_1) \\
-   (m', e_2) → (m'', v_2) \\
-   v' = v_1~\widehat{\opsymb}~v_2
-  }
-  {
-    (m, e_1~\opsymb~e_2) → (m'', v')
-  }
-\]
-
-On définit l'extension des stackframes
 
 \[
   \mathrm{Push}(s, (x_1, v_1), …, (x_n, v_n)) = \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}~::~s
@@ -95,7 +95,73 @@ On définit l'extension des stackframes
   \mathrm{Pop}(f~::~s) = s
 \]
 
-et extension aux m
++ extension aux $m$.
+
+\[
+  \textrm{VarLookup} (x, (s, g)) =
+  \left\{
+    \begin{array}{ll}
+      x      & \mbox{si } x ∈ g \\
+    (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
+               \mbox{ avec } x ∈ f \\
+    (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
+               \mbox{ avec } \textrm{VarLookup} (x, (s, g)) = (n, x)
+    \end{array}
+  \right.
+\]
+
+\section{Expressions}
+
+Réduction (grand pas) :
+
+(m, e) -> (m', v)
+
+Constante :
+
+\begin{mathpar}
+  \irule{Exp-Cst}
+    { }
+    {(m, c) → (m, c)}
+\end{mathpar}
+
+Cas variable :
+
+\begin{mathpar}
+  \irule{Exp-Var}
+  {(x, v) ∈ m}
+  {(m, x) → (m, v)}
+\end{mathpar}
+
+Cas op :
+
+\begin{mathpar}
+  \irule{Exp-UnOp}
+  {(m, e) → (m', v) \\ v' = \widehat{\opsymb}~v}
+  {(m, \opsymb~e) → (m', v') }
+\end{mathpar}
+
+À chaque opérateur $\opsymb$, correspond un opérateur sémantique
+$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
+$\widehat{+}$ est l'addition classique entre entiers.
+
+\begin{mathpar}
+  \irule{Exp-BinOp}
+  {(m, e_1) → (m', v_1) \\
+   (m', e_2) → (m'', v_2) \\
+   v' = v_1~\widehat{\opsymb}~v_2
+  }
+  {
+    (m, e_1~\opsymb~e_2) → (m'', v')
+  }
+\end{mathpar}
+
+\begin{mathpar}
+  \irule{Exp-AddrOf}
+    {a = \textrm{VarLookup} (x, m)}
+    {(m, \&x) → (m, a)}
+\end{mathpar}
+
+Appel de fonction :
 
 \[
   \irule{Call}
@@ -111,7 +177,7 @@ et extension aux m
   {(m, f(e_1, …, e_n)) → (m''', v)}
 \]
 
-Instructions
+\section{Instructions}
 
 (attention au pas)
 
