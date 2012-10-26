@@ -71,7 +71,7 @@ On définit ici un langage impératif.
 
   \gramlr{État mémoire}{
     \begin{align*}
-      m \gramisa (s, \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}) & \textrm{Pile, globales}
+      m \gramisa & (s, \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}) & \textrm{Pile, globales}
     \end{align*}
   }
 
@@ -98,31 +98,35 @@ On définit ici un langage impératif.
 
 + extension aux $m$.
 
-\[
-  \textrm{VarLookup} (x, (s, g)) =
-  \left\{
-    \begin{array}{ll}
-      x      & \mbox{si } x ∈ g \\
-    (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
-               \mbox{ avec } x ∈ f \\
-    (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
-               \mbox{ avec } \textrm{VarLookup} (x, (s, g)) = (n, x)
-    \end{array}
-  \right.
-\]
+\begin{definition}{Recherche de variable}
+
+  \[
+    \textrm{VarLookup} (x, (s, g)) =
+      \begin{cases}
+        x      & \mbox{si } x ∈ g \\
+      (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
+                 \mbox{ avec } x ∈ f \\
+      (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
+                 \mbox{ avec } \textrm{VarLookup} (x, (s, g)) = (n, x)
+      \end{cases}
+  \]
+
+\end{definition}
 
 \section{Expressions}
 
 Réduction (grand pas) :
 
-(m, e) -> (m', v)
+\[
+  (m, e) → (m', v)
+\]
 
 Constante :
 
 \begin{mathpar}
   \irule{Exp-Cst}
     { }
-    {(m, c) → (m, c)}
+    {(m, c) → (m, \widehat{c})}
 \end{mathpar}
 
 Cas variable :
@@ -186,7 +190,7 @@ Appel de fonction :
    (m_{n-1}, e_n) → (m_n, v_n) \\
    f = (i, arg_1, …, arg_n) \\
    m' = \mathrm{Push}(m_n, (arg_1, v_1), …, (arg_n, v_n)) \\
-   (m', i) → (m'', Return v) \\
+   (m', i) → (m'', \iReturn{v}) \\
    m''' = \mathrm{Pop}(m'')
   }
   {(m, f(e_1, …, e_n)) → (m''', v)}
