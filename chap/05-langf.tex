@@ -1,0 +1,262 @@
+On définit ici un langage impératif.
+
+\section{Syntaxe}
+
+Donnée dans la figure~\ref{fig:stx}.
+
+\begin{figure}
+
+  \gramlr{Constantes}{
+    \begin{align*}
+      c \gramisa & i & \textrm{Entier}
+      \\ \gramor & f & \textrm{Flottant}
+    \end{align*}
+  }
+
+  \gramlr{Expressions}{
+    \begin{align*}
+      e \gramisa & c               & \textrm{Constante}
+      \\ \gramor & x               & \textrm{Variable}
+      \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
+      \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
+      \\ \gramor & \& x            & \textrm{Pointeur}
+      \\ \gramor & * e             & \textrm{Déréférencement}
+      \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
+    \end{align*}
+  }
+
+  \gramlr{Instructions}{
+    \begin{align*}
+      i \gramisa & \iPass        & \textrm{Instruction vide}
+      \\ \gramor & i;i           & \textrm{Séquence}
+      \\ \gramor & x ← e         & \textrm{Affectation}
+      \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
+      \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
+      \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
+    \end{align*}
+  }
+
+  \gramlr{Fonctions}{
+    \begin{align*}
+      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps et arguments}
+    \end{align*}
+  }
+
+  \caption{Syntaxe}
+  \label{fig:stx}
+\end{figure}
+
+\section{Sémantique}
+
+On définit dans la suite une sémantique pour le langage défini dans la
+figure~\ref{fig:stx}.
+
+\section{État mémoire}
+
+Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
+précisément, lors de l'exécution de chaque fonction, un cadre de pile est créé,
+contenant un ensemble de variables accessibles par cette fonction. Il y en outre
+un ensemble de variables globales accessibles depuis n'importe quel point du
+programme.
+
+\begin{figure}
+
+  \gramlr{Valeurs}{
+    \begin{align*}
+      v \gramisa & c & \textrm{Constante}
+      \\ \gramor & a & \textrm{Adresse}
+    \end{align*}
+  }
+
+  \gramlr{Adresses}{
+    \begin{align*}
+      a \gramisa & (n, x) & \textrm{Variable locale}
+      \\ \gramor & x      & \textrm{Variable globale}
+    \end{align*}
+  }
+
+  \gramlr{Pile}{
+    \begin{align*}
+      s \gramisa & []                                   & \textrm{Pile vide}
+      \\ \gramor & \{ x_1 ; … ; x_n \} :: s & \textrm{Ajout d'un cadre}
+    \end{align*}
+  }
+
+  \gramlr{État mémoire}{
+    \begin{align*}
+      m \gramisa & (s, \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\}) & \textrm{Pile, globales, valeurs}
+    \end{align*}
+  }
+
+  \caption{Interpréteur}
+  \label{fig:interp}
+\end{figure}
+
+Chaque fonction peut donc accéder aux variables du dernier cadre de pile, ainsi
+qu'aux variables globales :
+
+\begin{definition}[Visibilité]
+  On dit qu'une variable $x$ est visible dans la pile $s$ (ou dans un état
+  mémoire $m$ qui a une telle pile) si $x$ fait partie des variables globales de
+  $s$ ou (si elle existe) dans la tête de pile de $s$.
+\end{definition}
+
+
+\begin{definition}[Recherche de variable]
+
+  \[
+    \textrm{VarLookup} (x, (s, g)) =
+      \begin{cases}
+        x      & \mbox{si } x ∈ g \\
+      (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
+                 \mbox{ avec } x ∈ f \\
+      (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
+                 \mbox{ avec } \textrm{VarLookup} (x, (s, g, e)) = (n, x)
+      \end{cases}
+  \]
+
+\end{definition}
+
+\begin{definition}[Manipulations des états mémoire]
+
+  On note $(a, v) ∈ m$ si blabla.
+
+  Par extension, $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a = \textrm{VarLookup}(x, m)$.
+
+  On note $m[a ↦ v]$ le blabla.
+
+  On étend de même cette notation pour $m[x ↦ v]$.
+\end{definition}
+
+
+\begin{definition}[Manipulations de pile]
+
+  Empilement / dépilement
+
+  \[
+    \mathrm{Push}(s, (x_1, v_1), …, (x_n, v_n)) = \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}~::~s
+  \]
+
+  \[
+    \mathrm{Pop}(f~::~s) = s
+  \]
+
+  + extension aux $m$.
+
+\end{definition}
+
+\section{Expressions}
+
+\begin{definition}[Évaluation d'une expression]
+
+  L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$ et est
+  susceptible de modifier celui-ci en le transformant en un nouveau $m'$. Le
+  résultat est toujours une valeur $v$, c'est à dire que nous présentons une
+  sémantique à grand pas. Cette évaluation est notée :
+
+  \[
+    (m, e) → (m', v)
+  \]
+
+\end{definition}
+
+Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
+celle-ci est déjà évaluée. À chaque constante syntaxique $c$, on peut associer
+une valeur sémantique $\widehat{c}$. Par exemple, au chiffre (symbole) $3$, on
+associe le nombre (entier) $\widehat{3}$.
+
+\begin{mathpar}
+  \irule{Exp-Cst}
+    { }
+    {(m, c) → (m, \widehat{c})}
+\end{mathpar}
+
+Pour lire le contenu d'une variable, il faut tout d'abord s'assurer que celle-ci
+est visible. Sa valeur est alors celle qui y est associée dans l'environnement
+mémoire. Celui-ci n'est pas modifié.
+
+\begin{mathpar}
+  \irule{Exp-Var}
+  {x \mbox{ visible dans } m \\
+    (x, v) ∈ m
+  }
+  {(m, x) → (m, v)}
+\end{mathpar}
+
+Cas op :
+
+\begin{mathpar}
+  \irule{Exp-UnOp}
+  {(m, e) → (m', v)}
+  {(m, \opsymb~e) → (m', \widehat{\opsymb}~v)}
+\end{mathpar}
+
+À chaque opérateur $\opsymb$, correspond un opérateur sémantique
+$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
+$\widehat{+}$ est l'addition classique entre entiers.
+
+\begin{mathpar}
+  \irule{Exp-BinOp}
+  {(m, e_1) → (m', v_1) \\
+   (m', e_2) → (m'', v_2)
+  }
+  {(m, e_1~\opsymb~e_2) → (m'', v_1~\widehat{\opsymb}~v_2)}
+\end{mathpar}
+
+Adresse :
+
+\begin{mathpar}
+  \irule{Exp-AddrOf}
+    {a = \textrm{VarLookup} (x, m)}
+    {(m, \&x) → (m, a)}
+\end{mathpar}
+
+Déréférencement :
+
+\begin{mathpar}
+  \irule{Exp-AddrOf}
+    { (m, e) → (m', a) \\
+      (a, v) ∈ m'
+    }
+    {
+      (m, *e) → (m', v)
+    }
+\end{mathpar}
+
+Appel de fonction :
+
+\[
+  \irule{Call}
+  {(m  , e_1) → (m_1, v_1) \\
+   (m_1, e_2) → (m_2, v_2) \\
+   … \\
+   (m_{n-1}, e_n) → (m_n, v_n) \\
+   f = (i, arg_1, …, arg_n) \\
+   m' = \mathrm{Push}(m_n, (arg_1, v_1), …, (arg_n, v_n)) \\
+   (m', i) → (m'', \iReturn{v}) \\
+   m''' = \mathrm{Pop}(m'')
+  }
+  {(m, f(e_1, …, e_n)) → (m''', v)}
+\]
+
+\section{Instructions}
+
+(attention au pas)
+
+\[
+  \irule{Set}
+  {
+    (m, e) → (m', v) \\
+    m'' = m' [ x ↦ v ]
+  }
+  {(m, x ← e) → (m'', pass)}
+\]
+
+\begin{itemize}
+\item
+  ajout des adresses
+\item
+  declaration
+\item
+  champs de records
+\end{itemize}

@@ -496,7 +496,7 @@ Ensuite, cela dépend des formes qu'ont les types réduits :
 
 \item si les deux types sont inconnus (de la forme \texttt{Var (ref
 (Instanciated t))}), on fait pointer l'une des deux références vers le premier
-type. Notons que cela créé un type de la forme \texttt{Var (ref (Instanciated
+type. Notons que cela crée un type de la forme \texttt{Var (ref (Instanciated
 (Var (ref (Unknown n)))))} qui sera réduit lors d'une prochaine étape
 d'unification.
 
@@ -507,11 +507,13 @@ créer un cycle dans le graphe (figure~\ref{fig:typecycle}).
 Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
 pas présent dans le type à affecter.
 
-\item si les deux types sont des types de base (comme \tInt ou \tFloat), on ne
-fait rien s'ils sont égaux ; l'algorithme échoue sinon.
+\item si les deux types sont des types de base (comme \tInt ou \tFloat) égaux,
+on ne fait rien.
 
 \item si les deux types sont des constructeurs de type, il faut que les
 constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
+
+\item dans les autres cas, l'algorithme échoue.
 
 \item TODO sous typage pour les structures
 
