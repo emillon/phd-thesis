@@ -2,6 +2,8 @@ On définit ici un langage impératif.
 
 \section{Syntaxe}
 
+Donnée dans la figure~\ref{fig:stx}.
+
 \begin{figure}
 
   \gramlr{Constantes}{
@@ -44,7 +46,18 @@ On définit ici un langage impératif.
   \label{fig:stx}
 \end{figure}
 
+\section{Sémantique}
+
+On définit dans la suite une sémantique pour le langage défini dans la
+figure~\ref{fig:stx}.
+
 \section{État mémoire}
+
+Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
+précisément, lors de l'exécution de chaque fonction, un cadre de pile est créé,
+contenant un ensemble de variables accessibles par cette fonction. Il y en outre
+un ensemble de variables globales accessibles depuis n'importe quel point du
+programme.
 
 \begin{figure}
 
@@ -79,6 +92,9 @@ On définit ici un langage impératif.
   \label{fig:interp}
 \end{figure}
 
+Chaque fonction peut donc accéder aux variables du dernier cadre de pile, ainsi
+qu'aux variables globales.
+
 \[
   (x, v) ∈ m
 \]
@@ -87,16 +103,21 @@ On définit ici un langage impératif.
   m[x ↦ v]
 \]
 
+\begin{definition}{Manipulations de pile}
 
-\[
-  \mathrm{Push}(s, (x_1, v_1), …, (x_n, v_n)) = \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}~::~s
-\]
+  Empilement / dépilement
 
-\[
-  \mathrm{Pop}(f~::~s) = s
-\]
+  \[
+    \mathrm{Push}(s, (x_1, v_1), …, (x_n, v_n)) = \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}~::~s
+  \]
 
-+ extension aux $m$.
+  \[
+    \mathrm{Pop}(f~::~s) = s
+  \]
+
+  + extension aux $m$.
+
+\end{definition}
 
 \begin{definition}{Recherche de variable}
 
@@ -122,6 +143,8 @@ Réduction (grand pas) :
 \]
 
 Constante :
+
+$\widehat{c}$ désigne la valeur (sémantique) de la constante (syntaxique) $c$.
 
 \begin{mathpar}
   \irule{Exp-Cst}
