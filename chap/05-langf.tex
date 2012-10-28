@@ -261,7 +261,7 @@ Adresse :
 Déréférencement :
 
 \begin{mathpar}
-  \irule{Exp-AddrOf}
+  \irule{Exp-Deref}
     { (m, e) → (m', a) \\
       (a, v) ∈ m'
     }
@@ -384,4 +384,6 @@ TODO
   faut-il une règle $(m, \iPass;i) → (m, i)$ ?
 \item
   faut-il une règle $(m, \iReturn{e};i) → (m, \iReturn{e})$ ?
+\item
+  interdire la division par zéro
 \end{itemize}
