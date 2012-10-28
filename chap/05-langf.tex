@@ -131,7 +131,7 @@ qu'aux variables globales :
   On note $m[a ↦ v]$ l'état mémoire obtenu en remplaçant dans la liste
   d'associations de mémoire de $m$, la valeur associée à $a$ par $v$.
 
-  On étend de même cette notation pour $m[x ↦ v]$ : c'est $m[a ↦ v]$ avec
+  On étend de même cette notation pour $m[x ↦ v]$ pour $m[a ↦ v]$ avec
   $a = \textrm{VarLookup}(x, m)$.
 
 \end{definition}
@@ -338,8 +338,6 @@ ci-dessus.
 
 \end{mathpar}
 
-TODO faut-il une règle $(m, \iPass;i) → (m, i)$ ?
-
 Alternative
 
 \begin{mathpar}
@@ -378,9 +376,13 @@ TODO
 
 \begin{itemize}
 \item
-  declaration
+  declarations
 \item
   champs de records
 \item
   déréférencement en lvalue (système d'adresse effective dans la règle Set)
+\item
+  faut-il une règle $(m, \iPass;i) → (m, i)$ ?
+\item
+  faut-il une règle $(m, \iReturn{e};i) → (m, \iReturn{e})$ ?
 \end{itemize}
