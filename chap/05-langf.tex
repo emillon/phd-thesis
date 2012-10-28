@@ -329,12 +329,13 @@ ci-dessus.
       (m, (i;i')) → (m', i')
     }
 
+
   \irule{Set}
   {
-    (m, e) → (m', v) \\
-    m'' = m' [ x ↦ v ]
+    (m, e) → (m', v)
   }
-  {(m, x ← e) → (m'', \iPass)}
+  {(m, x ← e) → (m' [ x ↦ v ], \iPass)}
+
 \end{mathpar}
 
 Alternative
