@@ -291,18 +291,34 @@ cet environnement, et le cadre dépilé.
 
 \section{Instructions}
 
-(attention au pas)
+Contrairement à l'évaluation des expression, on choisit une sémantique de
+réécriture à petits pas. La sémantique fonctionne de la manière suivante :
+partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
+d'évaluation suivantes permettent de réduire le problème en se ramenant à
+l'exécution d'une instruction $i'$ "plus simple" en partant d'un état mémoire
+$m'$. Un tel pas est noté :
 
-Cas terminaux :
+\[
+  (m, i) → (m', i')
+\]
 
-\begin{itemize}
-\item
-  $\iPass$
-\item
-  $\iReturn{e}$ avec $e$ terminal (constante)
-\end{itemize}
+Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
+mémoire dans lequel on a déjà réalisé la première affectation. La seconde
+affectation se réalise de même et permet de réécrire l'instruction restante en
+$\iPass$ :
 
-Séquence
+\begin{align*}
+  (m, (x ← 3 ; y ← x)) → & (m [x ↦ \widehat{3}], y ← x) \\
+                       → & (m [x ↦ \widehat{3}][y ↦ \widehat{3}], \iPass)
+\end{align*}
+
+Il n'est pas possible de réduire plus loin l'instruction $\iPass$. Dans un tel
+cas, l'évaluation est terminée.
+
+Les seuls cas terminaux sont $\iPass$ et $\iReturn{e}$.
+
+Les cas de la séquence et de l'affectation ont été utilisés dans l'exemple
+ci-dessus.
 
 \begin{mathpar}
   \irule{Seq}
@@ -312,9 +328,7 @@ Séquence
     {
       (m, (i;i')) → (m', i')
     }
-\end{mathpar}
 
-\begin{mathpar}
   \irule{Set}
   {
     (m, e) → (m', v) \\
@@ -346,12 +360,13 @@ Alternative
     }
 \end{mathpar}
 
+TODO
 
 \begin{itemize}
-\item
-  ajout des adresses
 \item
   declaration
 \item
   champs de records
+\item
+  déréférencement en lvalue (système d'adresse effective)
 \end{itemize}
