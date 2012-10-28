@@ -59,6 +59,9 @@ contenant un ensemble de variables accessibles par cette fonction. Il y en outre
 un ensemble de variables globales accessibles depuis n'importe quel point du
 programme.
 
+En plus de ces ensembles de variables, chaque état mémoire comprend une liste
+d'associations $(a, v)$ qui à une adresse associe une valeur.
+
 \begin{figure}
 
   \gramlr{Valeurs}{
@@ -84,7 +87,8 @@ programme.
 
   \gramlr{État mémoire}{
     \begin{align*}
-      m \gramisa & (s, \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\}) & \textrm{Pile, globales, valeurs}
+      m \gramisa & (s,    \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\})
+          & \textrm{Pile, globales,             valeurs}
     \end{align*}
   }
 
@@ -100,7 +104,6 @@ qu'aux variables globales :
   mémoire $m$ qui a une telle pile) si $x$ fait partie des variables globales de
   $s$ ou (si elle existe) dans la tête de pile de $s$.
 \end{definition}
-
 
 \begin{definition}[Recherche de variable]
 
@@ -119,29 +122,72 @@ qu'aux variables globales :
 
 \begin{definition}[Manipulations des états mémoire]
 
-  On note $(a, v) ∈ m$ si blabla.
+  On note $(a, v) ∈ m$ si $(a, v)$ fait partie de la liste d'associations de
+  mémoire de $m$ (c'est à dire si $(a, v) ∈ l$ avec $m = (s, g, l)$).
 
-  Par extension, $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a = \textrm{VarLookup}(x, m)$.
+  Par extension, on note aussi $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a =
+  \textrm{VarLookup}(x, m)$.
 
-  On note $m[a ↦ v]$ le blabla.
+  On note $m[a ↦ v]$ l'état mémoire obtenu en remplaçant dans la liste
+  d'associations de mémoire de $m$, la valeur associée à $a$ par $v$.
 
-  On étend de même cette notation pour $m[x ↦ v]$.
+  On étend de même cette notation pour $m[x ↦ v]$ : c'est $m[a ↦ v]$ avec
+  $a = \textrm{VarLookup}(x, m)$.
+
 \end{definition}
 
+En entrant dans une fonction, on rajoutera un cadre de pile qui contient les
+paramètres de la fonction ainsi que ses variables locales. De même, en
+retournant il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  Empilement / dépilement
+  La hauteur d'une pile est le nombre de cadres qu'elle contient :
+
+  \begin{align*}
+    \mathrm{StackHeight}([])     = & 0 \\
+    \mathrm{StackHeight}(f~::~s) = & 1 + \mathrm{StackHeight}(s)
+  \end{align*}
+
+  On définit l'empilement d'un cadre de pile :
 
   \[
-    \mathrm{Push}(s, (x_1, v_1), …, (x_n, v_n)) = \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}~::~s
+    \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}~::~s
   \]
+
+  On peut étendre cette notation aux états mémoires, en associant des valeurs à
+  ces nouvelles variables :
+
+  \[
+    \mathrm{Push}((s, g, l), (x_1, v_1), …, (x_n, v_n)) = (s', g, l')
+  \]
+
+  avec
+
+  \begin{align*}
+    s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
+    l' = & l \cup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
+    p  = & \mathrm{StackHeight}(s) + 1
+  \end{align*}
+
+  De même on définit le dépilement :
 
   \[
     \mathrm{Pop}(f~::~s) = s
   \]
 
-  + extension aux $m$.
+  ainsi que son extension aux états mémoire :
+
+  \[
+    \mathrm{Pop}((s, g, l)) = (s', g, l')
+  \]
+
+  avec
+
+  \begin{align*}
+    s' = & \mathrm{Pop}(s) \\
+    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l / p < \mathrm{StackHeight}(s) \}
+  \end{align*}
 
 \end{definition}
 
@@ -207,7 +253,9 @@ Adresse :
 
 \begin{mathpar}
   \irule{Exp-AddrOf}
-    {a = \textrm{VarLookup} (x, m)}
+    { x \mbox{ visible dans } m \\
+    a = \textrm{VarLookup} (x, m)
+    }
     {(m, \&x) → (m, a)}
 \end{mathpar}
 
