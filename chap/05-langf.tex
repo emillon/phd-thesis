@@ -229,19 +229,18 @@ mémoire. Celui-ci n'est pas modifié.
   {(m, x) → (m, v)}
 \end{mathpar}
 
-Cas op :
+Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
+puis l'autre (l'ordre d'évaluation, de gauche à droite, est imposé). À chaque
+opérateur $\opsymb$, correspond un opérateur sémantique $\widehat{\opsymb}$ qui
+agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
+classique entre entiers.
+
 
 \begin{mathpar}
   \irule{Exp-UnOp}
   {(m, e) → (m', v)}
   {(m, \opsymb~e) → (m', \widehat{\opsymb}~v)}
-\end{mathpar}
 
-À chaque opérateur $\opsymb$, correspond un opérateur sémantique
-$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
-$\widehat{+}$ est l'addition classique entre entiers.
-
-\begin{mathpar}
   \irule{Exp-BinOp}
   {(m, e_1) → (m', v_1) \\
    (m', e_2) → (m'', v_2)
@@ -271,7 +270,10 @@ Déréférencement :
     }
 \end{mathpar}
 
-Appel de fonction :
+L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
+opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
+placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
+cet environnement, et le cadre dépilé.
 
 \[
   \irule{Call}
@@ -279,7 +281,7 @@ Appel de fonction :
    (m_1, e_2) → (m_2, v_2) \\
    … \\
    (m_{n-1}, e_n) → (m_n, v_n) \\
-   f = (i, arg_1, …, arg_n) \\
+   f = (i, (arg_1, …, arg_n)) \\
    m' = \mathrm{Push}(m_n, (arg_1, v_1), …, (arg_n, v_n)) \\
    (m', i) → (m'', \iReturn{v}) \\
    m''' = \mathrm{Pop}(m'')
@@ -291,14 +293,59 @@ Appel de fonction :
 
 (attention au pas)
 
-\[
+Cas terminaux :
+
+\begin{itemize}
+\item
+  $\iPass$
+\item
+  $\iReturn{e}$ avec $e$ terminal (constante)
+\end{itemize}
+
+Séquence
+
+\begin{mathpar}
+  \irule{Seq}
+    {
+      (m, i) → (m', \iPass)
+    }
+    {
+      (m, (i;i')) → (m', i')
+    }
+\end{mathpar}
+
+\begin{mathpar}
   \irule{Set}
   {
     (m, e) → (m', v) \\
     m'' = m' [ x ↦ v ]
   }
-  {(m, x ← e) → (m'', pass)}
-\]
+  {(m, x ← e) → (m'', \iPass)}
+\end{mathpar}
+
+Alternative
+
+\begin{mathpar}
+  \irule{If-False}
+    {
+      (m, e) → (m', \widehat{0}) \\
+      (m', i_f) → (m'', i')
+    }
+    {
+      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+    }
+
+  \irule{If-True}
+    {
+      (m, e) → (m', v) \\
+      v ≠ \widehat{0} \\
+      (m', i_t) → (m'', i')
+    }
+    {
+      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+    }
+\end{mathpar}
+
 
 \begin{itemize}
 \item
