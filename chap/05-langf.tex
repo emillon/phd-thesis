@@ -275,19 +275,18 @@ opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
 placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
 cet environnement, et le cadre dépilé.
 
-\[
-  \irule{Call}
+\begin{mathpar}
+  \irule{Exp-Call}
   {(m  , e_1) → (m_1, v_1) \\
    (m_1, e_2) → (m_2, v_2) \\
    … \\
    (m_{n-1}, e_n) → (m_n, v_n) \\
-   f = (i, (arg_1, …, arg_n)) \\
-   m' = \mathrm{Push}(m_n, (arg_1, v_1), …, (arg_n, v_n)) \\
-   (m', i) → (m'', \iReturn{v}) \\
-   m''' = \mathrm{Pop}(m'')
+   f = (i, (x_1, …, x_n)) \\
+   m' = \mathrm{Push}(m_n, (x_1, v_1), …, (x_n, v_n)) \\
+   (m', i) → (m'', \iReturn{v})
   }
-  {(m, f(e_1, …, e_n)) → (m''', v)}
-\]
+  {(m, f(e_1, …, e_n)) → ( \mathrm{Pop}(m''), v)}
+\end{mathpar}
 
 \section{Instructions}
 
