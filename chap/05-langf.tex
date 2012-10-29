@@ -16,7 +16,7 @@ Donnée dans la figure~\ref{fig:stx}.
   \gramlr{Expressions}{
     \begin{align*}
       e \gramisa & c               & \textrm{Constante}
-      \\ \gramor & x               & \textrm{Variable}
+      \\ \gramor & lv              & \textrm{Accès mémoire}
       \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
       \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
       \\ \gramor & \& x            & \textrm{Pointeur}
@@ -25,11 +25,18 @@ Donnée dans la figure~\ref{fig:stx}.
     \end{align*}
   }
 
+  \gramlr{Left-values}{
+    \begin{align*}
+      lv \gramisa & x   & \textrm{Variable}
+      \\  \gramor & *lv & \textrm{Déréférencement}
+    \end{align*}
+  }
+
   \gramlr{Instructions}{
     \begin{align*}
       i \gramisa & \iPass        & \textrm{Instruction vide}
       \\ \gramor & i;i           & \textrm{Séquence}
-      \\ \gramor & x ← e         & \textrm{Affectation}
+      \\ \gramor & lv ← e         & \textrm{Affectation}
       \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
       \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
       \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
@@ -108,13 +115,13 @@ qu'aux variables globales :
 \begin{definition}[Recherche de variable]
 
   \[
-    \textrm{VarLookup} (x, (s, g, l)) =
+    \mathrm{VarLookup} (x, (s, g, l)) =
       \begin{cases}
         x      & \mbox{si } x ∈ g \\
       (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
                  \mbox{ avec } x ∈ f \\
       (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
-                 \mbox{ avec } \textrm{VarLookup} (x, (s, g, e)) = (n, x)
+                 \mbox{ avec } \mathrm{VarLookup} (x, (s, g, e)) = (n, x)
       \end{cases}
   \]
 
@@ -126,13 +133,13 @@ qu'aux variables globales :
   mémoire de $m$ (c'est à dire si $(a, v) ∈ l$ avec $m = (s, g, l)$).
 
   Par extension, on note aussi $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a =
-  \textrm{VarLookup}(x, m)$.
+  \mathrm{VarLookup}(x, m)$.
 
   On note $m[a ↦ v]$ l'état mémoire obtenu en remplaçant dans la liste
   d'associations de mémoire de $m$, la valeur associée à $a$ par $v$.
 
   On étend de même cette notation pour $m[x ↦ v]$ pour $m[a ↦ v]$ avec
-  $a = \textrm{VarLookup}(x, m)$.
+  $a = \mathrm{VarLookup}(x, m)$.
 
 \end{definition}
 
@@ -191,6 +198,22 @@ retournant il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
+\begin{definition}[Adresse effective]
+
+  Pour permettre les accès indirects (par pointeur), ce ne sont pas directement
+  les variables qui sont accédées en lecture ou écriture, mais des left-values.
+
+  Dans un état mémoire donné $m$, on peut associer une adresse $a$ qui est celle
+  à considérer. Cette adresse effective notée $\mathrm{EffAddr}(m, lv)$ est
+  calculée de la manière suivante :
+
+  \begin{align*}
+    \mathrm{EffAddr}(m, x)   = & \mathrm{VarLookup}(m, x) \\
+    \mathrm{EffAddr}(m, *lv) = & v \textrm{ si } (a, v) ∈ m
+                                 \textrm{ et } a = \mathrm{EffAddr}(m, lv)
+  \end{align*}
+\end{definition}
+
 \section{Expressions}
 
 \begin{definition}[Évaluation d'une expression]
@@ -222,9 +245,10 @@ est visible. Sa valeur est alors celle qui y est associée dans l'environnement
 mémoire. Celui-ci n'est pas modifié.
 
 \begin{mathpar}
-  \irule{Exp-Var}
+  \irule{Exp-Lv}
   {x \mbox{ visible dans } m \\
-    (x, v) ∈ m
+    a = \mathrm{EffAddr}(m, lv) \\
+    (a, v) ∈ m
   }
   {(m, x) → (m, v)}
 \end{mathpar}
@@ -253,21 +277,9 @@ Adresse :
 \begin{mathpar}
   \irule{Exp-AddrOf}
     { x \mbox{ visible dans } m \\
-    a = \textrm{VarLookup} (x, m)
+    a = \mathrm{VarLookup} (x, m)
     }
     {(m, \&x) → (m, a)}
-\end{mathpar}
-
-Déréférencement :
-
-\begin{mathpar}
-  \irule{Exp-Deref}
-    { (m, e) → (m', a) \\
-      (a, v) ∈ m'
-    }
-    {
-      (m, *e) → (m', v)
-    }
 \end{mathpar}
 
 L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
@@ -331,9 +343,10 @@ ci-dessus.
 
   \irule{Set}
   {
-    (m, e) → (m', v)
+    (m, lv) → (m', v) \\
+    a = \mathrm{EffAddr}(m, lv)
   }
-  {(m, x ← e) → (m' [ x ↦ v ], \iPass)}
+  {(m, lv ← e) → (m' [ a ↦ v ], \iPass)}
 
 \end{mathpar}
 
@@ -378,8 +391,6 @@ TODO
   declarations
 \item
   champs de records
-\item
-  déréférencement en lvalue (système d'adresse effective dans la règle Set)
 \item
   faut-il une règle $(m, \iPass;i) → (m, i)$ ?
 \item
