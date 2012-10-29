@@ -76,6 +76,12 @@ Donnée dans la figure~\ref{fig:stx}.
 On définit dans la suite une sémantique pour le langage défini dans la
 figure~\ref{fig:stx}.
 
+\subsection{Définitions préliminaires}
+
+List(X) = fix (List')
+
+List'(L) = [] | X x L
+
 Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
 précisément, un état mémoire $m = (s, g, l)$ est composé de :
 
