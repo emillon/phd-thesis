@@ -351,6 +351,12 @@ ci-dessus.
       (m, (i;i')) → (m', i')
     }
 
+  \irule{Pass}
+    {
+    }
+    {
+      (m, (\iPass;i)) → (m, i)
+    }
 
   \irule{Set}
   {
@@ -392,7 +398,15 @@ Boucle
     {
       (m, \iWhile{e}{i}) → (m, \iIf{e}{i;\iWhile{e}{i}}{\iPass})
     }
+\end{mathpar}
 
+
+Early return
+
+\begin{mathpar}
+  \irule{Return}
+  { }
+  { (m, \iReturn{e};i) → (m, \iReturn{e}) }
 \end{mathpar}
 
 TODO
@@ -402,10 +416,6 @@ TODO
   declarations
 \item
   champs de records
-\item
-  faut-il une règle $(m, \iPass;i) → (m, i)$ ?
-\item
-  faut-il une règle $(m, \iReturn{e};i) → (m, \iReturn{e})$ ?
 \item
   interdire la division par zéro
 \end{itemize}
