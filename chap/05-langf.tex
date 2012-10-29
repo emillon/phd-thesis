@@ -56,7 +56,14 @@ Donnée dans la figure~\ref{fig:stx}.
 
   \gramlr{Fonctions}{
     \begin{align*}
-      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps et arguments}
+      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps, arguments}
+    \end{align*}
+  }
+
+  \gramlr{Programme}{
+    \begin{align*}
+      P \gramisa & ((f_1, …, f_n),
+        ((x_1, e_1), …, (x_n, e_n))) & \textrm{Fonctions, globales}
     \end{align*}
   }
 
@@ -184,20 +191,20 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     \mathrm{StackSize}([])     = & 0 \\
-    \mathrm{StackSize}(f~::~s) = & 1 + \mathrm{StackSize}(s)
+    \mathrm{StackSize}(f::s) = & 1 + \mathrm{StackSize}(s)
   \end{align*}
 
   On définit l'empilement d'un cadre de pile :
 
   \[
-    \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}~::~s
+    \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}::s
   \]
 
   On peut étendre cette notation aux états mémoires, en associant des valeurs à
   ces nouvelles variables :
 
   \[
-    \mathrm{Push}((s, g, l), (x_1, v_1), …, (x_n, v_n)) = (s', g, l')
+    \mathrm{Push}((s, g, l), ((x_1, v_1), …, (x_n, v_n))) = (s', g, l')
   \]
 
   avec
@@ -211,7 +218,7 @@ retournant il faudra supprimer ce cadre de pile.
   De même on définit le dépilement :
 
   \[
-    \mathrm{Pop}(f~::~s) = s
+    \mathrm{Pop}(f::s) = s
   \]
 
   ainsi que son extension aux états mémoire :
@@ -325,7 +332,7 @@ cet environnement, et le cadre dépilé.
    … \\
    (m_{n-1}, e_n) → (m_n, v_n) \\
    f = (i, (x_1, …, x_n)) \\
-   m' = \mathrm{Push}(m_n, (x_1, v_1), …, (x_n, v_n)) \\
+   m' = \mathrm{Push}(m_n, ((x_1, v_1), …, (x_n, v_n))) \\
    (m', i) → (m'', \iReturn{v})
   }
   {(m, f(e_1, …, e_n)) → ( \mathrm{Pop}(m''), v)}
