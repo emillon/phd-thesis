@@ -32,7 +32,7 @@ Donnée dans la figure~\ref{fig:stx}.
       \\      \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
       \\      \gramor  & \&,|,\opxor,\sim  & \textrm{Opérateurs bit à bit}
       \\      \gramor  & \&\&,||,!         & \textrm{Opérateurs logiques}
-      \\      \gramor  & ⋘, ⋙              & \textrm{Décalages}
+      \\      \gramor  & \ll, \gg          & \textrm{Décalages}
     \end{align*}
   }
 
@@ -92,6 +92,9 @@ précisément, un état mémoire $m = (s, g, l)$ est composé de :
   une liste d'associations $l$ qui à chaque adresse mémoire associe une
   valeur.
 \end{itemize}
+
+Les variables qui apparaissent dans $s$ et $g$ sont uniquement des symboles
+(leurs noms) : les valeurs sont dans $l$.
 
 Pour la pile $s$, on reprend la syntaxe des listes ML : la liste vide est notée
 $[]$, et la construction $t::q$ : $t$ est la tête, et $q$ la queue.
