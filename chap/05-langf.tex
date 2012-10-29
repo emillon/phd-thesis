@@ -415,26 +415,24 @@ Version par soustractions successives:
 
 \begin{Verbatim}
 function gcd(a, b)
-  if a = 0
-    return b
+  var t = 0;
   while b != 0
-  if a > b
-    a := a - b
-  else
-    b := b - a
+    t = b
+    b = a mod b
+    a = t
   return a
 \end{Verbatim}
 
 Soit :
 
-\def\exinnerif{\iIf{a > b}{a ← a - b}{b ← b - a}\xspace}
+\def\exinnerif{t←b;b←a\%b;a←t}
 
 \begin{mathpar}
-  f(a, b) \{
-    \iIf{a = 0}{\iReturn{b}}{\iPass};
+  f(a, b) (t = 0) \{
     \iWhile{b ≠ 0}{
       \exinnerif
-    }
+    };
+    \iReturn{a}
   \}
 \end{mathpar}
 
@@ -443,7 +441,7 @@ Soit :
 \]
 
 \[
-  (m[a↦1071][b↦462], \iIf{a = 0}{\iReturn{b}}{\iPass}; \iWhile{b ≠ 0}{\exinnerif}) → ?
+  (m[a↦1071][b↦462][t↦0], \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) → ?
 \]
 
 (on notera cet état $s_0 = (m_0, e_0)$)
@@ -458,44 +456,32 @@ donc
   (m_0, \iIf{a = 0}{\iReturn{b}}{\iPass}) → (m[a↦1071][b↦462], \iPass)
 \]
 
-En appliquant (Seq) on en déduit :
+{ \scriptsize
+\begin{align}
+  s_0 → & (m_0, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+      → & (m_0, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_0', b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_0'', a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_1, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_1, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+      → & (m_1, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_2, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_2, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+      → & (m_2, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_3, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_3, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+      → & (m_3, \iPass; \iReturn{a}) \\
+      → & (m_3, \iReturn{a})
+\end{align}
 
 \begin{align*}
-  s_0 → (m_0, \iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_0, \iIf{b ≠ 0}{\exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}) \\
-      → (m_0, \exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_0, a ← a - b ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_1, \iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_1, \iIf{b ≠ 0}{\exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}) \\
-      → (m_1, \exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_1, a ← a - b ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_2, \iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_2, \iIf{b ≠ 0}{\exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}) \\
-      → (m_2, \exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_2, b ← b - a ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_3, \iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_3, \iIf{b ≠ 0}{\exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}) \\
-      → (m_3, \exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_3, b ← b - a ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_4, \iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_4, \iIf{b ≠ 0}{\exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}) \\
-      → (m_4, \exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_4, b ← b - a ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_5, \iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_6, \iIf{b ≠ 0}{\exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}) \\
-      → (m_6, \exinnerif ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      → (m_6, a ← a - b ;\iWhile{b ≠ 0}{ \exinnerif }) \\
-      DONE
+  m_0'  = & m_0  [t↦462] = m[a↦1071][b↦462][t↦462] \\
+  m_0'' = & m_0' [b↦147] = m[a↦1071][b↦147][t↦462] \\
+  m_1   = & m_0''[a↦462] = m[a↦462][b↦147][t↦462] \\
+  m_2   = & m_1[t↦147][b↦21][a↦147] = m[a↦147][b↦21][t↦147] \\
+  m_3   = & m_2[t↦21][b↦0][a↦21] = m[a↦21][b↦0][t↦21]
 \end{align*}
-
-\begin{align*}
-  m_1 = m_0[a↦609] = m[a↦609][b↦462] \\
-  m_2 = m_1[a↦147] = m[a↦147][b↦462] \\
-  m_3 = m_2[b↦315] = m[a↦147][b↦315] \\
-  m_4 = m_3[b↦168] = m[a↦147][b↦168] \\
-  m_4 = m_3[b↦21]  = m[a↦147][b↦21]  \\
-  OK
-\end{align*}
+}
 
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
@@ -504,7 +490,8 @@ TODO
 
 \begin{itemize}
 \item
-  declarations
+  declarations : locales (dans def de fonction) et globales (pour construire
+  l'env global)
 \item
   champs de records
 \item
