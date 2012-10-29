@@ -64,21 +64,37 @@ Donnée dans la figure~\ref{fig:stx}.
   \label{fig:stx}
 \end{figure}
 
-\section{Sémantique}
+\section{Mémoire}
 
 On définit dans la suite une sémantique pour le langage défini dans la
 figure~\ref{fig:stx}.
 
-\section{État mémoire}
-
 Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
-précisément, lors de l'exécution de chaque fonction, un cadre de pile est créé,
-contenant un ensemble de variables accessibles par cette fonction. Il y en outre
-un ensemble de variables globales accessibles depuis n'importe quel point du
-programme.
+précisément, un état mémoire $m = (s, g, l)$ est composé de :
 
-En plus de ces ensembles de variables, chaque état mémoire comprend une liste
-d'associations $(a, v)$ qui à une adresse associe une valeur.
+\begin{itemize}
+\item
+  une pile de variables locales $s$. Celles-ci sont organisées en
+  niveaux indépendants : à chaque appel de fonction, un nouveau cadre de
+  pile est créé, comprenant ses paramètres et ses variables locales.
+\item
+  un ensemble de variables globales $g$. Contrairement aux variables
+  locales, il n'y a pas de système d'empilement, puisque toutes ces
+  variables sont accessibles depuis tout point du programme.
+\item
+  une liste d'associations $l$ qui à chaque adresse mémoire associe une
+  valeur.
+\end{itemize}
+
+Pour la pile $s$, on reprend la syntaxe des listes ML : la liste vide est notée
+$[]$, et la construction $t::q$ : $t$ est la tête, et $q$ la queue.
+
+Les adresses intervenant dans $l$ sont soit un nom de variable globale, soit un
+couple $(n, x)$ où $n$ est un entier qui correspond à la hauteur de pile de la
+variable considérée. Cela permet de distinguer entre deux variables qui ont le
+même nom, par exemple dans le cas d'un appel récursif.
+
+Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
 \begin{figure}
 
@@ -114,16 +130,20 @@ d'associations $(a, v)$ qui à une adresse associe une valeur.
   \label{fig:interp}
 \end{figure}
 
-Chaque fonction peut donc accéder aux variables du dernier cadre de pile, ainsi
-qu'aux variables globales :
+\section{Sémantique}
+
+Chaque fonction peut accéder aux variables locales de la fonction en cours,
+ainsi qu'aux variables globales.
 
 \begin{definition}[Visibilité]
   On dit qu'une variable $x$ est visible dans la pile $s$ (ou dans un état
   mémoire $m$ qui a une telle pile) si $x$ fait partie des variables globales de
-  $s$ ou (si elle existe) dans la tête de pile de $s$.
+  $s$ ou de la tête de pile de $s$.
 \end{definition}
 
 \begin{definition}[Recherche de variable]
+
+  La recherche de variable permet d'associer à une variable $x$ une adresse $a$.
 
   \[
     \mathrm{VarLookup} (x, (s, g, l)) =
@@ -163,8 +183,8 @@ retournant il faudra supprimer ce cadre de pile.
   La hauteur d'une pile est le nombre de cadres qu'elle contient :
 
   \begin{align*}
-    \mathrm{StackHeight}([])     = & 0 \\
-    \mathrm{StackHeight}(f~::~s) = & 1 + \mathrm{StackHeight}(s)
+    \mathrm{StackSize}([])     = & 0 \\
+    \mathrm{StackSize}(f~::~s) = & 1 + \mathrm{StackSize}(s)
   \end{align*}
 
   On définit l'empilement d'un cadre de pile :
@@ -185,7 +205,7 @@ retournant il faudra supprimer ce cadre de pile.
   \begin{align*}
     s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
     l' = & l \cup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
-    p  = & \mathrm{StackHeight}(s) + 1
+    p  = & \mathrm{StackSize}(s) + 1
   \end{align*}
 
   De même on définit le dépilement :
@@ -204,7 +224,7 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     s' = & \mathrm{Pop}(s) \\
-    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l / p < \mathrm{StackHeight}(s) \}
+    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < \mathrm{StackSize}(s) \}
   \end{align*}
 
 \end{definition}
@@ -411,7 +431,7 @@ Early return
 
 \section{Exemple : l'algorithme d'Euclide}
 
-Version par soustractions successives:
+Version par divisions successives:
 
 \begin{Verbatim}
 function gcd(a, b)
