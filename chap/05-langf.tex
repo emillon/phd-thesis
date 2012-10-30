@@ -428,11 +428,13 @@ Alternative
 
 Boucle
 
+(on définit $\iThen{e}{i} = \iIf{e}{i}{\iPass}$)
+
 \begin{mathpar}
   \irule{While}
     { }
     {
-      (m, \iWhile{e}{i}) → (m, \iIf{e}{i;\iWhile{e}{i}}{\iPass})
+      (m, \iWhile{e}{i}) → (m, \iThen{e}{i;\iWhile{e}{i}})
     }
 \end{mathpar}
 
@@ -489,23 +491,23 @@ Soit :
 donc
 
 \[
-  (m_0, \iIf{a = 0}{\iReturn{b}}{\iPass}) → (m[a↦1071][b↦462], \iPass)
+  (m_0, \iThen{a = 0}{\iReturn{b}}) → (m[a↦1071][b↦462], \iPass)
 \]
 
 { \scriptsize
 \begin{align}
-  s_0 → & (m_0, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+  s_0 → & (m_0, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
       → & (m_0, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
       → & (m_0', b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
       → & (m_0'', a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
       → & (m_1, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_1, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+      → & (m_1, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
       → & (m_1, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
       → & (m_2, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_2, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+      → & (m_2, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
       → & (m_2, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
       → & (m_3, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_3, \iIf{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}{\iPass}; \iReturn{a}) \\
+      → & (m_3, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
       → & (m_3, \iPass; \iReturn{a}) \\
       → & (m_3, \iReturn{a})
 \end{align}
