@@ -599,6 +599,21 @@ TODO
   déplacer $lv ← e$ dans les expressions
 \item
   champs de records
+\item
+  si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
+  qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
+  de l'analyse)
+
+  Options :
+
+\begin{itemize}
+\item
+  on fait juste une restriction (forget) au pop (solution actuelle).
+\item
+  on donne à chaque stackframe un numéro fresh. Cela revient à considérer la
+  stack comme un heap.
+\end{itemize}
+
 \end{itemize}
 
 % vim: spelllang=fr
