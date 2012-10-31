@@ -71,19 +71,44 @@ Donnée dans la figure~\ref{fig:stx}.
   \label{fig:stx}
 \end{figure}
 
+\section{Définitions préliminaires}
+
+On suppose avoir à notre disposition un ensemble infini dénombrable
+d'identificateurs \sId (par exemple des chaînes de caractères).
+
+$X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
+X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
+définition). Pour $1 ≤ i ≤ |u|$, on note $u_i = u(i)$ le i-ème élément de la
+suite.
+
+On peut aussi voir les suites comme des listes : on note $[]$ la suite vide,
+telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
+suivante : si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
+que :
+
+\begin{align*}
+  v_1 = & x \\
+  ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
+\end{align*}
+
 \section{Mémoire}
 
-On définit dans la suite une sémantique pour le langage défini dans la
-figure~\ref{fig:stx}.
-
-\subsection{Définitions préliminaires}
-
-List(X) = fix (List')
-
-List'(L) = [] | X x L
 
 Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
 précisément, un état mémoire $m = (s, g, l)$ est composé de :
+
+$\sMem = {\sId^*}^* × \sId^* × \sVal^\sAddr$
+
+L'ensemble des adresses \sAddr est défini comme suit :
+
+\[
+  \sAddr = \sId \cup (ℕ × \sId)
+\]
+
+L'interprétation est la suivante : une adresse est soit un nom de variable
+globale, soit un nom de variable locale à un niveau donné.
+
+Les composantes d'un état mémoire sont :
 
 \begin{itemize}
 \item
@@ -101,9 +126,6 @@ précisément, un état mémoire $m = (s, g, l)$ est composé de :
 
 Les variables qui apparaissent dans $s$ et $g$ sont uniquement des symboles
 (leurs noms) : les valeurs sont dans $l$.
-
-Pour la pile $s$, on reprend la syntaxe des listes ML : la liste vide est notée
-$[]$, et la construction $t::q$ : $t$ est la tête, et $q$ la queue.
 
 Les adresses intervenant dans $l$ sont soit un nom de variable globale, soit un
 couple $(n, x)$ où $n$ est un entier qui correspond à la hauteur de pile de la
