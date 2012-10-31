@@ -218,13 +218,6 @@ retournant il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  La hauteur d'une pile est le nombre de cadres qu'elle contient :
-
-  \begin{align*}
-    \mathrm{StackSize}([])     = & 0 \\
-    \mathrm{StackSize}(f::s) = & 1 + \mathrm{StackSize}(s)
-  \end{align*}
-
   On définit l'empilement d'un cadre de pile :
 
   \[
@@ -243,7 +236,7 @@ retournant il faudra supprimer ce cadre de pile.
   \begin{align*}
     s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
     l' = & l \cup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
-    p  = & \mathrm{StackSize}(s) + 1
+    p  = & |s| + 1
   \end{align*}
 
   De même on définit le dépilement :
@@ -262,7 +255,7 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     s' = & \mathrm{Pop}(s) \\
-    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < \mathrm{StackSize}(s) \}
+    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
   \end{align*}
 
 \end{definition}
@@ -356,7 +349,8 @@ opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
 placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
 cet environnement, et le cadre dépilé.
 
-On commence par définir une opération auxiliaire de plusieurs expressions :
+On commence par définir une opération d'évaluation de plusieurs expressions à la
+fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droite.
 
 \begin{mathpar}
   \irule{Eval*-Nil}
@@ -491,7 +485,7 @@ On considère un programme $P = ((f_1, …, f_n), ((x_1, e_1), … (x_p, e_p)))$
 Son état mémoire initial est
 
 \[
-  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ \widehat(0), …, x_p ↦ \widehat(0)\}))
+  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ 0, …, x_p ↦ 0\}))
 \]
 
 Et son exécution est celle de l'instruction
