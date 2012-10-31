@@ -93,22 +93,33 @@ que :
 
 \section{Mémoire}
 
+L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
+associées aux variables du programme.
 
-Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
-précisément, un état mémoire $m = (s, g, l)$ est composé de :
+\begin{align*}
+  \sVal = & \sInt \cup \sFloat \sAddr \\
+  \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
+  \sAddr = & \sId \cup (ℕ × \sId)
+\end{align*}
 
-$\sMem = {\sId^*}^* × \sId^* × \sVal^\sAddr$
+\sFloat correspond à l'ensemble des flottants IEEE 754. Ici, \sInt est choisi
+pour représenter les nombres entiers de $-2^{31}$ à $2^{31}-1$, mais ce choix
+est arbitraire : de la même manière, on aurait pu choisir des nombres à 64 bits
+ou même de précision arbitraire.
 
-L'ensemble des adresses \sAddr est défini comme suit :
+L'ensemble des états mémoire est :
 
 \[
-  \sAddr = \sId \cup (ℕ × \sId)
+  \sMem = {\sId^*}^* × \sId^* × \sVal^\sAddr
 \]
 
 L'interprétation est la suivante : une adresse est soit un nom de variable
 globale, soit un nom de variable locale à un niveau donné.
 
-Les composantes d'un état mémoire sont :
+Un état mémoire contient deux ensembles de variables (locales et globales), et
+une fonction qui à chacune de ces variables associe une valeur.
+
+Plus précisément, un état mémoire $m = (s, g, l)$ est composé de :
 
 \begin{itemize}
 \item
@@ -581,3 +592,5 @@ TODO
 \item
   interdire la division par zéro
 \end{itemize}
+
+% vim: spelllang=fr
