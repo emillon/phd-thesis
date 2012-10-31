@@ -56,14 +56,16 @@ Donnée dans la figure~\ref{fig:stx}.
 
   \gramlr{Fonctions}{
     \begin{align*}
-      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps, arguments}
+      f \gramisa & (i,                             & \textrm{Corps} \\
+                 & (x_1, …, x_n),                  & \textrm{Arguments} \\
+                 & ((x'_1, e_1), …, (x'_p, e_p)))  & \textrm{Variables locales}
     \end{align*}
   }
 
   \gramlr{Programme}{
     \begin{align*}
-      P \gramisa & ((f_1, …, f_n),
-        ((x_1, e_1), …, (x_p, e_p))) & \textrm{Fonctions, globales}
+      P \gramisa & ((f_1, …, f_n),   & \textrm{Fonctions} \\
+                 & ((x_1, e_1), …, (x_p, e_p))) & \textrm{Globales}
     \end{align*}
   }
 
@@ -97,7 +99,7 @@ L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
 \begin{align*}
-  \sVal = & \sInt \cup \sFloat \sAddr \\
+  \sVal = & \sInt \cup \sFloat \cup \sAddr \\
   \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
   \sAddr = & \sId \cup (ℕ × \sId)
 \end{align*}
