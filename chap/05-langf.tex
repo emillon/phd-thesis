@@ -63,7 +63,7 @@ Donnée dans la figure~\ref{fig:stx}.
   \gramlr{Programme}{
     \begin{align*}
       P \gramisa & ((f_1, …, f_n),
-        ((x_1, e_1), …, (x_n, e_n))) & \textrm{Fonctions, globales}
+        ((x_1, e_1), …, (x_p, e_p))) & \textrm{Fonctions, globales}
     \end{align*}
   }
 
@@ -468,6 +468,24 @@ Early return
   { }
   { (m, \iReturn{e};i) → (m, \iReturn{e}) }
 \end{mathpar}
+
+\section{Exécution}
+
+On considère un programme $P = ((f_1, …, f_n), ((x_1, e_1), … (x_p, e_p)))$.
+
+Son état mémoire initial est
+
+\[
+  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ \widehat(0), …, x_p ↦ \widehat(0)\}))
+\]
+
+Et son exécution est celle de l'instruction
+
+\[
+  i_0(P) = x_1 ← e_1;…;x_p ← e_p;f_1()
+\]
+
+L'état initial est $(m_0(P), i_0(P))$.
 
 \section{Exemple : l'algorithme d'Euclide}
 
