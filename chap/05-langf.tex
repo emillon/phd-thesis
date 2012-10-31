@@ -332,8 +332,8 @@ Pour évaluer une expression constituée d'un opérateur, on évalue une express
 puis l'autre (l'ordre d'évaluation, de gauche à droite, est imposé). À chaque
 opérateur $\opsymb$, correspond un opérateur sémantique $\widehat{\opsymb}$ qui
 agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
-classique entre entiers.
-
+classique entre entiers. Afin d'interdire la division par zéro, celle ci et le
+modulo sont traités dans une règle à part.
 
 \begin{mathpar}
   \irule{Exp-UnOp}
@@ -341,8 +341,17 @@ classique entre entiers.
   {(m, \opsymb~e) → (m', \widehat{\opsymb}~v)}
 
   \irule{Exp-BinOp}
-  {(m, e_1) → (m', v_1) \\
-   (m', e_2) → (m'', v_2)
+  { \opsymb ∉ \{/, \%\} \\
+    (m, e_1) → (m', v_1) \\
+    (m', e_2) → (m'', v_2)
+  }
+  {(m, e_1~\opsymb~e_2) → (m'', v_1~\widehat{\opsymb}~v_2)}
+
+  \irule{Exp-Div}
+  { \opsymb ∈ \{/, \%\} \\
+    (m, e_1) → (m', v_1) \\
+    (m', e_2) → (m'', v_2) \\
+    v_2 ≠ \widehat{0}
   }
   {(m, e_1~\opsymb~e_2) → (m'', v_1~\widehat{\opsymb}~v_2)}
 \end{mathpar}
@@ -591,8 +600,6 @@ TODO
 \begin{itemize}
 \item
   champs de records
-\item
-  interdire la division par zéro
 \end{itemize}
 
 % vim: spelllang=fr
