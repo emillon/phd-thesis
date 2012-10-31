@@ -16,7 +16,7 @@ Donnée dans la figure~\ref{fig:stx}.
   \gramlr{Expressions}{
     \begin{align*}
       e \gramisa & c               & \textrm{Constante}
-      \\ \gramor & x               & \textrm{Variable}
+      \\ \gramor & lv              & \textrm{Accès mémoire}
       \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
       \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
       \\ \gramor & \& x            & \textrm{Pointeur}
@@ -25,11 +25,29 @@ Donnée dans la figure~\ref{fig:stx}.
     \end{align*}
   }
 
+  \gramlr{Opérateurs}{
+    \begin{align*}
+      \opsymb \gramisa & +,-,\times,/      & \textrm{Arithmétique entière}
+      \\      \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
+      \\      \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
+      \\      \gramor  & \&,|,\opxor,\sim  & \textrm{Opérateurs bit à bit}
+      \\      \gramor  & \&\&,||,!         & \textrm{Opérateurs logiques}
+      \\      \gramor  & \ll, \gg          & \textrm{Décalages}
+    \end{align*}
+  }
+
+  \gramlr{Left-values}{
+    \begin{align*}
+      lv \gramisa & x   & \textrm{Variable}
+      \\  \gramor & *lv & \textrm{Déréférencement}
+    \end{align*}
+  }
+
   \gramlr{Instructions}{
     \begin{align*}
       i \gramisa & \iPass        & \textrm{Instruction vide}
       \\ \gramor & i;i           & \textrm{Séquence}
-      \\ \gramor & x ← e         & \textrm{Affectation}
+      \\ \gramor & lv ← e         & \textrm{Affectation}
       \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
       \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
       \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
@@ -38,7 +56,14 @@ Donnée dans la figure~\ref{fig:stx}.
 
   \gramlr{Fonctions}{
     \begin{align*}
-      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps et arguments}
+      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps, arguments}
+    \end{align*}
+  }
+
+  \gramlr{Programme}{
+    \begin{align*}
+      P \gramisa & ((f_1, …, f_n),
+        ((x_1, e_1), …, (x_p, e_p))) & \textrm{Fonctions, globales}
     \end{align*}
   }
 
@@ -46,18 +71,68 @@ Donnée dans la figure~\ref{fig:stx}.
   \label{fig:stx}
 \end{figure}
 
-\section{Sémantique}
+\section{Définitions préliminaires}
 
-On définit dans la suite une sémantique pour le langage défini dans la
-figure~\ref{fig:stx}.
+On suppose avoir à notre disposition un ensemble infini dénombrable
+d'identificateurs \sId (par exemple des chaînes de caractères).
 
-\section{État mémoire}
+$X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
+X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
+définition). Pour $1 ≤ i ≤ |u|$, on note $u_i = u(i)$ le i-ème élément de la
+suite.
+
+On peut aussi voir les suites comme des listes : on note $[]$ la suite vide,
+telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
+suivante : si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
+que :
+
+\begin{align*}
+  v_1 = & x \\
+  ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
+\end{align*}
+
+\section{Mémoire}
+
 
 Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
-précisément, lors de l'exécution de chaque fonction, un cadre de pile est créé,
-contenant un ensemble de variables accessibles par cette fonction. Il y en outre
-un ensemble de variables globales accessibles depuis n'importe quel point du
-programme.
+précisément, un état mémoire $m = (s, g, l)$ est composé de :
+
+$\sMem = {\sId^*}^* × \sId^* × \sVal^\sAddr$
+
+L'ensemble des adresses \sAddr est défini comme suit :
+
+\[
+  \sAddr = \sId \cup (ℕ × \sId)
+\]
+
+L'interprétation est la suivante : une adresse est soit un nom de variable
+globale, soit un nom de variable locale à un niveau donné.
+
+Les composantes d'un état mémoire sont :
+
+\begin{itemize}
+\item
+  une pile de variables locales $s$. Celles-ci sont organisées en
+  niveaux indépendants : à chaque appel de fonction, un nouveau cadre de
+  pile est créé, comprenant ses paramètres et ses variables locales.
+\item
+  un ensemble de variables globales $g$. Contrairement aux variables
+  locales, il n'y a pas de système d'empilement, puisque toutes ces
+  variables sont accessibles depuis tout point du programme.
+\item
+  une liste d'associations $l$ qui à chaque adresse mémoire associe une
+  valeur.
+\end{itemize}
+
+Les variables qui apparaissent dans $s$ et $g$ sont uniquement des symboles
+(leurs noms) : les valeurs sont dans $l$.
+
+Les adresses intervenant dans $l$ sont soit un nom de variable globale, soit un
+couple $(n, x)$ où $n$ est un entier qui correspond à la hauteur de pile de la
+variable considérée. Cela permet de distinguer entre deux variables qui ont le
+même nom, par exemple dans le cas d'un appel récursif.
+
+Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
 \begin{figure}
 
@@ -84,7 +159,8 @@ programme.
 
   \gramlr{État mémoire}{
     \begin{align*}
-      m \gramisa & (s, \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\}) & \textrm{Pile, globales, valeurs}
+      m \gramisa & (s,    \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\})
+          & \textrm{Pile, globales,             valeurs}
     \end{align*}
   }
 
@@ -92,26 +168,29 @@ programme.
   \label{fig:interp}
 \end{figure}
 
-Chaque fonction peut donc accéder aux variables du dernier cadre de pile, ainsi
-qu'aux variables globales :
+\section{Sémantique}
+
+Chaque fonction peut accéder aux variables locales de la fonction en cours,
+ainsi qu'aux variables globales.
 
 \begin{definition}[Visibilité]
   On dit qu'une variable $x$ est visible dans la pile $s$ (ou dans un état
   mémoire $m$ qui a une telle pile) si $x$ fait partie des variables globales de
-  $s$ ou (si elle existe) dans la tête de pile de $s$.
+  $s$ ou de la tête de pile de $s$.
 \end{definition}
-
 
 \begin{definition}[Recherche de variable]
 
+  La recherche de variable permet d'associer à une variable $x$ une adresse $a$.
+
   \[
-    \textrm{VarLookup} (x, (s, g)) =
+    \mathrm{VarLookup} (x, (s, g, l)) =
       \begin{cases}
         x      & \mbox{si } x ∈ g \\
       (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
                  \mbox{ avec } x ∈ f \\
       (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
-                 \mbox{ avec } \textrm{VarLookup} (x, (s, g, e)) = (n, x)
+                 \mbox{ avec } \mathrm{VarLookup} (x, (s, g, e)) = (n, x)
       \end{cases}
   \]
 
@@ -119,40 +198,99 @@ qu'aux variables globales :
 
 \begin{definition}[Manipulations des états mémoire]
 
-  On note $(a, v) ∈ m$ si blabla.
+  On note $(a, v) ∈ m$ si $(a, v)$ fait partie de la liste d'associations de
+  mémoire de $m$ (c'est à dire si $(a, v) ∈ l$ avec $m = (s, g, l)$).
 
-  Par extension, $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a = \textrm{VarLookup}(x, m)$.
+  Par extension, on note aussi $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a =
+  \mathrm{VarLookup}(x, m)$.
 
-  On note $m[a ↦ v]$ le blabla.
+  On note $m[a ↦ v]$ l'état mémoire obtenu en remplaçant dans la liste
+  d'associations de mémoire de $m$, la valeur associée à $a$ par $v$.
 
-  On étend de même cette notation pour $m[x ↦ v]$.
+  On étend de même cette notation pour $m[x ↦ v]$ pour $m[a ↦ v]$ avec
+  $a = \mathrm{VarLookup}(x, m)$.
+
 \end{definition}
 
+En entrant dans une fonction, on rajoutera un cadre de pile qui contient les
+paramètres de la fonction ainsi que ses variables locales. De même, en
+retournant il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  Empilement / dépilement
+  La hauteur d'une pile est le nombre de cadres qu'elle contient :
+
+  \begin{align*}
+    \mathrm{StackSize}([])     = & 0 \\
+    \mathrm{StackSize}(f::s) = & 1 + \mathrm{StackSize}(s)
+  \end{align*}
+
+  On définit l'empilement d'un cadre de pile :
 
   \[
-    \mathrm{Push}(s, (x_1, v_1), …, (x_n, v_n)) = \{ x_1 ↦ v_1 ; … ; x_n ↦ v_n \}~::~s
+    \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}::s
   \]
+
+  On peut étendre cette notation aux états mémoires, en associant des valeurs à
+  ces nouvelles variables :
 
   \[
-    \mathrm{Pop}(f~::~s) = s
+    \mathrm{Push}((s, g, l), ((x_1, v_1), …, (x_n, v_n))) = (s', g, l')
   \]
 
-  + extension aux $m$.
+  avec
 
+  \begin{align*}
+    s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
+    l' = & l \cup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
+    p  = & \mathrm{StackSize}(s) + 1
+  \end{align*}
+
+  De même on définit le dépilement :
+
+  \[
+    \mathrm{Pop}(f::s) = s
+  \]
+
+  ainsi que son extension aux états mémoire :
+
+  \[
+    \mathrm{Pop}((s, g, l)) = (s', g, l')
+  \]
+
+  avec
+
+  \begin{align*}
+    s' = & \mathrm{Pop}(s) \\
+    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < \mathrm{StackSize}(s) \}
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Adresse effective]
+
+  Pour permettre les accès indirects (par pointeur), ce ne sont pas directement
+  les variables qui sont accédées en lecture ou écriture, mais des left-values.
+
+  Dans un état mémoire donné $m$, on peut associer une adresse $a$ qui est celle
+  à considérer. Cette adresse effective notée $\mathrm{EffAddr}(m, lv)$ est
+  calculée de la manière suivante :
+
+  \begin{align*}
+    \mathrm{EffAddr}(m, x)   = & \mathrm{VarLookup}(m, x) \\
+    \mathrm{EffAddr}(m, *lv) = & v \textrm{ si } (a, v) ∈ m
+                                 \textrm{ et } a = \mathrm{EffAddr}(m, lv)
+  \end{align*}
 \end{definition}
 
 \section{Expressions}
 
 \begin{definition}[Évaluation d'une expression]
 
-  L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$ et est
-  susceptible de modifier celui-ci en le transformant en un nouveau $m'$. Le
-  résultat est toujours une valeur $v$, c'est à dire que nous présentons une
-  sémantique à grand pas. Cette évaluation est notée :
+  L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
+  et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
+  Le résultat est toujours une valeur $v$, c'est à dire que nous présentons pour
+  les expressions une sémantique à grands pas. Cette évaluation est notée :
 
   \[
     (m, e) → (m', v)
@@ -176,26 +314,26 @@ est visible. Sa valeur est alors celle qui y est associée dans l'environnement
 mémoire. Celui-ci n'est pas modifié.
 
 \begin{mathpar}
-  \irule{Exp-Var}
+  \irule{Exp-Lv}
   {x \mbox{ visible dans } m \\
-    (x, v) ∈ m
+    a = \mathrm{EffAddr}(m, lv) \\
+    (a, v) ∈ m
   }
   {(m, x) → (m, v)}
 \end{mathpar}
 
-Cas op :
+Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
+puis l'autre (l'ordre d'évaluation, de gauche à droite, est imposé). À chaque
+opérateur $\opsymb$, correspond un opérateur sémantique $\widehat{\opsymb}$ qui
+agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
+classique entre entiers.
+
 
 \begin{mathpar}
   \irule{Exp-UnOp}
   {(m, e) → (m', v)}
   {(m, \opsymb~e) → (m', \widehat{\opsymb}~v)}
-\end{mathpar}
 
-À chaque opérateur $\opsymb$, correspond un opérateur sémantique
-$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
-$\widehat{+}$ est l'addition classique entre entiers.
-
-\begin{mathpar}
   \irule{Exp-BinOp}
   {(m, e_1) → (m', v_1) \\
    (m', e_2) → (m'', v_2)
@@ -207,56 +345,245 @@ Adresse :
 
 \begin{mathpar}
   \irule{Exp-AddrOf}
-    {a = \textrm{VarLookup} (x, m)}
+    { x \mbox{ visible dans } m \\
+    a = \mathrm{VarLookup} (x, m)
+    }
     {(m, \&x) → (m, a)}
 \end{mathpar}
 
-Déréférencement :
+L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
+opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
+placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
+cet environnement, et le cadre dépilé.
+
+On commence par définir une opération auxiliaire de plusieurs expressions :
 
 \begin{mathpar}
-  \irule{Exp-AddrOf}
-    { (m, e) → (m', a) \\
-      (a, v) ∈ m'
+  \irule{Eval*-Nil}
+    { }
+    {\mathrm{Eval}^*(m, [], m)}
+
+  \irule{Eval*-Cons}
+    { (m, e) → (m', v) \\
+      \mathrm{Eval}^*(m', l, m'')
     }
-    {
-      (m, *e) → (m', v)
-    }
+    {\mathrm{Eval}^*(m, (e, v)::l, m'')}
 \end{mathpar}
 
-Appel de fonction :
-
-\[
-  \irule{Call}
-  {(m  , e_1) → (m_1, v_1) \\
-   (m_1, e_2) → (m_2, v_2) \\
-   … \\
-   (m_{n-1}, e_n) → (m_n, v_n) \\
-   f = (i, arg_1, …, arg_n) \\
-   m' = \mathrm{Push}(m_n, (arg_1, v_1), …, (arg_n, v_n)) \\
-   (m', i) → (m'', \iReturn{v}) \\
-   m''' = \mathrm{Pop}(m'')
+\begin{mathpar}
+  \irule{Exp-Call}
+  {
+    f = (i, (x_1, …, x_n), ((x'_1, e'_1), …, (x'_p, e'_p))) \\
+    \mathrm{Eval}^*(m ,  ((e_1, v_1),…,(e_n, v_n)), m') \\
+    \mathrm{Eval}^*(m' , ((e'_1, v'_1),…,(e'_p, v'_p)), m'') \\
+   m''' = \mathrm{Push}(m'', ((x_1, v_1), …, (x_n, v_n),
+      (x'_1, v'_1), … (x'_p, v'_p)
+   )) \\
+   (m''', i) → (m'''', \iReturn{v})
   }
-  {(m, f(e_1, …, e_n)) → (m''', v)}
-\]
+  {(m, f(e_1, …, e_n)) → ( \mathrm{Pop}(m''''), v)}
+\end{mathpar}
 
 \section{Instructions}
 
-(attention au pas)
+Contrairement à l'évaluation des expressions, on choisit une sémantique de
+réécriture à petits pas. La sémantique fonctionne de la manière suivante :
+partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
+d'évaluation suivantes permettent de réduire le problème en se ramenant à
+l'exécution d'une instruction $i'$ "plus simple" en partant d'un état mémoire
+$m'$. Un tel pas est noté :
 
 \[
+  (m, i) → (m', i')
+\]
+
+Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
+mémoire dans lequel on a déjà réalisé la première affectation. La seconde
+affectation se réalise de même et permet de réécrire l'instruction restante en
+$\iPass$ :
+
+\begin{align*}
+  (m, (x ← 3 ; y ← x)) → & (m [x ↦ \widehat{3}], y ← x) \\
+                       → & (m [x ↦ \widehat{3}][y ↦ \widehat{3}], \iPass)
+\end{align*}
+
+Il n'est pas possible de réduire plus loin l'instruction $\iPass$. Dans un tel
+cas, l'évaluation est terminée.
+
+Les seuls cas terminaux sont $\iPass$ et $\iReturn{e}$.
+
+Les cas de la séquence et de l'affectation ont été utilisés dans l'exemple
+ci-dessus.
+
+\begin{mathpar}
+  \irule{Seq}
+    {
+      (m, i) → (m', \iPass)
+    }
+    {
+      (m, (i;i')) → (m', i')
+    }
+
+  \irule{Pass}
+    {
+    }
+    {
+      (m, (\iPass;i)) → (m, i)
+    }
+
   \irule{Set}
   {
-    (m, e) → (m', v) \\
-    m'' = m' [ x ↦ v ]
+    (m, lv) → (m', v) \\
+    a = \mathrm{EffAddr}(m, lv)
   }
-  {(m, x ← e) → (m'', pass)}
+  {(m, lv ← e) → (m' [ a ↦ v ], \iPass)}
+
+\end{mathpar}
+
+Alternative
+
+\begin{mathpar}
+  \irule{If-False}
+    {
+      (m, e) → (m', \widehat{0}) \\
+      (m', i_f) → (m'', i')
+    }
+    {
+      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+    }
+
+  \irule{If-True}
+    {
+      (m, e) → (m', v) \\
+      v ≠ \widehat{0} \\
+      (m', i_t) → (m'', i')
+    }
+    {
+      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+    }
+\end{mathpar}
+
+Boucle
+
+(on définit $\iThen{e}{i} = \iIf{e}{i}{\iPass}$)
+
+\begin{mathpar}
+  \irule{While}
+    { }
+    {
+      (m, \iWhile{e}{i}) → (m, \iThen{e}{i;\iWhile{e}{i}})
+    }
+\end{mathpar}
+
+
+Early return
+
+\begin{mathpar}
+  \irule{Return}
+  { }
+  { (m, \iReturn{e};i) → (m, \iReturn{e}) }
+\end{mathpar}
+
+\section{Exécution}
+
+On considère un programme $P = ((f_1, …, f_n), ((x_1, e_1), … (x_p, e_p)))$.
+
+Son état mémoire initial est
+
+\[
+  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ \widehat(0), …, x_p ↦ \widehat(0)\}))
 \]
+
+Et son exécution est celle de l'instruction
+
+\[
+  i_0(P) = x_1 ← e_1;…;x_p ← e_p;f_1()
+\]
+
+L'état initial est $(m_0(P), i_0(P))$.
+
+\section{Exemple : l'algorithme d'Euclide}
+
+Version par divisions successives:
+
+\begin{Verbatim}
+function gcd(a, b)
+  var t = 0;
+  while b != 0
+    t = b
+    b = a mod b
+    a = t
+  return a
+\end{Verbatim}
+
+Soit :
+
+\def\exinnerif{t←b;b←a\%b;a←t}
+
+\begin{mathpar}
+  f(a, b) (t = 0) \{
+    \iWhile{b ≠ 0}{
+      \exinnerif
+    };
+    \iReturn{a}
+  \}
+\end{mathpar}
+
+\[
+  (m, f(1071, 462)) → ?
+\]
+
+\[
+  (m[a↦1071][b↦462][t↦0], \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) → ?
+\]
+
+(on notera cet état $s_0 = (m_0, e_0)$)
+
+\[
+  (m_0, a = 0) → (m_0, 0)
+\]
+
+donc
+
+\[
+  (m_0, \iThen{a = 0}{\iReturn{b}}) → (m[a↦1071][b↦462], \iPass)
+\]
+
+{ \scriptsize
+\begin{align}
+  s_0 → & (m_0, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
+      → & (m_0, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_0', b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_0'', a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_1, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_1, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
+      → & (m_1, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_2, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_2, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
+      → & (m_2, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_3, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
+      → & (m_3, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
+      → & (m_3, \iPass; \iReturn{a}) \\
+      → & (m_3, \iReturn{a})
+\end{align}
+
+\begin{align*}
+  m_0'  = & m_0  [t↦462] = m[a↦1071][b↦462][t↦462] \\
+  m_0'' = & m_0' [b↦147] = m[a↦1071][b↦147][t↦462] \\
+  m_1   = & m_0''[a↦462] = m[a↦462][b↦147][t↦462] \\
+  m_2   = & m_1[t↦147][b↦21][a↦147] = m[a↦147][b↦21][t↦147] \\
+  m_3   = & m_2[t↦21][b↦0][a↦21] = m[a↦21][b↦0][t↦21]
+\end{align*}
+}
+
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+TODO
 
 \begin{itemize}
 \item
-  ajout des adresses
-\item
-  declaration
-\item
   champs de records
+\item
+  interdire la division par zéro
 \end{itemize}
