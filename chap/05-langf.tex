@@ -448,8 +448,8 @@ affectation se réalise de même et permet de réécrire l'instruction restante 
 $\iPass$ :
 
 \begin{align*}
-  (m, (x ← 3 ; y ← x)) → & (m [x ↦ \widehat{3}], y ← x) \\
-                       → & (m [x ↦ \widehat{3}][y ↦ \widehat{3}], \iPass)
+  \msi{m}{(x ← 3 ; y ← x)} → & \msi{m [x ↦ \widehat{3}]}{y ← x} \\
+                           → & \msi{m [x ↦ \widehat{3}][y ↦ \widehat{3}]}{\iPass}
 \end{align*}
 
 Il n'est pas possible de réduire plus loin l'instruction $\iPass$. Dans un tel
@@ -571,14 +571,14 @@ Soit :
 \end{mathpar}
 
 \[
-  (m, f(1071, 462)) → ?
+  \msi{m}{f(1071, 462)} → ?
 \]
 
 \[
-  (m[a↦1071][b↦462][t↦0], \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) → ?
+  \msi{m[a↦1071][b↦462][t↦0]}{\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} → ?
 \]
 
-(on notera cet état $s_0 = (m_0, e_0)$)
+(on notera cet état $s_0 = \msi{m_0}{i_0}$)
 
 \[
   \mm{m_0}{a = 0}{m_0}{0}
@@ -592,20 +592,20 @@ donc
 
 { \scriptsize
 \begin{align}
-  s_0 → & (m_0, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_0, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_0', b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_0'', a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_1, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_1, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_1, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_2, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_2, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_2, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_3, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_3, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_3, \iPass; \iReturn{a}) \\
-      → & (m_3, \iReturn{a})
+  s_0 → & \msi{m_0  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_0  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_0  }{ b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_0''}{ a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_1  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_1  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_1  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_2  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_2  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_2  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iPass; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iReturn{a}}
 \end{align}
 
 \begin{align*}
@@ -632,8 +632,6 @@ donc
   Options :
 
 \begin{itemize}
-\item
-  passer de $(m, e)$ à $\langle e, m \rangle$ ?
 \item
   on fait juste une restriction (forget) au pop (solution actuelle).
 \item
