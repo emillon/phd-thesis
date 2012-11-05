@@ -26,8 +26,8 @@ opérateur d'alternative et de boucle.
       \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
       \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
       \\ \gramor & \& x            & \textrm{Pointeur}
-      \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
       \\ \gramor & lv ← e          & \textrm{Affectation}
+      \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
     \end{align*}
   }
 
@@ -370,6 +370,16 @@ Adresse :
     {(m, \&x) → (m, a)}
 \end{mathpar}
 
+\begin{mathpar}
+  \irule{Exp-Set}
+  {
+    (m, lv) → (m', v) \\
+    a = \mathrm{EffAddr}(m, lv) \\
+    m'' = m' [ a ↦ v ]
+  }
+  {(m, lv ← e) → (m'', v)}
+\end{mathpar}
+
 L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
 opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
 placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
@@ -422,16 +432,6 @@ fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droit
    (m''', i) → (m'''', \iReturn{v})
   }
   {(m, f(e_1, …, e_n)) → ( \mathrm{Pop}(m''''), v)}
-\end{mathpar}
-
-\begin{mathpar}
-  \irule{Exp-Set}
-  {
-    (m, lv) → (m', v) \\
-    a = \mathrm{EffAddr}(m, lv) \\
-    m'' = m' [ a ↦ v ]
-  }
-  {(m, lv ← e) → (m'', v)}
 \end{mathpar}
 
 \section{Instructions}
