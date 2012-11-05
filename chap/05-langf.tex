@@ -378,24 +378,44 @@ cet environnement, et le cadre dépilé.
 On commence par définir une opération d'évaluation de plusieurs expressions à la
 fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droite.
 
+\def\evstar#1#2#3#4{
+  \left( #1, \begin{pmatrix}#2\end{pmatrix} \right) →
+  \left( #3, \begin{pmatrix}#4\end{pmatrix} \right)
+}
+
 \begin{mathpar}
-  \irule{Eval*-Nil}
-    { }
-    {\mathrm{Eval}^*(m, [], m)}
+  \evstar{m}{e_1 \\ \vdots \\ e_n}
+         {m'}{v_1 \\ \vdots \\ v_n}
+\end{mathpar}
+
+\begin{mathpar}
+
+  \irule{Eval*-1}
+    { (m, e) → (m', v) }
+    {
+      \evstar{m}{e}
+             {m'}{v}
+    }
 
   \irule{Eval*-Cons}
     { (m, e) → (m', v) \\
-      \mathrm{Eval}^*(m', l, m'')
+      \evstar{m'}{e_2 \\ \vdots \\ e_n}
+             {m''}{v_2 \\ \vdots \\ v_n}
     }
-    {\mathrm{Eval}^*(m, (e, v)::l, m'')}
+    { \evstar{m}{e_1 \\ \vdots \\ e_n}
+             {m''}{v_1 \\ \vdots \\ v_n}
+    }
+
 \end{mathpar}
 
 \begin{mathpar}
   \irule{Exp-Call}
   {
     f = (i, (x_1, …, x_n), ((x'_1, e'_1), …, (x'_p, e'_p))) \\
-    \mathrm{Eval}^*(m ,  ((e_1, v_1),…,(e_n, v_n)), m') \\
-    \mathrm{Eval}^*(m' , ((e'_1, v'_1),…,(e'_p, v'_p)), m'') \\
+    \evstar{m}{e_1 \\ \vdots \\ e_n}
+          {m'}{v_1 \\ \vdots \\ v_n} \\
+    \evstar{m'}{e'_1 \\ \vdots \\ e'_p}
+          {m''}{v'_1 \\ \vdots \\ v'_p} \\
    m''' = \mathrm{Push}(m'', ((x_1, v_1), …, (x_n, v_n),
       (x'_1, v'_1), … (x'_p, v'_p)
    )) \\
@@ -609,8 +629,6 @@ donc
 
 \begin{itemize}
 \item
-  simplifier $\mathrm{Eval}^*$
-\item
   champs de records
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
@@ -620,6 +638,8 @@ donc
   Options :
 
 \begin{itemize}
+\item
+  passer de $(m, e)$ à $\langle e, m \rangle$ ?
 \item
   on fait juste une restriction (forget) au pop (solution actuelle).
 \item
