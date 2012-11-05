@@ -53,6 +53,18 @@
 \def\sInt{\textsc{Int}\xspace}
 \def\sFloat{\textsc{Float}\xspace}
 
+\def\mm#1#2#3#4{ (#1, #2) → (#3, #4) }
+
+\def\mmbig#1#2#3#4{
+  \left( #1, #2 \right) →
+  \left( #3, #4 \right)
+}
+
+\def\evstar#1#2#3#4{
+  \mmbig{#1}{\begin{pmatrix}#2\end{pmatrix}}
+        {#3}{\begin{pmatrix}#4\end{pmatrix}}
+}
+
 % Continuations
 \def\kPass{\textsc{Kpass}\xspace}
 \def\kSeq#1#2{\textsc{Kseq}(#1, #2)}

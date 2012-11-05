@@ -303,7 +303,7 @@ retournant il faudra supprimer ce cadre de pile.
   les expressions une sémantique à grands pas. Cette évaluation est notée :
 
   \[
-    (m, e) → (m', v)
+    \mm{m}{e}{m'}{v}
   \]
 
 \end{definition}
@@ -316,7 +316,7 @@ associe le nombre (entier) $\widehat{3}$.
 \begin{mathpar}
   \irule{Exp-Cst}
     { }
-    {(m, c) → (m, \widehat{c})}
+    {\mm{m}{c}{m}{\widehat{c}}}
 \end{mathpar}
 
 Pour lire le contenu d'une variable, il faut tout d'abord s'assurer que celle-ci
@@ -329,7 +329,7 @@ mémoire. Celui-ci n'est pas modifié.
     a = \mathrm{EffAddr}(m, lv) \\
     (a, v) ∈ m
   }
-  {(m, x) → (m, v)}
+  {\mm{m}{x}{m}{v}}
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
@@ -341,23 +341,23 @@ modulo sont traités dans une règle à part.
 
 \begin{mathpar}
   \irule{Exp-UnOp}
-  {(m, e) → (m', v)}
-  {(m, \opsymb~e) → (m', \widehat{\opsymb}~v)}
+  {\mm{m}{e}{m'}{v}}
+  {\mm{m}{\opsymb~e}{m'}{\widehat{\opsymb}~v}}
 
   \irule{Exp-BinOp}
   { \opsymb ∉ \{/, \%\} \\
-    (m, e_1) → (m', v_1) \\
-    (m', e_2) → (m'', v_2)
+      \mm{m}{e_1}{m'}{v_1} \\
+      \mm{m'}{e_2}{m''}{v_2}
   }
-  {(m, e_1~\opsymb~e_2) → (m'', v_1~\widehat{\opsymb}~v_2)}
+  {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
 
   \irule{Exp-Div}
   { \opsymb ∈ \{/, \%\} \\
-    (m, e_1) → (m', v_1) \\
-    (m', e_2) → (m'', v_2) \\
+    \mm{m}{e_1}{m'}{v_1} \\
+    \mm{m'}{e_2}{m''}{v_2}
     v_2 ≠ \widehat{0}
   }
-  {(m, e_1~\opsymb~e_2) → (m'', v_1~\widehat{\opsymb}~v_2)}
+  {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
 \end{mathpar}
 
 Adresse :
@@ -367,17 +367,17 @@ Adresse :
     { x \mbox{ visible dans } m \\
     a = \mathrm{VarLookup} (x, m)
     }
-    {(m, \&x) → (m, a)}
+    {\mm{m}{\&x}{m}{a}}
 \end{mathpar}
 
 \begin{mathpar}
   \irule{Exp-Set}
   {
-    (m, lv) → (m', v) \\
+    \mm{m}{lv}{m'}{v} \\
     a = \mathrm{EffAddr}(m, lv) \\
     m'' = m' [ a ↦ v ]
   }
-  {(m, lv ← e) → (m'', v)}
+  {\mm{m}{lv ← e}{m''}{v}}
 \end{mathpar}
 
 L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
@@ -388,11 +388,6 @@ cet environnement, et le cadre dépilé.
 On commence par définir une opération d'évaluation de plusieurs expressions à la
 fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droite.
 
-\def\evstar#1#2#3#4{
-  \left( #1, \begin{pmatrix}#2\end{pmatrix} \right) →
-  \left( #3, \begin{pmatrix}#4\end{pmatrix} \right)
-}
-
 \begin{mathpar}
   \evstar{m}{e_1 \\ \vdots \\ e_n}
          {m'}{v_1 \\ \vdots \\ v_n}
@@ -401,14 +396,14 @@ fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droit
 \begin{mathpar}
 
   \irule{Eval*-1}
-    { (m, e) → (m', v) }
+    { \mm{m}{e}{m'}{v} }
     {
       \evstar{m}{e}
              {m'}{v}
     }
 
   \irule{Eval*-Cons}
-    { (m, e) → (m', v) \\
+    { \mm{m}{e}{m'}{v} \\
       \evstar{m'}{e_2 \\ \vdots \\ e_n}
              {m''}{v_2 \\ \vdots \\ v_n}
     }
@@ -429,9 +424,9 @@ fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droit
    m''' = \mathrm{Push}(m'', ((x_1, v_1), …, (x_n, v_n),
       (x'_1, v'_1), … (x'_p, v'_p)
    )) \\
-   (m''', i) → (m'''', \iReturn{v})
+   \mm{m'''}{i}{m''''}{\iReturn{v}}
   }
-  {(m, f(e_1, …, e_n)) → ( \mathrm{Pop}(m''''), v)}
+  {\mm{m}{f(e_1, …, e_n)}{\mathrm{Pop}(m'''')}{v}}
 \end{mathpar}
 
 \section{Instructions}
