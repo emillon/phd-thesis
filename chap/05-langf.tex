@@ -27,6 +27,7 @@ opérateur d'alternative et de boucle.
       \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
       \\ \gramor & \& x            & \textrm{Pointeur}
       \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
+      \\ \gramor & lv ← e          & \textrm{Affectation}
     \end{align*}
   }
 
@@ -52,7 +53,7 @@ opérateur d'alternative et de boucle.
     \begin{align*}
       i \gramisa & \iPass        & \textrm{Instruction vide}
       \\ \gramor & i;i           & \textrm{Séquence}
-      \\ \gramor & lv ← e         & \textrm{Affectation}
+      \\ \gramor & e             & \textrm{Expression}
       \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
       \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
       \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
@@ -403,6 +404,16 @@ fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droit
   {(m, f(e_1, …, e_n)) → ( \mathrm{Pop}(m''''), v)}
 \end{mathpar}
 
+\begin{mathpar}
+  \irule{Exp-Set}
+  {
+    (m, lv) → (m', v) \\
+    a = \mathrm{EffAddr}(m, lv) \\
+    m'' = m' [ a ↦ v ]
+  }
+  {(m, lv ← e) → (m'', v)}
+\end{mathpar}
+
 \section{Instructions}
 
 Contrairement à l'évaluation des expressions, on choisit une sémantique de
@@ -450,12 +461,9 @@ ci-dessus.
       (m, (\iPass;i)) → (m, i)
     }
 
-  \irule{Set}
-  {
-    (m, lv) → (m', v) \\
-    a = \mathrm{EffAddr}(m, lv)
-  }
-  {(m, lv ← e) → (m' [ a ↦ v ], \iPass)}
+  \irule{Exp}
+    { (m, e) → (m', v) }
+    { (m, e) → (m', \iPass) }
 
 \end{mathpar}
 
@@ -601,8 +609,6 @@ donc
 TODO
 
 \begin{itemize}
-\item
-  déplacer $lv ← e$ dans les expressions
 \item
   champs de records
 \item
