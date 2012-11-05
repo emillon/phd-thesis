@@ -1,8 +1,14 @@
-On définit ici un langage impératif.
+On définit ici un langage impératif servant de base à nos analyses. Un premier
+système de types sera donné dans le chapitre~\ref{cha:typbase}.
 
 \section{Syntaxe}
 
-Donnée dans la figure~\ref{fig:stx}.
+La figure~\ref{fig:stx} présente notre langage intermédiaire. Il contient la
+plupart des fonctionnalités présentes dans les langages impératifs comme C.
+
+Un programme est organisé en fonctions, qui contiennent des instructions, qui
+elles-même manipulent des expressions. Le flôt de contrôle est minimal, avec un
+opérateur d'alternative et de boucle.
 
 \begin{figure}
 
