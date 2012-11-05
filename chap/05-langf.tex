@@ -439,7 +439,7 @@ l'exécution d'une instruction $i'$ "plus simple" en partant d'un état mémoire
 $m'$. Un tel pas est noté :
 
 \[
-  (m, i) → (m', i')
+  \mmi{m}{i}{m'}{i'}
 \]
 
 Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
@@ -463,22 +463,22 @@ ci-dessus.
 \begin{mathpar}
   \irule{Seq}
     {
-      (m, i) → (m', \iPass)
+      \mmi{m}{i}{m'}{\iPass}
     }
     {
-      (m, (i;i')) → (m', i')
+      \mmi{m}{(i;i')}{m'}{i'}
     }
 
   \irule{Pass}
     {
     }
     {
-      (m, (\iPass;i)) → (m, i)
+      \mmi{m}{(\iPass;i)}{m}{i}
     }
 
   \irule{Exp}
-    { (m, e) → (m', v) }
-    { (m, e) → (m', \iPass) }
+    { \mm{m}{e}{m'}{v} }
+    { \mmi{m}{e}{m'}{\iPass} }
 
 \end{mathpar}
 
@@ -487,21 +487,21 @@ Alternative
 \begin{mathpar}
   \irule{If-False}
     {
-      (m, e) → (m', \widehat{0}) \\
-      (m', i_f) → (m'', i')
+      \mm{m}{e}{m'}{\widehat{0}} \\
+      \mmi{m'}{i_f}{m''}{i'}
     }
     {
-      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+      \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
     }
 
   \irule{If-True}
     {
-      (m, e) → (m', v) \\
+      \mm{m}{e}{m'}{v} \\
       v ≠ \widehat{0} \\
-      (m', i_t) → (m'', i')
+      \mmi{m'}{i_t}{m''}{i'}
     }
     {
-      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+      \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
     }
 \end{mathpar}
 
@@ -513,17 +513,16 @@ Boucle
   \irule{While}
     { }
     {
-      (m, \iWhile{e}{i}) → (m, \iThen{e}{i;\iWhile{e}{i}})
+      \mmi{m}{\iWhile{e}{i}}{m}{\iThen{e}{i;\iWhile{e}{i}}}
     }
 \end{mathpar}
-
 
 Early return
 
 \begin{mathpar}
   \irule{Return}
   { }
-  { (m, \iReturn{e};i) → (m, \iReturn{e}) }
+  { \mmi{m}{\iReturn{e};i}{m}{\iReturn{e}} }
 \end{mathpar}
 
 \section{Exécution}
@@ -582,13 +581,13 @@ Soit :
 (on notera cet état $s_0 = (m_0, e_0)$)
 
 \[
-  (m_0, a = 0) → (m_0, 0)
+  \mm{m_0}{a = 0}{m_0}{0}
 \]
 
 donc
 
 \[
-  (m_0, \iThen{a = 0}{\iReturn{b}}) → (m[a↦1071][b↦462], \iPass)
+  \mm{m_0}{\iThen{a = 0}{\iReturn{b}}}{m[a↦1071][b↦462]}{\iPass}
 \]
 
 { \scriptsize

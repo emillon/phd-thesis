@@ -53,7 +53,11 @@
 \def\sInt{\textsc{Int}\xspace}
 \def\sFloat{\textsc{Float}\xspace}
 
+% Reduction (expressions)
 \def\mm#1#2#3#4{ (#1, #2) → (#3, #4) }
+
+% Reduction (instructions)
+\def\mmi#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
 
 \def\mmbig#1#2#3#4{
   \left( #1, #2 \right) →
