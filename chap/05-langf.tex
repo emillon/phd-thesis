@@ -435,18 +435,21 @@ dont les champs sont ceux de la première structure évalués :
     \node[below of=m2]                    (m3) {$m_3$};
     \node[right of=m3, node distance=3cm] (m4) {$m_4$};
     \node[below of=m4]                    (m5) {$m_5$};
-    \node at ($(m0)!(m5)!(0,1)$) (m6) {$m_6$};
+    \node[below of=m5]                    (m6) {$m_6$};
+    \node at ($(m0)!(m6)!(0,1)$)          (m7) {$m_7$};
 
     \draw [->] (m0) -- node[auto] {$\vec{e} → \vec{v}$}               (m1);
     \draw [->] (m1) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}  (m2);
     \draw [->] (m2) -- node[auto] {$\vec{e'} → \vec{v'}$}             (m3);
-    \draw [->] (m3) -- node[auto] {$\mathrm{Push}(\vec{l}↦\vec{v'})$} (m4);
-    \draw [->] (m4) -- node[auto] {$i → \iReturn{v}$} (m5);
-    \draw [->] (m5) -- node[auto] {$\mathrm{Pop}(\vec{a} \cup \vec{l})$} (m6);
+    \draw [->] (m3) -- node[auto] {$\mathrm{Extend}(\vec{l}↦\vec{v'})$} (m4);
+    \draw [->] (m4) -- node[auto] {$i → \iReturn{e}$}                 (m5);
+    \draw [->] (m5) -- node[auto] {$e → v$}                           (m6);
+
+    \draw [->] (m6) -- node[auto] {$\mathrm{Pop}(\vec{a} \cup \vec{l})$} (m7);
 
     \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
                     -- node[auto, swap] {$f(\vec{e}) → v$}
-                       ($ (m6) + (-5mm, 3mm) $);
+                       ($ (m7) + (-5mm, 3mm) $);
 
   \end{tikzpicture}
 
@@ -473,9 +476,10 @@ Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
     m_2 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
     \evstar{m_2}{e'_1 \\ \vdots \\ e'_p}
            {m_3}{v'_1 \\ \vdots \\ v'_p} \\
-    m_4 = \mathrm{Push}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
-    \mm{m_4}{i}{m_5}{\iReturn{v}} \\
-    m_6 = \mathrm{Pop}(\mathrm{Pop}(m_5))
+    m_4 = \mathrm{Extend}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
+    \mm{m_4}{i}{m_5}{\iReturn{e}} \\
+    \mm{m_5}{e}{m_6}{v} \\
+    m_7 = \mathrm{Pop}(m_6)
   }
   {\mm{m_0}{f(e_1, …, e_n)}{m_6}{v}}
 \end{mathpar}
@@ -729,7 +733,6 @@ donc
 \begin{itemize}
 \item NULL ou top
 \item sortir les opérateurs
-\item évaluer le return
 \item
   système de vues pour accès aux records
 \item
