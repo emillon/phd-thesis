@@ -578,7 +578,7 @@ de "if" imbriqués.
 \begin{minipage}{0.3\textwidth}
 \begin{Verbatim}
 while(e) {
-  i
+    i
 }
 \end{Verbatim}
 \end{minipage}
@@ -586,17 +586,17 @@ $\widehat{=}$
 \begin{minipage}{0.3\textwidth}
 \begin{Verbatim}
 if(e) {
-  i;
-  if(e) {
     i;
     if(e) {
-      i;
-      if(e) {
         i;
-        ...
-      }
+        if(e) {
+            i;
+            if(e) {
+                i;
+                ...
+            }
+        }
     }
-  }
 }
 \end{Verbatim}
 \end{minipage}
@@ -606,7 +606,7 @@ Donc en remplaçant le second "if" par le "while", on obtient :
 \begin{minipage}{0.3\textwidth}
 \begin{Verbatim}
 while(e) {
-  i
+    i
 }
 \end{Verbatim}
 \end{minipage}
@@ -614,10 +614,10 @@ $\widehat{=}$
 \begin{minipage}{0.3\textwidth}
 \begin{Verbatim}
 if(e) {
-  i;
-  while(e) {
-    i
-  }
+    i;
+    while(e) {
+        i
+    }
 }
 \end{Verbatim}
 \end{minipage}
@@ -727,6 +727,9 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item NULL ou top
+\item sortir les opérateurs
+\item évaluer le return
 \item
   système de vues pour accès aux records
 \item
