@@ -421,21 +421,18 @@ dont les champs sont ceux de la première structure évalués :
   }
 \end{mathpar}
 
-L'appel de fonction repose également sur cette évaluation. Tout d'abord, les
-arguments sont évalués. Puis les expressions qui initialisent les variables
-locales. Cf. figure~\ref{fcall-details}.
-
 \shorthandoff{!}
 \begin{figure}
 
   \centering
 
   \begin{tikzpicture}
+    [node distance=2cm]
 
     \node (m0) {$m_0$};
-    \node[below of=m0, node distance=2cm] (m1) {$m_1$};
+    \node[below of=m0]                    (m1) {$m_1$};
     \node[right of=m1, node distance=3cm] (m2) {$m_2$};
-    \node[below of=m2, node distance=2cm] (m3) {$m_3$};
+    \node[below of=m2]                    (m3) {$m_3$};
     \node[right of=m3, node distance=3cm] (m4) {$m_4$};
     \node[below of=m4]                    (m5) {$m_5$};
     \node at ($(m0)!(m5)!(0,1)$) (m6) {$m_6$};
@@ -458,6 +455,14 @@ locales. Cf. figure~\ref{fcall-details}.
 
 \end{figure}
 \shorthandon{!}
+
+L'appel de fonction repose également sur cette évaluation multiple. Tout
+d'abord, les arguments sont évalués et placés dans un nouveau cadre de pile.
+Puis les expressions qui initialisent les variables locales sont elle aussi
+évaluées et ajoutées à ce même cadre de pile (opérateur $\mathrm{Extend}$).
+Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
+instruction $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
+Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \begin{mathpar}
   \irule{Exp-Call}
