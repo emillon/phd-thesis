@@ -533,7 +533,11 @@ ci-dessus.
 
 \end{mathpar}
 
-Alternative
+Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
+manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce
+cas), c'est la règle \textsc{If-False} qui est appliquée et l'instruction
+revient à évaluer la branche "else". Dans les autres cas, c'est la règle
+\textsc{If-True} qui s'applique et la branche "then" qui est prise.
 
 \begin{mathpar}
   \irule{If-False}
@@ -556,9 +560,8 @@ Alternative
     }
 \end{mathpar}
 
-Boucle
-
-(on définit $\iThen{e}{i} = \iIf{e}{i}{\iPass}$)
+Le traitement de la boucle est une simple règle de réécriture \footnote{Cette
+règle utilise la forme courte $\iThen{e}{i} = \iIf{e}{i}{\iPass}$.} :
 
 \begin{mathpar}
   \irule{While}
@@ -568,7 +571,58 @@ Boucle
     }
 \end{mathpar}
 
-Early return
+Cette règle revient à dire qu'on peut dérouler une boucle. Pour la comprendre,
+on peut remarquer qu'une boucle "while" est en réalité équivalente une infinité
+de "if" imbriqués.
+
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+while(e) {
+  i
+}
+\end{Verbatim}
+\end{minipage}
+$\widehat{=}$
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+if(e) {
+  i;
+  if(e) {
+    i;
+    if(e) {
+      i;
+      if(e) {
+        i;
+        ...
+      }
+    }
+  }
+}
+\end{Verbatim}
+\end{minipage}
+
+Donc en remplaçant le second "if" par le "while", on obtient :
+
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+while(e) {
+  i
+}
+\end{Verbatim}
+\end{minipage}
+$\widehat{=}$
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+if(e) {
+  i;
+  while(e) {
+    i
+  }
+}
+\end{Verbatim}
+\end{minipage}
+
+Si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 \begin{mathpar}
   \irule{Return}
