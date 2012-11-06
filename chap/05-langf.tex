@@ -423,7 +423,40 @@ dont les champs sont ceux de la première structure évalués :
 
 L'appel de fonction repose également sur cette évaluation. Tout d'abord, les
 arguments sont évalués. Puis les expressions qui initialisent les variables
-locales.
+locales. Cf. figure~\ref{fcall-details}.
+
+\begin{figure}
+
+  \centering
+
+  \begin{tikzpicture}
+    [node distance=2cm]
+
+    \node (m0) {$m_0$};
+    \node[below of=m0]                    (m1) {$m_1$};
+    \node[right of=m1]                    (m2) {$m_2$};
+    \node[below of=m2]                    (m3) {$m_3$};
+    \node[right of=m3]                    (m4) {$m_4$};
+    \node[below of=m4]                    (m5) {$m_5$};
+    \node[below of=m0, node distance=6cm] (m6) {$m_6$};
+
+    \draw [->] (m0) -- node[auto] {$\vec{e} → \vec{v}$}               (m1);
+    \draw [->] (m1) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}  (m2);
+    \draw [->] (m2) -- node[auto] {$\vec{e'} → \vec{v'}$}             (m3);
+    \draw [->] (m3) -- node[auto] {$\mathrm{Push}(\vec{l}↦\vec{v'})$} (m4);
+    \draw [->] (m4) -- node[auto] {$i → \iReturn{v}$} (m5);
+    \draw [->] (m5) -- node[auto] {$\mathrm{Pop}(\vec{a} \cup \vec{l})$} (m6);
+
+    \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
+                    -- node[auto] {$f(\vec{e} → v$}
+                       ($ (m6) + (-5mm, 3mm) $);
+
+  \end{tikzpicture}
+
+  \caption{L'appel d'une fonction}
+  \label{fig:fcall-details}
+
+\end{figure}
 
 \begin{mathpar}
   \irule{Exp-Call}
