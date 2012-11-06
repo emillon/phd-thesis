@@ -50,6 +50,29 @@
 \def\sId{\textsc{Id}\xspace}
 \def\sMem{\textsc{Mem}\xspace}
 \def\sAddr{\textsc{Addr}\xspace}
+\def\sInt{\textsc{Int}\xspace}
+\def\sFloat{\textsc{Float}\xspace}
+
+% Memory state (instructions)
+% #1 : memory
+% #2 : instruction
+\def\msi#1#2{ \langle #2, #1 \rangle }
+
+% Reduction (expressions)
+\def\mm#1#2#3#4{ \msi{#1}{#2} → \msi{#3}{#4} }
+
+% Reduction (instructions)
+\def\mmi#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
+
+\def\mmbig#1#2#3#4{
+  \left\langle #1, #2 \right\rangle →
+  \left\langle #3, #4 \right\rangle
+}
+
+\def\evstar#1#2#3#4{
+  \mmbig{#1}{\begin{pmatrix}#2\end{pmatrix}}
+        {#3}{\begin{pmatrix}#4\end{pmatrix}}
+}
 
 % Continuations
 \def\kPass{\textsc{Kpass}\xspace}

@@ -1,8 +1,14 @@
-On définit ici un langage impératif.
+On définit ici un langage impératif servant de base à nos analyses. Un premier
+système de types sera donné dans le chapitre~\ref{cha:typbase}.
 
 \section{Syntaxe}
 
-Donnée dans la figure~\ref{fig:stx}.
+La figure~\ref{fig:stx} présente notre langage intermédiaire. Il contient la
+plupart des fonctionnalités présentes dans les langages impératifs comme C.
+
+Un programme est organisé en fonctions, qui contiennent des instructions, qui
+elles-même manipulent des expressions. Le flôt de contrôle est minimal, avec un
+opérateur d'alternative et de boucle.
 
 \begin{figure}
 
@@ -20,7 +26,9 @@ Donnée dans la figure~\ref{fig:stx}.
       \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
       \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
       \\ \gramor & \& x            & \textrm{Pointeur}
-      \\ \gramor & * e             & \textrm{Déréférencement}
+      \\ \gramor & lv ← e          & \textrm{Affectation}
+      \\ \gramor & \{ f_1 : e_1 ;
+                  … ; f_n : e_n \} & \textrm{Structure}
       \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
     \end{align*}
   }
@@ -47,7 +55,7 @@ Donnée dans la figure~\ref{fig:stx}.
     \begin{align*}
       i \gramisa & \iPass        & \textrm{Instruction vide}
       \\ \gramor & i;i           & \textrm{Séquence}
-      \\ \gramor & lv ← e         & \textrm{Affectation}
+      \\ \gramor & e             & \textrm{Expression}
       \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
       \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
       \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
@@ -56,14 +64,16 @@ Donnée dans la figure~\ref{fig:stx}.
 
   \gramlr{Fonctions}{
     \begin{align*}
-      f \gramisa & (i, (x_1, …, x_n)) & \textrm{Corps, arguments}
+      f \gramisa & (i,                             & \textrm{Corps} \\
+                 & (x_1, …, x_n),                  & \textrm{Arguments} \\
+                 & ((x'_1, e_1), …, (x'_p, e_p)))  & \textrm{Variables locales}
     \end{align*}
   }
 
   \gramlr{Programme}{
     \begin{align*}
-      P \gramisa & ((f_1, …, f_n),
-        ((x_1, e_1), …, (x_p, e_p))) & \textrm{Fonctions, globales}
+      P \gramisa & ((f_1, …, f_n),   & \textrm{Fonctions} \\
+                 & ((x_1, e_1), …, (x_p, e_p))) & \textrm{Globales}
     \end{align*}
   }
 
@@ -93,22 +103,33 @@ que :
 
 \section{Mémoire}
 
+L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
+associées aux variables du programme.
 
-Un programme, pour s'exécuter, dispose de mémoire organisée en variables. Plus
-précisément, un état mémoire $m = (s, g, l)$ est composé de :
+\begin{align*}
+  \sVal = & \sInt \cup \sFloat \cup \sAddr \\
+  \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
+  \sAddr = & \sId \cup (ℕ × \sId)
+\end{align*}
 
-$\sMem = {\sId^*}^* × \sId^* × \sVal^\sAddr$
+\sFloat correspond à l'ensemble des flottants IEEE 754\cite{ieee754}. Ici, \sInt
+est choisi pour représenter les nombres entiers de $-2^{31}$ à $2^{31}-1$, mais
+ce choix est arbitraire : de la même manière, on aurait pu choisir des nombres à
+64 bits ou même de précision arbitraire.
 
-L'ensemble des adresses \sAddr est défini comme suit :
+L'ensemble des états mémoire est :
 
 \[
-  \sAddr = \sId \cup (ℕ × \sId)
+  \sMem = {\sId^*}^* × \sId^* × \sVal^\sAddr
 \]
 
 L'interprétation est la suivante : une adresse est soit un nom de variable
 globale, soit un nom de variable locale à un niveau donné.
 
-Les composantes d'un état mémoire sont :
+Un état mémoire contient deux ensembles de variables (locales et globales), et
+une fonction qui à chacune de ces variables associe une valeur.
+
+Plus précisément, un état mémoire $m = (s, g, l)$ est composé de :
 
 \begin{itemize}
 \item
@@ -138,8 +159,10 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
   \gramlr{Valeurs}{
     \begin{align*}
-      v \gramisa & c & \textrm{Constante}
-      \\ \gramor & a & \textrm{Adresse}
+      v \gramisa & c               & \textrm{Constante}
+      \\ \gramor & a               & \textrm{Adresse}
+      \\ \gramor & \{ f_1 : v_1 ;
+                  … ; f_n : v_n \} & \textrm{Structure}
     \end{align*}
   }
 
@@ -167,8 +190,6 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
   \caption{Interpréteur}
   \label{fig:interp}
 \end{figure}
-
-\section{Sémantique}
 
 Chaque fonction peut accéder aux variables locales de la fonction en cours,
 ainsi qu'aux variables globales.
@@ -218,13 +239,6 @@ retournant il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  La hauteur d'une pile est le nombre de cadres qu'elle contient :
-
-  \begin{align*}
-    \mathrm{StackSize}([])     = & 0 \\
-    \mathrm{StackSize}(f::s) = & 1 + \mathrm{StackSize}(s)
-  \end{align*}
-
   On définit l'empilement d'un cadre de pile :
 
   \[
@@ -243,7 +257,7 @@ retournant il faudra supprimer ce cadre de pile.
   \begin{align*}
     s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
     l' = & l \cup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
-    p  = & \mathrm{StackSize}(s) + 1
+    p  = & |s| + 1
   \end{align*}
 
   De même on définit le dépilement :
@@ -262,7 +276,7 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     s' = & \mathrm{Pop}(s) \\
-    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < \mathrm{StackSize}(s) \}
+    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
   \end{align*}
 
 \end{definition}
@@ -293,7 +307,7 @@ retournant il faudra supprimer ce cadre de pile.
   les expressions une sémantique à grands pas. Cette évaluation est notée :
 
   \[
-    (m, e) → (m', v)
+    \mm{m}{e}{m'}{v}
   \]
 
 \end{definition}
@@ -306,7 +320,7 @@ associe le nombre (entier) $\widehat{3}$.
 \begin{mathpar}
   \irule{Exp-Cst}
     { }
-    {(m, c) → (m, \widehat{c})}
+    {\mm{m}{c}{m}{\widehat{c}}}
 \end{mathpar}
 
 Pour lire le contenu d'une variable, il faut tout d'abord s'assurer que celle-ci
@@ -319,26 +333,35 @@ mémoire. Celui-ci n'est pas modifié.
     a = \mathrm{EffAddr}(m, lv) \\
     (a, v) ∈ m
   }
-  {(m, x) → (m, v)}
+  {\mm{m}{x}{m}{v}}
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
 puis l'autre (l'ordre d'évaluation, de gauche à droite, est imposé). À chaque
 opérateur $\opsymb$, correspond un opérateur sémantique $\widehat{\opsymb}$ qui
 agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
-classique entre entiers.
-
+classique entre entiers. Afin d'interdire la division par zéro, celle ci et le
+modulo sont traités dans une règle à part.
 
 \begin{mathpar}
   \irule{Exp-UnOp}
-  {(m, e) → (m', v)}
-  {(m, \opsymb~e) → (m', \widehat{\opsymb}~v)}
+  {\mm{m}{e}{m'}{v}}
+  {\mm{m}{\opsymb~e}{m'}{\widehat{\opsymb}~v}}
 
   \irule{Exp-BinOp}
-  {(m, e_1) → (m', v_1) \\
-   (m', e_2) → (m'', v_2)
+  { \opsymb ∉ \{/, \%\} \\
+      \mm{m}{e_1}{m'}{v_1} \\
+      \mm{m'}{e_2}{m''}{v_2}
   }
-  {(m, e_1~\opsymb~e_2) → (m'', v_1~\widehat{\opsymb}~v_2)}
+  {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
+
+  \irule{Exp-Div}
+  { \opsymb ∈ \{/, \%\} \\
+    \mm{m}{e_1}{m'}{v_1} \\
+    \mm{m'}{e_2}{m''}{v_2}
+    v_2 ≠ \widehat{0}
+  }
+  {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
 \end{mathpar}
 
 Adresse :
@@ -348,7 +371,17 @@ Adresse :
     { x \mbox{ visible dans } m \\
     a = \mathrm{VarLookup} (x, m)
     }
-    {(m, \&x) → (m, a)}
+    {\mm{m}{\&x}{m}{a}}
+\end{mathpar}
+
+\begin{mathpar}
+  \irule{Exp-Set}
+  {
+    \mm{m}{lv}{m'}{v} \\
+    a = \mathrm{EffAddr}(m, lv) \\
+    m'' = m' [ a ↦ v ]
+  }
+  {\mm{m}{lv ← e}{m''}{v}}
 \end{mathpar}
 
 L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
@@ -356,32 +389,90 @@ opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
 placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
 cet environnement, et le cadre dépilé.
 
-On commence par définir une opération auxiliaire de plusieurs expressions :
+On commence par définir une opération d'évaluation de plusieurs expressions à la
+fois : on note 
 
 \begin{mathpar}
-  \irule{Eval*-Nil}
-    { }
-    {\mathrm{Eval}^*(m, [], m)}
-
-  \irule{Eval*-Cons}
-    { (m, e) → (m', v) \\
-      \mathrm{Eval}^*(m', l, m'')
-    }
-    {\mathrm{Eval}^*(m, (e, v)::l, m'')}
+  \evstar{m}{e_1 \\ \vdots \\ e_n}
+         {m'}{v_1 \\ \vdots \\ v_n}
 \end{mathpar}
+
+si $∃ (m_1, …, m_n) , ∀ i ∈ [ 1; n-1 ], \mm{m_i}{e_i}{m_{i+1}}{e_{i+1}} $ avec
+$m = m_1$ et $m' = m_n$.
+
+Notons que l'évaluation se fait dans un ordre précis : de gauche à droite. On
+utilise la notation vecteur colonne pour signifier qu'il s'agit ici de
+métasyntaxe (il n'y a pas de tuples dans le langage).
+
+Cette évaluation chaînée est au coeur de la règle suivante qui permet d'évaluer
+les structures : à une structure (syntaxique) correspond une valeur structurelle
+dont les champs sont ceux de la première structure évalués :
+
+\begin{mathpar}
+
+  \irule{Exp-Struct}
+  {
+    \evstar{m}{e_1 \\ \vdots \\ e_n}
+          {m'}{v_1 \\ \vdots \\ v_n}
+  }
+  {
+    \mm{m}{ \{ f_1 : e_1 ; … ; f_n : e_n \} }
+      {m'}{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
+  }
+\end{mathpar}
+
+L'appel de fonction repose également sur cette évaluation. Tout d'abord, les
+arguments sont évalués. Puis les expressions qui initialisent les variables
+locales. Cf. figure~\ref{fcall-details}.
+
+\shorthandoff{!}
+\begin{figure}
+
+  \centering
+
+  \begin{tikzpicture}
+
+    \node (m0) {$m_0$};
+    \node[below of=m0, node distance=2cm] (m1) {$m_1$};
+    \node[right of=m1, node distance=3cm] (m2) {$m_2$};
+    \node[below of=m2, node distance=2cm] (m3) {$m_3$};
+    \node[right of=m3, node distance=3cm] (m4) {$m_4$};
+    \node[below of=m4]                    (m5) {$m_5$};
+    \node at ($(m0)!(m5)!(0,1)$) (m6) {$m_6$};
+
+    \draw [->] (m0) -- node[auto] {$\vec{e} → \vec{v}$}               (m1);
+    \draw [->] (m1) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}  (m2);
+    \draw [->] (m2) -- node[auto] {$\vec{e'} → \vec{v'}$}             (m3);
+    \draw [->] (m3) -- node[auto] {$\mathrm{Push}(\vec{l}↦\vec{v'})$} (m4);
+    \draw [->] (m4) -- node[auto] {$i → \iReturn{v}$} (m5);
+    \draw [->] (m5) -- node[auto] {$\mathrm{Pop}(\vec{a} \cup \vec{l})$} (m6);
+
+    \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
+                    -- node[auto, swap] {$f(\vec{e}) → v$}
+                       ($ (m6) + (-5mm, 3mm) $);
+
+  \end{tikzpicture}
+
+  \caption{L'appel d'une fonction}
+  \label{fig:fcall-details}
+
+\end{figure}
+\shorthandon{!}
 
 \begin{mathpar}
   \irule{Exp-Call}
   {
-    f = (i, (x_1, …, x_n), ((x'_1, e'_1), …, (x'_p, e'_p))) \\
-    \mathrm{Eval}^*(m ,  ((e_1, v_1),…,(e_n, v_n)), m') \\
-    \mathrm{Eval}^*(m' , ((e'_1, v'_1),…,(e'_p, v'_p)), m'') \\
-   m''' = \mathrm{Push}(m'', ((x_1, v_1), …, (x_n, v_n),
-      (x'_1, v'_1), … (x'_p, v'_p)
-   )) \\
-   (m''', i) → (m'''', \iReturn{v})
+    f = (i, (a_1, …, a_n), ((l'_1, l'_1), …, (l'_p, e'_p))) \\
+    \evstar{m_0}{e_1 \\ \vdots \\ e_n}
+           {m_1}{v_1 \\ \vdots \\ v_n} \\
+    m_2 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
+    \evstar{m_2}{e'_1 \\ \vdots \\ e'_p}
+           {m_3}{v'_1 \\ \vdots \\ v'_p} \\
+    m_4 = \mathrm{Push}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
+    \mm{m_4}{i}{m_5}{\iReturn{v}} \\
+    m_6 = \mathrm{Pop}(\mathrm{Pop}(m_5))
   }
-  {(m, f(e_1, …, e_n)) → ( \mathrm{Pop}(m''''), v)}
+  {\mm{m_0}{f(e_1, …, e_n)}{m_6}{v}}
 \end{mathpar}
 
 \section{Instructions}
@@ -394,7 +485,7 @@ l'exécution d'une instruction $i'$ "plus simple" en partant d'un état mémoire
 $m'$. Un tel pas est noté :
 
 \[
-  (m, i) → (m', i')
+  \mmi{m}{i}{m'}{i'}
 \]
 
 Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
@@ -403,8 +494,8 @@ affectation se réalise de même et permet de réécrire l'instruction restante 
 $\iPass$ :
 
 \begin{align*}
-  (m, (x ← 3 ; y ← x)) → & (m [x ↦ \widehat{3}], y ← x) \\
-                       → & (m [x ↦ \widehat{3}][y ↦ \widehat{3}], \iPass)
+  \msi{m}{(x ← 3 ; y ← x)} → & \msi{m [x ↦ \widehat{3}]}{y ← x} \\
+                           → & \msi{m [x ↦ \widehat{3}][y ↦ \widehat{3}]}{\iPass}
 \end{align*}
 
 Il n'est pas possible de réduire plus loin l'instruction $\iPass$. Dans un tel
@@ -418,25 +509,22 @@ ci-dessus.
 \begin{mathpar}
   \irule{Seq}
     {
-      (m, i) → (m', \iPass)
+      \mmi{m}{i}{m'}{\iPass}
     }
     {
-      (m, (i;i')) → (m', i')
+      \mmi{m}{(i;i')}{m'}{i'}
     }
 
   \irule{Pass}
     {
     }
     {
-      (m, (\iPass;i)) → (m, i)
+      \mmi{m}{(\iPass;i)}{m}{i}
     }
 
-  \irule{Set}
-  {
-    (m, lv) → (m', v) \\
-    a = \mathrm{EffAddr}(m, lv)
-  }
-  {(m, lv ← e) → (m' [ a ↦ v ], \iPass)}
+  \irule{Exp}
+    { \mm{m}{e}{m'}{v} }
+    { \mmi{m}{e}{m'}{\iPass} }
 
 \end{mathpar}
 
@@ -445,21 +533,21 @@ Alternative
 \begin{mathpar}
   \irule{If-False}
     {
-      (m, e) → (m', \widehat{0}) \\
-      (m', i_f) → (m'', i')
+      \mm{m}{e}{m'}{\widehat{0}} \\
+      \mmi{m'}{i_f}{m''}{i'}
     }
     {
-      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+      \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
     }
 
   \irule{If-True}
     {
-      (m, e) → (m', v) \\
+      \mm{m}{e}{m'}{v} \\
       v ≠ \widehat{0} \\
-      (m', i_t) → (m'', i')
+      \mmi{m'}{i_t}{m''}{i'}
     }
     {
-      (m, \iIf{e}{i_t}{i_f}) → (m'', i')
+      \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
     }
 \end{mathpar}
 
@@ -471,17 +559,16 @@ Boucle
   \irule{While}
     { }
     {
-      (m, \iWhile{e}{i}) → (m, \iThen{e}{i;\iWhile{e}{i}})
+      \mmi{m}{\iWhile{e}{i}}{m}{\iThen{e}{i;\iWhile{e}{i}}}
     }
 \end{mathpar}
-
 
 Early return
 
 \begin{mathpar}
   \irule{Return}
   { }
-  { (m, \iReturn{e};i) → (m, \iReturn{e}) }
+  { \mmi{m}{\iReturn{e};i}{m}{\iReturn{e}} }
 \end{mathpar}
 
 \section{Exécution}
@@ -491,7 +578,7 @@ On considère un programme $P = ((f_1, …, f_n), ((x_1, e_1), … (x_p, e_p)))$
 Son état mémoire initial est
 
 \[
-  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ \widehat(0), …, x_p ↦ \widehat(0)\}))
+  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ 0, …, x_p ↦ 0\}))
 \]
 
 Et son exécution est celle de l'instruction
@@ -530,41 +617,41 @@ Soit :
 \end{mathpar}
 
 \[
-  (m, f(1071, 462)) → ?
+  \msi{m}{f(1071, 462)} → ?
 \]
 
 \[
-  (m[a↦1071][b↦462][t↦0], \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) → ?
+  \msi{m[a↦1071][b↦462][t↦0]}{\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} → ?
 \]
 
-(on notera cet état $s_0 = (m_0, e_0)$)
+(on notera cet état $s_0 = \msi{m_0}{i_0}$)
 
 \[
-  (m_0, a = 0) → (m_0, 0)
+  \mm{m_0}{a = 0}{m_0}{0}
 \]
 
 donc
 
 \[
-  (m_0, \iThen{a = 0}{\iReturn{b}}) → (m[a↦1071][b↦462], \iPass)
+  \mm{m_0}{\iThen{a = 0}{\iReturn{b}}}{m[a↦1071][b↦462]}{\iPass}
 \]
 
 { \scriptsize
 \begin{align}
-  s_0 → & (m_0, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_0, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_0', b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_0'', a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_1, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_1, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_1, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_2, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_2, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_2, \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_3, \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}) \\
-      → & (m_3, \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}) \\
-      → & (m_3, \iPass; \iReturn{a}) \\
-      → & (m_3, \iReturn{a})
+  s_0 → & \msi{m_0  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_0  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_0  }{ b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_0''}{ a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_1  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_1  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_1  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_2  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_2  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_2  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iPass; \iReturn{a}} \\
+      → & \msi{m_3  }{ \iReturn{a}}
 \end{align}
 
 \begin{align*}
@@ -576,14 +663,28 @@ donc
 \end{align*}
 }
 
-
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
-TODO
+\section*{TODO}
 
 \begin{itemize}
 \item
-  champs de records
+  système de vues pour accès aux records
 \item
-  interdire la division par zéro
+  si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
+  qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
+  de l'analyse)
+
+  Options :
+
+\begin{itemize}
+\item
+  on fait juste une restriction (forget) au pop (solution actuelle).
+\item
+  on donne à chaque stackframe un numéro fresh. Cela revient à considérer la
+  stack comme un heap.
 \end{itemize}
+
+\end{itemize}
+
+% vim: spelllang=fr
