@@ -27,6 +27,8 @@ opérateur d'alternative et de boucle.
       \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
       \\ \gramor & \& x            & \textrm{Pointeur}
       \\ \gramor & lv ← e          & \textrm{Affectation}
+      \\ \gramor & \{ f_1 : e_1 ;
+                  … ; f_n : e_n \} & \textrm{Structure}
       \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
     \end{align*}
   }
@@ -157,8 +159,10 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
   \gramlr{Valeurs}{
     \begin{align*}
-      v \gramisa & c & \textrm{Constante}
-      \\ \gramor & a & \textrm{Adresse}
+      v \gramisa & c               & \textrm{Constante}
+      \\ \gramor & a               & \textrm{Adresse}
+      \\ \gramor & \{ f_1 : v_1 ;
+                  … ; f_n : v_n \} & \textrm{Structure}
     \end{align*}
   }
 
@@ -414,6 +418,19 @@ fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droit
 \end{mathpar}
 
 \begin{mathpar}
+
+  \irule{Exp-Struct}
+  {
+    \evstar{m}{e_1 \\ \vdots \\ e_n}
+          {m'}{v_1 \\ \vdots \\ v_n}
+  }
+  {
+    \mm{m}{ \{ f_1 : e_1 ; … ; f_n : e_n \} }
+      {m'}{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
+  }
+\end{mathpar}
+
+\begin{mathpar}
   \irule{Exp-Call}
   {
     f = (i, (x_1, …, x_n), ((x'_1, e'_1), …, (x'_p, e'_p))) \\
@@ -623,7 +640,7 @@ donc
 
 \begin{itemize}
 \item
-  champs de records
+  système de vues pour accès aux records
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
   qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
