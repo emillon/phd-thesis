@@ -462,17 +462,17 @@ locales. Cf. figure~\ref{fcall-details}.
 \begin{mathpar}
   \irule{Exp-Call}
   {
-    f = (i, (x_1, …, x_n), ((x'_1, e'_1), …, (x'_p, e'_p))) \\
-    \evstar{m}{e_1 \\ \vdots \\ e_n}
-          {m'}{v_1 \\ \vdots \\ v_n} \\
-    \evstar{m'}{e'_1 \\ \vdots \\ e'_p}
-          {m''}{v'_1 \\ \vdots \\ v'_p} \\
-   m''' = \mathrm{Push}(m'', ((x_1, v_1), …, (x_n, v_n),
-      (x'_1, v'_1), … (x'_p, v'_p)
-   )) \\
-   \mm{m'''}{i}{m''''}{\iReturn{v}}
+    f = (i, (a_1, …, a_n), ((l'_1, l'_1), …, (l'_p, e'_p))) \\
+    \evstar{m_0}{e_1 \\ \vdots \\ e_n}
+           {m_1}{v_1 \\ \vdots \\ v_n} \\
+    m_2 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
+    \evstar{m_2}{e'_1 \\ \vdots \\ e'_p}
+           {m_3}{v'_1 \\ \vdots \\ v'_p} \\
+    m_4 = \mathrm{Push}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
+    \mm{m_4}{i}{m_5}{\iReturn{v}} \\
+    m_6 = \mathrm{Pop}(\mathrm{Pop}(m_5))
   }
-  {\mm{m}{f(e_1, …, e_n)}{\mathrm{Pop}(m'''')}{v}}
+  {\mm{m_0}{f(e_1, …, e_n)}{m_6}{v}}
 \end{mathpar}
 
 \section{Instructions}
@@ -668,9 +668,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item
-  faire un premier push dans le call pour donner accès aux paramètres au
-  locales?
 \item
   système de vues pour accès aux records
 \item
