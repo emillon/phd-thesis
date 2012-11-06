@@ -390,32 +390,23 @@ placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
 cet environnement, et le cadre dépilé.
 
 On commence par définir une opération d'évaluation de plusieurs expressions à la
-fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droite.
+fois : on note 
 
 \begin{mathpar}
   \evstar{m}{e_1 \\ \vdots \\ e_n}
          {m'}{v_1 \\ \vdots \\ v_n}
 \end{mathpar}
 
-\begin{mathpar}
+si $∃ (m_1, …, m_n) , ∀ i ∈ [ 1; n-1 ], \mm{m_i}{e_i}{m_{i+1}}{e_{i+1}} $ avec
+$m = m_1$ et $m' = m_n$.
 
-  \irule{Eval*-1}
-    { \mm{m}{e}{m'}{v} }
-    {
-      \evstar{m}{e}
-             {m'}{v}
-    }
+Notons que l'évaluation se fait dans un ordre précis : de gauche à droite. On
+utilise la notation vecteur colonne pour signifier qu'il s'agit ici de
+métasyntaxe (il n'y a pas de tuples dans le langage).
 
-  \irule{Eval*-Cons}
-    { \mm{m}{e}{m'}{v} \\
-      \evstar{m'}{e_2 \\ \vdots \\ e_n}
-             {m''}{v_2 \\ \vdots \\ v_n}
-    }
-    { \evstar{m}{e_1 \\ \vdots \\ e_n}
-             {m''}{v_1 \\ \vdots \\ v_n}
-    }
-
-\end{mathpar}
+Cette évaluation chaînée est au coeur de la règle suivante qui permet d'évaluer
+les structures : à une structure (syntaxique) correspond une valeur structurelle
+dont les champs sont ceux de la première structure évalués :
 
 \begin{mathpar}
 
@@ -429,6 +420,10 @@ fois. Notons que l'évaluation se fait dans un ordre précis, de gauche à droit
       {m'}{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
   }
 \end{mathpar}
+
+L'appel de fonction repose également sur cette évaluation. Tout d'abord, les
+arguments sont évalués. Puis les expressions qui initialisent les variables
+locales.
 
 \begin{mathpar}
   \irule{Exp-Call}
@@ -639,6 +634,9 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item
+  faire un premier push dans le call pour donner accès aux paramètres au
+  locales?
 \item
   système de vues pour accès aux records
 \item
