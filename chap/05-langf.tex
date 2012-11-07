@@ -10,6 +10,9 @@ Un programme est organisé en fonctions, qui contiennent des instructions, qui
 elles-même manipulent des expressions. Le flôt de contrôle est minimal, avec un
 opérateur d'alternative et de boucle.
 
+Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
+\iIf{e}{i}{\iPass}$.
+
 Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 \begin{figure}
@@ -575,8 +578,7 @@ revient à évaluer la branche "else". Dans les autres cas, c'est la règle
     }
 \end{mathpar}
 
-Le traitement de la boucle est une simple règle de réécriture \footnote{Cette
-règle utilise la forme courte $\iThen{e}{i} = \iIf{e}{i}{\iPass}$.} :
+Le traitement de la boucle est une simple règle de réécriture :
 
 \begin{mathpar}
   \irule{While}
