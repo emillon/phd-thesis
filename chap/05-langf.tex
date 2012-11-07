@@ -117,9 +117,10 @@ L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
 \begin{align*}
-  \sVal = & \sInt \cup \sFloat \cup \sAddr \\
+  \sVal = & \sInt \bigdcup \sFloat \bigdcup \sAddr \\
   \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
-  \sAddr = & \sId \cup (ℕ × \sId)
+  \sAddr = & \sId \bigdcup (ℕ × \sId) \\
+  \sFloat = & \textsc{IeeeFloat}(32)
 \end{align*}
 
 \sFloat correspond à l'ensemble des flottants IEEE 754\cite{ieee754}. Ici, \sInt
@@ -266,7 +267,7 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
-    l' = & l \cup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
+    l' = & l \bigdcup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
     p  = & |s| + 1
   \end{align*}
 
@@ -286,7 +287,7 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     s' = & \mathrm{Pop}(s) \\
-    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
+    l' = & \{ (x) ∈ l \} \bigdcup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
   \end{align*}
 
 \end{definition}
@@ -455,7 +456,7 @@ dont les champs sont ceux de la première structure évalués :
     \draw [->] (m4) -- node[auto] {$i → \iReturn{e}$}                 (m5);
     \draw [->] (m5) -- node[auto] {$e → v$}                           (m6);
 
-    \draw [->] (m6) -- node[auto] {$\mathrm{Pop}(\vec{a} \cup \vec{l})$} (m7);
+    \draw [->] (m6) -- node[auto] {$\mathrm{Pop}(\vec{a} \bigdcup \vec{l})$} (m7);
 
     \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
                     -- node[auto, swap] {$f(\vec{e}) → v$}
