@@ -16,8 +16,9 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \gramlr{Constantes}{
     \begin{align*}
-      c \gramisa & i & \textrm{Entier}
-      \\ \gramor & f & \textrm{Flottant}
+      c \gramisa & i      & \textrm{Entier}
+      \\ \gramor & f      & \textrm{Flottant}
+      \\ \gramor & \eNull & \textrm{Pointeur nul}
     \end{align*}
   }
 
@@ -740,11 +741,11 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item NULL ou top
 \item mettre ensemble les noms de variables et leurs valeurs
 \item
   système de vues pour accès aux records
 \item tableaux
+\item top ?
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
   qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
