@@ -218,29 +218,19 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
   \label{fig:interp}
 \end{figure}
 
-Chaque fonction peut accéder aux variables locales de la fonction en cours,
-ainsi qu'aux variables globales.
-
-\begin{definition}[Visibilité]
-  On dit qu'une variable $x$ est visible dans la pile $s$ (ou dans un état
-  mémoire $m$ qui a une telle pile) si $x$ fait partie des variables globales de
-  $s$ ou de la tête de pile de $s$.
-\end{definition}
-
 \begin{definition}[Recherche de variable]
 
   La recherche de variable permet d'associer à une variable $x$ une adresse $a$.
 
-  \[
-    \mathrm{VarLookup} (x, (s, g, l)) =
-      \begin{cases}
-        x      & \mbox{si } x ∈ g \\
-      (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
-                 \mbox{ avec } x ∈ f \\
-      (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
-                 \mbox{ avec } \mathrm{VarLookup} (x, (s, g, e)) = (n, x)
-      \end{cases}
-  \]
+  Chaque fonction peut accéder aux variables locales de la fonction en cours,
+  ainsi qu'aux variables globales.
+
+  \begin{align*}
+    \mathrm{Lookup} ((s, g), x) = & (|s|, x)
+                                    \mbox{ si }|s| > 0
+                                    \mbox{ et }∃ (x, v) ∈ s_1 \\
+    \mathrm{Lookup} ((s, g), x) = & x \mbox{ si } (x, v) ∈ g
+  \end{align*}
 
 \end{definition}
 
@@ -418,7 +408,7 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
 \begin{mathpar}
   \irule{Phi-Var}
-    { ?? }
+    { a = \mathrm{Lookup}(x, m) }
     {
       \mmlv{m}{x}{m}{a}
     }
@@ -455,14 +445,12 @@ associe le nombre (entier) $\widehat{3}$.
     {\mm{m}{c}{m}{\widehat{c}}}
 \end{mathpar}
 
-Pour lire le contenu d'une variable, il faut tout d'abord s'assurer que celle-ci
-est visible. Sa valeur est alors celle qui y est associée dans l'environnement
-mémoire. Celui-ci n'est pas modifié.
+Pour lire le contenu d'un emplacement mémoire (left-value), il faut tout d'abord
+l'évaluer en un chemin.
 
 \begin{mathpar}
   \irule{Exp-Lv}
-  { lv \mbox{ visible dans } m \\
-    \mmlv{m}{lv}{m'}{φ} \\
+  { \mmlv{m}{lv}{m'}{φ} \\
     v = m'[φ]
   }
   {\mm{m}{lv}{m'}{v}}
@@ -500,8 +488,7 @@ Adresse :
 
 \begin{mathpar}
   \irule{Exp-AddrOf}
-    { x \mbox{ visible dans } m \\
-    a = \mathrm{VarLookup} (x, m)
+    { a = \mathrm{Lookup} (x, m)
     }
     {\mm{m}{\&x}{m}{a}}
 \end{mathpar}
@@ -509,7 +496,6 @@ Adresse :
 \begin{mathpar}
   \irule{Exp-Set}
   {
-    lv \mbox{ visible dans } m \\
     \mm{m}{e}{m'}{v} \\
     \mmi{m'}{lv}{m''}{φ} \\
     m''' = m'' [ φ ← v ]
@@ -863,7 +849,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item accesseur par nom
 \item mettre ensemble les noms de variables et leurs valeurs
 \item top ?
 \item sémantique des erreurs?
