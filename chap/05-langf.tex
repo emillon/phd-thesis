@@ -187,6 +187,13 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
     \end{align*}
   }
 
+  \gramlr{Chemins}{
+    \begin{align*}
+      φ \gramisa & a  & \textrm{Adresse}
+      \\ \gramor & *φ & \textrm{Déréférencement}
+    \end{align*}
+  }
+
   \gramlr{Pile}{
     \begin{align*}
       s \gramisa & []                                   & \textrm{Pile vide}
@@ -322,6 +329,20 @@ retournant il faudra supprimer ce cadre de pile.
 
   \[
     \mm{m}{e}{m'}{v}
+  \]
+
+\end{definition}
+
+\begin{definition}[Évaluation d'une left-value]
+
+  L'évaluation d'une left-value $lv$ produit un "chemin" $φ$ dans une variable,
+  qui est en fait équivalent à une left-value dont toutes les sous-expressions
+  (d'indices) ont été évaluées.
+
+  On note :
+
+  \[
+    \mmlv{m}{lv}{m'}{φ}
   \]
 
 \end{definition}
