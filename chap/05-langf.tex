@@ -192,9 +192,10 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
   \gramlr{Chemins}{
     \begin{align*}
-      φ \gramisa & a   & \textrm{Adresse}
-      \\ \gramor & *φ  & \textrm{Déréférencement}
-      \\ \gramor & φ.f & \textrm{Accès à un champ}
+      φ \gramisa & a    & \textrm{Adresse}
+      \\ \gramor & *φ   & \textrm{Déréférencement}
+      \\ \gramor & φ.f  & \textrm{Accès à un champ}
+      \\ \gramor & φ[n] & \textrm{Accès à un élément}
     \end{align*}
   }
 
@@ -207,8 +208,9 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
   \gramlr{État mémoire}{
     \begin{align*}
-      m \gramisa & (s,    \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\})
-          & \textrm{Pile, globales,             valeurs}
+      m \gramisa & (s,                    & \textrm{Pile}      \\
+                 & \{ x_1 ;…; x_n \},     & \textrm{Globales}  \\
+                 & \{a_1↦v_1;…;a_p↦v_p\}) & \textrm{Valeurs}
     \end{align*}
   }
 
@@ -405,6 +407,34 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
   \]
 
 \end{definition}
+
+\begin{mathpar}
+  \irule{Phi-Var}
+    { ?? }
+    {
+      \mmlv{m}{x}{m}{a}
+    }
+\end{mathpar}
+
+\begin{mathpar}
+  \irule{Phi-Deref}
+    { \mmlv{m}{ lv}{m'}{ φ} }
+    { \mmlv{m}{*lv}{m'}{*φ} }
+\end{mathpar}
+
+\begin{mathpar}
+  \irule{Phi-Struct}
+    { \mmlv{m}{lv  }{m'}{φ  } }
+    { \mmlv{m}{lv.f}{m'}{φ.f} }
+\end{mathpar}
+
+\begin{mathpar}
+  \irule{Phi-Array}
+    { \mmlv{m}{lv}{m'}{φ} \\
+      \mm{m'}{e}{m''}{v}
+    }
+    { \mmlv{m}{lv[e]}{m''}{φ[v]} }
+\end{mathpar}
 
 Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
 celle-ci est déjà évaluée. À chaque constante syntaxique $c$, on peut associer
@@ -827,7 +857,6 @@ donc
 \begin{itemize}
 \item accesseur par nom
 \item mettre ensemble les noms de variables et leurs valeurs
-\item évaluation d'un chemin
 \item top ?
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
