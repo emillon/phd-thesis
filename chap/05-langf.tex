@@ -234,22 +234,6 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
 \end{definition}
 
-\begin{definition}[Manipulations des états mémoire]
-
-  On note $(a, v) ∈ m$ si $(a, v)$ fait partie de la liste d'associations de
-  mémoire de $m$ (c'est à dire si $(a, v) ∈ l$ avec $m = (s, g, l)$).
-
-  Par extension, on note aussi $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a =
-  \mathrm{VarLookup}(x, m)$.
-
-  On note $m[a ↦ v]$ l'état mémoire obtenu en remplaçant dans la liste
-  d'associations de mémoire de $m$, la valeur associée à $a$ par $v$.
-
-  On étend de même cette notation pour $m[x ↦ v]$ pour $m[a ↦ v]$ avec
-  $a = \mathrm{VarLookup}(x, m)$.
-
-\end{definition}
-
 En entrant dans une fonction, on rajoutera un cadre de pile qui contient les
 paramètres de la fonction ainsi que ses variables locales. De même, en
 retournant il faudra supprimer ce cadre de pile.
