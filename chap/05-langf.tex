@@ -302,22 +302,6 @@ retournant il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
-\begin{definition}[Adresse effective]
-
-  Pour permettre les accès indirects (par pointeur), ce ne sont pas directement
-  les variables qui sont accédées en lecture ou écriture, mais des left-values.
-
-  Dans un état mémoire donné $m$, on peut associer une adresse $a$ qui est celle
-  à considérer. Cette adresse effective notée $\mathrm{EffAddr}(m, lv)$ est
-  calculée de la manière suivante :
-
-  \begin{align*}
-    \mathrm{EffAddr}(m, x)   = & \mathrm{VarLookup}(m, x) \\
-    \mathrm{EffAddr}(m, *lv) = & v \textrm{ si } (a, v) ∈ m
-                                 \textrm{ et } a = \mathrm{EffAddr}(m, lv)
-  \end{align*}
-\end{definition}
-
 \section{Accesseurs}
 
 On définit quelques accesseurs. Un accesseur $ [ \cdot ] $ permet d'accéder à
@@ -824,7 +808,6 @@ donc
 \begin{itemize}
 \item accesseur par nom
 \item mettre ensemble les noms de variables et leurs valeurs
-\item système de vues pour accès aux records
 \item tableaux
 \item top ?
 \item
