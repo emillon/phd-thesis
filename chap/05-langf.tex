@@ -272,7 +272,7 @@ retournant il faudra supprimer ce cadre de pile.
     \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}::s
   \]
 
-  On peut étendre cette notation aux états mémoires, en associant des valeurs à
+  On peut étendre cette notation aux états mémoire, en associant des valeurs à
   ces nouvelles variables :
 
   \[
@@ -286,6 +286,14 @@ retournant il faudra supprimer ce cadre de pile.
     l' = & l \bigdcup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
     p  = & |s| + 1
   \end{align*}
+
+  On définit aussi l'extension du dernier cadre de pile :
+
+  \[
+    \mathrm{Extend}(f::s, x) = ((f::x) :: s)
+  \]
+
+  et son extension triviale aux états mémoire.
 
   De même on définit le dépilement :
 
@@ -858,7 +866,6 @@ donc
 \item accesseur par nom
 \item mettre ensemble les noms de variables et leurs valeurs
 \item top ?
-\item opérateur extend
 \item sémantique des erreurs?
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
