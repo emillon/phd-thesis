@@ -337,15 +337,15 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 \begin{definition}[Accès par adresse]
 
   L'accesseur de base pour les états mémoire est l'accesseur par adresse
-  $[\cdot]_m$.
+  $[\cdot]_a$.
 
   Pour $m = (s, g)$,
 
   \begin{align*}
-    m [x]_m          = & g[x]_l        & \textrm{Lecture d'une globale} \\
-    m [(n, x)]_m     = & l_n[x]_l      & \textrm{Lecture d'une locale} \\
-    m [x ← v]_m      = & (s, g[x←v]_l) & \textrm{Écriture d'une globale} \\
-    m [(n, x) ← v]_m = & (s', g)       & \textrm{Écriture d'une locale} \\
+    m [x]_a          = & g[x]_l        & \textrm{Lecture d'une globale} \\
+    m [(n, x)]_a     = & l_n[x]_l      & \textrm{Lecture d'une locale} \\
+    m [x ← v]_a      = & (s, g[x←v]_l) & \textrm{Écriture d'une globale} \\
+    m [(n, x) ← v]_a = & (s', g)       & \textrm{Écriture d'une locale} \\
            \mbox{ où } & s'_n = s_n[x ← v]_l \\
                        & ∀ i ≠ n, s'_i = s_i
   \end{align*}
@@ -355,8 +355,21 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 \begin{definition}[Accès par chemin]
 
   \begin{align*}
-    m[ φ ]_φ \\
-    m[ φ ← v ]_φ
+    m[a]_φ      = & m[a]_a \\
+    m[*φ]_φ     = & m[a]_a \mbox{ où } a = m[φ]_φ \\
+    m[a ← v]_φ  = & m[a ← v]_a \\
+    m[*φ ← v]_φ = & m[a ← v]_a \mbox{ où } a = m[φ]_φ \\
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par champ]
+
+  \begin{align*}
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_f = & v_i \\
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_f = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
+          \mbox{ où } & v'_p = v \\
+                      & ∀ i ≠ p, v'_i = v_i
   \end{align*}
 
 \end{definition}
