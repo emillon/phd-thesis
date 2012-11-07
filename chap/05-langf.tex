@@ -420,11 +420,11 @@ mémoire. Celui-ci n'est pas modifié.
 
 \begin{mathpar}
   \irule{Exp-Lv}
-  {x \mbox{ visible dans } m \\
-    a = \mathrm{EffAddr}(m, lv) \\
-    (a, v) ∈ m
+  { lv \mbox{ visible dans } m \\
+    \mmlv{m}{lv}{m'}{φ} \\
+    v = m'[φ]
   }
-  {\mm{m}{x}{m}{v}}
+  {\mm{m}{lv}{m'}{v}}
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
@@ -468,11 +468,12 @@ Adresse :
 \begin{mathpar}
   \irule{Exp-Set}
   {
-    \mm{m}{lv}{m'}{v} \\
-    a = \mathrm{EffAddr}(m, lv) \\
-    m'' = m' [ a ↦ v ]
+    lv \mbox{ visible dans } m \\
+    \mm{m}{e}{m'}{v} \\
+    \mmi{m'}{lv}{m''}{φ} \\
+    m''' = m'' [ φ ← v ]
   }
-  {\mm{m}{lv ← e}{m''}{v}}
+  {\mm{m}{lv ← e}{m'''}{v}}
 \end{mathpar}
 
 L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
