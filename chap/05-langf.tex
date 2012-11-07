@@ -318,6 +318,49 @@ retournant il faudra supprimer ce cadre de pile.
   \end{align*}
 \end{definition}
 
+\section{Accesseurs}
+
+On définit quelques accesseurs. Un accesseur $ [ \cdot ] $ permet d'accéder à
+une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté $e
+= s [ i ]$) ou de modifier le sous-élément à l'indice $i$ par $e$ (noté $ s [ i
+  ← e $).
+
+\begin{definition}[Accès à une liste d'associations]
+
+  \begin{align*}
+    l[x]_l     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
+    l[x ← v]_l = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \})
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par adresse]
+
+  L'accesseur de base pour les états mémoire est l'accesseur par adresse
+  $[\cdot]_m$.
+
+  Pour $m = (s, g)$,
+
+  \begin{align*}
+    m [x]_m          = & g[x]_l        & \textrm{Lecture d'une globale} \\
+    m [(n, x)]_m     = & l_n[x]_l      & \textrm{Lecture d'une locale} \\
+    m [x ← v]_m      = & (s, g[x←v]_l) & \textrm{Écriture d'une globale} \\
+    m [(n, x) ← v]_m = & (s', g)       & \textrm{Écriture d'une locale} \\
+           \mbox{ où } & s'_n = s_n[x ← v]_l \\
+                       & ∀ i ≠ n, s'_i = s_i
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par chemin]
+
+  \begin{align*}
+    m[ φ ]_φ \\
+    m[ φ ← v ]_φ
+  \end{align*}
+
+\end{definition}
+
 \section{Expressions}
 
 \begin{definition}[Évaluation d'une expression]
@@ -425,7 +468,7 @@ placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
 cet environnement, et le cadre dépilé.
 
 On commence par définir une opération d'évaluation de plusieurs expressions à la
-fois : on note 
+fois : on note
 
 \begin{mathpar}
   \evstar{m}{e_1 \\ \vdots \\ e_n}
