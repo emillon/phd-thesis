@@ -189,8 +189,9 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
   \gramlr{Chemins}{
     \begin{align*}
-      φ \gramisa & a  & \textrm{Adresse}
-      \\ \gramor & *φ & \textrm{Déréférencement}
+      φ \gramisa & a   & \textrm{Adresse}
+      \\ \gramor & *φ  & \textrm{Déréférencement}
+      \\ \gramor & φ.f & \textrm{Accès à un champ}
     \end{align*}
   }
 
@@ -336,17 +337,6 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
 \end{definition}
 
-\begin{definition}[Accès par chemin]
-
-  \begin{align*}
-    m[a]_φ      = & m[a]_a \\
-    m[*φ]_φ     = & m[a]_a \mbox{ où } a = m[φ]_φ \\
-    m[a ← v]_φ  = & m[a ← v]_a \\
-    m[*φ ← v]_φ = & m[a ← v]_a \mbox{ où } a = m[φ]_φ \\
-  \end{align*}
-
-\end{definition}
-
 \begin{definition}[Accès par champ]
 
   \begin{align*}
@@ -354,6 +344,19 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
     \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_f = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
           \mbox{ où } & v'_p = v \\
                       & ∀ i ≠ p, v'_i = v_i
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par chemin]
+
+  \begin{align*}
+    m[a]_φ       = & m[a]_a \\
+    m[*φ]_φ      = & m[a]_a \mbox{ où } a = m[φ]_φ \\
+    m[φ.f]_φ     = & m[φ]_φ[f]_f \\
+    m[a ← v]_φ   = & m[a ← v]_a \\
+    m[*φ ← v]_φ  = & m[a ← v]_a \mbox{ où } a = m[φ]_φ \\
+    m[φ.f ← v]_φ = & m[φ ← (m[φ]_φ[f←v]_f)]_φ
   \end{align*}
 
 \end{definition}
