@@ -10,12 +10,18 @@ Un programme est organisé en fonctions, qui contiennent des instructions, qui
 elles-même manipulent des expressions. Le flôt de contrôle est minimal, avec un
 opérateur d'alternative et de boucle.
 
+Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
+\iIf{e}{i}{\iPass}$.
+
+Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
+
 \begin{figure}
 
   \gramlr{Constantes}{
     \begin{align*}
-      c \gramisa & i & \textrm{Entier}
-      \\ \gramor & f & \textrm{Flottant}
+      c \gramisa & i      & \textrm{Entier}
+      \\ \gramor & f      & \textrm{Flottant}
+      \\ \gramor & \eNull & \textrm{Pointeur nul}
     \end{align*}
   }
 
@@ -29,25 +35,17 @@ opérateur d'alternative et de boucle.
       \\ \gramor & lv ← e          & \textrm{Affectation}
       \\ \gramor & \{ f_1 : e_1 ;
                   … ; f_n : e_n \} & \textrm{Structure}
+      \\ \gramor & \{e_1 ;…; e_n\} & \textrm{Tableau}
       \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
-    \end{align*}
-  }
-
-  \gramlr{Opérateurs}{
-    \begin{align*}
-      \opsymb \gramisa & +,-,\times,/      & \textrm{Arithmétique entière}
-      \\      \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
-      \\      \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
-      \\      \gramor  & \&,|,\opxor,\sim  & \textrm{Opérateurs bit à bit}
-      \\      \gramor  & \&\&,||,!         & \textrm{Opérateurs logiques}
-      \\      \gramor  & \ll, \gg          & \textrm{Décalages}
     \end{align*}
   }
 
   \gramlr{Left-values}{
     \begin{align*}
-      lv \gramisa & x   & \textrm{Variable}
-      \\  \gramor & *lv & \textrm{Déréférencement}
+      lv \gramisa & x     & \textrm{Variable}
+      \\  \gramor & *lv   & \textrm{Déréférencement}
+      \\  \gramor & lv.f  & \textrm{Accès à un champ}
+      \\  \gramor & lv[n] & \textrm{Accès à un élément}
     \end{align*}
   }
 
@@ -81,6 +79,23 @@ opérateur d'alternative et de boucle.
   \label{fig:stx}
 \end{figure}
 
+\begin{figure}
+
+  \gramlr{Opérateurs}{
+    \begin{align*}
+      \opsymb \gramisa & +,-,\times,/      & \textrm{Arithmétique entière}
+      \\      \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
+      \\      \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
+      \\      \gramor  & \&,|,\opxor,\sim  & \textrm{Opérateurs bit à bit}
+      \\      \gramor  & \&\&,||,!         & \textrm{Opérateurs logiques}
+      \\      \gramor  & \ll, \gg          & \textrm{Décalages}
+    \end{align*}
+  }
+
+  \caption{Syntaxe des opeérateurs}
+  \label{fig:stx-ops}
+\end{figure}
+
 \section{Définitions préliminaires}
 
 On suppose avoir à notre disposition un ensemble infini dénombrable
@@ -107,9 +122,10 @@ L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
 \begin{align*}
-  \sVal = & \sInt \cup \sFloat \cup \sAddr \\
+  \sVal = & \sInt \bigdcup \sFloat \bigdcup \sAddr \\
   \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
-  \sAddr = & \sId \cup (ℕ × \sId)
+  \sAddr = & \sId \bigdcup (ℕ × \sId) \\
+  \sFloat = & \textsc{IeeeFloat}(32)
 \end{align*}
 
 \sFloat correspond à l'ensemble des flottants IEEE 754\cite{ieee754}. Ici, \sInt
@@ -163,6 +179,7 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
       \\ \gramor & a               & \textrm{Adresse}
       \\ \gramor & \{ f_1 : v_1 ;
                   … ; f_n : v_n \} & \textrm{Structure}
+      \\ \gramor & \{v_1 ;…; v_n\} & \textrm{Tableau}
     \end{align*}
   }
 
@@ -170,6 +187,15 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
     \begin{align*}
       a \gramisa & (n, x) & \textrm{Variable locale}
       \\ \gramor & x      & \textrm{Variable globale}
+    \end{align*}
+  }
+
+  \gramlr{Chemins}{
+    \begin{align*}
+      φ \gramisa & a    & \textrm{Adresse}
+      \\ \gramor & *φ   & \textrm{Déréférencement}
+      \\ \gramor & φ.f  & \textrm{Accès à un champ}
+      \\ \gramor & φ[n] & \textrm{Accès à un élément}
     \end{align*}
   }
 
@@ -182,8 +208,9 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
   \gramlr{État mémoire}{
     \begin{align*}
-      m \gramisa & (s,    \{ x_1 ; … ; x_n \}, \{a_1 ↦ v_1; … ; a_p ↦ v_p\})
-          & \textrm{Pile, globales,             valeurs}
+      m \gramisa & (s,                    & \textrm{Pile}      \\
+                 & \{ x_1 ;…; x_n \},     & \textrm{Globales}  \\
+                 & \{a_1↦v_1;…;a_p↦v_p\}) & \textrm{Valeurs}
     \end{align*}
   }
 
@@ -191,45 +218,19 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
   \label{fig:interp}
 \end{figure}
 
-Chaque fonction peut accéder aux variables locales de la fonction en cours,
-ainsi qu'aux variables globales.
-
-\begin{definition}[Visibilité]
-  On dit qu'une variable $x$ est visible dans la pile $s$ (ou dans un état
-  mémoire $m$ qui a une telle pile) si $x$ fait partie des variables globales de
-  $s$ ou de la tête de pile de $s$.
-\end{definition}
-
 \begin{definition}[Recherche de variable]
 
   La recherche de variable permet d'associer à une variable $x$ une adresse $a$.
 
-  \[
-    \mathrm{VarLookup} (x, (s, g, l)) =
-      \begin{cases}
-        x      & \mbox{si } x ∈ g \\
-      (0, x)   & \mbox{si } x ∉ g \mbox{ et } s = f::[]
-                 \mbox{ avec } x ∈ f \\
-      (n+1, x) & \mbox{si } x ∉ g \mbox{ et } s = f::s'
-                 \mbox{ avec } \mathrm{VarLookup} (x, (s, g, e)) = (n, x)
-      \end{cases}
-  \]
+  Chaque fonction peut accéder aux variables locales de la fonction en cours,
+  ainsi qu'aux variables globales.
 
-\end{definition}
-
-\begin{definition}[Manipulations des états mémoire]
-
-  On note $(a, v) ∈ m$ si $(a, v)$ fait partie de la liste d'associations de
-  mémoire de $m$ (c'est à dire si $(a, v) ∈ l$ avec $m = (s, g, l)$).
-
-  Par extension, on note aussi $(x, v) ∈ m$ si $(a, v) ∈ m$ avec $a =
-  \mathrm{VarLookup}(x, m)$.
-
-  On note $m[a ↦ v]$ l'état mémoire obtenu en remplaçant dans la liste
-  d'associations de mémoire de $m$, la valeur associée à $a$ par $v$.
-
-  On étend de même cette notation pour $m[x ↦ v]$ pour $m[a ↦ v]$ avec
-  $a = \mathrm{VarLookup}(x, m)$.
+  \begin{align*}
+    \mathrm{Lookup} ((s, g), x) = & (|s|, x)
+                                    \mbox{ si }|s| > 0
+                                    \mbox{ et }∃ (x, v) ∈ s_1 \\
+    \mathrm{Lookup} ((s, g), x) = & x \mbox{ si } (x, v) ∈ g
+  \end{align*}
 
 \end{definition}
 
@@ -245,7 +246,7 @@ retournant il faudra supprimer ce cadre de pile.
     \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}::s
   \]
 
-  On peut étendre cette notation aux états mémoires, en associant des valeurs à
+  On peut étendre cette notation aux états mémoire, en associant des valeurs à
   ces nouvelles variables :
 
   \[
@@ -256,9 +257,17 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
-    l' = & l \cup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
+    l' = & l \bigdcup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
     p  = & |s| + 1
   \end{align*}
+
+  On définit aussi l'extension du dernier cadre de pile :
+
+  \[
+    \mathrm{Extend}(f::s, x) = ((f::x) :: s)
+  \]
+
+  et son extension triviale aux états mémoire.
 
   De même on définit le dépilement :
 
@@ -276,25 +285,80 @@ retournant il faudra supprimer ce cadre de pile.
 
   \begin{align*}
     s' = & \mathrm{Pop}(s) \\
-    l' = & \{ (x) ∈ l \} \cup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
+    l' = & \{ (x) ∈ l \} \bigdcup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
   \end{align*}
 
 \end{definition}
 
-\begin{definition}[Adresse effective]
+\section{Accesseurs}
 
-  Pour permettre les accès indirects (par pointeur), ce ne sont pas directement
-  les variables qui sont accédées en lecture ou écriture, mais des left-values.
+On définit quelques accesseurs. Un accesseur $ [ \cdot ] $ permet d'accéder à
+une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté $e
+= s [ i ]$) ou de modifier le sous-élément à l'indice $i$ par $e$ (noté $ s [ i
+← e ] $).
 
-  Dans un état mémoire donné $m$, on peut associer une adresse $a$ qui est celle
-  à considérer. Cette adresse effective notée $\mathrm{EffAddr}(m, lv)$ est
-  calculée de la manière suivante :
+\begin{definition}[Accès à une liste d'associations]
 
   \begin{align*}
-    \mathrm{EffAddr}(m, x)   = & \mathrm{VarLookup}(m, x) \\
-    \mathrm{EffAddr}(m, *lv) = & v \textrm{ si } (a, v) ∈ m
-                                 \textrm{ et } a = \mathrm{EffAddr}(m, lv)
+    l[x]_l     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
+    l[x ← v]_l = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \})
   \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par adresse]
+
+  L'accesseur de base pour les états mémoire est l'accesseur par adresse
+  $[\cdot]_a$.
+
+  Pour $m = (s, g)$,
+
+  \begin{align*}
+    m [x]_a          = & g[x]_l        & \textrm{Lecture d'une globale} \\
+    m [(n, x)]_a     = & l_n[x]_l      & \textrm{Lecture d'une locale} \\
+    m [x ← v]_a      = & (s, g[x←v]_l) & \textrm{Écriture d'une globale} \\
+    m [(n, x) ← v]_a = & (s', g)       & \textrm{Écriture d'une locale} \\
+           \mbox{ où } & s'_n = s_n[x ← v]_l \\
+                       & ∀ i ≠ n, s'_i = s_i
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par champ]
+
+  \begin{align*}
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_f = & v_i \\
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_f = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
+          \mbox{ où } & v'_p = v \\
+                      & ∀ i ≠ p, v'_i = v_i
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par indice]
+
+  \begin{align*}
+    \{ v_1 ; … ; v_n \} [i]_i   = & e_i \\
+    \{ v_1 ; … ; v_n \} [i←v]_i = & \{ v'_1 ; … ; v'_n \} \\
+                      \mbox{ où } & v'_i = v \\
+                                  & ∀j≠i, v'_j = v_j
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}[Accès par chemin]
+
+  \begin{align*}
+    m[a]_φ        = & m[a]_a \\
+    m[*φ]_φ       = & m[a]_a \mbox{ où } a = m[φ]_φ \\
+    m[φ.f]_φ      = & m[φ]_φ[f]_f \\
+    m[φ[i]]_φ     = & m[φ]_φ[i]_i \\
+    m[a ← v]_φ    = & m[a ← v]_a \\
+    m[*φ ← v]_φ   = & m[a ← v]_a \mbox{ où } a = m[φ]_φ \\
+    m[φ.f ← v]_φ  = & m[φ ← (m[φ]_φ[f←v]_f)]_φ \\
+    m[φ[i] ← v]_φ = & m[φ ← (m[φ]_φ[i←v]_i)]_φ
+  \end{align*}
+
 \end{definition}
 
 \section{Expressions}
@@ -312,6 +376,69 @@ retournant il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
+\begin{definition}[Évaluation d'une left-value]
+
+  L'évaluation d'une left-value $lv$ produit un "chemin" $φ$ dans une variable,
+  qui est en fait équivalent à une left-value dont toutes les sous-expressions
+  (d'indices) ont été évaluées.
+
+  On note :
+
+  \[
+    \mmlv{m}{lv}{m'}{φ}
+  \]
+
+\end{definition}
+
+Puisque des left-values peuvent apparaitre dans les expressions, et des
+expressions dans les left-values (en indice de tableau), leurs règles
+d'évaluation sont mutuellement récursives.
+
+Commençons par décrire le cas des left-values. Obtenir un chemin à partir d'un
+nom de variable revient à résoudre le nom de cette variable : est-elle
+accessible ? Le nom désigne-t'il une variable locale ou une variable globale ?
+
+\begin{mathpar}
+  \irule{Phi-Var}
+    { a = \mathrm{Lookup}(x, m) }
+    {
+      \mmlv{m}{x}{m}{a}
+    }
+\end{mathpar}
+
+Les règles portant sur le déréférencement et l'accès à un champ de structure
+sont similaires : on commence par évaluer la left-value sur laquelle porte ce
+modificateur, et on place le même modificateur sur le chemin résultant.
+
+\begin{mathpar}
+  \irule{Phi-Deref}
+    { \mmlv{m}{ lv}{m'}{ φ} }
+    { \mmlv{m}{*lv}{m'}{*φ} }
+
+  \irule{Phi-Struct}
+    { \mmlv{m}{lv  }{m'}{φ  } }
+    { \mmlv{m}{lv.f}{m'}{φ.f} }
+\end{mathpar}
+
+Enfin, pour évaluer un chemin dans un tableau, on commence par procéder comme
+précédemment, c'est-à-dire en évaluant la left-value sur laquelle porte
+l'opération d'indexation. Puis on évalue l'expression d'indice en une valeur qui
+permet de construire le chemin résultant.
+
+\begin{mathpar}
+  \irule{Phi-Array}
+    { \mmlv{m}{lv}{m'}{φ} \\
+      \mm{m'}{e}{m''}{v}
+    }
+    { \mmlv{m}{lv[e]}{m''}{φ[v]} }
+\end{mathpar}
+
+Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite :
+dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
+$e_2$, puis $e_3$.
+
+Revenons au expressions.
+
 Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
 celle-ci est déjà évaluée. À chaque constante syntaxique $c$, on peut associer
 une valeur sémantique $\widehat{c}$. Par exemple, au chiffre (symbole) $3$, on
@@ -323,17 +450,15 @@ associe le nombre (entier) $\widehat{3}$.
     {\mm{m}{c}{m}{\widehat{c}}}
 \end{mathpar}
 
-Pour lire le contenu d'une variable, il faut tout d'abord s'assurer que celle-ci
-est visible. Sa valeur est alors celle qui y est associée dans l'environnement
-mémoire. Celui-ci n'est pas modifié.
+Pour lire le contenu d'un emplacement mémoire (left-value), il faut tout d'abord
+l'évaluer en un chemin.
 
 \begin{mathpar}
   \irule{Exp-Lv}
-  {x \mbox{ visible dans } m \\
-    a = \mathrm{EffAddr}(m, lv) \\
-    (a, v) ∈ m
+  { \mmlv{m}{lv}{m'}{φ} \\
+    v = m'[φ]
   }
-  {\mm{m}{x}{m}{v}}
+  {\mm{m}{lv}{m'}{v}}
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
@@ -368,8 +493,7 @@ Adresse :
 
 \begin{mathpar}
   \irule{Exp-AddrOf}
-    { x \mbox{ visible dans } m \\
-    a = \mathrm{VarLookup} (x, m)
+    { a = \mathrm{Lookup} (x, m)
     }
     {\mm{m}{\&x}{m}{a}}
 \end{mathpar}
@@ -377,11 +501,11 @@ Adresse :
 \begin{mathpar}
   \irule{Exp-Set}
   {
-    \mm{m}{lv}{m'}{v} \\
-    a = \mathrm{EffAddr}(m, lv) \\
-    m'' = m' [ a ↦ v ]
+    \mm{m}{e}{m'}{v} \\
+    \mmi{m'}{lv}{m''}{φ} \\
+    m''' = m'' [ φ ← v ]
   }
-  {\mm{m}{lv ← e}{m''}{v}}
+  {\mm{m}{lv ← e}{m'''}{v}}
 \end{mathpar}
 
 L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
@@ -390,7 +514,7 @@ placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
 cet environnement, et le cadre dépilé.
 
 On commence par définir une opération d'évaluation de plusieurs expressions à la
-fois : on note 
+fois : on note
 
 \begin{mathpar}
   \evstar{m}{e_1 \\ \vdots \\ e_n}
@@ -421,35 +545,35 @@ dont les champs sont ceux de la première structure évalués :
   }
 \end{mathpar}
 
-L'appel de fonction repose également sur cette évaluation. Tout d'abord, les
-arguments sont évalués. Puis les expressions qui initialisent les variables
-locales. Cf. figure~\ref{fcall-details}.
-
 \shorthandoff{!}
 \begin{figure}
 
   \centering
 
   \begin{tikzpicture}
+    [node distance=2cm]
 
     \node (m0) {$m_0$};
-    \node[below of=m0, node distance=2cm] (m1) {$m_1$};
+    \node[below of=m0]                    (m1) {$m_1$};
     \node[right of=m1, node distance=3cm] (m2) {$m_2$};
-    \node[below of=m2, node distance=2cm] (m3) {$m_3$};
+    \node[below of=m2]                    (m3) {$m_3$};
     \node[right of=m3, node distance=3cm] (m4) {$m_4$};
     \node[below of=m4]                    (m5) {$m_5$};
-    \node at ($(m0)!(m5)!(0,1)$) (m6) {$m_6$};
+    \node[below of=m5]                    (m6) {$m_6$};
+    \node at ($(m0)!(m6)!(0,1)$)          (m7) {$m_7$};
 
     \draw [->] (m0) -- node[auto] {$\vec{e} → \vec{v}$}               (m1);
     \draw [->] (m1) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}  (m2);
     \draw [->] (m2) -- node[auto] {$\vec{e'} → \vec{v'}$}             (m3);
-    \draw [->] (m3) -- node[auto] {$\mathrm{Push}(\vec{l}↦\vec{v'})$} (m4);
-    \draw [->] (m4) -- node[auto] {$i → \iReturn{v}$} (m5);
-    \draw [->] (m5) -- node[auto] {$\mathrm{Pop}(\vec{a} \cup \vec{l})$} (m6);
+    \draw [->] (m3) -- node[auto] {$\mathrm{Extend}(\vec{l}↦\vec{v'})$} (m4);
+    \draw [->] (m4) -- node[auto] {$i → \iReturn{e}$}                 (m5);
+    \draw [->] (m5) -- node[auto] {$e → v$}                           (m6);
+
+    \draw [->] (m6) -- node[auto] {$\mathrm{Pop}(\vec{a} \bigdcup \vec{l})$} (m7);
 
     \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
                     -- node[auto, swap] {$f(\vec{e}) → v$}
-                       ($ (m6) + (-5mm, 3mm) $);
+                       ($ (m7) + (-5mm, 3mm) $);
 
   \end{tikzpicture}
 
@@ -458,6 +582,14 @@ locales. Cf. figure~\ref{fcall-details}.
 
 \end{figure}
 \shorthandon{!}
+
+L'appel de fonction repose également sur cette évaluation multiple. Tout
+d'abord, les arguments sont évalués et placés dans un nouveau cadre de pile.
+Puis les expressions qui initialisent les variables locales sont elle aussi
+évaluées et ajoutées à ce même cadre de pile (opérateur $\mathrm{Extend}$).
+Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
+instruction $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
+Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \begin{mathpar}
   \irule{Exp-Call}
@@ -468,9 +600,10 @@ locales. Cf. figure~\ref{fcall-details}.
     m_2 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
     \evstar{m_2}{e'_1 \\ \vdots \\ e'_p}
            {m_3}{v'_1 \\ \vdots \\ v'_p} \\
-    m_4 = \mathrm{Push}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
-    \mm{m_4}{i}{m_5}{\iReturn{v}} \\
-    m_6 = \mathrm{Pop}(\mathrm{Pop}(m_5))
+    m_4 = \mathrm{Extend}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
+    \mm{m_4}{i}{m_5}{\iReturn{e}} \\
+    \mm{m_5}{e}{m_6}{v} \\
+    m_7 = \mathrm{Pop}(m_6)
   }
   {\mm{m_0}{f(e_1, …, e_n)}{m_6}{v}}
 \end{mathpar}
@@ -528,7 +661,11 @@ ci-dessus.
 
 \end{mathpar}
 
-Alternative
+Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
+manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce
+cas), c'est la règle \textsc{If-False} qui est appliquée et l'instruction
+revient à évaluer la branche "else". Dans les autres cas, c'est la règle
+\textsc{If-True} qui s'applique et la branche "then" qui est prise.
 
 \begin{mathpar}
   \irule{If-False}
@@ -551,9 +688,7 @@ Alternative
     }
 \end{mathpar}
 
-Boucle
-
-(on définit $\iThen{e}{i} = \iIf{e}{i}{\iPass}$)
+Le traitement de la boucle est une simple règle de réécriture :
 
 \begin{mathpar}
   \irule{While}
@@ -563,7 +698,58 @@ Boucle
     }
 \end{mathpar}
 
-Early return
+Cette règle revient à dire qu'on peut dérouler une boucle. Pour la comprendre,
+on peut remarquer qu'une boucle "while" est en réalité équivalente une infinité
+de "if" imbriqués.
+
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+while(e) {
+    i
+}
+\end{Verbatim}
+\end{minipage}
+$\widehat{=}$\hspace{1cm}
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+if(e) {
+    i;
+    if(e) {
+        i;
+        if(e) {
+            i;
+            if(e) {
+                i;
+                ...
+            }
+        }
+    }
+}
+\end{Verbatim}
+\end{minipage}
+
+Donc en remplaçant le second "if" par le "while", on obtient :
+
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+while(e) {
+    i
+}
+\end{Verbatim}
+\end{minipage}
+$\widehat{=}$\hspace{1cm}
+\begin{minipage}{0.3\textwidth}
+\begin{Verbatim}
+if(e) {
+    i;
+    while(e) {
+        i
+    }
+}
+\end{Verbatim}
+\end{minipage}
+
+Si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 \begin{mathpar}
   \irule{Return}
@@ -668,8 +854,9 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item
-  système de vues pour accès aux records
+\item mettre ensemble les noms de variables et leurs valeurs
+\item top ?
+\item sémantique des erreurs?
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
   qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness

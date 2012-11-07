@@ -1,6 +1,22 @@
 \newcommand{\irule}[3]{ \inferrule*[right=(#1)]{#2}{#3} }
 \def\iaxiom#1#2{\irule{#1}{ }{#2}}
 
+% http://tex.stackexchange.com/questions/3964/mathematical-symbol-for-disjoint-set-union
+\makeatletter
+\def\moverlay{\mathpalette\mov@rlay}
+\def\mov@rlay#1#2{\leavevmode\vtop{%
+   \baselineskip\z@skip \lineskiplimit-\maxdimen
+   \ialign{\hfil$\m@th#1##$\hfil\cr#2\crcr}}}
+\newcommand{\charfusion}[3][\mathord]{
+    #1{\ifx#1\mathop\vphantom{#2}\fi
+        \mathpalette\mov@rlay{#2\cr#3}
+      }
+    \ifx#1\mathop\expandafter\displaylimits\fi}
+\makeatother
+
+\newcommand{\dcup}{\charfusion[\mathbin]{\cup}{+}}
+\newcommand{\bigdcup}{\charfusion[\mathbin]{\bigcup}{+}}
+
 % Fix '::' -> ': :' when using babel
 \newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
 
@@ -46,6 +62,8 @@
 
 \def\iThen#1#2{\textsc{If}(#1) \{ #2 \}}
 
+\def \eNull{\textsc{Null}\xspace}
+
 % sets pour semantique
 \def\sId{\textsc{Id}\xspace}
 \def\sMem{\textsc{Mem}\xspace}
@@ -63,6 +81,9 @@
 
 % Reduction (instructions)
 \def\mmi#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
+
+% Reduction (left-values)
+\def\mmlv#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
 
 \def\mmbig#1#2#3#4{
   \left\langle #1, #2 \right\rangle →
