@@ -7,8 +7,14 @@ La figure~\ref{fig:stx} présente notre langage intermédiaire. Il contient la
 plupart des fonctionnalités présentes dans les langages impératifs comme C.
 
 Un programme est organisé en fonctions, qui contiennent des instructions, qui
-elles-même manipulent des expressions. Le flôt de contrôle est minimal, avec un
-opérateur d'alternative et de boucle.
+elles-même manipulent des expressions.
+
+Le flot de contrôle est simplifié par rapport à C : il ne contient que
+l'alternative ("if") et la boucle "while". Les autres formes de boucle
+("do/while" et "for") peuvent être émulées par une boucle "while".
+
+Les fonctionnalités manquantes, et comment les émuler, seront discutés dans le
+chapitre\ref{chap:nexistepas}. % TODO
 
 Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 \iIf{e}{i}{\iPass}$.
@@ -125,10 +131,16 @@ associées aux variables du programme.
   \sVal = &          \sInt
             \bigdcup \sFloat
             \bigdcup \{ \eNull \}
-            \bigdcup \sAddr \\
+            \bigdcup \sPhi \\
   \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
+  \sFloat = & \textsc{IeeeFloat}(32) \\
+    \sPhi = & \mathrm{fix} (\sPhi') \\
+    \sPhi'(X) = & X \\ 
+                & \cup \sAddr \\
+                & \cup \{*φ / φ ∈ \sPhi\} \\
+                & \cup \{φ.f / φ ∈ \sPhi, f ∈ \sId\} \\
+                & \cup \{φ[n] / φ ∈ \sPhi, n ∈ \sInt\} \\
   \sAddr = & \sId \bigdcup (ℕ × \sId) \\
-  \sFloat = & \textsc{IeeeFloat}(32)
 \end{align*}
 
 $\textsc{IeeeFloat}(n)$ correspond à l'ensemble des flottants IEEE 754 de $n$
@@ -142,35 +154,23 @@ L'ensemble des états mémoire est :
   \sMem = ((\sId × \sVal)^*)^* × (\sId × \sVal)^*
 \]
 
-L'interprétation est la suivante : une adresse est soit un nom de variable
-globale, soit un nom de variable locale à un niveau donné.
-
-Un état mémoire contient deux ensembles de variables (locales et globales), et
-une fonction qui à chacune de ces variables associe une valeur.
-
-Plus précisément, un état mémoire $m = (s, g, l)$ est composé de :
+Un état mémoire état mémoire $(s, g) ∈ \sMem$ est composé :
 
 \begin{itemize}
 \item
-  une pile de variables locales $s$. Celles-ci sont organisées en
-  niveaux indépendants : à chaque appel de fonction, un nouveau cadre de
-  pile est créé, comprenant ses paramètres et ses variables locales.
+  d'une part, d'une pile $s$ de cadres, qui sont des listes
+  d'association (nom de variable, valeur).
 \item
-  un ensemble de variables globales $g$. Contrairement aux variables
-  locales, il n'y a pas de système d'empilement, puisque toutes ces
-  variables sont accessibles depuis tout point du programme.
-\item
-  une liste d'associations $l$ qui à chaque adresse mémoire associe une
-  valeur.
+  d'autre part, une liste d'association qui représente les variables
+  globales.
 \end{itemize}
 
-Les variables qui apparaissent dans $s$ et $g$ sont uniquement des symboles
-(leurs noms) : les valeurs sont dans $l$.
+La structure de pile des locales permet de les organiser en niveaux indépendants:
+à chaque appel de fonction, un nouveau cadre de pile est créé, comprenant ses
+paramètres et ses variables locales.
 
-Les adresses intervenant dans $l$ sont soit un nom de variable globale, soit un
-couple $(n, x)$ où $n$ est un entier qui correspond à la hauteur de pile de la
-variable considérée. Cela permet de distinguer entre deux variables qui ont le
-même nom, par exemple dans le cas d'un appel récursif.
+Au contraire, pour les globales il n'y a pas de système d'empilement, puisque
+ces variables sont accessibles depuis tout point du programme.
 
 Ces définitions sont résumées dans la figure~\ref{fig:interp}
 
