@@ -179,7 +179,7 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
   \gramlr{Valeurs}{
     \begin{align*}
       v \gramisa & c               & \textrm{Constante}
-      \\ \gramor & a               & \textrm{Adresse}
+      \\ \gramor & φ               & \textrm{Référence mémoire}
       \\ \gramor & \{ f_1 : v_1 ;
                   … ; f_n : v_n \} & \textrm{Structure}
       \\ \gramor & \{v_1 ;…; v_n\} & \textrm{Tableau}
@@ -382,11 +382,11 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
   \begin{align*}
     m[a]_φ        = & m[a]_a \\
-    m[*φ]_φ       = & m[a]_a \mbox{ où } a = m[φ]_φ \\
+    m[*φ]_φ       = & m[φ']_φ \mbox{ où } φ' = m[φ]_φ \\
     m[φ.f]_φ      = & m[φ]_φ[f]_f \\
     m[φ[i]]_φ     = & m[φ]_φ[i]_i \\
     m[a ← v]_φ    = & m[a ← v]_a \\
-    m[*φ ← v]_φ   = & m[a ← v]_a \mbox{ où } a = m[φ]_φ \\
+    m[*φ ← v]_φ   = & m[φ' ← v]_φ \mbox{ où } φ' = m[φ]_φ \\
     m[φ.f ← v]_φ  = & m[φ ← (m[φ]_φ[f←v]_f)]_φ \\
     m[φ[i] ← v]_φ = & m[φ ← (m[φ]_φ[i←v]_i)]_φ
   \end{align*}
