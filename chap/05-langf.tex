@@ -116,18 +116,16 @@ que :
   ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
 \end{align*}
 
-\section*{Erreurs}
-
-La sémantique présentée n'a pas d'erreur explicite. Si aucune règle ne peut
-s'appliquer, on considère que l'exécution est terminée.
-
 \section{Mémoire}
 
 L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
 \begin{align*}
-  \sVal = & \sInt \bigdcup \sFloat \bigdcup \sAddr \\
+  \sVal = &          \sInt
+            \bigdcup \sFloat
+            \bigdcup \{ \eNull \}
+            \bigdcup \sAddr \\
   \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
   \sAddr = & \sId \bigdcup (ℕ × \sId) \\
   \sFloat = & \textsc{IeeeFloat}(32)
@@ -441,6 +439,9 @@ tous ces accesseurs.
   \]
 
 \end{definition}
+
+La sémantique présentée n'a pas d'erreur explicite. Si aucune règle ne peut
+s'appliquer, on considère que l'exécution est terminée.
 
 Puisque des left-values peuvent apparaitre dans les expressions, et des
 expressions dans les left-values (en indice de tableau), leurs règles
@@ -908,7 +909,6 @@ donc
 \begin{itemize}
 \item mettre ensemble les noms de variables et leurs valeurs
 \item top ?
-\item sémantique des erreurs?
 \item procédures vs fonctions
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
