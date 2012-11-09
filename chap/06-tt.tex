@@ -1,0 +1,217 @@
+\section{Expressions}
+
+\begin{mathpar}
+
+  \irule{Cst-Int}
+    { }
+    { Γ ⊢ i : \tInt}
+
+  \irule{Cst-Float}
+    { }
+    { Γ ⊢ i : \tInt}
+
+  % TODO
+  \irule{Cst-Null}
+    { }
+    { Γ ⊢ \eNull : ?}
+
+  \irule{Lv-Var}
+    { (x, t) ∈ Γ }
+    { Γ ⊢ x : t }
+
+  \irule{Lv-Deref}
+    { Γ ⊢ x : t* }
+    { Γ ⊢ *x : t }
+
+  % TODO
+  \irule{Lv-Field}
+    { }
+    { Γ ⊢ x.f : t }
+
+  \irule{Lv-Index}
+    { Γ ⊢ e : \tInt \\
+      Γ ⊢ x : t[]
+    }
+    { Γ ⊢ x[e] : t }
+
+  % TODO opérateurs
+
+  \irule{Addr}
+    { Γ ⊢ lv : t }
+    { Γ ⊢ \&lv : t* }
+
+  \irule{Set}
+    { Γ ⊢ lv : t \\
+      Γ ⊢ e : t
+    }
+    { Γ ⊢ lv ← e : t }
+
+  \irule{Struct}
+    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t_i }
+    { Γ ⊢ \{ f_1 : e_1 ;
+         … ; f_n : e_n \}
+        : \{ f_1 : t_1 ;
+         … ; f_n : t_n \}
+    }
+
+  \irule{Array}
+    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t }
+    { Γ ⊢ \{ e_1 ;
+         … ; e_n \}
+        : t[]
+    }
+
+  \irule{Call}
+    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t_i \\
+      Γ ⊢ f : ( t_1 ,
+            … , t_n ) → t
+    }
+    { Γ ⊢ f( e_1 ,
+         … , e_n )
+        : t
+    }
+
+\end{mathpar}
+
+\subsection*{Opérateurs}
+
+Un certain nombre d'opérations est possible sur le type \tInt.
+
+\begin{mathpar}
+\irule{Op-Int}{
+  \opsymb ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
+  Γ ⊢ e_1 : \tInt \\
+  Γ ⊢ e_2 : \tInt
+}{
+  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+}
+\end{mathpar}
+
+De même sur \tFloat.
+
+\begin{mathpar}
+\irule{Op-Float}{
+  \opsymb ∈ \{+.,-.,\times.,/.\} \\
+  Γ ⊢ e_1 : \tFloat \\
+  Γ ⊢ e_2 : \tFloat
+}{
+  Γ ⊢ e_1~\opsymb~e_2 : \tFloat
+}
+\end{mathpar}
+
+Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
+"comparables". On introduit donc un jugement $\textsc{Comparable}(τ)$ qui est
+vrai pour les types \tInt, \tFloat et pointeurs. Les comparaisons renvoient
+alors un \tInt.
+
+\begin{mathpar}
+\irule{Cmp-Num}
+  {τ ∈ \{ \tInt, \tFloat \}}
+  {\textsc{Comparable}(τ)}
+\and
+\irule{Cmp-Ptr}
+  { }
+  {\textsc{Comparable}(τ*)}
+\and
+\irule{Op-Cmp}{
+  \opsymb ∈ \{=,≠,≤,≥,<,>\} \\
+  Γ ⊢ e_1 : τ \\
+  Γ ⊢ e_2 : τ \\
+  \textsc{Comparable}(τ)
+}{
+  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+}
+\end{mathpar}
+
+Les opérateurs unaires de négations "$-$" et "$-.$" s'appliquent respectivement
+aux \tInt et aux \tFloat.
+
+\begin{mathpar}
+\irule{Unop-Minus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ - e : \tInt }
+\and
+\irule{Unop-Minus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ -. e : \tFloat }
+\end{mathpar}
+
+Les opérateurs de négation unaires, en revanche, ne s'appliquent qu'aux
+entiers.
+
+\begin{mathpar}
+\irule{Unop-Not}{
+  \opsymb ∈ \{ \sim, ! \} \\
+  Γ ⊢ e : \tInt
+}{
+  Γ ⊢ \opsymb~e : \tInt
+}
+\end{mathpar}
+
+
+\section{Instructions}
+
+\begin{mathpar}
+
+  \irule{Pass}
+    { }
+    {Γ ⊢ \iPass}
+
+  \irule{Seq}{
+    Γ ⊢ i_1 \\
+    Γ ⊢ i_2
+  }{
+    Γ ⊢ i_1;i_2
+  }
+
+  \irule{Exp}
+    { Γ ⊢ e : t }
+    { Γ ⊢ e }
+
+  \irule{If}
+    { Γ ⊢ e : \tInt \\
+      Γ ⊢ i_1 \\
+      Γ ⊢ i_2
+    }
+    { Γ ⊢ \iIf{e}{i_1}{i_2} }
+
+  \irule{While}
+    { Γ ⊢ e : \tInt \\
+      Γ ⊢ i
+    }
+    { Γ ⊢ \iWhile{e}{i} }
+
+  % TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
+  \irule{Return}
+    { Γ ⊢ e : t }
+    { Γ ⊢ \iReturn{e} }
+
+\end{mathpar}
+
+\section{Fonctions}
+
+\begin{mathpar}
+
+  \irule{Fun}
+    { ?? }
+    { Γ ⊢ f : (t_1, …, t_n) → t }
+
+\end{mathpar}
+
+\section{Programme}
+
+\begin{mathpar}
+  \irule{Prog}
+    { ∀ i, 1 ≤ i ≤ p ⇒ Γ e_i : t_i
+    }
+    {
+      Γ ⊢ ((f_1, …, f_n), ((x_1, e_1), …, (x_p, e_p)))
+    }
+\end{mathpar}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+\section*{TODO}
+
+\begin{itemize}
+\item
+  utiliser des phrases toplevel
+\item
+  résoudre le problème du return
+\end{itemize}
