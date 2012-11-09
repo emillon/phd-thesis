@@ -73,6 +73,78 @@
 
 \end{mathpar}
 
+\subsection*{Opérateurs}
+
+Un certain nombre d'opérations est possible sur le type \tInt.
+
+\begin{mathpar}
+\irule{Op-Int}{
+  \opsymb ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
+  Γ ⊢ e_1 : \tInt \\
+  Γ ⊢ e_2 : \tInt
+}{
+  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+}
+\end{mathpar}
+
+De même sur \tFloat.
+
+\begin{mathpar}
+\irule{Op-Float}{
+  \opsymb ∈ \{+.,-.,\times.,/.\} \\
+  Γ ⊢ e_1 : \tFloat \\
+  Γ ⊢ e_2 : \tFloat
+}{
+  Γ ⊢ e_1~\opsymb~e_2 : \tFloat
+}
+\end{mathpar}
+
+Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
+"comparables". On introduit donc un jugement $\textsc{Comparable}(τ)$ qui est
+vrai pour les types \tInt, \tFloat et pointeurs. Les comparaisons renvoient
+alors un \tInt.
+
+\begin{mathpar}
+\irule{Cmp-Num}
+  {τ ∈ \{ \tInt, \tFloat \}}
+  {\textsc{Comparable}(τ)}
+\and
+\irule{Cmp-Ptr}
+  { }
+  {\textsc{Comparable}(τ*)}
+\and
+\irule{Op-Cmp}{
+  \opsymb ∈ \{=,≠,≤,≥,<,>\} \\
+  Γ ⊢ e_1 : τ \\
+  Γ ⊢ e_2 : τ \\
+  \textsc{Comparable}(τ)
+}{
+  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+}
+\end{mathpar}
+
+Les opérateurs unaires de négations "$-$" et "$-.$" s'appliquent respectivement
+aux \tInt et aux \tFloat.
+
+\begin{mathpar}
+\irule{Unop-Minus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ - e : \tInt }
+\and
+\irule{Unop-Minus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ -. e : \tFloat }
+\end{mathpar}
+
+Les opérateurs de négation unaires, en revanche, ne s'appliquent qu'aux
+entiers.
+
+\begin{mathpar}
+\irule{Unop-Not}{
+  \opsymb ∈ \{ \sim, ! \} \\
+  Γ ⊢ e : \tInt
+}{
+  Γ ⊢ \opsymb~e : \tInt
+}
+\end{mathpar}
+
+
 \section{Instructions}
 
 \begin{mathpar}
@@ -138,8 +210,6 @@
 \section*{TODO}
 
 \begin{itemize}
-\item
-  typer les opérateurs
 \item
   utiliser des phrases toplevel
 \item
