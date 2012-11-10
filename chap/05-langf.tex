@@ -426,9 +426,11 @@ Puisque des left-values peuvent apparaitre dans les expressions, et des
 expressions dans les left-values (en indice de tableau), leurs règles
 d'évaluation sont mutuellement récursives.
 
-Commençons par décrire le cas des left-values. Obtenir un chemin à partir d'un
-nom de variable revient à résoudre le nom de cette variable : est-elle
-accessible ? Le nom désigne-t'il une variable locale ou une variable globale ?
+\subsection*{Left-values}
+
+Obtenir un chemin à partir d'un nom de variable revient à résoudre le nom de
+cette variable : est-elle accessible ? Le nom désigne-t'il une variable locale
+ou une variable globale ?
 
 \begin{mathpar}
   \irule{Phi-Var}
@@ -469,7 +471,7 @@ Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite :
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
 
-Revenons au expressions.
+\subsection*{Expressions}
 
 Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
 celle-ci est déjà évaluée. À chaque constante syntaxique $c$, on peut associer
@@ -494,11 +496,11 @@ l'évaluer en un chemin.
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
-puis l'autre (l'ordre d'évaluation, de gauche à droite, est imposé). À chaque
-opérateur $\opsymb$, correspond un opérateur sémantique $\widehat{\opsymb}$ qui
-agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
-classique entre entiers. Afin d'interdire la division par zéro, celle ci et le
-modulo sont traités dans une règle à part.
+puis l'autre (l'ordre d'évaluation, est encore imposé : de gauche à droite). À
+chaque opérateur $\opsymb$, correspond un opérateur sémantique
+$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
+$\widehat{+}$ est l'addition classique entre entiers. Afin d'interdire la
+division par zéro, celle ci et le modulo sont traités dans une règle à part.
 
 \begin{mathpar}
   \irule{Exp-UnOp}
@@ -521,7 +523,8 @@ modulo sont traités dans une règle à part.
   {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
 \end{mathpar}
 
-Adresse :
+Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
+l'état mémoire courant.
 
 \begin{mathpar}
   \irule{Exp-AddrOf}
@@ -529,6 +532,12 @@ Adresse :
     }
     {\mm{m}{\&x}{m}{a}}
 \end{mathpar}
+
+L'affectation se déroule 3 étapes : d'abord, l'expression est évaluée en une
+valeur $v$. Ensuite, la left-value est évaluée en un chemin $φ$. Enfin, un
+nouvel état mémoire est construit, où la valeur accessible par $φ$ est remplacée
+par $v$. Comme dans le langage C, l'expression d'affectation produit une valeur,
+qui est celle qui a été affectée.
 
 \begin{mathpar}
   \irule{Exp-Set}
@@ -540,10 +549,7 @@ Adresse :
   {\mm{m}{lv ← e}{m'''}{v}}
 \end{mathpar}
 
-L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
-opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
-placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
-cet environnement, et le cadre dépilé.
+\subsection*{Expressions composées}
 
 On commence par définir une opération d'évaluation de plusieurs expressions à la
 fois : on note
@@ -556,9 +562,9 @@ fois : on note
 si $∃ (m_1, …, m_n) , ∀ i ∈ [ 1; n-1 ], \mm{m_i}{e_i}{m_{i+1}}{e_{i+1}} $ avec
 $m = m_1$ et $m' = m_n$.
 
-Notons que l'évaluation se fait dans un ordre précis : de gauche à droite. On
-utilise la notation vecteur colonne pour signifier qu'il s'agit ici de
-métasyntaxe (il n'y a pas de tuples dans le langage).
+Notons que l'évaluation se fait encore de gauche à droite. On utilise la
+notation vecteur colonne pour signifier qu'il s'agit ici de métasyntaxe (il n'y
+a pas de tuples dans le langage).
 
 Cette évaluation chaînée est au coeur de la règle suivante qui permet d'évaluer
 les structures : à une structure (syntaxique) correspond une valeur structurelle
@@ -781,7 +787,7 @@ if(e) {
 \end{Verbatim}
 \end{minipage}
 
-Si un "return" apparaît dans une séquence, on peut supprimer la suite :
+Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 \begin{mathpar}
   \irule{Return}
@@ -886,7 +892,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item mettre ensemble les noms de variables et leurs valeurs
 \item top ?
 \item procédures vs fonctions
 \item pointeurs sur fonction
