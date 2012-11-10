@@ -122,6 +122,14 @@ que :
   ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
 \end{align*}
 
+La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que :
+
+\begin{align*}
+|w| = & |u| + |v| \\
+∀ i ∈ [1 ; |u|] , w_i = & u_i \\
+∀ j ∈ [1 ; |v|] , w_{|u| + j} = & v_j
+\end{align*}
+
 \section{Mémoire}
 
 L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
@@ -243,53 +251,24 @@ retournant il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  On définit l'empilement d'un cadre de pile :
+  On définit l'empilement d'un cadre de pile $f = ((x_1, v_1), …, (x_n, v_n))$
+  sur un état mémoire $m = (s, g)$ :
 
   \[
-    \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}::s
+    \mathrm{Push}((s, g), f) = (f::s, g)
   \]
-
-  On peut étendre cette notation aux états mémoire, en associant des valeurs à
-  ces nouvelles variables :
-
-  \[
-    \mathrm{Push}((s, g, l), ((x_1, v_1), …, (x_n, v_n))) = (s', g, l')
-  \]
-
-  avec
-
-  \begin{align*}
-    s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
-    l' = & l \bigdcup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
-    p  = & |s| + 1
-  \end{align*}
 
   On définit aussi l'extension du dernier cadre de pile :
 
   \[
-    \mathrm{Extend}(f::s, x) = ((f::x) :: s)
+    \mathrm{Extend}((f::s, g), x) = (((x @ f) :: s), g)
   \]
-
-  et son extension triviale aux états mémoire.
 
   De même on définit le dépilement :
 
   \[
-    \mathrm{Pop}(f::s) = s
+    \mathrm{Pop}(f::s, g) = (s, g)
   \]
-
-  ainsi que son extension aux états mémoire :
-
-  \[
-    \mathrm{Pop}((s, g, l)) = (s', g, l')
-  \]
-
-  avec
-
-  \begin{align*}
-    s' = & \mathrm{Pop}(s) \\
-    l' = & \{ (x) ∈ l \} \bigdcup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
-  \end{align*}
 
 \end{definition}
 
