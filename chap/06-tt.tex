@@ -1,3 +1,52 @@
+\section{Définitions}
+
+\gramlr{Type}{
+  \begin{align*}
+    t \gramisa & \tInt
+    \\ \gramor & \tFloat
+    \\ \gramor & τ[]                           & \textrm{Tableau}
+    \\ \gramor & τ*                            & \textrm{Pointeur}
+    \\ \gramor & \{ f_1:τ_1
+               ,    …
+               , f_n:τ_n \}                  & \textrm{Structure}
+    \\ \gramor & (τ_1, …, τ_n) \rightarrow τ_r & \textrm{Fonction}
+  \end{align*}
+}
+
+\gramlr{Environnement de typage}{
+  \begin{align*}
+    Γ \gramisa & ε
+    \\ \gramor & (a, t)
+  \end{align*}
+}
+
+\section{Typage}
+
+\begin{definition}[Typage d'une expression]
+
+  \[
+    Γ ⊢ e : t
+  \]
+
+\end{definition}
+
+\begin{definition}[Typage d'une instruction]
+
+  \[
+    Γ ⊢ i
+  \]
+
+\end{definition}
+
+\begin{definition}[Typage d'une phrase]
+
+  \[
+    Γ, S ⊢ p → Γ', S'
+  \]
+
+\end{definition}
+
+
 \section{Expressions}
 
 \begin{mathpar}
