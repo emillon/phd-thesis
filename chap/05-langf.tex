@@ -74,6 +74,16 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \end{align*}
   }
 
+  \gramlr{Phrases}{
+    \begin{align*}
+      p \gramisa & x = f & \textrm{Déclaration de fonction}
+      \\ \gramor & \mathrm{struct} s \{ x_1 : t_1
+                                     ; …
+                                     ;  x_n : t_n
+                                     \} & \textrm{Déclaration de structure}
+    \end{align*}
+  }
+
   \gramlr{Programme}{
     \begin{align*}
       P \gramisa & ((f_1, …, f_n),   & \textrm{Fonctions} \\
@@ -892,10 +902,11 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item top ?
+\item phrases
 \item procédures vs fonctions
 \item pointeurs sur fonction
 \item arithmétique de pointeurs
+\item top ?
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
   qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
