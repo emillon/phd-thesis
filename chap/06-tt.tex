@@ -1,3 +1,80 @@
+Dans ce chapitre, nous enrichissons le langage défini dans le
+chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
+programmes bien formés, comme
+
+\begin{Verbatim}
+f()
+(x=0)
+{
+  x = 1
+  return x
+}
+\end{Verbatim}
+
+des programmes mal formés comme
+
+\begin{Verbatim}
+f()
+(x=0)
+{
+  x = 1
+  return (*x)
+}
+\end{Verbatim}
+
+Le but d'un tel système de types est de rejeter les programmes qui sont
+"évidemment faux", c'est à dire dont on peut prouver qu'il provoqueraient des
+erreurs de typage à l'exécution.
+
+\section{Définitions}
+
+\gramlr{Type}{
+  \begin{align*}
+    t \gramisa & \tInt
+    \\ \gramor & \tFloat
+    \\ \gramor & τ[]                           & \textrm{Tableau}
+    \\ \gramor & τ*                            & \textrm{Pointeur}
+    \\ \gramor & \{ f_1:τ_1
+               ,    …
+               , f_n:τ_n \}                  & \textrm{Structure}
+    \\ \gramor & (τ_1, …, τ_n) \rightarrow τ_r & \textrm{Fonction}
+  \end{align*}
+}
+
+\gramlr{Environnement de typage}{
+  \begin{align*}
+    Γ \gramisa & ε
+    \\ \gramor & (a, t), Γ'
+  \end{align*}
+}
+
+\section{Typage}
+
+\begin{definition}[Typage d'une expression]
+
+  \[
+    Γ ⊢ e : t
+  \]
+
+\end{definition}
+
+\begin{definition}[Typage d'une instruction]
+
+  \[
+    Γ ⊢ i
+  \]
+
+\end{definition}
+
+\begin{definition}[Typage d'une phrase]
+
+  \[
+    Γ, S ⊢ p → Γ', S'
+  \]
+
+\end{definition}
+
+
 \section{Expressions}
 
 \begin{mathpar}

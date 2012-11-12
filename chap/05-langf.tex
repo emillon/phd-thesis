@@ -51,7 +51,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       lv \gramisa & x     & \textrm{Variable}
       \\  \gramor & *lv   & \textrm{Déréférencement}
       \\  \gramor & lv.f  & \textrm{Accès à un champ}
-      \\  \gramor & lv[n] & \textrm{Accès à un élément}
+      \\  \gramor & lv[e] & \textrm{Accès à un élément}
     \end{align*}
   }
 
@@ -74,10 +74,22 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \end{align*}
   }
 
+  \gramlr{Phrases}{
+    \begin{align*}
+      p \gramisa & f                 & \textrm{Déclaration de fonction}
+      \\ \gramor & \mathrm{struct}~s
+                      \{ x_1 : t_1
+                       ; …
+                       ;  x_n : t_n
+                      \}             & \textrm{Déclaration de structure}
+      \\ \gramor & e                 & \textrm{Évaluation d'expression}
+      \\ \gramor & x = e             & \textrm{Variable globale}
+    \end{align*}
+  }
+
   \gramlr{Programme}{
     \begin{align*}
-      P \gramisa & ((f_1, …, f_n),   & \textrm{Fonctions} \\
-                 & ((x_1, e_1), …, (x_p, e_p))) & \textrm{Globales}
+      P \gramisa & (p_1, …, p_n) & \textrm{Phrases}
     \end{align*}
   }
 
@@ -120,6 +132,14 @@ que :
 \begin{align*}
   v_1 = & x \\
   ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
+\end{align*}
+
+La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que :
+
+\begin{align*}
+|w| = & |u| + |v| \\
+∀ i ∈ [1 ; |u|] , w_i = & u_i \\
+∀ j ∈ [1 ; |v|] , w_{|u| + j} = & v_j
 \end{align*}
 
 \section{Mémoire}
@@ -243,53 +263,24 @@ retournant il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  On définit l'empilement d'un cadre de pile :
+  On définit l'empilement d'un cadre de pile $f = ((x_1, v_1), …, (x_n, v_n))$
+  sur un état mémoire $m = (s, g)$ :
 
   \[
-    \mathrm{Push}(s, (x_1, …, x_n)) = \{ x_1 ; … ; x_n \}::s
+    \mathrm{Push}((s, g), f) = (f::s, g)
   \]
-
-  On peut étendre cette notation aux états mémoire, en associant des valeurs à
-  ces nouvelles variables :
-
-  \[
-    \mathrm{Push}((s, g, l), ((x_1, v_1), …, (x_n, v_n))) = (s', g, l')
-  \]
-
-  avec
-
-  \begin{align*}
-    s' = & \mathrm{Push}(s, (x_1, …, x_n)) \\
-    l' = & l \bigdcup \{(p, x_1) ↦ v_1; … ; (p, x_n) ↦ v_n\} \\
-    p  = & |s| + 1
-  \end{align*}
 
   On définit aussi l'extension du dernier cadre de pile :
 
   \[
-    \mathrm{Extend}(f::s, x) = ((f::x) :: s)
+    \mathrm{Extend}((f::s, g), x) = (((x @ f) :: s), g)
   \]
-
-  et son extension triviale aux états mémoire.
 
   De même on définit le dépilement :
 
   \[
-    \mathrm{Pop}(f::s) = s
+    \mathrm{Pop}(f::s, g) = (s, g)
   \]
-
-  ainsi que son extension aux états mémoire :
-
-  \[
-    \mathrm{Pop}((s, g, l)) = (s', g, l')
-  \]
-
-  avec
-
-  \begin{align*}
-    s' = & \mathrm{Pop}(s) \\
-    l' = & \{ (x) ∈ l \} \bigdcup \{ (p, x) ∈ l \mbox{ où } p < |s| \}
-  \end{align*}
 
 \end{definition}
 
@@ -408,8 +399,8 @@ qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 \item affecter cette valeur au même chemin (le $m[φ ← …]_φ$ externe)
 \end{itemize}
 
-Dans la suite, on notera lorsque ce n'est pas ambigü uniquement $[\cdot]$ pour
-tous ces accesseurs.
+Dans la suite, on notera uniquement $[\cdot]$ tous ces accesseurs lorsque ce
+n'est pas ambigü.
 
 \section{Expressions}
 
@@ -447,9 +438,11 @@ Puisque des left-values peuvent apparaitre dans les expressions, et des
 expressions dans les left-values (en indice de tableau), leurs règles
 d'évaluation sont mutuellement récursives.
 
-Commençons par décrire le cas des left-values. Obtenir un chemin à partir d'un
-nom de variable revient à résoudre le nom de cette variable : est-elle
-accessible ? Le nom désigne-t'il une variable locale ou une variable globale ?
+\subsection*{Left-values}
+
+Obtenir un chemin à partir d'un nom de variable revient à résoudre le nom de
+cette variable : est-elle accessible ? Le nom désigne-t'il une variable locale
+ou une variable globale ?
 
 \begin{mathpar}
   \irule{Phi-Var}
@@ -490,7 +483,7 @@ Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite :
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
 
-Revenons au expressions.
+\subsection*{Expressions}
 
 Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
 celle-ci est déjà évaluée. À chaque constante syntaxique $c$, on peut associer
@@ -515,11 +508,11 @@ l'évaluer en un chemin.
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
-puis l'autre (l'ordre d'évaluation, de gauche à droite, est imposé). À chaque
-opérateur $\opsymb$, correspond un opérateur sémantique $\widehat{\opsymb}$ qui
-agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
-classique entre entiers. Afin d'interdire la division par zéro, celle ci et le
-modulo sont traités dans une règle à part.
+puis l'autre (l'ordre d'évaluation, est encore imposé : de gauche à droite). À
+chaque opérateur $\opsymb$, correspond un opérateur sémantique
+$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
+$\widehat{+}$ est l'addition classique entre entiers. Afin d'interdire la
+division par zéro, celle ci et le modulo sont traités dans une règle à part.
 
 \begin{mathpar}
   \irule{Exp-UnOp}
@@ -542,7 +535,8 @@ modulo sont traités dans une règle à part.
   {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
 \end{mathpar}
 
-Adresse :
+Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
+l'état mémoire courant.
 
 \begin{mathpar}
   \irule{Exp-AddrOf}
@@ -550,6 +544,12 @@ Adresse :
     }
     {\mm{m}{\&x}{m}{a}}
 \end{mathpar}
+
+L'affectation se déroule 3 étapes : d'abord, l'expression est évaluée en une
+valeur $v$. Ensuite, la left-value est évaluée en un chemin $φ$. Enfin, un
+nouvel état mémoire est construit, où la valeur accessible par $φ$ est remplacée
+par $v$. Comme dans le langage C, l'expression d'affectation produit une valeur,
+qui est celle qui a été affectée.
 
 \begin{mathpar}
   \irule{Exp-Set}
@@ -561,10 +561,7 @@ Adresse :
   {\mm{m}{lv ← e}{m'''}{v}}
 \end{mathpar}
 
-L'évaluation d'un appel de fonction commence de manière semblable au cas d'un
-opérateur : on évalue de gauche à droite les arguments. Ceux-ci sont ensuite
-placés dans un nouveau cadre de pile. Le corps de la fonction est évalué dans
-cet environnement, et le cadre dépilé.
+\subsection*{Expressions composées}
 
 On commence par définir une opération d'évaluation de plusieurs expressions à la
 fois : on note
@@ -577,9 +574,9 @@ fois : on note
 si $∃ (m_1, …, m_n) , ∀ i ∈ [ 1; n-1 ], \mm{m_i}{e_i}{m_{i+1}}{e_{i+1}} $ avec
 $m = m_1$ et $m' = m_n$.
 
-Notons que l'évaluation se fait dans un ordre précis : de gauche à droite. On
-utilise la notation vecteur colonne pour signifier qu'il s'agit ici de
-métasyntaxe (il n'y a pas de tuples dans le langage).
+Notons que l'évaluation se fait encore de gauche à droite. On utilise la
+notation vecteur colonne pour signifier qu'il s'agit ici de métasyntaxe (il n'y
+a pas de tuples dans le langage).
 
 Cette évaluation chaînée est au coeur de la règle suivante qui permet d'évaluer
 les structures : à une structure (syntaxique) correspond une valeur structurelle
@@ -641,8 +638,26 @@ d'abord, les arguments sont évalués et placés dans un nouveau cadre de pile.
 Puis les expressions qui initialisent les variables locales sont elle aussi
 évaluées et ajoutées à ce même cadre de pile (opérateur $\mathrm{Extend}$).
 Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
-instruction $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
-Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
+instruction $\iReturn{v}$. Puis, le cadre précédemment utilisé est dépilé.
+
+%La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
+%de pile. En effet, si une référence au dernier cadre est toujours présente après
+%le retour, elle pourra se résoudre en un objet différent plus tard dans
+%l'exécution du programme.
+
+%La fonction $\mathrm{Cleanup}$ est donnée par :
+
+%\begin{align*}
+  %\mathrm{Cleanup}(s, g)  = & (s', g') \\
+                    %où g' = & \mathrm{CleanupList}(g) \\
+                       %s' = & [CleanupList(s_1), …, CleanupList (s_n)] \\
+  %\mathrm{CleanupList}(u) = & \{(k, v) ∈ u / v n'est pas une adresse \} \\
+                       %\cup & \{(k, φ) ∈ u / a n'est pas une adresse \} \\
+  %\mathrm{Var}(a) = & a \\
+  %\mathrm{Var}(*φ) = & ?
+%\end{align*}
+
+% TODO il faut casser les pointeurs, aussi. tri topo sur le graphe des chemins ?
 
 \begin{mathpar}
   \irule{Exp-Call}
@@ -656,10 +671,13 @@ Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
     m_4 = \mathrm{Extend}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
     \mm{m_4}{i}{m_5}{\iReturn{e}} \\
     \mm{m_5}{e}{m_6}{v} \\
-    m_7 = \mathrm{Pop}(m_6)
+    m_7 = \mathrm{Pop}(m_6) \\
+    m_8 = \mathrm{Cleanup}(m_7) \\
   }
-  {\mm{m_0}{f(e_1, …, e_n)}{m_6}{v}}
+  {\mm{m_0}{f(e_1, …, e_n)}{m_8}{v}}
 \end{mathpar}
+
+Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
 
@@ -802,7 +820,7 @@ if(e) {
 \end{Verbatim}
 \end{minipage}
 
-Si un "return" apparaît dans une séquence, on peut supprimer la suite :
+Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 \begin{mathpar}
   \irule{Return}
@@ -810,23 +828,50 @@ Si un "return" apparaît dans une séquence, on peut supprimer la suite :
   { \mmi{m}{\iReturn{e};i}{m}{\iReturn{e}} }
 \end{mathpar}
 
+\section{Phrases}
+
+\[
+  \ph{m}{p}{m'}
+\]
+
+\begin{mathpar}
+
+  \irule{Ph-Fun}
+    {?}
+    {\ph{m}{f}{m+f?}}
+
+  \irule{Ph-Struct}
+    { }
+    {\ph{m}{\mathrm{struct}~s \{ … \}}{m}}
+
+  \irule{Ph-Exp}
+    {\mm{m}{e}{m'}{v}}
+    {\ph{m}{e}{m'}}
+
+  \irule{Ph-Var}
+    {\mm{m}{e}{m'}{v}}
+    {\ph{(s,g)}{x = e}{(s, (x, v)::g)}}
+
+\end{mathpar}
+
 \section{Exécution}
 
-On considère un programme $P = ((f_1, …, f_n), ((x_1, e_1), … (x_p, e_p)))$.
+\begin{mathpar}
 
-Son état mémoire initial est
+  \irule{Ph*-Nil}
+    { }
+    {\phstar{m}{[]}{m}}
+
+  \irule{Ph*-Cons}
+    {\ph{m}{p}{m'} \\
+     \phstar{m'}{ps}{m''}}
+    {\phstar{m}{p::ps}{m''}}
+
+\end{mathpar}
 
 \[
-  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ 0, …, x_p ↦ 0\}))
+  \phstar{([], [])}{P}{m}
 \]
-
-Et son exécution est celle de l'instruction
-
-\[
-  i_0(P) = x_1 ← e_1;…;x_p ← e_p;f_1()
-\]
-
-L'état initial est $(m_0(P), i_0(P))$.
 
 \section{Exemple : l'algorithme d'Euclide}
 
@@ -907,10 +952,19 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item mettre ensemble les noms de variables et leurs valeurs
-\item top ?
+\item phrases
+\item séparer les opérateurs unaires et binaires
+\item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
+\item dédupliquer la def de l'état mémoire
+\item coquille opeérateur
+\item figure "interpréteur" -> "état mémoire"
+\item accesseurs : utiliser des majs
+\item liste d'assos -> fonction
+\item syntaxe concrète
 \item procédures vs fonctions
 \item pointeurs sur fonction
+\item arithmétique de pointeurs
+\item top ?
 \item
   si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
   qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
