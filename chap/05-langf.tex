@@ -51,7 +51,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       lv \gramisa & x     & \textrm{Variable}
       \\  \gramor & *lv   & \textrm{Déréférencement}
       \\  \gramor & lv.f  & \textrm{Accès à un champ}
-      \\  \gramor & lv[n] & \textrm{Accès à un élément}
+      \\  \gramor & lv[e] & \textrm{Accès à un élément}
     \end{align*}
   }
 
@@ -76,18 +76,20 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \gramlr{Phrases}{
     \begin{align*}
-      p \gramisa & x = f & \textrm{Déclaration de fonction}
-      \\ \gramor & \mathrm{struct} s \{ x_1 : t_1
-                                     ; …
-                                     ;  x_n : t_n
-                                     \} & \textrm{Déclaration de structure}
+      p \gramisa & f                 & \textrm{Déclaration de fonction}
+      \\ \gramor & \mathrm{struct}~s
+                      \{ x_1 : t_1
+                       ; …
+                       ;  x_n : t_n
+                      \}             & \textrm{Déclaration de structure}
+      \\ \gramor & e                 & \textrm{Évaluation d'expression}
+      \\ \gramor & x = e             & \textrm{Variable globale}
     \end{align*}
   }
 
   \gramlr{Programme}{
     \begin{align*}
-      P \gramisa & ((f_1, …, f_n),   & \textrm{Fonctions} \\
-                 & ((x_1, e_1), …, (x_p, e_p))) & \textrm{Globales}
+      P \gramisa & (p_1, …, p_n) & \textrm{Phrases}
     \end{align*}
   }
 
@@ -826,23 +828,50 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
   { \mmi{m}{\iReturn{e};i}{m}{\iReturn{e}} }
 \end{mathpar}
 
+\section{Phrases}
+
+\[
+  \ph{m}{p}{m'}
+\]
+
+\begin{mathpar}
+
+  \irule{Ph-Fun}
+    {?}
+    {\ph{m}{f}{m+f?}}
+
+  \irule{Ph-Struct}
+    { }
+    {\ph{m}{\mathrm{struct}~s \{ … \}}{m}}
+
+  \irule{Ph-Exp}
+    {\mm{m}{e}{m'}{v}}
+    {\ph{m}{e}{m'}}
+
+  \irule{Ph-Var}
+    {\mm{m}{e}{m'}{v}}
+    {\ph{(s,g)}{x = e}{(s, (x, v)::g)}}
+
+\end{mathpar}
+
 \section{Exécution}
 
-On considère un programme $P = ((f_1, …, f_n), ((x_1, e_1), … (x_p, e_p)))$.
+\begin{mathpar}
 
-Son état mémoire initial est
+  \irule{Ph*-Nil}
+    { }
+    {\phstar{m}{[]}{m}}
+
+  \irule{Ph*-Cons}
+    {\ph{m}{p}{m'} \\
+     \phstar{m'}{ps}{m''}}
+    {\phstar{m}{p::ps}{m''}}
+
+\end{mathpar}
 
 \[
-  m_{0}(P) = ([], (x_1, …, x_p), \{x_1 ↦ 0, …, x_p ↦ 0\}))
+  \phstar{([], [])}{P}{m}
 \]
-
-Et son exécution est celle de l'instruction
-
-\[
-  i_0(P) = x_1 ← e_1;…;x_p ← e_p;f_1()
-\]
-
-L'état initial est $(m_0(P), i_0(P))$.
 
 \section{Exemple : l'algorithme d'Euclide}
 
@@ -924,6 +953,13 @@ donc
 
 \begin{itemize}
 \item phrases
+\item séparer les opérateurs unaires et binaires
+\item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
+\item dédupliquer la def de l'état mémoire
+\item coquille opeérateur
+\item figure "interpréteur" -> "état mémoire"
+\item accesseurs : utiliser des majs
+\item liste d'assos -> fonction
 \item syntaxe concrète
 \item procédures vs fonctions
 \item pointeurs sur fonction
