@@ -638,22 +638,22 @@ Puis les expressions qui initialisent les variables locales sont elle aussi
 Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
 instruction $\iReturn{v}$. Puis, le cadre précédemment utilisé est dépilé.
 
-La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
-de pile. En effet, si une référence au dernier cadre est toujours présente après
-le retour, elle pourra se résoudre en un objet différent plus tard dans
-l'exécution du programme.
+%La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
+%de pile. En effet, si une référence au dernier cadre est toujours présente après
+%le retour, elle pourra se résoudre en un objet différent plus tard dans
+%l'exécution du programme.
 
-La fonction $\mathrm{Cleanup}$ est donnée par :
+%La fonction $\mathrm{Cleanup}$ est donnée par :
 
-\begin{align*}
-  \mathrm{Cleanup}(s, g)  = & (s', g') \\
-                    où g' = & \mathrm{CleanupList}(g) \\
-                       s' = & [CleanupList(s_1), …, CleanupList (s_n)] \\
-  \mathrm{CleanupList}(u) = & \{(k, v) ∈ u / v n'est pas une adresse \} \\
-                       \cup & \{(k, φ) ∈ u / a n'est pas une adresse \} \\
-  \mathrm{Var}(a) = & a \\
-  \mathrm{Var}(*φ) = & ?
-\end{align*}
+%\begin{align*}
+  %\mathrm{Cleanup}(s, g)  = & (s', g') \\
+                    %où g' = & \mathrm{CleanupList}(g) \\
+                       %s' = & [CleanupList(s_1), …, CleanupList (s_n)] \\
+  %\mathrm{CleanupList}(u) = & \{(k, v) ∈ u / v n'est pas une adresse \} \\
+                       %\cup & \{(k, φ) ∈ u / a n'est pas une adresse \} \\
+  %\mathrm{Var}(a) = & a \\
+  %\mathrm{Var}(*φ) = & ?
+%\end{align*}
 
 % TODO il faut casser les pointeurs, aussi. tri topo sur le graphe des chemins ?
 
