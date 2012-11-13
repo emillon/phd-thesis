@@ -258,8 +258,8 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 \end{definition}
 
 En entrant dans une fonction, on rajoutera un cadre de pile qui contient les
-paramètres de la fonction ainsi que ses variables locales. De même, en
-retournant il faudra supprimer ce cadre de pile.
+paramètres de la fonction ainsi que ses variables locales. En retournant à
+l'appelant, il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
@@ -646,24 +646,42 @@ Puis les expressions qui initialisent les variables locales sont elle aussi
 Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
 instruction $\iReturn{v}$. Puis, le cadre précédemment utilisé est dépilé.
 
-%La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
-%de pile. En effet, si une référence au dernier cadre est toujours présente après
-%le retour, elle pourra se résoudre en un objet différent plus tard dans
-%l'exécution du programme.
+La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
+de pile. En effet, si une référence au dernier cadre est toujours présente après
+le retour, elle pourra se résoudre en un objet différent plus tard dans
+l'exécution du programme.
 
-%La fonction $\mathrm{Cleanup}$ est donnée par :
+La fonction $\mathrm{Cleanup}$ est donnée par :
 
-%\begin{align*}
-  %\mathrm{Cleanup}(s, g)  = & (s', g') \\
-                    %où g' = & \mathrm{CleanupList}(g) \\
-                       %s' = & [CleanupList(s_1), …, CleanupList (s_n)] \\
-  %\mathrm{CleanupList}(u) = & \{(k, v) ∈ u / v n'est pas une adresse \} \\
-                       %\cup & \{(k, φ) ∈ u / a n'est pas une adresse \} \\
-  %\mathrm{Var}(a) = & a \\
-  %\mathrm{Var}(*φ) = & ?
-%\end{align*}
+\def\cleanuplist#1#2{\mathrm{CleanupList}(#1, #2)}
+\def\cllive#1#2{\mathrm{Live}(#1, #2)}
 
-% TODO il faut casser les pointeurs, aussi. tri topo sur le graphe des chemins ?
+\begin{align*}
+  \mathrm{Cleanup}(s, g)  = & (s', g') \\
+                    où g' = & \cleanuplist{|s|}{g} \\
+                       s' = & [\cleanuplist{|s|}{s_1},
+                            …, \cleanuplist{|s|}{s_n}] \\
+       \cleanuplist{p}{u} = & \{(x, v) ∈ u / v\mbox{ n'est pas une adresse} \} \\
+                       \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
+    \cllive{p}{(n, x)} = & n < p \\
+    \cllive{p}{(x)}    = & \mathrm{Vrai} \\
+    \cllive{p}{*φ}     = & \mathrm{Live}(φ) \\
+    \cllive{p}{φ.f}    = & \mathrm{Live}(φ) \\
+    \cllive{p}{φ[n]}   = & \mathrm{Live}(φ) \\
+\end{align*}
+
+Sans cette règle, examinons le programme suivant :
+
+\begin{Verbatim}
+f ()                g (p)           h ()
+  (x=0)               (x=0.0)         (p=f())
+{                   {               {
+  return (&x);        *p = 1;         g(p);
+}                   }               }
+\end{Verbatim}
+
+L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
+déréférencement de $p$ va modifier $x$.
 
 \begin{mathpar}
   \irule{Exp-Call}
@@ -971,21 +989,6 @@ donc
 \item pointeurs sur fonction
 \item arithmétique de pointeurs
 \item top ?
-\item
-  si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
-  qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
-  de l'analyse)
-
-  Options :
-
-\begin{itemize}
-\item
-  on fait juste une restriction (forget) au pop (solution actuelle).
-\item
-  on donne à chaque stackframe un numéro fresh. Cela revient à considérer la
-  stack comme un heap.
-\end{itemize}
-
 \end{itemize}
 
 % vim: spelllang=fr
