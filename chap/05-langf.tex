@@ -321,15 +321,21 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
   Pour $m = (s, g)$,
 
   \begin{align*}
-    m [x]_A          = & g[x]_L        & \textrm{Lecture d'une globale} \\
-    m [(n, x)]_A     = & l_{|l|-n+1}[x]_L      & \textrm{Lecture d'une locale} \\
-    m [x ← v]_A      = & (s, g[x←v]_L) & \textrm{Écriture d'une globale} \\
-    m [(n, x) ← v]_A = & (s', g)       & \textrm{Écriture d'une locale} \\
+    m [x]_A          = & g[x]_L           & \textrm{Lecture d'une globale} \\
+    m [(n, x)]_A     = & s_{|l|-n+1}[x]_L & \textrm{Lecture d'une locale} \\
+    m [x ← v]_A      = & (s, g[x←v]_L)    & \textrm{Écriture d'une globale} \\
+    m [(n, x) ← v]_A = & (s', g)          & \textrm{Écriture d'une locale} \\
            \mbox{ où } & s'_{|l|-n+1} = s_{|l|-n+1}[x ← v]_L \\
                        & ∀ i ≠ |l|-n+1, s'_i = s_i
   \end{align*}
 
 \end{definition}
+
+Les numéros de cadre qui permettent d'identifier les globales (le $n$ dans $(n,
+x)$) croissent avec la pile. D'autre part, l'empilement se fait en tête de liste
+(près de l'indice 1). Donc pour accéder aux plus vieilles locales (numérotées
+1), il faut accéder au dernier élément de la liste. Ceci explique pourquoi un
+indice $|l|-n+1$ apparaît dans la définition précédente.
 
 \begin{definition}[Accès par champ]
 
