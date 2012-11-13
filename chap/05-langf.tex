@@ -299,11 +299,11 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
   également possible, en remplaçant un couple par un couple avec une valeur
   différente.
 
-  L'accesseur $[\cdot]_l$ est défini par :
+  L'accesseur $[\cdot]_L$ est défini par :
 
   \begin{align*}
-    l[x]_l     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
-    l[x ← v]_l = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \})
+    l[x]_L     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
+    l[x ← v]_L = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \})
   \end{align*}
 
 \end{definition}
@@ -312,7 +312,7 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
   Les états mémoire sont constitués des listes d'association (nom, valeur).
 
-  L'accesseur par adresse $[\cdot]_a$ permet de généraliser l'accès à ces
+  L'accesseur par adresse $[\cdot]_A$ permet de généraliser l'accès à ces
   valeurs en utilisant comme clef non pas un nom mais une adresse.
 
   Selon cette adresse, on accède soit à la liste des globales, soit à une des
@@ -321,11 +321,11 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
   Pour $m = (s, g)$,
 
   \begin{align*}
-    m [x]_a          = & g[x]_l        & \textrm{Lecture d'une globale} \\
-    m [(n, x)]_a     = & l_{|l|-n+1}[x]_l      & \textrm{Lecture d'une locale} \\
-    m [x ← v]_a      = & (s, g[x←v]_l) & \textrm{Écriture d'une globale} \\
-    m [(n, x) ← v]_a = & (s', g)       & \textrm{Écriture d'une locale} \\
-           \mbox{ où } & s'_{|l|-n+1} = s_{|l|-n+1}[x ← v]_l \\
+    m [x]_A          = & g[x]_L        & \textrm{Lecture d'une globale} \\
+    m [(n, x)]_A     = & l_{|l|-n+1}[x]_L      & \textrm{Lecture d'une locale} \\
+    m [x ← v]_A      = & (s, g[x←v]_L) & \textrm{Écriture d'une globale} \\
+    m [(n, x) ← v]_A = & (s', g)       & \textrm{Écriture d'une locale} \\
+           \mbox{ où } & s'_{|l|-n+1} = s_{|l|-n+1}[x ← v]_L \\
                        & ∀ i ≠ |l|-n+1, s'_i = s_i
   \end{align*}
 
@@ -336,15 +336,15 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
 
-  L'accesseur $[ \cdot ]_f$ permet de lire et de modifier un champ de ces
+  L'accesseur $[ \cdot ]_F$ permet de lire et de modifier un champ de ces
   valeurs.
 
   C'est une erreur d'accéder à un champ d'une valeur non structure ($4[f]$ par
   exemple).
 
   \begin{align*}
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_f = & v_i \\
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_f = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_F = & v_i \\
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_F = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
           \mbox{ où } & v'_p = v \\
                       & ∀ i ≠ p, v'_i = v_i
   \end{align*}
@@ -353,13 +353,13 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
 \begin{definition}[Accès par indice]
 
-  On définit de même un accesseur $[\cdot]_i$ pour les accès par indice à des
+  On définit de même un accesseur $[\cdot]_I$ pour les accès par indice à des
   valeurs tableaux. Néanmoins le paramètre indice est toujours un entier et pas
   une expression arbitraire.
 
   \begin{align*}
-    \{ v_1 ; … ; v_n \} [i]_i   = & e_i \\
-    \{ v_1 ; … ; v_n \} [i←v]_i = & \{ v'_1 ; … ; v'_n \} \\
+    \{ v_1 ; … ; v_n \} [i]_I   = & e_i \\
+    \{ v_1 ; … ; v_n \} [i←v]_I = & \{ v'_1 ; … ; v'_n \} \\
                       \mbox{ où } & v'_i = v \\
                                   & ∀j≠i, v'_j = v_j
   \end{align*}
@@ -368,24 +368,24 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
 \begin{definition}[Accès par chemin]
 
-  L'accès par chemin $[\cdot]_φ$ permet de lire et de modifier la mémoire en
+  L'accès par chemin $[\cdot]_Φ$ permet de lire et de modifier la mémoire en
   profondeur.
 
   \begin{align*}
-    m[a]_φ        = & m[a]_a \\
-    m[*φ]_φ       = & m[φ']_φ \mbox{ où } φ' = m[φ]_φ \\
-    m[φ.f]_φ      = & m[φ]_φ[f]_f \\
-    m[φ[i]]_φ     = & m[φ]_φ[i]_i \\
-    m[a ← v]_φ    = & m[a ← v]_a \\
-    m[*φ ← v]_φ   = & m[φ' ← v]_φ \mbox{ où } φ' = m[φ]_φ \\
-    m[φ.f ← v]_φ  = & m[φ ← (m[φ]_φ[f←v]_f)]_φ \\
-    m[φ[i] ← v]_φ = & m[φ ← (m[φ]_φ[i←v]_i)]_φ
+    m[a]_Φ        = & m[a]_A \\
+    m[*φ]_Φ       = & m[φ']_Φ \mbox{ où } φ' = m[φ]_Φ \\
+    m[φ.f]_Φ      = & m[φ]_φ[f]_F \\
+    m[φ[i]]_Φ     = & m[φ]_φ[i]_I \\
+    m[a ← v]_Φ    = & m[a ← v]_A \\
+    m[*φ ← v]_Φ   = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
+    m[φ.f ← v]_Φ  = & m[φ ← (m[φ]_Φ[f←v]_F)]_Φ \\
+    m[φ[i] ← v]_Φ = & m[φ ← (m[φ]_Φ[i←v]_I)]_Φ
   \end{align*}
 
 \end{definition}
 
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
-suffit d'appliquer les bons accesseurs : $[\cdot]_f$ pour $φ.f$, etc.
+suffit d'appliquer les bons accesseurs : $[\cdot]_F$ pour $φ.f$, etc.
 
 En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
 et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
