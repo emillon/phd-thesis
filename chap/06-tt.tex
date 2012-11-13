@@ -52,16 +52,19 @@ erreurs de typage à l'exécution.
 
 \begin{definition}[Typage d'une expression]
 
+  Sous l'environnement $Γ$ , l'expression $e$ a pour type $t$.
+
   \[
-    Γ ⊢ e : t
+    \ty{Γ}{e}{t}
   \]
 
 \end{definition}
 
 \begin{definition}[Typage d'une instruction]
+  Sous l'environnement $Γ$ , l'instruction $i$ est bien typée.
 
   \[
-    Γ ⊢ i
+    \tyi{Γ}{i}
   \]
 
 \end{definition}
@@ -69,7 +72,7 @@ erreurs de typage à l'exécution.
 \begin{definition}[Typage d'une phrase]
 
   \[
-    Γ, S ⊢ p → Γ', S'
+    \typh{Γ}{S}{p}{Γ'}{S'}
   \]
 
 \end{definition}
@@ -156,7 +159,7 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 
 \begin{mathpar}
 \irule{Op-Int}{
-  \opsymb ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
+  \opsymb ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
