@@ -159,11 +159,11 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 
 \begin{mathpar}
 \irule{Op-Int}{
-  \opsymb ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
+  \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+  Γ ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -171,11 +171,11 @@ De même sur \tFloat.
 
 \begin{mathpar}
 \irule{Op-Float}{
-  \opsymb ∈ \{+.,-.,\times.,/.\} \\
+  \opbin ∈ \{+.,-.,\times.,/.\} \\
   Γ ⊢ e_1 : \tFloat \\
   Γ ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1~\opsymb~e_2 : \tFloat
+  Γ ⊢ e_1~\opbin~e_2 : \tFloat
 }
 \end{mathpar}
 
@@ -194,12 +194,12 @@ alors un \tInt.
   {\textsc{Comparable}(τ*)}
 \and
 \irule{Op-Cmp}{
-  \opsymb ∈ \{=,≠,≤,≥,<,>\} \\
+  \opbin ∈ \{=,≠,≤,≥,<,>\} \\
   Γ ⊢ e_1 : τ \\
   Γ ⊢ e_2 : τ \\
   \textsc{Comparable}(τ)
 }{
-  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+  Γ ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -217,10 +217,10 @@ entiers.
 
 \begin{mathpar}
 \irule{Unop-Not}{
-  \opsymb ∈ \{ \sim, ! \} \\
+  \opun ∈ \{ \sim, ! \} \\
   Γ ⊢ e : \tInt
 }{
-  Γ ⊢ \opsymb~e : \tInt
+  Γ ⊢ \opun~e : \tInt
 }
 \end{mathpar}
 
@@ -294,4 +294,6 @@ entiers.
   utiliser des phrases toplevel
 \item
   résoudre le problème du return
+\item
+  $+$ et $-$ unaires (+flottants)
 \end{itemize}
