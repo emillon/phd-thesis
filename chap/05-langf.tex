@@ -687,9 +687,9 @@ La fonction $\mathrm{Cleanup}$ est donnée par :
                        \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
     \cllive{p}{(n, x)} = & n < p \\
     \cllive{p}{(x)}    = & \mathrm{Vrai} \\
-    \cllive{p}{*φ}     = & \mathrm{Live}(φ) \\
-    \cllive{p}{φ.f}    = & \mathrm{Live}(φ) \\
-    \cllive{p}{φ[n]}   = & \mathrm{Live}(φ) \\
+    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
+    \cllive{p}{φ.f}    = & \cllive{p}{φ} \\
+    \cllive{p}{φ[n]}   = & \cllive{p}{φ}
 \end{align*}
 
 Sans cette règle, examinons le programme suivant :
