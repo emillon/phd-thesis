@@ -305,43 +305,44 @@ l'appelant, il faudra supprimer ce cadre de pile.
   \begin{tikzpicture}
     [ stack/.style={draw,shape=rectangle,minimum height=5mm,minimum width=2cm}
     , every node/.style={font=\footnotesize}
+    , faded/.style={fill=black!20}
     ]
 
-    \path (0,0) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
+    \path (0,0)   node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
+    -- ++ (0,0.5) node [stack] {$…$}
     ;
 
-    \path (4,0) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
+    \path (4,0)   node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
     ;
 
     \draw [->] (1.2, 1) -- node[auto] {Pop} ++(1.6, 0);
 
-    \path (8,0) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
+    \path (8,0)   node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
     ;
 
-    \path (12,0) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
+    \path (12,0)  node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
 
     \draw [->] (9.2, 1) -- node[auto] {$\mathrm{Push}((x, 0))$} ++(1.6, 0);
 
-    \path (4,-3) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
+    \path (4,-3)  node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
 
-    \path (8,-3) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
-    -- ++ (0,0.5) node [stack] {}
+    \path (8,-3)  node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
+    -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
     ;
 
