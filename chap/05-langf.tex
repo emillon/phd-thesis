@@ -303,22 +303,50 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \begin{figure}
 
   \begin{tikzpicture}
-    [ scale=0.5
-    , stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=2cm}
+    [ stack/.style={draw,shape=rectangle,minimum height=5mm,minimum width=2cm}
+    , every node/.style={font=\footnotesize}
     ]
 
     \path (0,0) node [stack] {}
-    -- ++ (0,1) node [stack] {}
-    -- ++ (0,1) node [stack] {}
-    -- ++ (0,1) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
     ;
+
+    \path (4,0) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    ;
+
+    \draw [->] (1.2, 1) -- node[auto] {Pop} ++(1.6, 0);
 
     \path (8,0) node [stack] {}
-    -- ++ (0,1) node [stack] {}
-    -- ++ (0,1) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
     ;
 
-    \draw [->] (3, 1.5) -- node[auto] {Pop} ++(2, 0);
+    \path (12,0) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {$x↦0$}
+    ;
+
+    \draw [->] (9.2, 1) -- node[auto] {$\mathrm{Push}((x, 0))$} ++(1.6, 0);
+
+    \path (4,-3) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {$x↦0$}
+    ;
+
+    \path (8,-3) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
+    ;
+
+    \draw [->] (5.2, -2) -- node[auto] {$\mathrm{Extend}((y, 3))$} ++(1.6, 0);
+
   \end{tikzpicture}
 
   \caption{Opérations de pile}
