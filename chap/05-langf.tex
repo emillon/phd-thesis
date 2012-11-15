@@ -300,6 +300,33 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
+\begin{figure}
+
+  \begin{tikzpicture}
+    [ scale=0.5
+    , stack/.style={draw,shape=rectangle,minimum height=1cm,minimum width=2cm}
+    ]
+
+    \path (0,0) node [stack] {}
+    -- ++ (0,1) node [stack] {}
+    -- ++ (0,1) node [stack] {}
+    -- ++ (0,1) node [stack] {}
+    ;
+
+    \path (8,0) node [stack] {}
+    -- ++ (0,1) node [stack] {}
+    -- ++ (0,1) node [stack] {}
+    ;
+
+    \draw [->] (3, 1.5) -- node[auto] {Pop} ++(2, 0);
+  \end{tikzpicture}
+
+  \caption{Opérations de pile}
+  \label{fig:stackops}
+\end{figure}
+
+Ces définitions sont illustrées dans la figure~\ref{fig:stackops}.
+
 \section{Accesseurs}
 
 On définit quelques accesseurs. Un accesseur $ [ \cdot ] $ permet d'accéder à
