@@ -20,7 +20,8 @@
 % Fix '::' -> ': :' when using babel
 \newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
 
-\def\opsymb{\diamond\xspace}
+\def\opbin{\boxplus\xspace}
+\def\opun{\boxminus\xspace}
 
 \newcommand{\gramisa}[0]{::=~}
 \newcommand{\gramor}[0]{|\hspace{3mm}}
@@ -100,6 +101,11 @@
   \mmbig{#1}{\begin{pmatrix}#2\end{pmatrix}}
         {#3}{\begin{pmatrix}#4\end{pmatrix}}
 }
+
+% typage
+\def\ty#1#2#3{#1 ⊢ #2 : #3}
+\def\tyi#1#2{#1 ⊢ #2}
+\def\typh#1#2#3#4#5{#1, #2 ⊢ #3 : #4, #5}
 
 % Continuations
 \def\kPass{\textsc{Kpass}\xspace}

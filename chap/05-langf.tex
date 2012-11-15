@@ -3,8 +3,9 @@ système de types sera donné dans le chapitre~\ref{cha:typbase}.
 
 \section{Syntaxe}
 
-La figure~\ref{fig:stx} présente notre langage intermédiaire. Il contient la
-plupart des fonctionnalités présentes dans les langages impératifs comme C.
+Les figures~\ref{fig:stx}, \ref{fig:stx-data} et \ref{fig:stx-ops} présentent
+notre langage intermédiaire. Il contient la plupart des fonctionnalités
+présentes dans les langages impératifs comme C.
 
 Un programme est organisé en fonctions, qui contiennent des instructions, qui
 elles-même manipulent des expressions.
@@ -35,14 +36,15 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \begin{align*}
       e \gramisa & c               & \textrm{Constante}
       \\ \gramor & lv              & \textrm{Accès mémoire}
-      \\ \gramor & \opsymb~e       & \textrm{Opération unaire}
-      \\ \gramor & e~\opsymb~e     & \textrm{Opération binaire}
+      \\ \gramor & \opun~e         & \textrm{Opération unaire}
+      \\ \gramor & e~\opbin~e      & \textrm{Opération binaire}
       \\ \gramor & \& lv           & \textrm{Pointeur}
       \\ \gramor & lv ← e          & \textrm{Affectation}
       \\ \gramor & \{ f_1 : e_1 ;
                   … ; f_n : e_n \} & \textrm{Structure}
       \\ \gramor & \{e_1 ;…; e_n\} & \textrm{Tableau}
-      \\ \gramor & f (e_1, …, e_n) & \textrm{Appel de fonction}
+      \\ \gramor & f               & \textrm{Fonction}
+      \\ \gramor & e (e_1, …, e_n) & \textrm{Appel de fonction}
     \end{align*}
   }
 
@@ -54,7 +56,11 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       \\  \gramor & lv[e] & \textrm{Accès à un élément}
     \end{align*}
   }
+  \caption{Syntaxe - expressions}
+  \label{fig:stx-data}
+\end{figure}
 
+\begin{figure}
   \gramlr{Instructions}{
     \begin{align*}
       i \gramisa & \iPass        & \textrm{Instruction vide}
@@ -68,22 +74,21 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \gramlr{Fonctions}{
     \begin{align*}
-      f \gramisa & (i,                             & \textrm{Corps} \\
-                 & (x_1, …, x_n),                  & \textrm{Arguments} \\
-                 & ((x'_1, e_1), …, (x'_p, e_p)))  & \textrm{Variables locales}
+      f \gramisa & \mathrm{fun} (x_1, …, x_n)    & \textrm{Arguments} \\
+                 & ((x'_1, e_1), …, (x'_p, e_p)) & \textrm{Variables locales} \\
+                 & \{ i \}                       & \textrm{Corps} \\
     \end{align*}
   }
 
   \gramlr{Phrases}{
     \begin{align*}
-      p \gramisa & f                 & \textrm{Déclaration de fonction}
+      p \gramisa & x = e             & \textrm{Variable globale}
+      \\ \gramor & e                 & \textrm{Évaluation d'expression}
       \\ \gramor & \mathrm{struct}~s
                       \{ x_1 : t_1
                        ; …
                        ;  x_n : t_n
                       \}             & \textrm{Déclaration de structure}
-      \\ \gramor & e                 & \textrm{Évaluation d'expression}
-      \\ \gramor & x = e             & \textrm{Variable globale}
     \end{align*}
   }
 
@@ -93,24 +98,34 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \end{align*}
   }
 
-  \caption{Syntaxe}
+  \caption{Syntaxe - instructions}
   \label{fig:stx}
 \end{figure}
 
 \begin{figure}
 
-  \gramlr{Opérateurs}{
+  \gramlr{Opérateurs binaires}{
     \begin{align*}
-      \opsymb \gramisa & +,-,\times,/      & \textrm{Arithmétique entière}
-      \\      \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
-      \\      \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
-      \\      \gramor  & \&,|,\opxor,\sim  & \textrm{Opérateurs bit à bit}
-      \\      \gramor  & \&\&,||,!         & \textrm{Opérateurs logiques}
-      \\      \gramor  & \ll, \gg          & \textrm{Décalages}
+      \opbin \gramisa & +,-,\times,/      & \textrm{Arithmétique entière}
+      \\     \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
+      \\     \gramor  & +_p, -_p          & \textrm{Arithmétique de pointeurs}
+      \\     \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
+      \\     \gramor  & \&,|,\opxor       & \textrm{Opérateurs bit à bit}
+      \\     \gramor  & \&\&,||           & \textrm{Opérateurs logiques}
+      \\     \gramor  & \ll, \gg          & \textrm{Décalages}
     \end{align*}
   }
 
-  \caption{Syntaxe des opeérateurs}
+  \gramlr{Opérateurs unaires}{
+    \begin{align*}
+      \opun \gramisa & +,-   & \textrm{Arithmétique entière}
+      \\    \gramor  & +.,-. & \textrm{Arithmétique flottante}
+      \\    \gramor  & \sim  & \textrm{Négation bit à bit}
+      \\    \gramor  & !     & \textrm{Négation logique}
+    \end{align*}
+  }
+
+  \caption{Syntaxe - opérateurs}
   \label{fig:stx-ops}
 \end{figure}
 
@@ -203,6 +218,7 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
       \\ \gramor & \{ f_1 : v_1 ;
                   … ; f_n : v_n \} & \textrm{Structure}
       \\ \gramor & \{v_1 ;…; v_n\} & \textrm{Tableau}
+      \\ \gramor & f               & \textrm{Fonction}
     \end{align*}
   }
 
@@ -237,7 +253,7 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
     \end{align*}
   }
 
-  \caption{Interpréteur}
+  \caption{Composantes d'un état mémoire}
   \label{fig:interp}
 \end{figure}
 
@@ -258,8 +274,8 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
 \end{definition}
 
 En entrant dans une fonction, on rajoutera un cadre de pile qui contient les
-paramètres de la fonction ainsi que ses variables locales. De même, en
-retournant il faudra supprimer ce cadre de pile.
+paramètres de la fonction ainsi que ses variables locales. En retournant à
+l'appelant, il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
@@ -284,6 +300,61 @@ retournant il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
+\begin{figure}
+
+  \begin{tikzpicture}
+    [ stack/.style={draw,shape=rectangle,minimum height=5mm,minimum width=2cm}
+    , every node/.style={font=\footnotesize}
+    ]
+
+    \path (0,0) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    ;
+
+    \path (4,0) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    ;
+
+    \draw [->] (1.2, 1) -- node[auto] {Pop} ++(1.6, 0);
+
+    \path (8,0) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    ;
+
+    \path (12,0) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {$x↦0$}
+    ;
+
+    \draw [->] (9.2, 1) -- node[auto] {$\mathrm{Push}((x, 0))$} ++(1.6, 0);
+
+    \path (4,-3) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {$x↦0$}
+    ;
+
+    \path (8,-3) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {}
+    -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
+    ;
+
+    \draw [->] (5.2, -2) -- node[auto] {$\mathrm{Extend}((y, 3))$} ++(1.6, 0);
+
+  \end{tikzpicture}
+
+  \caption{Opérations de pile}
+  \label{fig:stackops}
+\end{figure}
+
+Ces définitions sont illustrées dans la figure~\ref{fig:stackops}.
+
 \section{Accesseurs}
 
 On définit quelques accesseurs. Un accesseur $ [ \cdot ] $ permet d'accéder à
@@ -299,11 +370,11 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
   également possible, en remplaçant un couple par un couple avec une valeur
   différente.
 
-  L'accesseur $[\cdot]_l$ est défini par :
+  L'accesseur $[\cdot]_L$ est défini par :
 
   \begin{align*}
-    l[x]_l     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
-    l[x ← v]_l = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \})
+    l[x]_L     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
+    l[x ← v]_L = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \})
   \end{align*}
 
 \end{definition}
@@ -312,7 +383,7 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
   Les états mémoire sont constitués des listes d'association (nom, valeur).
 
-  L'accesseur par adresse $[\cdot]_a$ permet de généraliser l'accès à ces
+  L'accesseur par adresse $[\cdot]_A$ permet de généraliser l'accès à ces
   valeurs en utilisant comme clef non pas un nom mais une adresse.
 
   Selon cette adresse, on accède soit à la liste des globales, soit à une des
@@ -321,30 +392,36 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
   Pour $m = (s, g)$,
 
   \begin{align*}
-    m [x]_a          = & g[x]_l        & \textrm{Lecture d'une globale} \\
-    m [(n, x)]_a     = & l_{|l|-n+1}[x]_l      & \textrm{Lecture d'une locale} \\
-    m [x ← v]_a      = & (s, g[x←v]_l) & \textrm{Écriture d'une globale} \\
-    m [(n, x) ← v]_a = & (s', g)       & \textrm{Écriture d'une locale} \\
-           \mbox{ où } & s'_{|l|-n+1} = s_{|l|-n+1}[x ← v]_l \\
+    m [x]_A          = & g[x]_L           & \textrm{Lecture d'une globale} \\
+    m [(n, x)]_A     = & s_{|l|-n+1}[x]_L & \textrm{Lecture d'une locale} \\
+    m [x ← v]_A      = & (s, g[x←v]_L)    & \textrm{Écriture d'une globale} \\
+    m [(n, x) ← v]_A = & (s', g)          & \textrm{Écriture d'une locale} \\
+           \mbox{ où } & s'_{|l|-n+1} = s_{|l|-n+1}[x ← v]_L \\
                        & ∀ i ≠ |l|-n+1, s'_i = s_i
   \end{align*}
 
 \end{definition}
+
+Les numéros de cadre qui permettent d'identifier les globales (le $n$ dans $(n,
+x)$) croissent avec la pile. D'autre part, l'empilement se fait en tête de liste
+(près de l'indice 1). Donc pour accéder aux plus vieilles locales (numérotées
+1), il faut accéder au dernier élément de la liste. Ceci explique pourquoi un
+indice $|l|-n+1$ apparaît dans la définition précédente.
 
 \begin{definition}[Accès par champ]
 
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
 
-  L'accesseur $[ \cdot ]_f$ permet de lire et de modifier un champ de ces
+  L'accesseur $[ \cdot ]_F$ permet de lire et de modifier un champ de ces
   valeurs.
 
   C'est une erreur d'accéder à un champ d'une valeur non structure ($4[f]$ par
   exemple).
 
   \begin{align*}
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_f = & v_i \\
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_f = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_F = & v_i \\
+    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_F = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
           \mbox{ où } & v'_p = v \\
                       & ∀ i ≠ p, v'_i = v_i
   \end{align*}
@@ -353,13 +430,13 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
 \begin{definition}[Accès par indice]
 
-  On définit de même un accesseur $[\cdot]_i$ pour les accès par indice à des
+  On définit de même un accesseur $[\cdot]_I$ pour les accès par indice à des
   valeurs tableaux. Néanmoins le paramètre indice est toujours un entier et pas
   une expression arbitraire.
 
   \begin{align*}
-    \{ v_1 ; … ; v_n \} [i]_i   = & e_i \\
-    \{ v_1 ; … ; v_n \} [i←v]_i = & \{ v'_1 ; … ; v'_n \} \\
+    \{ v_1 ; … ; v_n \} [i]_I   = & e_i \\
+    \{ v_1 ; … ; v_n \} [i←v]_I = & \{ v'_1 ; … ; v'_n \} \\
                       \mbox{ où } & v'_i = v \\
                                   & ∀j≠i, v'_j = v_j
   \end{align*}
@@ -368,24 +445,24 @@ une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté
 
 \begin{definition}[Accès par chemin]
 
-  L'accès par chemin $[\cdot]_φ$ permet de lire et de modifier la mémoire en
+  L'accès par chemin $[\cdot]_Φ$ permet de lire et de modifier la mémoire en
   profondeur.
 
   \begin{align*}
-    m[a]_φ        = & m[a]_a \\
-    m[*φ]_φ       = & m[φ']_φ \mbox{ où } φ' = m[φ]_φ \\
-    m[φ.f]_φ      = & m[φ]_φ[f]_f \\
-    m[φ[i]]_φ     = & m[φ]_φ[i]_i \\
-    m[a ← v]_φ    = & m[a ← v]_a \\
-    m[*φ ← v]_φ   = & m[φ' ← v]_φ \mbox{ où } φ' = m[φ]_φ \\
-    m[φ.f ← v]_φ  = & m[φ ← (m[φ]_φ[f←v]_f)]_φ \\
-    m[φ[i] ← v]_φ = & m[φ ← (m[φ]_φ[i←v]_i)]_φ
+    m[a]_Φ        = & m[a]_A \\
+    m[*φ]_Φ       = & m[φ']_Φ \mbox{ où } φ' = m[φ]_Φ \\
+    m[φ.f]_Φ      = & m[φ]_φ[f]_F \\
+    m[φ[i]]_Φ     = & m[φ]_φ[i]_I \\
+    m[a ← v]_Φ    = & m[a ← v]_A \\
+    m[*φ ← v]_Φ   = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
+    m[φ.f ← v]_Φ  = & m[φ ← (m[φ]_Φ[f←v]_F)]_Φ \\
+    m[φ[i] ← v]_Φ = & m[φ ← (m[φ]_Φ[i←v]_I)]_Φ
   \end{align*}
 
 \end{definition}
 
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
-suffit d'appliquer les bons accesseurs : $[\cdot]_f$ pour $φ.f$, etc.
+suffit d'appliquer les bons accesseurs : $[\cdot]_F$ pour $φ.f$, etc.
 
 En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
 et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
@@ -440,6 +517,31 @@ d'évaluation sont mutuellement récursives.
 
 \subsection*{Left-values}
 
+\begin{figure}
+
+  \centering
+
+  \begin{tikzpicture}
+    \node              (a1) {$x$};
+    \node[right of=a1] (a2) {$.f$};
+    \node[right of=a2] (a3) {$[2*n]$};
+    \node[right of=a3] (a4) {$.g$};
+
+    \node[below of=a1] (b1) {$(2, x)$};
+    \node[below of=a2] (b2) {$.f$};
+    \node[below of=a3] (b3) {$[4]$};
+    \node[below of=a4] (b4) {$.g$};
+
+    \draw[->] (a1) -- (b1);
+    \draw[->] (a2) -- (b2);
+    \draw[->] (a3) -- (b3);
+    \draw[->] (a4) -- (b4);
+  \end{tikzpicture}
+
+  \caption{Évaluation des left-values.}
+  \label{fig:eval-lv}
+\end{figure}
+
 Obtenir un chemin à partir d'un nom de variable revient à résoudre le nom de
 cette variable : est-elle accessible ? Le nom désigne-t'il une variable locale
 ou une variable globale ?
@@ -483,6 +585,8 @@ Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite :
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
 
+Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
+
 \subsection*{Expressions}
 
 Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
@@ -495,6 +599,16 @@ associe le nombre (entier) $\widehat{3}$.
     { }
     {\mm{m}{c}{m}{\widehat{c}}}
 \end{mathpar}
+
+De même, une fonction n'est pas évaluée plus :
+
+\begin{mathpar}
+  \irule{Exp-Cst}
+    { }
+    {\mm{m}{f}{m}{f}}
+\end{mathpar}
+
+% TODO vraiment?
 
 Pour lire le contenu d'un emplacement mémoire (left-value), il faut tout d'abord
 l'évaluer en un chemin.
@@ -509,31 +623,41 @@ l'évaluer en un chemin.
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
 puis l'autre (l'ordre d'évaluation, est encore imposé : de gauche à droite). À
-chaque opérateur $\opsymb$, correspond un opérateur sémantique
-$\widehat{\opsymb}$ qui agit sur les valeurs. Par exemple, l'opérateur
-$\widehat{+}$ est l'addition classique entre entiers. Afin d'interdire la
-division par zéro, celle ci et le modulo sont traités dans une règle à part.
+chaque opérateur $\opbin$, correspond un opérateur sémantique $\widehat{\opbin}$
+qui agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
+classique entre entiers. Afin d'interdire la division par zéro, celle ci et le
+modulo sont traités dans une règle à part.
 
 \begin{mathpar}
   \irule{Exp-UnOp}
   {\mm{m}{e}{m'}{v}}
-  {\mm{m}{\opsymb~e}{m'}{\widehat{\opsymb}~v}}
+  {\mm{m}{\opun~e}{m'}{\widehat{\opun}~v}}
 
   \irule{Exp-BinOp}
-  { \opsymb ∉ \{/, \%\} \\
+  { \opbin ∉ \{/, \%\} \\
       \mm{m}{e_1}{m'}{v_1} \\
       \mm{m'}{e_2}{m''}{v_2}
   }
-  {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
+  {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
 
   \irule{Exp-Div}
-  { \opsymb ∈ \{/, \%\} \\
+  { \opbin ∈ \{/, \%\} \\
     \mm{m}{e_1}{m'}{v_1} \\
     \mm{m'}{e_2}{m''}{v_2}
     v_2 ≠ \widehat{0}
   }
-  {\mm{m}{e_1~\opsymb~e_2}{m''}{v_1~\widehat{\opsymb}~v_2}}
+  {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
 \end{mathpar}
+
+Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$
+et $\widehat{-_p}$ définissant l'arithmétique des pointeurs. Celles-ci sont
+uniquement définies pour les références mémoire à un tableau, c'est à dire
+celles qui ont la forme $φ[n]$. On a alors :
+
+\begin{align*}
+  φ[n] +_p m = & φ[n+m] \\
+  φ[n] -_p m = & φ[n-m] \\
+\end{align*}
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
@@ -605,29 +729,34 @@ dont les champs sont ceux de la première structure évalués :
 
     \node (m0) {$m_0$};
     \node[below of=m0]                    (m1) {$m_1$};
-    \node[right of=m1, node distance=3cm] (m2) {$m_2$};
-    \node[below of=m2]                    (m3) {$m_3$};
-    \node[right of=m3, node distance=3cm] (m4) {$m_4$};
-    \node[below of=m4]                    (m5) {$m_5$};
+    \node[below of=m1]                    (m2) {$m_2$};
+    \node[right of=m2, node distance=3cm] (m3) {$m_3$};
+    \node[below of=m3]                    (m4) {$m_4$};
+    \node[right of=m4, node distance=3cm] (m5) {$m_5$};
     \node[below of=m5]                    (m6) {$m_6$};
-    \node at ($(m0)!(m6)!(0,1)$)          (m7) {$m_7$};
+    \node[below of=m6]                    (m7) {$m_7$};
+    \node at ($(m1)!(m7)!(0,1)$)          (m8) {$m_8$};
+    \node[below of=m8]                    (m9) {$m_9$};
 
-    \draw [->] (m0) -- node[auto] {$\vec{e} → \vec{v}$}               (m1);
-    \draw [->] (m1) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}  (m2);
-    \draw [->] (m2) -- node[auto] {$\vec{e'} → \vec{v'}$}             (m3);
-    \draw [->] (m3) -- node[auto] {$\mathrm{Extend}(\vec{l}↦\vec{v'})$} (m4);
-    \draw [->] (m4) -- node[auto] {$i → \iReturn{e}$}                 (m5);
-    \draw [->] (m5) -- node[auto] {$e → v$}                           (m6);
-
-    \draw [->] (m6) -- node[auto] {$\mathrm{Pop}(\vec{a} \bigdcup \vec{l})$} (m7);
+    \draw [->] (m0) -- node[auto] {$e → \mathrm{fun}(\vec{a})
+                                   (\vec{l}↦\vec{e'})\{i\}$}            (m1);
+    \draw [->] (m1) -- node[auto] {$\vec{e} → \vec{v}$}                 (m2);
+    \draw [->] (m2) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m3);
+    \draw [->] (m3) -- node[auto] {$\vec{e'} → \vec{v'}$}               (m4);
+    \draw [->] (m4) -- node[auto] {$\mathrm{Extend}(\vec{l}↦\vec{v'})$} (m5);
+    \draw [->] (m5) -- node[auto] {$i → \iReturn{e}$}                   (m6);
+    \draw [->] (m6) -- node[auto] {$e → v$}                             (m7);
+    \draw [->] (m7) -- node[auto] {$\mathrm{Pop}$}                      (m8);
+    \draw [->] (m8) -- node[auto] {$\mathrm{Cleanup}$}                  (m9);
 
     \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
                     -- node[auto, swap] {$f(\vec{e}) → v$}
-                       ($ (m7) + (-5mm, 3mm) $);
+                       ($ (m9) + (-5mm, 3mm) $);
 
   \end{tikzpicture}
 
-  \caption{L'appel d'une fonction}
+  \caption{L'appel d'une fonction. La taille de la pile croît de gauche à
+  droite, et les réductions se font de haut en bas.}
   \label{fig:fcall-details}
 
 \end{figure}
@@ -640,41 +769,63 @@ Puis les expressions qui initialisent les variables locales sont elle aussi
 Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
 instruction $\iReturn{v}$. Puis, le cadre précédemment utilisé est dépilé.
 
-%La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
-%de pile. En effet, si une référence au dernier cadre est toujours présente après
-%le retour, elle pourra se résoudre en un objet différent plus tard dans
-%l'exécution du programme.
+La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
+de pile. En effet, si une référence au dernier cadre est toujours présente après
+le retour, elle pourra se résoudre en un objet différent plus tard dans
+l'exécution du programme.
 
-%La fonction $\mathrm{Cleanup}$ est donnée par :
+La fonction $\mathrm{Cleanup}$ est donnée par :
 
-%\begin{align*}
-  %\mathrm{Cleanup}(s, g)  = & (s', g') \\
-                    %où g' = & \mathrm{CleanupList}(g) \\
-                       %s' = & [CleanupList(s_1), …, CleanupList (s_n)] \\
-  %\mathrm{CleanupList}(u) = & \{(k, v) ∈ u / v n'est pas une adresse \} \\
-                       %\cup & \{(k, φ) ∈ u / a n'est pas une adresse \} \\
-  %\mathrm{Var}(a) = & a \\
-  %\mathrm{Var}(*φ) = & ?
-%\end{align*}
+\def\cleanuplist#1#2{\mathrm{CleanupList}(#1, #2)}
+\def\cllive#1#2{\mathrm{Live}(#1, #2)}
 
-% TODO il faut casser les pointeurs, aussi. tri topo sur le graphe des chemins ?
+\begin{align*}
+  \mathrm{Cleanup}(s, g)  = & (s', g') \\
+                    où g' = & \cleanuplist{|s|}{g} \\
+                       s' = & [\cleanuplist{|s|}{s_1},
+                            …, \cleanuplist{|s|}{s_n}] \\
+       \cleanuplist{p}{u} = & \{(x, v) ∈ u / v\mbox{ n'est pas une adresse} \} \\
+                       \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
+    \cllive{p}{(n, x)} = & n < p \\
+    \cllive{p}{(x)}    = & \mathrm{Vrai} \\
+    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
+    \cllive{p}{φ.f}    = & \cllive{p}{φ} \\
+    \cllive{p}{φ[n]}   = & \cllive{p}{φ}
+\end{align*}
+
+Sans cette règle, examinons le programme suivant :
+
+\begin{Verbatim}
+f ()                g (p)           h ()
+  (x=0)               (x=0.0)         (p=f())
+{                   {               {
+  return (&x);        *p = 1;         g(p);
+}                   }               }
+\end{Verbatim}
+
+L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
+déréférencement de $p$ va modifier $x$.
 
 \begin{mathpar}
   \irule{Exp-Call}
   {
-    f = (i, (a_1, …, a_n), ((l'_1, l'_1), …, (l'_p, e'_p))) \\
-    \evstar{m_0}{e_1 \\ \vdots \\ e_n}
-           {m_1}{v_1 \\ \vdots \\ v_n} \\
-    m_2 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
-    \evstar{m_2}{e'_1 \\ \vdots \\ e'_p}
-           {m_3}{v'_1 \\ \vdots \\ v'_p} \\
-    m_4 = \mathrm{Extend}(m_3, ((l_1, v_1), …, (l_n, v_n))) \\
-    \mm{m_4}{i}{m_5}{\iReturn{e}} \\
-    \mm{m_5}{e}{m_6}{v} \\
-    m_7 = \mathrm{Pop}(m_6) \\
-    m_8 = \mathrm{Cleanup}(m_7) \\
+    \mm{m_0}{e}{m_1}{
+    \mathrm{fun} (a_1, …, a_n)
+                 ((l'_1, l'_1), …, (l'_p, e'_p))
+                 \{ i \}
+               } \\
+    \evstar{m_1}{e_1 \\ \vdots \\ e_n}
+           {m_2}{v_1 \\ \vdots \\ v_n} \\
+    m_3 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
+    \evstar{m_3}{e'_1 \\ \vdots \\ e'_p}
+           {m_4}{v'_1 \\ \vdots \\ v'_p} \\
+    m_5 = \mathrm{Extend}(m_4, ((l_1, v_1), …, (l_n, v_n))) \\
+    \mm{m_5}{i}{m_6}{\iReturn{e}} \\
+    \mm{m_6}{e}{m_7}{v} \\
+    m_8 = \mathrm{Pop}(m_6) \\
+    m_9 = \mathrm{Cleanup}(m_7) \\
   }
-  {\mm{m_0}{f(e_1, …, e_n)}{m_8}{v}}
+  {\mm{m_0}{f(e_1, …, e_n)}{m_9}{v}}
 \end{mathpar}
 
 Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
@@ -830,34 +981,52 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 \section{Phrases}
 
+Un programme est constitué d'une suite de phrases : déclarations de fonctions,
+de variables et de types, et évaluation d'expressions.
+
+Il est donc logique que l'évaluation d'une phrase fasse passer d'un état mémoire
+à un autre :
+
 \[
   \ph{m}{p}{m'}
 \]
 
+La définition d'une structure est ignorée. En effet, celle-ci ne sert qu'au
+typage.
+
 \begin{mathpar}
-
-  \irule{Ph-Fun}
-    {?}
-    {\ph{m}{f}{m+f?}}
-
   \irule{Ph-Struct}
     { }
     {\ph{m}{\mathrm{struct}~s \{ … \}}{m}}
+\end{mathpar}
 
+L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
+exemple, après avoir défini les fonctions du programme, on pourra appeller
+$\textrm{main}()$.
+
+\begin{mathpar}
   \irule{Ph-Exp}
     {\mm{m}{e}{m'}{v}}
     {\ph{m}{e}{m'}}
+\end{mathpar}
 
+La déclaration d'une variable globale (avec un initialiseur) consiste à évaluer
+cet initialiseur et à étendre l'état mémoire avec ce couple (variable, valeur).
+
+\begin{mathpar}
   \irule{Ph-Var}
     {\mm{m}{e}{m'}{v}}
     {\ph{(s,g)}{x = e}{(s, (x, v)::g)}}
-
 \end{mathpar}
 
 \section{Exécution}
 
-\begin{mathpar}
+L'exécution d'un programme est sans surprise l'exécution de ses phrases, les
+unes à la suite des autres.
 
+On commence par étendre l'extension $→^*$ au listes de la relation $→$ :
+
+\begin{mathpar}
   \irule{Ph*-Nil}
     { }
     {\phstar{m}{[]}{m}}
@@ -866,8 +1035,9 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
     {\ph{m}{p}{m'} \\
      \phstar{m'}{ps}{m''}}
     {\phstar{m}{p::ps}{m''}}
-
 \end{mathpar}
+
+L'exécution d'un programme est alors :
 
 \[
   \phstar{([], [])}{P}{m}
@@ -952,34 +1122,12 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item phrases
-\item séparer les opérateurs unaires et binaires
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item dédupliquer la def de l'état mémoire
-\item coquille opeérateur
-\item figure "interpréteur" -> "état mémoire"
-\item accesseurs : utiliser des majs
 \item liste d'assos -> fonction
 \item syntaxe concrète
 \item procédures vs fonctions
-\item pointeurs sur fonction
-\item arithmétique de pointeurs
 \item top ?
-\item
-  si on prend l'adresse d'une locale, et qu'on la redéférence, comment s'assurer
-  qu'il n'y a pas de dangling pointer? (ça peut être important pour la soundness
-  de l'analyse)
-
-  Options :
-
-\begin{itemize}
-\item
-  on fait juste une restriction (forget) au pop (solution actuelle).
-\item
-  on donne à chaque stackframe un numéro fresh. Cela revient à considérer la
-  stack comme un heap.
-\end{itemize}
-
 \end{itemize}
 
 % vim: spelllang=fr

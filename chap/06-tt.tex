@@ -52,16 +52,19 @@ erreurs de typage à l'exécution.
 
 \begin{definition}[Typage d'une expression]
 
+  Sous l'environnement $Γ$ , l'expression $e$ a pour type $t$.
+
   \[
-    Γ ⊢ e : t
+    \ty{Γ}{e}{t}
   \]
 
 \end{definition}
 
 \begin{definition}[Typage d'une instruction]
+  Sous l'environnement $Γ$ , l'instruction $i$ est bien typée.
 
   \[
-    Γ ⊢ i
+    \tyi{Γ}{i}
   \]
 
 \end{definition}
@@ -69,7 +72,7 @@ erreurs de typage à l'exécution.
 \begin{definition}[Typage d'une phrase]
 
   \[
-    Γ, S ⊢ p → Γ', S'
+    \typh{Γ}{S}{p}{Γ'}{S'}
   \]
 
 \end{definition}
@@ -156,11 +159,11 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 
 \begin{mathpar}
 \irule{Op-Int}{
-  \opsymb ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,⋘,⋙\} \\
+  \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
   Γ ⊢ e_1 : \tInt \\
   Γ ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+  Γ ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -168,11 +171,11 @@ De même sur \tFloat.
 
 \begin{mathpar}
 \irule{Op-Float}{
-  \opsymb ∈ \{+.,-.,\times.,/.\} \\
+  \opbin ∈ \{+.,-.,\times.,/.\} \\
   Γ ⊢ e_1 : \tFloat \\
   Γ ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1~\opsymb~e_2 : \tFloat
+  Γ ⊢ e_1~\opbin~e_2 : \tFloat
 }
 \end{mathpar}
 
@@ -191,19 +194,23 @@ alors un \tInt.
   {\textsc{Comparable}(τ*)}
 \and
 \irule{Op-Cmp}{
-  \opsymb ∈ \{=,≠,≤,≥,<,>\} \\
+  \opbin ∈ \{=,≠,≤,≥,<,>\} \\
   Γ ⊢ e_1 : τ \\
   Γ ⊢ e_2 : τ \\
   \textsc{Comparable}(τ)
 }{
-  Γ ⊢ e_1~\opsymb~e_2 : \tInt
+  Γ ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
 
-Les opérateurs unaires de négations "$-$" et "$-.$" s'appliquent respectivement
-aux \tInt et aux \tFloat.
+Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
+"$+.$" et "$-.$" aux \tFloat.
 
 \begin{mathpar}
+\irule{Unop-Plus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ + e : \tInt }
+\and
+\irule{Unop-Plus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ +. e : \tFloat }
+
 \irule{Unop-Minus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ - e : \tInt }
 \and
 \irule{Unop-Minus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ -. e : \tFloat }
@@ -214,13 +221,23 @@ entiers.
 
 \begin{mathpar}
 \irule{Unop-Not}{
-  \opsymb ∈ \{ \sim, ! \} \\
+  \opun ∈ \{ \sim, ! \} \\
   Γ ⊢ e : \tInt
 }{
-  Γ ⊢ \opsymb~e : \tInt
+  Γ ⊢ \opun~e : \tInt
 }
 \end{mathpar}
 
+L'arithmétique de pointeurs préserve le type.
+
+\begin{mathpar}
+\irule{Ptr-Arith}
+  { \opbin ∈ \{ +_p, -_p \} \\
+    Γ ⊢ e_1 : t* \\
+    Γ ⊢ e_2 : \tInt \\
+  }
+  { Γ ⊢ e_1~\opbin~e_2 : t* }
+\end{mathpar}
 
 \section{Instructions}
 
@@ -275,7 +292,7 @@ entiers.
 
 \begin{mathpar}
   \irule{Prog}
-    { ∀ i, 1 ≤ i ≤ p ⇒ Γ e_i : t_i
+    { ∀ i, 1 ≤ i ≤ p ⇒ Γ ⊢ e_i : t_i
     }
     {
       Γ ⊢ ((f_1, …, f_n), ((x_1, e_1), …, (x_p, e_p)))
