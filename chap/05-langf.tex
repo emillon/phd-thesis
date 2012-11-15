@@ -517,6 +517,31 @@ d'évaluation sont mutuellement récursives.
 
 \subsection*{Left-values}
 
+\begin{figure}
+
+  \centering
+
+  \begin{tikzpicture}
+    \node              (a1) {$x$};
+    \node[right of=a1] (a2) {$.f$};
+    \node[right of=a2] (a3) {$[2*n]$};
+    \node[right of=a3] (a4) {$.g$};
+
+    \node[below of=a1] (b1) {$(2, x)$};
+    \node[below of=a2] (b2) {$.f$};
+    \node[below of=a3] (b3) {$[4]$};
+    \node[below of=a4] (b4) {$.g$};
+
+    \draw[->] (a1) -- (b1);
+    \draw[->] (a2) -- (b2);
+    \draw[->] (a3) -- (b3);
+    \draw[->] (a4) -- (b4);
+  \end{tikzpicture}
+
+  \caption{Évaluation des left-values.}
+  \label{fig:eval-lv}
+\end{figure}
+
 Obtenir un chemin à partir d'un nom de variable revient à résoudre le nom de
 cette variable : est-elle accessible ? Le nom désigne-t'il une variable locale
 ou une variable globale ?
@@ -559,6 +584,8 @@ permet de construire le chemin résultant.
 Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite :
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
+
+Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
 \subsection*{Expressions}
 
