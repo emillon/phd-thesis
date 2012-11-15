@@ -3,8 +3,9 @@ système de types sera donné dans le chapitre~\ref{cha:typbase}.
 
 \section{Syntaxe}
 
-La figure~\ref{fig:stx} présente notre langage intermédiaire. Il contient la
-plupart des fonctionnalités présentes dans les langages impératifs comme C.
+Les figures~\ref{fig:stx}, \ref{fig:stx-data} et \ref{fig:stx-ops} présentent
+notre langage intermédiaire. Il contient la plupart des fonctionnalités
+présentes dans les langages impératifs comme C.
 
 Un programme est organisé en fonctions, qui contiennent des instructions, qui
 elles-même manipulent des expressions.
@@ -55,7 +56,11 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       \\  \gramor & lv[e] & \textrm{Accès à un élément}
     \end{align*}
   }
+  \caption{Syntaxe - expressions}
+  \label{fig:stx-data}
+\end{figure}
 
+\begin{figure}
   \gramlr{Instructions}{
     \begin{align*}
       i \gramisa & \iPass        & \textrm{Instruction vide}
@@ -93,7 +98,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \end{align*}
   }
 
-  \caption{Syntaxe}
+  \caption{Syntaxe - instructions}
   \label{fig:stx}
 \end{figure}
 
@@ -119,7 +124,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \end{align*}
   }
 
-  \caption{Syntaxe des opérateurs}
+  \caption{Syntaxe - opérateurs}
   \label{fig:stx-ops}
 \end{figure}
 
@@ -892,14 +897,6 @@ Il est donc logique que l'évaluation d'une phrase fasse passer d'un état mémo
 \[
   \ph{m}{p}{m'}
 \]
-
-L'évaluation d'une fonction ajoute celle-ci dans l'environnement.
-
-\begin{mathpar}
-  \irule{Ph-Fun}
-    {?}
-    {\ph{m}{f}{m+f?}}
-\end{mathpar}
 
 La définition d'une structure est ignorée. En effet, celle-ci ne sert qu'au
 typage.
