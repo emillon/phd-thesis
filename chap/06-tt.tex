@@ -203,10 +203,14 @@ alors un \tInt.
 }
 \end{mathpar}
 
-Les opérateurs unaires de négations "$-$" et "$-.$" s'appliquent respectivement
-aux \tInt et aux \tFloat.
+Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
+"$+.$" et "$-.$" aux \tFloat.
 
 \begin{mathpar}
+\irule{Unop-Plus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ + e : \tInt }
+\and
+\irule{Unop-Plus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ +. e : \tFloat }
+
 \irule{Unop-Minus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ - e : \tInt }
 \and
 \irule{Unop-Minus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ -. e : \tFloat }
@@ -224,6 +228,16 @@ entiers.
 }
 \end{mathpar}
 
+L'arithmétique de pointeurs préserve le type.
+
+\begin{mathpar}
+\irule{Ptr-Arith}
+  { \opbin ∈ \{ +_p, -_p \} \\
+    Γ ⊢ e_1 : t* \\
+    Γ ⊢ e_2 : \tInt \\
+  }
+  { Γ ⊢ e_1~\opbin~e_2 : t* }
+\end{mathpar}
 
 \section{Instructions}
 
@@ -294,6 +308,4 @@ entiers.
   utiliser des phrases toplevel
 \item
   résoudre le problème du return
-\item
-  $+$ et $-$ unaires (+flottants)
 \end{itemize}
