@@ -108,6 +108,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \begin{align*}
       \opbin \gramisa & +,-,\times,/      & \textrm{Arithmétique entière}
       \\     \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
+      \\     \gramor  & +_p, -_p          & \textrm{Arithmétique de pointeurs}
       \\     \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
       \\     \gramor  & \&,|,\opxor       & \textrm{Opérateurs bit à bit}
       \\     \gramor  & \&\&,||           & \textrm{Opérateurs logiques}
@@ -565,6 +566,16 @@ modulo sont traités dans une règle à part.
   }
   {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
 \end{mathpar}
+
+Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$
+et $\widehat{-_p}$ définissant l'arithmétique des pointeurs. Celles-ci sont
+uniquement définies pour les références mémoire à un tableau, c'est à dire
+celles qui ont la forme $φ[n]$. On a alors :
+
+\begin{align*}
+  φ[n] +_p m = & φ[n+m] \\
+  φ[n] -_p m = & φ[n-m] \\
+\end{align*}
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
@@ -1035,7 +1046,6 @@ donc
 \item syntaxe concrète
 \item procédures vs fonctions
 \item pointeurs sur fonction
-\item arithmétique de pointeurs
 \item top ?
 \end{itemize}
 
