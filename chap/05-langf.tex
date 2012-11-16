@@ -807,6 +807,49 @@ f ()                g (p)           h ()
 L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
 déréférencement de $p$ va modifier $x$.
 
+\begin{figure}
+  \centering
+
+  \begin{tikzpicture}
+
+    [ stack/.style={draw,minimum height=5mm,minimum width=3cm ,shape=rectangle}
+    , every node/.style={font=\footnotesize}
+    , faded/.style={fill=black!20}
+    , substack/.style={draw, minimum height=5mm, }
+    , oldstack/.style={loosely dashed}
+    , fixmatrix/.style={matrix, row sep=-\pgflinewidth, column sep=-\pgflinewidth}
+    , >=stealth'
+    ]
+
+    \path (0, 0)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, minimum width=10mm}] {
+        \node (p) { }; & \node { }; & \node (q) { }; \\
+      }
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
+        \node (x) { }; & \node (y) { }; \\
+      };
+
+      \node [fixmatrix, nodes={substack, minimum width=15mm}]
+        at (5, 0) {
+          \node (r) { }; & \node { }; \\
+      };
+
+      \draw[->] (p.center) -- ++(0, 0.5);
+      \draw[->] (q.center) -| ($ (r.center) - (3mm, 0) $);
+      \draw[->] ($ (r.center) + (3mm, 0) $) |- (y.center);
+
+
+  \end{tikzpicture}
+
+  \caption{Nettoyage d'un cadre de pile}
+  \label{fig:stackcleanup}
+\end{figure}
+
 \begin{mathpar}
   \irule{Exp-Call}
   {
