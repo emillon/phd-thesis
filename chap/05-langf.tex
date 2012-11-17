@@ -810,6 +810,7 @@ déréférencement de $p$ va modifier $x$.
 \begin{figure}
   \centering
 
+
   \begin{tikzpicture}
     [ stack/.style={draw,minimum height=5mm,minimum width=3cm ,shape=rectangle}
     , every node/.style={font=\footnotesize}
@@ -842,6 +843,35 @@ déréférencement de $p$ va modifier $x$.
       \draw[->] (q.center) -| ($ (r.center) - (3mm, 0) $);
       \draw[->] ($ (r.center) + (3mm, 0) $) |- (y.center);
 
+      %%%%%
+
+    \path (0, -3)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, minimum width=10mm}] {
+        \node (p2) { }; & \node { }; & \node (q2) { }; \\
+      }
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
+        \node (x2) { }; & \node (y2) { }; \\
+      };
+
+      \node [fixmatrix, nodes={substack, minimum width=15mm}]
+        at (5, -3) {
+          \node (r2) { }; & \node { }; \\
+      };
+
+      \draw[->] (q2.center) -| ($ (r2.center) - (3mm, 0) $);
+
+      \def\crossat#1{
+        \draw ($ #1 + (2mm, 2mm) $) -- ++ (-4mm, -4mm);
+        \draw ($ #1 + (-2mm, 2mm) $) -- ++ (4mm, -4mm);
+      }
+
+      \crossat{(r2.center) + (3mm, 0)}
+      \crossat{(p2.center)}
 
   \end{tikzpicture}
 
