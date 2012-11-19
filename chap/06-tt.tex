@@ -143,8 +143,7 @@ $t_f$ dans une structure de type $\tstruct{t_s}$.
     ∀ i ∈ [1;n-1], \typh{Γ_i}{S_i}{p_i}{Γ_{i+1}}{S_{i+1}}
   \]
 
-  Puisqu'on part alors d'un environnement vide, cela est indépendant de tout
-  environnement. On note alors :
+  Cela est indépendant de tout environnement ; on note alors :
 
   \[
     ⊢ P
@@ -171,8 +170,9 @@ ce sont toujours des entiers ou des flottants.
 
 \end{mathpar}
 
+Le pointeur nul, quant à lui, est compatible avec tous les types pointeur.
+
 \begin{mathpar}
-  % TODO
   \irule{Cst-Null}
     { }
     { Γ, S ⊢ \eNull : t*}
@@ -358,7 +358,6 @@ chaque champ.
             … ; f_n : e_n \}
             : \tstruct{s}
     }
-    % TODO retirer les types structures "libre" (f:t) de types
 \end{mathpar}
 
 Pour typer un appel de fonction, on s'assure que la fonction a bien un type
