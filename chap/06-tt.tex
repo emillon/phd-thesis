@@ -145,17 +145,30 @@ $t_f$ dans une structure de type $\tstruct{s}$.
 
   si le typage de la phrase $p$ transforme l'environnement $Γ, S$ en $Γ', S'$.
 
+  On étend cette notation aux suites de phrases :
+
+  \[
+    \begin{cases}
+      \typhstar{Γ}{S}{[]}{Γ}{S}  \\
+      \typhstar{Γ}{S}{p::ps}{Γ'}{S'} \mbox{ si }
+        ∃ Γ'', S'' ,
+            \begin{cases}
+              \typh{Γ}{S}{p}{Γ''}{S''}  \\
+              \typhstar{Γ''}{S''}{ps}{Γ'}{S'}
+            \end{cases}
+    \end{cases}
+  \]
+
 \end{definition}
 
 \begin{definition}[Typage d'un programme]
 
   Un programme est bien typé si on peut typer sa suite de phrases dans l'ordre
-  en partant d'un environnement vide. C'est à dire si en posant $Γ_1 = ε$ et
-  $S_1 = ε$,
+  en partant d'un environnement vide. C'est à dire s'il existe un environnement
+  final $Γ_f, S_f$ tel que
 
   \[
-    ∃ Γ_2, S_2, …, Γ_n, S_n ,
-    ∀ i ∈ [1;n-1], \typh{Γ_i}{S_i}{p_i}{Γ_{i+1}}{S_{i+1}}
+    \typhstar{[]}{[]}{P}{Γ_f}{S_f}
   \]
 
   Cela est indépendant de tout environnement ; on note alors :
