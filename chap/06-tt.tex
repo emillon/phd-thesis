@@ -106,9 +106,17 @@ environnement de typage. Celui-ci associe des types aux variables.
 
 \begin{definition}[Typage d'une phrase]
 
+  De par leur nature séquentielle, les phrases qui composent un programme
+  altèrent l'environnement de typage. Par exemple, la déclaration d'une variable
+  globale ajoute une valeur dans l'environnement.
+
+  On note
+
   \[
     \typh{Γ}{S}{p}{Γ'}{S'}
   \]
+
+  si le typage de la phrase $p$ transforme l'environnement $Γ, S$ en $Γ', S'$.
 
 % TODO définir S
 
@@ -116,77 +124,74 @@ environnement de typage. Celui-ci associe des types aux variables.
 
 \section{Expressions}
 
+\subsection*{Littéraux}
+
+Le typage des littéraux numériques ne dépend pas de l'environnement de typage :
+ce sont toujours des entiers ou des flottants.
+
 \begin{mathpar}
 
   \irule{Cst-Int}
     { }
-    { Γ ⊢ i : \tInt}
+    { Γ, S ⊢ i : \tInt}
 
   \irule{Cst-Float}
     { }
-    { Γ ⊢ i : \tInt}
+    { Γ, S ⊢ i : \tInt}
 
+\end{mathpar}
+
+\begin{mathpar}
   % TODO
   \irule{Cst-Null}
     { }
-    { Γ ⊢ \eNull : ?}
+    { Γ, S ⊢ \eNull : t*}
+\end{mathpar}
 
+\subsection*{Left-values}
+
+Rappelons que l'environnement de typage $Γ$ contient le type des variables
+accessibles du programme. Le cas où la left-value à typer est une variable est
+donc direct : il suffit de retrouver son type dans l'environnement.
+
+\begin{mathpar}
   \irule{Lv-Var}
     { (x, t) ∈ Γ }
-    { Γ ⊢ x : t }
+    { Γ, S ⊢ x : t }
+\end{mathpar}
 
+Dans le cas d'un déréférencement, on commence par typer la left-value
+déréférencée. Si elle a un type pointeur, la valeur déréférencée est le type
+pointé.
+
+\begin{mathpar}
   \irule{Lv-Deref}
-    { Γ ⊢ x : t* }
-    { Γ ⊢ *x : t }
+    { Γ, S ⊢ lv : t* }
+    { Γ, S ⊢ *lv : t }
+\end{mathpar}
 
-  % TODO
-  \irule{Lv-Field}
-    { }
-    { Γ ⊢ x.f : t }
+Pour une left-value indexée (l'accès à tableau), on s'assure que l'indice soit
+entier, et que la left-value a un type tableau : le type de l'élement est encore
+une fois le type de base du type tableau ($t$ pour $t[]$).
 
+\begin{mathpar}
   \irule{Lv-Index}
-    { Γ ⊢ e : \tInt \\
-      Γ ⊢ x : t[]
+    { Γ, S ⊢ e : \tInt \\
+      Γ, S ⊢ lv : t[]
     }
-    { Γ ⊢ x[e] : t }
+    { Γ, S ⊢ lv[e] : t }
+\end{mathpar}
 
-  % TODO opérateurs
+Enfin, le typage de l'accès à un champ nécessite d'accéder à l'environnement de
+structures $S$. L'existence d'un triplet $(f, t_f, t_s)$ tel que $lv$ est
+typable en $t_s$ permet de typer $lv.f$ en $t_f$.
 
-  \irule{Addr}
-    { Γ ⊢ lv : t }
-    { Γ ⊢ \&lv : t* }
-
-  \irule{Set}
-    { Γ ⊢ lv : t \\
-      Γ ⊢ e : t
+\begin{mathpar}
+  \irule{Lv-Field}
+    { (f, t_f, t_s) ∈ S \\
+      Γ, S ⊢ lv : t_s
     }
-    { Γ ⊢ lv ← e : t }
-
-  \irule{Struct}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t_i }
-    { Γ ⊢ \{ f_1 : e_1 ;
-         … ; f_n : e_n \}
-        : \{ f_1 : t_1 ;
-         … ; f_n : t_n \}
-    }
-
-  \irule{Array}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t }
-    { Γ ⊢ \{ e_1 ;
-         … ; e_n \}
-        : t[]
-    }
-
-  \irule{Call}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t_i \\
-      Γ ⊢ f : ( t_1 ,
-            … , t_n ) → t
-    }
-    { Γ ⊢ f( e_1 ,
-         … , e_n )
-        : t
-    }
-
+    { Γ, S ⊢ lv.f : t_f }
 \end{mathpar}
 
 \subsection*{Opérateurs}
@@ -273,6 +278,47 @@ L'arithmétique de pointeurs préserve le type.
     Γ ⊢ e_2 : \tInt \\
   }
   { Γ ⊢ e_1~\opbin~e_2 : t* }
+\end{mathpar}
+
+\subsection*{Autres expressions}
+
+\begin{mathpar}
+
+  \irule{Addr}
+    { Γ, S ⊢ lv : t }
+    { Γ, S ⊢ \&lv : t* }
+
+  \irule{Set}
+    { Γ, S ⊢ lv : t \\
+      Γ, S ⊢ e : t
+    }
+    { Γ, S ⊢ lv ← e : t }
+
+  \irule{Struct}
+    { ∀ i, 1 ≤ i ≤ n ⇒ Γ, S ⊢ e_i : t_i }
+    { Γ, S ⊢ \{ f_1 : e_1 ;
+            … ; f_n : e_n \}
+           : \{ f_1 : t_1 ;
+            … ; f_n : t_n \}
+    }
+
+  \irule{Array}
+    { ∀ i, 1 ≤ i ≤ n ⇒ Γ, S ⊢ e_i : t }
+    { Γ, S ⊢ \{ e_1 ;
+            … ; e_n \}
+            : t[]
+    }
+
+  \irule{Call}
+    { ∀ i, 1 ≤ i ≤ n ⇒ Γ, S ⊢ e_i : t_i \\
+      Γ, S ⊢ f : ( t_1 ,
+               … , t_n ) → t
+    }
+    { Γ, S ⊢ f( e_1 ,
+           … , e_n )
+           : t
+    }
+
 \end{mathpar}
 
 \section{Instructions}
