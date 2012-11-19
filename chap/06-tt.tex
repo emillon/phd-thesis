@@ -81,13 +81,13 @@ environnement de typage. Celui-ci associe des types aux variables.
 
 Les types structures ont un ensemble de champs associés à un type.
 Les environnements de typage permettent de regrouper cette information. Ce sont
-des ensembles de triplets $(x, t_f, t_s)$ où $x$ est le nom d'un champ de type
-$t_f$ dans une structure de type $\tstruct{t_s}$.
+des ensembles de triplets $(s, x, t_f)$ où $x$ est le nom d'un champ de type
+$t_f$ dans une structure de type $\tstruct{s}$.
 
 \gramlr{Environnement de typage de structures}{
   \begin{align*}
     S \gramisa & ε                 & \textrm {Environnement vide}
-    \\ \gramor & (x, t_f, t_s), Γ' & \textrm{Extension}
+    \\ \gramor & (s, x, t_f), Γ'   & \textrm{Extension}
   \end{align*}
 }
 
@@ -213,13 +213,13 @@ une fois le type de base du type tableau ($t$ pour $t[]$).
 \end{mathpar}
 
 Enfin, le typage de l'accès à un champ nécessite d'accéder à l'environnement de
-structures $S$. L'existence d'un triplet $(f, t_f, t_s)$ tel que $lv$ est
-typable en $t_s$ permet de typer $lv.f$ en $t_f$.
+structures $S$. L'existence d'un triplet $(s, f, t_f)$ tel que $lv$ est
+typable en $t_s$ permet de typer $lv.f$ en $\tstruct{s}$.
 
 \begin{mathpar}
   \irule{Lv-Field}
-    { (f, t_f, t_s) ∈ S \\
-      Γ, S ⊢ lv : t_s
+    { (s, f, t_f) ∈ S \\
+      Γ, S ⊢ lv : \tstruct{s}
     }
     { Γ, S ⊢ lv.f : t_f }
 \end{mathpar}
@@ -352,7 +352,7 @@ chaque champ.
 \begin{mathpar}
   \irule{Struct}
     { ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i \\
-      ∀ i ∈ [1;n], (f_i, t_i, s) ∈ S
+      ∀ i ∈ [1;n], (s, f_i, t_i) ∈ S
     }
     { Γ, S ⊢ \{ f_1 : e_1 ;
             … ; f_n : e_n \}
