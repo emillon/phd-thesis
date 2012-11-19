@@ -424,13 +424,14 @@ bien typées, et si la condition est d'un type entier.
 Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
 
 \begin{mathpar}
-  % TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
   \irule{Return}
     { Γ ⊢ e : t }
     { Γ ⊢ \iReturn{e} }
 \end{mathpar}
 
 \section{Fonctions}
+
+% TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
 
 \begin{mathpar}
 
@@ -442,18 +443,31 @@ Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
 
 \section{Phrases}
 
-\begin{mathpar}
+L'évaluation d'une expression est le cas le plus simple. En effet, il y a juste
+à vérifier que celle-ci est bien typable (avec ce type) dans l'environnement de
+départ. L'environnement n'est pas modifié.
 
+\begin{mathpar}
+  \irule{Ph-Exp}
+    { Γ, S ⊢ e : t }
+    { \typh{Γ}{S}{e}{Γ}{S} }
+\end{mathpar}
+
+La déclaration d'une variable globale commence de la même manière, mais on
+enrichit l'environnement de cette nouvelle valeur.
+
+\begin{mathpar}
   \irule{Ph-Var}
     { Γ, S ⊢ e : t \\
       Γ' = (x, t), Γ
     }
     { \typh{Γ}{S}{p}{Γ'}{S} }
+\end{mathpar}
 
-  \irule{Ph-Exp}
-    { Γ, S ⊢ e : t }
-    { \typh{Γ}{S}{e}{Γ}{S} }
+La déclaration d'une structure ne modifie pas $Γ$, mais ajoute $n$ triplets
+$(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
 
+\begin{mathpar}
   \irule{Ph-Struct}
     { S' =
       (x_1, t_1, s),
