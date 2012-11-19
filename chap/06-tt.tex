@@ -24,14 +24,42 @@ f()
 
 Le but d'un tel système de types est de rejeter les programmes qui sont
 "évidemment faux", c'est à dire dont on peut prouver qu'il provoqueraient des
-erreurs de typage à l'exécution.
+erreurs de typage à l'exécution (c'est-à-dire dont la sémantique d'exécution
+reste bloquée à cause d'incompatibilité entre valeurs).
+
+\section{Principe}
+
+Le principe est d'associer à chaque construction syntaxique une étiquette
+représentant le genre de valeurs qu'elle produira. Prenons le premier programme
+ci-dessus. La variable $x$ est initialisée avec la valeur $0$, c'est donc un
+entier. Cela signifie que dans tous le programme, toutes les instances de cette
+variable
+\footnote{Deux variables peuvent avoir le même nom dans deux fonction
+  différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
+  entre ces deux variables. L'analyse de typage se fait toujours dans un
+  contexte précis.
+}
+porteront ce type. La première instruction est l'affectation de la constante $1$
+(entière) à $x$ dont on sait qu'elle porte des valeurs entières, ce qui est donc
+correct. Le fait de rencontrer $\iReturn{x}$ permet de conclure que le type de
+la fonction est $() → \tInt$.
+
+Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
+début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
+entières). Or cet opérateur prend un argument d'un type pointeur de la forme
+$t*$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout $t$
+(\tInt, \tFloat où même $t'*$ : le déréférencement d'un pointeur sur pointeur
+donne un pointeur), mais le type de $x$, \tInt, n'est pas de cette forme. Ce
+programme est donc mal typé.
 
 \section{Définitions}
 
+Les types associés aux expressions sont les suivants :
+
 \gramlr{Type}{
   \begin{align*}
-    t \gramisa & \tInt
-    \\ \gramor & \tFloat
+    t \gramisa & \tInt                         & \textrm{Entier}
+    \\ \gramor & \tFloat                       & \textrm{Flottant}
     \\ \gramor & t[]                           & \textrm{Tableau}
     \\ \gramor & t*                            & \textrm{Pointeur}
     \\ \gramor & \{ f_1:t_1
@@ -41,14 +69,15 @@ erreurs de typage à l'exécution.
   \end{align*}
 }
 
+Le typage se fait toujours dans un contexte particulier, qui est un
+environnement de typage. Celui-ci associe des types aux variables.
+
 \gramlr{Environnement de typage}{
   \begin{align*}
-    Γ \gramisa & ε
-    \\ \gramor & (a, t), Γ'
+    Γ \gramisa & ε          & \textrm{Environnement vide}
+    \\ \gramor & (a, t), Γ' & \textrm{Extension}
   \end{align*}
 }
-
-\section{Typage}
 
 \begin{definition}[Typage d'une expression]
 
@@ -75,8 +104,9 @@ erreurs de typage à l'exécution.
     \typh{Γ}{S}{p}{Γ'}{S'}
   \]
 
-\end{definition}
+% TODO définir S
 
+\end{definition}
 
 \section{Expressions}
 
