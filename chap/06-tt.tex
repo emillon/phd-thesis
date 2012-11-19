@@ -366,7 +366,7 @@ Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
 
 \begin{mathpar}
   \irule{Array}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ, S ⊢ e_i : t }
+    { ∀ i ∈ [1;n] , Γ, S ⊢ e_i : t }
     { Γ, S ⊢ \{ e_1 ;
             … ; e_n \}
             : t[]
