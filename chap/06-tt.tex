@@ -259,10 +259,10 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 \begin{mathpar}
 \irule{Op-Int}{
   \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
-  Γ ⊢ e_1 : \tInt \\
-  Γ ⊢ e_2 : \tInt
+  Γ, S ⊢ e_1 : \tInt \\
+  Γ, S ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1~\opbin~e_2 : \tInt
+  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -271,10 +271,10 @@ De même sur \tFloat.
 \begin{mathpar}
 \irule{Op-Float}{
   \opbin ∈ \{+.,-.,\times.,/.\} \\
-  Γ ⊢ e_1 : \tFloat \\
-  Γ ⊢ e_2 : \tFloat
+  Γ, S ⊢ e_1 : \tFloat \\
+  Γ, S ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1~\opbin~e_2 : \tFloat
+  Γ, S ⊢ e_1~\opbin~e_2 : \tFloat
 }
 \end{mathpar}
 
@@ -294,11 +294,11 @@ alors un \tInt.
 \and
 \irule{Op-Cmp}{
   \opbin ∈ \{=,≠,≤,≥,<,>\} \\
-  Γ ⊢ e_1 : τ \\
-  Γ ⊢ e_2 : τ \\
+  Γ, S ⊢ e_1 : τ \\
+  Γ, S ⊢ e_2 : τ \\
   \textsc{Comparable}(τ)
 }{
-  Γ ⊢ e_1~\opbin~e_2 : \tInt
+  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -306,13 +306,13 @@ Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalen
 "$+.$" et "$-.$" aux \tFloat.
 
 \begin{mathpar}
-\irule{Unop-Plus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ + e : \tInt }
+\irule{Unop-Plus-Int}{ Γ, S ⊢ e : \tInt }{ Γ, S ⊢ + e : \tInt }
 \and
-\irule{Unop-Plus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ +. e : \tFloat }
+\irule{Unop-Plus-Float}{ Γ, S ⊢ e : \tFloat }{ Γ, S ⊢ +. e : \tFloat }
 
-\irule{Unop-Minus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ - e : \tInt }
+\irule{Unop-Minus-Int}{ Γ, S ⊢ e : \tInt }{ Γ, S ⊢ - e : \tInt }
 \and
-\irule{Unop-Minus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ -. e : \tFloat }
+\irule{Unop-Minus-Float}{ Γ, S ⊢ e : \tFloat }{ Γ, S ⊢ -. e : \tFloat }
 \end{mathpar}
 
 Les opérateurs de négation unaires, en revanche, ne s'appliquent qu'aux
@@ -321,9 +321,9 @@ entiers.
 \begin{mathpar}
 \irule{Unop-Not}{
   \opun ∈ \{ \sim, ! \} \\
-  Γ ⊢ e : \tInt
+  Γ, S ⊢ e : \tInt
 }{
-  Γ ⊢ \opun~e : \tInt
+  Γ, S ⊢ \opun~e : \tInt
 }
 \end{mathpar}
 
@@ -332,10 +332,10 @@ L'arithmétique de pointeurs préserve le type.
 \begin{mathpar}
 \irule{Ptr-Arith}
   { \opbin ∈ \{ +_p, -_p \} \\
-    Γ ⊢ e_1 : t* \\
-    Γ ⊢ e_2 : \tInt \\
+    Γ, S ⊢ e_1 : t* \\
+    Γ, S ⊢ e_2 : \tInt \\
   }
-  { Γ ⊢ e_1~\opbin~e_2 : t* }
+  { Γ, S ⊢ e_1~\opbin~e_2 : t* }
 \end{mathpar}
 
 \subsection*{Autres expressions}
@@ -427,8 +427,8 @@ typée dans ce même contexte.
 
 \begin{mathpar}
   \irule{Exp}
-    { Γ ⊢ e : t }
-    { Γ ⊢ e }
+    { Γ, S ⊢ e : t }
+    { Γ, S ⊢ e }
 \end{mathpar}
 
 Les constructions de contrôle sont bien typées si leurs sous-instructions sont
@@ -436,25 +436,25 @@ bien typées, et si la condition est d'un type entier.
 
 \begin{mathpar}
   \irule{If}
-    { Γ ⊢ e : \tInt \\
-      Γ ⊢ i_1 \\
-      Γ ⊢ i_2
+    { Γ, S ⊢ e : \tInt \\
+      Γ, S ⊢ i_1 \\
+      Γ, S ⊢ i_2
     }
-    { Γ ⊢ \iIf{e}{i_1}{i_2} }
+    { Γ, S ⊢ \iIf{e}{i_1}{i_2} }
 
   \irule{While}
-    { Γ ⊢ e : \tInt \\
-      Γ ⊢ i
+    { Γ, S ⊢ e : \tInt \\
+      Γ, S ⊢ i
     }
-    { Γ ⊢ \iWhile{e}{i} }
+    { Γ, S ⊢ \iWhile{e}{i} }
 \end{mathpar}
 
 Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
 
 \begin{mathpar}
   \irule{Return}
-    { Γ ⊢ e : t }
-    { Γ ⊢ \iReturn{e} }
+    { Γ, S ⊢ e : t }
+    { Γ, S ⊢ \iReturn{e} }
 \end{mathpar}
 
 \section{Fonctions}
@@ -465,7 +465,7 @@ Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
 
   \irule{Fun}
     { ?? }
-    { Γ ⊢ f : (t_1, …, t_n) → t }
+    { Γ, S ⊢ f : (t_1, …, t_n) → t }
 
 \end{mathpar}
 
