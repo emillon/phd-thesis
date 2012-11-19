@@ -413,6 +413,34 @@ Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
 
 \section{Phrases}
 
+\begin{mathpar}
+
+  \irule{Ph-Var}
+    { Γ, S ⊢ e : t \\
+      Γ' = (x, t), Γ
+    }
+    { \typh{Γ}{S}{p}{Γ'}{S} }
+
+  \irule{Ph-Exp}
+    { Γ, S ⊢ e : t }
+    { \typh{Γ}{S}{e}{Γ}{S} }
+
+  \irule{Ph-Struct}
+    { S' =
+      (x_1, t_1, s),
+      …
+      (x_n, t_n, s), S
+    }
+    { \typh{Γ}{S}{ \mathrm{struct}~s
+                      \{ x_1 : t_1
+                       ; …
+                       ;  x_n : t_n
+                      \}
+                  }{Γ}{S'}
+    }
+
+\end{mathpar}
+
 \section{Programme}
 
 \begin{mathpar}
