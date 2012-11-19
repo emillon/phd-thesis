@@ -34,7 +34,7 @@ représentant le genre de valeurs qu'elle produira. Prenons le premier programme
 ci-dessus. La variable $x$ est initialisée avec la valeur $0$, c'est donc un
 entier. Cela signifie que dans tous le programme, toutes les instances de cette
 variable
-\footnote{Deux variables peuvent avoir le même nom dans deux fonction
+\footnote{Deux variables peuvent avoir le même nom dans deux fonctions
   différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
   entre ces deux variables. L'analyse de typage se fait toujours dans un
   contexte précis.
@@ -54,42 +54,57 @@ programme est donc mal typé.
 
 \section{Définitions}
 
-Les types associés aux expressions sont les suivants :
+\begin{figure}
 
-\gramlr{Type}{
-  \begin{align*}
-    t \gramisa & \tInt                         & \textrm{Entier}
-    \\ \gramor & \tFloat                       & \textrm{Flottant}
-    \\ \gramor & t[]                           & \textrm{Tableau}
-    \\ \gramor & t*                            & \textrm{Pointeur}
-    \\ \gramor & \{ f_1:t_1
-               ,    …
-               , f_n:t_n \}                    & \textrm{Structure}
-    \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
-  \end{align*}
-}
+  \gramlr{Type}{
+    \begin{align*}
+      t \gramisa & \tInt                         & \textrm{Entier}
+      \\ \gramor & \tFloat                       & \textrm{Flottant}
+      \\ \gramor & t[]                           & \textrm{Tableau}
+      \\ \gramor & t*                            & \textrm{Pointeur}
+      \\ \gramor & \tstruct{s}                   & \textrm{Structure}
+      \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
+    \end{align*}
+  }
+
+  \gramlr{Environnement de typage}{
+    \begin{align*}
+      Γ \gramisa & ε          & \textrm{Environnement vide}
+      \\ \gramor & (a, t), Γ' & \textrm{Extension}
+    \end{align*}
+  }
+
+  \gramlr{Environnement de typage de structures}{
+    \begin{align*}
+      S \gramisa & ε                 & \textrm {Environnement vide}
+      \\ \gramor & (s, x, t_f), Γ'   & \textrm{Extension}
+    \end{align*}
+  }
+
+  \caption{Types et environnements de typage}
+
+  \label{fig:les-types}
+
+\end{figure}
+
+Les types associés aux expressions sont décrits dans la
+figure~\ref{fig:les-types}.
+
+Les type de structures comprennent uniquement un nom. Celui-ci permet de
+retrouver la liste des champs dans l'environnement de typage de structures
+décrit plus bas.
+
+Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
+n'est qu'une notation : il n'y a pas de n-uplets de première classe, ils sont
+toujours présents dans un type fonctionnel.
 
 Le typage se fait toujours dans un contexte particulier, qui est un
 environnement de typage. Celui-ci associe des types aux variables.
-
-\gramlr{Environnement de typage}{
-  \begin{align*}
-    Γ \gramisa & ε          & \textrm{Environnement vide}
-    \\ \gramor & (a, t), Γ' & \textrm{Extension}
-  \end{align*}
-}
 
 Les types structures ont un ensemble de champs associés à un type.
 Les environnements de typage permettent de regrouper cette information. Ce sont
 des ensembles de triplets $(s, x, t_f)$ où $x$ est le nom d'un champ de type
 $t_f$ dans une structure de type $\tstruct{s}$.
-
-\gramlr{Environnement de typage de structures}{
-  \begin{align*}
-    S \gramisa & ε                 & \textrm {Environnement vide}
-    \\ \gramor & (s, x, t_f), Γ'   & \textrm{Extension}
-  \end{align*}
-}
 
 \begin{definition}[Typage d'une expression]
 
