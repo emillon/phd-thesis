@@ -79,6 +79,13 @@ environnement de typage. Celui-ci associe des types aux variables.
   \end{align*}
 }
 
+\gramlr{Environnement de typage de structures}{
+  \begin{align*}
+    S \gramisa & ε                 & \textrm {Environnement vide}
+    \\ \gramor & (x, t_f, t_s), Γ' & \textrm{Extension}
+  \end{align*}
+}
+
 \begin{definition}[Typage d'une expression]
 
   Sous l'environnement $Γ$ , l'expression $e$ a pour type $t$.
@@ -118,7 +125,25 @@ environnement de typage. Celui-ci associe des types aux variables.
 
   si le typage de la phrase $p$ transforme l'environnement $Γ, S$ en $Γ', S'$.
 
-% TODO définir S
+\end{definition}
+
+\begin{definition}[Typage d'un programme]
+
+  Un programme est bien typé si on peut typer sa suite de phrases dans l'ordre
+  en partant d'un environnement vide. C'est à dire si en posant $Γ_1 = ε$ et
+  $S_1 = ε$,
+
+  \[
+    ∃ Γ_2, S_2, …, Γ_n, S_n ,
+    ∀ i ∈ [1;n-1], \typh{Γ_i}{S_i}{p_i}{Γ_{i+1}}{S_{i+1}}
+  \]
+
+  Puisqu'on part alors d'un environnement vide, cela est indépendant de tout
+  environnement. On note alors :
+
+  \[
+    ⊢ P
+  \]
 
 \end{definition}
 
@@ -439,17 +464,6 @@ Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
                   }{Γ}{S'}
     }
 
-\end{mathpar}
-
-\section{Programme}
-
-\begin{mathpar}
-  \irule{Prog}
-    { ∀ i, 1 ≤ i ≤ p ⇒ Γ ⊢ e_i : t_i
-    }
-    {
-      Γ ⊢ ((f_1, …, f_n), ((x_1, e_1), …, (x_p, e_p)))
-    }
 \end{mathpar}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
