@@ -90,7 +90,13 @@ environnement de typage. Celui-ci associe des types aux variables.
 \end{definition}
 
 \begin{definition}[Typage d'une instruction]
-  Sous l'environnement $Γ$ , l'instruction $i$ est bien typée.
+
+  Les instructions n'ont en revanche pas de type. Mais il est tout de même
+  nécessaire de vérifier que troutes les sous-expressions apparaissant dans une
+  instruction sont cohérentes ensemble.
+
+  On note de la manière suivante le fait que sous l'environnement $Γ$
+  l'instruction $i$ est bien typée :
 
   \[
     \tyi{Γ}{i}
