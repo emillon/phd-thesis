@@ -79,6 +79,11 @@ environnement de typage. Celui-ci associe des types aux variables.
   \end{align*}
 }
 
+Les types structures ont un ensemble de champs associés à un type.
+Les environnements de typage permettent de regrouper cette information. Ce sont
+des ensembles de triplets $(x, t_f, t_s)$ où $x$ est le nom d'un champ de type
+$t_f$ dans une structure de type $\mathrm{struct}~t_s$.
+
 \gramlr{Environnement de typage de structures}{
   \begin{align*}
     S \gramisa & ε                 & \textrm {Environnement vide}
