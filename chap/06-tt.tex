@@ -82,7 +82,7 @@ environnement de typage. Celui-ci associe des types aux variables.
 Les types structures ont un ensemble de champs associés à un type.
 Les environnements de typage permettent de regrouper cette information. Ce sont
 des ensembles de triplets $(x, t_f, t_s)$ où $x$ est le nom d'un champ de type
-$t_f$ dans une structure de type $\mathrm{struct}~t_s$.
+$t_f$ dans une structure de type $\tstruct{t_s}$.
 
 \gramlr{Environnement de typage de structures}{
   \begin{align*}
@@ -352,11 +352,11 @@ chaque champ.
 \begin{mathpar}
   \irule{Struct}
     { ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i \\
-      ∀ i ∈ [1;n], (f_i, t_i, t) ∈ S
+      ∀ i ∈ [1;n], (f_i, t_i, s) ∈ S
     }
     { Γ, S ⊢ \{ f_1 : e_1 ;
             … ; f_n : e_n \}
-           : t
+            : \tstruct{s}
     }
     % TODO retirer les types structures "libre" (f:t) de types
 \end{mathpar}
@@ -461,7 +461,7 @@ Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
       …
       (x_n, t_n, s), S
     }
-    { \typh{Γ}{S}{ \mathrm{struct}~s
+    { \typh{Γ}{S}{ \tstruct{s}
                       \{ x_1 : t_1
                        ; …
                        ;  x_n : t_n

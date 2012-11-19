@@ -103,7 +103,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \begin{align*}
       p \gramisa & x = e             & \textrm{Variable globale}
       \\ \gramor & e                 & \textrm{Évaluation d'expression}
-      \\ \gramor & \mathrm{struct}~s
+      \\ \gramor & \tstruct{s}
                       \{ x_1 : t_1
                        ; …
                        ;  x_n : t_n
@@ -1089,7 +1089,7 @@ typage.
 \begin{mathpar}
   \irule{Ph-Struct}
     { }
-    {\ph{m}{\mathrm{struct}~s \{ … \}}{m}}
+    {\ph{m}{\tstruct{s} \{ … \}}{m}}
 \end{mathpar}
 
 L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
