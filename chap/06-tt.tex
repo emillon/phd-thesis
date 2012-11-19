@@ -24,31 +24,72 @@ f()
 
 Le but d'un tel système de types est de rejeter les programmes qui sont
 "évidemment faux", c'est à dire dont on peut prouver qu'il provoqueraient des
-erreurs de typage à l'exécution.
+erreurs de typage à l'exécution (c'est-à-dire dont la sémantique d'exécution
+reste bloquée à cause d'incompatibilité entre valeurs).
+
+\section{Principe}
+
+Le principe est d'associer à chaque construction syntaxique une étiquette
+représentant le genre de valeurs qu'elle produira. Prenons le premier programme
+ci-dessus. La variable $x$ est initialisée avec la valeur $0$, c'est donc un
+entier. Cela signifie que dans tous le programme, toutes les instances de cette
+variable
+\footnote{Deux variables peuvent avoir le même nom dans deux fonction
+  différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
+  entre ces deux variables. L'analyse de typage se fait toujours dans un
+  contexte précis.
+}
+porteront ce type. La première instruction est l'affectation de la constante $1$
+(entière) à $x$ dont on sait qu'elle porte des valeurs entières, ce qui est donc
+correct. Le fait de rencontrer $\iReturn{x}$ permet de conclure que le type de
+la fonction est $() → \tInt$.
+
+Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
+début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
+entières). Or cet opérateur prend un argument d'un type pointeur de la forme
+$t*$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout $t$
+(\tInt, \tFloat où même $t'*$ : le déréférencement d'un pointeur sur pointeur
+donne un pointeur), mais le type de $x$, \tInt, n'est pas de cette forme. Ce
+programme est donc mal typé.
 
 \section{Définitions}
 
+Les types associés aux expressions sont les suivants :
+
 \gramlr{Type}{
   \begin{align*}
-    t \gramisa & \tInt
-    \\ \gramor & \tFloat
-    \\ \gramor & τ[]                           & \textrm{Tableau}
-    \\ \gramor & τ*                            & \textrm{Pointeur}
-    \\ \gramor & \{ f_1:τ_1
+    t \gramisa & \tInt                         & \textrm{Entier}
+    \\ \gramor & \tFloat                       & \textrm{Flottant}
+    \\ \gramor & t[]                           & \textrm{Tableau}
+    \\ \gramor & t*                            & \textrm{Pointeur}
+    \\ \gramor & \{ f_1:t_1
                ,    …
-               , f_n:τ_n \}                  & \textrm{Structure}
-    \\ \gramor & (τ_1, …, τ_n) \rightarrow τ_r & \textrm{Fonction}
+               , f_n:t_n \}                    & \textrm{Structure}
+    \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
   \end{align*}
 }
+
+Le typage se fait toujours dans un contexte particulier, qui est un
+environnement de typage. Celui-ci associe des types aux variables.
 
 \gramlr{Environnement de typage}{
   \begin{align*}
-    Γ \gramisa & ε
-    \\ \gramor & (a, t), Γ'
+    Γ \gramisa & ε          & \textrm{Environnement vide}
+    \\ \gramor & (a, t), Γ' & \textrm{Extension}
   \end{align*}
 }
 
-\section{Typage}
+Les types structures ont un ensemble de champs associés à un type.
+Les environnements de typage permettent de regrouper cette information. Ce sont
+des ensembles de triplets $(x, t_f, t_s)$ où $x$ est le nom d'un champ de type
+$t_f$ dans une structure de type $\mathrm{struct}~t_s$.
+
+\gramlr{Environnement de typage de structures}{
+  \begin{align*}
+    S \gramisa & ε                 & \textrm {Environnement vide}
+    \\ \gramor & (x, t_f, t_s), Γ' & \textrm{Extension}
+  \end{align*}
+}
 
 \begin{definition}[Typage d'une expression]
 
@@ -61,7 +102,13 @@ erreurs de typage à l'exécution.
 \end{definition}
 
 \begin{definition}[Typage d'une instruction]
-  Sous l'environnement $Γ$ , l'instruction $i$ est bien typée.
+
+  Les instructions n'ont en revanche pas de type. Mais il est tout de même
+  nécessaire de vérifier que troutes les sous-expressions apparaissant dans une
+  instruction sont cohérentes ensemble.
+
+  On note de la manière suivante le fait que sous l'environnement $Γ$
+  l'instruction $i$ est bien typée :
 
   \[
     \tyi{Γ}{i}
@@ -71,86 +118,110 @@ erreurs de typage à l'exécution.
 
 \begin{definition}[Typage d'une phrase]
 
+  De par leur nature séquentielle, les phrases qui composent un programme
+  altèrent l'environnement de typage. Par exemple, la déclaration d'une variable
+  globale ajoute une valeur dans l'environnement.
+
+  On note
+
   \[
     \typh{Γ}{S}{p}{Γ'}{S'}
   \]
 
+  si le typage de la phrase $p$ transforme l'environnement $Γ, S$ en $Γ', S'$.
+
 \end{definition}
 
+\begin{definition}[Typage d'un programme]
+
+  Un programme est bien typé si on peut typer sa suite de phrases dans l'ordre
+  en partant d'un environnement vide. C'est à dire si en posant $Γ_1 = ε$ et
+  $S_1 = ε$,
+
+  \[
+    ∃ Γ_2, S_2, …, Γ_n, S_n ,
+    ∀ i ∈ [1;n-1], \typh{Γ_i}{S_i}{p_i}{Γ_{i+1}}{S_{i+1}}
+  \]
+
+  Puisqu'on part alors d'un environnement vide, cela est indépendant de tout
+  environnement. On note alors :
+
+  \[
+    ⊢ P
+  \]
+
+\end{definition}
 
 \section{Expressions}
+
+\subsection*{Littéraux}
+
+Le typage des littéraux numériques ne dépend pas de l'environnement de typage :
+ce sont toujours des entiers ou des flottants.
 
 \begin{mathpar}
 
   \irule{Cst-Int}
     { }
-    { Γ ⊢ i : \tInt}
+    { Γ, S ⊢ i : \tInt}
 
   \irule{Cst-Float}
     { }
-    { Γ ⊢ i : \tInt}
+    { Γ, S ⊢ i : \tInt}
 
+\end{mathpar}
+
+\begin{mathpar}
   % TODO
   \irule{Cst-Null}
     { }
-    { Γ ⊢ \eNull : ?}
+    { Γ, S ⊢ \eNull : t*}
+\end{mathpar}
 
+\subsection*{Left-values}
+
+Rappelons que l'environnement de typage $Γ$ contient le type des variables
+accessibles du programme. Le cas où la left-value à typer est une variable est
+donc direct : il suffit de retrouver son type dans l'environnement.
+
+\begin{mathpar}
   \irule{Lv-Var}
     { (x, t) ∈ Γ }
-    { Γ ⊢ x : t }
+    { Γ, S ⊢ x : t }
+\end{mathpar}
 
+Dans le cas d'un déréférencement, on commence par typer la left-value
+déréférencée. Si elle a un type pointeur, la valeur déréférencée est le type
+pointé.
+
+\begin{mathpar}
   \irule{Lv-Deref}
-    { Γ ⊢ x : t* }
-    { Γ ⊢ *x : t }
+    { Γ, S ⊢ lv : t* }
+    { Γ, S ⊢ *lv : t }
+\end{mathpar}
 
-  % TODO
-  \irule{Lv-Field}
-    { }
-    { Γ ⊢ x.f : t }
+Pour une left-value indexée (l'accès à tableau), on s'assure que l'indice soit
+entier, et que la left-value a un type tableau : le type de l'élement est encore
+une fois le type de base du type tableau ($t$ pour $t[]$).
 
+\begin{mathpar}
   \irule{Lv-Index}
-    { Γ ⊢ e : \tInt \\
-      Γ ⊢ x : t[]
+    { Γ, S ⊢ e : \tInt \\
+      Γ, S ⊢ lv : t[]
     }
-    { Γ ⊢ x[e] : t }
+    { Γ, S ⊢ lv[e] : t }
+\end{mathpar}
 
-  % TODO opérateurs
+Enfin, le typage de l'accès à un champ nécessite d'accéder à l'environnement de
+structures $S$. L'existence d'un triplet $(f, t_f, t_s)$ tel que $lv$ est
+typable en $t_s$ permet de typer $lv.f$ en $t_f$.
 
-  \irule{Addr}
-    { Γ ⊢ lv : t }
-    { Γ ⊢ \&lv : t* }
-
-  \irule{Set}
-    { Γ ⊢ lv : t \\
-      Γ ⊢ e : t
+\begin{mathpar}
+  \irule{Lv-Field}
+    { (f, t_f, t_s) ∈ S \\
+      Γ, S ⊢ lv : t_s
     }
-    { Γ ⊢ lv ← e : t }
-
-  \irule{Struct}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t_i }
-    { Γ ⊢ \{ f_1 : e_1 ;
-         … ; f_n : e_n \}
-        : \{ f_1 : t_1 ;
-         … ; f_n : t_n \}
-    }
-
-  \irule{Array}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t }
-    { Γ ⊢ \{ e_1 ;
-         … ; e_n \}
-        : t[]
-    }
-
-  \irule{Call}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ ⊢ e_i : t_i \\
-      Γ ⊢ f : ( t_1 ,
-            … , t_n ) → t
-    }
-    { Γ ⊢ f( e_1 ,
-         … , e_n )
-        : t
-    }
-
+    { Γ, S ⊢ lv.f : t_f }
 \end{mathpar}
 
 \subsection*{Opérateurs}
@@ -239,25 +310,104 @@ L'arithmétique de pointeurs préserve le type.
   { Γ ⊢ e_1~\opbin~e_2 : t* }
 \end{mathpar}
 
-\section{Instructions}
+\subsection*{Autres expressions}
+
+Prendre l'adresse d'une left-value rend un type pointeur sur le type de
+celle-ci.
 
 \begin{mathpar}
+  \irule{Addr}
+    { Γ, S ⊢ lv : t }
+    { Γ, S ⊢ \&lv : t* }
+\end{mathpar}
 
+Pour typer une affectation, on vérifie que la left-value (à gauche) et
+l'expression (à droite) ont le même type. C'est alors le type résultat de
+l'expression d'affectation.
+
+\begin{mathpar}
+  \irule{Set}
+    { Γ, S ⊢ lv : t \\
+      Γ, S ⊢ e : t
+    }
+    { Γ, S ⊢ lv ← e : t }
+\end{mathpar}
+
+Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
+éléments.
+
+\begin{mathpar}
+  \irule{Array}
+    { ∀ i, 1 ≤ i ≤ n ⇒ Γ, S ⊢ e_i : t }
+    { Γ, S ⊢ \{ e_1 ;
+            … ; e_n \}
+            : t[]
+    }
+\end{mathpar}
+
+Pour qu'un littéral de structure soit bien typé, il faut que chacun de ses noms
+de champs corresponde à un même nom de type structure, avec le bon type pour
+chaque champ.
+
+\begin{mathpar}
+  \irule{Struct}
+    { ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i \\
+      ∀ i ∈ [1;n], (f_i, t_i, t) ∈ S
+    }
+    { Γ, S ⊢ \{ f_1 : e_1 ;
+            … ; f_n : e_n \}
+           : t
+    }
+    % TODO retirer les types structures "libre" (f:t) de types
+\end{mathpar}
+
+Pour typer un appel de fonction, on s'assure que la fonction a bien un type
+fonctionnel. On type alors chacun des arguments avec le type attendu. Le
+résultat est du type de retour de la fonction.
+
+\begin{mathpar}
+  \irule{Call}
+    { Γ, S ⊢ f : ( t_1 ,
+               … , t_n ) → t \\
+      ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i
+    }
+    { Γ, S ⊢ f( e_1 ,
+            … , e_n )
+            : t
+    }
+\end{mathpar}
+
+\section{Instructions}
+
+La séquence est simple à traiter : l'instruction vide est toujours bien typée,
+et la suite de deux instructions est bien typée si celles-ci le sont également.
+
+\begin{mathpar}
   \irule{Pass}
     { }
-    {Γ ⊢ \iPass}
+    {Γ, S ⊢ \iPass}
 
   \irule{Seq}{
-    Γ ⊢ i_1 \\
-    Γ ⊢ i_2
+    Γ, S ⊢ i_1 \\
+    Γ, S ⊢ i_2
   }{
-    Γ ⊢ i_1;i_2
+    Γ, S ⊢ i_1;i_2
   }
+\end{mathpar}
 
+Une instruction constituée d'une expression est bien typée si celle-ci peut être
+typée dans ce même contexte.
+
+\begin{mathpar}
   \irule{Exp}
     { Γ ⊢ e : t }
     { Γ ⊢ e }
+\end{mathpar}
 
+Les constructions de contrôle sont bien typées si leurs sous-instructions sont
+bien typées, et si la condition est d'un type entier.
+
+\begin{mathpar}
   \irule{If}
     { Γ ⊢ e : \tInt \\
       Γ ⊢ i_1 \\
@@ -270,12 +420,15 @@ L'arithmétique de pointeurs préserve le type.
       Γ ⊢ i
     }
     { Γ ⊢ \iWhile{e}{i} }
+\end{mathpar}
 
+Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
+
+\begin{mathpar}
   % TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
   \irule{Return}
     { Γ ⊢ e : t }
     { Γ ⊢ \iReturn{e} }
-
 \end{mathpar}
 
 \section{Fonctions}
@@ -288,15 +441,34 @@ L'arithmétique de pointeurs préserve le type.
 
 \end{mathpar}
 
-\section{Programme}
+\section{Phrases}
 
 \begin{mathpar}
-  \irule{Prog}
-    { ∀ i, 1 ≤ i ≤ p ⇒ Γ ⊢ e_i : t_i
+
+  \irule{Ph-Var}
+    { Γ, S ⊢ e : t \\
+      Γ' = (x, t), Γ
     }
-    {
-      Γ ⊢ ((f_1, …, f_n), ((x_1, e_1), …, (x_p, e_p)))
+    { \typh{Γ}{S}{p}{Γ'}{S} }
+
+  \irule{Ph-Exp}
+    { Γ, S ⊢ e : t }
+    { \typh{Γ}{S}{e}{Γ}{S} }
+
+  \irule{Ph-Struct}
+    { S' =
+      (x_1, t_1, s),
+      …
+      (x_n, t_n, s), S
     }
+    { \typh{Γ}{S}{ \mathrm{struct}~s
+                      \{ x_1 : t_1
+                       ; …
+                       ;  x_n : t_n
+                      \}
+                  }{Γ}{S'}
+    }
+
 \end{mathpar}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
