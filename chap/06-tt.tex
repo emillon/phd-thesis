@@ -109,25 +109,30 @@ programme est donc mal typé.
 Les types associés aux expressions sont décrits dans la
 figure~\ref{fig:les-types}.
 
-Les type de structures comprennent uniquement un nom. Celui-ci permet de
-retrouver la liste des champs dans l'environnement de typage de structures
-décrit plus bas.
+Pour maintenir les contextes de typage, deux environnements sont nécessaires :
+d'une part, un environnement $Γ$ qui associe un type à un ensemble de variables ;
+et d'autre part, un environnement de structures $S$ qui associe les noms de
+champs et leur type à un nom de structure.
+
+Plus précisément, un environnement $Γ$ est une liste de couples (variable, type)
+et un environnement de structures $S$ est une liste de triplets (nom de la
+structure, nom du champ, type du champ).
+
+Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ en
+$\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
+
+Si $(s, y, \tFloat) ∈ S$, $y$ désigne le nom d'un champ de type $\tInt$ dans une
+structure de type $\tstruct{s}$. Donc sous $Γ = (x, \tstruct{s})$, on peut alors
+typer $x.y$ en $\tFloat$.
 
 Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
 n'est qu'une notation : il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
-Le typage se fait toujours dans un contexte particulier, qui est un
-environnement de typage. Celui-ci associe des types aux variables.
-
-Les types structures ont un ensemble de champs associés à un type.
-Les environnements de typage permettent de regrouper cette information. Ce sont
-des ensembles de triplets $(s, x, t_f)$ où $x$ est le nom d'un champ de type
-$t_f$ dans une structure de type $\tstruct{s}$.
-
 \begin{definition}[Typage d'une expression]
 
-  Sous l'environnement $Γ$ , l'expression $e$ a pour type $t$.
+  On note de la manière suivante le fait qu'une expression $e$ (telle que
+  définie dans la figure~\ref{fig:stx-data}) ait pour type $t$.
 
   \[
     \ty{Γ}{e}{t}
