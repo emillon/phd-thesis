@@ -132,10 +132,11 @@ toujours présents dans un type fonctionnel.
 \begin{definition}[Typage d'une expression]
 
   On note de la manière suivante le fait qu'une expression $e$ (telle que
-  définie dans la figure~\ref{fig:stx-data}) ait pour type $t$.
+  définie dans la figure~\ref{fig:stx-data}) ait pour type $t$ dans le contexte
+  $Γ, S$.
 
   \[
-    \ty{Γ}{e}{t}
+    \ty{Γ, S}{e}{t}
   \]
 
 \end{definition}
@@ -150,7 +151,7 @@ toujours présents dans un type fonctionnel.
   l'instruction $i$ est bien typée :
 
   \[
-    \tyi{Γ}{i}
+    \tyi{Γ, S}{i}
   \]
 
 \end{definition}
@@ -187,9 +188,9 @@ toujours présents dans un type fonctionnel.
 
 \begin{definition}[Typage d'un programme]
 
-  Un programme est bien typé si on peut typer sa suite de phrases dans l'ordre
-  en partant d'un environnement vide. C'est à dire s'il existe un environnement
-  final $Γ_f, S_f$ tel que
+  Un programme est bien typé si on peut typer sa suite de phrases en partant
+  d'un environnement vide. C'est à dire s'il existe un environnement final $Γ_f,
+  S_f$ tel que
 
   \[
     \typhstar{[]}{[]}{P}{Γ_f}{S_f}
@@ -218,7 +219,7 @@ ce sont toujours des entiers ou des flottants.
 
   \irule{Cst-Float}
     { }
-    { Γ, S ⊢ i : \tInt}
+    { Γ, S ⊢ i : \tFloat}
 
 \end{mathpar}
 
