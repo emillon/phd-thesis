@@ -88,15 +88,15 @@ programme est donc mal typé.
 
   \gramlr{Environnement de typage}{
     \begin{align*}
-      Γ \gramisa & ε          & \textrm{Environnement vide}
-      \\ \gramor & (a, t), Γ' & \textrm{Extension}
+      Γ \gramisa & []         & \textrm{Environnement vide}
+      \\ \gramor & (a, t)::Γ' & \textrm{Extension}
     \end{align*}
   }
 
   \gramlr{Environnement de typage de structures}{
     \begin{align*}
-      S \gramisa & ε                 & \textrm {Environnement vide}
-      \\ \gramor & (s, x, t_f), Γ'   & \textrm{Extension}
+      S \gramisa & []                & \textrm {Environnement vide}
+      \\ \gramor & (s, x, t_f)::Γ'   & \textrm{Extension}
     \end{align*}
   }
 
