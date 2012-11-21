@@ -1,39 +1,58 @@
 Dans ce chapitre, nous enrichissons le langage défini dans le
 chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
-programmes bien formés, comme
+programmes bien formés, comme celui de la figure~\ref{fig:progwf:good} des
+programmes mal formés comme celui de la figure~\ref{fig:progwf:bad}.
 
-\begin{Verbatim}
+\begin{SaveVerbatim}[]{VerbProgGood}
 f()
 (x=0)
 {
   x = 1
   return x
 }
-\end{Verbatim}
+\end{SaveVerbatim}
 
-des programmes mal formés comme
-
-\begin{Verbatim}
+\begin{SaveVerbatim}[]{VerbProgBad}
 f()
 (x=0)
 {
   x = 1
   return (*x)
 }
-\end{Verbatim}
+\end{SaveVerbatim}
+
+\begin{figure}
+
+  \centering
+
+  \subfloat[][Programme bien formé]{
+    \label{fig:progwf:good}
+    \BUseVerbatim{VerbProgGood}
+  }
+  \hspace{2cm}
+  \subfloat[][Programme mal formé]{
+    \label{fig:progwf:bad}
+    \BUseVerbatim{VerbProgBad}
+  }
+
+  \caption{Programmes bien et mal formés}
+  \label{fig:progwf}
+
+\end{figure}
 
 Le but d'un tel système de types est de rejeter les programmes qui sont
 "évidemment faux", c'est à dire dont on peut prouver qu'il provoqueraient des
-erreurs de typage à l'exécution (c'est-à-dire dont la sémantique d'exécution
-reste bloquée à cause d'incompatibilité entre valeurs).
+erreurs à l'exécution dues à une incompatibilité entre valeurs. En ajoutant
+cette étape, on restreint la classe d'erreurs qui pourraient bloquer la
+sémantique.
 
 \section{Principe}
 
 Le principe est d'associer à chaque construction syntaxique une étiquette
-représentant le genre de valeurs qu'elle produira. Prenons le premier programme
-ci-dessus. La variable $x$ est initialisée avec la valeur $0$, c'est donc un
-entier. Cela signifie que dans tous le programme, toutes les instances de cette
-variable
+représentant le genre de valeurs qu'elle produira. Dans le programme de la
+figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la valeur
+$0$, c'est donc un entier. Cela signifie que dans tout le programme, toutes les
+instances de cette variable
 \footnote{Deux variables peuvent avoir le même nom dans deux fonctions
   différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
   entre ces deux variables. L'analyse de typage se fait toujours dans un
