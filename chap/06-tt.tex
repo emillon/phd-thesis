@@ -304,24 +304,24 @@ De même sur \tFloat.
 \end{mathpar}
 
 Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
-"comparables". On introduit donc un jugement $\textsc{Comparable}(τ)$ qui est
+"comparables". On introduit donc un jugement $\textsc{Comparable}(t)$ qui est
 vrai pour les types \tInt, \tFloat et pointeurs. Les comparaisons renvoient
 alors un \tInt.
 
 \begin{mathpar}
 \irule{Cmp-Num}
-  {τ ∈ \{ \tInt, \tFloat \}}
-  {\textsc{Comparable}(τ)}
+  {t ∈ \{ \tInt, \tFloat \}}
+  {\textsc{Comparable}(t)}
 \and
 \irule{Cmp-Ptr}
   { }
-  {\textsc{Comparable}(τ*)}
+  {\textsc{Comparable}(t*)}
 \and
 \irule{Op-Cmp}{
   \opbin ∈ \{=,≠,≤,≥,<,>\} \\
-  Γ, S ⊢ e_1 : τ \\
-  Γ, S ⊢ e_2 : τ \\
-  \textsc{Comparable}(τ)
+  Γ, S ⊢ e_1 : t \\
+  Γ, S ⊢ e_2 : t \\
+  \textsc{Comparable}(t)
 }{
   Γ, S ⊢ e_1~\opbin~e_2 : \tInt
 }
