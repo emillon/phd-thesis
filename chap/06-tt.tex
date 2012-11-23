@@ -303,29 +303,45 @@ De même sur \tFloat.
 }
 \end{mathpar}
 
-Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
-"comparables". On introduit donc un jugement $\textsc{Comparable}(t)$ qui est
-vrai pour les types \tInt, \tFloat et pointeurs. Les comparaisons renvoient
-alors un \tInt.
+Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
+type qui supporte l'égalité. Ceci est représenté par un jugement
+$\textsc{Eq}(t)$ qui est vrai pour les types \tInt, \tFloat et pointeurs. Les
+opérateurs $=$ et $≠$ renvoient alors un \tInt.
 
 \begin{mathpar}
-\irule{Cmp-Num}
+\irule{Eq-Num}
   {t ∈ \{ \tInt, \tFloat \}}
-  {\textsc{Comparable}(t)}
+  {\textsc{Eq}(t)}
 \and
-\irule{Cmp-Ptr}
-  { }
-  {\textsc{Comparable}(t*)}
+\irule{Eq-Ptr}
+  {\textsc{Eq}(t)}
+  {\textsc{Eq}(t*)}
 \and
-\irule{Op-Cmp}{
-  \opbin ∈ \{=,≠,≤,≥,<,>\} \\
+\irule{Op-Eq}{
+  \opbin ∈ \{=,≠\} \\
   Γ, S ⊢ e_1 : t \\
   Γ, S ⊢ e_2 : t \\
-  \textsc{Comparable}(t)
+  \textsc{Eq}(t)
 }{
   Γ, S ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
+
+Les comparaisons sont plus restrictives, et ne s'appliquent qu'aux types
+primitifs (on ne peut pas comparer deux pointeurs, ou deux tableaux).
+
+\begin{mathpar}
+\irule{Op-Comparable}{
+  \opbin ∈ \{=,≠,≤,≥,<,>\} \\
+  Γ, S ⊢ e_1 : t \\
+  Γ, S ⊢ e_2 : t \\
+  t ∈ \{ \tInt, \tFloat \}
+}{
+  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
+}
+\end{mathpar}
+
+% TODO extensions aux structs et tableaux
 
 Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
 "$+.$" et "$-.$" aux \tFloat.
@@ -352,7 +368,7 @@ entiers.
 }
 \end{mathpar}
 
-L'arithmétique de pointeurs préserve le type.
+L'arithmétique de pointeurs préserve le type des pointeurs.
 
 \begin{mathpar}
 \irule{Ptr-Arith}
