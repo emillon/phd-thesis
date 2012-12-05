@@ -219,7 +219,7 @@ ce sont toujours des entiers ou des flottants.
 
   \irule{Cst-Float}
     { }
-    { Γ, S ⊢ i : \tFloat}
+    { Γ, S ⊢ f : \tFloat}
 
 \end{mathpar}
 
@@ -244,7 +244,7 @@ donc direct : il suffit de retrouver son type dans l'environnement.
 \end{mathpar}
 
 Dans le cas d'un déréférencement, on commence par typer la left-value
-déréférencée. Si elle a un type pointeur, la valeur déréférencée est le type
+déréférencée. Si elle a un type pointeur, la valeur déréférencée est du type
 pointé.
 
 \begin{mathpar}
@@ -312,11 +312,15 @@ opérateurs $=$ et $≠$ renvoient alors un \tInt.
 \irule{Eq-Num}
   {t ∈ \{ \tInt, \tFloat \}}
   {\textsc{Eq}(t)}
-\and
+
 \irule{Eq-Ptr}
   {\textsc{Eq}(t)}
   {\textsc{Eq}(t*)}
-\and
+
+\irule{Eq-Array}
+  {\textsc{Eq}(t)}
+  {\textsc{Eq}(t[])}
+
 \irule{Op-Eq}{
   \opbin ∈ \{=,≠\} \\
   Γ, S ⊢ e_1 : t \\
@@ -326,6 +330,8 @@ opérateurs $=$ et $≠$ renvoient alors un \tInt.
   Γ, S ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
+
+%TODO Eq-Struct
 
 Les comparaisons sont plus restrictives, et ne s'appliquent qu'aux types
 primitifs (on ne peut pas comparer deux pointeurs, ou deux tableaux).
@@ -537,6 +543,7 @@ La déclaration d'une structure ne modifie pas $Γ$, mais ajoute $n$ triplets
 $(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
 
 \begin{mathpar}
+
   \irule{Ph-Struct}
     { S' =
       (x_1, t_1, s),
