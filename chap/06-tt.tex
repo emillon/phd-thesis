@@ -1,40 +1,59 @@
 Dans ce chapitre, nous enrichissons le langage défini dans le
 chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
-programmes bien formés, comme
+programmes bien formés, comme celui de la figure~\ref{fig:progwf:good} des
+programmes mal formés comme celui de la figure~\ref{fig:progwf:bad}.
 
-\begin{Verbatim}
+\begin{SaveVerbatim}[]{VerbProgGood}
 f()
 (x=0)
 {
   x = 1
   return x
 }
-\end{Verbatim}
+\end{SaveVerbatim}
 
-des programmes mal formés comme
-
-\begin{Verbatim}
+\begin{SaveVerbatim}[]{VerbProgBad}
 f()
 (x=0)
 {
   x = 1
   return (*x)
 }
-\end{Verbatim}
+\end{SaveVerbatim}
+
+\begin{figure}
+
+  \centering
+
+  \subfloat[][Programme bien formé]{
+    \label{fig:progwf:good}
+    \BUseVerbatim{VerbProgGood}
+  }
+  \hspace{2cm}
+  \subfloat[][Programme mal formé]{
+    \label{fig:progwf:bad}
+    \BUseVerbatim{VerbProgBad}
+  }
+
+  \caption{Programmes bien et mal formés}
+  \label{fig:progwf}
+
+\end{figure}
 
 Le but d'un tel système de types est de rejeter les programmes qui sont
 "évidemment faux", c'est à dire dont on peut prouver qu'il provoqueraient des
-erreurs de typage à l'exécution (c'est-à-dire dont la sémantique d'exécution
-reste bloquée à cause d'incompatibilité entre valeurs).
+erreurs à l'exécution dues à une incompatibilité entre valeurs. En ajoutant
+cette étape, on restreint la classe d'erreurs qui pourraient bloquer la
+sémantique.
 
 \section{Principe}
 
 Le principe est d'associer à chaque construction syntaxique une étiquette
-représentant le genre de valeurs qu'elle produira. Prenons le premier programme
-ci-dessus. La variable $x$ est initialisée avec la valeur $0$, c'est donc un
-entier. Cela signifie que dans tous le programme, toutes les instances de cette
-variable
-\footnote{Deux variables peuvent avoir le même nom dans deux fonction
+représentant le genre de valeurs qu'elle produira. Dans le programme de la
+figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la valeur
+$0$, c'est donc un entier. Cela signifie que dans tout le programme, toutes les
+instances de cette variable
+\footnote{Deux variables peuvent avoir le même nom dans deux fonctions
   différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
   entre ces deux variables. L'analyse de typage se fait toujours dans un
   contexte précis.
@@ -54,49 +73,70 @@ programme est donc mal typé.
 
 \section{Définitions}
 
-Les types associés aux expressions sont les suivants :
+\begin{figure}
 
-\gramlr{Type}{
-  \begin{align*}
-    t \gramisa & \tInt                         & \textrm{Entier}
-    \\ \gramor & \tFloat                       & \textrm{Flottant}
-    \\ \gramor & t[]                           & \textrm{Tableau}
-    \\ \gramor & t*                            & \textrm{Pointeur}
-    \\ \gramor & \{ f_1:t_1
-               ,    …
-               , f_n:t_n \}                    & \textrm{Structure}
-    \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
-  \end{align*}
-}
+  \gramlr{Type}{
+    \begin{align*}
+      t \gramisa & \tInt                         & \textrm{Entier}
+      \\ \gramor & \tFloat                       & \textrm{Flottant}
+      \\ \gramor & t[]                           & \textrm{Tableau}
+      \\ \gramor & t*                            & \textrm{Pointeur}
+      \\ \gramor & \tstruct{s}                   & \textrm{Structure}
+      \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
+    \end{align*}
+  }
 
-Le typage se fait toujours dans un contexte particulier, qui est un
-environnement de typage. Celui-ci associe des types aux variables.
+  \gramlr{Environnement de typage}{
+    \begin{align*}
+      Γ \gramisa & []         & \textrm{Environnement vide}
+      \\ \gramor & (a, t)::Γ' & \textrm{Extension}
+    \end{align*}
+  }
 
-\gramlr{Environnement de typage}{
-  \begin{align*}
-    Γ \gramisa & ε          & \textrm{Environnement vide}
-    \\ \gramor & (a, t), Γ' & \textrm{Extension}
-  \end{align*}
-}
+  \gramlr{Environnement de typage de structures}{
+    \begin{align*}
+      S \gramisa & []                & \textrm {Environnement vide}
+      \\ \gramor & (s, x, t_f)::Γ'   & \textrm{Extension}
+    \end{align*}
+  }
 
-Les types structures ont un ensemble de champs associés à un type.
-Les environnements de typage permettent de regrouper cette information. Ce sont
-des ensembles de triplets $(x, t_f, t_s)$ où $x$ est le nom d'un champ de type
-$t_f$ dans une structure de type $\mathrm{struct}~t_s$.
+  \caption{Types et environnements de typage}
 
-\gramlr{Environnement de typage de structures}{
-  \begin{align*}
-    S \gramisa & ε                 & \textrm {Environnement vide}
-    \\ \gramor & (x, t_f, t_s), Γ' & \textrm{Extension}
-  \end{align*}
-}
+  \label{fig:les-types}
+
+\end{figure}
+
+Les types associés aux expressions sont décrits dans la
+figure~\ref{fig:les-types}.
+
+Pour maintenir les contextes de typage, deux environnements sont nécessaires :
+d'une part, un environnement $Γ$ qui associe un type à un ensemble de variables ;
+et d'autre part, un environnement de structures $S$ qui associe les noms de
+champs et leur type à un nom de structure.
+
+Plus précisément, un environnement $Γ$ est une liste de couples (variable, type)
+et un environnement de structures $S$ est une liste de triplets (nom de la
+structure, nom du champ, type du champ).
+
+Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ en
+$\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
+
+Si $(s, y, \tFloat) ∈ S$, $y$ désigne le nom d'un champ de type $\tInt$ dans une
+structure de type $\tstruct{s}$. Donc sous $Γ = (x, \tstruct{s})$, on peut alors
+typer $x.y$ en $\tFloat$.
+
+Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
+n'est qu'une notation : il n'y a pas de n-uplets de première classe, ils sont
+toujours présents dans un type fonctionnel.
 
 \begin{definition}[Typage d'une expression]
 
-  Sous l'environnement $Γ$ , l'expression $e$ a pour type $t$.
+  On note de la manière suivante le fait qu'une expression $e$ (telle que
+  définie dans la figure~\ref{fig:stx-data}) ait pour type $t$ dans le contexte
+  $Γ, S$.
 
   \[
-    \ty{Γ}{e}{t}
+    \ty{Γ, S}{e}{t}
   \]
 
 \end{definition}
@@ -111,7 +151,7 @@ $t_f$ dans une structure de type $\mathrm{struct}~t_s$.
   l'instruction $i$ est bien typée :
 
   \[
-    \tyi{Γ}{i}
+    \tyi{Γ, S}{i}
   \]
 
 \end{definition}
@@ -130,21 +170,33 @@ $t_f$ dans une structure de type $\mathrm{struct}~t_s$.
 
   si le typage de la phrase $p$ transforme l'environnement $Γ, S$ en $Γ', S'$.
 
+  On étend cette notation aux suites de phrases :
+
+  \[
+    \begin{cases}
+      \typhstar{Γ}{S}{[]}{Γ}{S}  \\
+      \typhstar{Γ}{S}{p::ps}{Γ'}{S'} \mbox{ si }
+        ∃ Γ'', S'' ,
+            \begin{cases}
+              \typh{Γ}{S}{p}{Γ''}{S''}  \\
+              \typhstar{Γ''}{S''}{ps}{Γ'}{S'}
+            \end{cases}
+    \end{cases}
+  \]
+
 \end{definition}
 
 \begin{definition}[Typage d'un programme]
 
-  Un programme est bien typé si on peut typer sa suite de phrases dans l'ordre
-  en partant d'un environnement vide. C'est à dire si en posant $Γ_1 = ε$ et
-  $S_1 = ε$,
+  Un programme est bien typé si on peut typer sa suite de phrases en partant
+  d'un environnement vide. C'est à dire s'il existe un environnement final $Γ_f,
+  S_f$ tel que
 
   \[
-    ∃ Γ_2, S_2, …, Γ_n, S_n ,
-    ∀ i ∈ [1;n-1], \typh{Γ_i}{S_i}{p_i}{Γ_{i+1}}{S_{i+1}}
+    \typhstar{[]}{[]}{P}{Γ_f}{S_f}
   \]
 
-  Puisqu'on part alors d'un environnement vide, cela est indépendant de tout
-  environnement. On note alors :
+  Cela est indépendant de tout environnement ; on note alors :
 
   \[
     ⊢ P
@@ -167,12 +219,13 @@ ce sont toujours des entiers ou des flottants.
 
   \irule{Cst-Float}
     { }
-    { Γ, S ⊢ i : \tInt}
+    { Γ, S ⊢ f : \tFloat}
 
 \end{mathpar}
 
+Le pointeur nul, quant à lui, est compatible avec tous les types pointeur.
+
 \begin{mathpar}
-  % TODO
   \irule{Cst-Null}
     { }
     { Γ, S ⊢ \eNull : t*}
@@ -191,7 +244,7 @@ donc direct : il suffit de retrouver son type dans l'environnement.
 \end{mathpar}
 
 Dans le cas d'un déréférencement, on commence par typer la left-value
-déréférencée. Si elle a un type pointeur, la valeur déréférencée est le type
+déréférencée. Si elle a un type pointeur, la valeur déréférencée est du type
 pointé.
 
 \begin{mathpar}
@@ -213,13 +266,13 @@ une fois le type de base du type tableau ($t$ pour $t[]$).
 \end{mathpar}
 
 Enfin, le typage de l'accès à un champ nécessite d'accéder à l'environnement de
-structures $S$. L'existence d'un triplet $(f, t_f, t_s)$ tel que $lv$ est
-typable en $t_s$ permet de typer $lv.f$ en $t_f$.
+structures $S$. L'existence d'un triplet $(s, f, t_f)$ tel que $lv$ est
+typable en $t_s$ permet de typer $lv.f$ en $\tstruct{s}$.
 
 \begin{mathpar}
   \irule{Lv-Field}
-    { (f, t_f, t_s) ∈ S \\
-      Γ, S ⊢ lv : t_s
+    { (s, f, t_f) ∈ S \\
+      Γ, S ⊢ lv : \tstruct{s}
     }
     { Γ, S ⊢ lv.f : t_f }
 \end{mathpar}
@@ -231,10 +284,10 @@ Un certain nombre d'opérations est possible sur le type \tInt.
 \begin{mathpar}
 \irule{Op-Int}{
   \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
-  Γ ⊢ e_1 : \tInt \\
-  Γ ⊢ e_2 : \tInt
+  Γ, S ⊢ e_1 : \tInt \\
+  Γ, S ⊢ e_2 : \tInt
 }{
-  Γ ⊢ e_1~\opbin~e_2 : \tInt
+  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
 
@@ -243,48 +296,70 @@ De même sur \tFloat.
 \begin{mathpar}
 \irule{Op-Float}{
   \opbin ∈ \{+.,-.,\times.,/.\} \\
-  Γ ⊢ e_1 : \tFloat \\
-  Γ ⊢ e_2 : \tFloat
+  Γ, S ⊢ e_1 : \tFloat \\
+  Γ, S ⊢ e_2 : \tFloat
 }{
-  Γ ⊢ e_1~\opbin~e_2 : \tFloat
+  Γ, S ⊢ e_1~\opbin~e_2 : \tFloat
 }
 \end{mathpar}
 
-Les opérateurs de comparaison peuvent s'appliquer à deux opérandes de types
-"comparables". On introduit donc un jugement $\textsc{Comparable}(τ)$ qui est
-vrai pour les types \tInt, \tFloat et pointeurs. Les comparaisons renvoient
-alors un \tInt.
+Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
+type qui supporte l'égalité. Ceci est représenté par un jugement
+$\textsc{Eq}(t)$ qui est vrai pour les types \tInt, \tFloat et pointeurs. Les
+opérateurs $=$ et $≠$ renvoient alors un \tInt.
 
 \begin{mathpar}
-\irule{Cmp-Num}
-  {τ ∈ \{ \tInt, \tFloat \}}
-  {\textsc{Comparable}(τ)}
-\and
-\irule{Cmp-Ptr}
-  { }
-  {\textsc{Comparable}(τ*)}
-\and
-\irule{Op-Cmp}{
-  \opbin ∈ \{=,≠,≤,≥,<,>\} \\
-  Γ ⊢ e_1 : τ \\
-  Γ ⊢ e_2 : τ \\
-  \textsc{Comparable}(τ)
+\irule{Eq-Num}
+  {t ∈ \{ \tInt, \tFloat \}}
+  {\textsc{Eq}(t)}
+
+\irule{Eq-Ptr}
+  {\textsc{Eq}(t)}
+  {\textsc{Eq}(t*)}
+
+\irule{Eq-Array}
+  {\textsc{Eq}(t)}
+  {\textsc{Eq}(t[])}
+
+\irule{Op-Eq}{
+  \opbin ∈ \{=,≠\} \\
+  Γ, S ⊢ e_1 : t \\
+  Γ, S ⊢ e_2 : t \\
+  \textsc{Eq}(t)
 }{
-  Γ ⊢ e_1~\opbin~e_2 : \tInt
+  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
 }
 \end{mathpar}
+
+%TODO Eq-Struct
+
+Les comparaisons sont plus restrictives, et ne s'appliquent qu'aux types
+primitifs (on ne peut pas comparer deux pointeurs, ou deux tableaux).
+
+\begin{mathpar}
+\irule{Op-Comparable}{
+  \opbin ∈ \{=,≠,≤,≥,<,>\} \\
+  Γ, S ⊢ e_1 : t \\
+  Γ, S ⊢ e_2 : t \\
+  t ∈ \{ \tInt, \tFloat \}
+}{
+  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
+}
+\end{mathpar}
+
+% TODO extensions aux structs et tableaux
 
 Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
 "$+.$" et "$-.$" aux \tFloat.
 
 \begin{mathpar}
-\irule{Unop-Plus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ + e : \tInt }
+\irule{Unop-Plus-Int}{ Γ, S ⊢ e : \tInt }{ Γ, S ⊢ + e : \tInt }
 \and
-\irule{Unop-Plus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ +. e : \tFloat }
+\irule{Unop-Plus-Float}{ Γ, S ⊢ e : \tFloat }{ Γ, S ⊢ +. e : \tFloat }
 
-\irule{Unop-Minus-Int}{ Γ ⊢ e : \tInt }{ Γ ⊢ - e : \tInt }
+\irule{Unop-Minus-Int}{ Γ, S ⊢ e : \tInt }{ Γ, S ⊢ - e : \tInt }
 \and
-\irule{Unop-Minus-Float}{ Γ ⊢ e : \tFloat }{ Γ ⊢ -. e : \tFloat }
+\irule{Unop-Minus-Float}{ Γ, S ⊢ e : \tFloat }{ Γ, S ⊢ -. e : \tFloat }
 \end{mathpar}
 
 Les opérateurs de négation unaires, en revanche, ne s'appliquent qu'aux
@@ -293,21 +368,21 @@ entiers.
 \begin{mathpar}
 \irule{Unop-Not}{
   \opun ∈ \{ \sim, ! \} \\
-  Γ ⊢ e : \tInt
+  Γ, S ⊢ e : \tInt
 }{
-  Γ ⊢ \opun~e : \tInt
+  Γ, S ⊢ \opun~e : \tInt
 }
 \end{mathpar}
 
-L'arithmétique de pointeurs préserve le type.
+L'arithmétique de pointeurs préserve le type des pointeurs.
 
 \begin{mathpar}
 \irule{Ptr-Arith}
   { \opbin ∈ \{ +_p, -_p \} \\
-    Γ ⊢ e_1 : t* \\
-    Γ ⊢ e_2 : \tInt \\
+    Γ, S ⊢ e_1 : t* \\
+    Γ, S ⊢ e_2 : \tInt \\
   }
-  { Γ ⊢ e_1~\opbin~e_2 : t* }
+  { Γ, S ⊢ e_1~\opbin~e_2 : t* }
 \end{mathpar}
 
 \subsection*{Autres expressions}
@@ -338,7 +413,7 @@ Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
 
 \begin{mathpar}
   \irule{Array}
-    { ∀ i, 1 ≤ i ≤ n ⇒ Γ, S ⊢ e_i : t }
+    { ∀ i ∈ [1;n] , Γ, S ⊢ e_i : t }
     { Γ, S ⊢ \{ e_1 ;
             … ; e_n \}
             : t[]
@@ -352,13 +427,12 @@ chaque champ.
 \begin{mathpar}
   \irule{Struct}
     { ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i \\
-      ∀ i ∈ [1;n], (f_i, t_i, t) ∈ S
+      ∀ i ∈ [1;n], (s, f_i, t_i) ∈ S
     }
     { Γ, S ⊢ \{ f_1 : e_1 ;
             … ; f_n : e_n \}
-           : t
+            : \tstruct{s}
     }
-    % TODO retirer les types structures "libre" (f:t) de types
 \end{mathpar}
 
 Pour typer un appel de fonction, on s'assure que la fonction a bien un type
@@ -400,8 +474,8 @@ typée dans ce même contexte.
 
 \begin{mathpar}
   \irule{Exp}
-    { Γ ⊢ e : t }
-    { Γ ⊢ e }
+    { Γ, S ⊢ e : t }
+    { Γ, S ⊢ e }
 \end{mathpar}
 
 Les constructions de contrôle sont bien typées si leurs sous-instructions sont
@@ -409,51 +483,66 @@ bien typées, et si la condition est d'un type entier.
 
 \begin{mathpar}
   \irule{If}
-    { Γ ⊢ e : \tInt \\
-      Γ ⊢ i_1 \\
-      Γ ⊢ i_2
+    { Γ, S ⊢ e : \tInt \\
+      Γ, S ⊢ i_1 \\
+      Γ, S ⊢ i_2
     }
-    { Γ ⊢ \iIf{e}{i_1}{i_2} }
+    { Γ, S ⊢ \iIf{e}{i_1}{i_2} }
 
   \irule{While}
-    { Γ ⊢ e : \tInt \\
-      Γ ⊢ i
+    { Γ, S ⊢ e : \tInt \\
+      Γ, S ⊢ i
     }
-    { Γ ⊢ \iWhile{e}{i} }
+    { Γ, S ⊢ \iWhile{e}{i} }
 \end{mathpar}
 
 Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
 
 \begin{mathpar}
-  % TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
   \irule{Return}
-    { Γ ⊢ e : t }
-    { Γ ⊢ \iReturn{e} }
+    { Γ, S ⊢ e : t }
+    { Γ, S ⊢ \iReturn{e} }
 \end{mathpar}
 
 \section{Fonctions}
+
+% TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
 
 \begin{mathpar}
 
   \irule{Fun}
     { ?? }
-    { Γ ⊢ f : (t_1, …, t_n) → t }
+    { Γ, S ⊢ f : (t_1, …, t_n) → t }
 
 \end{mathpar}
 
 \section{Phrases}
 
-\begin{mathpar}
+L'évaluation d'une expression est le cas le plus simple. En effet, il y a juste
+à vérifier que celle-ci est bien typable (avec ce type) dans l'environnement de
+départ. L'environnement n'est pas modifié.
 
+\begin{mathpar}
+  \irule{Ph-Exp}
+    { Γ, S ⊢ e : t }
+    { \typh{Γ}{S}{e}{Γ}{S} }
+\end{mathpar}
+
+La déclaration d'une variable globale commence de la même manière, mais on
+enrichit l'environnement de cette nouvelle valeur.
+
+\begin{mathpar}
   \irule{Ph-Var}
     { Γ, S ⊢ e : t \\
       Γ' = (x, t), Γ
     }
     { \typh{Γ}{S}{p}{Γ'}{S} }
+\end{mathpar}
 
-  \irule{Ph-Exp}
-    { Γ, S ⊢ e : t }
-    { \typh{Γ}{S}{e}{Γ}{S} }
+La déclaration d'une structure ne modifie pas $Γ$, mais ajoute $n$ triplets
+$(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
+
+\begin{mathpar}
 
   \irule{Ph-Struct}
     { S' =
@@ -461,7 +550,7 @@ Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
       …
       (x_n, t_n, s), S
     }
-    { \typh{Γ}{S}{ \mathrm{struct}~s
+    { \typh{Γ}{S}{ \tstruct{s}
                       \{ x_1 : t_1
                        ; …
                        ;  x_n : t_n
@@ -476,8 +565,6 @@ Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
 \section*{TODO}
 
 \begin{itemize}
-\item
-  utiliser des phrases toplevel
-\item
-  résoudre le problème du return
+\item résoudre le problème du return
+\item ordre des sections
 \end{itemize}
