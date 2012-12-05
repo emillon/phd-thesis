@@ -562,6 +562,37 @@ $(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
+\section{Sûreté du typage}
+
+Comme le dit Robin Milner, "Well-typed programs don't go wrong". C'est à dire
+qu'un programme bien typé possède des propriétés de sûreté.
+
+\paragraph{Progrès :} l'évaluation d'un terme bien typé ne reste pas bloquée;
+il y a toujours une règle qui s'applique.
+
+\paragraph{Préservation :} l'évaluation d'un terme bien typé produit un terme
+bien typé.
+
+\begin{theorem}[Progrès]
+
+  Si $Γ, S ⊢ x : t$, alors soit :
+
+\begin{itemize}
+\item $x$ est une valeur
+\item $∃ x' . x → x'$ % TODO
+\item array index error
+\item ptr deref error
+\end{itemize}
+
+\end{theorem}
+
+\begin{theorem}[Préservation]
+
+  Si $Γ, S ⊢ x : t$ et $x → v$ % TODO
+  alors $Γ, S ⊢ v : t$.
+
+\end{theorem}
+
 \section*{TODO}
 
 \begin{itemize}
