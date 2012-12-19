@@ -601,6 +601,11 @@ expression.
 \item
   si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t$
 \item
+  si $Γ ⊢ φ[] : t$, alors $Γ ⊢ φ : t[]$
+\item
+  si $Γ ⊢ φ.f : t$, alors $Γ ⊢ φ : \{ f: t ; … \}$
+% TODO structure
+\item
   si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
   tels que
 
@@ -661,5 +666,5 @@ expression.
 \item résoudre le problème du return
 \item enlever S
 \item ordre des sections
-\item noter les flottants et fonctions différemment
+\item noter les flottants, fonctions et champs différemment
 \end{itemize}
