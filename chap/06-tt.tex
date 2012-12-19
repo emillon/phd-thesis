@@ -599,8 +599,21 @@ expression.
 \item
   si $Γ ⊢ x : t$, $x : t ∈ Γ$
 \item
-  si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$ tels
-  que $Γ ⊢ e : (t_1, …, t_n) → t$ et $∀ i ∈ [1;n], Γ ⊢ e_i : t_i$
+  si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t$
+\item
+  si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
+  tels que
+
+  \[
+    \begin{cases}
+      Γ ⊢ e : (t_1, …, t_n) → t \\
+      ∀ i ∈ [1;n], Γ ⊢ e_i : t_i
+    \end{cases}
+  \]
+
+\item si $Γ ⊢ n : t$, alors $t = \tInt$
+\item si $Γ ⊢ f : t$, alors $t = \tFloat$
+\item si $Γ ⊢ \eNull : t$, alors $t = t'*$
   % TODO ...
   % TODO cas fonction
 \end{itemize}
@@ -648,4 +661,5 @@ expression.
 \item résoudre le problème du return
 \item enlever S
 \item ordre des sections
+\item noter les flottants et fonctions différemment
 \end{itemize}
