@@ -575,27 +575,77 @@ bien typé.
 
 \begin{theorem}[Progrès]
 
-  Si $Γ, S ⊢ x : t$, alors soit :
+  Si $Γ, S ⊢ e : t$, alors soit :
 
 \begin{itemize}
-\item $x$ est une valeur
-\item $∃ x' . x → x'$ % TODO
-\item array index error
-\item ptr deref error
+\item $e = v$
+\item il existe $e'$ tel que $e → e'$ % TODO
+\item une erreur d'accès tableau ou pointeur se produit
 \end{itemize}
 
 \end{theorem}
 
+Les règles précédentes ont la particularité suivante : pour chaque forme
+syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
+déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
+expression.
+
+\begin{lemma}[Inversion]
+
+  À partir d'un jugement de typage, on peut en déduire des inforamtions sur les
+  types de ses sous-expressions.
+
+\begin{itemize}
+\item
+  si $Γ ⊢ x : t$, $x : t ∈ Γ$
+\item
+  si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$ tels
+  que $Γ ⊢ e : (t_1, …, t_n) → t$ et $∀ i ∈ [1;n], Γ ⊢ e_i : t_i$
+  % TODO ...
+  % TODO cas fonction
+\end{itemize}
+
+\end{lemma}
+
+\begin{lemma}[Formes canoniques]
+
+  On peut déterminer la forme syntaxique d'une valeur d'après son type :
+
+  \begin{itemize}
+  \item si $Γ ⊢ v : \tInt$, $v = n$.
+  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = f$.
+  \item si $Γ ⊢ v : t*$, $v = φ$.
+  \item si $Γ ⊢ v : t[]$, $v = [v_1, …, v_n]$.
+    %TODO structures
+  \end{itemize}
+
+\end{lemma}
+
+\begin{lemma}[Permutation]
+  Si $Γ ⊢ e : t$ et $Γ' = σ(Γ)$, alors $Γ' ⊢ e : t$.
+\end{lemma}
+
+\begin{lemma}[Affaiblissement]
+  Si $Γ ⊢ e : t$ et $x ∉ dom(Γ)$, alors $Γ, x : t' ⊢ e : t$.
+\end{lemma}
+
+\begin{lemma}[Substitution]
+  Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [e'/x] : t$.
+\end{lemma}
+
 \begin{theorem}[Préservation]
 
-  Si $Γ, S ⊢ x : t$ et $x → v$ % TODO
+  Si $Γ, S ⊢ e : t$ et $e → v$ % TODO
   alors $Γ, S ⊢ v : t$.
 
 \end{theorem}
+
+% TODO versions Γ ⊢ i
 
 \section*{TODO}
 
 \begin{itemize}
 \item résoudre le problème du return
+\item enlever S
 \item ordre des sections
 \end{itemize}
