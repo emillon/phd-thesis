@@ -34,16 +34,19 @@
 \newtheorem{lemma}{Lemme}[chapter]
 
 \def\iffull#1{\if#1\relax\else}
-\title{ \bfseries\LARGE Analyse statique de logiciel système par typage statique fort\\%
-      {\mdseries\Large Application au noyau Linux}}
+\title{Analyse statique de logiciel système par typage statique fort}
+\subtitle{Application au noyau Linux}
 \author{Étienne Millon}
+\date{xx-yy-2013}
 
+\input{title.tex}
 \begin{document}
-
 
 \frontmatter
 
-\maketitle
+\begin{titlingpage}
+\titleUL{}
+\end{titlingpage}
 
 \cleartorecto
 
@@ -71,9 +74,9 @@
 \label{cha:os}
 \input{chap/02-os.tex}
 
-\chapter{Typage}
+%\chapter{Typage}
 
-\input{chap/03-typage.tex}
+%\input{chap/03-typage.tex}
 
 \chapter{État de l'art}
 
@@ -91,10 +94,10 @@
 \label{cha:typbase}
 \input{chap/06-tt.tex}
 
-\chapter{Sémantique statique}
+%\chapter{Sémantique statique}
 
-\label{cha:typbase}
-\input{chap/06-typbase.tex}
+%\label{cha:typbase}
+%\input{chap/06-typbase.tex}
 
 \chapter{Analyse de provenance des pointeurs}
 

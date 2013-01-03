@@ -156,9 +156,10 @@
 \newcommand{\asminstr}[1]{\texttt{#1}}
 
 \newcommand{\wip}[0]{%
-\begin{center}
-    \includegraphics[width=5cm]{gen/travaux.pdf}
-\end{center}
+%\begin{center}
+    %\includegraphics[width=5cm]{gen/travaux.pdf}
+%\end{center}
+\textbf{(wip)}
 }
 
 \newcommand{\listcons}[0]{%
@@ -245,3 +246,8 @@
 {\clearpage\mbox{}\vfill\centering #1 \par\vfill\clearpage}}
 
 % }}} /memoir
+
+% {{{ subtitle command
+\newcommand\subtitle[1]{%
+  \newcommand\thesubtitle{#1}}
+% }}}
