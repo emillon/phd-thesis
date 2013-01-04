@@ -52,36 +52,64 @@
 \makeatother
 
 
+\usetikzlibrary{fadings}
 
-
-\newcommand*{\titleUL}{\begingroup% University of Liege
+\newcommand*{\titleUL}{
+  \newgeometry{left=2cm, right=2cm, top=2cm, bottom=2cm}%
+  \begingroup% University of Liege
 \drop=0.1\textheight
-\vspace*{\drop}
 \begin{center}
 {\textsc{Université Pierre et Marie Curie\\
 École Doctorale Informatique, Télécommunications et Électronique
-}}\\[\drop]
+}}\\
+\vspace{1cm}
+\begin{tikzpicture}
+  \begin{scope}
+    \node (A) {\includegraphics[height=\textwidth]{curies.pdf}};
+    \path[opacity=0.2, fill=white]
+      (A.north west) rectangle (A.south east);
+    %\path[opacity=0.8, fill=white, path fading=north, fading transform={rotate=-45}]
+    %(A.north west) rectangle (A.south east);
+    %\clip (A.center) circle(8.5cm);
+    %\shade[opacity=0.2, shading=axis,bottom color=black!10,top color=black,shading angle=-45]
+    %(A.south west) rectangle (A.north east);
+  \end{scope}
+\end{tikzpicture}
+\vspace{-13cm}
+\\[\drop]
+\begin{minipage}{13cm}
+  \begin{center}
 \rule{\textwidth}{1pt}\par
 \vspace{0.5\baselineskip}
 {\huge\bfseries \thetitle\\
 \vspace{5mm}
 \large --- \thesubtitle ---
 }\\[0.5\baselineskip]
-\rule{\textwidth}{1pt}\par
-\vspace{2cm}
+\rule{\textwidth}{1pt}
+  \end{center}
+\end{minipage}
+\par
+\vspace{1cm}
 {{\Large\textsc{\theauthor}} \\
 sous la direction d'Emmanuel Chailloux et de Sarah Zennou
 }
-\vfill
+\vspace{16mm}\\
 {{\LARGE\textsc{Thèse}}\\
 pour obtenir le titre de\\
 {\Large Docteur en Sciences}\\
 {\large mention Informatique}
 }
-\vfill
+\vspace{2cm}\\
 {\large Soutenue le \thedate{} devant un jury composé de\\
 
+aaa\\
+aaa\\
+aaa\\
+aaa\\
+aaa
 }
 \end{center}
-\endgroup}
+\endgroup
+\restoregeometry
+}
 
