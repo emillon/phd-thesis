@@ -1,0 +1,113 @@
+\usepackage{url}
+\ifpdf
+\usepackage{pdfcolmk}
+\fi
+%% check if using xelatex rather than pdflatex
+\ifxetex
+\usepackage{fontspec}
+\fi
+\usepackage{graphicx}
+%%\usepackage{hyperref}
+%% drawing package
+\usepackage{tikz}
+%% for dingbats
+\usepackage{pifont}
+\providecommand{\HUGE}{\Huge}% if not using memoir
+\newlength{\drop}% for my convenience
+%% specify the Webomints family
+\newcommand*{\wb}[2]{\fontsize{#1}{#2}\usefont{U}{webo}{xl}{n}}
+%% select a (FontSite) font by its font family ID
+\newcommand*{\FSfont}[1]{\fontencoding{T1}\fontfamily{#1}\selectfont}
+%% if you don’t have the FontSite fonts either \renewcommand*{\FSfont}[1]{}
+%% or use your own choice of family.
+%% select a (TeX Font) font by its font family ID
+\newcommand*{\TXfont}[1]{\fontencoding{T1}\fontfamily{#1}\selectfont}
+%% Generic publisher’s logo
+\newcommand*{\plogo}{\fbox{$\mathcal{PL}$}}
+
+%% Some shades
+\definecolor{Dark}{gray}{0.2}
+\definecolor{MedDark}{gray}{0.4}
+\definecolor{Medium}{gray}{0.6}
+\definecolor{Light}{gray}{0.8}
+%%%% Additional font series macros
+\makeatletter
+%%%% light series
+%% e.g., kernel doc, section s: line 12 or thereabouts
+\DeclareRobustCommand\ltseries
+{\not@math@alphabet\ltseries\relax
+\fontseries\ltdefault\selectfont}
+%% e.g., kernel doc, section t: line 32 or thereabouts
+\newcommand{\ltdefault}{l}
+%% e.g., kernel doc, section v: line 19 or thereabouts
+\DeclareTextFontCommand{\textlt}{\ltseries}
+% heavy(bold) series
+\DeclareRobustCommand\hbseries
+{\not@math@alphabet\hbseries\relax
+\fontseries\hbdefault\selectfont}
+\newcommand{\hbdefault}{hb}
+\DeclareTextFontCommand{\texthb}{\hbseries}
+\makeatother
+
+
+\usetikzlibrary{fadings}
+
+\newcommand*{\titleUL}{
+  \newgeometry{left=2cm, right=2cm, top=2cm, bottom=2cm}%
+  \begingroup% University of Liege
+\drop=0.1\textheight
+\begin{center}
+{\textsc{Université Pierre et Marie Curie\\
+École Doctorale Informatique, Télécommunications et Électronique
+}}\\
+\vspace{1cm}
+\begin{tikzpicture}
+  \begin{scope}
+    \node (A) {\includegraphics[height=\textwidth]{curies.pdf}};
+    \path[opacity=0.2, fill=white]
+      (A.north west) rectangle (A.south east);
+    %\path[opacity=0.8, fill=white, path fading=north, fading transform={rotate=-45}]
+    %(A.north west) rectangle (A.south east);
+    %\clip (A.center) circle(8.5cm);
+    %\shade[opacity=0.2, shading=axis,bottom color=black!10,top color=black,shading angle=-45]
+    %(A.south west) rectangle (A.north east);
+  \end{scope}
+\end{tikzpicture}
+\vspace{-13cm}
+\\[\drop]
+\begin{minipage}{13cm}
+  \begin{center}
+\rule{\textwidth}{1pt}\par
+\vspace{0.5\baselineskip}
+{\huge\bfseries \thetitle\\
+\vspace{5mm}
+\large --- \thesubtitle ---
+}\\[0.5\baselineskip]
+\rule{\textwidth}{1pt}
+  \end{center}
+\end{minipage}
+\par
+\vspace{1cm}
+{{\Large\textsc{\theauthor}} \\
+sous la direction d'Emmanuel Chailloux et de Sarah Zennou
+}
+\vspace{16mm}\\
+{{\LARGE\textsc{Thèse}}\\
+pour obtenir le titre de\\
+{\Large Docteur en Sciences}\\
+{\large mention Informatique}
+}
+\vspace{2cm}\\
+{\large Soutenue le \thedate{} devant un jury composé de\\
+
+aaa\\
+aaa\\
+aaa\\
+aaa\\
+aaa
+}
+\end{center}
+\endgroup
+\restoregeometry
+}
+

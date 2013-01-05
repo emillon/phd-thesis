@@ -560,11 +560,140 @@ $(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
 
 \end{mathpar}
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
+\section{Sûreté du typage}
+
+Comme le dit Robin Milner, "Well-typed programs don't go wrong". C'est à dire
+qu'un programme bien typé possède des propriétés de sûreté.
+
+\paragraph{Progrès :} l'évaluation d'un terme bien typé ne reste pas bloquée;
+il y a toujours une règle qui s'applique.
+
+\paragraph{Préservation :} l'évaluation d'un terme bien typé produit un terme
+bien typé.
+
+\begin{theorem}[Progrès]
+
+  Si $Γ, S ⊢ e : t$, alors soit :
+
+\begin{itemize}
+\item $e$ est une valeur : $∃ v, e = v$
+\item il existe $e'$ tel que $e → e'$ % TODO
+\item une erreur d'accès tableau ou pointeur se produit
+\end{itemize}
+
+\end{theorem}
+
+Les règles précédentes ont la particularité suivante : pour chaque forme
+syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
+déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
+expression.
+
+\begin{lemma}[Inversion]
+
+  À partir d'un jugement de typage, on peut en déduire des inforamtions sur les
+  types de ses sous-expressions.
+
+\begin{itemize}
+\item Références mémoire
+  \begin{itemize}
+    \item
+      si $Γ ⊢ x : t$, $x : t ∈ Γ$
+    \item
+      si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t$
+    \item
+      si $Γ ⊢ φ[] : t$, alors $Γ ⊢ φ : t[]$
+    \item
+      si $Γ ⊢ φ.f : t$, alors $Γ ⊢ φ : \{ f: t ; … \}$
+    % TODO structure
+  \end{itemize}
+\item
+  Appel de fonction : si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
+  tels que
+
+  \[
+    \begin{cases}
+      Γ ⊢ e : (t_1, …, t_n) → t \\
+      ∀ i ∈ [1;n], Γ ⊢ e_i : t_i
+    \end{cases}
+  \]
+
+\item
+  Constantes
+  \begin{itemize}
+    \item si $Γ ⊢ n : t$, alors $t = \tInt$
+    \item si $Γ ⊢ f : t$, alors $t = \tFloat$
+    \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$
+  \end{itemize}
+  % TODO ...
+  % TODO cas fonction
+\end{itemize}
+
+\end{lemma}
+
+Il est aussi possible de réaliser l'opération inverse : à partir du type d'une
+valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
+possible pour les valeurs, pas pour n'importe quelle expression (par exemple
+l'expression $x$ (variable) peut avoir n'importe quel type $t$ dans le contexte
+$Γ = x:t$).
+
+\begin{lemma}[Formes canoniques]
+
+  Pour chaque type de valeur, il existe une unique forme syntaxique.
+
+  \begin{itemize}
+  \item si $Γ ⊢ v : \tInt$, $v = n$.
+  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = f$.
+  \item si $Γ ⊢ v : t*$, $v = φ$.
+  \item si $Γ ⊢ v : t[]$, $v = [v_1, …, v_n]$.
+    %TODO structures
+  \end{itemize}
+
+\end{lemma}
+
+\begin{lemma}[Permutation]
+  L'ordre dans lequel les variables apparaissent dans un environnement
+  n'influe pas sur la relation de typage.
+
+  Pour toute permutation $σ$ de $[1;n]$, on note $σ(x_1 : t_1, …, x_n : t_n) =
+  x_{σ(1)} : t_{σ(1)}, … x_{σ(n)} : t_{σ(n)}$.
+
+  Alors : si $Γ ⊢ e : t$ et $Γ' = σ(Γ)$, alors $Γ' ⊢ e : t$.
+\end{lemma}
+
+\begin{lemma}[Affaiblissement]
+  De même que l'ordre n'influe pas le typage, on peut aussi ajouter des
+  associations supplémentaires dans l'environnement sans modifier les typages
+  dans cet environnement.
+
+  Si $Γ ⊢ e : t$ et $x ∉ \mathrm{dom}(Γ)$, alors $Γ, x : t' ⊢ e : t$.
+\end{lemma}
+
+\begin{lemma}[Substitution]
+  Si dans une expression $e$ il apparait une variable $x$ de type $t'$, le
+  typage est préservé lorsqu'on remplace ses occurrences par une expression $e'$
+  de même type.
+
+  Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [x/e'] : t$.
+\end{lemma}
+
+\begin{theorem}[Préservation]
+
+  Si une expression est typable et que son évaluation produit une valeur, alors
+  cette valeur est du même type que l'expression.
+
+  Si $Γ, S ⊢ e : t$ et $e → v$ % TODO
+
+  alors $Γ, S ⊢ v : t$.
+
+\end{theorem}
+
+% TODO versions Γ ⊢ i
 
 \section*{TODO}
 
 \begin{itemize}
 \item résoudre le problème du return
+\item enlever S
 \item ordre des sections
+\item noter les flottants, fonctions et champs différemment
 \end{itemize}
