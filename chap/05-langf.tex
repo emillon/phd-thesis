@@ -903,7 +903,7 @@ déréférencement de $p$ va modifier $x$.
   {
     \mm{m_0}{e}{m_1}{
     \mathrm{fun} (a_1, …, a_n)
-                 ((l'_1, l'_1), …, (l'_p, e'_p))
+                 ((l'_1, e'_1), …, (l'_p, e'_p))
                  \{ i \}
                } \\
     \evstar{m_1}{e_1 \\ \vdots \\ e_n}
@@ -917,7 +917,7 @@ déréférencement de $p$ va modifier $x$.
     m_8 = \mathrm{Pop}(m_6) \\
     m_9 = \mathrm{Cleanup}(m_7) \\
   }
-  {\mm{m_0}{f(e_1, …, e_n)}{m_9}{v}}
+  {\mm{m_0}{e(e_1, …, e_n)}{m_9}{v}}
 \end{mathpar}
 
 Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.

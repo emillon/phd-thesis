@@ -496,23 +496,33 @@ bien typées, et si la condition est d'un type entier.
     { Γ, S ⊢ \iWhile{e}{i} }
 \end{mathpar}
 
-Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
-
 \begin{mathpar}
-  \irule{Return}
-    { Γ, S ⊢ e : t }
-    { Γ, S ⊢ \iReturn{e} }
 \end{mathpar}
 
 \section{Fonctions}
 
-% TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
+Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
+revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$.
+
 
 \begin{mathpar}
 
+  \irule{Return}
+    { Γ, S ⊢ \vRet ← e }
+    { Γ, S ⊢ \iReturn{e} }
+
   \irule{Fun}
-    { ?? }
-    { Γ, S ⊢ f : (t_1, …, t_n) → t }
+    {
+      Γ - \vRet, a_1 : t_1, …, a_n : t_n,
+         l_1 : t'_1, …, l_n : t'_p,
+         \vRet : t
+         ⊢ i
+      \\
+      ∀ i ∈ [1;p], Γ ⊢ e_i : t'_i
+    }
+    { Γ ⊢ \mathrm{fun} (a_1, …, a_n)
+          ((l_1, e_1), …, (l_p, e_p)) \{i\}
+           : (t_1, …, t_n) → t }
 
 \end{mathpar}
 
