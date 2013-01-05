@@ -604,7 +604,7 @@ expression.
   types de ses sous-expressions.
 
 \begin{itemize}
-\item Références mémoire
+\item Références mémoire :
   \begin{itemize}
     \item
       si $Γ ⊢ x : t$, $x : t ∈ Γ$
@@ -627,6 +627,10 @@ expression.
     \end{cases}
   \]
 
+\item Fonction : si $Γ ⊢ \mathrm{fun} (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))
+  \{i\} : t$, alors il existe $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …,
+  t_n) → t$.
+
 \item
   Constantes
   \begin{itemize}
@@ -635,7 +639,6 @@ expression.
     \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$
   \end{itemize}
   % TODO ...
-  % TODO cas fonction
 \end{itemize}
 
 \end{lemma}
@@ -648,7 +651,8 @@ $Γ = x:t$).
 
 \begin{lemma}[Formes canoniques]
 
-  Pour chaque type de valeur, il existe une unique forme syntaxique.
+  Il est possible de déterminer la forme syntaxique d'une valeur étant donné son
+  type.
 
   \begin{itemize}
   \item si $Γ ⊢ v : \tInt$, $v = n$.
@@ -656,6 +660,8 @@ $Γ = x:t$).
   \item si $Γ ⊢ v : t*$, $v = φ$.
   \item si $Γ ⊢ v : t[]$, $v = [v_1, …, v_n]$.
     %TODO structures
+  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \mathrm{fun}
+    (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))$.
   \end{itemize}
 
 \end{lemma}
@@ -686,6 +692,8 @@ $Γ = x:t$).
   Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [x/e'] : t$.
 \end{lemma}
 
+Ces lemmes permettent de prouver le théorème suivant :
+
 \begin{theorem}[Préservation]
 
   Si une expression est typable et que son évaluation produit une valeur, alors
@@ -702,7 +710,6 @@ $Γ = x:t$).
 \section*{TODO}
 
 \begin{itemize}
-\item résoudre le problème du return
 \item enlever S
 \item ordre des sections
 \item noter les flottants, fonctions et champs différemment
