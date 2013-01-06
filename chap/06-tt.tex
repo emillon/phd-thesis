@@ -599,17 +599,45 @@ il y a toujours une règle qui s'applique.
 \paragraph{Préservation :} l'évaluation d'un terme bien typé produit un terme
 bien typé.
 
+Puisqu'il s'agit de propriétés reliant la syntaxe à la sémantique, deux types
+d'environnement sont utilisés en même temps. D'une part, les environnement de
+typage $Γ$ pour la syntaxe, et d'autre part les environnements mémoire $m$ pour
+la sémantique. Il est nécessaire de définir une relation de compatibilité entre
+ces deux monde, pour exprimer par exemple qu'un état mémoire contient dans la
+variable $x$ un entier.
+
+\begin{definition}[Compatibilité mémoire]
+
+  Soient $Γ$ un environnement de typage et $m = x_1 ↦ v_1, …, x_n ↦ v_n$ un état
+  mémoire. On dit que $m$ est compatible avec $Γ$ si
+
+  \[
+    ∃ (t_1, …, t_n),
+    ∀ i ∈ [1;n],
+    \begin{cases} Γ ⊢ x_i : t_i
+               \\ Γ ⊢ v_i : t_i
+    \end{cases}
+  \]
+
+  On note alors $\mcomp{Γ}{m}$.
+
+\end{definition}
+
 \begin{theorem}[Progrès]
 
-  Si $Γ, S ⊢ e : t$, alors soit :
+  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Alors l'un des cas suivant est vrai :
 
 \begin{itemize}
-\item $e$ est une valeur : $∃ v, e = v$
-\item il existe $e'$ tel que $e → e'$ % TODO
-\item une erreur d'accès tableau ou pointeur se produit
+  \item $e$ est une valeur : $∃ v, e = v$
+  \item il existe $e'$ et $m'$ tels que $\mm{m}{e}{m'}{e'}$
+  \item une erreur d'accès tableau ou pointeur se produit
 \end{itemize}
-
 \end{theorem}
+
+\begin{proof}
+  On procède par induction sur la dérivation de $Γ ⊢ e : t$.
+\end{proof}
 
 Les règles précédentes ont la particularité suivante : pour chaque forme
 syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
