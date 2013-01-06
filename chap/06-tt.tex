@@ -239,7 +239,7 @@ donc direct : il suffit de retrouver son type dans l'environnement.
 
 \begin{mathpar}
   \irule{Lv-Var}
-    { (x, t) ∈ Γ }
+    { x : t ∈ Γ }
     { Γ, S ⊢ x : t }
 \end{mathpar}
 
@@ -441,12 +441,14 @@ résultat est du type de retour de la fonction.
 
 \begin{mathpar}
   \irule{Call}
-    { Γ, S ⊢ f : ( t_1 ,
+    { Γ, S ⊢ e : ( t_1 ,
                … , t_n ) → t \\
       ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i
     }
-    { Γ, S ⊢ f( e_1 ,
-            … , e_n )
+    { Γ, S ⊢ e ( e_1
+               , …
+               , e_n
+               )
             : t
     }
 \end{mathpar}
@@ -740,7 +742,7 @@ expression.
     \item
       si $Γ ⊢ x : t$, $x : t ∈ Γ$
     \item
-      si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t$
+      si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t*$
     \item
       si $Γ ⊢ φ[] : t$, alors $Γ ⊢ φ : t[]$
     \item
@@ -773,6 +775,50 @@ expression.
 \end{itemize}
 
 \end{lemma}
+
+\begin{proof}
+
+  Pour chaque jugement, on considère les règles qui peuvent amener à cette
+  conclusion.
+
+\begin{itemize}
+\item
+  Références mémoire :
+
+  \begin{itemize}
+
+    \item $Γ ⊢ x : t$
+
+      La seule règle de cette forme est \textsc{Lv-Var}. Puisque sa prémisse est
+      vraie, on en conclut que $x : t ∈ Γ$.
+
+    \item $Γ ⊢ *φ : t$
+
+      De même, seule la règle \textsc{Lv-Deref} convient. On en conclut que $Γ ⊢ φ : t*$.
+
+    \item $Γ ⊢ φ[] : t$
+
+      Idem avec \textsc{Lv-Index}.
+
+    \item $Γ ⊢ φ.f : t$
+
+      $Γ ⊢ φ : \{ f: t ; … \}$ %TODO sûrement différent sans S
+
+  \end{itemize}
+
+\item
+  Appel de fonction : pour en arriver à $Γ ⊢ e (e_1, …, e_n) : t$, seule la
+  règle \textsc{Call} s'applique, ce qui permet de conclure.
+
+\item Fonction : la seule règle possible pour conclure une dérivation de
+
+  \[
+    Γ ⊢ \mathrm{fun} (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p)) \{i\} : t
+  \]
+  est \textsc{Fun}.
+
+\end{itemize}
+\end{proof}
 
 Il est aussi possible de réaliser l'opération inverse : à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
