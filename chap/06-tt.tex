@@ -239,7 +239,7 @@ donc direct : il suffit de retrouver son type dans l'environnement.
 
 \begin{mathpar}
   \irule{Lv-Var}
-    { (x, t) ∈ Γ }
+    { x : t ∈ Γ }
     { Γ, S ⊢ x : t }
 \end{mathpar}
 
@@ -441,12 +441,14 @@ résultat est du type de retour de la fonction.
 
 \begin{mathpar}
   \irule{Call}
-    { Γ, S ⊢ f : ( t_1 ,
+    { Γ, S ⊢ e : ( t_1 ,
                … , t_n ) → t \\
       ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i
     }
-    { Γ, S ⊢ f( e_1 ,
-            … , e_n )
+    { Γ, S ⊢ e ( e_1
+               , …
+               , e_n
+               )
             : t
     }
 \end{mathpar}
@@ -496,24 +498,52 @@ bien typées, et si la condition est d'un type entier.
     { Γ, S ⊢ \iWhile{e}{i} }
 \end{mathpar}
 
-Enfin, un $\iReturn{\cdot}$ est bien typé si la valeur de retour est typable.
-
 \begin{mathpar}
-  \irule{Return}
-    { Γ, S ⊢ e : t }
-    { Γ, S ⊢ \iReturn{e} }
 \end{mathpar}
 
 \section{Fonctions}
 
-% TODO comment le détecter pour typer la fonction ? faire une fausse lvalue ?
+Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
+revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$.
 
 \begin{mathpar}
+  \irule{Return}
+    { Γ, S ⊢ \vRet ← e }
+    { Γ, S ⊢ \iReturn{e} }
+\end{mathpar}
 
+Pour typer une définition de fonction, on commence par créer un nouvel
+environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes :
+
+\begin{itemize}
+\item
+  on enlève (s'il existe) le couple $\vRet : t_f$ correspondant à la
+  valeur de retour de la fonction appelante
+\item
+  on ajoute les types des arguments $a_i : t_i$
+\item
+  on ajoute les types des variables locales $l_i : t'_i$
+\item
+  on ajoute le type de la valeur de retour de la fonction appelée,
+  $\vRet : t$
+\end{itemize}
+
+Il reste alors à vérifier que les initialiseurs $e_i$ ont le bon type $t'_i$ et
+que le corps de la fonction est bien typé sous $Γ'$. Le type de la fonction est
+alors $(t_1, …, t_n) → t$.
+
+\begin{mathpar}
   \irule{Fun}
-    { ?? }
-    { Γ, S ⊢ f : (t_1, …, t_n) → t }
-
+    {
+      Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n,
+           l_1 : t'_1, …, l_n : t'_p,
+           \vRet : t \\
+      ∀ i ∈ [1;p], Γ ⊢ e_i : t'_i \\
+      Γ' ⊢ i
+    }
+    { Γ ⊢ \mathrm{fun} (a_1, …, a_n)
+          ((l_1, e_1), …, (l_p, e_p)) \{i\}
+           : (t_1, …, t_n) → t }
 \end{mathpar}
 
 \section{Phrases}
@@ -571,17 +601,130 @@ il y a toujours une règle qui s'applique.
 \paragraph{Préservation :} l'évaluation d'un terme bien typé produit un terme
 bien typé.
 
+Puisqu'il s'agit de propriétés reliant la syntaxe à la sémantique, deux types
+d'environnement sont utilisés en même temps. D'une part, les environnement de
+typage $Γ$ pour la syntaxe, et d'autre part les environnements mémoire $m$ pour
+la sémantique. Il est nécessaire de définir une relation de compatibilité entre
+ces deux monde, pour exprimer par exemple qu'un état mémoire contient dans la
+variable $x$ un entier.
+
+\begin{definition}[Compatibilité mémoire]
+
+  Soient $Γ$ un environnement de typage et $m = x_1 ↦ v_1, …, x_n ↦ v_n$ un état
+  mémoire. On dit que $m$ est compatible avec $Γ$ si
+
+  \[
+    ∃ (t_1, …, t_n),
+    ∀ i ∈ [1;n],
+    \begin{cases} Γ ⊢ x_i : t_i
+               \\ Γ ⊢ v_i : t_i
+    \end{cases}
+  \]
+
+  On note alors $\mcomp{Γ}{m}$.
+
+  % TODO les états mémoires ne sont pas linéaires
+  % TODO il faut peut être les 2 sens
+
+\end{definition}
+
 \begin{theorem}[Progrès]
 
-  Si $Γ, S ⊢ e : t$, alors soit :
+  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Alors l'un des cas suivant est vrai :
 
 \begin{itemize}
-\item $e$ est une valeur : $∃ v, e = v$
-\item il existe $e'$ tel que $e → e'$ % TODO
-\item une erreur d'accès tableau ou pointeur se produit
+  \item $e$ est une valeur : $∃ v, e = v$
+  \item il existe $e'$ et $m'$ tels que $\mm{m}{e}{m'}{e'}$
+  \item une erreur d'accès tableau ou pointeur se produit
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
+  sur la dernière règle utilisée.
+
+\begin{itemize}
+
+  \item \textsc{Cst-Int} :
+
+    Alors $e$ est de la forme $i$, qui est une valeur. Les cas
+    \textsc{Cst-Float} et \textsc{Cst-Null} sont similaires.
+
+  \item \textsc{Lv-Var} :
+
+      Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle d'évaluation
+      \textsc{Phi-Var} s'applique donc.
+
+      % TODO prouver le coup du lookup
+
+  \item \textsc{Lv-Deref}
+
+    \textsc{Phi-Deref} s'applique, ou alors une erreur de pointeur se produit.
+    % TODO rediger
+
+  \item \textsc{Lv-Index}
+
+    \textsc{Phi-Index} s'applique, ou alors une erreur d'indice se produit.
+    % TODO rediger
+
+  \item \textsc{Lv-Field}
+
+    \textsc{Phi-Struct} s'applique.
+    % TODO rédiger
+    % TODO cohérence dans le nommage
+
+  \item \textsc{Op-Int}
+
+    \textsc{Exp-Binop} s'applique.
+    % TODO rédiger
+
+    Les cas \textsc{Op-Float}, \textsc{Op-Eq}, et \textsc{Op-Comparable} sont
+    similaires.
+
+  % TODO cohérence : ordre entre Unop et Binop
+
+  \item \textsc{Unop-Plus-Int}
+
+    \textsc{Exp-Unop} s'applique.
+    % TODO rédiger
+
+    Les cas \textsc{Unop-Minus-Int}, \textsc{Unop-Plus-Float},
+    \textsc{Unop-Minus-Float}, et \textsc{Unop-Not} sont similaires.
+
+  \item \textsc{Ptr-Arith}
+
+    \textsc{Exp-Binop} s'applique ou une erreur se produit
+    % TODO rédiger
+
+  \item \textsc{Addr}
+
+    \textsc{Exp-AddrOf} s'applique.
+    % TODO rédiger
+    % TODO cohérence
+    % TODO prouver que Lookup réussit
+
+  \item \textsc{Set}
+
+    \textsc{Exp-Lv} s'applique.
+    % TODO rédiger
+    % TODO cohérence
+
+  \item \textsc{Array}
+    \textsc{Exp-Array} s'applique.
+    % TODO rédiger
+
+  \item \textsc{Struct}
+    \textsc{Exp-Struct} s'applique.
+    % TODO rédiger
+
+  \item \textsc{Call}
+    \textsc{Exp-Call} s'applique.
+    % TODO rédiger
+
 \end{itemize}
 
-\end{theorem}
+\end{proof}
 
 Les règles précédentes ont la particularité suivante : pour chaque forme
 syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
@@ -594,12 +737,12 @@ expression.
   types de ses sous-expressions.
 
 \begin{itemize}
-\item Références mémoire
+\item Références mémoire :
   \begin{itemize}
     \item
       si $Γ ⊢ x : t$, $x : t ∈ Γ$
     \item
-      si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t$
+      si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t*$
     \item
       si $Γ ⊢ φ[] : t$, alors $Γ ⊢ φ : t[]$
     \item
@@ -617,6 +760,10 @@ expression.
     \end{cases}
   \]
 
+\item Fonction : si $Γ ⊢ \mathrm{fun} (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))
+  \{i\} : t$, alors il existe $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …,
+  t_n) → t$.
+
 \item
   Constantes
   \begin{itemize}
@@ -625,10 +772,53 @@ expression.
     \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$
   \end{itemize}
   % TODO ...
-  % TODO cas fonction
 \end{itemize}
 
 \end{lemma}
+
+\begin{proof}
+
+  Pour chaque jugement, on considère les règles qui peuvent amener à cette
+  conclusion.
+
+\begin{itemize}
+\item
+  Références mémoire :
+
+  \begin{itemize}
+
+    \item $Γ ⊢ x : t$
+
+      La seule règle de cette forme est \textsc{Lv-Var}. Puisque sa prémisse est
+      vraie, on en conclut que $x : t ∈ Γ$.
+
+    \item $Γ ⊢ *φ : t$
+
+      De même, seule la règle \textsc{Lv-Deref} convient. On en conclut que $Γ ⊢ φ : t*$.
+
+    \item $Γ ⊢ φ[] : t$
+
+      Idem avec \textsc{Lv-Index}.
+
+    \item $Γ ⊢ φ.f : t$
+
+      $Γ ⊢ φ : \{ f: t ; … \}$ %TODO sûrement différent sans S
+
+  \end{itemize}
+
+\item
+  Appel de fonction : pour en arriver à $Γ ⊢ e (e_1, …, e_n) : t$, seule la
+  règle \textsc{Call} s'applique, ce qui permet de conclure.
+
+\item Fonction : la seule règle possible pour conclure une dérivation de
+
+  \[
+    Γ ⊢ \mathrm{fun} (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p)) \{i\} : t
+  \]
+  est \textsc{Fun}.
+
+\end{itemize}
+\end{proof}
 
 Il est aussi possible de réaliser l'opération inverse : à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
@@ -638,7 +828,8 @@ $Γ = x:t$).
 
 \begin{lemma}[Formes canoniques]
 
-  Pour chaque type de valeur, il existe une unique forme syntaxique.
+  Il est possible de déterminer la forme syntaxique d'une valeur étant donné son
+  type.
 
   \begin{itemize}
   \item si $Γ ⊢ v : \tInt$, $v = n$.
@@ -646,6 +837,8 @@ $Γ = x:t$).
   \item si $Γ ⊢ v : t*$, $v = φ$.
   \item si $Γ ⊢ v : t[]$, $v = [v_1, …, v_n]$.
     %TODO structures
+  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \mathrm{fun}
+    (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))$.
   \end{itemize}
 
 \end{lemma}
@@ -676,6 +869,8 @@ $Γ = x:t$).
   Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [x/e'] : t$.
 \end{lemma}
 
+Ces lemmes permettent de prouver le théorème suivant :
+
 \begin{theorem}[Préservation]
 
   Si une expression est typable et que son évaluation produit une valeur, alors
@@ -692,7 +887,6 @@ $Γ = x:t$).
 \section*{TODO}
 
 \begin{itemize}
-\item résoudre le problème du return
 \item enlever S
 \item ordre des sections
 \item noter les flottants, fonctions et champs différemment

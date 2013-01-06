@@ -65,6 +65,8 @@
 
 \def \eNull{\textsc{Null}\xspace}
 
+\def\vRet{\underline{R}}
+
 % sets pour semantique
 \def\sId{\textsc{Id}\xspace}
 \def\sMem{\textsc{Mem}\xspace}
@@ -88,9 +90,12 @@
 \def\mmlv#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
 
 \def\mmbig#1#2#3#4{
-  \left\langle #1, #2 \right\rangle →
-  \left\langle #3, #4 \right\rangle
+  \left\langle #2, #1 \right\rangle →
+  \left\langle #4, #3 \right\rangle
 }
+
+% Compatibilité Γ / m
+\def\mcomp#1#2{#1 ⊢_{mem} #2}
 
 % Eval de phrase
 \def\ph#1#2#3{#1 ⊢ #2 → #3}
