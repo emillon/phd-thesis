@@ -621,6 +621,9 @@ variable $x$ un entier.
 
   On note alors $\mcomp{Γ}{m}$.
 
+  % TODO les états mémoires ne sont pas linéaires
+  % TODO il faut peut être les 2 sens
+
 \end{definition}
 
 \begin{theorem}[Progrès]
@@ -636,7 +639,89 @@ variable $x$ un entier.
 \end{theorem}
 
 \begin{proof}
-  On procède par induction sur la dérivation de $Γ ⊢ e : t$.
+  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
+  sur la dernière règle utilisée.
+
+\begin{itemize}
+
+  \item \textsc{Cst-Int} :
+
+    Alors $e$ est de la forme $i$, qui est une valeur. Les cas
+    \textsc{Cst-Float} et \textsc{Cst-Null} sont similaires.
+
+  \item \textsc{Lv-Var} :
+
+      Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle d'évaluation
+      \textsc{Phi-Var} s'applique donc.
+
+      % TODO prouver le coup du lookup
+
+  \item \textsc{Lv-Deref}
+
+    \textsc{Phi-Deref} s'applique, ou alors une erreur de pointeur se produit.
+    % TODO rediger
+
+  \item \textsc{Lv-Index}
+
+    \textsc{Phi-Index} s'applique, ou alors une erreur d'indice se produit.
+    % TODO rediger
+
+  \item \textsc{Lv-Field}
+
+    \textsc{Phi-Struct} s'applique.
+    % TODO rédiger
+    % TODO cohérence dans le nommage
+
+  \item \textsc{Op-Int}
+
+    \textsc{Exp-Binop} s'applique.
+    % TODO rédiger
+
+    Les cas \textsc{Op-Float}, \textsc{Op-Eq}, et \textsc{Op-Comparable} sont
+    similaires.
+
+  % TODO cohérence : ordre entre Unop et Binop
+
+  \item \textsc{Unop-Plus-Int}
+
+    \textsc{Exp-Unop} s'applique.
+    % TODO rédiger
+
+    Les cas \textsc{Unop-Minus-Int}, \textsc{Unop-Plus-Float},
+    \textsc{Unop-Minus-Float}, et \textsc{Unop-Not} sont similaires.
+
+  \item \textsc{Ptr-Arith}
+
+    \textsc{Exp-Binop} s'applique ou une erreur se produit
+    % TODO rédiger
+
+  \item \textsc{Addr}
+
+    \textsc{Exp-AddrOf} s'applique.
+    % TODO rédiger
+    % TODO cohérence
+    % TODO prouver que Lookup réussit
+
+  \item \textsc{Set}
+
+    \textsc{Exp-Lv} s'applique.
+    % TODO rédiger
+    % TODO cohérence
+
+  \item \textsc{Array}
+    \textsc{Exp-Array} s'applique.
+    % TODO rédiger
+
+  \item \textsc{Struct}
+    \textsc{Exp-Struct} s'applique.
+    % TODO rédiger
+
+  \item \textsc{Call}
+    \textsc{Exp-Call} s'applique.
+    % TODO rédiger
+
+\end{itemize}
+
 \end{proof}
 
 Les règles précédentes ont la particularité suivante : pour chaque forme

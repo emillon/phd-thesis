@@ -623,7 +623,7 @@ associe le nombre (entier) $\widehat{3}$.
 De même, une fonction n'est pas évaluée plus :
 
 \begin{mathpar}
-  \irule{Exp-Cst}
+  \irule{Exp-Fun}
     { }
     {\mm{m}{f}{m}{f}}
 \end{mathpar}
@@ -727,7 +727,6 @@ les structures : à une structure (syntaxique) correspond une valeur structurell
 dont les champs sont ceux de la première structure évalués :
 
 \begin{mathpar}
-
   \irule{Exp-Struct}
   {
     \evstar{m}{e_1 \\ \vdots \\ e_n}
@@ -736,6 +735,21 @@ dont les champs sont ceux de la première structure évalués :
   {
     \mm{m}{ \{ f_1 : e_1 ; … ; f_n : e_n \} }
       {m'}{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
+  }
+\end{mathpar}
+
+De même, l'évaluation d'un littéral de tableau se fait en évaluant de gauche à
+droite ses éléments :
+
+\begin{mathpar}
+  \irule{Exp-Array}
+  {
+    \evstar{m}{e_1 \\ \vdots \\ e_n}
+          {m'}{v_1 \\ \vdots \\ v_n}
+  }
+  {
+    \mm{m}{ [ e_1, … , e_n ] }
+      {m'}{ [ v_1, … , v_n ] }
   }
 \end{mathpar}
 
