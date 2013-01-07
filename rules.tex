@@ -32,13 +32,13 @@
                   }
                   { Γ, S ⊢ lv.f : t_f }
     }
-    {Op-Int}{ \irule{Op-Int}{
-                \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
-                Γ, S ⊢ e_1 : \tInt \\
-                Γ, S ⊢ e_2 : \tInt
-              }{
-                Γ, S ⊢ e_1~\opbin~e_2 : \tInt
-              }
+    {Op-Int}{ \irule{Op-Int}
+                { \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
+                  Γ, S ⊢ e_1 : \tInt \\
+                  Γ, S ⊢ e_2 : \tInt
+                }{
+                  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
+                }
     }
     {Op-Float}{ \irule{Op-Float}
                 { \opbin ∈ \{+.,-.,\times.,/.\} \\
@@ -69,14 +69,14 @@
                Γ, S ⊢ e_1~\opbin~e_2 : \tInt
              }
     }
-    {Op-Comparable}{ \irule{Op-Comparable}{
-                       \opbin ∈ \{=,≠,≤,≥,<,>\} \\
-                       Γ, S ⊢ e_1 : t \\
-                       Γ, S ⊢ e_2 : t \\
-                       t ∈ \{ \tInt, \tFloat \}
-                     }{
-                       Γ, S ⊢ e_1~\opbin~e_2 : \tInt
-                     }
+    {Op-Comparable}{ \irule{Op-Comparable}
+                       { \opbin ∈ \{=,≠,≤,≥,<,>\} \\
+                         Γ, S ⊢ e_1 : t \\
+                         Γ, S ⊢ e_2 : t \\
+                         t ∈ \{ \tInt, \tFloat \}
+                       }{
+                         Γ, S ⊢ e_1~\opbin~e_2 : \tInt
+                       }
     }
     {Unop-Plus-Int}{ \irule{Unop-Plus-Int}
                        { Γ, S ⊢ e : \tInt }
