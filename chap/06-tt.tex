@@ -585,12 +585,55 @@ variable $x$ un entier.
 
 \end{proof}
 
+\begin{proof}[Démonstration avec une sémantique par réduction]
+
+  Cas \textsc{Op-Int} ($\disprule{Op-Int}$).
+
+  Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
+  en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
+
+  Appliquons l'hypothèse de récurrence sur $e_1$. Trois cas peuvent se produire.
+
+\begin{itemize}
+
+  \item $e_1 = v_1$. On a alors $\mm{m}{e_1}{m'}{v_1}$ avec $m' = m$.
+
+    On applique l'hypothèse de récurrence à $e_2$.
+
+      \begin{itemize}
+
+        \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
+          peut alors appliquer \textsc{Exp-BinOp} ($\semrule{Exp-BinOp}$).
+
+        \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
+
+          En appliquant \textsc{Ctx} avec $C = \ctxOp{v_1}{\ctxEmpty}$, on
+          en déduit $\mm{m'}{v_1~\opbin~e_2}{m''}{v_1~\opbin~e'_2}$ soit
+          $\mm{m}{e}{m''}{v_1~\opbin~e'_2}$.
+
+          %TODO définir Ctx et adapter la sémantique de réduction
+
+        \item $\msi{m'}{e_2} → Ω$. On pose alors $\msi{m}{e} → Ω$.
+      \end{itemize}
+
+  \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
+    En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
+    $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
+    $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
+
+  \item $\msi{m}{e_1} → Ω$. On pose alors $\msi{m}{e} → Ω$.
+    %TODO définir Ω
+
+\end{itemize}
+
+\end{proof}
+
 Les règles précédentes ont la particularité suivante : pour chaque forme
 syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
 déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
 expression.
 
-\begin{lemma}[Inversion]
+\begin{lemma}[Inversion] \label{lemma:inversion}
 
   À partir d'un jugement de typage, on peut en déduire des inforamtions sur les
   types de ses sous-expressions.
