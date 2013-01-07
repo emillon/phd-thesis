@@ -216,3 +216,167 @@
                }
     {END}
 }
+
+\def\semrule#1{
+  \switch{#1}
+    {Phi-Var}{ \irule{Phi-Var}
+                 { a = \mathrm{Lookup}(x, m) }
+                 {
+                   \mmlv{m}{x}{m}{a}
+                 }
+    }
+    {Phi-Deref}{ \irule{Phi-Deref}
+                   { \mmlv{m}{ lv}{m'}{ φ} }
+                   { \mmlv{m}{*lv}{m'}{*φ} }
+    }
+    {Phi-Struct}{ \irule{Phi-Struct}
+                    { \mmlv{m}{lv  }{m'}{φ  } }
+                    { \mmlv{m}{lv.f}{m'}{φ.f} }
+    }
+    {Phi-Array}{ \irule{Phi-Array}
+                   { \mmlv{m}{lv}{m'}{φ} \\
+                     \mm{m'}{e}{m''}{v}
+                   }
+                   { \mmlv{m}{lv[e]}{m''}{φ[v]} }
+    }
+    {Exp-Cst}{ \irule{Exp-Cst}
+                 { }
+                 {\mm{m}{c}{m}{\widehat{c}}}
+             }
+    {Exp-Fun}{ \irule{Exp-Fun}
+                 { }
+                 {\mm{m}{f}{m}{f}}
+             }
+    {Exp-Lv}{ \irule{Exp-Lv}
+              { \mmlv{m}{lv}{m'}{φ} \\
+                v = m'[φ]
+              }
+              {\mm{m}{lv}{m'}{v}}
+    }
+    {Exp-UnOp}{ \irule{Exp-UnOp}
+                {\mm{m}{e}{m'}{v}}
+                {\mm{m}{\opun~e}{m'}{\widehat{\opun}~v}}
+    }
+    {Exp-BinOp}{ \irule{Exp-BinOp}
+                   { \opbin ∉ \{/, \%\} \\
+                       \mm{m}{e_1}{m'}{v_1} \\
+                       \mm{m'}{e_2}{m''}{v_2}
+                   }
+                   {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
+    }
+    {Exp-Div}{ \irule{Exp-Div}
+                 { \opbin ∈ \{/, \%\} \\
+                   \mm{m}{e_1}{m'}{v_1} \\
+                   \mm{m'}{e_2}{m''}{v_2}
+                   v_2 ≠ \widehat{0}
+                 }
+                 {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
+    }
+    {Exp-AddrOf}{ \irule{Exp-AddrOf}
+                    { a = \mathrm{Lookup} (x, m)
+                    }
+                    {\mm{m}{\&x}{m}{a}}
+    }
+    {Exp-Set}{ \irule{Exp-Set}
+                 { \mm{m}{e}{m'}{v} \\
+                   \mmi{m'}{lv}{m''}{φ} \\
+                   m''' = m'' [ φ ← v ]
+                 }
+                 {\mm{m}{lv ← e}{m'''}{v}}
+    }
+    {Exp-Struct}{ \irule{Exp-Struct}
+                   { \evstar{m}{e_1 \\ \vdots \\ e_n}
+                           {m'}{v_1 \\ \vdots \\ v_n}
+                   }
+                   { \mm{m}{ \{ f_1 : e_1 ; … ; f_n : e_n \} }
+                       {m'}{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
+                   }
+    }
+    {Exp-Array}{ \irule{Exp-Array}
+                 {
+                   \evstar{m}{e_1 \\ \vdots \\ e_n}
+                         {m'}{v_1 \\ \vdots \\ v_n}
+                 }
+                 {
+                   \mm{m}{ [ e_1, … , e_n ] }
+                     {m'}{ [ v_1, … , v_n ] }
+                 }
+    }
+    {Exp-Call}{ \irule{Exp-Call}
+                  { \mm{m_0}{e}{m_1}{
+                    \mathrm{fun} (a_1, …, a_n)
+                                 ((l'_1, e'_1), …, (l'_p, e'_p))
+                                 \{ i \}
+                               } \\
+                    \evstar{m_1}{e_1 \\ \vdots \\ e_n}
+                           {m_2}{v_1 \\ \vdots \\ v_n} \\
+                    m_3 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
+                    \evstar{m_3}{e'_1 \\ \vdots \\ e'_p}
+                           {m_4}{v'_1 \\ \vdots \\ v'_p} \\
+                    m_5 = \mathrm{Extend}(m_4, ((l_1, v_1), …, (l_n, v_n))) \\
+                    \mm{m_5}{i}{m_6}{\iReturn{e}} \\
+                    \mm{m_6}{e}{m_7}{v} \\
+                    m_8 = \mathrm{Pop}(m_6) \\
+                    m_9 = \mathrm{Cleanup}(m_7) \\
+                  }
+                  {\mm{m_0}{e(e_1, …, e_n)}{m_9}{v}}
+    }
+    {Seq}{ \irule{Seq}
+             { \mmi{m}{i}{m'}{\iPass} }
+             { \mmi{m}{(i;i')}{m'}{i'} }
+    }
+    {Pass}{ \irule{Pass}
+              { }
+              { \mmi{m}{(\iPass;i)}{m}{i} }
+    }
+    {Exp}{ \irule{Exp}
+             { \mm{m}{e}{m'}{v} }
+             { \mmi{m}{e}{m'}{\iPass} }
+    }
+    {If-False}{ \irule{If-False}
+                  { \mm{m}{e}{m'}{\widehat{0}} \\
+                    \mmi{m'}{i_f}{m''}{i'}
+                  }{
+                    \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
+                  }
+    }
+    {If-True}{ \irule{If-True}
+                 { \mm{m}{e}{m'}{v} \\
+                   v ≠ \widehat{0} \\
+                   \mmi{m'}{i_t}{m''}{i'}
+                 }{
+                   \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
+                 }
+    }
+    {While}{ \irule{While}
+               { }
+               { \mmi{m}{\iWhile{e}{i}}{m}{\iThen{e}{i;\iWhile{e}{i}}}
+               }
+    }
+    {Return}{ \irule{Return}
+              { }
+              { \mmi{m}{\iReturn{e};i}{m}{\iReturn{e}} }
+    }
+    {Ph-Struct}{ \irule{Ph-Struct}
+                   { }
+                   {\ph{m}{\tstruct{s} \{ … \}}{m}}
+    }
+    {Ph-Exp}{ \irule{Ph-Exp}
+                {\mm{m}{e}{m'}{v}}
+                {\ph{m}{e}{m'}}
+            }
+    {Ph-Var}{ \irule{Ph-Var}
+                {\mm{m}{e}{m'}{v}}
+                {\ph{(s,g)}{x = e}{(s, (x, v)::g)}}
+    }
+    {Ph*-Nil}{ \irule{Ph*-Nil}
+                 { }
+                 {\phstar{m}{[]}{m}}
+    }
+    {Ph*-Cons}{ \irule{Ph*-Cons}
+                  {\ph{m}{p}{m'} \\
+                   \phstar{m'}{ps}{m''}}
+                  {\phstar{m}{p::ps}{m''}}
+    }
+    {END}
+}
