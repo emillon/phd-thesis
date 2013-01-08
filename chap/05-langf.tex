@@ -189,7 +189,7 @@ associées aux variables du programme.
   \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
   \sFloat = & \textsc{IeeeFloat}(32) \\
     \sPhi = & \mathrm{fix} (\sPhi') \\
-    \sPhi'(X) = & X \\ 
+    \sPhi'(X) = & X \\
                 & \cup \sAddr \\
                 & \cup \{*φ / φ ∈ \sPhi\} \\
                 & \cup \{φ.f / φ ∈ \sPhi, f ∈ \sId\} \\
@@ -498,6 +498,81 @@ qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 
 Dans la suite, on notera uniquement $[\cdot]$ tous ces accesseurs lorsque ce
 n'est pas ambigü.
+
+\section{Contextes d'évaluation}
+
+L'évaluation des expressions repose sur la notion de contextes d'évaluation.
+L'idée est que si on peut évaluer une expression, alors on peut évaluer une
+expression qui contient celle-ci.
+
+Par exemple, supposons que $\mm{m}{f(3)}{m}{2}$. Alors on peut ajouter la
+constante $1$ à gauche de chaque expression sans changer le résultat :
+$\mm{m}{1+f(3)}{m}{1+2}$. On a utilisé le même contexte
+$C = 1+\ctxEmpty$.
+
+Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
+
+\begin{itemize}
+\item comment découper une expression selon un contextes
+\item comment appliquer une règle d'évaluation sous un contexte
+\item comment regrouper une expression et un contexte
+\end{itemize}
+
+\begin{figure}
+  \gramlr{Contextes}{
+  \begin{align*}
+  C \gramisa & \ctxEmpty
+  \\ \gramor & \ctxOp{C}{e}
+  \\ \gramor & \ctxOp{v}{C}
+  \\ \gramor & \ctxUnOp{C}
+  \\ \gramor & \ctxLvDeref{C}
+  \\ \gramor & \ctxLvField{φ}{C}
+  \\ \gramor & \ctxLvIndex{φ}{C}
+  \\ \gramor & \ctxLvIndex{C}{e}
+  \\
+  \\ \gramor & C;i 
+  \\ \gramor & \iIf{C}{i_1}{i_2}
+  \\ \gramor & \iWhile{C}{i}
+  \\ \gramor & \iReturn{C}
+  \end{align*}
+  }
+
+\caption{Contextes d'exécution}
+\label{fig:eval-ctx}
+\end{figure}
+
+Le premier point consiste à définir les contextes eux-mêmes
+(figure~\ref{fig:eval-ctx}).
+
+Le deuxième est résolu la règle d'inférence suivante :
+
+\begin{mathpar}
+  \semrule{Ctx}
+\end{mathpar}
+
+Enfin, le troisième revient à définit l'opérateur de substitution
+$\phxx{\ctxSub}$ présent dans la règle précédente.
+
+Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
+fait apparaître exactement un "$C$". Chaque contexte est donc constitué
+d'exactement un "trou" $\ctxEmpty$ (une dérivation de $C$ est toujours
+linéaire). L'opération de substitution consiste à remplacer ce trou :
+
+\begin{align*}
+  \ctxSub{\ctxEmpty}{e_0} = & e_0 \\
+  \ctxSub{(\ctxOp{C}{e}     )}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e}      \\
+  \ctxSub{(\ctxOp{v}{C}     )}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}}      \\
+  \ctxSub{(\ctxUnOp{C}      )}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}}       \\
+  \ctxSub{(\ctxLvDeref{C}   )}{e_0} = & \ctxLvDeref{\ctxSub{C}{e_0}}    \\
+  \ctxSub{(\ctxLvField{φ}{C})}{e_0} = & \ctxLvField{φ}{\ctxSub{C}{e_0}} \\
+  \ctxSub{(\ctxLvIndex{φ}{C})}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
+  \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
+  \\
+  \ctxSub{(C;i              )}{e_0} = & \ctxSub{C}{e_0};i               \\
+  \ctxSub{(\iIf{C}{i_1}{i_2})}{e_0} = & \iIf{\ctxSub{C}{e_0}}{i_1}{i_2} \\
+  \ctxSub{(\iWhile{C}{i}    )}{e_0} = & \iWhile{\ctxSub{C}{e_0}}{i}     \\
+  \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
+\end{align*}
 
 \section{Expressions}
 

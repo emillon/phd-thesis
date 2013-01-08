@@ -219,6 +219,10 @@
 
 \def\semrule#1{
   \switch{#1}
+    {Ctx}{ \irule{Ctx}
+             { \mm{m}{e}{m'}{e'} }
+             { \mm{m}{\ctxSub{C}{e}}{m'}{\ctxSub{C}{e'}} }
+    }
     {Phi-Var}{ \irule{Phi-Var}
                  { a = \mathrm{Lookup}(x, m) }
                  {

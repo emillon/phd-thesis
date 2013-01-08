@@ -100,6 +100,13 @@
 % Reduction contexts
 \def\ctxOp#1#2{#1~\opbin~#2}
 \def\ctxEmpty{\bullet\xspace}
+\def\ctxUnOp#1{\opun~#1}
+\def\ctxLvDeref#1{*#1}
+\def\ctxLvField#1#2{#1.#2}
+\def\ctxLvIndex#1#2{#1[#2]}
+
+% Context substitution
+\def\ctxSub#1#2{#1\llparenthesis#2\rrparenthesis}
 
 % Eval de phrase
 \def\ph#1#2#3{#1 ⊢ #2 → #3}
