@@ -189,7 +189,7 @@ associées aux variables du programme.
   \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
   \sFloat = & \textsc{IeeeFloat}(32) \\
     \sPhi = & \mathrm{fix} (\sPhi') \\
-    \sPhi'(X) = & X \\ 
+    \sPhi'(X) = & X \\
                 & \cup \sAddr \\
                 & \cup \{*φ / φ ∈ \sPhi\} \\
                 & \cup \{φ.f / φ ∈ \sPhi, f ∈ \sId\} \\
@@ -499,6 +499,81 @@ qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 Dans la suite, on notera uniquement $[\cdot]$ tous ces accesseurs lorsque ce
 n'est pas ambigü.
 
+\section{Contextes d'évaluation}
+
+L'évaluation des expressions repose sur la notion de contextes d'évaluation.
+L'idée est que si on peut évaluer une expression, alors on peut évaluer une
+expression qui contient celle-ci.
+
+Par exemple, supposons que $\mm{m}{f(3)}{m}{2}$. Alors on peut ajouter la
+constante $1$ à gauche de chaque expression sans changer le résultat :
+$\mm{m}{1+f(3)}{m}{1+2}$. On a utilisé le même contexte
+$C = 1+\ctxEmpty$.
+
+Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
+
+\begin{itemize}
+\item comment découper une expression selon un contextes
+\item comment appliquer une règle d'évaluation sous un contexte
+\item comment regrouper une expression et un contexte
+\end{itemize}
+
+\begin{figure}
+  \gramlr{Contextes}{
+  \begin{align*}
+  C \gramisa & \ctxEmpty
+  \\ \gramor & \ctxOp{C}{e}
+  \\ \gramor & \ctxOp{v}{C}
+  \\ \gramor & \ctxUnOp{C}
+  \\ \gramor & \ctxLvDeref{C}
+  \\ \gramor & \ctxLvField{φ}{C}
+  \\ \gramor & \ctxLvIndex{φ}{C}
+  \\ \gramor & \ctxLvIndex{C}{e}
+  \\
+  \\ \gramor & C;i 
+  \\ \gramor & \iIf{C}{i_1}{i_2}
+  \\ \gramor & \iWhile{C}{i}
+  \\ \gramor & \iReturn{C}
+  \end{align*}
+  }
+
+\caption{Contextes d'exécution}
+\label{fig:eval-ctx}
+\end{figure}
+
+Le premier point consiste à définir les contextes eux-mêmes
+(figure~\ref{fig:eval-ctx}).
+
+Le deuxième est résolu la règle d'inférence suivante :
+
+\begin{mathpar}
+  \semrule{Ctx}
+\end{mathpar}
+
+Enfin, le troisième revient à définit l'opérateur de substitution
+$\phxx{\ctxSub}$ présent dans la règle précédente.
+
+Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
+fait apparaître exactement un "$C$". Chaque contexte est donc constitué
+d'exactement un "trou" $\ctxEmpty$ (une dérivation de $C$ est toujours
+linéaire). L'opération de substitution consiste à remplacer ce trou :
+
+\begin{align*}
+  \ctxSub{\ctxEmpty}{e_0} = & e_0 \\
+  \ctxSub{(\ctxOp{C}{e}     )}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e}      \\
+  \ctxSub{(\ctxOp{v}{C}     )}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}}      \\
+  \ctxSub{(\ctxUnOp{C}      )}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}}       \\
+  \ctxSub{(\ctxLvDeref{C}   )}{e_0} = & \ctxLvDeref{\ctxSub{C}{e_0}}    \\
+  \ctxSub{(\ctxLvField{φ}{C})}{e_0} = & \ctxLvField{φ}{\ctxSub{C}{e_0}} \\
+  \ctxSub{(\ctxLvIndex{φ}{C})}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
+  \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
+  \\
+  \ctxSub{(C;i              )}{e_0} = & \ctxSub{C}{e_0};i               \\
+  \ctxSub{(\iIf{C}{i_1}{i_2})}{e_0} = & \iIf{\ctxSub{C}{e_0}}{i_1}{i_2} \\
+  \ctxSub{(\iWhile{C}{i}    )}{e_0} = & \iWhile{\ctxSub{C}{e_0}}{i}     \\
+  \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
+\end{align*}
+
 \section{Expressions}
 
 \begin{definition}[Évaluation d'une expression]
@@ -567,11 +642,7 @@ cette variable : est-elle accessible ? Le nom désigne-t'il une variable locale
 ou une variable globale ?
 
 \begin{mathpar}
-  \irule{Phi-Var}
-    { a = \mathrm{Lookup}(x, m) }
-    {
-      \mmlv{m}{x}{m}{a}
-    }
+  \semrule{Phi-Var}
 \end{mathpar}
 
 Les règles portant sur le déréférencement et l'accès à un champ de structure
@@ -579,13 +650,9 @@ sont similaires : on commence par évaluer la left-value sur laquelle porte ce
 modificateur, et on place le même modificateur sur le chemin résultant.
 
 \begin{mathpar}
-  \irule{Phi-Deref}
-    { \mmlv{m}{ lv}{m'}{ φ} }
-    { \mmlv{m}{*lv}{m'}{*φ} }
+  \semrule{Phi-Deref}
 
-  \irule{Phi-Struct}
-    { \mmlv{m}{lv  }{m'}{φ  } }
-    { \mmlv{m}{lv.f}{m'}{φ.f} }
+  \semrule{Phi-Struct}
 \end{mathpar}
 
 Enfin, pour évaluer un chemin dans un tableau, on commence par procéder comme
@@ -594,11 +661,7 @@ l'opération d'indexation. Puis on évalue l'expression d'indice en une valeur q
 permet de construire le chemin résultant.
 
 \begin{mathpar}
-  \irule{Phi-Array}
-    { \mmlv{m}{lv}{m'}{φ} \\
-      \mm{m'}{e}{m''}{v}
-    }
-    { \mmlv{m}{lv[e]}{m''}{φ[v]} }
+  \semrule{Phi-Array}
 \end{mathpar}
 
 Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite :
@@ -615,17 +678,13 @@ une valeur sémantique $\widehat{c}$. Par exemple, au chiffre (symbole) $3$, on
 associe le nombre (entier) $\widehat{3}$.
 
 \begin{mathpar}
-  \irule{Exp-Cst}
-    { }
-    {\mm{m}{c}{m}{\widehat{c}}}
+  \semrule{Exp-Cst}
 \end{mathpar}
 
 De même, une fonction n'est pas évaluée plus :
 
 \begin{mathpar}
-  \irule{Exp-Fun}
-    { }
-    {\mm{m}{f}{m}{f}}
+  \semrule{Exp-Fun}
 \end{mathpar}
 
 % TODO vraiment?
@@ -634,11 +693,7 @@ Pour lire le contenu d'un emplacement mémoire (left-value), il faut tout d'abor
 l'évaluer en un chemin.
 
 \begin{mathpar}
-  \irule{Exp-Lv}
-  { \mmlv{m}{lv}{m'}{φ} \\
-    v = m'[φ]
-  }
-  {\mm{m}{lv}{m'}{v}}
+  \semrule{Exp-Lv}
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
@@ -649,24 +704,11 @@ classique entre entiers. Afin d'interdire la division par zéro, celle ci et le
 modulo sont traités dans une règle à part.
 
 \begin{mathpar}
-  \irule{Exp-UnOp}
-  {\mm{m}{e}{m'}{v}}
-  {\mm{m}{\opun~e}{m'}{\widehat{\opun}~v}}
+  \semrule{Exp-UnOp}
 
-  \irule{Exp-BinOp}
-  { \opbin ∉ \{/, \%\} \\
-      \mm{m}{e_1}{m'}{v_1} \\
-      \mm{m'}{e_2}{m''}{v_2}
-  }
-  {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
+  \semrule{Exp-BinOp}
 
-  \irule{Exp-Div}
-  { \opbin ∈ \{/, \%\} \\
-    \mm{m}{e_1}{m'}{v_1} \\
-    \mm{m'}{e_2}{m''}{v_2}
-    v_2 ≠ \widehat{0}
-  }
-  {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
+  \semrule{Exp-Div}
 \end{mathpar}
 
 Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$
@@ -683,10 +725,7 @@ Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
 
 \begin{mathpar}
-  \irule{Exp-AddrOf}
-    { a = \mathrm{Lookup} (x, m)
-    }
-    {\mm{m}{\&x}{m}{a}}
+  \semrule{Exp-AddrOf}
 \end{mathpar}
 
 L'affectation se déroule 3 étapes : d'abord, l'expression est évaluée en une
@@ -696,13 +735,7 @@ par $v$. Comme dans le langage C, l'expression d'affectation produit une valeur,
 qui est celle qui a été affectée.
 
 \begin{mathpar}
-  \irule{Exp-Set}
-  {
-    \mm{m}{e}{m'}{v} \\
-    \mmi{m'}{lv}{m''}{φ} \\
-    m''' = m'' [ φ ← v ]
-  }
-  {\mm{m}{lv ← e}{m'''}{v}}
+  \semrule{Exp-Set}
 \end{mathpar}
 
 \subsection*{Expressions composées}
@@ -727,30 +760,14 @@ les structures : à une structure (syntaxique) correspond une valeur structurell
 dont les champs sont ceux de la première structure évalués :
 
 \begin{mathpar}
-  \irule{Exp-Struct}
-  {
-    \evstar{m}{e_1 \\ \vdots \\ e_n}
-          {m'}{v_1 \\ \vdots \\ v_n}
-  }
-  {
-    \mm{m}{ \{ f_1 : e_1 ; … ; f_n : e_n \} }
-      {m'}{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
-  }
+  \semrule{Exp-Struct}
 \end{mathpar}
 
 De même, l'évaluation d'un littéral de tableau se fait en évaluant de gauche à
 droite ses éléments :
 
 \begin{mathpar}
-  \irule{Exp-Array}
-  {
-    \evstar{m}{e_1 \\ \vdots \\ e_n}
-          {m'}{v_1 \\ \vdots \\ v_n}
-  }
-  {
-    \mm{m}{ [ e_1, … , e_n ] }
-      {m'}{ [ v_1, … , v_n ] }
-  }
+  \semrule{Exp-Array}
 \end{mathpar}
 
 \shorthandoff{!}
@@ -913,25 +930,7 @@ déréférencement de $p$ va modifier $x$.
 \end{figure}
 
 \begin{mathpar}
-  \irule{Exp-Call}
-  {
-    \mm{m_0}{e}{m_1}{
-    \mathrm{fun} (a_1, …, a_n)
-                 ((l'_1, e'_1), …, (l'_p, e'_p))
-                 \{ i \}
-               } \\
-    \evstar{m_1}{e_1 \\ \vdots \\ e_n}
-           {m_2}{v_1 \\ \vdots \\ v_n} \\
-    m_3 = \mathrm{Push}(m_1, ((a_1, v_1), …, (a_n, v_n))) \\
-    \evstar{m_3}{e'_1 \\ \vdots \\ e'_p}
-           {m_4}{v'_1 \\ \vdots \\ v'_p} \\
-    m_5 = \mathrm{Extend}(m_4, ((l_1, v_1), …, (l_n, v_n))) \\
-    \mm{m_5}{i}{m_6}{\iReturn{e}} \\
-    \mm{m_6}{e}{m_7}{v} \\
-    m_8 = \mathrm{Pop}(m_6) \\
-    m_9 = \mathrm{Cleanup}(m_7) \\
-  }
-  {\mm{m_0}{e(e_1, …, e_n)}{m_9}{v}}
+  \semrule{Exp-Call}
 \end{mathpar}
 
 Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
@@ -968,25 +967,11 @@ Les cas de la séquence et de l'affectation ont été utilisés dans l'exemple
 ci-dessus.
 
 \begin{mathpar}
-  \irule{Seq}
-    {
-      \mmi{m}{i}{m'}{\iPass}
-    }
-    {
-      \mmi{m}{(i;i')}{m'}{i'}
-    }
+  \semrule{Seq}
 
-  \irule{Pass}
-    {
-    }
-    {
-      \mmi{m}{(\iPass;i)}{m}{i}
-    }
+  \semrule{Pass}
 
-  \irule{Exp}
-    { \mm{m}{e}{m'}{v} }
-    { \mmi{m}{e}{m'}{\iPass} }
-
+  \semrule{Exp}
 \end{mathpar}
 
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
@@ -996,34 +981,15 @@ revient à évaluer la branche "else". Dans les autres cas, c'est la règle
 \textsc{If-True} qui s'applique et la branche "then" qui est prise.
 
 \begin{mathpar}
-  \irule{If-False}
-    {
-      \mm{m}{e}{m'}{\widehat{0}} \\
-      \mmi{m'}{i_f}{m''}{i'}
-    }
-    {
-      \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
-    }
+  \semrule{If-False}
 
-  \irule{If-True}
-    {
-      \mm{m}{e}{m'}{v} \\
-      v ≠ \widehat{0} \\
-      \mmi{m'}{i_t}{m''}{i'}
-    }
-    {
-      \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
-    }
+  \semrule{If-True}
 \end{mathpar}
 
 Le traitement de la boucle est une simple règle de réécriture :
 
 \begin{mathpar}
-  \irule{While}
-    { }
-    {
-      \mmi{m}{\iWhile{e}{i}}{m}{\iThen{e}{i;\iWhile{e}{i}}}
-    }
+  \semrule{While}
 \end{mathpar}
 
 Cette règle revient à dire qu'on peut dérouler une boucle. Pour la comprendre,
@@ -1080,9 +1046,7 @@ if(e) {
 Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 \begin{mathpar}
-  \irule{Return}
-  { }
-  { \mmi{m}{\iReturn{e};i}{m}{\iReturn{e}} }
+  \semrule{Return}
 \end{mathpar}
 
 \section{Phrases}
@@ -1101,9 +1065,7 @@ La définition d'une structure est ignorée. En effet, celle-ci ne sert qu'au
 typage.
 
 \begin{mathpar}
-  \irule{Ph-Struct}
-    { }
-    {\ph{m}{\tstruct{s} \{ … \}}{m}}
+  \semrule{Ph-Struct}
 \end{mathpar}
 
 L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
@@ -1111,18 +1073,14 @@ exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$.
 
 \begin{mathpar}
-  \irule{Ph-Exp}
-    {\mm{m}{e}{m'}{v}}
-    {\ph{m}{e}{m'}}
+  \semrule{Ph-Exp}
 \end{mathpar}
 
 La déclaration d'une variable globale (avec un initialiseur) consiste à évaluer
 cet initialiseur et à étendre l'état mémoire avec ce couple (variable, valeur).
 
 \begin{mathpar}
-  \irule{Ph-Var}
-    {\mm{m}{e}{m'}{v}}
-    {\ph{(s,g)}{x = e}{(s, (x, v)::g)}}
+  \semrule{Ph-Var}
 \end{mathpar}
 
 \section{Exécution}
@@ -1133,14 +1091,9 @@ unes à la suite des autres.
 On commence par étendre l'extension $→^*$ au listes de la relation $→$ :
 
 \begin{mathpar}
-  \irule{Ph*-Nil}
-    { }
-    {\phstar{m}{[]}{m}}
+  \semrule{Ph*-Nil}
 
-  \irule{Ph*-Cons}
-    {\ph{m}{p}{m'} \\
-     \phstar{m'}{ps}{m''}}
-    {\phstar{m}{p::ps}{m''}}
+  \semrule{Ph*-Cons}
 \end{mathpar}
 
 L'exécution d'un programme est alors :

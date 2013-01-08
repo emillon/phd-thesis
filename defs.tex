@@ -97,6 +97,17 @@
 % Compatibilité Γ / m
 \def\mcomp#1#2{#1 ⊢_{mem} #2}
 
+% Reduction contexts
+\def\ctxOp#1#2{#1~\opbin~#2}
+\def\ctxEmpty{\bullet\xspace}
+\def\ctxUnOp#1{\opun~#1}
+\def\ctxLvDeref#1{*#1}
+\def\ctxLvField#1#2{#1.#2}
+\def\ctxLvIndex#1#2{#1[#2]}
+
+% Context substitution
+\def\ctxSub#1#2{#1\llparenthesis#2\rrparenthesis}
+
 % Eval de phrase
 \def\ph#1#2#3{#1 ⊢ #2 → #3}
 
@@ -255,4 +266,27 @@
 % {{{ subtitle command
 \newcommand\subtitle[1]{%
   \newcommand\thesubtitle{#1}}
+% }}}
+
+% switch {{{
+\def\switch#1#2{
+  \ifstrequal{#2}{END}{
+    \errmessage{switch : case "#1" not found}
+  }{
+    \switchnext{#1}{#2}
+  }
+}
+
+\def\switchnext#1#2#3{
+  \ifstrequal{#1}{#2}
+    {#3\switchlast}
+    {
+      \switch{#1}
+    }
+}
+
+\def\switchlast#1{
+  \ifstrequal{#1}{END}{}
+  {\switchlast}
+}
 % }}}

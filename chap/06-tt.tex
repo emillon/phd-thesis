@@ -213,22 +213,16 @@ ce sont toujours des entiers ou des flottants.
 
 \begin{mathpar}
 
-  \irule{Cst-Int}
-    { }
-    { Γ, S ⊢ i : \tInt}
+  \disprule{Cst-Int}
 
-  \irule{Cst-Float}
-    { }
-    { Γ, S ⊢ f : \tFloat}
+  \disprule{Cst-Float}
 
 \end{mathpar}
 
 Le pointeur nul, quant à lui, est compatible avec tous les types pointeur.
 
 \begin{mathpar}
-  \irule{Cst-Null}
-    { }
-    { Γ, S ⊢ \eNull : t*}
+  \disprule{Cst-Null}
 \end{mathpar}
 
 \subsection*{Left-values}
@@ -238,9 +232,7 @@ accessibles du programme. Le cas où la left-value à typer est une variable est
 donc direct : il suffit de retrouver son type dans l'environnement.
 
 \begin{mathpar}
-  \irule{Lv-Var}
-    { x : t ∈ Γ }
-    { Γ, S ⊢ x : t }
+  \disprule{Lv-Var}
 \end{mathpar}
 
 Dans le cas d'un déréférencement, on commence par typer la left-value
@@ -248,9 +240,7 @@ déréférencée. Si elle a un type pointeur, la valeur déréférencée est du 
 pointé.
 
 \begin{mathpar}
-  \irule{Lv-Deref}
-    { Γ, S ⊢ lv : t* }
-    { Γ, S ⊢ *lv : t }
+  \disprule{Lv-Deref}
 \end{mathpar}
 
 Pour une left-value indexée (l'accès à tableau), on s'assure que l'indice soit
@@ -258,11 +248,7 @@ entier, et que la left-value a un type tableau : le type de l'élement est encor
 une fois le type de base du type tableau ($t$ pour $t[]$).
 
 \begin{mathpar}
-  \irule{Lv-Index}
-    { Γ, S ⊢ e : \tInt \\
-      Γ, S ⊢ lv : t[]
-    }
-    { Γ, S ⊢ lv[e] : t }
+  \disprule{Lv-Index}
 \end{mathpar}
 
 Enfin, le typage de l'accès à un champ nécessite d'accéder à l'environnement de
@@ -270,11 +256,7 @@ structures $S$. L'existence d'un triplet $(s, f, t_f)$ tel que $lv$ est
 typable en $t_s$ permet de typer $lv.f$ en $\tstruct{s}$.
 
 \begin{mathpar}
-  \irule{Lv-Field}
-    { (s, f, t_f) ∈ S \\
-      Γ, S ⊢ lv : \tstruct{s}
-    }
-    { Γ, S ⊢ lv.f : t_f }
+  \disprule{Lv-Field}
 \end{mathpar}
 
 \subsection*{Opérateurs}
@@ -282,25 +264,13 @@ typable en $t_s$ permet de typer $lv.f$ en $\tstruct{s}$.
 Un certain nombre d'opérations est possible sur le type \tInt.
 
 \begin{mathpar}
-\irule{Op-Int}{
-  \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
-  Γ, S ⊢ e_1 : \tInt \\
-  Γ, S ⊢ e_2 : \tInt
-}{
-  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
-}
+  \disprule{Op-Int}
 \end{mathpar}
 
 De même sur \tFloat.
 
 \begin{mathpar}
-\irule{Op-Float}{
-  \opbin ∈ \{+.,-.,\times.,/.\} \\
-  Γ, S ⊢ e_1 : \tFloat \\
-  Γ, S ⊢ e_2 : \tFloat
-}{
-  Γ, S ⊢ e_1~\opbin~e_2 : \tFloat
-}
+  \disprule{Op-Float}
 \end{mathpar}
 
 Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
@@ -309,26 +279,13 @@ $\textsc{Eq}(t)$ qui est vrai pour les types \tInt, \tFloat et pointeurs. Les
 opérateurs $=$ et $≠$ renvoient alors un \tInt.
 
 \begin{mathpar}
-\irule{Eq-Num}
-  {t ∈ \{ \tInt, \tFloat \}}
-  {\textsc{Eq}(t)}
+\disprule{Eq-Num}
 
-\irule{Eq-Ptr}
-  {\textsc{Eq}(t)}
-  {\textsc{Eq}(t*)}
+\disprule{Eq-Ptr}
 
-\irule{Eq-Array}
-  {\textsc{Eq}(t)}
-  {\textsc{Eq}(t[])}
+\disprule{Eq-Array}
 
-\irule{Op-Eq}{
-  \opbin ∈ \{=,≠\} \\
-  Γ, S ⊢ e_1 : t \\
-  Γ, S ⊢ e_2 : t \\
-  \textsc{Eq}(t)
-}{
-  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
-}
+\disprule{Op-Eq}
 \end{mathpar}
 
 %TODO Eq-Struct
@@ -337,14 +294,7 @@ Les comparaisons sont plus restrictives, et ne s'appliquent qu'aux types
 primitifs (on ne peut pas comparer deux pointeurs, ou deux tableaux).
 
 \begin{mathpar}
-\irule{Op-Comparable}{
-  \opbin ∈ \{=,≠,≤,≥,<,>\} \\
-  Γ, S ⊢ e_1 : t \\
-  Γ, S ⊢ e_2 : t \\
-  t ∈ \{ \tInt, \tFloat \}
-}{
-  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
-}
+  \disprule{Op-Comparable}
 \end{mathpar}
 
 % TODO extensions aux structs et tableaux
@@ -353,36 +303,26 @@ Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalen
 "$+.$" et "$-.$" aux \tFloat.
 
 \begin{mathpar}
-\irule{Unop-Plus-Int}{ Γ, S ⊢ e : \tInt }{ Γ, S ⊢ + e : \tInt }
+\disprule{Unop-Plus-Int}
 \and
-\irule{Unop-Plus-Float}{ Γ, S ⊢ e : \tFloat }{ Γ, S ⊢ +. e : \tFloat }
+\disprule{Unop-Plus-Float}
 
-\irule{Unop-Minus-Int}{ Γ, S ⊢ e : \tInt }{ Γ, S ⊢ - e : \tInt }
+\disprule{Unop-Minus-Int}
 \and
-\irule{Unop-Minus-Float}{ Γ, S ⊢ e : \tFloat }{ Γ, S ⊢ -. e : \tFloat }
+\disprule{Unop-Minus-Float}
 \end{mathpar}
 
 Les opérateurs de négation unaires, en revanche, ne s'appliquent qu'aux
 entiers.
 
 \begin{mathpar}
-\irule{Unop-Not}{
-  \opun ∈ \{ \sim, ! \} \\
-  Γ, S ⊢ e : \tInt
-}{
-  Γ, S ⊢ \opun~e : \tInt
-}
+  \disprule{Unop-Not}
 \end{mathpar}
 
 L'arithmétique de pointeurs préserve le type des pointeurs.
 
 \begin{mathpar}
-\irule{Ptr-Arith}
-  { \opbin ∈ \{ +_p, -_p \} \\
-    Γ, S ⊢ e_1 : t* \\
-    Γ, S ⊢ e_2 : \tInt \\
-  }
-  { Γ, S ⊢ e_1~\opbin~e_2 : t* }
+  \disprule{Ptr-Arith}
 \end{mathpar}
 
 \subsection*{Autres expressions}
@@ -391,9 +331,7 @@ Prendre l'adresse d'une left-value rend un type pointeur sur le type de
 celle-ci.
 
 \begin{mathpar}
-  \irule{Addr}
-    { Γ, S ⊢ lv : t }
-    { Γ, S ⊢ \&lv : t* }
+  \disprule{Addr}
 \end{mathpar}
 
 Pour typer une affectation, on vérifie que la left-value (à gauche) et
@@ -401,23 +339,14 @@ l'expression (à droite) ont le même type. C'est alors le type résultat de
 l'expression d'affectation.
 
 \begin{mathpar}
-  \irule{Set}
-    { Γ, S ⊢ lv : t \\
-      Γ, S ⊢ e : t
-    }
-    { Γ, S ⊢ lv ← e : t }
+  \disprule{Set}
 \end{mathpar}
 
 Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
 éléments.
 
 \begin{mathpar}
-  \irule{Array}
-    { ∀ i ∈ [1;n] , Γ, S ⊢ e_i : t }
-    { Γ, S ⊢ \{ e_1 ;
-            … ; e_n \}
-            : t[]
-    }
+  \disprule{Array}
 \end{mathpar}
 
 Pour qu'un littéral de structure soit bien typé, il faut que chacun de ses noms
@@ -425,14 +354,7 @@ de champs corresponde à un même nom de type structure, avec le bon type pour
 chaque champ.
 
 \begin{mathpar}
-  \irule{Struct}
-    { ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i \\
-      ∀ i ∈ [1;n], (s, f_i, t_i) ∈ S
-    }
-    { Γ, S ⊢ \{ f_1 : e_1 ;
-            … ; f_n : e_n \}
-            : \tstruct{s}
-    }
+  \disprule{Struct}
 \end{mathpar}
 
 Pour typer un appel de fonction, on s'assure que la fonction a bien un type
@@ -440,17 +362,7 @@ fonctionnel. On type alors chacun des arguments avec le type attendu. Le
 résultat est du type de retour de la fonction.
 
 \begin{mathpar}
-  \irule{Call}
-    { Γ, S ⊢ e : ( t_1 ,
-               … , t_n ) → t \\
-      ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i
-    }
-    { Γ, S ⊢ e ( e_1
-               , …
-               , e_n
-               )
-            : t
-    }
+  \disprule{Call}
 \end{mathpar}
 
 \section{Instructions}
@@ -459,46 +371,25 @@ La séquence est simple à traiter : l'instruction vide est toujours bien typée
 et la suite de deux instructions est bien typée si celles-ci le sont également.
 
 \begin{mathpar}
-  \irule{Pass}
-    { }
-    {Γ, S ⊢ \iPass}
+  \disprule{Pass}
 
-  \irule{Seq}{
-    Γ, S ⊢ i_1 \\
-    Γ, S ⊢ i_2
-  }{
-    Γ, S ⊢ i_1;i_2
-  }
+  \disprule{Seq}
 \end{mathpar}
 
 Une instruction constituée d'une expression est bien typée si celle-ci peut être
 typée dans ce même contexte.
 
 \begin{mathpar}
-  \irule{Exp}
-    { Γ, S ⊢ e : t }
-    { Γ, S ⊢ e }
+  \disprule{Exp}
 \end{mathpar}
 
 Les constructions de contrôle sont bien typées si leurs sous-instructions sont
 bien typées, et si la condition est d'un type entier.
 
 \begin{mathpar}
-  \irule{If}
-    { Γ, S ⊢ e : \tInt \\
-      Γ, S ⊢ i_1 \\
-      Γ, S ⊢ i_2
-    }
-    { Γ, S ⊢ \iIf{e}{i_1}{i_2} }
+  \disprule{If}
 
-  \irule{While}
-    { Γ, S ⊢ e : \tInt \\
-      Γ, S ⊢ i
-    }
-    { Γ, S ⊢ \iWhile{e}{i} }
-\end{mathpar}
-
-\begin{mathpar}
+  \disprule{While}
 \end{mathpar}
 
 \section{Fonctions}
@@ -507,9 +398,7 @@ Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
 revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$.
 
 \begin{mathpar}
-  \irule{Return}
-    { Γ, S ⊢ \vRet ← e }
-    { Γ, S ⊢ \iReturn{e} }
+  \disprule{Return}
 \end{mathpar}
 
 Pour typer une définition de fonction, on commence par créer un nouvel
@@ -533,17 +422,7 @@ que le corps de la fonction est bien typé sous $Γ'$. Le type de la fonction es
 alors $(t_1, …, t_n) → t$.
 
 \begin{mathpar}
-  \irule{Fun}
-    {
-      Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n,
-           l_1 : t'_1, …, l_n : t'_p,
-           \vRet : t \\
-      ∀ i ∈ [1;p], Γ ⊢ e_i : t'_i \\
-      Γ' ⊢ i
-    }
-    { Γ ⊢ \mathrm{fun} (a_1, …, a_n)
-          ((l_1, e_1), …, (l_p, e_p)) \{i\}
-           : (t_1, …, t_n) → t }
+  \disprule{Fun}
 \end{mathpar}
 
 \section{Phrases}
@@ -553,41 +432,21 @@ L'évaluation d'une expression est le cas le plus simple. En effet, il y a juste
 départ. L'environnement n'est pas modifié.
 
 \begin{mathpar}
-  \irule{Ph-Exp}
-    { Γ, S ⊢ e : t }
-    { \typh{Γ}{S}{e}{Γ}{S} }
+  \disprule{Ph-Exp}
 \end{mathpar}
 
 La déclaration d'une variable globale commence de la même manière, mais on
 enrichit l'environnement de cette nouvelle valeur.
 
 \begin{mathpar}
-  \irule{Ph-Var}
-    { Γ, S ⊢ e : t \\
-      Γ' = (x, t), Γ
-    }
-    { \typh{Γ}{S}{p}{Γ'}{S} }
+  \disprule{Ph-Var}
 \end{mathpar}
 
 La déclaration d'une structure ne modifie pas $Γ$, mais ajoute $n$ triplets
 $(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
 
 \begin{mathpar}
-
-  \irule{Ph-Struct}
-    { S' =
-      (x_1, t_1, s),
-      …
-      (x_n, t_n, s), S
-    }
-    { \typh{Γ}{S}{ \tstruct{s}
-                      \{ x_1 : t_1
-                       ; …
-                       ;  x_n : t_n
-                      \}
-                  }{Γ}{S'}
-    }
-
+  \disprule{Ph-Struct}
 \end{mathpar}
 
 \section{Sûreté du typage}
@@ -726,12 +585,55 @@ variable $x$ un entier.
 
 \end{proof}
 
+\begin{proof}[Démonstration avec une sémantique par réduction]
+
+  Cas \textsc{Op-Int} ($\disprule{Op-Int}$).
+
+  Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
+  en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
+
+  Appliquons l'hypothèse de récurrence sur $e_1$. Trois cas peuvent se produire.
+
+\begin{itemize}
+
+  \item $e_1 = v_1$. On a alors $\mm{m}{e_1}{m'}{v_1}$ avec $m' = m$.
+
+    On applique l'hypothèse de récurrence à $e_2$.
+
+      \begin{itemize}
+
+        \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
+          peut alors appliquer \textsc{Exp-BinOp} ($\semrule{Exp-BinOp}$).
+
+        \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
+
+          En appliquant \textsc{Ctx} avec $C = \ctxOp{v_1}{\ctxEmpty}$, on
+          en déduit $\mm{m'}{v_1~\opbin~e_2}{m''}{v_1~\opbin~e'_2}$ soit
+          $\mm{m}{e}{m''}{v_1~\opbin~e'_2}$.
+
+          %TODO définir Ctx et adapter la sémantique de réduction
+
+        \item $\msi{m'}{e_2} → Ω$. On pose alors $\msi{m}{e} → Ω$.
+      \end{itemize}
+
+  \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
+    En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
+    $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
+    $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
+
+  \item $\msi{m}{e_1} → Ω$. On pose alors $\msi{m}{e} → Ω$.
+    %TODO définir Ω
+
+\end{itemize}
+
+\end{proof}
+
 Les règles précédentes ont la particularité suivante : pour chaque forme
 syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
 déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
 expression.
 
-\begin{lemma}[Inversion]
+\begin{lemma}[Inversion] \label{lemma:inversion}
 
   À partir d'un jugement de typage, on peut en déduire des inforamtions sur les
   types de ses sous-expressions.
