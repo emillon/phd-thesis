@@ -451,8 +451,13 @@ $(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
 
 \section{Sûreté du typage}
 
-Comme le dit Robin Milner, "Well-typed programs don't go wrong". C'est à dire
-qu'un programme bien typé possède des propriétés de sûreté.
+Comme dit l'adage :
+
+\begin{quote}
+"Well-typed programs don't go wrong." (Robin Milner)
+\end{quote}
+
+C'est à dire qu'un programme bien typé possède des propriétés de sûreté.
 
 \paragraph{Progrès :} l'évaluation d'un terme bien typé ne reste pas bloquée;
 il y a toujours une règle qui s'applique.
@@ -587,7 +592,7 @@ variable $x$ un entier.
 
 \begin{proof}[Démonstration avec une sémantique par réduction]
 
-  Cas \textsc{Op-Int} ($\disprule{Op-Int}$).
+  Cas \textsc{Op-Int}.
 
   Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
   en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
@@ -603,7 +608,7 @@ variable $x$ un entier.
       \begin{itemize}
 
         \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
-          peut alors appliquer \textsc{Exp-BinOp} ($\semrule{Exp-BinOp}$).
+          peut alors appliquer \textsc{Exp-BinOp}.
 
         \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
 

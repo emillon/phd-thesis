@@ -574,14 +574,14 @@ linéaire). L'opération de substitution consiste à remplacer ce trou :
   \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
 \end{align*}
 
-Une dérivation.
+Exemple de dérivation.
 
 \begin{mathpar}
 \inferrule*
   {
     \inferrule*[vdots=2em]
       {
-        \inferrule*[leftskip=4cm, vdots=2em]
+        \inferrule*[right=(Ctx), leftskip=4cm, vdots=2em]
           {
             \mmstar{m}{e_1}{m'}{v_1}
             \\
@@ -591,7 +591,7 @@ Une dérivation.
             \mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}
           }
         \\
-        \inferrule*[rightskip=4cm, vdots=2em]
+        \inferrule*[right=(Ctx), rightskip=4cm, vdots=2em]
           {
             \mmstar{m'}{e_2}{m''}{v_2}
             \\
@@ -603,7 +603,7 @@ Une dérivation.
       }
       { \mmstar{m}{e}{m''}{v_1\opbin~v_2} }
     \\
-    \inferrule*[rightskip=2cm, vdots=2em]
+    \inferrule*[right=(Exp-BinOp), rightskip=2cm, vdots=2em]
       { }
       { \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2} }
   }
