@@ -592,7 +592,19 @@ variable $x$ un entier.
 
 \begin{proof}[Démonstration avec une sémantique par réduction]
 
-  Cas \textsc{Op-Int}.
+  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
+  sur la dernière règle utilisée.
+
+  \paragraph{\textsc{Cst-Int} :} % {{{
+$e$ est alors de la forme $n$, qui est une valeur.
+%}}}
+  \paragraph{\textsc{Cst-Float} :} % {{{
+$e$ est alors de la forme $f$, qui est une valeur.
+%}}}
+  \paragraph{\textsc{Cst-Null} :} % {{{
+$e$ est alors égal à $\eNull$, qui est une valeur.
+%}}}
+  \paragraph{\textsc{Op-Int} :} % {{{
 
   Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
   en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
@@ -630,6 +642,27 @@ variable $x$ un entier.
     %TODO définir Ω
 
 \end{itemize}
+
+% }}}
+\paragraph{\textsc{Unop-Plus-Int} :} % {{{
+
+Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
+
+\begin{itemize}
+\item
+  soit $e_1 = v_1$. Alors en appliquant \textsc{Exp-UnOp},
+  $\mm{m}{+~v_1}{m}{\widehat{+}~v_1}$, c'est à dire en posant $v =
+  \widehat{+}~v_1$, $\mm{m}{e}{m}{v}$.
+% TODO écrire la règle
+\item
+  soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
+avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
+\item
+  soit $\msi{m}{e_1} → Ω$. Alors on pose $\msi{m}{e} → Ω$.
+  % TODO ?
+\end{itemize}
+
+% }}}
 
 \end{proof}
 
