@@ -2,50 +2,50 @@
   \switch{#1}
     {Cst-Int}{ \irule{Cst-Int}
                  { }
-                 { Γ, S ⊢ i : \tInt}
+                 { Γ ⊢ i : \tInt}
     }
     {Cst-Float}{ \irule{Cst-Float}
                    { }
-                   { Γ, S ⊢ f : \tFloat}
+                   { Γ ⊢ f : \tFloat}
     }
     {Cst-Null}{ \irule{Cst-Null}
                   { }
-                  { Γ, S ⊢ \eNull : t*}
+                  { Γ ⊢ \eNull : t*}
     }
     {Lv-Var}{ \irule{Lv-Var}
                 { x : t ∈ Γ }
-                { Γ, S ⊢ x : t }
+                { Γ ⊢ x : t }
     }
     {Lv-Deref}{ \irule{Lv-Deref}
-                  { Γ, S ⊢ lv : t* }
-                  { Γ, S ⊢ *lv : t }
+                  { Γ ⊢ lv : t* }
+                  { Γ ⊢ *lv : t }
     }
     {Lv-Index}{ \irule{Lv-Index}
-                  { Γ, S ⊢ e : \tInt \\
-                    Γ, S ⊢ lv : t[]
+                  { Γ ⊢ e : \tInt \\
+                    Γ ⊢ lv : t[]
                   }
-                  { Γ, S ⊢ lv[e] : t }
+                  { Γ ⊢ lv[e] : t }
     }
     {Lv-Field}{ \irule{Lv-Field}
                   { (s, f, t_f) ∈ S \\
-                    Γ, S ⊢ lv : \tstruct{s}
+                    Γ ⊢ lv : \tstruct{s}
                   }
-                  { Γ, S ⊢ lv.f : t_f }
+                  { Γ ⊢ lv.f : t_f }
     }
     {Op-Int}{ \irule{Op-Int}
                 { \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
-                  Γ, S ⊢ e_1 : \tInt \\
-                  Γ, S ⊢ e_2 : \tInt
+                  Γ ⊢ e_1 : \tInt \\
+                  Γ ⊢ e_2 : \tInt
                 }{
-                  Γ, S ⊢ e_1~\opbin~e_2 : \tInt
+                  Γ ⊢ e_1~\opbin~e_2 : \tInt
                 }
     }
     {Op-Float}{ \irule{Op-Float}
                 { \opbin ∈ \{+.,-.,\times.,/.\} \\
-                  Γ, S ⊢ e_1 : \tFloat \\
-                  Γ, S ⊢ e_2 : \tFloat
+                  Γ ⊢ e_1 : \tFloat \\
+                  Γ ⊢ e_2 : \tFloat
                 }{
-                  Γ, S ⊢ e_1~\opbin~e_2 : \tFloat
+                  Γ ⊢ e_1~\opbin~e_2 : \tFloat
                 }
     }
     {Eq-Num}{ \irule{Eq-Num}
@@ -62,84 +62,84 @@
     }
     {Op-Eq}{ \irule{Op-Eq}
              { \opbin ∈ \{=,≠\} \\
-               Γ, S ⊢ e_1 : t \\
-               Γ, S ⊢ e_2 : t \\
+               Γ ⊢ e_1 : t \\
+               Γ ⊢ e_2 : t \\
                \textsc{Eq}(t)
              }{
-               Γ, S ⊢ e_1~\opbin~e_2 : \tInt
+               Γ ⊢ e_1~\opbin~e_2 : \tInt
              }
     }
     {Op-Comparable}{ \irule{Op-Comparable}
                        { \opbin ∈ \{=,≠,≤,≥,<,>\} \\
-                         Γ, S ⊢ e_1 : t \\
-                         Γ, S ⊢ e_2 : t \\
+                         Γ ⊢ e_1 : t \\
+                         Γ ⊢ e_2 : t \\
                          t ∈ \{ \tInt, \tFloat \}
                        }{
-                         Γ, S ⊢ e_1~\opbin~e_2 : \tInt
+                         Γ ⊢ e_1~\opbin~e_2 : \tInt
                        }
     }
     {Unop-Plus-Int}{ \irule{Unop-Plus-Int}
-                       { Γ, S ⊢ e : \tInt }
-                       { Γ, S ⊢ + e : \tInt }
+                       { Γ ⊢ e : \tInt }
+                       { Γ ⊢ + e : \tInt }
     }
     {Unop-Plus-Float}{ \irule{Unop-Plus-Float}
-                         { Γ, S ⊢ e : \tFloat }
-                         { Γ, S ⊢ +. e : \tFloat }
+                         { Γ ⊢ e : \tFloat }
+                         { Γ ⊢ +. e : \tFloat }
     }
     {Unop-Minus-Int}{ \irule{Unop-Minus-Int}
-                        { Γ, S ⊢ e : \tInt }
-                        { Γ, S ⊢ - e : \tInt }
+                        { Γ ⊢ e : \tInt }
+                        { Γ ⊢ - e : \tInt }
     }
     {Unop-Minus-Float}{ \irule{Unop-Minus-Float}
-                          { Γ, S ⊢ e : \tFloat }
-                          { Γ, S ⊢ -. e : \tFloat }
+                          { Γ ⊢ e : \tFloat }
+                          { Γ ⊢ -. e : \tFloat }
     }
     {Unop-Not}{ \irule{Unop-Not}
                 { \opun ∈ \{ \sim, ! \} \\
-                  Γ, S ⊢ e : \tInt
+                  Γ ⊢ e : \tInt
                 }{
-                  Γ, S ⊢ \opun~e : \tInt
+                  Γ ⊢ \opun~e : \tInt
                 }
               }
     {Ptr-Arith}{ \irule{Ptr-Arith}
                    { \opbin ∈ \{ +_p, -_p \} \\
-                     Γ, S ⊢ e_1 : t* \\
-                     Γ, S ⊢ e_2 : \tInt \\
+                     Γ ⊢ e_1 : t* \\
+                     Γ ⊢ e_2 : \tInt \\
                    }
-                   { Γ, S ⊢ e_1~\opbin~e_2 : t* }
+                   { Γ ⊢ e_1~\opbin~e_2 : t* }
                }
     {Addr}{ \irule{Addr}
-              { Γ, S ⊢ lv : t }
-              { Γ, S ⊢ \&lv : t* }
+              { Γ ⊢ lv : t }
+              { Γ ⊢ \&lv : t* }
           }
     {Set}{ \irule{Set}
-             { Γ, S ⊢ lv : t \\
-               Γ, S ⊢ e : t
+             { Γ ⊢ lv : t \\
+               Γ ⊢ e : t
              }
-             { Γ, S ⊢ lv ← e : t }
+             { Γ ⊢ lv ← e : t }
          }
     {Array}{ \irule{Array}
-               { ∀ i ∈ [1;n] , Γ, S ⊢ e_i : t }
-               { Γ, S ⊢ \{ e_1 ;
+               { ∀ i ∈ [1;n] , Γ ⊢ e_i : t }
+               { Γ ⊢ \{ e_1 ;
                        … ; e_n \}
                        : t[]
                }
            }
     {Struct}{ \irule{Struct}
-                { ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i \\
+                { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i \\
                   ∀ i ∈ [1;n], (s, f_i, t_i) ∈ S
                 }
-                { Γ, S ⊢ \{ f_1 : e_1 ;
+                { Γ ⊢ \{ f_1 : e_1 ;
                         … ; f_n : e_n \}
                         : \tstruct{s}
                 }
             }
     {Call}{ \irule{Call}
-              { Γ, S ⊢ e : ( t_1 ,
+              { Γ ⊢ e : ( t_1 ,
                          … , t_n ) → t \\
-                ∀ i ∈ [1;n], Γ, S ⊢ e_i : t_i
+                ∀ i ∈ [1;n], Γ ⊢ e_i : t_i
               }
-              { Γ, S ⊢ e ( e_1
+              { Γ ⊢ e ( e_1
                          , …
                          , e_n
                          )
@@ -148,35 +148,35 @@
           }
     {Pass}{ \irule{Pass}
               { }
-              {Γ, S ⊢ \iPass}
+              {Γ ⊢ \iPass}
           }
     {Seq}{ \irule{Seq}
-             { Γ, S ⊢ i_1 \\
-               Γ, S ⊢ i_2
+             { Γ ⊢ i_1 \\
+               Γ ⊢ i_2
              }{
-               Γ, S ⊢ i_1;i_2
+               Γ ⊢ i_1;i_2
              }
          }
     {Exp}{ \irule{Exp}
-             { Γ, S ⊢ e : t }
-             { Γ, S ⊢ e }
+             { Γ ⊢ e : t }
+             { Γ ⊢ e }
          }
     {If}{ \irule{If}
-            { Γ, S ⊢ e : \tInt \\
-              Γ, S ⊢ i_1 \\
-              Γ, S ⊢ i_2
+            { Γ ⊢ e : \tInt \\
+              Γ ⊢ i_1 \\
+              Γ ⊢ i_2
             }
-            { Γ, S ⊢ \iIf{e}{i_1}{i_2} }
+            { Γ ⊢ \iIf{e}{i_1}{i_2} }
         }
     {While}{ \irule{While}
-               { Γ, S ⊢ e : \tInt \\
-                 Γ, S ⊢ i
+               { Γ ⊢ e : \tInt \\
+                 Γ ⊢ i
                }
-               { Γ, S ⊢ \iWhile{e}{i} }
+               { Γ ⊢ \iWhile{e}{i} }
            }
     {Return}{ \irule{Return}
-                { Γ, S ⊢ \vRet ← e }
-                { Γ, S ⊢ \iReturn{e} }
+                { Γ ⊢ \vRet ← e }
+                { Γ ⊢ \iReturn{e} }
             }
     {Fun}{ \irule{Fun}
              { Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n,
@@ -191,29 +191,29 @@
              }
          }
     {Ph-Exp}{ \irule{Ph-Exp}
-                { Γ, S ⊢ e : t }
-                { \typh{Γ}{S}{e}{Γ}{S} }
+                { Γ ⊢ e : t }
+                { \typh{Γ}{e}{Γ} }
             }
     {Ph-Var}{ \irule{Ph-Var}
-                { Γ, S ⊢ e : t \\
+                { Γ ⊢ e : t \\
                   Γ' = (x, t), Γ
                 }
-                { \typh{Γ}{S}{p}{Γ'}{S} }
+                { \typh{Γ}{p}{Γ'} }
             }
     {Ph-Struct}{ \irule{Ph-Struct}
                    { S' =
                      (x_1, t_1, s),
                      …
-                     (x_n, t_n, s), S
+                     (x_n, t_n, s)
                    }
-                   { \typh{Γ}{S}{ \tstruct{s}
-                                     \{ x_1 : t_1
-                                      ; …
-                                      ;  x_n : t_n
-                                     \}
-                                 }{Γ}{S'}
+                   { \typh{Γ}{ \tstruct{s}
+                                  \{ x_1 : t_1
+                                   ; …
+                                   ;  x_n : t_n
+                                  \}
+                              }{Γ}
                    }
-               }
+               } % TODO
     {END}
 }
 

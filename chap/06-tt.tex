@@ -93,13 +93,6 @@ programme est donc mal typé.
     \end{align*}
   }
 
-  \gramlr{Environnement de typage de structures}{
-    \begin{align*}
-      S \gramisa & []                & \textrm {Environnement vide}
-      \\ \gramor & (s, x, t_f)::Γ'   & \textrm{Extension}
-    \end{align*}
-  }
-
   \caption{Types et environnements de typage}
 
   \label{fig:les-types}
@@ -109,21 +102,14 @@ programme est donc mal typé.
 Les types associés aux expressions sont décrits dans la
 figure~\ref{fig:les-types}.
 
-Pour maintenir les contextes de typage, deux environnements sont nécessaires :
-d'une part, un environnement $Γ$ qui associe un type à un ensemble de variables ;
-et d'autre part, un environnement de structures $S$ qui associe les noms de
-champs et leur type à un nom de structure.
+Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
+un ensemble de variables.
 
-Plus précisément, un environnement $Γ$ est une liste de couples (variable, type)
-et un environnement de structures $S$ est une liste de triplets (nom de la
-structure, nom du champ, type du champ).
+Plus précisément, un environnement $Γ$ est une liste de couples (variable,
+type).
 
 Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ en
 $\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
-
-Si $(s, y, \tFloat) ∈ S$, $y$ désigne le nom d'un champ de type $\tInt$ dans une
-structure de type $\tstruct{s}$. Donc sous $Γ = (x, \tstruct{s})$, on peut alors
-typer $x.y$ en $\tFloat$.
 
 Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
 n'est qu'une notation : il n'y a pas de n-uplets de première classe, ils sont
@@ -133,10 +119,10 @@ toujours présents dans un type fonctionnel.
 
   On note de la manière suivante le fait qu'une expression $e$ (telle que
   définie dans la figure~\ref{fig:stx-data}) ait pour type $t$ dans le contexte
-  $Γ, S$.
+  $Γ$.
 
   \[
-    \ty{Γ, S}{e}{t}
+    \ty{Γ}{e}{t}
   \]
 
 \end{definition}
@@ -151,7 +137,7 @@ toujours présents dans un type fonctionnel.
   l'instruction $i$ est bien typée :
 
   \[
-    \tyi{Γ, S}{i}
+    \tyi{Γ}{i}
   \]
 
 \end{definition}
@@ -165,21 +151,21 @@ toujours présents dans un type fonctionnel.
   On note
 
   \[
-    \typh{Γ}{S}{p}{Γ'}{S'}
+    \typh{Γ}{p}{Γ'}
   \]
 
-  si le typage de la phrase $p$ transforme l'environnement $Γ, S$ en $Γ', S'$.
+  si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
   On étend cette notation aux suites de phrases :
 
   \[
     \begin{cases}
-      \typhstar{Γ}{S}{[]}{Γ}{S}  \\
-      \typhstar{Γ}{S}{p::ps}{Γ'}{S'} \mbox{ si }
-        ∃ Γ'', S'' ,
+      \typhstar{Γ}{[]}{Γ}  \\
+      \typhstar{Γ}{p::ps}{Γ'} \mbox{ si }
+        ∃ Γ'',
             \begin{cases}
-              \typh{Γ}{S}{p}{Γ''}{S''}  \\
-              \typhstar{Γ''}{S''}{ps}{Γ'}{S'}
+              \typh{Γ}{p}{Γ''}  \\
+              \typhstar{Γ''}{ps}{Γ'}
             \end{cases}
     \end{cases}
   \]
@@ -189,11 +175,11 @@ toujours présents dans un type fonctionnel.
 \begin{definition}[Typage d'un programme]
 
   Un programme est bien typé si on peut typer sa suite de phrases en partant
-  d'un environnement vide. C'est à dire s'il existe un environnement final $Γ_f,
-  S_f$ tel que
+  d'un environnement vide. C'est à dire s'il existe un environnement final $Γ_f$
+  tel que
 
   \[
-    \typhstar{[]}{[]}{P}{Γ_f}{S_f}
+    \typhstar{[]}{P}{Γ_f}
   \]
 
   Cela est indépendant de tout environnement ; on note alors :
@@ -251,13 +237,11 @@ une fois le type de base du type tableau ($t$ pour $t[]$).
   \disprule{Lv-Index}
 \end{mathpar}
 
-Enfin, le typage de l'accès à un champ nécessite d'accéder à l'environnement de
-structures $S$. L'existence d'un triplet $(s, f, t_f)$ tel que $lv$ est
-typable en $t_s$ permet de typer $lv.f$ en $\tstruct{s}$.
-
 \begin{mathpar}
   \disprule{Lv-Field}
 \end{mathpar}
+
+% TODO
 
 \subsection*{Opérateurs}
 
@@ -442,12 +426,11 @@ enrichit l'environnement de cette nouvelle valeur.
   \disprule{Ph-Var}
 \end{mathpar}
 
-La déclaration d'une structure ne modifie pas $Γ$, mais ajoute $n$ triplets
-$(x_i, t_i, s)$ à l'environnement de typage de structures $S$.
-
 \begin{mathpar}
   \disprule{Ph-Struct}
 \end{mathpar}
+
+% TODO
 
 \section{Sûreté du typage}
 
@@ -816,9 +799,9 @@ Ces lemmes permettent de prouver le théorème suivant :
   Si une expression est typable et que son évaluation produit une valeur, alors
   cette valeur est du même type que l'expression.
 
-  Si $Γ, S ⊢ e : t$ et $e → v$ % TODO
+  Si $Γ ⊢ e : t$ et $e → v$ % TODO
 
-  alors $Γ, S ⊢ v : t$.
+  alors $Γ ⊢ v : t$.
 
 \end{theorem}
 
@@ -827,7 +810,6 @@ Ces lemmes permettent de prouver le théorème suivant :
 \section*{TODO}
 
 \begin{itemize}
-\item enlever S
 \item ordre des sections
 \item noter les flottants, fonctions et champs différemment
 \end{itemize}
