@@ -318,23 +318,16 @@
               { \mmi{m}{(\iPass;i)}{m}{i} }
     }
     {Exp}{ \irule{Exp}
-             { \mm{m}{e}{m'}{v} }
-             { \mmi{m}{e}{m'}{\iPass} }
+             { }
+             { \mmi{m}{v}{m}{\iPass} }
     }
     {If-False}{ \irule{If-False}
-                  { \mm{m}{e}{m'}{\widehat{0}} \\
-                    \mmi{m'}{i_f}{m''}{i'}
-                  }{
-                    \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
-                  }
+                  { }
+                  { \mmi{m}{\iIf{0}{i_t}{i_f}}{m}{i_f} }
     }
     {If-True}{ \irule{If-True}
-                 { \mm{m}{e}{m'}{v} \\
-                   v ≠ \widehat{0} \\
-                   \mmi{m'}{i_t}{m''}{i'}
-                 }{
-                   \mmi{m}{\iIf{e}{i_t}{i_f}}{m''}{i'}
-                 }
+                 { v ≠ 0 }
+                 { \mmi{m}{\iIf{v}{i_t}{i_f}}{m}{i_t} }
     }
     {While}{ \irule{While}
                { }
@@ -343,7 +336,7 @@
     }
     {Return}{ \irule{Return}
               { }
-              { \mmi{m}{\iReturn{e};i}{m}{\iReturn{e}} }
+              { \mmi{m}{\iReturn{v};i}{m}{\iReturn{e}} }
     }
     {Ph-Struct}{ \irule{Ph-Struct}
                    { }
