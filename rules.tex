@@ -282,21 +282,16 @@
                  {\mm{m}{φ ← v}{m[φ ← v]}{v}}
     }
     {Exp-Struct}{ \irule{Exp-Struct}
-                   { \evstar{m}{e_1 \\ \vdots \\ e_n}
-                           {m'}{v_1 \\ \vdots \\ v_n}
-                   }
-                   { \mm{m}{ \{ f_1 : e_1 ; … ; f_n : e_n \} }
-                       {m'}{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
+                   { }
+                   { \mms{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
+                         { \widehat{\{ f_1 : v_1 ; … ; f_n : v_n \}} }
                    }
     }
     {Exp-Array}{ \irule{Exp-Array}
+                 { }
                  {
-                   \evstar{m}{e_1 \\ \vdots \\ e_n}
-                         {m'}{v_1 \\ \vdots \\ v_n}
-                 }
-                 {
-                   \mm{m}{ [ e_1, … , e_n ] }
-                     {m'}{ [ v_1, … , v_n ] }
+                   \mms{ [ v_1, … , v_n ] }
+                       { \widehat{[ v_1, … , v_n ]} }
                  }
     }
     {Exp-Call}{ \irule{Exp-Call}
