@@ -234,28 +234,24 @@
                    { \mmlv{m}{*lv}{m'}{*φ} }
     }
     {Phi-Struct}{ \irule{Phi-Struct}
-                    { \mmlv{m}{lv  }{m'}{φ  } }
-                    { \mmlv{m}{lv.f}{m'}{φ.f} }
+                    {  }
+                    { \mms{lv.f}{lv\widehat{.}f} }
     }
     {Phi-Array}{ \irule{Phi-Array}
-                   { \mmlv{m}{lv}{m'}{φ} \\
-                     \mm{m'}{e}{m''}{v}
-                   }
-                   { \mmlv{m}{lv[e]}{m''}{φ[v]} }
+                   { }
+                   { \mms{φ[n]}{φ\widehat{[n]}} }
     }
     {Exp-Cst}{ \irule{Exp-Cst}
                  { }
-                 {\mm{m}{c}{m}{\widehat{c}}}
+                 {\mms{c}{\widehat{c}}}
              }
     {Exp-Fun}{ \irule{Exp-Fun}
                  { }
-                 {\mm{m}{f}{m}{f}}
+                 {\mms{f}{\widehat{f}}}
              }
     {Exp-Lv}{ \irule{Exp-Lv}
-              { \mmlv{m}{lv}{m'}{φ} \\
-                v = m'[φ]
-              }
-              {\mm{m}{lv}{m'}{v}}
+              { }
+              {\mm{m}{φ}{m}{m[φ]}}
     }
     {Exp-UnOp}{ \irule{Exp-UnOp}
                 {\mm{m}{e}{m'}{v}}
