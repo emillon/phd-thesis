@@ -529,6 +529,12 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
   \\ \gramor & \ctxLvField{φ}{C}
   \\ \gramor & \ctxLvIndex{φ}{C}
   \\ \gramor & \ctxLvIndex{C}{e}
+  \\ \gramor & \ctxSet{C}{e}
+  \\ \gramor & \ctxSet{φ}{C}
+  \\ \gramor & \{ f_1:v_1 ; … ; f_i:C ; … ; f_n:e_n \}
+  \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
+  \\ \gramor & C (e_1, …, e_n)
+  \\ \gramor & f (v_1, …, C, …, e_n)
   \\
   \\ \gramor & C;i 
   \\ \gramor & \iIf{C}{i_1}{i_2}
@@ -573,6 +579,42 @@ linéaire). L'opération de substitution consiste à remplacer ce trou :
   \ctxSub{(\iWhile{C}{i}    )}{e_0} = & \iWhile{\ctxSub{C}{e_0}}{i}     \\
   \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
 \end{align*}
+
+Exemple de dérivation.
+
+\begin{mathpar}
+\inferrule*
+  {
+    \inferrule*[vdots=2em]
+      {
+        \inferrule*[right=(Ctx), leftskip=4cm, vdots=2em]
+          {
+            \mmstar{m}{e_1}{m'}{v_1}
+            \\
+            (C = \ctxOp{\ctxEmpty}{e_2})
+          }
+          {
+            \mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}
+          }
+        \\
+        \inferrule*[right=(Ctx), rightskip=4cm, vdots=2em]
+          {
+            \mmstar{m'}{e_2}{m''}{v_2}
+            \\
+            (C = \ctxOp{v_1}{\ctxEmpty})
+          }
+          {
+            \mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}
+          }
+      }
+      { \mmstar{m}{e}{m''}{v_1\opbin~v_2} }
+    \\
+    \inferrule*[right=(Exp-BinOp), rightskip=2cm, vdots=2em]
+      { }
+      { \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2} }
+  }
+  { \mmstar{m}{e}{m''}{v_1~\widehat{\opbin}~v_2} }
+\end{mathpar}
 
 \section{Expressions}
 
@@ -1181,6 +1223,9 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item rajouter les contextes en annexe
+\item widehats sur les constantes ?
+\item while-true et while-false : ne marchent pas à cause du coup classique (plus de e)
 \item liste d'assos -> fonction
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item dédupliquer la def de l'état mémoire

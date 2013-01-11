@@ -82,6 +82,8 @@
 
 % Reduction (expressions)
 \def\mm#1#2#3#4{ \msi{#1}{#2} → \msi{#3}{#4} }
+\def\mmstar#1#2#3#4{ \msi{#1}{#2} →^{*} \msi{#3}{#4} }
+\def\mms#1#2{\mm{m}{#1}{m}{#2}}
 
 % Reduction (instructions)
 \def\mmi#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
@@ -104,6 +106,7 @@
 \def\ctxLvDeref#1{*#1}
 \def\ctxLvField#1#2{#1.#2}
 \def\ctxLvIndex#1#2{#1[#2]}
+\def\ctxSet#1#2{#1 ← #2}
 
 % Context substitution
 \def\ctxSub#1#2{#1\llparenthesis#2\rrparenthesis}
@@ -121,8 +124,8 @@
 % typage
 \def\ty#1#2#3{#1 ⊢ #2 : #3}
 \def\tyi#1#2{#1 ⊢ #2}
-\def\typh#1#2#3#4#5{#1, #2 ⊢ #3 → #4, #5}
-\def\typhstar#1#2#3#4#5{#1, #2 ⊢ #3 →^* #4, #5}
+\def\typh#1#2#3{#1 ⊢ #2 → #3}
+\def\typhstar#1#2#3{#1 ⊢ #2 →^* #2}
 
 \def\tstruct#1{\mathrm{struct}~#1}
 
