@@ -254,23 +254,23 @@
               {\mm{m}{φ}{m}{m[φ]}}
     }
     {Exp-UnOp}{ \irule{Exp-UnOp}
-                {\mm{m}{e}{m'}{v}}
-                {\mm{m}{\opun~e}{m'}{\widehat{\opun}~v}}
+                { }
+                {\mms{\opun~v}{\widehat{\opun}~v}}
     }
     {Exp-BinOp}{ \irule{Exp-BinOp}
-                   { \opbin ∉ \{/, \%\} \\
-                       \mm{m}{e_1}{m'}{v_1} \\
-                       \mm{m'}{e_2}{m''}{v_2}
-                   }
-                   {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
+                   { \opbin ∉ \{/, \%\} }
+                   {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
     }
     {Exp-Div}{ \irule{Exp-Div}
                  { \opbin ∈ \{/, \%\} \\
-                   \mm{m}{e_1}{m'}{v_1} \\
-                   \mm{m'}{e_2}{m''}{v_2}
                    v_2 ≠ \widehat{0}
                  }
-                 {\mm{m}{e_1~\opbin~e_2}{m''}{v_1~\widehat{\opbin}~v_2}}
+                 {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
+    }
+    {Exp-Div-Zero}{ \irule{Exp-Div-Zero}
+                 { \opbin ∈ \{/, \%\}
+                 }
+                 {\msi{m}{v_1~\opbin~0} → Ω_{div}}
     }
     {Exp-AddrOf}{ \irule{Exp-AddrOf}
                     { a = \mathrm{Lookup} (x, m)
@@ -278,11 +278,8 @@
                     {\mm{m}{\&x}{m}{a}}
     }
     {Exp-Set}{ \irule{Exp-Set}
-                 { \mm{m}{e}{m'}{v} \\
-                   \mmi{m'}{lv}{m''}{φ} \\
-                   m''' = m'' [ φ ← v ]
-                 }
-                 {\mm{m}{lv ← e}{m'''}{v}}
+                 { }
+                 {\mm{m}{φ ← v}{m[φ ← v]}{v}}
     }
     {Exp-Struct}{ \irule{Exp-Struct}
                    { \evstar{m}{e_1 \\ \vdots \\ e_n}
