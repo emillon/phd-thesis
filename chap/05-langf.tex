@@ -519,28 +519,7 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
 \end{itemize}
 
 \begin{figure}
-  \gramlr{Contextes}{
-  \begin{align*}
-  C \gramisa & \ctxEmpty
-  \\ \gramor & \ctxOp{C}{e}
-  \\ \gramor & \ctxOp{v}{C}
-  \\ \gramor & \ctxUnOp{C}
-  \\ \gramor & \ctxLvDeref{C}
-  \\ \gramor & \ctxLvField{φ}{C}
-  \\ \gramor & \ctxLvIndex{φ}{C}
-  \\ \gramor & \ctxLvIndex{C}{e}
-  \\ \gramor & \ctxSet{C}{e}
-  \\ \gramor & \ctxSet{φ}{C}
-  \\ \gramor & \{ f_1:v_1 ; … ; f_i:C ; … ; f_n:e_n \}
-  \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
-  \\ \gramor & C (e_1, …, e_n)
-  \\ \gramor & f (v_1, …, C, …, e_n)
-  \\
-  \\ \gramor & C;i
-  \\ \gramor & \iIf{C}{i_1}{i_2}
-  \\ \gramor & \iReturn{C}
-  \end{align*}
-  }
+\figctx{}
 
 \caption{Contextes d'exécution}
 \label{fig:eval-ctx}
@@ -1254,7 +1233,6 @@ donc
 \begin{itemize}
 \item changer les para de présentation des règles
 \item cas d'erreurs explicites $Ω_{ptr}$ et $Ω_{array}$
-\item rajouter les contextes en annexe
 \item widehats sur les constantes ?
 \item liste d'assos -> fonction
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre

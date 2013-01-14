@@ -361,3 +361,28 @@
     }
     {END}
 }
+
+\def\figctx{
+  \gramlr{Contextes}{
+  \begin{align*}
+  C \gramisa & \ctxEmpty
+  \\ \gramor & \ctxOp{C}{e}
+  \\ \gramor & \ctxOp{v}{C}
+  \\ \gramor & \ctxUnOp{C}
+  \\ \gramor & \ctxLvDeref{C}
+  \\ \gramor & \ctxLvField{φ}{C}
+  \\ \gramor & \ctxLvIndex{φ}{C}
+  \\ \gramor & \ctxLvIndex{C}{e}
+  \\ \gramor & \ctxSet{C}{e}
+  \\ \gramor & \ctxSet{φ}{C}
+  \\ \gramor & \{ f_1:v_1 ; … ; f_i:C ; … ; f_n:e_n \}
+  \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
+  \\ \gramor & C (e_1, …, e_n)
+  \\ \gramor & f (v_1, …, C, …, e_n)
+  \\
+  \\ \gramor & C;i
+  \\ \gramor & \iIf{C}{i_1}{i_2}
+  \\ \gramor & \iReturn{C}
+  \end{align*}
+  }
+}
