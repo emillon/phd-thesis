@@ -493,11 +493,6 @@ variable $x$ un entier.
 
 \begin{itemize}
 
-  \item \textsc{Lv-Deref}
-
-    \textsc{Phi-Deref} s'applique, ou alors une erreur de pointeur se produit.
-    % TODO rediger
-
   \item \textsc{Lv-Index}
 
     \textsc{Phi-Index} s'applique, ou alors une erreur d'indice se produit.
@@ -582,7 +577,23 @@ d'évaluation \textsc{Phi-Var} s'applique donc.
 
 % TODO prouver le coup du lookup
 %}}}
-\paragraph{\textsc{Lv-Deref} :} % TODO
+\paragraph{\textsc{Lv-Deref} :}%{{{
+On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item
+  si $lv = φ$, alors la règle \textsc{Phi-Deref} s'applique : et
+  $\mms{*lv}{\widehat{*}φ}$
+  % TODO ça utilise forme canonique?
+\item
+  $∃ (lv', m'), \mmlv{m}{lv}{m'}{lv'}$. On peut alors utiliser la règle
+  \textsc{Ctx} avec $C = \ctxLvDeref{\ctxEmpty}$, ce qui donne :
+  $\mmlv{m}{\ctxLvDeref{lv}}{m'}{\ctxLvDeref{lv'}}$.
+  % TODO ça utilise forme canonique?
+% TODO cas d'erreur
+\end{itemize}
+
+%}}}
 \paragraph{\textsc{Lv-Index} :} % TODO
 \paragraph{\textsc{Lv-Field} :} % TODO
   \paragraph{\textsc{Op-Int} :} % {{{
