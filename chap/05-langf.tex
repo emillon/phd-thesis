@@ -538,7 +538,6 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
   \\
   \\ \gramor & C;i
   \\ \gramor & \iIf{C}{i_1}{i_2}
-  \\ \gramor & \iWhile{C}{i}
   \\ \gramor & \iReturn{C}
   \end{align*}
   }
@@ -585,7 +584,6 @@ décrit dans la figure~\ref{fig:ctx-sub}.
   \\
   \ctxSub{(C;i              )}{e_0} = & \ctxSub{C}{e_0};i               \\
   \ctxSub{(\iIf{C}{i_1}{i_2})}{e_0} = & \iIf{\ctxSub{C}{e_0}}{i_1}{i_2} \\
-  \ctxSub{(\iWhile{C}{i}    )}{e_0} = & \iWhile{\ctxSub{C}{e_0}}{i}     \\
   \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
 \end{align*}
 
@@ -1256,7 +1254,6 @@ donc
 \begin{itemize}
 \item changer les para de présentation des règles
 \item cas d'erreurs explicites $Ω_{ptr}$ et $Ω_{array}$
-\item enlever le cas while dans les ctx
 \item rajouter les contextes en annexe
 \item widehats sur les constantes ?
 \item liste d'assos -> fonction
