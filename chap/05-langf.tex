@@ -1043,7 +1043,23 @@ revient à évaluer la branche "else". Dans les autres cas, c'est la règle
   \semrule{If-True}
 \end{mathpar}
 
-Le traitement de la boucle est une simple règle de réécriture :
+Pour traiter la boucle, on peut être tenté de procéder de la même manière :
+
+\begin{mathpar}
+  \irule{While-False-Bad}
+    { v ≠ 0 }
+    { \mmi{m}{\iWhile{v}{i}}{m}{\iPass} }
+
+  \irule{While-True-Bad}
+    { }
+    { \mmi{m}{\iWhile{0}{i}}{m'}{i;\iWhile{e}{i}}}
+\end{mathpar}
+
+Mais la seconde règle est impossible : puisque $e$ a déjà été évaluée, il est
+impossible de la réintroduire non évaluée en partie droite.
+
+À la place, on exprime la sémantique de la boucle comme une simple règle de
+réécriture :
 
 \begin{mathpar}
   \semrule{While}
@@ -1240,9 +1256,9 @@ donc
 \begin{itemize}
 \item changer les para de présentation des règles
 \item cas d'erreurs explicites $Ω_{ptr}$ et $Ω_{array}$
+\item enlever le cas while dans les ctx
 \item rajouter les contextes en annexe
 \item widehats sur les constantes ?
-\item while-true et while-false : ne marchent pas à cause du coup classique (plus de e)
 \item liste d'assos -> fonction
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item dédupliquer la def de l'état mémoire
