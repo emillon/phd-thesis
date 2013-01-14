@@ -587,6 +587,10 @@ $e$ est alors de la forme $f$, qui est une valeur.
   \paragraph{\textsc{Cst-Null} :} % {{{
 $e$ est alors égal à $\eNull$, qui est une valeur.
 %}}}
+\paragraph{\textsc{Lv-Var} :} % TODO
+\paragraph{\textsc{Lv-Deref} :} % TODO
+\paragraph{\textsc{Lv-Index} :} % TODO
+\paragraph{\textsc{Lv-Field} :} % TODO
   \paragraph{\textsc{Op-Int} :} % {{{
 
   Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
@@ -627,6 +631,11 @@ $e$ est alors égal à $\eNull$, qui est une valeur.
 \end{itemize}
 
 % }}}
+\paragraph{\textsc{Op-Float} :} % {{{
+Ce cas est similaire à \textsc{Op-Int}.
+%}}}
+\paragraph{\textsc{Op-Eq} :} % TODO
+\paragraph{\textsc{Op-Comparable} :} % TODO
 \paragraph{\textsc{Unop-Plus-Int} :} % {{{
 
 Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
@@ -646,6 +655,23 @@ avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
 \end{itemize}
 
 % }}}
+\paragraph{\textsc{Unop-Plus-Float} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Minus-Int} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Minus-Float} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Not} :} % TODO
+\paragraph{\textsc{Ptr-Arith} :} % TODO
+\paragraph{\textsc{Addr} :} % TODO
+\paragraph{\textsc{Set} :} % TODO
+\paragraph{\textsc{Array} :} % TODO
+\paragraph{\textsc{Struct} :} % TODO
+\paragraph{\textsc{Call} :} % TODO
+\paragraph{\textsc{Fun} :} % TODO
 
 \end{proof}
 
