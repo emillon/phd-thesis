@@ -493,18 +493,6 @@ variable $x$ un entier.
 
 \begin{itemize}
 
-  \item \textsc{Cst-Int} :
-
-    Alors $e$ est de la forme $i$, qui est une valeur. Les cas
-    \textsc{Cst-Float} et \textsc{Cst-Null} sont similaires.
-
-  \item \textsc{Lv-Var} :
-
-      Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle d'évaluation
-      \textsc{Phi-Var} s'applique donc.
-
-      % TODO prouver le coup du lookup
-
   \item \textsc{Lv-Deref}
 
     \textsc{Phi-Deref} s'applique, ou alors une erreur de pointeur se produit.
@@ -587,7 +575,13 @@ $e$ est alors de la forme $f$, qui est une valeur.
   \paragraph{\textsc{Cst-Null} :} % {{{
 $e$ est alors égal à $\eNull$, qui est une valeur.
 %}}}
-\paragraph{\textsc{Lv-Var} :} % TODO
+\paragraph{\textsc{Lv-Var} :}%{{{
+
+Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle
+d'évaluation \textsc{Phi-Var} s'applique donc.
+
+% TODO prouver le coup du lookup
+%}}}
 \paragraph{\textsc{Lv-Deref} :} % TODO
 \paragraph{\textsc{Lv-Index} :} % TODO
 \paragraph{\textsc{Lv-Field} :} % TODO
