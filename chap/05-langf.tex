@@ -519,29 +519,7 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
 \end{itemize}
 
 \begin{figure}
-  \gramlr{Contextes}{
-  \begin{align*}
-  C \gramisa & \ctxEmpty
-  \\ \gramor & \ctxOp{C}{e}
-  \\ \gramor & \ctxOp{v}{C}
-  \\ \gramor & \ctxUnOp{C}
-  \\ \gramor & \ctxLvDeref{C}
-  \\ \gramor & \ctxLvField{φ}{C}
-  \\ \gramor & \ctxLvIndex{φ}{C}
-  \\ \gramor & \ctxLvIndex{C}{e}
-  \\ \gramor & \ctxSet{C}{e}
-  \\ \gramor & \ctxSet{φ}{C}
-  \\ \gramor & \{ f_1:v_1 ; … ; f_i:C ; … ; f_n:e_n \}
-  \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
-  \\ \gramor & C (e_1, …, e_n)
-  \\ \gramor & f (v_1, …, C, …, e_n)
-  \\
-  \\ \gramor & C;i 
-  \\ \gramor & \iIf{C}{i_1}{i_2}
-  \\ \gramor & \iWhile{C}{i}
-  \\ \gramor & \iReturn{C}
-  \end{align*}
-  }
+\figctx{}
 
 \caption{Contextes d'exécution}
 \label{fig:eval-ctx}
@@ -562,8 +540,10 @@ $\phxx{\ctxSub}$ présent dans la règle précédente.
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
 fait apparaître exactement un "$C$". Chaque contexte est donc constitué
 d'exactement un "trou" $\ctxEmpty$ (une dérivation de $C$ est toujours
-linéaire). L'opération de substitution consiste à remplacer ce trou :
+linéaire). L'opération de substitution consiste à remplacer ce trou, comme
+décrit dans la figure~\ref{fig:ctx-sub}.
 
+\begin{figure}
 \begin{align*}
   \ctxSub{\ctxEmpty}{e_0} = & e_0 \\
   \ctxSub{(\ctxOp{C}{e}     )}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e}      \\
@@ -573,12 +553,22 @@ linéaire). L'opération de substitution consiste à remplacer ce trou :
   \ctxSub{(\ctxLvField{φ}{C})}{e_0} = & \ctxLvField{φ}{\ctxSub{C}{e_0}} \\
   \ctxSub{(\ctxLvIndex{φ}{C})}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
   \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
+  \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
+  \ctxSub{(\ctxSet{φ}{C})    }{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}}     \\
+  \ctxSub{\{ f_1:v_1 ; …
+     ; f_i:C ; … ; f_n:e_n \}}{e_0} = & \{ f_1:v_1 ; … ; f_i:\ctxSub{C}{e_0} ; … ; f_n:e_n \} \\
+  \ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ]    \\
+  \ctxSub{C (e_1, …, e_n)          }{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n)              \\
+  \ctxSub{f (v_1, …, C, …, e_n)    }{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n)        \\
   \\
   \ctxSub{(C;i              )}{e_0} = & \ctxSub{C}{e_0};i               \\
   \ctxSub{(\iIf{C}{i_1}{i_2})}{e_0} = & \iIf{\ctxSub{C}{e_0}}{i_1}{i_2} \\
-  \ctxSub{(\iWhile{C}{i}    )}{e_0} = & \iWhile{\ctxSub{C}{e_0}}{i}     \\
   \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
 \end{align*}
+
+\caption{Substitution dans les contextes d'évaluation}
+\label{fig:ctx-sub}
+\end{figure}
 
 Exemple de dérivation.
 
@@ -751,6 +741,8 @@ modulo sont traités dans une règle à part.
   \semrule{Exp-BinOp}
 
   \semrule{Exp-Div}
+
+  \semrule{Exp-Div-Zero}
 \end{mathpar}
 
 Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$
@@ -1028,7 +1020,23 @@ revient à évaluer la branche "else". Dans les autres cas, c'est la règle
   \semrule{If-True}
 \end{mathpar}
 
-Le traitement de la boucle est une simple règle de réécriture :
+Pour traiter la boucle, on peut être tenté de procéder de la même manière :
+
+\begin{mathpar}
+  \irule{While-False-Bad}
+    { v ≠ 0 }
+    { \mmi{m}{\iWhile{v}{i}}{m}{\iPass} }
+
+  \irule{While-True-Bad}
+    { }
+    { \mmi{m}{\iWhile{0}{i}}{m'}{i;\iWhile{e}{i}}}
+\end{mathpar}
+
+Mais la seconde règle est impossible : puisque $e$ a déjà été évaluée, il est
+impossible de la réintroduire non évaluée en partie droite.
+
+À la place, on exprime la sémantique de la boucle comme une simple règle de
+réécriture :
 
 \begin{mathpar}
   \semrule{While}
@@ -1223,15 +1231,16 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item rajouter les contextes en annexe
+\item changer les para de présentation des règles
+\item cas d'erreurs explicites $Ω_{div}$, $Ω_{ptr}$ et $Ω_{array}$
 \item widehats sur les constantes ?
-\item while-true et while-false : ne marchent pas à cause du coup classique (plus de e)
 \item liste d'assos -> fonction
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item dédupliquer la def de l'état mémoire
 \item syntaxe concrète
 \item procédures vs fonctions
 \item top ?
+\item return implicite en fin de fct
 \end{itemize}
 
 % vim: spelllang=fr

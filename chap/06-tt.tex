@@ -493,23 +493,6 @@ variable $x$ un entier.
 
 \begin{itemize}
 
-  \item \textsc{Cst-Int} :
-
-    Alors $e$ est de la forme $i$, qui est une valeur. Les cas
-    \textsc{Cst-Float} et \textsc{Cst-Null} sont similaires.
-
-  \item \textsc{Lv-Var} :
-
-      Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle d'évaluation
-      \textsc{Phi-Var} s'applique donc.
-
-      % TODO prouver le coup du lookup
-
-  \item \textsc{Lv-Deref}
-
-    \textsc{Phi-Deref} s'applique, ou alors une erreur de pointeur se produit.
-    % TODO rediger
-
   \item \textsc{Lv-Index}
 
     \textsc{Phi-Index} s'applique, ou alors une erreur d'indice se produit.
@@ -587,6 +570,32 @@ $e$ est alors de la forme $f$, qui est une valeur.
   \paragraph{\textsc{Cst-Null} :} % {{{
 $e$ est alors égal à $\eNull$, qui est une valeur.
 %}}}
+\paragraph{\textsc{Lv-Var} :}%{{{
+
+Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle
+d'évaluation \textsc{Phi-Var} s'applique donc.
+
+% TODO prouver le coup du lookup
+%}}}
+\paragraph{\textsc{Lv-Deref} :}%{{{
+On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item
+  si $lv = φ$, alors la règle \textsc{Phi-Deref} s'applique : et
+  $\mms{*lv}{\widehat{*}φ}$
+  % TODO ça utilise forme canonique?
+\item
+  $∃ (lv', m'), \mmlv{m}{lv}{m'}{lv'}$. On peut alors utiliser la règle
+  \textsc{Ctx} avec $C = \ctxLvDeref{\ctxEmpty}$, ce qui donne :
+  $\mmlv{m}{\ctxLvDeref{lv}}{m'}{\ctxLvDeref{lv'}}$.
+  % TODO ça utilise forme canonique?
+% TODO cas d'erreur
+\end{itemize}
+
+%}}}
+\paragraph{\textsc{Lv-Index} :} % TODO
+\paragraph{\textsc{Lv-Field} :} % TODO
   \paragraph{\textsc{Op-Int} :} % {{{
 
   Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
@@ -627,6 +636,17 @@ $e$ est alors égal à $\eNull$, qui est une valeur.
 \end{itemize}
 
 % }}}
+\paragraph{\textsc{Op-Float} :} % {{{
+Ce cas est similaire à \textsc{Op-Int}.
+%}}}
+\paragraph{\textsc{Op-Eq} :} %{{{
+Ce cas est similaire à \textsc{Op-Int}.
+% TODO expand un peu
+%}}}
+\paragraph{\textsc{Op-Comparable} :} %{{{
+Ce cas est similaire à \textsc{Op-Int}.
+% TODO expand un peu
+%}}}
 \paragraph{\textsc{Unop-Plus-Int} :} % {{{
 
 Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
@@ -646,6 +666,23 @@ avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
 \end{itemize}
 
 % }}}
+\paragraph{\textsc{Unop-Plus-Float} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Minus-Int} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Minus-Float} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Not} :} % TODO
+\paragraph{\textsc{Ptr-Arith} :} % TODO
+\paragraph{\textsc{Addr} :} % TODO
+\paragraph{\textsc{Set} :} % TODO
+\paragraph{\textsc{Array} :} % TODO
+\paragraph{\textsc{Struct} :} % TODO
+\paragraph{\textsc{Call} :} % TODO
+\paragraph{\textsc{Fun} :} % TODO
 
 \end{proof}
 
@@ -805,11 +842,11 @@ Ces lemmes permettent de prouver le théorème suivant :
 
 \end{theorem}
 
-% TODO versions Γ ⊢ i
 
 \section*{TODO}
 
 \begin{itemize}
 \item ordre des sections
 \item noter les flottants, fonctions et champs différemment
+\item versions $Γ ⊢ i$ des propriétés
 \end{itemize}
