@@ -8,30 +8,45 @@ expressions dont la valeur est sûre.
 
 \subsection{Éditions et ajouts}
 
+La sémantique d'évaluation du langage n'est pas modifiée. En revanche, on
+modifie légèrement le système de types afin d'ajouter à chaque pointeur un
+\emph{qualificateur} qui représente qui contrôle sa valeur.
+
+Les deux qualificateurs possibles sont :
+
+\begin{itemize}
+\item
+  \qKernel : il s'applique aux pointeurs contrôlés par le noyau. Par exemple,
+  prendre l'adresse d'un objet donne un pointeur noyau.
+\item
+  \qUser : il s'applique aux pointeurs qui proviennent de l'espace utilisateur.
+  Ces pointeurs proviennent toujours d'interfaces particulières, comme les
+  appels système ou les paramètres de la fonction \texttt{ioctl}.
+\end{itemize}
+
+(figure~\ref{fig:qualif-changes})
+
+\begin{figure}
+
 \gramlr{Qualificateurs}{
 \begin{align*}
-q  \gramisa & \textsc{Kernel} & \textrm{Donnée noyau (sûre)}
-\\ \gramor  & \textsc{User}   & \textrm{Donnée utilisateur (non sûre)}
+q  \gramisa & \qKernel & \textrm{Donnée noyau (sûre)}
+\\ \gramor  & \qUser   & \textrm{Donnée utilisateur (non sûre)}
 \end{align*}
 }
-
-Ensuite,
 
 \gramlr{Types}{
 \begin{align*}
-τ  \gramisa & τ q* & \textrm{Pointeur qualifié}
-\\ \gramor  & …    & \textrm{Reste inchangé}
+t  \gramisa & …
+\\ \gramor  & \msout{t *} & \msout{\textrm{Pointeur}}
+\\ \gramor  & t q* & \textrm{Pointeur qualifié}
 \end{align*}
 }
 
-voire :
+\caption{Changements liés aux qualificateurs de types}
+\label{fig:qualif-changes}
 
-\gramlr{Environnements}{
-\begin{align*}
-Γ  \gramisa & ε
-\\ \gramor  & Γ, x:τ~q
-\end{align*}
-}
+\end{figure}
 
 Règle de sûreté du déréférencement
 
