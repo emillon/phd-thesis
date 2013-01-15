@@ -9,8 +9,9 @@ expressions dont la valeur est sûre.
 \subsection{Éditions et ajouts}
 
 La sémantique d'évaluation du langage n'est pas modifiée. En revanche, on
-modifie légèrement le système de types afin d'ajouter à chaque pointeur un
-\emph{qualificateur} qui représente qui contrôle sa valeur.
+modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
+d'ajouter à chaque pointeur un \emph{qualificateur} qui représente qui contrôle
+sa valeur.
 
 Les deux qualificateurs possibles sont :
 
@@ -24,22 +25,27 @@ Les deux qualificateurs possibles sont :
   appels système ou les paramètres de la fonction \texttt{ioctl}.
 \end{itemize}
 
-(figure~\ref{fig:qualif-changes})
-
 \begin{figure}
 
 \gramlr{Qualificateurs}{
 \begin{align*}
-q  \gramisa & \qKernel & \textrm{Donnée noyau (sûre)}
-\\ \gramor  & \qUser   & \textrm{Donnée utilisateur (non sûre)}
+q \gramisa & \qKernel & \textrm{Donnée noyau (sûre)}
+\\ \gramor & \qUser   & \textrm{Donnée utilisateur (non sûre)}
 \end{align*}
 }
 
 \gramlr{Types}{
 \begin{align*}
-t  \gramisa & …
-\\ \gramor  & \msout{t *} & \msout{\textrm{Pointeur}}
-\\ \gramor  & t q* & \textrm{Pointeur qualifié}
+t \gramisa & …
+\\ \gramor & \msout{t *} & \msout{\textrm{Pointeur}}
+\\ \gramor & t q* & \textrm{Pointeur qualifié}
+\end{align*}
+}
+
+\gramlr{Instructions}{
+\begin{align*}
+i \gramisa …
+\\ \gramor & \iTaint{x}
 \end{align*}
 }
 
@@ -56,6 +62,24 @@ Règle de sûreté du déréférencement
 }{
   Γ ⊢ *e : τ
 }
+\end{mathpar}
+
+Règle d'évaluation
+
+% TODO pas de contexte associé
+
+\begin{mathpar}
+\irule{Taint}
+  { }
+  { \mmi{m}{\iTaint{x}}{m}{\iPass} }
+\end{mathpar}
+
+Règle de taintage
+
+\begin{mathpar}
+\irule{Taint}
+  { Γ ⊢ x : t~\qUser~* }
+  { Γ ⊢ \iTaint{x} }
 \end{mathpar}
 
 \subsection{Propriété d'isolation mémoire}
