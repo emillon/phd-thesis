@@ -52,12 +52,28 @@ i \gramisa …
 \gramlr{Valeurs}{
 \begin{align*}
 v \gramisa & …
-\\ \gramor & \vTainted{v} & \textrm{Valeur teintée}
+\\ \gramor & \vTainted{φ} & \textrm{Valeur teintée}
+\end{align*}
+}
+
+\gramlr{États}{
+\begin{align*}
+ms \gramisa & …
+\\  \gramor & Ω_{taint} & \textrm{Erreur de taintage}
+\end{align*}
+}
+
+\gramlr{Contextes}{
+\begin{align*}
+C \gramisa & …
+\\ \gramor & \iTaint{C}
 \end{align*}
 }
 
 \caption{Changements liés aux qualificateurs de types}
 \label{fig:qualif-changes}
+
+% TODO définir les états et ms
 
 \end{figure}
 
@@ -82,9 +98,15 @@ Règle d'évaluation
 \end{mathpar}
 
 \begin{mathpar}
-\irule{Taint-Write}
+\irule{Taint-Write-Old}
   { }
   { \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
+\end{mathpar}
+
+\begin{mathpar}
+\irule{Taint-Write}
+  { }
+  { \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
 \end{mathpar}
 
 Règle de taintage
@@ -94,6 +116,15 @@ Règle de taintage
   { Γ ⊢ x : t~\qUser~* }
   { Γ ⊢ \iTaint{x} }
 \end{mathpar}
+
+%Déréférencement
+%
+% TODO
+%\begin{mathpar}
+%\irule{Deref-Kernel}
+  %{ }
+  %{ \mm{m}{*\vT }
+%\end{mathpar}
 
 \subsection{Propriété d'isolation mémoire}
 
@@ -316,6 +347,7 @@ size_t strlen(const char *s);
 
 \begin{itemize}
 \item appliquer taint sur des sous-valeurs?
+\item étendre l'état mémoire aux variables utilisateur
 \item règle de sous-typage structurel
 \end{itemize}
 
