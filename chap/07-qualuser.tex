@@ -45,7 +45,14 @@ t \gramisa & …
 \gramlr{Instructions}{
 \begin{align*}
 i \gramisa …
-\\ \gramor & \iTaint{x}
+\\ \gramor & \iTaint{x} & \textrm{Teintage d'une valeur}
+\end{align*}
+}
+
+\gramlr{Valeurs}{
+\begin{align*}
+v \gramisa & …
+\\ \gramor & \vTainted{v} & \textrm{Valeur teintée}
 \end{align*}
 }
 
@@ -69,9 +76,15 @@ Règle d'évaluation
 % TODO pas de contexte associé
 
 \begin{mathpar}
-\irule{Taint}
+\irule{Taint-Erase}
   { }
   { \mmi{m}{\iTaint{x}}{m}{\iPass} }
+\end{mathpar}
+
+\begin{mathpar}
+\irule{Taint-Write}
+  { }
+  { \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
 \end{mathpar}
 
 Règle de taintage
@@ -298,5 +311,12 @@ size_t strlen(const char *s);
 \subsection{Extensions au système de types}
 
 \subsection{Résultats}
+
+\section{TODO}
+
+\begin{itemize}
+\item appliquer taint sur des sous-valeurs?
+\item règle de sous-typage structurel
+\end{itemize}
 
 % vim: spelllang=fr
