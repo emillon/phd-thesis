@@ -528,10 +528,14 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
 Le premier point consiste à définir les contextes eux-mêmes
 (figure~\ref{fig:eval-ctx}).
 
-Le deuxième est résolu la règle d'inférence suivante :
+Le deuxième est résolu les règles d'inférence suivantes :
 
 \begin{mathpar}
   \semrule{Ctx}
+
+  \semrule{Ctx-Lv}
+
+  \semrule{Ctx-Instr}
 \end{mathpar}
 
 Enfin, le troisième revient à définit l'opérateur de substitution
@@ -570,9 +574,43 @@ décrit dans la figure~\ref{fig:ctx-sub}.
 \label{fig:ctx-sub}
 \end{figure}
 
-Exemple de dérivation.
+Par exemple, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
+v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ (cf.
+figure~\ref{fig:eval-ex-ctx}) :
 
-\begin{mathpar}
+\begin{enumerate}
+\item
+  on commence par évaluer, d'une manière ou d'une autre, l'expression
+  $e_1$ en une valeur $v_1$. Le nouvel état mémoire est noté $m'$. Soit
+  donc $\mm{m}{e_1}{m'}{v_1}$.
+\item
+  En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
+  une des formes possibles pour un contexte d'évaluation), on déduit de 1. que
+  $\mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
+\item
+  D'autre part, on évalue $e_2$ depuis $m'$. En supposant encore que
+  l'évaluation converge, notons $v_2$ la valeur calculée et $m''$ l'état mémoire
+  résultant : $\mm{m'}{e_2}{m''}{v_2}$.
+\item
+  Appliquons la règle~\textsc{Ctx} à 3. avec $C = \ctxOp{v_1}{\ctxEmpty}$. On
+  obtient $\mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
+\item
+  En combinant les résultats de 2. et 4. on en déduit que
+  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
+% TODO comment combiner ?
+\item D'après la règle~\textsc{Exp_Binop},
+  $ \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
+\item D'après 5. et 6., on a par combinaison
+  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v}$
+  en posant 
+  $v = v_1~\widehat{\opbin}~v_2$
+  .
+% TODO comment combiner ?
+\end{enumerate}
+
+\begin{figure} % {{{
+
+\[
 \inferrule*
   {
     \inferrule*[vdots=2em]
@@ -604,7 +642,12 @@ Exemple de dérivation.
       { \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2} }
   }
   { \mmstar{m}{e}{m''}{v_1~\widehat{\opbin}~v_2} }
-\end{mathpar}
+\]
+
+\caption{Évaluation d'une expression}
+\label{fig:eval-ex-ctx}
+
+\end{figure} % }}}
 
 \section{Expressions}
 
@@ -1231,8 +1274,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item ajouter une règle Ctx-Lv
-\item les lv doivent avoir leur règle Ctx aussi
 \item changer les para de présentation des règles
 \item cas d'erreurs explicites $Ω_{div}$, $Ω_{ptr}$ et $Ω_{array}$
 \item widehats sur les constantes ?
@@ -1243,6 +1284,8 @@ donc
 \item procédures vs fonctions
 \item top ?
 \item return implicite en fin de fct
+\item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$ et quand il
+faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
 \end{itemize}
 
 % vim: spelllang=fr
