@@ -555,15 +555,15 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
 
-  L'accesseur $[ \cdot ]_l$ permet de lire et de modifier un champ de ces
+  L'accesseur $[ \cdot ]_L$ permet de lire et de modifier un champ de ces
   valeurs.
 
-  C'est une erreur d'accéder à un champ d'une valeur non structure ($4[l]_l$ par
+  C'est une erreur d'accéder à un champ d'une valeur non structure ($4[l]_L$ par
   exemple).
 
   \begin{align*}
-    \{ l_1 : v_1; … ; l_n : v_n \}[l_i]_l = & v_i \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l_p ← v]_l = & \{ l_1 : v'_1; … ; l_n : v'_n \} \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l_i]_L = & v_i \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l_p ← v]_L = & \{ l_1 : v'_1; … ; l_n : v'_n \} \\
           \mbox{ où } & v'_p = v \\
                       & ∀ i ≠ p, v'_i = v_i
   \end{align*}
@@ -597,7 +597,7 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
     m[φ[i]]_Φ     = & m[φ]_φ[i]_I \\
     m[a ← v]_Φ    = & m[a ← v]_A \\
     m[*φ ← v]_Φ   = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
-    m[φ.l ← v]_Φ  = & m[φ ← (m[φ]_Φ[l←v]_l)]_Φ \\
+    m[φ.l ← v]_Φ  = & m[φ ← (m[φ]_Φ[l←v]_L)]_Φ \\
     m[φ[i] ← v]_Φ = & m[φ ← (m[φ]_Φ[i←v]_I)]_Φ
   \end{align*}
 
@@ -1396,7 +1396,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item indices des accesseurs en majuscules
 \item changer les para de présentation des règles
 \item cas d'erreurs explicites $Ω_{div}$, $Ω_{ptr}$ et $Ω_{array}$
 \item widehats sur les constantes ?
