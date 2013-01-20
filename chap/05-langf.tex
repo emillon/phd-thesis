@@ -168,7 +168,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
   \gramlr{Constantes}{
     \begin{align*}
       c \gramisa & i      & \textrm{Entier}
-      \\ \gramor & f      & \textrm{Flottant}
+      \\ \gramor & d      & \textrm{Flottant}
       \\ \gramor & \eNull & \textrm{Pointeur nul}
     \end{align*}
   }
@@ -181,8 +181,8 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       \\ \gramor & e~\opbin~e      & \textrm{Opération binaire}
       \\ \gramor & \& lv           & \textrm{Pointeur}
       \\ \gramor & lv ← e          & \textrm{Affectation}
-      \\ \gramor & \{ f_1 : e_1 ;
-                  … ; f_n : e_n \} & \textrm{Structure}
+      \\ \gramor & \{ l_1 : e_1 ;
+                  … ; l_n : e_n \} & \textrm{Structure}
       \\ \gramor & \{e_1 ;…; e_n\} & \textrm{Tableau}
       \\ \gramor & f               & \textrm{Fonction}
       \\ \gramor & e (e_1, …, e_n) & \textrm{Appel de fonction}
@@ -193,7 +193,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \begin{align*}
       lv \gramisa & x     & \textrm{Variable}
       \\  \gramor & *lv   & \textrm{Déréférencement}
-      \\  \gramor & lv.f  & \textrm{Accès à un champ}
+      \\  \gramor & lv.l  & \textrm{Accès à un champ}
       \\  \gramor & lv[e] & \textrm{Accès à un élément}
     \end{align*}
   }
@@ -314,7 +314,7 @@ associées aux variables du programme.
     \sPhi'(X) = & X \\
                 & \cup \sAddr \\
                 & \cup \{*φ / φ ∈ \sPhi\} \\
-                & \cup \{φ.f / φ ∈ \sPhi, f ∈ \sId\} \\
+                & \cup \{φ.c / φ ∈ \sPhi, c ∈ \sId\} \\
                 & \cup \{φ[n] / φ ∈ \sPhi, n ∈ \sInt\} \\
   \sAddr = & \sId \bigdcup (ℕ × \sId) \\
 \end{align*}
@@ -356,8 +356,8 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
     \begin{align*}
       v \gramisa & c               & \textrm{Constante}
       \\ \gramor & φ               & \textrm{Référence mémoire}
-      \\ \gramor & \{ f_1 : v_1 ;
-                  … ; f_n : v_n \} & \textrm{Structure}
+      \\ \gramor & \{ l_1 : v_1 ;
+                  … ; l_n : v_n \} & \textrm{Structure}
       \\ \gramor & \{v_1 ;…; v_n\} & \textrm{Tableau}
       \\ \gramor & f               & \textrm{Fonction}
     \end{align*}
@@ -374,7 +374,7 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
     \begin{align*}
       φ \gramisa & a    & \textrm{Adresse}
       \\ \gramor & *φ   & \textrm{Déréférencement}
-      \\ \gramor & φ.f  & \textrm{Accès à un champ}
+      \\ \gramor & φ.l  & \textrm{Accès à un champ}
       \\ \gramor & φ[n] & \textrm{Accès à un élément}
     \end{align*}
   }
@@ -420,23 +420,23 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  On définit l'empilement d'un cadre de pile $f = ((x_1, v_1), …, (x_n, v_n))$
+  On définit l'empilement d'un cadre de pile $c = ((x_1, v_1), …, (x_n, v_n))$
   sur un état mémoire $m = (s, g)$ :
 
   \[
-    \mathrm{Push}((s, g), f) = (f::s, g)
+    \mathrm{Push}((s, g), c) = (c::s, g)
   \]
 
   On définit aussi l'extension du dernier cadre de pile :
 
   \[
-    \mathrm{Extend}((f::s, g), x) = (((x @ f) :: s), g)
+    \mathrm{Extend}((c::s, g), x) = (((x @ c) :: s), g)
   \]
 
   De même on définit le dépilement :
 
   \[
-    \mathrm{Pop}(f::s, g) = (s, g)
+    \mathrm{Pop}(c::s, g) = (s, g)
   \]
 
 \end{definition}
@@ -555,15 +555,15 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
 
-  L'accesseur $[ \cdot ]_F$ permet de lire et de modifier un champ de ces
+  L'accesseur $[ \cdot ]_l$ permet de lire et de modifier un champ de ces
   valeurs.
 
-  C'est une erreur d'accéder à un champ d'une valeur non structure ($4[f]$ par
+  C'est une erreur d'accéder à un champ d'une valeur non structure ($4[l]_l$ par
   exemple).
 
   \begin{align*}
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_F = & v_i \\
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_F = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l_i]_l = & v_i \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l_p ← v]_l = & \{ l_1 : v'_1; … ; l_n : v'_n \} \\
           \mbox{ où } & v'_p = v \\
                       & ∀ i ≠ p, v'_i = v_i
   \end{align*}
@@ -593,28 +593,28 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   \begin{align*}
     m[a]_Φ        = & m[a]_A \\
     m[*φ]_Φ       = & m[φ']_Φ \mbox{ où } φ' = m[φ]_Φ \\
-    m[φ.f]_Φ      = & m[φ]_φ[f]_F \\
+    m[φ.l]_Φ      = & m[φ]_φ[l]_l \\
     m[φ[i]]_Φ     = & m[φ]_φ[i]_I \\
     m[a ← v]_Φ    = & m[a ← v]_A \\
     m[*φ ← v]_Φ   = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
-    m[φ.f ← v]_Φ  = & m[φ ← (m[φ]_Φ[f←v]_F)]_Φ \\
+    m[φ.l ← v]_Φ  = & m[φ ← (m[φ]_Φ[l←v]_l)]_Φ \\
     m[φ[i] ← v]_Φ = & m[φ ← (m[φ]_Φ[i←v]_I)]_Φ
   \end{align*}
 
 \end{definition}
 
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
-suffit d'appliquer les bons accesseurs : $[\cdot]_F$ pour $φ.f$, etc.
+suffit d'appliquer les bons accesseurs : $[\cdot]_L$ pour $φ.l$, etc.
 
 En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
 et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
-association), mais les deux suivants ($φ = φ'.f$ et $φ = φ'[i]$) ne font
+association), mais les deux suivants ($φ = φ'.l$ et $φ = φ'[i]$) ne font
 qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 étapes :
 
 \begin{itemize}
 \item obtenir la valeur à modifier (soit $m[φ]_φ$)
-\item construitre une valeur altérée (en appliquant par exemple $[f←v]_f$)
+\item construitre une valeur altérée (en appliquant par exemple $[l←v]_L$)
 \item affecter cette valeur au même chemin (le $m[φ ← …]_φ$ externe)
 \end{itemize}
 
@@ -681,8 +681,8 @@ décrit dans la figure~\ref{fig:ctx-sub}.
   \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
   \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
   \ctxSub{(\ctxSet{φ}{C})    }{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}}     \\
-  \ctxSub{\{ f_1:v_1 ; …
-     ; f_i:C ; … ; f_n:e_n \}}{e_0} = & \{ f_1:v_1 ; … ; f_i:\ctxSub{C}{e_0} ; … ; f_n:e_n \} \\
+  \ctxSub{\{ l_1:v_1 ; …
+     ; l_i:C ; … ; l_n:e_n \}}{e_0} = & \{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n \} \\
   \ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ]    \\
   \ctxSub{C (e_1, …, e_n)          }{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n)              \\
   \ctxSub{f (v_1, …, C, …, e_n)    }{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n)        \\
@@ -815,12 +815,12 @@ d'évaluation sont mutuellement récursives.
 
   \begin{tikzpicture}
     \node              (a1) {$x$};
-    \node[right of=a1] (a2) {$.f$};
+    \node[right of=a1] (a2) {$.l$};
     \node[right of=a2] (a3) {$[2*n]$};
     \node[right of=a3] (a4) {$.g$};
 
     \node[below of=a1] (b1) {$(2, x)$};
-    \node[below of=a2] (b2) {$.f$};
+    \node[below of=a2] (b2) {$.l$};
     \node[below of=a3] (b3) {$[4]$};
     \node[below of=a4] (b4) {$.g$};
 
@@ -1039,7 +1039,7 @@ La fonction $\mathrm{Cleanup}$ est donnée par :
     \cllive{p}{(n, x)} = & n < p \\
     \cllive{p}{(x)}    = & \mathrm{Vrai} \\
     \cllive{p}{*φ}     = & \cllive{p}{φ} \\
-    \cllive{p}{φ.f}    = & \cllive{p}{φ} \\
+    \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
     \cllive{p}{φ[n]}   = & \cllive{p}{φ}
 \end{align*}
 
@@ -1412,6 +1412,7 @@ donc
 faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
 \item arithmétique de pointeur à préciser
 \item état mémoire : doublet/triplet
+\item indices des accesseurs en majuscules
 \end{itemize}
 
 % vim: spelllang=fr
