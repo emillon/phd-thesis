@@ -6,7 +6,7 @@
     }
     {Cst-Float}{ \irule{Cst-Float}
                    { }
-                   { Γ ⊢ f : \tFloat}
+                   { Γ ⊢ d : \tFloat}
     }
     {Cst-Null}{ \irule{Cst-Null}
                   { }
@@ -27,10 +27,10 @@
                   { Γ ⊢ lv[e] : t }
     }
     {Lv-Field}{ \irule{Lv-Field}
-                  { (s, f, t_f) ∈ S \\
+                  { (s, l, t_l) ∈ S \\
                     Γ ⊢ lv : \tstruct{s}
                   }
-                  { Γ ⊢ lv.f : t_f }
+                  { Γ ⊢ lv.l : t_l }
     }
     {Op-Int}{ \irule{Op-Int}
                 { \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
@@ -127,11 +127,11 @@
            }
     {Struct}{ \irule{Struct}
                 { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i \\
-                  ∀ i ∈ [1;n], (s, f_i, t_i) ∈ S
+                  ∀ i ∈ [1;n], (s, l_i, t_i) ∈ S
                 }
-                { Γ ⊢ \{ f_1 : e_1 ;
-                        … ; f_n : e_n \}
-                        : \tstruct{s}
+                { Γ ⊢ \{ l_1 : e_1 ;
+                     … ; l_n : e_n \}
+                    : \tstruct{s}
                 }
             }
     {Call}{ \irule{Call}
@@ -243,7 +243,7 @@
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
-                    { \mms{lv.f}{lv\widehat{.}f} }
+                    { \mms{lv.l}{lv\widehat{.}l} }
     }
     {Phi-Array}{ \irule{Phi-Array}
                    { }
@@ -291,8 +291,8 @@
     }
     {Exp-Struct}{ \irule{Exp-Struct}
                    { }
-                   { \mms{ \{ f_1 : v_1 ; … ; f_n : v_n \} }
-                         { \widehat{\{ f_1 : v_1 ; … ; f_n : v_n \}} }
+                   { \mms{ \{ l_1 : v_1 ; … ; l_n : v_n \} }
+                         { \widehat{\{ l_1 : v_1 ; … ; l_n : v_n \}} }
                    }
     }
     {Exp-Array}{ \irule{Exp-Array}
@@ -378,13 +378,13 @@
   \\ \gramor & \ctxOp{C}{e} & \gramor & \ctxOp{v}{C}
   \\ \gramor & \ctxUnOp{C}
   \\ \gramor & \ctxSet{C}{e} & \gramor & \ctxSet{φ}{C}
-  \\ \gramor & \{ f_1:v_1 ; … ; f_i:C ; … ; f_n:e_n \}
+  \\ \gramor & \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \}
   \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
   \\ \gramor & C (e_1, …, e_n) & \gramor & f (v_1, …, C, …, e_n)
   \\
   \\
   C_L \gramisa & \ctxLvDeref{C_L}
-  \\   \gramor & \ctxLvField{C_L}{f}
+  \\   \gramor & \ctxLvField{C_L}{l}
   \\   \gramor & \ctxLvIndex{C_L}{e} & \gramor & \ctxLvIndex{φ}{C}
   \\
   \\
