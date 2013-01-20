@@ -1,24 +1,146 @@
-On définit ici un langage impératif servant de base à nos analyses. Un premier
-système de types sera donné dans le chapitre~\ref{cha:typbase}.
+Dans ce chapitre nous présentons \langname, un langage impératif inspiré de C.
+Sa syntaxe est tout d'abord décrite ; puis une sémantique opérationnelle est
+explicitée.
+
+Ce langage servira de support au systèmes de types décrit dans le
+chapitre~\ref{cha:typbase} et enrichi dans le chapitre~\ref{cha:qualifs}.
+
+La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
+
+\section{Notations}
+
+\subsection*{Ensembles inductifs}
+
+Dans ce chapitre (et les chapitres suivants), on définit de nombreux ensembles
+inductifs. Plutôt que d'écrire la construction explicite par point fixe, on
+emploie une notation en grammaire.
+
+Prenons l'exemple des listes chaînées composées d'élements de $ℕ$. On peut
+définir cet ensemble $L$ de la manière inductive suivante :
+
+\def\opfix{\textrm{fix}\xspace}
+
+\begin{align*}
+  \textsc{L} & = \opfix (L') \\
+  L'(E) & = \{[]\} \cup \{ n::l / n ∈ ℕ, l ∈ E \} \\
+\end{align*}
+
+où
+
+\begin{align*}
+  \opfix (f) & = \bigcup_{n=0}^{\infty} f^{n}(ø) \\
+  f^0(x) & = x \\
+  ∀ n > 0, f^n(x) & = f^{n-1}(f (x)) \\
+\end{align*}
+
+On écrira à la place :
+
+\gramlr{Listes}{
+\begin{align*}
+  l \gramisa & []   & \textrm{Liste vide}
+  \\ \gramor & n::l & \textrm{Construction de liste}
+\end{align*}
+}
+
+Chaque ensemble est identifié de manière unique par les noms de variables
+métasyntaxiques : $n$ pour les entiers et $l$ pour les listes ici. Si plusieurs
+métavariables du même ensemble doivent apparaître, elles sont indicées. Par
+exemple, on peut définir des arbres binaires d'entiers de la manière suivante :
+
+\gramlr{Arbres binaires}{
+\begin{align*}
+  a \gramisa & \textsc{Feuille}           & \textrm{Feuille}
+  \\ \gramor & \textsc{Nœud}(a_1, n, a_2) & \textrm{Nœud}
+\end{align*}
+}
+
+Cette notation a aussi l'avantage de s'étendre facilement aux définitions
+mutuellement récursives.
+
+\subsection*{Inférence}
+
+La sémantique opérationnelle consiste en la définition d'une relation de
+transition $\rightarrow$ entre états de l'interpréteur.
+
+Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
+de présenter l'induction explicitement, elle est représentée par des jugements
+logiques et des règles d'inférences, de la forme :
+
+\[
+\irule{Nom}{P_1 \\ … \\ P_n}{C}
+\]
+
+Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
+la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
+
+Certaines règles n'ont pas de prémisse, ce sont des axiomes :
+
+\[
+\iaxiom{Ax}{A}
+\]
+
+Compte-tenu de la structure des règles, la preuve d'un jugement pourra donc être
+vue sous la forme d'un arbre :
+
+\[
+  \irule{r1}{
+    \irule{r2}
+          {
+            \iaxiom{r3}{A_1}
+              \\
+            \iaxiom{r4}{A_2}
+          }
+          {B_1}
+    \\
+    \irule{r5}
+      {
+        \iaxiom{r6} {A_3}
+      }{B_2}
+      }{C}
+\]
+
+\section{But et comparaison à C}
+
+Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
+``assembleur portable''. Ses types de données et les opérations associées sont
+donc naturellement très bas niveau.
+
+Les types de données de C sont établis pour représenter les mots mémoire
+manipulables par les processeurs : essentiellement des entiers et flottants de
+plusieurs tailles. Les types composés correespondent à des zones de mémoire
+contigües, homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
+structures).
+
+Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
+c'est à dire des variables qui représentent directement une adresse en mémoire.
+Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
+stocké à cette adresse) ou non typés.
+
+Le système de types rudimentaire de C ne permet pas d'avoir beaucoup de
+garanties sur la sûreté du programme. En effet, aucune vérification n'est
+effectuée en dehors de celles faites par le programmeur.
+
+Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
+sur une certaine classe de programmes C.
 
 \section{Principes}
 
 Nous voulons capturer l'essence de C. Les traits principaux sont les suivants :
 
-\begin{itemize}
-\item
-  les types de données sont très simples : entiers machine, flottants,
-  pointeurs et types composés (structures et tableaux) composés de
-  ceux-ci.
-\item
-  les variables sont mutables, et on peut passer des données par valeur
-  ou par pointeur.
-\item
-  le flôt de contrôle repose sur les construction ``if'' et ``while''.
-\item
-  le code est organisé en fonctions ``simples'', c'est-à-dire qui ne
-  sont pas des fermetures.
-\end{itemize}
+\paragraph{Types de données :} très simples. Entiers machine, flottants,
+pointeurs et types composés (structures et tableaux) composés de ceux-ci.
+
+\paragraph{Variables :} elles sont mutables, et on peut passer des données par
+valeur ou par pointeur.
+
+\paragraph{Flôt de contrôle :} il repose sur les construction ``if'' et
+``while''. Les autres types de boucle (``for'' et ``do/while'') peuvent être
+construits avec ces opérateurs.
+
+\paragraph{Fonctions :} le code est organisé en fonctions ``simples'',
+c'est-à-dire qui ne sont pas des fermetures. Même si le corps
+d'une fonction peut être inclus dans le corps d'une autre, il n'est pas possible
+d'accéder aux variables de la portée entourante depuis la fonction intérieure.
 
 \section{Syntaxe}
 
@@ -27,14 +149,14 @@ notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
 
 Un programme est organisé en fonctions, qui contiennent des instructions, qui
-elles-même manipulent des expressions.
+elles-mêmes manipulent des expressions.
 
 Le flot de contrôle est simplifié par rapport à C : il ne contient que
 l'alternative ("if") et la boucle "while". Les autres formes de boucle
 ("do/while" et "for") peuvent être émulées par une boucle "while".
 
 Les fonctionnalités manquantes, et comment les émuler, seront discutés dans le
-chapitre\ref{chap:nexistepas}. % TODO
+chapitre~\ref{cha:conclusion}. % TODO vraiment ?
 
 Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 \iIf{e}{i}{\iPass}$.
@@ -46,7 +168,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
   \gramlr{Constantes}{
     \begin{align*}
       c \gramisa & i      & \textrm{Entier}
-      \\ \gramor & f      & \textrm{Flottant}
+      \\ \gramor & d      & \textrm{Flottant}
       \\ \gramor & \eNull & \textrm{Pointeur nul}
     \end{align*}
   }
@@ -59,8 +181,8 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       \\ \gramor & e~\opbin~e      & \textrm{Opération binaire}
       \\ \gramor & \& lv           & \textrm{Pointeur}
       \\ \gramor & lv ← e          & \textrm{Affectation}
-      \\ \gramor & \{ f_1 : e_1 ;
-                  … ; f_n : e_n \} & \textrm{Structure}
+      \\ \gramor & \{ l_1 : e_1 ;
+                  … ; l_n : e_n \} & \textrm{Structure}
       \\ \gramor & \{e_1 ;…; e_n\} & \textrm{Tableau}
       \\ \gramor & f               & \textrm{Fonction}
       \\ \gramor & e (e_1, …, e_n) & \textrm{Appel de fonction}
@@ -71,7 +193,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \begin{align*}
       lv \gramisa & x     & \textrm{Variable}
       \\  \gramor & *lv   & \textrm{Déréférencement}
-      \\  \gramor & lv.f  & \textrm{Accès à un champ}
+      \\  \gramor & lv.l  & \textrm{Accès à un champ}
       \\  \gramor & lv[e] & \textrm{Accès à un élément}
     \end{align*}
   }
@@ -192,7 +314,7 @@ associées aux variables du programme.
     \sPhi'(X) = & X \\
                 & \cup \sAddr \\
                 & \cup \{*φ / φ ∈ \sPhi\} \\
-                & \cup \{φ.f / φ ∈ \sPhi, f ∈ \sId\} \\
+                & \cup \{φ.c / φ ∈ \sPhi, c ∈ \sId\} \\
                 & \cup \{φ[n] / φ ∈ \sPhi, n ∈ \sInt\} \\
   \sAddr = & \sId \bigdcup (ℕ × \sId) \\
 \end{align*}
@@ -226,18 +348,28 @@ paramètres et ses variables locales.
 Au contraire, pour les globales il n'y a pas de système d'empilement, puisque
 ces variables sont accessibles depuis tout point du programme.
 
-Ces définitions sont résumées dans la figure~\ref{fig:interp}
+Ces définitions sont résumées dans la figure~\ref{fig:interp}. Plusieurs
+constructions, comme les tableaux, sont ambigües puisqu'elle ont à la fois une
+forme syntaxique et une forme sémantique. Pour lever cette ambigüité, on note
+sous un accent circonflexe $\widehat{\cdot}$ les constructions syntaxique. Par
+exemple, si $x$ vaut $2$ et $y$ vaut $3$, l'expression $\{ x, y \}$ s'évaluera
+en valeur $\widehat{\{ 2, 3 \}}$
+
 
 \begin{figure}
 
   \gramlr{Valeurs}{
     \begin{align*}
-      v \gramisa & c               & \textrm{Constante}
+      v \gramisa & \widehat{c}     & \textrm{Constante}
       \\ \gramor & φ               & \textrm{Référence mémoire}
-      \\ \gramor & \{ f_1 : v_1 ;
-                  … ; f_n : v_n \} & \textrm{Structure}
-      \\ \gramor & \{v_1 ;…; v_n\} & \textrm{Tableau}
-      \\ \gramor & f               & \textrm{Fonction}
+      \\ \gramor & \widehat{
+                    \{ l_1 : v_1 ;
+                  … ; l_n : v_n \}
+                  }                & \textrm{Structure}
+      \\ \gramor & \widehat{
+                   \{v_1 ;…; v_n\}
+                   }               & \textrm{Tableau}
+      \\ \gramor & \widehat{f}     & \textrm{Fonction}
     \end{align*}
   }
 
@@ -252,7 +384,7 @@ Ces définitions sont résumées dans la figure~\ref{fig:interp}
     \begin{align*}
       φ \gramisa & a    & \textrm{Adresse}
       \\ \gramor & *φ   & \textrm{Déréférencement}
-      \\ \gramor & φ.f  & \textrm{Accès à un champ}
+      \\ \gramor & φ.l  & \textrm{Accès à un champ}
       \\ \gramor & φ[n] & \textrm{Accès à un élément}
     \end{align*}
   }
@@ -298,23 +430,23 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  On définit l'empilement d'un cadre de pile $f = ((x_1, v_1), …, (x_n, v_n))$
+  On définit l'empilement d'un cadre de pile $c = ((x_1, v_1), …, (x_n, v_n))$
   sur un état mémoire $m = (s, g)$ :
 
   \[
-    \mathrm{Push}((s, g), f) = (f::s, g)
+    \mathrm{Push}((s, g), c) = (c::s, g)
   \]
 
   On définit aussi l'extension du dernier cadre de pile :
 
   \[
-    \mathrm{Extend}((f::s, g), x) = (((x @ f) :: s), g)
+    \mathrm{Extend}((c::s, g), x) = (((x @ c) :: s), g)
   \]
 
   De même on définit le dépilement :
 
   \[
-    \mathrm{Pop}(f::s, g) = (s, g)
+    \mathrm{Pop}(c::s, g) = (s, g)
   \]
 
 \end{definition}
@@ -433,15 +565,15 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
 
-  L'accesseur $[ \cdot ]_F$ permet de lire et de modifier un champ de ces
+  L'accesseur $[ \cdot ]_L$ permet de lire et de modifier un champ de ces
   valeurs.
 
-  C'est une erreur d'accéder à un champ d'une valeur non structure ($4[f]$ par
+  C'est une erreur d'accéder à un champ d'une valeur non structure ($4[l]_L$ par
   exemple).
 
   \begin{align*}
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_i]_F = & v_i \\
-    \{ f_1 : v_1; … ; f_n : v_n \}[f_p ← v]_F = & \{ f_1 : v'_1; … ; f_n : v'_n \} \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l_i]_L = & v_i \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l_p ← v]_L = & \{ l_1 : v'_1; … ; l_n : v'_n \} \\
           \mbox{ où } & v'_p = v \\
                       & ∀ i ≠ p, v'_i = v_i
   \end{align*}
@@ -471,28 +603,28 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   \begin{align*}
     m[a]_Φ        = & m[a]_A \\
     m[*φ]_Φ       = & m[φ']_Φ \mbox{ où } φ' = m[φ]_Φ \\
-    m[φ.f]_Φ      = & m[φ]_φ[f]_F \\
+    m[φ.l]_Φ      = & m[φ]_φ[l]_l \\
     m[φ[i]]_Φ     = & m[φ]_φ[i]_I \\
     m[a ← v]_Φ    = & m[a ← v]_A \\
     m[*φ ← v]_Φ   = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
-    m[φ.f ← v]_Φ  = & m[φ ← (m[φ]_Φ[f←v]_F)]_Φ \\
+    m[φ.l ← v]_Φ  = & m[φ ← (m[φ]_Φ[l←v]_L)]_Φ \\
     m[φ[i] ← v]_Φ = & m[φ ← (m[φ]_Φ[i←v]_I)]_Φ
   \end{align*}
 
 \end{definition}
 
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
-suffit d'appliquer les bons accesseurs : $[\cdot]_F$ pour $φ.f$, etc.
+suffit d'appliquer les bons accesseurs : $[\cdot]_L$ pour $φ.l$, etc.
 
 En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
 et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
-association), mais les deux suivants ($φ = φ'.f$ et $φ = φ'[i]$) ne font
+association), mais les deux suivants ($φ = φ'.l$ et $φ = φ'[i]$) ne font
 qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 étapes :
 
 \begin{itemize}
 \item obtenir la valeur à modifier (soit $m[φ]_φ$)
-\item construitre une valeur altérée (en appliquant par exemple $[f←v]_f$)
+\item construitre une valeur altérée (en appliquant par exemple $[l←v]_L$)
 \item affecter cette valeur au même chemin (le $m[φ ← …]_φ$ externe)
 \end{itemize}
 
@@ -528,10 +660,14 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
 Le premier point consiste à définir les contextes eux-mêmes
 (figure~\ref{fig:eval-ctx}).
 
-Le deuxième est résolu la règle d'inférence suivante :
+Le deuxième est résolu les règles d'inférence suivantes :
 
 \begin{mathpar}
   \semrule{Ctx}
+
+  \semrule{Ctx-Lv}
+
+  \semrule{Ctx-Instr}
 \end{mathpar}
 
 Enfin, le troisième revient à définit l'opérateur de substitution
@@ -555,8 +691,8 @@ décrit dans la figure~\ref{fig:ctx-sub}.
   \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
   \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
   \ctxSub{(\ctxSet{φ}{C})    }{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}}     \\
-  \ctxSub{\{ f_1:v_1 ; …
-     ; f_i:C ; … ; f_n:e_n \}}{e_0} = & \{ f_1:v_1 ; … ; f_i:\ctxSub{C}{e_0} ; … ; f_n:e_n \} \\
+  \ctxSub{\{ l_1:v_1 ; …
+     ; l_i:C ; … ; l_n:e_n \}}{e_0} = & \{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n \} \\
   \ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ]    \\
   \ctxSub{C (e_1, …, e_n)          }{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n)              \\
   \ctxSub{f (v_1, …, C, …, e_n)    }{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n)        \\
@@ -570,9 +706,43 @@ décrit dans la figure~\ref{fig:ctx-sub}.
 \label{fig:ctx-sub}
 \end{figure}
 
-Exemple de dérivation.
+Par exemple, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
+v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ (cf.
+figure~\ref{fig:eval-ex-ctx}) :
 
-\begin{mathpar}
+\begin{enumerate}
+\item
+  on commence par évaluer, d'une manière ou d'une autre, l'expression
+  $e_1$ en une valeur $v_1$. Le nouvel état mémoire est noté $m'$. Soit
+  donc $\mm{m}{e_1}{m'}{v_1}$.
+\item
+  En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
+  une des formes possibles pour un contexte d'évaluation), on déduit de 1. que
+  $\mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
+\item
+  D'autre part, on évalue $e_2$ depuis $m'$. En supposant encore que
+  l'évaluation converge, notons $v_2$ la valeur calculée et $m''$ l'état mémoire
+  résultant : $\mm{m'}{e_2}{m''}{v_2}$.
+\item
+  Appliquons la règle~\textsc{Ctx} à 3. avec $C = \ctxOp{v_1}{\ctxEmpty}$. On
+  obtient $\mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
+\item
+  En combinant les résultats de 2. et 4. on en déduit que
+  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
+% TODO comment combiner ?
+\item D'après la règle~\textsc{Exp_Binop},
+  $ \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
+\item D'après 5. et 6., on a par combinaison
+  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v}$
+  en posant 
+  $v = v_1~\widehat{\opbin}~v_2$
+  .
+% TODO comment combiner ?
+\end{enumerate}
+
+\begin{figure} % {{{
+
+\[
 \inferrule*
   {
     \inferrule*[vdots=2em]
@@ -604,7 +774,12 @@ Exemple de dérivation.
       { \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2} }
   }
   { \mmstar{m}{e}{m''}{v_1~\widehat{\opbin}~v_2} }
-\end{mathpar}
+\]
+
+\caption{Évaluation d'une expression}
+\label{fig:eval-ex-ctx}
+
+\end{figure} % }}}
 
 \section{Expressions}
 
@@ -650,12 +825,12 @@ d'évaluation sont mutuellement récursives.
 
   \begin{tikzpicture}
     \node              (a1) {$x$};
-    \node[right of=a1] (a2) {$.f$};
+    \node[right of=a1] (a2) {$.l$};
     \node[right of=a2] (a3) {$[2*n]$};
     \node[right of=a3] (a4) {$.g$};
 
     \node[below of=a1] (b1) {$(2, x)$};
-    \node[below of=a2] (b2) {$.f$};
+    \node[below of=a2] (b2) {$.l$};
     \node[below of=a3] (b3) {$[4]$};
     \node[below of=a4] (b4) {$.g$};
 
@@ -874,7 +1049,7 @@ La fonction $\mathrm{Cleanup}$ est donnée par :
     \cllive{p}{(n, x)} = & n < p \\
     \cllive{p}{(x)}    = & \mathrm{Vrai} \\
     \cllive{p}{*φ}     = & \cllive{p}{φ} \\
-    \cllive{p}{φ.f}    = & \cllive{p}{φ} \\
+    \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
     \cllive{p}{φ[n]}   = & \cllive{p}{φ}
 \end{align*}
 
@@ -1235,12 +1410,23 @@ donc
 \item cas d'erreurs explicites $Ω_{div}$, $Ω_{ptr}$ et $Ω_{array}$
 \item widehats sur les constantes ?
 \item liste d'assos -> fonction
+\item résoudre le problème des structures
+\item définir les opérations d'ajout/remplacement sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item dédupliquer la def de l'état mémoire
 \item syntaxe concrète
 \item procédures vs fonctions
 \item top ?
 \item return implicite en fin de fct
+\item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$ et quand il
+faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
+\item arithmétique de pointeur à préciser
+\item état mémoire : doublet/triplet
+\item notation des tableaux et structures : deux points ou point virgule ?
+\item notation des tableaux : crochets ou accolades ?
+\item syntaxique ou syntactique ?
+\item métasyntaxique ou métasyntactique ?
+\item tableau vide, structure vide
 \end{itemize}
 
 % vim: spelllang=fr

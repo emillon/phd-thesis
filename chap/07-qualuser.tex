@@ -45,12 +45,35 @@ t \gramisa & …
 \gramlr{Instructions}{
 \begin{align*}
 i \gramisa …
-\\ \gramor & \iTaint{x}
+\\ \gramor & \iTaint{x} & \textrm{Teintage d'une valeur}
+\end{align*}
+}
+
+\gramlr{Valeurs}{
+\begin{align*}
+v \gramisa & …
+\\ \gramor & \vTainted{φ} & \textrm{Valeur teintée}
+\end{align*}
+}
+
+\gramlr{États}{
+\begin{align*}
+ms \gramisa & …
+\\  \gramor & Ω_{taint} & \textrm{Erreur de taintage}
+\end{align*}
+}
+
+\gramlr{Contextes}{
+\begin{align*}
+C \gramisa & …
+\\ \gramor & \iTaint{C}
 \end{align*}
 }
 
 \caption{Changements liés aux qualificateurs de types}
 \label{fig:qualif-changes}
+
+% TODO définir les états et ms
 
 \end{figure}
 
@@ -69,9 +92,21 @@ Règle d'évaluation
 % TODO pas de contexte associé
 
 \begin{mathpar}
-\irule{Taint}
+\irule{Taint-Erase}
   { }
   { \mmi{m}{\iTaint{x}}{m}{\iPass} }
+\end{mathpar}
+
+\begin{mathpar}
+\irule{Taint-Write-Old}
+  { }
+  { \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
+\end{mathpar}
+
+\begin{mathpar}
+\irule{Taint-Write}
+  { }
+  { \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
 \end{mathpar}
 
 Règle de taintage
@@ -82,6 +117,15 @@ Règle de taintage
   { Γ ⊢ \iTaint{x} }
 \end{mathpar}
 
+%Déréférencement
+%
+% TODO
+%\begin{mathpar}
+%\irule{Deref-Kernel}
+  %{ }
+  %{ \mm{m}{*\vT }
+%\end{mathpar}
+
 \subsection{Propriété d'isolation mémoire}
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
@@ -90,7 +134,7 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \section{Analyse de terminaison des chaînes C}
 
 Dans ce chapitre, nous présentons une autre extension au système de types du
-chapitre~\ref{cha:typbase}, similaire à celle du chapitre~\ref{cha:qualuser}.
+chapitre~\ref{cha:typbase}, similaire à celle de la section précédente.
 Il s'agit cette fois-ci de détecter les pointeurs sur caractères (\texttt{char
 *}) qui sont terminés par un caractère NUL et donc une chaîne C correcte. La
 bibliothèque C propose quantité de fonctions manipulant ces chaînes et appeler
@@ -151,10 +195,10 @@ pourquoi nous appellerons ce qualificateur de type \texttt{sz}.
 \subsection{Approche}
 
 Cette propriété est un peu différente de la séparation entre espace utilisateur
-et espace noyau modélisée dans le chapitre~\ref{cha:qualuser} : autant un pointeur
-reste contrôlé par l'utilisateur (ou sûr) toute sa vie, autant le fait d'être
-terminé par un octet nul dépend de l'ensemble de l'état mémoire. Il y a deux
-problèmes principaux à considérer.
+et espace noyau modélisée précédemment : autant un pointeur reste contrôlé par
+l'utilisateur (ou sûr) toute sa vie, autant le fait d'être terminé par un octet
+nul dépend de l'ensemble de l'état mémoire. Il y a deux problèmes principaux à
+considérer.
 
 D'une part, l'\emph{aliasing} rend l'analyse difficile : si \texttt{p} et
 \texttt{q} pointent tous les deux vers une même zone mémoire, le fait de
@@ -298,5 +342,13 @@ size_t strlen(const char *s);
 \subsection{Extensions au système de types}
 
 \subsection{Résultats}
+
+\section*{TODO}
+
+\begin{itemize}
+\item appliquer taint sur des sous-valeurs?
+\item étendre l'état mémoire aux variables utilisateur
+\item règle de sous-typage structurel
+\end{itemize}
 
 % vim: spelllang=fr

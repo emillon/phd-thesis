@@ -1,0 +1,54 @@
+\thispagestyle{simple}
+
+Dans cette partie, nous allons présenter un langage impératif modélisant le
+langage C. Le chapitre~\ref{cha:lang} décrit sa syntaxe, ainsi que sa
+sémantique. À ce point, de nombreux programmes sont acceptés mais qui provoquent
+des erreurs à l'exécution.
+
+Afin de rejeter ces programmes incorrects, on définit ensuite dans le
+chapitre~\ref{cha:typbase} une sémantique statique s'appuyant sur un système de
+types simples. Des propriétés de sûreté de typage sont ensuite établies,
+permettant de catégoriser l'ensemble des erreurs à l'exécution possibles.
+
+Le chapitre~\ref{cha:qualifs} commence par étendre notre langage avec une
+nouvelle classe d'erreurs à l'exécution, modélisant les accès à la mémoire
+utilisateur catégorisé comme dangereux dans le chapitre~\ref{cha:os}. Une
+extension au système de types du chapitre~\ref{cha:typbase} est ensuite établie,
+et on prouve que les programmes ainsi typés ne peuvent pas atteindre ces cas
+d'erreur.
+
+Trois types d'erreurs à l'exécution sont possibles :
+
+\begin{itemize}
+\item
+  les erreurs de typage (dynamique), lorsqu'on tente d'appliquer à une
+  opération des valeurs incompatibles (additionner un entier et une
+  fonction par exemple.
+\item
+  les erreurs de sécurité, qui consistent en le déréférencement d'un
+  pointeur dont la valeur est contrôlée par l'espace utilisateur.
+  Celles-ci sont uniquement possibles en contexte noyau.
+\item
+  les erreurs mémoire, qui résultent d'un débordement de tableau, du
+  déréférencement d'un pointeur invalide ou d'arithmétique de pointeur
+  invalide.
+\end{itemize}
+
+En résumé, l'introduction des types simples enlève la possibilité de rencontrer
+des erreurs de typage dynamique, et l'ajout des qualificateurs interdit les
+erreurs de sécurité.
+
+\begin{center}
+\begin{tabular}{ll|ccc}
+\toprule
+Langage         & Types     & \multicolumn{3}{c}{Erreurs possibles}   \\
+\multicolumn{2}{c|}{}       & Typage      & Sécurité    & Mémoire     \\
+\langname       & sans      & \CheckedBox & N/A         & \CheckedBox \\
+\langname       & simples   & \Square     & N/A         & \CheckedBox \\
+\langname noyau & simples   & \Square     & \CheckedBox & \CheckedBox \\
+\langname noyau & qualifiés & \Square     & \Square     & \CheckedBox \\
+\bottomrule
+\end{tabular}
+
+% TODO ajouter une ligne horitontale sous la première ligne
+\end{center}

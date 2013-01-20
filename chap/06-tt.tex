@@ -565,7 +565,7 @@ variable $x$ un entier.
 $e$ est alors de la forme $n$, qui est une valeur.
 %}}}
   \paragraph{\textsc{Cst-Float} :} % {{{
-$e$ est alors de la forme $f$, qui est une valeur.
+$e$ est alors de la forme $d$, qui est une valeur.
 %}}}
   \paragraph{\textsc{Cst-Null} :} % {{{
 $e$ est alors égal à $\eNull$, qui est une valeur.
@@ -706,7 +706,7 @@ expression.
     \item
       si $Γ ⊢ φ[] : t$, alors $Γ ⊢ φ : t[]$
     \item
-      si $Γ ⊢ φ.f : t$, alors $Γ ⊢ φ : \{ f: t ; … \}$
+      si $Γ ⊢ φ.l : t$, alors $Γ ⊢ φ : \{ l: t ; … \}$
     % TODO structure
   \end{itemize}
 \item
@@ -728,7 +728,7 @@ expression.
   Constantes
   \begin{itemize}
     \item si $Γ ⊢ n : t$, alors $t = \tInt$
-    \item si $Γ ⊢ f : t$, alors $t = \tFloat$
+    \item si $Γ ⊢ d : t$, alors $t = \tFloat$
     \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$
   \end{itemize}
   % TODO ...
@@ -760,9 +760,9 @@ expression.
 
       Idem avec \textsc{Lv-Index}.
 
-    \item $Γ ⊢ φ.f : t$
+    \item $Γ ⊢ φ.l : t$
 
-      $Γ ⊢ φ : \{ f: t ; … \}$ %TODO sûrement différent sans S
+      $Γ ⊢ φ : \{ l: t ; … \}$ %TODO sûrement différent sans S
 
   \end{itemize}
 
@@ -847,6 +847,7 @@ Ces lemmes permettent de prouver le théorème suivant :
 
 \begin{itemize}
 \item ordre des sections
-\item noter les flottants, fonctions et champs différemment
 \item versions $Γ ⊢ i$ des propriétés
+\item preuve de progres : état mémoire : doublet/triplet
+\item définir les opérations d'ajout/remplacement sur les contextes de typage
 \end{itemize}
