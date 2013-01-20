@@ -9,7 +9,7 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \section{But et comparaison à C}
 
-Le langage C~\ref{KandR} est un langage impératif, conçu pour être un
+Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
 ``assembleur portable''. Ses types de données et les opérations associées sont
 donc naturellement très bas niveau.
 
@@ -32,6 +32,8 @@ Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
 sur une certaine classe de programmes C.
 
 \section{Notations}
+
+\subsection*{Ensembles inductifs}
 
 Dans ce chapitre (et les chapitres suivants), on définit de nombreux ensembles
 inductifs. Plutôt que d'écrire la construction explicite par point fixe, on
@@ -78,6 +80,48 @@ exemple, on peut définir des arbres binaires d'entiers de la manière suivante 
 
 Cette notation a aussi l'avantage de s'étendre facilement aux définitions
 mutuellement récursives.
+
+\subsection*{Inférence}
+
+La sémantique opérationnelle consiste en la définition d'une relation de
+transition $\rightarrow$ entre états de l'interpréteur.
+
+Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
+de présenter l'induction explicitement, elle est représentée par des jugements
+logiques et des règles d'inférences, de la forme :
+
+\[
+\irule{Nom}{P_1 \\ … \\ P_n}{C}
+\]
+
+Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
+la manière suivante : si les $P_i$ sont prouvées, alors $C$ est prouvée.
+
+Certaines règles n'ont pas de prémisse, ce sont des axiomes :
+
+\[
+\iaxiom{Ax}{A}
+\]
+
+Compte-tenu de la structure des règles, la preuve d'un jugement pourra donc être
+vue sous la forme d'un arbre :
+
+\[
+  \irule{r1}{
+    \irule{r2}
+          {
+            \iaxiom{r3}{A_1}
+              \\
+            \iaxiom{r4}{A_2}
+          }
+          {B_1}
+    \\
+    \irule{r5}
+      {
+        \iaxiom{r6} {A_3}
+      }{B_2}
+      }{C}
+\]
 
 \section{Principes}
 
@@ -1366,7 +1410,6 @@ donc
 faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
 \item arithmétique de pointeur à préciser
 \item état mémoire : doublet/triplet
-\item preuve de progres : état mémoire : doublet/triplet
 \end{itemize}
 
 % vim: spelllang=fr
