@@ -17,14 +17,36 @@ extension au système de types du chapitre~\ref{cha:typbase} est ensuite établi
 et on prouve que les programmes ainsi typés ne peuvent pas atteindre ces cas
 d'erreur.
 
+Trois types d'erreurs à l'exécution sont possibles :
+
+\begin{itemize}
+\item
+  les erreurs de typage (dynamique), lorsqu'on tente d'appliquer à une
+  opération des valeurs incompatibles (additionner un entier et une
+  fonction par exemple.
+\item
+  les erreurs de sécurité, qui consistent en le déréférencement d'un
+  pointeur dont la valeur est contrôlée par l'espace utilisateur.
+  Celles-ci sont uniquement possibles en contexte noyau.
+\item
+  les erreurs mémoire, qui résultent d'un débordement de tableau, du
+  déréférencement d'un pointeur invalide ou d'arithmétique de pointeur
+  invalide.
+\end{itemize}
+
+En résumé, l'introduction des types simples enlève la possibilité de rencontrer
+des erreurs de typage dynamique, et l'ajout des qualificateurs interdit les
+erreurs de sécurité.
+
 \begin{center}
 \begin{tabular}{ll|ccc}
 \toprule
-Langage          & Types     & E typage    & E sécurité  & E mémoire   \\
-\langname        & sans      & \CheckedBox & N/A         & \CheckedBox \\
-\langname        & simples   & \Square     & N/A         & \CheckedBox \\
-\langname Kernel & simples   & \Square     & \CheckedBox & \CheckedBox \\
-\langname Kernel & qualifiés & \Square     & \Square     & \CheckedBox \\
+Langage         & Types     & \multicolumn{3}{c}{Erreurs possibles}   \\
+\multicolumn{2}{c|}{}       & Typage      & Sécurité    & Mémoire     \\
+\langname       & sans      & \CheckedBox & N/A         & \CheckedBox \\
+\langname       & simples   & \Square     & N/A         & \CheckedBox \\
+\langname noyau & simples   & \Square     & \CheckedBox & \CheckedBox \\
+\langname noyau & qualifiés & \Square     & \Square     & \CheckedBox \\
 \bottomrule
 \end{tabular}
 
