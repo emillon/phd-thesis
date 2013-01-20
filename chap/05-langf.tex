@@ -127,20 +127,20 @@ sur une certaine classe de programmes C.
 
 Nous voulons capturer l'essence de C. Les traits principaux sont les suivants :
 
-\begin{itemize}
-\item
-  les types de données sont très simples : entiers machine, flottants,
-  pointeurs et types composés (structures et tableaux) composés de
-  ceux-ci.
-\item
-  les variables sont mutables, et on peut passer des données par valeur
-  ou par pointeur.
-\item
-  le flôt de contrôle repose sur les construction ``if'' et ``while''.
-\item
-  le code est organisé en fonctions ``simples'', c'est-à-dire qui ne
-  sont pas des fermetures.
-\end{itemize}
+\paragraph{Types de données :} très simples. Entiers machine, flottants,
+pointeurs et types composés (structures et tableaux) composés de ceux-ci.
+
+\paragraph{Variables :} elles sont mutables, et on peut passer des données par
+valeur ou par pointeur.
+
+\paragraph{Flôt de contrôle :} il repose sur les construction ``if'' et
+``while''. Les autres types de boucle (``for'' et ``do/while'') peuvent être
+construits avec ces opérateurs.
+
+\paragraph{Fonctions :} le code est organisé en fonctions ``simples'',
+c'est-à-dire qui ne sont pas des fermetures. Même si le corps
+d'une fonction peut être inclus dans le corps d'une autre, il n'est pas possible
+d'accéder aux variables de la portée entourante depuis la fonction intérieure.
 
 \section{Syntaxe}
 
@@ -149,7 +149,7 @@ notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
 
 Un programme est organisé en fonctions, qui contiennent des instructions, qui
-elles-même manipulent des expressions.
+elles-mêmes manipulent des expressions.
 
 Le flot de contrôle est simplifié par rapport à C : il ne contient que
 l'alternative ("if") et la boucle "while". Les autres formes de boucle
