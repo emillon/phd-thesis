@@ -348,18 +348,28 @@ paramètres et ses variables locales.
 Au contraire, pour les globales il n'y a pas de système d'empilement, puisque
 ces variables sont accessibles depuis tout point du programme.
 
-Ces définitions sont résumées dans la figure~\ref{fig:interp}
+Ces définitions sont résumées dans la figure~\ref{fig:interp}. Plusieurs
+constructions, comme les tableaux, sont ambigües puisqu'elle ont à la fois une
+forme syntaxique et une forme sémantique. Pour lever cette ambigüité, on note
+sous un accent circonflexe $\widehat{\cdot}$ les constructions syntaxique. Par
+exemple, si $x$ vaut $2$ et $y$ vaut $3$, l'expression $\{ x, y \}$ s'évaluera
+en valeur $\widehat{\{ 2, 3 \}}$
+
 
 \begin{figure}
 
   \gramlr{Valeurs}{
     \begin{align*}
-      v \gramisa & c               & \textrm{Constante}
+      v \gramisa & \widehat{c}     & \textrm{Constante}
       \\ \gramor & φ               & \textrm{Référence mémoire}
-      \\ \gramor & \{ l_1 : v_1 ;
-                  … ; l_n : v_n \} & \textrm{Structure}
-      \\ \gramor & \{v_1 ;…; v_n\} & \textrm{Tableau}
-      \\ \gramor & f               & \textrm{Fonction}
+      \\ \gramor & \widehat{
+                    \{ l_1 : v_1 ;
+                  … ; l_n : v_n \}
+                  }                & \textrm{Structure}
+      \\ \gramor & \widehat{
+                   \{v_1 ;…; v_n\}
+                   }               & \textrm{Tableau}
+      \\ \gramor & \widehat{f}     & \textrm{Fonction}
     \end{align*}
   }
 
@@ -1412,6 +1422,11 @@ donc
 faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
 \item arithmétique de pointeur à préciser
 \item état mémoire : doublet/triplet
+\item notation des tableaux et structures : deux points ou point virgule ?
+\item notation des tableaux : crochets ou accolades ?
+\item syntaxique ou syntactique ?
+\item métasyntaxique ou métasyntactique ?
+\item tableau vide, structure vide
 \end{itemize}
 
 % vim: spelllang=fr
