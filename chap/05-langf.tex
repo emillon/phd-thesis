@@ -1,5 +1,83 @@
-On définit ici un langage impératif servant de base à nos analyses. Un premier
-système de types sera donné dans le chapitre~\ref{cha:typbase}.
+Dans ce chapitre nous présentons \langname, un langage impératif inspiré de C.
+Sa syntaxe est tout d'abord décrite ; puis une sémantique opérationnelle est
+explicitée.
+
+Ce langage servira de support au systèmes de types décrit dans le
+chapitre~\ref{cha:typbase} et enrichi dans le chapitre~\ref{cha:qualifs}.
+
+La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
+
+\section{But et comparaison à C}
+
+Le langage C~\ref{KandR} est un langage impératif, conçu pour être un
+``assembleur portable''. Ses types de données et les opérations associées sont
+donc naturellement très bas niveau.
+
+Les types de données de C sont établis pour représenter les mots mémoire
+manipulables par les processeurs : essentiellement des entiers et flottants de
+plusieurs tailles. Les types composés correespondent à des zones de mémoire
+contigües, homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
+structures).
+
+Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
+c'est à dire des variables qui représentent directement une adresse en mémoire.
+Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
+stocké à cette adresse) ou non typés.
+
+Le système de types rudimentaire de C ne permet pas d'avoir beaucoup de
+garanties sur la sûreté du programme. En effet, aucune vérification n'est
+effectuée en dehors de celles faites par le programmeur.
+
+Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
+sur une certaine classe de programmes C.
+
+\section{Notations}
+
+Dans ce chapitre (et les chapitres suivants), on définit de nombreux ensembles
+inductifs. Plutôt que d'écrire la construction explicite par point fixe, on
+emploie une notation en grammaire.
+
+Prenons l'exemple des listes chaînées composées d'élements de $ℕ$. On peut
+définir cet ensemble $L$ de la manière inductive suivante :
+
+\def\opfix{\textrm{fix}\xspace}
+
+\begin{align*}
+  \textsc{L} & = \opfix (L') \\
+  L'(E) & = \{[]\} \cup \{ n::l / n ∈ ℕ, l ∈ E \} \\
+\end{align*}
+
+où
+
+\begin{align*}
+  \opfix (f) & = \bigcup_{n=0}^{\infty} f^{n}(ø) \\
+  f^0(x) & = x \\
+  ∀ n > 0, f^n(x) & = f^{n-1}(f (x)) \\
+\end{align*}
+
+On écrira à la place :
+
+\gramlr{Listes}{
+\begin{align*}
+  l \gramisa & []   & \textrm{Liste vide}
+  \\ \gramor & n::l & \textrm{Construction de liste}
+\end{align*}
+}
+
+Chaque ensemble est identifié de manière unique par les noms de variables
+métasyntaxiques : $n$ pour les entiers et $l$ pour les listes ici. Si plusieurs
+métavariables du même ensemble doivent apparaître, elles sont indicées. Par
+exemple, on peut définir des arbres binaires d'entiers de la manière suivante :
+
+\gramlr{Arbres binaires}{
+\begin{align*}
+  a \gramisa & \textsc{Feuille}           & \textrm{Feuille}
+  \\ \gramor & \textsc{Nœud}(a_1, n, a_2) & \textrm{Nœud}
+\end{align*}
+}
+
+Cette notation a aussi l'avantage de s'étendre facilement aux définitions
+mutuellement récursives.
 
 \section{Principes}
 
@@ -1286,6 +1364,7 @@ donc
 \item return implicite en fin de fct
 \item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$ et quand il
 faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
+\item arithmétique de pointeur à préciser
 \end{itemize}
 
 % vim: spelllang=fr
