@@ -15,8 +15,20 @@ Dans ce chapitre (et les chapitres suivants), on définit de nombreux ensembles
 inductifs. Plutôt que d'écrire la construction explicite par point fixe, on
 emploie une notation en grammaire.
 
-Prenons l'exemple des listes chaînées composées d'élements de $ℕ$. On peut
-définir cet ensemble $L$ de la manière inductive suivante :
+Étudions l'exemple des listes chaînées composées d'élements de $ℕ$.
+
+Notons $L$ cet ensemble ; si $[]$ est la liste vide et $n::l$ la liste formée
+d'une ``tête'' $n ∈ ℕ$ et d'une ``queue'' $l ∈ L$. Toute liste est donc d'une des
+formes suivantes :
+
+\begin{itemize}
+\item $[]$
+\item $n_1::[]$
+\item $n_1::n_2::[]$
+\item etc.
+\end{itemize}
+
+On peut donc $L$ de la manière inductive suivante :
 
 \def\opfix{\textrm{fix}\xspace}
 
@@ -33,7 +45,11 @@ où
   ∀ n > 0, f^n(x) & = f^{n-1}(f (x)) \\
 \end{align*}
 
-On écrira à la place :
+(L'itération $n$ de l'union correspond aux listes comprenant au plus $n$
+éléments)
+
+Plutôt que d'écrire cette définition précise mais chargée, on écrira à la place
+une définition en compréhension :
 
 \gramlr{Listes}{
 \begin{align*}
@@ -49,8 +65,8 @@ exemple, on peut définir des arbres binaires d'entiers de la manière suivante 
 
 \gramlr{Arbres binaires}{
 \begin{align*}
-  a \gramisa & \textsc{Feuille}           & \textrm{Feuille}
-  \\ \gramor & \textsc{Nœud}(a_1, n, a_2) & \textrm{Nœud}
+  a \gramisa & \textsc{F}           & \textrm{Feuille}
+  \\ \gramor & \textsc{N}(a_1, n, a_2) & \textrm{Nœud}
 \end{align*}
 }
 
@@ -1409,7 +1425,7 @@ donc
 \item changer les para de présentation des règles
 \item cas d'erreurs explicites $Ω_{div}$, $Ω_{ptr}$ et $Ω_{array}$
 \item widehats sur les constantes ?
-\item liste d'assos -> fonction
+\item liste d'assos $→$ fonction
 \item résoudre le problème des structures
 \item définir les opérations d'ajout/remplacement sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
