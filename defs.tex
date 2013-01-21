@@ -305,3 +305,11 @@
 
 % Language name
 \def\langname{\ensuremath{C_{ML}}\xspace}
+
+% Center vertically + remove header & footer
+\newenvironment{headingpage}{
+\thispagestyle{simple}
+\vspace*{\fill}
+}{
+\vspace*{\fill}
+}
