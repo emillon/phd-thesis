@@ -40,15 +40,15 @@ erreurs de sécurité.
 
 \begin{center}
 \begin{tabular}{ll|ccc}
-\toprule
-Langage         & Types     & \multicolumn{3}{c}{Erreurs possibles}   \\
-\multicolumn{2}{c|}{}       & Typage      & Sécurité    & Mémoire     \\
+\hline
+\multirow{2}{*}{Langage} & \multirow{2}{*}{Types}  & \multicolumn{3}{c}{Erreurs possibles}   \\
+                         &  & Typage      & Sécurité    & Mémoire     \\
+\hline
 \langname       & sans      & \CheckedBox & N/A         & \CheckedBox \\
 \langname       & simples   & \Square     & N/A         & \CheckedBox \\
 \langname noyau & simples   & \Square     & \CheckedBox & \CheckedBox \\
 \langname noyau & qualifiés & \Square     & \Square     & \CheckedBox \\
-\bottomrule
+\hline
 \end{tabular}
 
-% TODO ajouter une ligne horitontale sous la première ligne
 \end{center}
