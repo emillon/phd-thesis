@@ -289,29 +289,25 @@ possible d'encoder ce genre de propriétés dans un sytème de types, cf.
 
 \section{Logique de Hoare}
 
-Pour raisonner sur un programme, on peut écrire les invariants qui sont vérifiés
-à un point donné du programme. Ce sont des propositions écrits dans une logique
-$\mathcal{L}$.
+Une technique pour vérifier statiquement des propriétés sur la sémantique d'un
+programme a été formalisée par Robert Floyd\cite{FloydMeaning} et Tony
+Hoare\cite{hoare}.
 
-On peut aller plus loin que les simples types et utiliser un langage de contrats:
-chaque fonction est annotée par des pré- et post-conditions sur la
-mémoire.
+Elle consiste à écrire les invariants qui sont maintenus à un point donné du
+programme. Ces propositions sont écrites dans une logique $\mathcal{L}$.
 
-\begin{itemize}
-\item TODO relire \cite{cssv}
-\item TODO citer Hoare\cite{hoare}
-\item TODO citer Floyd\cite{FloydMeaning}
-\item TODO citer C\# Contract (Rustan Leino)\cite{krml136}
-\end{itemize}
-
-Chaque instruction (ou \emph{commande}) $c$ est annotée d'une précondition $P$
-et d'une postcondition $Q$, ce que l'on note :
-
-\def\hoare#1#2#3{\ensuremath{\{#1\}~#2~\{#3\}}}
-
-\[
-\hoare{P}{c}{Q}
-\]
+Chaque instruction (ou \emph{commande}) $c$ est annotée d'une pré-condition $P$
+et d'une post-condition $Q$, ce que l'on note $\hoare{P}{c}{Q}$. Cela signifie
+que si $P$ est vérifiée et que l'exécution de $c$ se termine
+\footnote{
+  Comme dans la plupart des cas, la vérification de la terminaison d'un
+  algorithme est réalisée de manière séparée.
+  % TODO faire un chapeau général façon Devie?
+  % 1/ Terminaison
+  % 2/ Correction
+  % 3/ Complexité
+}
+, alors $Q$ sera vérifiée.
 
 En plus des règles de $\mathcal{L}$, des règles d'inférence traduisent la
 sémantique du programme ; par exemple la règle de composition est :
@@ -321,11 +317,12 @@ sémantique du programme ; par exemple la règle de composition est :
     { \hoare{P}{c_1}{Q} \\
       \hoare{Q}{c_2}{R}
     }{
-      \hoare{P}{c_1;c_2}{R}.
+      \hoare{P}{c_1;c_2}{R}
     }
 \end{mathpar}
 
-Les préconditions peuvent être renforcées et les postconditions relaxées :
+Les pré-conditions peuvent être renforcées et les post-conditions relaxées :
+
 \begin{mathpar}
   \irule{Hoare-Consequence}
     { \vDash_{\mathcal{L}} P  ⇒ P' \\
@@ -337,6 +334,49 @@ Les préconditions peuvent être renforcées et les postconditions relaxées :
 
 Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation.
+% TODO à la compil?
+
+La règle de conséquence permet de découpler les propriétés du programme lui-même
+: plusieurs niveaux d'annotations sont possibles, du moins précis au plus
+précis. En fait, il est même possible d'annoter chaque point de contrôle par
+l'ensemble d'annotations vide : \hoare{T}{c}{T} est toujours vrai.
+
+Augmenter graduellement les pré- et post-conditions est néanmoins assez
+difficile, puisqu'il peut être nécessaire de modifier l'ensemble des conditions
+à la fois.
+
+Cette difficulté est mentionnée dans \cite{cssv}, où un système de programmation
+par contrats est utilisé pour vérifier la correction de routines de manipulation
+de chaînes en C.
+
+Le système Spec\#, présenté dans \cite{krml136}, permet d'utiliser un système de
+contrats sur le langage C\#.
+
+\subsection*{TODO}
+
+\begin{itemize}
+\item
+  citer JML (39, 40 dans \cite{krml136})
+\item
+  quand est-ce que le compile time suffit ? et le runtime nécessaire ?
+\end{itemize}
+
+\section{Theorem provers}
+
+\begin{itemize}
+\item
+  Dependent types
+\item
+  proof $:$ theorem $::$ type $:$ term
+\item
+  Coq
+\item
+  Agda, termination checker
+\item
+  proof irrelevance
+\end{itemize}
+
+% TODO
 
 \section{Analyse dynamique}
 
