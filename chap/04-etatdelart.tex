@@ -289,9 +289,54 @@ possible d'encoder ce genre de propriétés dans un sytème de types, cf.
 
 \section{Logique de Hoare}
 
+Pour raisonner sur un programme, on peut écrire les invariants qui sont vérifiés
+à un point donné du programme. Ce sont des propositions écrits dans une logique
+$\mathcal{L}$.
+
 On peut aller plus loin que les simples types et utiliser un langage de contrats:
 chaque fonction est annotée par des pré- et post-conditions sur la
-mémoire\cite{cssv}\todo{Hoare}.
+mémoire.
+
+\begin{itemize}
+\item TODO relire \cite{cssv}
+\item TODO citer Hoare\cite{hoare}
+\item TODO citer Floyd
+\item TODO citer C\# Contract (Rustan Leino)\cite{krml136}
+\end{itemize}
+
+Chaque instruction (ou \emph{commande}) $c$ est annotée d'une précondition $P$
+et d'une postcondition $Q$, ce que l'on note :
+
+\def\hoare#1#2#3{\ensuremath{\{#1\}~#2~\{#3\}}}
+
+\[
+\hoare{P}{c}{Q}
+\]
+
+En plus des règles de $\mathcal{L}$, des règles d'inférence traduisent la
+sémantique du programme ; par exemple la règle de composition est :
+
+\begin{mathpar}
+  \irule{Hoare-Seq}
+    { \hoare{P}{c_1}{Q} \\
+      \hoare{Q}{c_2}{R}
+    }{
+      \hoare{P}{c_1;c_2}{R}.
+    }
+\end{mathpar}
+
+Les préconditions peuvent être renforcées et les postconditions relaxées :
+\begin{mathpar}
+  \irule{Hoare-Consequence}
+    { \vDash_{\mathcal{L}} P  ⇒ P' \\
+      \hoare{P}{c}{Q} \\
+      \vDash_{\mathcal{L}} Q' ⇒ Q
+    }
+    { \hoare{P'}{c}{Q'} }
+\end{mathpar}
+
+Il est alors possible d'annoter le programme avec ses invariants formalisés de
+manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation.
 
 \section{Analyse dynamique}
 
