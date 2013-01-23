@@ -1,6 +1,45 @@
 L'analyse statique de programmes est un sujet de recherche actif depuis
 l'apparition de la science informatique.
 
+\section{Taxonomie}
+
+\paragraph{Techniques statiques et dynamiques :} l'analyse peut être faite au
+moment de la compilation, ou au moment de l'exécution. En général on peut
+obtenir des informations plus précises de manière dynamique, mais cela ne prend
+en compte que les parties du programme qui seront vraiment exécutées. Un autre
+problème des techniques dynamiques est qu'il est souvent nécessaire
+d'instrumenter l'environnement d'exécution (ce qui --- dans le cas où cela est
+possible --- peut se traduire par un impact en performances). L'approche
+statique, en revanche, nécessite de construire à l'arrêt une carte mentale du
+programme, ce qui n'est pas toujours possible dans certains langages.
+
+Dans la suite, nous considérerons essentiellement des techniques statiques,
+précisant le contraire lorsque c'est nécessaire.
+
+\paragraph{Cohérence et complétude :} le but d'une analyse statique est de
+catégoriser les programmes selon leurs caractéristiques à l'exécution. Or,
+
+\begin{theorem}[ de Rice\cite{rice} ]
+  Toute propriété non triviale sur le comportement dynamique des programmes est
+  indécidable.
+\end{theorem}
+% TODO formaliser un peu plus?
+
+Autrement dit, il n'est pas possible d'écrire un analyseur statique parfait,
+c'est à dire ne se trompant jamais. Toute technique statique va donc de se
+retrouver dans au moins un des cas suivants :
+
+\begin{itemize}
+\item
+  un programme valide est rejeté : on parle de \emph{faux positif}.
+\item
+  un programme invalide n'est pas détecté : on parle de
+  \emph{faux négatif}.
+\end{itemize}
+
+En général on préfère s'assurer que les programmes acceptés possèdent la
+propriété recherchée, quitte à en rejeter certains.
+
 \section{Méthodes syntaxiques}
 
 L'analyse la plus simple consiste à traiter un programme comme du texte, et à y
