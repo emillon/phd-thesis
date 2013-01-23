@@ -647,9 +647,9 @@ Les pré-conditions peuvent être renforcées et les post-conditions relaxées :
 
 \begin{mathpar}
   \irule{Hoare-Consequence}
-    { \vDash_{\mathcal{L}} P  ⇒ P' \\
+    { ⊢_{\mathcal{L}} P  ⇒ P' \\
       \hoare{P}{c}{Q} \\
-      \vDash_{\mathcal{L}} Q' ⇒ Q
+      ⊢_{\mathcal{L}} Q' ⇒ Q
     }
     { \hoare{P'}{c}{Q'} }
 \end{mathpar}
