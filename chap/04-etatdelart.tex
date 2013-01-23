@@ -48,6 +48,173 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
+% 1
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+\end{tikzpicture}%}}}
+% 2
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+\end{tikzpicture}%}}}
+
+% 3
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+% Flèches "?"
+\draw [<->] (2cm,2.6cm) -- node [left]  {?} ++(0,9mm);
+\draw [<->] (2.8cm,1cm) -- node [above] {?} ++(17mm,0);
+\draw [<->] (5mm,1cm)   -- node [above] {?} ++(-4mm,0);
+\draw [<->] (2cm,5mm)   -- node [left]  {?} ++(0,-4mm);
+\end{tikzpicture}%}}}
+% 4
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (précise)
+\draw [fill=blue!50,scale around={1.3:(3,3)}]
+           (1,1) -- (1,2)
+        -- (2,3) -- (3,3)
+        -- (3,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+\end{tikzpicture}%}}}
+
+% 5
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (précise)
+\draw [fill=blue!50,scale around={1.3:(3,3)}]
+           (1,1) -- (1,2)
+        -- (2,3) -- (3,3)
+        -- (3,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+% Flèches "OK"
+\draw [<->] (2cm,3.1cm) -- node [left]  {\tiny OK !} ++(0,5mm);
+\draw [<->] (3.1cm,1cm) -- node [above] {\tiny OK !} ++(15mm,0);
+\draw [<->] (3.5mm,1cm)   -- node [above] {\tiny OK !} ++(-3mm,0);
+\draw [<->] (2cm,3.5mm)   -- node [left]  {\tiny OK !} ++(0,-3mm);
+\end{tikzpicture}%}}}
+% 6
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (imprécise)
+\draw [fill=blue!50,scale around={1.3:(3,3)}]
+            (1,1) -- (1,2)
+         -- (3,4)
+         -- (3,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+\end{tikzpicture}%}}}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
 \begin{figure}%{{{
 \centering
 \begin{tikzpicture}
@@ -516,19 +683,15 @@ contrats sur le langage C\#.
   quand est-ce que le compile time suffit ? et le runtime nécessaire ?
 \end{itemize}
 
-\section{Theorem provers}
+\section{Assistants de preuves et systèmes de types dépendants}
 
 \begin{itemize}
-\item
-  Dependent types
-\item
-  proof $:$ theorem $::$ type $:$ term
-\item
-  Coq
-\item
-  Agda, termination checker
-\item
-  proof irrelevance
+\item Dependent types
+\item proof $:$ theorem $::$ type $:$ term
+\item Coq
+\item Agda, termination checker
+\item proof irrelevance
+\item Theorems for Free\cite{theoremsforfree}
 \end{itemize}
 
 % TODO
