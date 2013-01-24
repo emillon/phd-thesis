@@ -225,11 +225,11 @@
     }
     {Ctx-Lv}{ \irule{Ctx-Lv}
              { \mmlv{m}{lv}{m'}{lv'} }
-             { \mmlv{m}{\ctxSub{C_L}{lv}}{m'}{\ctxSub{C_L}{lv'}} }
+             { \mmlv{m}{\ctxSubL{C_L}{lv}}{m'}{\ctxSubL{C_L}{lv'}} }
     }
     {Ctx-Instr}{ \irule{Ctx-Instr}
              { \mmlv{m}{i}{m'}{i'} }
-             { \mmlv{m}{\ctxSub{C_I}{i}}{m'}{\ctxSub{C_I}{i'}} }
+             { \mmlv{m}{\ctxSubI{C_I}{i}}{m'}{\ctxSubI{C_I}{i'}} }
     }
     {Phi-Var}{ \irule{Phi-Var}
                  { a = \mathrm{Lookup}(x, m) }
@@ -373,25 +373,29 @@
 \def\figctx{
   \gramlr{Contextes}{
   \begin{align*}
-  C \gramisa & \ctxEmpty
-  \\ \gramor & C_L
-  \\ \gramor & \ctxOp{C}{e} & \gramor & \ctxOp{v}{C}
+  C \gramisa & C_L
+  \\ \gramor & \ctxOp{C}{e}
+  \\ \gramor & \ctxOp{v}{C}
   \\ \gramor & \ctxUnOp{C}
-  \\ \gramor & \ctxSet{C}{e} & \gramor & \ctxSet{φ}{C}
+  \\ \gramor & \ctxSet{C}{e}
+  \\ \gramor & \ctxSet{φ}{C}
   \\ \gramor & \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \}
   \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
-  \\ \gramor & C (e_1, …, e_n) & \gramor & f (v_1, …, C, …, e_n)
+  \\ \gramor & C (e_1, …, e_n)
+  \\ \gramor & f (v_1, …, C, …, e_n)
   \\
   \\
-  C_L \gramisa & \ctxLvDeref{C_L}
+  C_L \gramisa & \ctxEmpty
+  \\   \gramor & \ctxLvDeref{C_L}
   \\   \gramor & \ctxLvField{C_L}{l}
-  \\   \gramor & \ctxLvIndex{C_L}{e} & \gramor & \ctxLvIndex{φ}{C}
+  \\   \gramor & \ctxLvIndex{C_L}{e}
+  \\   \gramor & \ctxLvIndex{φ}{C}
   \\
   \\
-  C_I \gramisa & C_i;i
+  C_I \gramisa & C_I;i
   \\   \gramor & \iIf{C}{i_1}{i_2}
   \\   \gramor & \iReturn{C}
-  \\   \gramor & C_E
+  \\   \gramor & C
   \end{align*}
   }
 }

@@ -1,6 +1,45 @@
 L'analyse statique de programmes est un sujet de recherche actif depuis
 l'apparition de la science informatique.
 
+\section{Taxonomie}
+
+\paragraph{Techniques statiques et dynamiques :} l'analyse peut être faite au
+moment de la compilation, ou au moment de l'exécution. En général on peut
+obtenir des informations plus précises de manière dynamique, mais cela ne prend
+en compte que les parties du programme qui seront vraiment exécutées. Un autre
+problème des techniques dynamiques est qu'il est souvent nécessaire
+d'instrumenter l'environnement d'exécution (ce qui --- dans le cas où cela est
+possible --- peut se traduire par un impact en performances). L'approche
+statique, en revanche, nécessite de construire à l'arrêt une carte mentale du
+programme, ce qui n'est pas toujours possible dans certains langages.
+
+Dans la suite, nous considérerons essentiellement des techniques statiques,
+précisant le contraire lorsque c'est nécessaire.
+
+\paragraph{Cohérence et complétude :} le but d'une analyse statique est de
+catégoriser les programmes selon leurs caractéristiques à l'exécution. Or,
+
+\begin{theorem}[de Rice]
+  Toute propriété non triviale sur le comportement dynamique des programmes est
+  indécidable.\cite{rice}
+\end{theorem}
+% TODO formaliser un peu plus?
+
+Autrement dit, il n'est pas possible d'écrire un analyseur statique parfait,
+c'est à dire ne se trompant jamais. Toute technique statique va donc de se
+retrouver dans au moins un des cas suivants :
+
+\begin{itemize}
+\item
+  un programme valide est rejeté : on parle de \emph{faux positif}.
+\item
+  un programme invalide n'est pas détecté : on parle de
+  \emph{faux négatif}.
+\end{itemize}
+
+En général on préfère s'assurer que les programmes acceptés possèdent la
+propriété recherchée, quitte à en rejeter certains.
+
 \section{Méthodes syntaxiques}
 
 L'analyse la plus simple consiste à traiter un programme comme du texte, et à y
@@ -13,24 +52,6 @@ sensible à la syntaxe et au flot de contrôle du programme. Cette notion de
 \cite{coccinelle09,coccinelle11} \todo{lire coccinelle09} : on peut définir des
 \emph{patches sémantiques} pour détecter ou modifier des constructions
 particulières.
-
-\section{Qualificateurs de types}
-
-Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
-la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
-au code source. Un pointeur peut être décoré d'une annotation
-\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
-sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
-Sparse \link{sparse} peut être utilisé pour détecter les cas les plus simples
-d'erreurs.
-
-Ce système d'annotations sur les types a été formalisé sous le nom de
-\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
-qualificateurs (à la manière de \texttt{const}), et des règles de typage
-permettent d'établir des propriétés sur le programme. Ces analyses ont été
-implantée dans l'outil CQual
-\cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}. \todo{lister les
-applications}.
 
 \section{Interprétation abstraite}
 
@@ -45,6 +66,148 @@ Cette hypothèse n'est pas facilement satisfaite dans un noyau de système
 d'exploitation, qui possède de nombreux points d'entrée. D'autre part,
 il est très difficile de faire passer à l'échelle un interpréteur abstrait
 \cite{AstreeScale,coverityBillion}.
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+\begin{figure}
+\centering
+\subfloat[
+  L'ensemble des états d'erreur est calculable (zone hachurée)…
+]{
+\label{fig:ia-f1}
+% 1
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+\end{tikzpicture}%}}}
+}
+\hspace{5mm}
+\subfloat[
+  …mais pas celui des états atteints.
+]{
+\label{fig:ia-f2}
+% 2
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+\end{tikzpicture}%}}}
+}
+
+\subfloat[
+  On construit donc une surapproximation calculable de la sémantique. Si
+  celle-ci n'a pas d'erreur, on est assuré que le programme n'en aura pas non
+  plus.
+]{
+\label{fig:ia-f3}
+% 4
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (précise)
+\draw [fill=blue!50,scale around={1.3:(3,3)}]
+           (1,1) -- (1,2)
+        -- (2,3) -- (3,3)
+        -- (3,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+\end{tikzpicture}%}}}
+}
+\hspace{5mm}
+\subfloat[
+  Si on détecte une intersection, il n'est pas possible de savoir si elle est
+  due à une erreur atteignable ou à une approximation trop laxe.
+]{
+\label{fig:ia-f4}
+% 6
+\begin{tikzpicture}[scale=0.7]%{{{
+\clip  (-1,-1) rectangle (6,5);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\path [fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Ensemble sûr (redraw)
+\draw            (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (imprécise)
+\draw [fill=blue!50,scale around={1.3:(3,3)}]
+            (1,1) -- (1,2)
+         -- (3,4)
+         -- (3,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\draw [fill=green!50,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+\end{tikzpicture}%}}}
+}
+
+\caption{
+  Surapproximation en interprétation abstraite.
+  Il n'est donc pas possible de déterminer si l'ensemble des états atteignables
+  est inclus dans l'ensemble des états sûrs (figure~\ref{fig:ia-f2}). En
+  revanche, en construisant une surapproximation on peut parfois conclure
+  (figures~\ref{fig:ia-f3} et~\ref{fig:ia-f4}).
+}
+\label{fig:ia}
+
+\end{figure}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
@@ -280,38 +443,215 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
   \label{fig:dom-octo}
 \end{figure}%}}}
 
+\subsection*{TODO}
+
+\begin{itemize}
+\item widening \cite{granger},
+\item CGS \cite{cgs},
+\item Astrée : presentation\cite{Astree04,Astree05},
+\end{itemize}
+
 \section{Typage}
+
+La plupart des langages de programmation incorporent la notion de type, qui
+permet de détecter ou d'empêcher de manipuler des données incompatibles entre
+elles.
+
+Nous avons vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
+seules données qu'un ordinateur manipule sont des nombres. Selon les opérations
+effectuées, ils seront interprétés comme des entiers, des adresses mémoires, ou
+des caractères. Pourtant il est clair que certaines opérations n'ont pas de
+sens: par exemple, ajouter deux adresses, ou déréférencer le résultat d'une
+division sont des comportements qu'on voudrait pouvoir empêcher.
+
+En un mot, le but du typage est de classifier les objets et de restreindre les
+opérations possibles selon la classe d'un objet : ``ne pas ajouter des pommes et
+des oranges''. Le modèle qui permet cette classification est appelé
+\emph{système de types} et est en général constitué d'un ensemble de
+\emph{règles de typage}, comme ``un entier plus un entier égale un entier''.
+
+Il y a deux grandes familles de systèmes de types, selon quand se fait la
+vérification de types. On peut en effet l'effectuer au moment de l'exécution, ou
+au contraire prévenir les erreurs à l'exécution en la faisant au moment de la
+compilation (ou avant l'interprétation).
+
+\subsubsection{Typage dynamique}
+
+La première est le typage \emph{dynamique}. Pour différencier les différents
+types de données, on ajoute une étiquette à chaque valeur. Dans tout le
+programme, on ne manipulera que des valeurs étiquetées, c'est à dire des couples
+(donnée, nom de type). Si on veut réaliser l'opération $(\hexa{00000001}, Int) +
+(\hexa{0000f000}, Int)$, on vérifie tout d'abord qu'on peut réaliser l'opération
+$+$ entre deux $Int$. Ensuite on réalise l'opération elle même, qu'on étiquette
+avec le type du résultat : $(\hexa{0000f001}, Int)$. Si au contraire on tente
+d'ajouter deux adresses $(\hexa{2e8d5a90}, Addr) + (\hexa{76a5e0ec}, Addr)$, la
+vérification échoue et l'opération s'arrête avec une erreur.
+
+\begin{figure}
+  \insertcode{typage-dynamique.pycon}
+  \caption{Session Python présentant le typage dynamique}
+  \label{fig:typage-dynamique}
+\end{figure}
+
+La figure~\ref{fig:typage-dynamique} est une session interactive Python qui
+illustre le typage dynamique. Chaque variable, en plus de sa valeur, possède une
+étiquette qui permet d'identifier le type de celle-ci. On peut accéder au type
+d'une valeur \texttt{x} avec la construction \texttt{type(x)}.
+
+Au moment de réaliser une opération comme \texttt{+}, l'interpréteur Python
+vérifie les types des opérandes : s'ils sont compatibles, il créé une valeur de
+résultat, et sinon il lève une exception.
+
+Comme l'implémentation elle-même des fonction a accès aux informations de type,
+elle peut faire des traitements particuliers. Par exemple, pour l'addition de
+\texttt{a} (de type entier) et de \texttt{c} (de type flottant), la fonction
+d'addition va d'abord convertir \texttt{a} en flottant, puis réaliser l'addition
+dans le domaine des flottants.
+
+\subsubsection{Typage statique}
+
+Le typage dynamique est simple à comprendre puisque toute les vérifications se
+font dans la sémantique dynamique (ie, à l'exécution). C'est à double tranchant:
+d'une part, cela permet d'être plus flexible, mais d'autre part, cela permet à
+des programmes incorrects d'être exécutés.
+
+\begin{figure}
+  \insertcode{non-typable.py}
+  \caption{Fonction Python non typable statiquement.}
+  \label{fig:nontypable}
+\end{figure}
+
+On peut lire le code source d'un programme et essayer de ``deviner'' quels
+seront les types des différentes expressions. Dans certains cas, cela n'est pas
+possible (fig~\ref{fig:nontypable}) ; mais lorsqu'on peut conclure cela élimine
+la nécessité de faire les tests de type dynamiques car on a réalisé le typage
+\emph{statiquement}.
+
+Bien sûr, deviner n'est pas suffisant : il faut formaliser cette analyse. Dans
+le cas dynamique, ce sont les fonctions elles-mêmes qui réalisent les tests de
+type et qui appliquent des règles comme ``si les arguments ont pour type
+\texttt{int} alors la valeur de retour a pour type \texttt{int}'' : la
+fonction qui réalise ce test sur les valeurs. Dans le cas statique,
+c'est le compilateur (ou l'interpréteur) qui réalise ce test sur les
+expressions non évaluées. En
+appliquant de proche en proche un ensemble de règles (liées uniquement au
+langage de programmation), on finit par associer à chaque sous-expression du
+programme un type.
+
+Benjamin Pierce résume cette approche dans cette définition très générale :
+
+\begin{definition}[Système de types]
+Un système de types est une méthode syntaxique tractable qui vise à prouver
+l'absence de certains comportements de programmes en classifiant leurs phrases
+selon le genre de valeurs qu'elles produisent. \cite{TAPL}
+\end{definition}
+
+\subsection{Polymorphisme}
+
+Dans le cas du typage statique, restreindre une opération à un seul type de
+données peut être assez restrictif.
+
+Par exemple, quel doit être le type d'une fonction qui trie un tableau ?
+
+\subsubsection{Monomorphisme}
+
+Une première solution peut être de forcer des types concrets, c'est à dire
+qu'une même fonction ne pourra s'appliquer qu'à un seul type de données.
+
+Il est confortable pour le programmeur de n'avoir à écrire un algorithme qu'une
+seule fois, indépendamment du type des éléments considérés.
+
+Il existe deux grandes classes de systèmes de types introduisant du
+polymorphisme.
+
+\subsubsection{Polymorphisme paramétrique}
+
+\todo{Historique + citer le papier de Milner sur le polymorphisme}
+\cite{Milner78}
+
+\cite{PascalNoEscape}
+
+\begin{figure}
+  \insertcode{listappend.ml}
+  \caption{Fonction de concaténation de listes en OCaml.}
+  \label{fig:listappend}
+\end{figure}
+
+La fonction de la figure~\ref{fig:listappend} n'opère que sur la structure du type
+liste (en utilisant ses constructeurs \texttt{{[}{]}} et \listcons ainsi que
+le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne sont pas manipulés
+à part pour les transférer dans le résultat.
+
+Moralement, cette fonction est donc indépendante du type de données contenu dans
+la liste : elle pourra agir sur des listes de n'importe quel type d'élément.
+
+Plutôt qu'un type, on peut lui donner le \emph{schéma de types} suivant :
+
+\[
+  \textrm{append} : \forall a . a \textrm{list}
+                             -> a \textrm{list}
+                             -> a \textrm{list}
+\]
+
+C'est à dire que \texttt{append} peut être utilisé avec n'importe quel type
+concret \texttt{a} en substituant les variables quantifiées (on parle d'
+\emph{instanciation}).
+
+\subsection*{TODO}
+
+\begin{itemize}
+\item
+  incorporer la subsection d'après
+\item
+  virer la figure~\ref{fig:nontypable} ?
+\end{itemize}
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
 
 L'approche par typage, plus légère, est séduisante. Pour les différents enjeux
 des systèmes de types statiques, on pourra se référer à~\cite{TAPL}. Il est
 possible d'encoder ce genre de propriétés dans un sytème de types, cf.
 \cite{lightweight-static-capabilities} et \cite{LZ06a}.
 
+\section{Qualificateurs de types}
+
+Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
+la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
+au code source. Un pointeur peut être décoré d'une annotation
+\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
+sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
+Sparse \link{sparse} peut être utilisé pour détecter les cas les plus simples
+d'erreurs.
+
+Ce système d'annotations sur les types a été formalisé sous le nom de
+\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
+qualificateurs (à la manière de \texttt{const}), et des règles de typage
+permettent d'établir des propriétés sur le programme. Ces analyses ont été
+implantée dans l'outil CQual
+\cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}. \todo{lister les
+applications}.
+
 \section{Logique de Hoare}
 
-Pour raisonner sur un programme, on peut écrire les invariants qui sont vérifiés
-à un point donné du programme. Ce sont des propositions écrits dans une logique
-$\mathcal{L}$.
+Une technique pour vérifier statiquement des propriétés sur la sémantique d'un
+programme a été formalisée par Robert Floyd\cite{FloydMeaning} et Tony
+Hoare\cite{hoare}.
 
-On peut aller plus loin que les simples types et utiliser un langage de contrats:
-chaque fonction est annotée par des pré- et post-conditions sur la
-mémoire.
+Elle consiste à écrire les invariants qui sont maintenus à un point donné du
+programme. Ces propositions sont écrites dans une logique $\mathcal{L}$.
 
-\begin{itemize}
-\item TODO relire \cite{cssv}
-\item TODO citer Hoare\cite{hoare}
-\item TODO citer Floyd\cite{FloydMeaning}
-\item TODO citer C\# Contract (Rustan Leino)\cite{krml136}
-\end{itemize}
-
-Chaque instruction (ou \emph{commande}) $c$ est annotée d'une précondition $P$
-et d'une postcondition $Q$, ce que l'on note :
-
-\def\hoare#1#2#3{\ensuremath{\{#1\}~#2~\{#3\}}}
-
-\[
-\hoare{P}{c}{Q}
-\]
+Chaque instruction (ou \emph{commande}) $c$ est annotée d'une pré-condition $P$
+et d'une post-condition $Q$, ce que l'on note $\hoare{P}{c}{Q}$. Cela signifie
+que si $P$ est vérifiée et que l'exécution de $c$ se termine
+\footnote{
+  Comme dans la plupart des cas, la vérification de la terminaison d'un
+  algorithme est réalisée de manière séparée.
+  % TODO faire un chapeau général façon Devie?
+  % 1/ Terminaison
+  % 2/ Correction
+  % 3/ Complexité
+}
+, alors $Q$ sera vérifiée.
 
 En plus des règles de $\mathcal{L}$, des règles d'inférence traduisent la
 sémantique du programme ; par exemple la règle de composition est :
@@ -321,22 +661,62 @@ sémantique du programme ; par exemple la règle de composition est :
     { \hoare{P}{c_1}{Q} \\
       \hoare{Q}{c_2}{R}
     }{
-      \hoare{P}{c_1;c_2}{R}.
+      \hoare{P}{c_1;c_2}{R}
     }
 \end{mathpar}
 
-Les préconditions peuvent être renforcées et les postconditions relaxées :
+Les pré-conditions peuvent être renforcées et les post-conditions relaxées :
+
 \begin{mathpar}
   \irule{Hoare-Consequence}
-    { \vDash_{\mathcal{L}} P  ⇒ P' \\
+    { ⊢_{\mathcal{L}} P  ⇒ P' \\
       \hoare{P}{c}{Q} \\
-      \vDash_{\mathcal{L}} Q' ⇒ Q
+      ⊢_{\mathcal{L}} Q' ⇒ Q
     }
     { \hoare{P'}{c}{Q'} }
 \end{mathpar}
 
 Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation.
+% TODO à la compil?
+
+La règle de conséquence permet de découpler les propriétés du programme lui-même
+: plusieurs niveaux d'annotations sont possibles, du moins précis au plus
+précis. En fait, il est même possible d'annoter chaque point de contrôle par
+l'ensemble d'annotations vide : \hoare{T}{c}{T} est toujours vrai.
+
+Augmenter graduellement les pré- et post-conditions est néanmoins assez
+difficile, puisqu'il peut être nécessaire de modifier l'ensemble des conditions
+à la fois.
+
+Cette difficulté est mentionnée dans \cite{cssv}, où un système de programmation
+par contrats est utilisé pour vérifier la correction de routines de manipulation
+de chaînes en C.
+
+Le système Spec\#, présenté dans \cite{krml136}, permet d'utiliser un système de
+contrats sur le langage C\#.
+
+\subsection*{TODO}
+
+\begin{itemize}
+\item
+  citer JML (39, 40 dans \cite{krml136})
+\item
+  quand est-ce que le compile time suffit ? et le runtime nécessaire ?
+\end{itemize}
+
+\section{Assistants de preuves et systèmes de types dépendants}
+
+\begin{itemize}
+\item Dependent types
+\item proof $:$ theorem $::$ type $:$ term
+\item Coq
+\item Agda, termination checker
+\item proof irrelevance
+\item Theorems for Free\cite{theoremsforfree}
+\end{itemize}
+
+% TODO
 
 \section{Analyse dynamique}
 
@@ -344,16 +724,9 @@ Du côté de l'analyse dynamique, \cite{oakland10}\todo{et Perl ?}.
 
 \section{Analyse de flot}
 
-Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un
-\emph{survey} des problèmes et techniques existantes peut être trouvé
+Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un tour
+d'horizon des problèmes et techniques existantes peut être trouvé
 dans~\cite{sm-jsac03}.
-
-\wip{}
-
-Interprétation Abstraite :
-    widening \cite{granger},
-    CGS \cite{cgs},
-    Astrée : presentation\cite{Astree04,Astree05},
 
 \section{Divers}
 

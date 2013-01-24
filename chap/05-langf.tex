@@ -40,7 +40,7 @@ On peut donc $L$ de la manière inductive suivante :
 où
 
 \begin{align*}
-  \opfix (f) & = \bigcup_{n=0}^{\infty} f^{n}(ø) \\
+  \opfix (f) & = \bigcup_{n=0}^{\infty} f^{n}(∅) \\
   f^0(x) & = x \\
   ∀ n > 0, f^n(x) & = f^{n-1}(f (x)) \\
 \end{align*}
@@ -71,12 +71,44 @@ exemple, on peut définir des arbres binaires d'entiers de la manière suivante 
 }
 
 Cette notation a aussi l'avantage de s'étendre facilement aux définitions
-mutuellement récursives.
+mutuellement récursives :
+
+\gramlr{Expression}{
+\begin{align*}
+  e \gramisa & t     & \textrm{Terme}
+  \\ \gramor & e + t & \textrm{Addition}
+  \\ \gramor & e - t & \textrm{Soustraction}
+\end{align*}
+}
+
+\gramlr{Terme}{
+\begin{align*}
+t \gramisa & f     & \textrm{Facteur}
+\\ \gramor & t * f & \textrm{Multiplication}
+\\ \gramor & t / f & \textrm{Division}
+\end{align*}
+}
+
+\gramlr{Facteur}{
+\begin{align*}
+f \gramisa & ( e )  & \textrm{Expression parenthésée}
+\\ \gramor & f ** e & \textrm{Puissance}
+\\ \gramor & n      & \textrm{Nombre}
+\end{align*}
+}
+
+Cette notation définit les ensembles $E, T, F$ de la manière suivante :
+
+…
+
+% TODO cet exemple est syntaxique, c'est pas top
 
 \subsection*{Inférence}
 
 La sémantique opérationnelle consiste en la définition d'une relation de
-transition $\rightarrow$ entre états de l'interpréteur.
+transition $\cdot\rightarrow\cdot$ entre états de l'interpréteur\footnote{Dans le
+chapitre~\ref{cha:typbase}, la relation de typage $\cdot ⊢ \cdot : \cdot$ sera
+définie par la même technique.}.
 
 Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
 de présenter l'induction explicitement, elle est représentée par des jugements
@@ -687,7 +719,9 @@ Le deuxième est résolu les règles d'inférence suivantes :
 \end{mathpar}
 
 Enfin, le troisième revient à définit l'opérateur de substitution
-$\phxx{\ctxSub}$ présent dans la règle précédente.
+$\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer des
+substitution au niveau des left-values et des instructions, on définit aussi
+respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
 
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
 fait apparaître exactement un "$C$". Chaque contexte est donc constitué
@@ -716,6 +750,34 @@ décrit dans la figure~\ref{fig:ctx-sub}.
   \ctxSub{(C;i              )}{e_0} = & \ctxSub{C}{e_0};i               \\
   \ctxSub{(\iIf{C}{i_1}{i_2})}{e_0} = & \iIf{\ctxSub{C}{e_0}}{i_1}{i_2} \\
   \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
+\end{align*}
+
+\begin{align*}
+% C
+\ctxSub{C_L}{e_0} = & \ctxSubL{C_L}{e_0} \\
+\ctxSub{\ctxOp{C}{e}}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e} \\
+\ctxSub{\ctxOp{v}{C}}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}} \\
+\ctxSub{\ctxUnOp{C}}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}} \\
+\ctxSub{\ctxSet{C}{e}}{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e} \\
+\ctxSub{\ctxSet{φ}{C}}{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}} \\
+\ctxSub{\{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \}}{e_0} = & \{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n \} \\
+\ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ] \\
+\ctxSub{C (e_1, …, e_n)}{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n) \\
+\ctxSub{f (v_1, …, C, …, e_n)}{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n) \\
+\\
+% C_L
+\ctxSubL{\ctxEmpty}{l_0} = & \ctxEmpty \\
+\ctxSubL{\ctxLvDeref{C_L}}{l_0} = & \ctxLvDeref{\ctxSubL{C_L}{l_0}} \\
+\ctxSubL{\ctxLvField{C_L}{l}}{l_0} = & \ctxLvField{\ctxSubL{C_L}{l_0}}{l} \\
+\ctxSubL{\ctxLvIndex{C_L}{e}}{l_0} = & \ctxLvIndex{\ctxSubL{C_L}{l_0}}{e} \\
+\ctxSub{\ctxLvIndex{φ}{C}}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
+\\
+% % C_I
+% \ctxSubI{C_I;i}{i_0} = & \ctxSubI{C_I}{i_0};i \\
+% 
+% \iIf{C}{i_1}{i_2}
+% \iReturn{C}
+% C
 \end{align*}
 
 \caption{Substitution dans les contextes d'évaluation}
@@ -1422,6 +1484,8 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item substitutions dans les ctx : éditer $C_l$ et $C_i$
+\item en fait, séparer selon le truc substitué (2è arg), pas le premier
 \item changer les para de présentation des règles
 \item cas d'erreurs explicites $Ω_{div}$, $Ω_{ptr}$ et $Ω_{array}$
 \item widehats sur les constantes ?

@@ -9,102 +9,9 @@ Python\link{python} et Perl\link{perl}\cite{perlCamelBook}.
 
 \section{Présentation et but}
 
-Nous avons vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
-seules données qu'un ordinateur manipule sont des nombres. Selon les opérations
-effectuées, ils seront interprétés comme des entiers, des adresses mémoires, ou
-des caractères. Pourtant il est clair que certaines opérations n'ont pas de
-sens: par exemple, ajouter deux adresses, ou déréférencer le résultat d'une
-division sont des comportements qu'on voudrait pouvoir empêcher.
-
-En un mot, le but du typage est de classifier les objets et de restreindre les
-opérations possibles selon la classe d'un objet : ``ne pas ajouter des pommes et
-des oranges''. Le modèle qui permet cette classification est appelé
-\emph{système de types} et est en général constitué d'un ensemble de
-\emph{règles de typage}, comme ``un entier plus un entier égale un entier''.
-
 \section{Taxonomie}
 
-La définition d'un langage de programmation introduit la plupart du temps celle
-d'un système de types. Il y a donc de nombreux systèmes de types différents,
-dont nous pouvons donner une classification sommaire.
-
 \subsection{Dynamique, statique, mixte}
-
-Il y a deux grandes familles de systèmes de types, selon quand se fait la
-vérification de types. On peut en effet l'effectuer au moment de l'exécution, ou
-au contraire prévenir les erreurs à l'exécution en la faisant au moment de la
-compilation (ou avant l'interprétation).
-
-\subsubsection{Typage dynamique}
-
-La première est le typage \emph{dynamique}. Pour différencier les différents
-types de données, on ajoute une étiquette à chaque valeur. Dans tout le
-programme, on ne manipulera que des valeurs étiquetées, c'est à dire des couples
-(donnée, nom de type). Si on veut réaliser l'opération $(\hexa{00000001}, Int) +
-(\hexa{0000f000}, Int)$, on vérifie tout d'abord qu'on peut réaliser l'opération
-$+$ entre deux $Int$. Ensuite on réalise l'opération elle même, qu'on étiquette
-avec le type du résultat : $(\hexa{0000f001}, Int)$. Si au contraire on tente
-d'ajouter deux adresses $(\hexa{2e8d5a90}, Addr) + (\hexa{76a5e0ec}, Addr)$, la
-vérification échoue et l'opération s'arrête avec une erreur.
-
-\begin{figure}
-  \insertcode{typage-dynamique.pycon}
-  \caption{Session Python présentant le typage dynamique}
-  \label{fig:typage-dynamique}
-\end{figure}
-
-La figure~\ref{fig:typage-dynamique} est une session interactive Python qui
-illustre le typage dynamique. Chaque variable, en plus de sa valeur, possède une
-étiquette qui permet d'identifier le type de celle-ci. On peut accéder au type
-d'une valeur \texttt{x} avec la construction \texttt{type(x)}.
-
-Au moment de réaliser une opération comme \texttt{+}, l'interpréteur Python
-vérifie les types des opérandes : s'ils sont compatibles, il créé une valeur de
-résultat, et sinon il lève une exception.
-
-Comme l'implémentation elle-même des fonction a accès aux informations de type,
-elle peut faire des traitements particuliers. Par exemple, pour l'addition de
-\texttt{a} (de type entier) et de \texttt{c} (de type flottant), la fonction
-d'addition va d'abord convertir \texttt{a} en flottant, puis réaliser l'addition
-dans le domaine des flottants.
-
-\subsubsection{Typage statique}
-
-Le typage dynamique est simple à comprendre puisque toute les vérifications se
-font dans la sémantique dynamique (ie, à l'exécution). C'est à double tranchant:
-d'une part, cela permet d'être plus flexible, mais d'autre part, cela permet à
-des programmes incorrects d'être exécutés.
-
-On peut lire le code source d'un programme et essayer de ``deviner'' quels
-seront les types des différentes expressions. Dans certains cas, cela n'est pas
-possible (fig~\ref{fig:nontypable}) ; mais lorsqu'on peut conclure cela élimine
-la nécessité de faire les tests de type dynamiques car on a réalisé le typage
-\emph{statiquement}.
-
-Bien sûr, deviner n'est pas suffisant : il faut formaliser cette analyse. Dans
-le cas dynamique, ce sont les fonctions elles-mêmes qui réalisent les tests de
-type et qui appliquent des règles comme ``si les arguments ont pour type
-\texttt{int} alors la valeur de retour a pour type \texttt{int}'' : la
-fonction qui réalise ce test sur les valeurs. Dans le cas statique,
-c'est le compilateur (ou l'interpréteur) qui réalise ce test sur les
-expressions non évaluées. En
-appliquant de proche en proche un ensemble de règles (liées uniquement au
-langage de programmation), on finit par associer à chaque sous-expression du
-programme un type.
-
-Benjamin Pierce résume cette approche dans cette définition très générale :
-
-\begin{definition}[Système de types]
-Un système de types est une méthode syntaxique tractable qui vise à prouver
-l'absence de certains comportements de programmes en classifiant leurs phrases
-selon le genre de valeurs qu'elles produisent. \cite{TAPL}
-\end{definition}
-
-\begin{figure}
-  \insertcode{non-typable.py}
-  \caption{Fonction Python non typable statiquement.}
-  \label{fig:nontypable}
-\end{figure}
 
 A première vue, cela semble moins puissant que le typage dynamique : en effet,
 il existe des programmes qui s'exécuteront sans erreur de type mais sur lesquels
@@ -112,25 +19,6 @@ le typage statique ne peut s'appliquer. Dans la figure~\ref{fig:nontypable}, on
 peut voir par une simple analyse de cas que si on fournit un booléen à
 \texttt{f}, elle retourne un entier. Mais selon la valeur de \texttt{b}, la
 variable \texttt{x} contiendra une valeur de type entier ou fonction.
-
-Même si cet exemple est construit artificiellement, il illustre le problème
-suivant : les types statiques demandent un certain effort et au programmeur et
-au compilateur. Mais Dans le cas où le typage statique est possible, les
-garanties sont importantes : les valeurs portées par une variable auront
-toujours le même type. Par voie de conséquence, la vérification dynamique de
-types réussira toujours, et on peut la supprimer. Il est également possible
-de supprimer toutes les étiquettes de typage : on parle de \emph{type erasure}.
-Une conséquence heureuse de cette suppression est que l'exécution de ce
-programme se fera de manière plus rapide.
-
-Connaître les types à la compilation permet aussi de réaliser plus
-d'optimisations. Par exemple, en Python, considérons l'expression \texttt{y = x
-- x}. Sans information sur le type de \texttt{x}, aucune simplification n'est
-possible : l'implémentation de la différence sur ce type est une fonction
-quelconque, sans propriétés particulières \emph{a priori}. Si au contraire, on
-sait que \texttt{x} est un entier, on peut en déduire que \texttt{y = 0}, sans
-réaliser la soustraction (si c'était la seule utilisation de \texttt{x}, le
-calcul de \texttt{x} aurait alors pu être éliminé).
 
 \subsection{Fort, faible, sound}
 
@@ -156,12 +44,6 @@ Exception in thread "main" java.lang.ClassCastException:
 
 \wip{}
 
-\subsection{Polymorphisme}
-
-Dans le cas du typage statique, restreindre une opération à un seul type de
-données peut être assez restrictif.
-
-Par exemple, quel doit être le type d'une fonction qui trie un tableau ?
 
 \begin{figure}
 \centering
@@ -170,16 +52,6 @@ Par exemple, quel doit être le type d'une fonction qui trie un tableau ?
 \label{fig:types-de-polymorphisme}
 \end{figure}
 
-\subsubsection{Monomorphisme}
-
-Une première solution peut être de forcer des types concrets, c'est à dire
-qu'une même fonction ne pourra s'appliquer qu'à un seul type de données.
-
-Il est confortable pour le programmeur de n'avoir à écrire un algorithme qu'une
-seule fois, indépendamment du type des éléments considérés.
-
-Il existe deux grandes classes de systèmes de types introduisant du
-polymorphisme.
 
 \subsubsection{Polymorphisme universel}
 
@@ -194,39 +66,6 @@ Le polymorphisme est dit universel si toute fonction générique peut s'applique
 
 Le polymorphisme est \emph{ad-hoc} si les fonctions génériques ne peuvent
 s'appliquer qu'à un ensemble de types prédéfini.
-
-\subsubsection{Polymorphisme paramétrique}
-
-\todo{Historique + citer le papier de Milner sur le polymorphisme}
-\cite{Milner78}
-
-\cite{PascalNoEscape}
-
-\begin{figure}
-  \insertcode{listappend.ml}
-  \caption{Fonction de concaténation de listes en OCaml.}
-  \label{fig:listappend}
-\end{figure}
-
-La fonction de la figure~\ref{fig:listappend} n'opère que sur la structure du type
-liste (en utilisant ses constructeurs \texttt{{[}{]}} et \listcons ainsi que
-le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne sont pas manipulés
-à part pour les transférer dans le résultat.
-
-Moralement, cette fonction est donc indépendante du type de données contenu dans
-la liste : elle pourra agir sur des listes de n'importe quel type d'élément.
-
-Plutôt qu'un type, on peut lui donner le \emph{schéma de types} suivant :
-
-\[
-  \textrm{append} : \forall a . a \textrm{list}
-                             -> a \textrm{list}
-                             -> a \textrm{list}
-\]
-
-C'est à dire que \texttt{append} peut être utilisé avec n'importe quel type
-concret \texttt{a} en substituant les variables quantifiées (on parle d'
-\emph{instanciation}).
 
 \subsubsection{Polymorphisme par sous-typage}
 

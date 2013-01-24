@@ -110,6 +110,8 @@
 
 % Context substitution
 \def\ctxSub#1#2{#1\llparenthesis#2\rrparenthesis}
+\def\ctxSubL#1#2{\ctxSub{#1}{#2}_L}
+\def\ctxSubI#1#2{\ctxSub{#1}{#2}_I}
 
 % Qualifs
 \def\qKernel{\textsc{Kernel}\xspace}
@@ -313,3 +315,6 @@
 }{
 \vspace*{\fill}
 }
+
+% Hoare triple
+\def\hoare#1#2#3{\ensuremath{\{#1\}~#2~\{#3\}}}

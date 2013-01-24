@@ -1,33 +1,5 @@
 \section{Syntaxe}
 
-\begin{figure}
-\input{fig/syntax.tex}
-\caption{Syntaxe d'un langage impératif - instructions}
-\label{fig:syntx}
-\end{figure}
-
-\begin{figure}
-\input{fig/syntax-data.tex}
-\caption{Syntaxe - expressions}
-\label{fig:syntx-data}
-\end{figure}
-
-\todo{Ajouter l'arithmétique des pointeurs + types}
-
-Les figures~\ref{fig:syntx} et \ref{fig:syntx-data} définissent un langage
-impératif. On suppose qu'on peut compiler un programme écrit en C vers ce
-langage.
-
-Un programme est un triplet $P = (\vec{f}, \vec{v}, b)$\footnote{Dans tout ce
-chapitre on utilise la notation des vecteurs pour les collections ordonnées :
-$\vec{f} = (f_1, f_2, …, f_n)$, $\vec{v} = (v_1, v_2, …, v_p)$ (leur
-cardinalités ne sont pas forcément égales).} constitué d'un ensemble de
-fonctions, d'un ensemble de variables et d'un bloc d'instructions. Ce bloc sera
-exécuté au lancement du programme ; il peut par exemple contenir le code
-d'initialisation des variables globales et l'appel à la fonction principale.
-
-\todo{expliquer pourquoi un while expr ne suffit pas}
-
 Les différences principales avec C sont les suivantes :
 
 \begin{itemize}
