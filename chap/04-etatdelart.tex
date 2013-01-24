@@ -53,24 +53,6 @@ sensible à la syntaxe et au flot de contrôle du programme. Cette notion de
 \emph{patches sémantiques} pour détecter ou modifier des constructions
 particulières.
 
-\section{Qualificateurs de types}
-
-Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
-la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
-au code source. Un pointeur peut être décoré d'une annotation
-\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
-sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
-Sparse \link{sparse} peut être utilisé pour détecter les cas les plus simples
-d'erreurs.
-
-Ce système d'annotations sur les types a été formalisé sous le nom de
-\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
-qualificateurs (à la manière de \texttt{const}), et des règles de typage
-permettent d'établir des propriétés sur le programme. Ces analyses ont été
-implantée dans l'outil CQual
-\cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}. \todo{lister les
-applications}.
-
 \section{Interprétation abstraite}
 
 L'interprétation abstraite est une technique d'analyse générique qui permet de
@@ -89,7 +71,9 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 
 \begin{figure}
 \centering
-\subfloat[][]{
+\subfloat[
+  L'ensemble des états d'erreur est calculable (zone hachurée)…
+]{
 \label{fig:ia-f1}
 % 1
 \begin{tikzpicture}[scale=0.7]%{{{
@@ -112,7 +96,9 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 \end{tikzpicture}%}}}
 }
 \hspace{5mm}
-\subfloat[][]{
+\subfloat[
+  …mais pas celui des états atteints.
+]{
 \label{fig:ia-f2}
 % 2
 \begin{tikzpicture}[scale=0.7]%{{{
@@ -139,7 +125,11 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 \end{tikzpicture}%}}}
 }
 
-\subfloat[][]{
+\subfloat[
+  On construit donc une surapproximation calculable de la sémantique. Si
+  celle-ci n'a pas d'erreur, on est assuré que le programme n'en aura pas non
+  plus.
+]{
 \label{fig:ia-f3}
 % 4
 \begin{tikzpicture}[scale=0.7]%{{{
@@ -172,7 +162,10 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 \end{tikzpicture}%}}}
 }
 \hspace{5mm}
-\subfloat[][]{
+\subfloat[
+  Si on détecte une intersection, il n'est pas possible de savoir si elle est
+  due à une erreur atteignable ou à une approximation trop laxe.
+]{
 \label{fig:ia-f4}
 % 6
 \begin{tikzpicture}[scale=0.7]%{{{
@@ -206,11 +199,11 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 }
 
 \caption{
-  Interprétation abstraite
-  \ref{fig:ia-f1}
-  \ref{fig:ia-f2}
-  \ref{fig:ia-f3}
-  \ref{fig:ia-f4}
+  Surapproximation en interprétation abstraite.
+  Il n'est donc pas possible de déterminer si l'ensemble des états atteignables
+  est inclus dans l'ensemble des états sûrs (figure~\ref{fig:ia-f2}). En
+  revanche, en construisant une surapproximation on peut parfois conclure
+  (figures~\ref{fig:ia-f3} et~\ref{fig:ia-f4}).
 }
 \label{fig:ia}
 
@@ -611,6 +604,24 @@ L'approche par typage, plus légère, est séduisante. Pour les différents enje
 des systèmes de types statiques, on pourra se référer à~\cite{TAPL}. Il est
 possible d'encoder ce genre de propriétés dans un sytème de types, cf.
 \cite{lightweight-static-capabilities} et \cite{LZ06a}.
+
+\section{Qualificateurs de types}
+
+Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
+la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
+au code source. Un pointeur peut être décoré d'une annotation
+\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
+sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
+Sparse \link{sparse} peut être utilisé pour détecter les cas les plus simples
+d'erreurs.
+
+Ce système d'annotations sur les types a été formalisé sous le nom de
+\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
+qualificateurs (à la manière de \texttt{const}), et des règles de typage
+permettent d'établir des propriétés sur le programme. Ces analyses ont été
+implantée dans l'outil CQual
+\cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}. \todo{lister les
+applications}.
 
 \section{Logique de Hoare}
 
