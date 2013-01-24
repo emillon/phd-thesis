@@ -225,11 +225,11 @@
     }
     {Ctx-Lv}{ \irule{Ctx-Lv}
              { \mmlv{m}{lv}{m'}{lv'} }
-             { \mmlv{m}{\ctxSub{C_L}{lv}}{m'}{\ctxSub{C_L}{lv'}} }
+             { \mmlv{m}{\ctxSubL{C_L}{lv}}{m'}{\ctxSubL{C_L}{lv'}} }
     }
     {Ctx-Instr}{ \irule{Ctx-Instr}
              { \mmlv{m}{i}{m'}{i'} }
-             { \mmlv{m}{\ctxSub{C_I}{i}}{m'}{\ctxSub{C_I}{i'}} }
+             { \mmlv{m}{\ctxSubI{C_I}{i}}{m'}{\ctxSubI{C_I}{i'}} }
     }
     {Phi-Var}{ \irule{Phi-Var}
                  { a = \mathrm{Lookup}(x, m) }
@@ -392,7 +392,7 @@
   \\   \gramor & \ctxLvIndex{φ}{C}
   \\
   \\
-  C_I \gramisa & C_i;i
+  C_I \gramisa & C_I;i
   \\   \gramor & \iIf{C}{i_1}{i_2}
   \\   \gramor & \iReturn{C}
   \\   \gramor & C
