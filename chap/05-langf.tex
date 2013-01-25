@@ -183,7 +183,23 @@ On note $\mathcal{L} =
 \end{definition}
 
 \begin{example}[Lentilles de tête et de queue de liste]
-Lol.
+
+Soit $E$ un ensemble. On considère $L(E)$, l'ensemble des listes d'éléments de
+$E$.
+
+On définit :
+
+\begin{align*}
+  g_T (t::q) = & t \\
+  s_T (t', t::q) = & t'::q \\
+  g_Q (t::q) = & q \\
+  s_Q (q', t::q) = & t::q' \\
+  T = & \mkLens{g_T}{p_T} \\
+  Q = & \mkLens{g_Q}{p_Q} \\
+\end{align*}
+
+Alors $T ∈ \textsc{Lens}_{L(E), E}$ et $Q ∈ \textsc{Lens}_{L(E), L(E)}$.
+
 \end{example}
 
 \begin{definition}[Lentille indexée]
@@ -208,7 +224,7 @@ r [ i ← a ]_{\mathcal{L}} \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
 
 \begin{example}[Lentille "n\ieme élément d'un tuple"]
 
-Soit $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
+Soient $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
 
 Pour tout $i ∈ [1, n]$, on définit :
 
