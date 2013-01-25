@@ -71,41 +71,11 @@ exemple, on peut définir des arbres binaires d'entiers de la manière suivante 
 }
 
 Cette notation a aussi l'avantage de s'étendre facilement aux définitions
-mutuellement récursives :
-
-\gramlr{Expression}{
-\begin{align*}
-  e \gramisa & t     & \textrm{Terme}
-  \\ \gramor & e + t & \textrm{Addition}
-  \\ \gramor & e - t & \textrm{Soustraction}
-\end{align*}
-}
-
-\gramlr{Terme}{
-\begin{align*}
-t \gramisa & f     & \textrm{Facteur}
-\\ \gramor & t * f & \textrm{Multiplication}
-\\ \gramor & t / f & \textrm{Division}
-\end{align*}
-}
-
-\gramlr{Facteur}{
-\begin{align*}
-f \gramisa & ( e )  & \textrm{Expression parenthésée}
-\\ \gramor & f ** e & \textrm{Puissance}
-\\ \gramor & n      & \textrm{Nombre}
-\end{align*}
-}
-
-Cette notation définit les ensembles $E, T, F$ de la manière suivante :
-
-…
-
-% TODO cet exemple est syntaxique, c'est pas top
+mutuellement récursives.
 
 \subsection*{Inférence}
 
-La sémantique opérationnelle consiste en la définition d'une relation de
+La sémantique apérationnelle consiste en la définition d'une relation de
 transition $\cdot\rightarrow\cdot$ entre états de l'interpréteur\footnote{Dans le
 chapitre~\ref{cha:typbase}, la relation de typage $\cdot ⊢ \cdot : \cdot$ sera
 définie par la même technique.}.
@@ -161,9 +131,9 @@ suivantes :
 
 \begin{itemize}
 \item
-  une opération de lecture $\mathrm{get}_\mathcal{L} : R → A$
+  une fonction de lecture $\mathrm{get}_\mathcal{L} : R → A$
 \item
-  une opération de mise à jour $\mathrm{put}_\mathcal{L} : (A × R) → R$
+  une fonction de mise à jour $\mathrm{put}_\mathcal{L} : (A × R) → R$
 \end{itemize}
 
 telles que
@@ -174,11 +144,17 @@ telles que
 \tag{PutGet}
 \mathrm{get}_\mathcal{L}(\mathrm{put}_\mathcal{L}(a, r)) = & a \\
 \tag{PutPut}
-\mathrm{put}_\mathcal{L}(a', \mathrm{put}_\mathcal{L}(a, r)) = & \mathrm{put}_\mathcal{L}(a, r) \\
+\mathrm{put}_\mathcal{L}(a', \mathrm{put}_\mathcal{L}(a, r)) = & \mathrm{put}_\mathcal{L}(a', r) \\
 \end{align*}
 
 On note $\mathcal{L} =
 \mkLens{\mathrm{get}_{\mathcal{L}}}{\mathrm{put}_{\mathcal{L}}}$.
+
+\textsc{GetPut} signifie que si on lit une valeur puis qu'on la réecrit, l'objet
+n'est pas modifié ; \textsc{PutGet} décrit l'opération inverse : si on écrit
+une valeur dans le champ, c'est la valeur qui sera lue ; enfin, \textsc{PutPut}
+évoque le fait que chaque écriture est totale : quand deux écritures se suivent,
+seule la seconde compte.
 
 \end{definition}
 
@@ -190,15 +166,24 @@ $E$.
 On définit :
 
 \begin{align*}
-  g_T (t::q) = & t \\
-  s_T (t', t::q) = & t'::q \\
-  g_Q (t::q) = & q \\
-  s_Q (q', t::q) = & t::q' \\
-  T = & \mkLens{g_T}{p_T} \\
-  Q = & \mkLens{g_Q}{p_Q} \\
+  \mathrm{get}_T (t::q) = & t \\
+  \mathrm{put}_T (t', t::q) = & t'::q \\
+  \mathrm{get}_Q (t::q) = & q \\
+  \mathrm{put}_Q (q', t::q) = & t::q' \\
 \end{align*}
 
-Alors $T ∈ \textsc{Lens}_{L(E), E}$ et $Q ∈ \textsc{Lens}_{L(E), L(E)}$.
+Alors
+$T = \mkLens{\mathrm{get}_T}{\mathrm{put}_T} ∈ \textsc{Lens}_{L(E), E}$
+et
+$Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \textsc{Lens}_{L(E), L(E)}$.
+
+On a par exemple :
+
+$\mathrm{get}_T (1::6::1::8::[]) = 1$
+
+et :
+
+$\mathrm{put}_Q (7, 3::6::1::5::[]) = 7::6::1::5::[]$.
 
 \end{example}
 
@@ -213,7 +198,7 @@ $A_i$:
 ∀ i ∈ I, ∃ A_i, Δ(i) ∈ \textsc{Lens}_{R, A_i}
 \]
 
-On note alors
+On note alors :
 
 \begin{align*}
 r [ i ]_{\mathcal{L}} \eqdef & \mathrm{get}_{Δ(i)}(r) \\
