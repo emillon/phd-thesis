@@ -584,10 +584,88 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \section{Accesseurs}
 
-On définit quelques accesseurs. Un accesseur $ [ \cdot ] $ permet d'accéder à
-une structure $s$ et d'obtenir un élément $e$ à partir d'un indice $i$ (noté $e
-= s [ i ]$) ou de modifier le sous-élément à l'indice $i$ par $e$ (noté $ s [ i
-← e ] $).
+On définit ici quelques accesseurs. La notion d'accesseur utilisée ici est
+directement inspirée des \emph{lentilles} utilisées en programmation
+fonctionnelle, décrite dans~\cite{PierceLenses} et~\cite{LaarhovenLenses}.
+
+\begin{definition}[Lentille]
+
+Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $\mathcal{L} ∈
+\textsc{Lens}_{R, A}$ (ou \emph{accesseur}) est consistuée des opérations
+suivantes :
+
+\begin{itemize}
+\item
+  une opération de lecture $\mathrm{get}_\mathcal{L} : R → A$
+\item
+  une opération de mise à jour $\mathrm{put}_\mathcal{L} : (A × R) → R$
+\end{itemize}
+
+telles que
+
+\begin{align*}
+\tag{GetPut}
+\mathrm{put}_\mathcal{L}(a, \mathrm{get}_\mathcal{L}(r)) = & r \\
+\tag{PutGet}
+\mathrm{get}_\mathcal{L}(\mathrm{put}_\mathcal{L}(a, r)) = & a \\
+\tag{PutPut}
+\mathrm{put}_\mathcal{L}(a', \mathrm{put}_\mathcal{L}(a, r)) = & \mathrm{put}_\mathcal{L}(a, r) \\
+\end{align*}
+
+On note $\mathcal{L} =
+\mkLens{\mathrm{get}_{\mathcal{L}}}{\mathrm{put}_{\mathcal{L}}}$.
+
+\end{definition}
+
+\begin{example}[Lentilles de tête et de queue de liste]
+Lol.
+\end{example}
+
+\begin{definition}[Lentille indexée]
+
+Les objets de certains ensembles $R$ sont composés de plusieurs sous-objets
+accessibles à travers un indice $i ∈ I$. Une lentille indexée est une fonction
+$Δ$ qui associe à un indice $i$ une lentille entre $R$ et un de ses champs
+$A_i$:
+
+\[
+∀ i ∈ I, ∃ A_i, Δ(i) ∈ \textsc{Lens}_{R, A_i}
+\]
+
+On note alors
+
+\begin{align*}
+r [ i ]_{\mathcal{L}} \eqdef & \mathrm{get}_{Δ(i)}(r) \\
+r [ i ← a ]_{\mathcal{L}} \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
+\end{align*}
+
+\end{definition}
+
+\begin{example}[Lentille "n\ieme élément d'un tuple"]
+
+Soit $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
+
+Pour tout $i ∈ [1, n]$, on définit :
+
+\begin{align*}
+g_i((x_1, …, x_n)) = & x_i \\
+p_i(y, (x_1, …, x_n)) = & (x_1, …, x_{i-1}, x_{i+1}, y, …, x_n)\\
+\end{align*}
+
+Définissons $T(i) = \mkLens{g_i}{p_i}$. Alors $T(i) ∈ \textsc{Lens}_{(E_1×…×E_n),E_i}$.
+
+Donc $T$ est une lentille indexée, et on a par exemple :
+
+\begin{align*}
+(3,1,4,1,5) [2]_T = & \mathrm{get}_{T(2)} ((3, 1, 4, 1, 5)) \\
+                  = & 1 \\
+\\
+(9,2,6,5,3) [3 ← 1]_T = & \mathrm{put}_{T(3)} (1, (9,2,6,5,3)) \\
+                      = & (9,2,1,5,3)
+\end{align*}
+\end{example}
+
+On définit ici quelques lentilles.
 
 \begin{definition}[Accès à une liste d'associations]
 
