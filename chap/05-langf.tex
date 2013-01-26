@@ -136,7 +136,7 @@ suivantes :
   une fonction de mise à jour $\mathrm{put}_\mathcal{L} : (A × R) → R$
 \end{itemize}
 
-telles que
+telles que pour tous $a∈A, a'∈A, r∈R$ :
 
 \begin{align*}
 \tag{GetPut}
@@ -215,7 +215,7 @@ Pour tout $i ∈ [1, n]$, on définit :
 
 \begin{align*}
 g_i((x_1, …, x_n)) = & x_i \\
-p_i(y, (x_1, …, x_n)) = & (x_1, …, x_{i-1}, x_{i+1}, y, …, x_n)\\
+p_i(y, (x_1, …, x_n)) = & (x_1, …, x_{i-1}, y, x_{i+1}, …, x_n)\\
 \end{align*}
 
 Définissons $T(i) = \mkLens{g_i}{p_i}$. Alors $T(i) ∈ \textsc{Lens}_{(E_1×…×E_n),E_i}$.
