@@ -772,6 +772,7 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
 \end{definition}
 
 \begin{definition}[Accès par chemin]
+  \label{def:acces-phi}
 
   L'accès par chemin $[\cdot]_Φ$ permet de lire et de modifier la mémoire en
   profondeur.
@@ -779,8 +780,8 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   \begin{align*}
     m[a]_Φ        = & m[a]_A \\
     m[*φ]_Φ       = & m[φ']_Φ \mbox{ où } φ' = m[φ]_Φ \\
-    m[φ.l]_Φ      = & m[φ]_φ[l]_l \\
-    m[φ[i]]_Φ     = & m[φ]_φ[i]_I \\
+    m[φ.l]_Φ      = & m[φ]_Φ[l]_L \\
+    m[φ[i]]_Φ     = & m[φ]_Φ[i]_I \\
     m[a ← v]_Φ    = & m[a ← v]_A \\
     m[*φ ← v]_Φ   = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
     m[φ.l ← v]_Φ  = & m[φ ← (m[φ]_Φ[l←v]_L)]_Φ \\
