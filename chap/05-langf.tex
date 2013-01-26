@@ -126,8 +126,7 @@ et~\cite{LaarhovenLenses}.
 \begin{definition}[Lentille]
 
 Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $\mathcal{L} ∈
-\textsc{Lens}_{R, A}$ (ou \emph{accesseur}) est consistuée des opérations
-suivantes :
+\setLens{R}{A}$ (ou \emph{accesseur}) est consistuée des opérations suivantes :
 
 \begin{itemize}
 \item
@@ -173,9 +172,9 @@ On définit :
 \end{align*}
 
 Alors
-$T = \mkLens{\mathrm{get}_T}{\mathrm{put}_T} ∈ \textsc{Lens}_{L(E), E}$
+$T = \mkLens{\mathrm{get}_T}{\mathrm{put}_T} ∈ \setLens{L(E)}{E}$
 et
-$Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \textsc{Lens}_{L(E), L(E)}$.
+$Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \setLens{L(E)}{L(E)}$.
 
 On a par exemple :
 
@@ -195,7 +194,7 @@ $Δ$ qui associe à un indice $i$ une lentille entre $R$ et un de ses champs
 $A_i$:
 
 \[
-∀ i ∈ I, ∃ A_i, Δ(i) ∈ \textsc{Lens}_{R, A_i}
+  ∀ i ∈ I, ∃ A_i, Δ(i) ∈ \setLens{R}{A_i}
 \]
 
 On note alors :
@@ -218,7 +217,7 @@ g_i((x_1, …, x_n)) = & x_i \\
 p_i(y, (x_1, …, x_n)) = & (x_1, …, x_{i-1}, y, x_{i+1}, …, x_n)\\
 \end{align*}
 
-Définissons $T(i) = \mkLens{g_i}{p_i}$. Alors $T(i) ∈ \textsc{Lens}_{(E_1×…×E_n),E_i}$.
+Définissons $T(i) = \mkLens{g_i}{p_i}$. Alors $T(i) ∈ \setLens{(E_1×…×E_n)}{E_i}$.
 
 Donc $T$ est une lentille indexée, et on a par exemple :
 
@@ -231,6 +230,26 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 \end{align*}
 \end{example}
 
+\begin{definition}[Composition de lentilles]
+
+  Soient $\mathcal{L}_1 ∈ \setLens{A}{B}$ et $\mathcal{L}_2 ∈ \setLens{B}{C}$.
+
+  La composition de $\mathcal{L}_1$ et $\mathcal{L}_2$ est la lentille
+  $\mathcal{L} ∈ \setLens{A}{C}$ définie de la manière suivante:
+
+  \begin{align*}
+    \mathrm{get}_{\mathcal{L}} (r) =&
+        \mathrm{get}_{\mathcal{L}_2}
+        (\mathrm{get}_{\mathcal{L}_1} r) \\
+    \mathrm{put}_{\mathcal{L}} (a, r) =&
+        \mathrm{put}_{\mathcal{L}_1} (\mathrm{put}_{\mathcal{L}_2}
+        (a, \mathrm{get}_{\mathcal{L}_1} r), r) \\
+  \end{align*}
+
+
+\end{definition}
+
+% TODO utile?
 
 \section{But et comparaison à C}
 
