@@ -4,44 +4,17 @@ de lui ajouter des \emph{qualificateurs de type} qui décrivent l'origine des
 données. Ils permettent de restreindre certaines opérations sensibles à des
 expressions dont la valeur est sûre.
 
-\section{Provenance des pointeurs}
+\section{Extensions noyau pour \langname}
 
-\subsection{Éditions et ajouts}
+Jusqu'ici \langname, tel qu'il a été présenté dans le chapitre~\ref{cha:lang}
+est un langage de programmation impératif généraliste. Aucune construction en
+particulier n'est prévue pour implanter un système d'exploitation.
 
-La sémantique d'évaluation du langage n'est pas modifiée. En revanche, on
-modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
-d'ajouter à chaque pointeur un \emph{qualificateur} qui représente qui contrôle
-sa valeur.
+La sémantique d'évaluation du langage n'est pas modifiée.
 
-Les deux qualificateurs possibles sont :
 
-\begin{itemize}
-\item
-  \qKernel : il s'applique aux pointeurs contrôlés par le noyau. Par exemple,
-  prendre l'adresse d'un objet donne un pointeur noyau.
-\item
-  \qUser : il s'applique aux pointeurs qui proviennent de l'espace utilisateur.
-  Ces pointeurs proviennent toujours d'interfaces particulières, comme les
-  appels système ou les paramètres de la fonction \texttt{ioctl}.
-\end{itemize}
 
 \begin{figure}
-
-\gramlr{Qualificateurs}{
-\begin{align*}
-q \gramisa & \qKernel & \textrm{Donnée noyau (sûre)}
-\\ \gramor & \qUser   & \textrm{Donnée utilisateur (non sûre)}
-\end{align*}
-}
-
-\gramlr{Types}{
-\begin{align*}
-t \gramisa & …
-\\ \gramor & \msout{t *} & \msout{\textrm{Pointeur}}
-\\ \gramor & t q* & \textrm{Pointeur qualifié}
-\end{align*}
-}
-
 \gramlr{Instructions}{
 \begin{align*}
 i \gramisa …
@@ -70,9 +43,9 @@ C \gramisa & …
 \end{align*}
 }
 
-\caption{Changements liés aux qualificateurs de types}
-\label{fig:qualif-changes}
 
+\caption{Ajout liés aux pointeurs utilisateurs}
+\label{fig:qualif-changes}
 % TODO définir les états et ms
 
 \end{figure}
@@ -88,6 +61,25 @@ On rajoute donc le cas :
 \end{align*}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
+
+
+\section{Extensions du système de types}
+
+On modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
+d'ajouter à chaque pointeur un \emph{qualificateur} qui représente qui contrôle
+sa valeur.
+
+Les deux qualificateurs possibles sont :
+
+\begin{itemize}
+\item
+  \qKernel : il s'applique aux pointeurs contrôlés par le noyau. Par exemple,
+  prendre l'adresse d'un objet donne un pointeur noyau.
+\item
+  \qUser : il s'applique aux pointeurs qui proviennent de l'espace utilisateur.
+  Ces pointeurs proviennent toujours d'interfaces particulières, comme les
+  appels système ou les paramètres de la fonction \texttt{ioctl}.
+\end{itemize}
 
 Règle de sûreté du déréférencement
 
@@ -121,6 +113,28 @@ Règle d'évaluation
   { \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
 \end{mathpar}
 
+\begin{figure}
+
+\gramlr{Qualificateurs}{
+\begin{align*}
+q \gramisa & \qKernel & \textrm{Donnée noyau (sûre)}
+\\ \gramor & \qUser   & \textrm{Donnée utilisateur (non sûre)}
+\end{align*}
+}
+
+\gramlr{Types}{
+\begin{align*}
+t \gramisa & …
+\\ \gramor & \msout{t *} & \msout{\textrm{Pointeur}}
+\\ \gramor & t q* & \textrm{Pointeur qualifié}
+\end{align*}
+}
+
+\caption{Changements liés aux qualificateurs de types}
+\label{fig:qualif-changes}
+\end{figure}
+
+
 Règle de taintage
 
 \begin{mathpar}
@@ -142,6 +156,12 @@ Règle de taintage
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
+
+\begin{theorem}[Isolation]
+Si $Γ ⊢_k e : t$ et $\msi{m}{e} → Ω$, alors $Ω ≠ Ω_{taint}$.
+\end{theorem}
+
+% TODO ou refaire en forme de progrès
 
 \section{Analyse de terminaison des chaînes C}
 
