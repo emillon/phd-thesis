@@ -1,8 +1,18 @@
 Dans le chapitre~\ref{cha:typbase}, nous avons vu comment ajouter un système de
-types forts statiques à un langage impératif. Ici, nous étendons ce système afin
-de lui ajouter des \emph{qualificateurs de type} qui décrivent l'origine des
-données. Ils permettent de restreindre certaines opérations sensibles à des
-expressions dont la valeur est sûre.
+types forts statiques à un langage impératif (défini dans le
+chapitre~\ref{cha:lang}).
+
+Ici, nous étendons l'expressivité de \langname avec un système d'annotations de
+"souillure" (\emph{tainting} en anglais). Un cas d'erreur est ajouté, lorsqu'on
+tente d'accéder à une valeur souillée. Avec cet ajout, la propriété de progrès
+(théorème~\ref{thm:progres}) n'est donc plus valable.
+
+Afin de retrouver cette adéquation entre la sémantique et le systme de typage,
+ce dernier est étendu d'un système de \emph{qualificateurs de type} qui
+décrivent l'origine des données. Ils permettent de restreindre certaines
+opérations sensibles à des expressions dont la valeur est sûre.
+
+La propriété de progrès est alors retrouvée (théorème~\ref{thm:progres-qual}).
 
 \section{Extensions noyau pour \langname}
 
@@ -10,15 +20,22 @@ Jusqu'ici \langname, tel qu'il a été présenté dans le chapitre~\ref{cha:lang
 est un langage de programmation impératif généraliste. Aucune construction en
 particulier n'est prévue pour implanter un système d'exploitation.
 
-La sémantique d'évaluation du langage n'est pas modifiée.
+On ajoute donc la notion de valeur provenant de l'espace utilisateur (cf.
+chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
 
+\begin{figure}%{{{
 
-
-\begin{figure}
-\gramlr{Instructions}{
+\gramlr{Expressions}{
 \begin{align*}
-i \gramisa …
-\\ \gramor & \iTaint{x} & \textrm{Teintage d'une valeur}
+e \gramisa & …
+\\ \gramor & \eTaint{e} & \textrm{Expression souillée}
+\end{align*}
+}
+
+\gramlr{Contextes}{
+\begin{align*}
+C \gramisa & …
+\\ \gramor & \eTaint{C}
 \end{align*}
 }
 
@@ -36,28 +53,51 @@ ms \gramisa & …
 \end{align*}
 }
 
-\gramlr{Contextes}{
-\begin{align*}
-C \gramisa & …
-\\ \gramor & \iTaint{C}
-\end{align*}
-}
-
-
-\caption{Ajout liés aux pointeurs utilisateurs}
+\caption{Ajouts liés aux pointeurs utilisateurs}
 \label{fig:qualif-changes}
 % TODO définir les états et ms
 
-\end{figure}
+\end{figure}%}}}
+
+\begin{itemize}
+\item
+  tout d'abord, on ajoute une expression d'annotation sur les variables que
+  celles-ci sont contrôlés par un utilisateur non privilégié.
+\item
+  ensuite, on étend l'ensemble des valeurs possibles pour les pointeurs
+  à une valeur $\vTainted{φ}$ signifiant que l'objet pointé se situe en
+  espace utilisateur
+\item
+  enfin, on définit une nouvelle erreur $Ω_{tainted}$ produite par le
+  déréférencement d'un pointeur ayant une telle valeur.
+\end{itemize}
+
+Pour adapter l'évaluation, plusieurs cas sont à rajouter. D'une part, la
+présence de $\phx{\eTaint}$ dans une instruction consiste à ajouter un
+$\phx{\vTainted}$ dans la valeur construite. Ceci ne peut être fait que dans le
+cas où la valeur est un chemin $φ$, c'est à dire que la construction
+$\phx{\eTaint}$ ne peut se faire que sur une expression de type pointeur.
+
+\begin{mathpar}
+  \irule{Expr-Tainted}
+    { }
+    { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
+\end{mathpar}
+
+D'autre part, une règle accède à la mémoire : \textsc{Exp-Lv}; pour
+rappel :
+
+\begin{mathpar}
+  \semrule{Exp-Lv}
+\end{mathpar}
 
 Puisque la définition des chemins $φ$ a été changée, il est aussi nécessaire de
-redéfinir la lentille $Φ$ utilisée dans l'évaluation des expressions
-(définition~\ref{def:acces-phi}).
+redéfinir la lentille $Φ$ utilisée ci-dessus (définition~\ref{def:acces-phi}).
 
 On rajoute donc le cas :
 
 \begin{align*}
-Φ(\vTainted{…}) =& Ω_{taint}
+Φ(\vTainted{φ}) =& Ω_{taint}
 \end{align*}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
@@ -158,7 +198,9 @@ Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisa
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
 
 \begin{theorem}[Isolation]
-Si $Γ ⊢_k e : t$ et $\msi{m}{e} → Ω$, alors $Ω ≠ Ω_{taint}$.
+  \label{thm:progres-qual}
+
+  Si $Γ ⊢_k e : t$ et $\msi{m}{e} → Ω$, alors $Ω ≠ Ω_{taint}$.
 \end{theorem}
 
 % TODO ou refaire en forme de progrès
