@@ -100,8 +100,26 @@ On rajoute donc le cas :
 Φ(\vTainted{φ}) =& Ω_{taint}
 \end{align*}
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
+\section{Insuffisance des types simples}
 
+Étant donné \langname augmenté de cette extension sémantique, on peut étendre
+trivialement le système de types avec la règle suivante :
+
+\begin{mathpar}
+  \irule{Taint-Ignore}
+    { Γ ⊢ e : t* }
+    { Γ ⊢ \eTaint{e} : t* }
+\end{mathpar}
+
+Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
+qui sont bien typables mais dont l'évaluation provoque une erreur autre que
+$Ω_{array}$ ou $Ω_{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
+
+Par exemple, supposons que $x$ soit une variable globale. Alors posons
+
+\[
+  e = * \eTaint {\& x}
+\]
 
 \section{Extensions du système de types}
 
