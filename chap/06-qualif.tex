@@ -210,6 +210,12 @@ Règle de taintage
   %{ \mm{m}{*\vT }
 %\end{mathpar}
 
+\begin{mathpar}
+\irule{Taint-Struct}
+  { Γ ⊢ \&e : s~\qUser~* }
+  { Γ ⊢ e.l : t~\qUser~* }
+\end{mathpar}
+
 \subsection{Propriété d'isolation mémoire}
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
@@ -222,6 +228,10 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \end{theorem}
 
 % TODO ou refaire en forme de progrès
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+\clearpage
 
 \section{Analyse de terminaison des chaînes C}
 
