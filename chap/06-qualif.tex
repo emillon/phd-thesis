@@ -121,6 +121,8 @@ Par exemple, supposons que $x$ soit une variable globale. Alors posons
   e = * \eTaint {\& x}
 \]
 
+% TODO
+
 \section{Extensions du système de types}
 
 On modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
@@ -149,27 +151,23 @@ Règle de sûreté du déréférencement
 }
 \end{mathpar}
 
-Règle d'évaluation
+%\begin{mathpar}
+%\irule{Taint-Erase}
+  %{ }
+  %{ \mmi{m}{\iTaint{x}}{m}{\iPass} }
+%\end{mathpar}
 
-% TODO pas de contexte associé
+%\begin{mathpar}
+%\irule{Taint-Write-Old}
+  %{ }
+  %{ \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
+%\end{mathpar}
 
-\begin{mathpar}
-\irule{Taint-Erase}
-  { }
-  { \mmi{m}{\iTaint{x}}{m}{\iPass} }
-\end{mathpar}
-
-\begin{mathpar}
-\irule{Taint-Write-Old}
-  { }
-  { \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
-\end{mathpar}
-
-\begin{mathpar}
-\irule{Taint-Write}
-  { }
-  { \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
-\end{mathpar}
+%\begin{mathpar}
+%\irule{Taint-Write}
+  %{ }
+  %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
+%\end{mathpar}
 
 \begin{figure}
 
