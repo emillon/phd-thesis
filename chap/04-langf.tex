@@ -302,26 +302,26 @@ On prouve que $\mathcal{L}_1 \ggg \mathcal{L}_2 ∈ \setLens{A}{C}$.
 \paragraph{PutGet}
 
 \begin{align*}
-& \lensGet{L}
+& \lensGet{ℒ}
     {
-      \lensPut{L}
+      \lensPut{ℒ}
         {a}
         {r}
     } \\
-= & \{ \textrm{définition de } \lensGetX{L} \} \\
-& \lensGet{L_2}
+= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
+& \lensGet{ℒ_2}
     {
-      \lensGet{L_1}
+      \lensGet{ℒ_1}
         {
-          \lensPut{L}
+          \lensPut{ℒ}
             {a}
             {r}
         }
     } \\
-= & \{ \textrm{définition de } \lensPutX{L} \} \\
-& \lensGet{L_2}
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensGet{ℒ_2}
     {
-      \lensGet{L_1}
+      \lensGet{ℒ_1}
         {
           \lensPut{ℒ_1}
             {
@@ -332,9 +332,16 @@ On prouve que $\mathcal{L}_1 \ggg \mathcal{L}_2 ∈ \setLens{A}{C}$.
             { r }
         }
     } \\
+= & \{ \textrm{\textsc{PutGet} sur $ℒ_1$} \} \\
+& \lensGet{ℒ_2}
+    {
+      \lensPut{ℒ_2}
+        {a}
+        { \lensGet{ℒ_1}{r} }
+    } \\
+= & \{ \textrm{\textsc{PutGet} sur $ℒ_2$} \} \\
+& a \\
 \end{align*}
-
-% TODO changer le L
 
 \paragraph{PutPut}
 
