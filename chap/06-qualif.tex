@@ -1,15 +1,131 @@
 Dans le chapitre~\ref{cha:typbase}, nous avons vu comment ajouter un système de
-types forts statiques à un langage impératif. Ici, nous étendons ce système afin
-de lui ajouter des \emph{qualificateurs de type} qui décrivent l'origine des
-données. Ils permettent de restreindre certaines opérations sensibles à des
-expressions dont la valeur est sûre.
+types forts statiques à un langage impératif (défini dans le
+chapitre~\ref{cha:lang}).
 
-\section{Provenance des pointeurs}
+Ici, nous étendons l'expressivité de \langname avec un système d'annotations de
+"souillure" (\emph{tainting} en anglais). Un cas d'erreur est ajouté, lorsqu'on
+tente d'accéder à une valeur souillée. Avec cet ajout, la propriété de progrès
+(théorème~\ref{thm:progres}) n'est donc plus valable.
 
-\subsection{Éditions et ajouts}
+Afin de retrouver cette adéquation entre la sémantique et le systme de typage,
+ce dernier est étendu d'un système de \emph{qualificateurs de type} qui
+décrivent l'origine des données. Ils permettent de restreindre certaines
+opérations sensibles à des expressions dont la valeur est sûre.
 
-La sémantique d'évaluation du langage n'est pas modifiée. En revanche, on
-modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
+La propriété de progrès est alors retrouvée (théorème~\ref{thm:progres-qual}).
+
+\section{Extensions noyau pour \langname}
+
+Jusqu'ici \langname, tel qu'il a été présenté dans le chapitre~\ref{cha:lang}
+est un langage de programmation impératif généraliste. Aucune construction en
+particulier n'est prévue pour implanter un système d'exploitation.
+
+On ajoute donc la notion de valeur provenant de l'espace utilisateur (cf.
+chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
+
+\begin{figure}%{{{
+
+\gramlr{Expressions}{
+\begin{align*}
+e \gramisa & …
+\\ \gramor & \eTaint{e} & \textrm{Expression souillée}
+\end{align*}
+}
+
+\gramlr{Contextes}{
+\begin{align*}
+C \gramisa & …
+\\ \gramor & \eTaint{C}
+\end{align*}
+}
+
+\gramlr{Chemins}{
+\begin{align*}
+φ \gramisa & …
+\\ \gramor & \vTainted{φ} & \textrm{Valeur teintée}
+\end{align*}
+}
+
+\gramlr{États}{
+\begin{align*}
+ms \gramisa & …
+\\  \gramor & Ω_{taint} & \textrm{Erreur de souillure}
+\end{align*}
+}
+
+\caption{Ajouts liés aux pointeurs utilisateurs}
+\label{fig:qualif-changes}
+% TODO définir les états et ms
+
+\end{figure}%}}}
+
+\begin{itemize}
+\item
+  tout d'abord, on ajoute une expression d'annotation sur les variables que
+  celles-ci sont contrôlés par un utilisateur non privilégié.
+\item
+  ensuite, on étend l'ensemble des valeurs possibles pour les pointeurs
+  à une valeur $\vTainted{φ}$ signifiant que l'objet pointé se situe en
+  espace utilisateur
+\item
+  enfin, on définit une nouvelle erreur $Ω_{tainted}$ produite par le
+  déréférencement d'un pointeur ayant une telle valeur.
+\end{itemize}
+
+Pour adapter l'évaluation, plusieurs cas sont à rajouter. D'une part, la
+présence de $\phx{\eTaint}$ dans une instruction consiste à ajouter un
+$\phx{\vTainted}$ dans la valeur construite. Ceci ne peut être fait que dans le
+cas où la valeur est un chemin $φ$, c'est à dire que la construction
+$\phx{\eTaint}$ ne peut se faire que sur une expression de type pointeur.
+
+\begin{mathpar}
+  \irule{Expr-Tainted}
+    { }
+    { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
+\end{mathpar}
+
+D'autre part, une règle accède à la mémoire : \textsc{Exp-Lv}; pour
+rappel :
+
+\begin{mathpar}
+  \semrule{Exp-Lv}
+\end{mathpar}
+
+Puisque la définition des chemins $φ$ a été changée, il est aussi nécessaire de
+redéfinir la lentille $Φ$ utilisée ci-dessus (définition~\ref{def:acces-phi}).
+
+On rajoute donc le cas :
+
+\begin{align*}
+Φ(\vTainted{φ}) =& Ω_{taint}
+\end{align*}
+
+\section{Insuffisance des types simples}
+
+Étant donné \langname augmenté de cette extension sémantique, on peut étendre
+trivialement le système de types avec la règle suivante :
+
+\begin{mathpar}
+  \irule{Taint-Ignore}
+    { Γ ⊢ e : t* }
+    { Γ ⊢ \eTaint{e} : t* }
+\end{mathpar}
+
+Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
+qui sont bien typables mais dont l'évaluation provoque une erreur autre que
+$Ω_{array}$ ou $Ω_{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
+
+Par exemple, supposons que $x$ soit une variable globale. Alors posons
+
+\[
+  e = * \eTaint {\& x}
+\]
+
+% TODO
+
+\section{Extensions du système de types}
+
+On modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
 d'ajouter à chaque pointeur un \emph{qualificateur} qui représente qui contrôle
 sa valeur.
 
@@ -24,6 +140,34 @@ Les deux qualificateurs possibles sont :
   Ces pointeurs proviennent toujours d'interfaces particulières, comme les
   appels système ou les paramètres de la fonction \texttt{ioctl}.
 \end{itemize}
+
+Règle de sûreté du déréférencement
+
+\begin{mathpar}
+\irule{Lv-Deref-Kernel}{
+  Γ ⊢ e : τ~\textsc{Kernel}*
+}{
+  Γ ⊢ *e : τ
+}
+\end{mathpar}
+
+%\begin{mathpar}
+%\irule{Taint-Erase}
+  %{ }
+  %{ \mmi{m}{\iTaint{x}}{m}{\iPass} }
+%\end{mathpar}
+
+%\begin{mathpar}
+%\irule{Taint-Write-Old}
+  %{ }
+  %{ \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
+%\end{mathpar}
+
+%\begin{mathpar}
+%\irule{Taint-Write}
+  %{ }
+  %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
+%\end{mathpar}
 
 \begin{figure}
 
@@ -42,72 +186,10 @@ t \gramisa & …
 \end{align*}
 }
 
-\gramlr{Instructions}{
-\begin{align*}
-i \gramisa …
-\\ \gramor & \iTaint{x} & \textrm{Teintage d'une valeur}
-\end{align*}
-}
-
-\gramlr{Valeurs}{
-\begin{align*}
-v \gramisa & …
-\\ \gramor & \vTainted{φ} & \textrm{Valeur teintée}
-\end{align*}
-}
-
-\gramlr{États}{
-\begin{align*}
-ms \gramisa & …
-\\  \gramor & Ω_{taint} & \textrm{Erreur de taintage}
-\end{align*}
-}
-
-\gramlr{Contextes}{
-\begin{align*}
-C \gramisa & …
-\\ \gramor & \iTaint{C}
-\end{align*}
-}
-
 \caption{Changements liés aux qualificateurs de types}
 \label{fig:qualif-changes}
-
-% TODO définir les états et ms
-
 \end{figure}
 
-Règle de sûreté du déréférencement
-
-\begin{mathpar}
-\irule{Lv-Deref-Kernel}{
-  Γ ⊢ e : τ~\textsc{Kernel}*
-}{
-  Γ ⊢ *e : τ
-}
-\end{mathpar}
-
-Règle d'évaluation
-
-% TODO pas de contexte associé
-
-\begin{mathpar}
-\irule{Taint-Erase}
-  { }
-  { \mmi{m}{\iTaint{x}}{m}{\iPass} }
-\end{mathpar}
-
-\begin{mathpar}
-\irule{Taint-Write-Old}
-  { }
-  { \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
-\end{mathpar}
-
-\begin{mathpar}
-\irule{Taint-Write}
-  { }
-  { \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
-\end{mathpar}
 
 Règle de taintage
 
@@ -126,10 +208,28 @@ Règle de taintage
   %{ \mm{m}{*\vT }
 %\end{mathpar}
 
+\begin{mathpar}
+\irule{Taint-Struct}
+  { Γ ⊢ \&e : s~\qUser~* }
+  { Γ ⊢ e.l : t~\qUser~* }
+\end{mathpar}
+
 \subsection{Propriété d'isolation mémoire}
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
+
+\begin{theorem}[Isolation]
+  \label{thm:progres-qual}
+
+  Si $Γ ⊢_k e : t$ et $\msi{m}{e} → Ω$, alors $Ω ≠ Ω_{taint}$.
+\end{theorem}
+
+% TODO ou refaire en forme de progrès
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+\clearpage
 
 \section{Analyse de terminaison des chaînes C}
 

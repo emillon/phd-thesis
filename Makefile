@@ -52,6 +52,7 @@ snapshot:
 	git add gen/*
 	git commit -av -m snapshot
 	git checkout master
+	make
 
 # Debian package: latex-make
 include /usr/include/LaTeX.mk

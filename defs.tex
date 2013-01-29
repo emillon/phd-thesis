@@ -116,8 +116,9 @@
 % Qualifs
 \def\qKernel{\textsc{Kernel}\xspace}
 \def\qUser{\textsc{User}\xspace}
-\def\iTaint#1{\textsc{Taint}(#1)}
+\def\iTaint#1{\textsc{Taint}(#1)} % TODO deprec ?
 \def\vTainted#1{\textsc{Tainted}(#1)}
+\def\eTaint#1{\textsc{Taint}(#1)}
 
 % Eval de phrase
 \def\ph#1#2#3{#1 ⊢ #2 → #3}
@@ -196,6 +197,9 @@
 \newcommand{\hexa}[1]{%
 \texttt{0x#1}%
 }
+
+
+\tikzstyle{bigbrace} = [decorate,decoration={brace,amplitude=3mm}]
 
 % Debug tikz bounding box
 \def\drawbb{\draw[thick] (current bounding box.south west) rectangle (current bounding box.north east);}
@@ -323,3 +327,8 @@
 
 % Lens
 \def\mkLens#1#2{\langle #1 | #2 \rangle}
+\def\setLens#1#2{\textsc{Lens}_{#1, #2}}
+\def\lensGetX#1{\mathrm{get}_{#1}}
+\def\lensPutX#1{\mathrm{put}_{#1}}
+\def\lensGet#1#2{\lensGetX{#1}(#2)}
+\def\lensPut#1#2#3{\lensPutX{#1}(#2, #3)}
