@@ -252,9 +252,10 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 \end{definition}
 
 \begin{proof}
-On prouve que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
+Pour prouver que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$, il suffit de prouver les trois
+propriétés caractéristiques.
 
-\paragraph{GetPut}
+\paragraph{GetPut}%{{{
 
 \begin{align*}
 & \lensPut{ℒ}{
@@ -297,9 +298,9 @@ On prouve que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
     {r} \\
 = & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
 & r \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutGet}
+\paragraph{PutGet}%{{{
 
 \begin{align*}
 & \lensGet{ℒ}
@@ -341,9 +342,9 @@ On prouve que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
     } \\
 = & \{ \textrm{\textsc{PutGet} sur $ℒ_2$} \} \\
 & a \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutPut}
+\paragraph{PutPut}%{{{
 
 \begin{align*}
 & \lensPut{ℒ}{a'}{
@@ -431,7 +432,7 @@ On prouve que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
     } \\
 = & \{ \textrm{définition de } \ggg \} \\
 & \lensPut{ℒ}{a'}{r} \\
-\end{align*}
+\end{align*}%}}}
 
 \end{proof}
 
