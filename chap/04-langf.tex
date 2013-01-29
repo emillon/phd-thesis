@@ -125,29 +125,29 @@ et~\cite{LaarhovenLenses}.
 
 \begin{definition}[Lentille]
 
-Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $\mathcal{L} ∈
+Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈
 \setLens{R}{A}$ (ou \emph{accesseur}) est consistuée des opérations suivantes :
 
 \begin{itemize}
 \item
-  une fonction de lecture $\mathrm{get}_\mathcal{L} : R → A$
+  une fonction de lecture $\mathrm{get}_ℒ : R → A$
 \item
-  une fonction de mise à jour $\mathrm{put}_\mathcal{L} : (A × R) → R$
+  une fonction de mise à jour $\mathrm{put}_ℒ : (A × R) → R$
 \end{itemize}
 
 telles que pour tous $a∈A, a'∈A, r∈R$ :
 
 \begin{align*}
 \tag{GetPut}
-\mathrm{put}_\mathcal{L}(\mathrm{get}_\mathcal{L}(r), r) = & r \\
+\mathrm{put}_ℒ(\mathrm{get}_ℒ(r), r) = & r \\
 \tag{PutGet}
-\mathrm{get}_\mathcal{L}(\mathrm{put}_\mathcal{L}(a, r)) = & a \\
+\mathrm{get}_ℒ(\mathrm{put}_ℒ(a, r)) = & a \\
 \tag{PutPut}
-\mathrm{put}_\mathcal{L}(a', \mathrm{put}_\mathcal{L}(a, r)) = & \mathrm{put}_\mathcal{L}(a', r) \\
+\mathrm{put}_ℒ(a', \mathrm{put}_ℒ(a, r)) = & \mathrm{put}_ℒ(a', r) \\
 \end{align*}
 
-On note $\mathcal{L} =
-\mkLens{\mathrm{get}_{\mathcal{L}}}{\mathrm{put}_{\mathcal{L}}}$.
+On note $ℒ =
+\mkLens{\mathrm{get}_{ℒ}}{\mathrm{put}_{ℒ}}$.
 
 \textsc{GetPut} signifie que si on lit une valeur puis qu'on la réecrit, l'objet
 n'est pas modifié ; \textsc{PutGet} décrit l'opération inverse : si on écrit
@@ -233,26 +233,26 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 \begin{definition}[Composition de lentilles]
   \label{def:lens-comp}
 
-  Soient $\mathcal{L}_1 ∈ \setLens{A}{B}$ et $\mathcal{L}_2 ∈ \setLens{B}{C}$.
+  Soient $ℒ_1 ∈ \setLens{A}{B}$ et $ℒ_2 ∈ \setLens{B}{C}$.
 
-  La composition de $\mathcal{L}_1$ et $\mathcal{L}_2$ est la lentille
-  $\mathcal{L} ∈ \setLens{A}{C}$ définie de la manière suivante:
+  La composition de $ℒ_1$ et $ℒ_2$ est la lentille
+  $ℒ ∈ \setLens{A}{C}$ définie de la manière suivante:
 
   \begin{align*}
-    \mathrm{get}_{\mathcal{L}} (r) =&
-        \mathrm{get}_{\mathcal{L}_2}
-        (\mathrm{get}_{\mathcal{L}_1} r) \\
-    \mathrm{put}_{\mathcal{L}} (a, r) =&
-        \mathrm{put}_{\mathcal{L}_1} (\mathrm{put}_{\mathcal{L}_2}
-        (a, \mathrm{get}_{\mathcal{L}_1} r), r) \\
+    \mathrm{get}_{ℒ} (r) =&
+        \mathrm{get}_{ℒ_2}
+        (\mathrm{get}_{ℒ_1} r) \\
+    \mathrm{put}_{ℒ} (a, r) =&
+        \mathrm{put}_{ℒ_1} (\mathrm{put}_{ℒ_2}
+        (a, \mathrm{get}_{ℒ_1} r), r) \\
   \end{align*}
 
-  On notera alors $\mathcal{L} = \mathcal{L}_1 \ggg \mathcal{L}_2$.
+  On notera alors $ℒ = ℒ_1 \ggg ℒ_2$.
 
 \end{definition}
 
 \begin{proof}
-On prouve que $\mathcal{L}_1 \ggg \mathcal{L}_2 ∈ \setLens{A}{C}$.
+On prouve que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
 
 \paragraph{GetPut}
 
