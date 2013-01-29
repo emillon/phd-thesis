@@ -345,6 +345,94 @@ On prouve que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
 
 \paragraph{PutPut}
 
+\begin{align*}
+& \lensPut{L}{a'}{
+    \lensPut{L}{a}{r}
+  } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut{L}{a'}{
+    \lensPut{ℒ_1}
+      {
+        \lensPut{ℒ_2}
+          {a}
+          { \lensGet{ℒ_1}{r} }
+      }
+      { r }
+  } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{
+            \lensPut{ℒ_1}
+              {
+                \lensPut{ℒ_2}
+                  {a}
+                  { \lensGet{ℒ_1}{r} }
+              }
+              { r }
+          }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        {
+          \lensPut{ℒ_2}
+            {a}
+            { \lensGet{ℒ_1}{r} }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{PutPut} sur $ℒ_2$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{PutPut} sur $ℒ_1$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    { r
+    } \\
+= & \{ \textrm{définition de } \ggg \} \\
+& \lensPut{L}{a'}{r} \\
+\end{align*}
+
 \end{proof}
 
 \section{But et comparaison à C}
@@ -395,6 +483,8 @@ d'accéder aux variables de la portée entourante depuis la fonction intérieure
 Les figures~\ref{fig:stx}, \ref{fig:stx-data} et \ref{fig:stx-ops} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
+
+%TODO ordre
 
 Un programme est organisé en fonctions, qui contiennent des instructions, qui
 elles-mêmes manipulent des expressions.
