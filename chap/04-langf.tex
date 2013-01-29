@@ -301,6 +301,41 @@ On prouve que $\mathcal{L}_1 \ggg \mathcal{L}_2 ∈ \setLens{A}{C}$.
 
 \paragraph{PutGet}
 
+\begin{align*}
+& \lensGet{L}
+    {
+      \lensPut{L}
+        {a}
+        {r}
+    } \\
+= & \{ \textrm{définition de } \lensGetX{L} \} \\
+& \lensGet{L_2}
+    {
+      \lensGet{L_1}
+        {
+          \lensPut{L}
+            {a}
+            {r}
+        }
+    } \\
+= & \{ \textrm{définition de } \lensPutX{L} \} \\
+& \lensGet{L_2}
+    {
+      \lensGet{L_1}
+        {
+          \lensPut{ℒ_1}
+            {
+              \lensPut{ℒ_2}
+                {a}
+                { \lensGet{ℒ_1}{r} }
+            }
+            { r }
+        }
+    } \\
+\end{align*}
+
+% TODO changer le L
+
 \paragraph{PutPut}
 
 \end{proof}
