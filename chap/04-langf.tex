@@ -251,7 +251,59 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 
 \end{definition}
 
-% TODO utile?
+\begin{proof}
+On prouve que $\mathcal{L}_1 \ggg \mathcal{L}_2 ∈ \setLens{A}{C}$.
+
+\paragraph{GetPut}
+
+\begin{align*}
+& \lensPut{ℒ}{
+    \lensGet{ℒ}{r}
+    }{
+      r
+    } \\
+= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
+& \lensPut{ℒ}
+    {
+      \lensGet{ℒ_2}{
+        \lensGet{ℒ_1}{r}
+      }
+    }
+    { r } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut
+    {ℒ_1}
+    {
+      \lensPut
+        {ℒ_2}
+        {
+          \lensGet{ℒ_2}
+            {
+              \lensGet{ℒ_1}{r}
+            }
+        }
+        { \lensGet
+            {ℒ_1}
+            {r}
+        }
+    }
+    {r} \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_2$} \} \\
+& \lensPut
+    {ℒ_1}
+    {
+      \lensGet{ℒ_1}{r}
+    }
+    {r} \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
+& r \\
+\end{align*}
+
+\paragraph{PutGet}
+
+\paragraph{PutPut}
+
+\end{proof}
 
 \section{But et comparaison à C}
 
