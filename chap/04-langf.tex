@@ -162,7 +162,8 @@ seule la seconde compte.
 Soit $E$ un ensemble. On considère $L(E)$, l'ensemble des listes d'éléments de
 $E$.
 
-On définit :
+On définit les fonctions suivantes. Notons qu'elles ne sont pas définies sur la
+liste vide $[]$, qui pourra être traité comme un cas d'erreur.
 
 \begin{align*}
   \mathrm{get}_T     (t::q) = & t \\
@@ -185,6 +186,67 @@ et :
 $\mathrm{put}_Q (7, 3::6::1::5::[]) = 7::6::1::5::[]$.
 
 \end{example}
+
+\begin{proof}
+
+Prouvons les trois propriétés pour $T$ et $Q$. En ignorant les cas d'erreur, on
+peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
+
+\paragraph{GetPut pour $T$}
+
+\begin{align*}
+\lensPut{T}{\lensGet{T}{l}}{l} & = \lensPut{T}{\lensGet{T}{t::q}}{t::q} \\
+                               & = \lensPut{T}{t}{t::q} \\
+                               & = t::q \\
+                               & = l \\
+\end{align*}
+
+\paragraph{PutGet pour $T$}
+
+\begin{align*}
+  \lensGet{T}{\lensPut{T}{a}{l}} & = \lensGet{T}{\lensPut{T}{a}{t::q}} \\
+                                 & = \lensGet{T}{a::q} \\
+                                 & = a \\
+\end{align*}
+
+\paragraph{PutPut pour $T$}
+
+\begin{align*}
+\lensPut{T}{a'}{\lensPut{T}{a}{l}} & = \lensPut{T}{a'}{\lensPut{T}{a}{t::q}} \\
+                                   & = \lensPut{T}{a'}{a::q} \\
+                                   & = a'::q \\
+                                   & = \lensPut{T}{a'}{t::q} \\
+                                   & = \lensPut{T}{a'}{l} \\
+\end{align*}
+
+\paragraph{GetPut pour $Q$}
+
+\begin{align*}
+\lensPut{Q}{\lensGet{Q}{l}}{l} & = \lensPut{Q}{\lensGet{Q}{t::q}}{t::q} \\
+                               & = \lensPut{Q}{q}{t::q} \\
+                               & = t::q \\
+                               & = l \\
+\end{align*}
+
+\paragraph{PutGet pour $Q$}
+
+\begin{align*}
+  \lensGet{Q}{\lensPut{Q}{a}{l}} & = \lensGet{Q}{\lensPut{Q}{a}{t::q}} \\
+                                 & = \lensGet{Q}{t::a} \\
+                                 & = a \\
+\end{align*}
+
+\paragraph{PutPut pour $Q$}
+
+\begin{align*}
+\lensPut{Q}{a'}{\lensPut{Q}{a}{l}} & = \lensPut{Q}{a'}{\lensPut{Q}{a}{t::q}} \\
+                                   & = \lensPut{Q}{a'}{t::a} \\
+                                   & = t::a' \\
+                                   & = \lensPut{Q}{a'}{t::q} \\
+                                   & = \lensPut{Q}{a'}{l} \\
+\end{align*}
+
+\end{proof}
 
 \begin{definition}[Lentille indexée]
 
