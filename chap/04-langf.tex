@@ -204,9 +204,9 @@ peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
 \paragraph{PutGet pour $T$}
 
 \begin{align*}
-  \lensGet{T}{\lensPut{T}{a}{l}} & = \lensGet{T}{\lensPut{T}{a}{t::q}} \\
-                                 & = \lensGet{T}{a::q} \\
-                                 & = a \\
+\lensGet{T}{\lensPut{T}{a}{l}} & = \lensGet{T}{\lensPut{T}{a}{t::q}} \\
+                               & = \lensGet{T}{a::q} \\
+                               & = a \\
 \end{align*}
 
 \paragraph{PutPut pour $T$}
@@ -231,9 +231,9 @@ peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
 \paragraph{PutGet pour $Q$}
 
 \begin{align*}
-  \lensGet{Q}{\lensPut{Q}{a}{l}} & = \lensGet{Q}{\lensPut{Q}{a}{t::q}} \\
-                                 & = \lensGet{Q}{t::a} \\
-                                 & = a \\
+\lensGet{Q}{\lensPut{Q}{a}{l}} & = \lensGet{Q}{\lensPut{Q}{a}{t::q}} \\
+                               & = \lensGet{Q}{t::a} \\
+                               & = a \\
 \end{align*}
 
 \paragraph{PutPut pour $Q$}
@@ -272,7 +272,7 @@ r [ i ← a ]_Δ \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
 
 Soient $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
 
-Pour tout $i ∈ [1, n]$, on définit :
+Pour tout $i ∈ [1; n]$, on définit :
 
 \begin{align*}
 g_i((x_1, …, x_n)) = & x_i \\
@@ -291,6 +291,41 @@ Donc $T$ est une lentille indexée, et on a par exemple :
                       = & (9,2,1,5,3)
 \end{align*}
 \end{example}
+
+\begin{proof}
+Soit $i ∈ [1; n]$. On montre que $T(i) ∈ \setLens{(E_1×…×E_n)}{E_i}$.
+
+
+\paragraph{GetPut}
+
+On note $r = (x_1,…,x_n)$.
+
+\begin{align*}
+\lensPut{T(i)}{\lensGet{T(i)}{r}}{r} = & \lensPut{T(i)}{\lensGet{T(i)}{ (x_1,…,x_n) }}{ (x_1,…,x_n) } \\
+                                     = & \lensPut{T(i)}{x_i}{ (x_1,…,x_n) } \\
+                                     = & (x_1,…,x_{i-1},x_i,x_{i+1},…,x_n) \\
+                                     = & r \\
+\end{align*}
+
+\paragraph{PutGet}
+
+\begin{align*}
+\lensGet{T(i)}{\lensPut{T(i)}{a}{r}} = & \lensGet{T(i)}{\lensPut{T(i)}{a}{ (x_1,…,x_n) }}  \\
+                                     = & \lensGet{T(i)}{(x_1,…,x_{i-1},a,x_{i+1},…,x_n)} \\
+                                     = & a \\
+\end{align*}
+
+\paragraph{PutPut}
+
+\begin{align*}
+\lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{r}} = & \lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{(x_1,…,x_n)}}  \\
+                                         = & \lensPut{T(i)}{a'}{ (x_1,…, x_{i-1}, a, x_{i+1}, …, x_n) } \\
+                                         = & (x_1,…, x_{i-1}, a', x_{i+1}, …, x_n) \\
+                                         = & \lensPut{T(i)}{a'}{ (x_1,…,x_n) } \\
+                                         = & \lensPut{T(i)}{a'}{r} \\
+\end{align*}
+
+\end{proof}
 
 \begin{definition}[Composition de lentilles]
   \label{def:lens-comp}
