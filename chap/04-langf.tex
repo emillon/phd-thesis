@@ -187,29 +187,29 @@ $\mathrm{put}_Q (7, 3::6::1::5::[]) = 7::6::1::5::[]$.
 
 \end{example}
 
-\begin{proof}
+\begin{proof}%{{{
 
 Prouvons les trois propriétés pour $T$ et $Q$. En ignorant les cas d'erreur, on
 peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
 
-\paragraph{GetPut pour $T$}
+\paragraph{GetPut pour $T$}%{{{
 
 \begin{align*}
 \lensPut{T}{\lensGet{T}{l}}{l} & = \lensPut{T}{\lensGet{T}{t::q}}{t::q} \\
                                & = \lensPut{T}{t}{t::q} \\
                                & = t::q \\
                                & = l \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutGet pour $T$}
+\paragraph{PutGet pour $T$}%{{{
 
 \begin{align*}
 \lensGet{T}{\lensPut{T}{a}{l}} & = \lensGet{T}{\lensPut{T}{a}{t::q}} \\
                                & = \lensGet{T}{a::q} \\
                                & = a \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutPut pour $T$}
+\paragraph{PutPut pour $T$}%{{{
 
 \begin{align*}
 \lensPut{T}{a'}{\lensPut{T}{a}{l}} & = \lensPut{T}{a'}{\lensPut{T}{a}{t::q}} \\
@@ -217,26 +217,26 @@ peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
                                    & = a'::q \\
                                    & = \lensPut{T}{a'}{t::q} \\
                                    & = \lensPut{T}{a'}{l} \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{GetPut pour $Q$}
+\paragraph{GetPut pour $Q$}%{{{
 
 \begin{align*}
 \lensPut{Q}{\lensGet{Q}{l}}{l} & = \lensPut{Q}{\lensGet{Q}{t::q}}{t::q} \\
                                & = \lensPut{Q}{q}{t::q} \\
                                & = t::q \\
                                & = l \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutGet pour $Q$}
+\paragraph{PutGet pour $Q$}%{{{
 
 \begin{align*}
 \lensGet{Q}{\lensPut{Q}{a}{l}} & = \lensGet{Q}{\lensPut{Q}{a}{t::q}} \\
                                & = \lensGet{Q}{t::a} \\
                                & = a \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutPut pour $Q$}
+\paragraph{PutPut pour $Q$}%{{{
 
 \begin{align*}
 \lensPut{Q}{a'}{\lensPut{Q}{a}{l}} & = \lensPut{Q}{a'}{\lensPut{Q}{a}{t::q}} \\
@@ -244,9 +244,9 @@ peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
                                    & = t::a' \\
                                    & = \lensPut{Q}{a'}{t::q} \\
                                    & = \lensPut{Q}{a'}{l} \\
-\end{align*}
+\end{align*}%}}}
 
-\end{proof}
+\end{proof}%}}}
 
 \begin{definition}[Lentille indexée]
 
@@ -292,11 +292,11 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 \end{align*}
 \end{example}
 
-\begin{proof}
+\begin{proof}%{{{
 Soit $i ∈ [1; n]$. On montre que $T(i) ∈ \setLens{(E_1×…×E_n)}{E_i}$.
 
 
-\paragraph{GetPut}
+\paragraph{GetPut}%{{{
 
 On note $r = (x_1,…,x_n)$.
 
@@ -305,17 +305,17 @@ On note $r = (x_1,…,x_n)$.
                                      = & \lensPut{T(i)}{x_i}{ (x_1,…,x_n) } \\
                                      = & (x_1,…,x_{i-1},x_i,x_{i+1},…,x_n) \\
                                      = & r \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutGet}
+\paragraph{PutGet}%{{{
 
 \begin{align*}
 \lensGet{T(i)}{\lensPut{T(i)}{a}{r}} = & \lensGet{T(i)}{\lensPut{T(i)}{a}{ (x_1,…,x_n) }}  \\
                                      = & \lensGet{T(i)}{(x_1,…,x_{i-1},a,x_{i+1},…,x_n)} \\
                                      = & a \\
-\end{align*}
+\end{align*}%}}}
 
-\paragraph{PutPut}
+\paragraph{PutPut}%{{{
 
 \begin{align*}
 \lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{r}} = & \lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{(x_1,…,x_n)}}  \\
@@ -323,9 +323,9 @@ On note $r = (x_1,…,x_n)$.
                                          = & (x_1,…, x_{i-1}, a', x_{i+1}, …, x_n) \\
                                          = & \lensPut{T(i)}{a'}{ (x_1,…,x_n) } \\
                                          = & \lensPut{T(i)}{a'}{r} \\
-\end{align*}
+\end{align*}%}}}
 
-\end{proof}
+\end{proof}%}}}
 
 \begin{definition}[Composition de lentilles]
   \label{def:lens-comp}
