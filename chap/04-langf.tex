@@ -810,7 +810,7 @@ pas capturé (il n'y a pas de clôture lexicale).
 
 \end{itemize}
 
-\begin{figure}
+\begin{figure}%{{{
 
   \gramlr{Valeurs}{
     \begin{align*}
@@ -845,11 +845,34 @@ pas capturé (il n'y a pas de clôture lexicale).
 
   \caption{Valeurs}
   \label{fig:interp-val}
-\end{figure}
+\end{figure}%}}}
 
-figure~\ref{fig:interp}
+La figure~\ref{fig:interp} résume comment ces valeurs sont organisées. Une pile
+est une liste de cadre de piles, et un cadre de pile est une liste de couples
+(nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une pile
+et $g$ un cadre de pile (qui représente les variables globales).
 
-\begin{figure}
+Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
+états $Ξ$ ; ces états sont d'une des formes suivantes :
+
+\begin{itemize}
+\item
+  un couple $\msi{m}{e}$ où $e$ est une expression et $m$ un état
+  mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
+  réalisée. Par exemple $\mm{([], [x,3])}{3}{([], [x,3])}{\widehat{3}}$
+  L'évaluation des expressions est détaillée dans la
+  section~\ref{sec:eval-exp}.
+% TODO widehat sur le 3 ? est-ce qu'il faut distinguer les valeurs?
+\item
+  un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
+  mémoire. La réduction instructions est traitée dans la
+  section~\ref{sec:eval-instr}.
+\item
+  une erreur $Ω$. La propagation des erreurs est détaillée dans la
+  section~\ref{sec:eval-errors}.
+\end{itemize}
+
+\begin{figure}%{{{
 
   \gramlr{Pile}{
     \begin{align*}
@@ -878,12 +901,13 @@ figure~\ref{fig:interp}
     \begin{align*}
       Ω \gramisa & Ω_{array}  & \textrm{Dépassement de tableau}
       \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
+      \\ \gramor & Ω_{div}    & \textrm{Division par zéro}
     \end{align*}
   }
 
   \caption{Composantes d'un état mémoire}
   \label{fig:interp}
-\end{figure}
+\end{figure}%}}}
 
 \begin{definition}[Recherche de variable]
 
@@ -1324,6 +1348,7 @@ figure~\ref{fig:eval-ex-ctx}) :
 \end{figure} % }}}
 
 \section{Expressions}
+\label{sec:eval-exp}
 
 \begin{definition}[Évaluation d'une expression]
 
@@ -1687,6 +1712,7 @@ déréférencement de $p$ va modifier $x$.
 Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
+\label{sec:eval-instr}
 
 Contrairement à l'évaluation des expressions, on choisit une sémantique de
 réécriture à petits pas. La sémantique fonctionne de la manière suivante :
@@ -1815,6 +1841,11 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 \begin{mathpar}
   \semrule{Return}
 \end{mathpar}
+
+\section{Erreurs}
+\label{sec:eval-errors}
+
+% TODO
 
 \section{Phrases}
 
