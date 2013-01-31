@@ -739,6 +739,53 @@ La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que :
 L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
+La mémoire est constituée de variables, qui contiennent des valeurs. Ces
+variables sont organisées, d'une part en un ensemble de variables globales, et
+d'autre part en une pile de contextes d'appel\footnote{qu'on appellera donc aussi cadres
+de pile pour \emph{stackframes} en anglais}. Cette structure empilée permet
+de représenter les différents contextes à chaque appel de fonction : par
+exemple, si une fonction s'appelle récursivement, plusieurs instances de ses
+variables locales sont présentes dans le programme.
+
+Pour identifier de manière non ambigüe une variable, on note simplement $x$ la
+variable globale nommée $x$, et $(n, x)$ la variable locale nommée $x$ dans le
+$n$\ieme cadre de pile\footnote{Les paramètres de fonction sont traités comme
+des variables locales et se retrouvent dans le cadre correspondant.}.
+
+Les affectations peuvent avoir la forme $x ← e$ où $x$ est une variable et $e$
+est une expression, mais pas seulement. En effet, à gauche de $←$ on trouve en
+général non pas une variable mais une left-value. Pour représenter quelle partie
+de la mémoire doit être accédée par cette left-value, on introduit la notion de
+chemin $φ$. Un chemin est en quelque sorte une left-value symbolique évaluée :
+les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, $φ
+= (5, x).p$ représente le champ "$p$" de la variable $x$ dans le 5\ieme cadre de
+pile.
+
+Les valeurs, quant à elles, peuvent avoir les formes suivantes :
+
+\begin{itemize}
+\item
+
+$\widehat{c}$ : une constante. La notation circonflexe permet de distinguer
+les constructions syntaxique des constructions sémantiques. Par exemple, à la
+syntaxe $3$ correspond la valeur $\widehat{3}$.
+
+\item
+
+$φ$ : une référence mémoire. Ce chemin correspond à un pointeur sur une
+left-value. Par exemple, l'expression $\&x$ s'évalue en $φ = (5, x)$ si $x$
+désigne lexicalement une variable dans le 5\ieme cadre de pile.
+
+\item
+  $\widehat{ \{ l_1 : v_1 ; … ; l_n : v_n \} }$ : une structure
+\item
+  $\widehat{ \{v_1 ;…; v_n\} }$ : un tableau
+\item
+  $\widehat{f}$ : une fonction
+\end{itemize}
+
+%TODO : Les entiers sont modulo $2^{32}$, etc
+
 \begin{align*}
   \sVal = &          \sInt
             \bigdcup \sFloat
