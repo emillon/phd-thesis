@@ -121,7 +121,27 @@ Par exemple, supposons que $x$ soit une variable globale. Alors posons
   e = * \eTaint {\& x}
 \]
 
-% TODO
+On a alors :
+
+\begin{mathpar}
+\inferrule*
+  {
+    \irule{Exp-Lv}
+      {
+        \inferrule*
+          { }
+          {m[*\vTainted{x}] = Ω_{taint}}
+      }
+      { \mm{m}{* \eTaint {\& x}}{m}{Ω_{taint}} }
+    \\
+    \irule{Eval-Err}
+      { }
+      {
+        \msi{m}{Ω_{taint}} → Ω_{taint}
+      }
+  }
+  {\msi{m}{* \eTaint {\& x}} → Ω_{taint}}
+\end{mathpar}
 
 \section{Extensions du système de types}
 

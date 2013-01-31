@@ -1846,6 +1846,27 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 \label{sec:eval-errors}
 
 % TODO
+% TODO déplacer en semrule
+% TODO mettre un e (ou v) ::= Ω
+
+Les erreurs se propagent des données vers l'interprète ; c'est à dire que si
+une expression ou instruction est réduite en une valeur d'erreur $Ω$, alors une
+transition est faite vers cet état d'erreur.
+
+Cela est aussi vrai d'une sous-expression ou sous-instruction : si l'évaluation
+de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
+de sous-structure est présente grâce aux contexte $C$ dans la règle suivante :
+
+\begin{mathpar}
+  \irule{Eval-Err}
+    { }
+    { \msi{m}{Ω} → Ω }
+
+  % TODO Règle à vérifier
+  \irule{Eval-Err}
+    { }
+    { \msi{m}{\ctxSub{C}{Ω}} → Ω }
+\end{mathpar}
 
 \section{Phrases}
 
@@ -1991,12 +2012,13 @@ donc
 \item procédures vs fonctions ($\tVoid$)
 \item top ?
 \item return implicite en fin de fct
-\item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$ et quand il
-faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
+\item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
+             et quand il faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
 \item arithmétique de pointeur à préciser
 \item notation des tableaux et structures : deux points ou point virgule ?
 \item notation des tableaux : crochets ou accolades ?
 \item tableau vide, structure vide
+\item "et" et "ou" lazy
 \end{itemize}
 
 % vim: spelllang=fr
