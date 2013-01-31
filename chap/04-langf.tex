@@ -741,11 +741,17 @@ associées aux variables du programme.
 
 La mémoire est constituée de variables, qui contiennent des valeurs. Ces
 variables sont organisées, d'une part en un ensemble de variables globales, et
-d'autre part en une pile de contextes d'appel\footnote{qu'on appellera donc aussi cadres
-de pile pour \emph{stackframes} en anglais}. Cette structure empilée permet
-de représenter les différents contextes à chaque appel de fonction : par
-exemple, si une fonction s'appelle récursivement, plusieurs instances de ses
-variables locales sont présentes dans le programme.
+d'autre part en une pile de contextes d'appel\footnote{qu'on appellera donc
+aussi cadres de pile pour \emph{stack frames} en anglais}. Cette structure
+empilée permet de représenter les différents contextes à chaque appel de
+fonction : par exemple, si une fonction s'appelle récursivement, plusieurs
+instances de ses variables locales sont présentes dans le programme.
+
+La structure de pile des locales permet de les organiser en niveaux
+indépendants: à chaque appel de fonction, un nouveau cadre de pile est créé,
+comprenant ses paramètres et ses variables locales. Au contraire, pour les
+globales il n'y a pas de système d'empilement, puisque ces variables sont
+accessibles depuis tout point du programme.
 
 Pour identifier de manière non ambigüe une variable, on note simplement $x$ la
 variable globale nommée $x$, et $(n, x)$ la variable locale nommée $x$ dans le
@@ -761,7 +767,8 @@ les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, 
 = (5, x).p$ représente le champ "$p$" de la variable $x$ dans le 5\ieme cadre de
 pile.
 
-Les valeurs, quant à elles, peuvent avoir les formes suivantes :
+Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
+figure~\ref{fig:interp-val}) :
 
 \begin{itemize}
 \item
@@ -769,6 +776,11 @@ Les valeurs, quant à elles, peuvent avoir les formes suivantes :
 $\widehat{c}$ : une constante. La notation circonflexe permet de distinguer
 les constructions syntaxique des constructions sémantiques. Par exemple, à la
 syntaxe $3$ correspond la valeur $\widehat{3}$.
+
+Les valeurs entières sont les entiers signés sur 32 bits, c'est à dire entre
+$-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire : de la même manière, on
+aurait pu choisir des nombres à 64 bits ou même de précision arbitraire.
+Les flottants sont les flottants IEEE 754 de 32 bits \cite{ieee754}.
 
 \item
 
@@ -783,69 +795,20 @@ précédemment, on note $\widehat{\{\cdot\}}$ pour dénoter les valeurs.
 
 \item
 
-$\widehat{ \{v_1 ;…; v_n\} }$ : un tableau. Pareillement, $\widehat{\cdot}$
-désigne une valeur.
+$\widehat{ \{v_1 ;…; v_n\} }$ : un tableau. Pareillement, $\widehat{\{\cdot\}}$
+permet de désigner les valeurs. Par exemple, si $x$ vaut $2$ et $y$ vaut $3$,
+l'expression $\{ x, y \}$ s'évaluera en valeur $\widehat{\{ 2, 3 \}}$
 
 \item
 
-$\widehat{f}$ : une fonction
+$\widehat{f}$ : une fonction. Les valeurs fonctions comportent l'intégralité de
+la définition de la fonction (liste de paramètres, de variables locales et
+corps). Remarquons que contrairement à certains langages, l'environnement n'est
+pas capturé (il n'y a pas de clôture lexicale).
+
+% TODO citer sur les closures ?
 
 \end{itemize}
-
-%TODO : Les entiers sont modulo $2^{32}$, etc
-
-\begin{align*}
-  \sVal = &          \sInt
-            \bigdcup \sFloat
-            \bigdcup \{ \eNull \}
-            \bigdcup \sPhi \\
-  \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
-  \sFloat = & \textsc{IeeeFloat}(32) \\
-    \sPhi = & \mathrm{fix} (\sPhi') \\
-    \sPhi'(X) = & X \\
-                & \cup \sAddr \\
-                & \cup \{*φ / φ ∈ \sPhi\} \\
-                & \cup \{φ.c / φ ∈ \sPhi, c ∈ \sId\} \\
-                & \cup \{φ[n] / φ ∈ \sPhi, n ∈ \sInt\} \\
-  \sAddr = & \sId \bigdcup (ℕ × \sId) \\
-\end{align*}
-
-$\textsc{IeeeFloat}(n)$ correspond à l'ensemble des flottants IEEE 754 de $n$
-bits\cite{ieee754}. Ici, \sInt est choisi pour représenter les nombres entiers
-de $-2^{31}$ à $2^{31}-1$, mais ce choix est arbitraire : de la même manière, on
-aurait pu choisir des nombres à 64 bits ou même de précision arbitraire.
-
-L'ensemble des états mémoire est :
-
-\[
-  \sMem = ((\sId × \sVal)^*)^* × (\sId × \sVal)^*
-\]
-
-Un état mémoire état mémoire $(s, g) ∈ \sMem$ est composé :
-
-\begin{itemize}
-\item
-  d'une part, d'une pile $s$ de cadres, qui sont des listes
-  d'association (nom de variable, valeur).
-\item
-  d'autre part, une liste d'association qui représente les variables
-  globales.
-\end{itemize}
-
-La structure de pile des locales permet de les organiser en niveaux indépendants:
-à chaque appel de fonction, un nouveau cadre de pile est créé, comprenant ses
-paramètres et ses variables locales.
-
-Au contraire, pour les globales il n'y a pas de système d'empilement, puisque
-ces variables sont accessibles depuis tout point du programme.
-
-Ces définitions sont résumées dans la figure~\ref{fig:interp}. Plusieurs
-constructions, comme les tableaux, sont ambigües puisqu'elle ont à la fois une
-forme syntaxique et une forme sémantique. Pour lever cette ambigüité, on note
-sous un accent circonflexe $\widehat{\cdot}$ les constructions syntaxique. Par
-exemple, si $x$ vaut $2$ et $y$ vaut $3$, l'expression $\{ x, y \}$ s'évaluera
-en valeur $\widehat{\{ 2, 3 \}}$
-
 
 \begin{figure}
 
@@ -880,6 +843,14 @@ en valeur $\widehat{\{ 2, 3 \}}$
     \end{align*}
   }
 
+  \caption{Valeurs}
+  \label{fig:interp-val}
+\end{figure}
+
+figure~\ref{fig:interp}
+
+\begin{figure}
+
   \gramlr{Pile}{
     \begin{align*}
       s \gramisa & []                       & \textrm{Pile vide}
@@ -892,6 +863,21 @@ en valeur $\widehat{\{ 2, 3 \}}$
       m \gramisa & (s,                    & \textrm{Pile}      \\
                  & \{ x_1 ;…; x_n \},     & \textrm{Globales}  \\
                  & \{a_1↦v_1;…;a_p↦v_p\}) & \textrm{Valeurs}
+    \end{align*}
+  }
+
+  \gramlr{État d'interpréteur}{
+    \begin{align*}
+      Ξ \gramisa & \msi{m}{e} & \textrm{Expression, mémoire}
+      \\ \gramor & \msi{m}{i} & \textrm{Instruction, mémoire}
+      \\ \gramor & Ω          & \textrm{Erreur}
+    \end{align*}
+  }
+
+  \gramlr{Erreur}{
+    \begin{align*}
+      Ω \gramisa & Ω_{array}  & \textrm{Dépassement de tableau}
+      \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
     \end{align*}
   }
 
