@@ -561,17 +561,18 @@ sur une certaine classe de programmes C.
 
 % TODO mettre ailleurs ?
 
-Un des problèmes classiques dans les langages impératifs est de distinguer les
-fonctions (qui retournent une valeur) et les procédures (qui n'en retournent
-pas). La solution choisie par C est de marquer les procédures comme retournant
-un ``faux'' type \texttt{void}. Mais c'est uniquement syntaxique : il n'est pas
-possible de manipuler cette valeur de retour de type \texttt{void}.
+\paragraph{Fonctions et procédures :} Un des problèmes classiques dans les
+langages impératifs est de distinguer les fonctions (qui retournent une valeur)
+et les procédures (qui n'en retournent pas). La solution choisie par C est de
+marquer les procédures comme retournant un ``faux'' type \texttt{void}. Mais
+c'est uniquement syntaxique : il n'est pas possible de manipuler cette valeur de
+retour de type \texttt{void}.
 
 L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
 faire de distinction entre ces deux cas et d'interdire les procédures. Les
 fonctions ne retournant pas de valeur ``intéressante'' renvoient alors une
 valeur d'un type à un seul élément appelé \eUnit\footnote{Cette notation évoque
-un $n$-uplet à 0 composantes.}, et donc le type sera noté \tUnit.
+un $n$-uplet à 0 composante.}, et donc le type sera noté \tUnit.
 
 En C, puisqu'il n'y a pas de valeurs de type \texttt{void}, la notation
 \texttt{void *} a un sens particulier : elle désigne les pointeurs de type non
@@ -580,6 +581,14 @@ la seule forme --- rudimentaire --- de généricité qu'offre le langage). Ici, 
 valeur \eUnit est une valeur comme les autres, et on peut constuire un pointeur
 de type $\tUnit *$ qui n'aura pas de signification particulière : c'est
 seulement un pointeur vers une valeur de type \tUnit.
+
+\paragraph{Tableaux :} ce sont des valeurs composées qui contiennent un certain
+nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
+valeurs par un indice entier, qui dans le cas général n'est pas connu à la
+compilation. C'est une erreur ($Ω_{array}$) d'accéder à un tableau en dehors de
+ses bornes, c'est à dire en dehors de $[0;n-1]$ pour un tableau à $n$
+éléments\footnote{Comme le fait remarquer Dijkstra, seule la numérotation à
+partir de 0 a du sens\cite{EWD831}.}.
 
 \section{Principes}
 
@@ -1359,9 +1368,6 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ :
 
 \end{definition}
 
-La sémantique présentée n'a pas d'erreur explicite. Si aucune règle ne peut
-s'appliquer, on considère que l'exécution est terminée.
-
 Puisque des left-values peuvent apparaitre dans les expressions, et des
 expressions dans les left-values (en indice de tableau), leurs règles
 d'évaluation sont mutuellement récursives.
@@ -1477,6 +1483,18 @@ celles qui ont la forme $φ[n]$. On a alors :
 \begin{align*}
   φ[n] +_p m = & φ[n+m] \\
   φ[n] -_p m = & φ[n-m] \\
+\end{align*}
+
+% TODO widehats ici et ci-dessous non ?
+
+Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
+d'une même structure. Autrement c'est une erreur de manipulation de pointeurs :
+
+% TODO quoter le passage pertinent de la norme
+
+\begin{align*}
+φ +_p m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
+φ -_p m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
 \end{align*}
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
@@ -1999,6 +2017,7 @@ donc
 \item notation des tableaux : crochets ou accolades ?
 \item tableau vide, structure vide
 \item "et" et "ou" lazy
+\item tableaux de taille dynamique ?
 \end{itemize}
 
 % vim: spelllang=fr
