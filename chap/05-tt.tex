@@ -488,10 +488,19 @@ variable $x$ un entier.
   Alors l'un des cas suivant est vrai :
 
 \begin{itemize}
-  \item $e$ est une valeur : $∃ v, e = v$
-  \item il existe $e'$ et $m'$ tels que $\mm{m}{e}{m'}{e'}$ et $\mcomp{Γ}{m'}$
-  \item une erreur d'accès tableau ou pointeur se produit
+  \item $∃ v, e = v$
+  \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{Ω_{div},Ω_{array},Ω_{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
+
+  C'est à dire, soit :
+
+\begin{itemize}
+  \item $e$ est complètement évaluée
+  \item un pas d'évaluation préservant la compatibilité mémoire est possible
+  \item une erreur de division, tableau ou pointeur se produit
+\end{itemize}
+
 \end{theorem}
 
 \begin{proof}
