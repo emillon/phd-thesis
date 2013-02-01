@@ -115,13 +115,10 @@ Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $Ω_{array}$ ou $Ω_{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
 
-Par exemple, supposons que $x$ soit une variable globale. Alors posons
+Par exemple, supposons que $x$ soit une variable globale, et posons $e = *
+\eTaint {\& x}$.
 
-\[
-  e = * \eTaint {\& x}
-\]
-
-On a alors :
+L'évaluation de $e$ provoque une erreur, comme le montre la dérivation suivante.
 
 \begin{mathpar}
 \inferrule*
