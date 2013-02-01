@@ -1273,8 +1273,7 @@ décrit dans la figure~\ref{fig:ctx-sub}.
 \end{figure}
 
 Par exemple, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
-v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ (cf.
-figure~\ref{fig:eval-ex-ctx}) :
+v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ :
 
 \begin{enumerate}
 \item
@@ -1305,47 +1304,6 @@ figure~\ref{fig:eval-ex-ctx}) :
   .
 % TODO comment combiner ?
 \end{enumerate}
-
-\begin{figure} % {{{
-
-\[
-\inferrule*
-  {
-    \inferrule*[vdots=2em]
-      {
-        \inferrule*[right=(Ctx), leftskip=4cm, vdots=2em]
-          {
-            \mmstar{m}{e_1}{m'}{v_1}
-            \\
-            (C = \ctxOp{\ctxEmpty}{e_2})
-          }
-          {
-            \mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}
-          }
-        \\
-        \inferrule*[right=(Ctx), rightskip=4cm, vdots=2em]
-          {
-            \mmstar{m'}{e_2}{m''}{v_2}
-            \\
-            (C = \ctxOp{v_1}{\ctxEmpty})
-          }
-          {
-            \mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}
-          }
-      }
-      { \mmstar{m}{e}{m''}{v_1\opbin~v_2} }
-    \\
-    \inferrule*[right=(Exp-BinOp), rightskip=2cm, vdots=2em]
-      { }
-      { \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2} }
-  }
-  { \mmstar{m}{e}{m''}{v_1~\widehat{\opbin}~v_2} }
-\]
-
-\caption{Évaluation d'une expression}
-\label{fig:eval-ex-ctx}
-
-\end{figure} % }}}
 
 \section{Expressions}
 \label{sec:eval-exp}
