@@ -593,6 +593,16 @@ partir de 0 a du sens\cite{EWD831}.}.
 Les tableaux sont notés $[e_1; …; e_n]$, et le cas dégénéré ($n = 0$) est
 interdit.
 
+\paragraph{Structures :} comme les tableaux, ce sont des valeurs composées mais
+hétérogènes. Les différents éléments (appelés \emph{champs}) sont désignés par
+noms $l$ (pour \emph{label}) et de manière statique (il n'y a pas de mécanisme
+pour faire référence à un nom dans le programme).
+
+Les structures sont notées $\{ l_1 : e_1 ; … ; l_n : e_n \}$ et comme dans le
+cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
+
+% TODO
+
 \section{Principes}
 
 Nous voulons capturer l'essence de C. Les traits principaux sont les suivants :
@@ -2003,21 +2013,19 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item résoudre le problème des structures
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item changer les para de présentation des règles
 \item widehats sur les constantes ?
 \item liste d'assos $→$ fonction
-\item résoudre le problème des structures
 \item définir les opérations d'ajout/remplacement sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
-\item top ?
 \item return implicite en fin de fct
 \item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
              et quand il faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
-\item notation des tableaux et structures : deux points ou point virgule ?
-\item structure vide
 \item "et" et "ou" lazy
+\item top ?
 \item tableaux de taille dynamique ?
 \end{itemize}
 
