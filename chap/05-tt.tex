@@ -578,7 +578,7 @@ $Γ = x:t$).
   \item si $Γ ⊢ v : t*$, $v = φ$ ou $v = \eNull$.
   \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = f$.
   \item si $Γ ⊢ v : t*$, $v = φ$.
-  \item si $Γ ⊢ v : t[]$, $v = [v_1, …, v_n]$.
+  \item si $Γ ⊢ v : t[]$, $v = \{v_1; …; v_n\}$.
     %TODO structures
   \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \mathrm{fun}
     (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))$.
@@ -683,7 +683,46 @@ d'évaluation \textsc{Phi-Var} s'applique donc.
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{Lv-Index} :} % TODO
+\paragraph{\textsc{Lv-Index} :} % %{{{
+
+De même, on applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item $lv = v$.
+
+Comme $Γ ⊢ v : t[]$, on déduit du lemme~\ref{lemma:canon} que
+$v = \{v_1; …; v_p\}$.
+Appliquons l'hypothèse de récurrence à $e$.
+
+\begin{itemize}
+\item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
+lemme~\ref{lemma:canon} et $v' = n$. Deux cas sont à distinguer :
+si $n ∈ [0;p-1]$, la règle \textsc{Phi-Array} s'applique et
+$\mm{m}{lv[e]}{m}{v_{n+1}}$.
+% TODO réécrire bien Phi-Array
+% TODO attention à l'off by one
+Sinon, $\msi{m}{lv[e]} → Ω_{array}$.
+% TODO pourquoi ?
+
+\item $\mm{m}{e}{m'}{e'}$.
+En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
+\item $\mm{m}{lv[e]}{m'}{lv[e']}$.
+
+\item $\msi{m}{e} → Ω$.
+Avec \textsc{Eval-Err} sous ce même contexte,
+$\msi{m}{lv[e]} → Ω$
+\end{itemize}
+
+\item $\mm{m}{lv}{m'}{e'}$.
+On applique alors \textsc{Ctx} avec $C = \ctxEmpty[e]$, et
+$\mm{m}{lv[e]}{m'}{e'[e]}$.
+
+\item $\msi{m}{lv} → Ω$.
+Toujours avec $C = \ctxEmpty[e]$, de \textsc{Eval-Err} il vient
+$\msi{m}{lv[e]} → Ω$.
+
+\end{itemize}
+%}}}
 \paragraph{\textsc{Lv-Field} :} % TODO
   \paragraph{\textsc{Op-Int} :} % {{{
 
@@ -772,7 +811,12 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Unop-Not} :}%{{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
-\paragraph{\textsc{Ptr-Arith} :} % TODO
+\paragraph{\textsc{Ptr-Arith} :} % %{{{
+
+\[ \left( \disprule{Ptr-Arith} \right) \]
+
+% TODO
+%}}}
 \paragraph{\textsc{Addr} :} % TODO
 \paragraph{\textsc{Set} :} % TODO
 \paragraph{\textsc{Array} :} % TODO
@@ -780,6 +824,7 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Call} :} % TODO
 \paragraph{\textsc{Fun} :} % TODO
 % TODO vérifier qu'il n'y a pas d'autre règle
+% TODO général : que désigne e. Ex avec lv[e]
 \end{proof}
 
 \begin{lemma}[Permutation]
