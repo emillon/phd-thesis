@@ -125,8 +125,10 @@ et~\cite{LaarhovenLenses}.
 
 \begin{definition}[Lentille]
 
-Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈
-\setLens{R}{A}$ (ou \emph{accesseur}) est consistuée des opérations suivantes :
+Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈ \setLens{R}{A}$
+(ou \emph{accesseur}) est un moyen d'accéder en lecture ou en écriture à
+sous-valeur de type $A$ au sein d'une valeur de type $R$ (pour \emph{record}).
+Elle est consistuée des opérations suivantes :
 
 \begin{itemize}
 \item
@@ -162,7 +164,8 @@ seule la seconde compte.
 Soit $E$ un ensemble. On considère $L(E)$, l'ensemble des listes d'éléments de
 $E$.
 
-On définit :
+On définit les fonctions suivantes. Notons qu'elles ne sont pas définies sur la
+liste vide $[]$, qui pourra être traité comme un cas d'erreur.
 
 \begin{align*}
   \mathrm{get}_T     (t::q) = & t \\
@@ -185,6 +188,67 @@ et :
 $\mathrm{put}_Q (7, 3::6::1::5::[]) = 7::6::1::5::[]$.
 
 \end{example}
+
+\begin{proof}%{{{
+
+Prouvons les trois propriétés pour $T$ et $Q$. En ignorant les cas d'erreur, on
+peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
+
+\paragraph{GetPut pour $T$}%{{{
+
+\begin{align*}
+\lensPut{T}{\lensGet{T}{l}}{l} & = \lensPut{T}{\lensGet{T}{t::q}}{t::q} \\
+                               & = \lensPut{T}{t}{t::q} \\
+                               & = t::q \\
+                               & = l \\
+\end{align*}%}}}
+
+\paragraph{PutGet pour $T$}%{{{
+
+\begin{align*}
+\lensGet{T}{\lensPut{T}{a}{l}} & = \lensGet{T}{\lensPut{T}{a}{t::q}} \\
+                               & = \lensGet{T}{a::q} \\
+                               & = a \\
+\end{align*}%}}}
+
+\paragraph{PutPut pour $T$}%{{{
+
+\begin{align*}
+\lensPut{T}{a'}{\lensPut{T}{a}{l}} & = \lensPut{T}{a'}{\lensPut{T}{a}{t::q}} \\
+                                   & = \lensPut{T}{a'}{a::q} \\
+                                   & = a'::q \\
+                                   & = \lensPut{T}{a'}{t::q} \\
+                                   & = \lensPut{T}{a'}{l} \\
+\end{align*}%}}}
+
+\paragraph{GetPut pour $Q$}%{{{
+
+\begin{align*}
+\lensPut{Q}{\lensGet{Q}{l}}{l} & = \lensPut{Q}{\lensGet{Q}{t::q}}{t::q} \\
+                               & = \lensPut{Q}{q}{t::q} \\
+                               & = t::q \\
+                               & = l \\
+\end{align*}%}}}
+
+\paragraph{PutGet pour $Q$}%{{{
+
+\begin{align*}
+\lensGet{Q}{\lensPut{Q}{a}{l}} & = \lensGet{Q}{\lensPut{Q}{a}{t::q}} \\
+                               & = \lensGet{Q}{t::a} \\
+                               & = a \\
+\end{align*}%}}}
+
+\paragraph{PutPut pour $Q$}%{{{
+
+\begin{align*}
+\lensPut{Q}{a'}{\lensPut{Q}{a}{l}} & = \lensPut{Q}{a'}{\lensPut{Q}{a}{t::q}} \\
+                                   & = \lensPut{Q}{a'}{t::a} \\
+                                   & = t::a' \\
+                                   & = \lensPut{Q}{a'}{t::q} \\
+                                   & = \lensPut{Q}{a'}{l} \\
+\end{align*}%}}}
+
+\end{proof}%}}}
 
 \begin{definition}[Lentille indexée]
 
@@ -210,7 +274,7 @@ r [ i ← a ]_Δ \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
 
 Soient $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
 
-Pour tout $i ∈ [1, n]$, on définit :
+Pour tout $i ∈ [1; n]$, on définit :
 
 \begin{align*}
 g_i((x_1, …, x_n)) = & x_i \\
@@ -229,6 +293,41 @@ Donc $T$ est une lentille indexée, et on a par exemple :
                       = & (9,2,1,5,3)
 \end{align*}
 \end{example}
+
+\begin{proof}%{{{
+Soit $i ∈ [1; n]$. On montre que $T(i) ∈ \setLens{(E_1×…×E_n)}{E_i}$.
+
+
+\paragraph{GetPut}%{{{
+
+On note $r = (x_1,…,x_n)$.
+
+\begin{align*}
+\lensPut{T(i)}{\lensGet{T(i)}{r}}{r} = & \lensPut{T(i)}{\lensGet{T(i)}{ (x_1,…,x_n) }}{ (x_1,…,x_n) } \\
+                                     = & \lensPut{T(i)}{x_i}{ (x_1,…,x_n) } \\
+                                     = & (x_1,…,x_{i-1},x_i,x_{i+1},…,x_n) \\
+                                     = & r \\
+\end{align*}%}}}
+
+\paragraph{PutGet}%{{{
+
+\begin{align*}
+\lensGet{T(i)}{\lensPut{T(i)}{a}{r}} = & \lensGet{T(i)}{\lensPut{T(i)}{a}{ (x_1,…,x_n) }}  \\
+                                     = & \lensGet{T(i)}{(x_1,…,x_{i-1},a,x_{i+1},…,x_n)} \\
+                                     = & a \\
+\end{align*}%}}}
+
+\paragraph{PutPut}%{{{
+
+\begin{align*}
+\lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{r}} = & \lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{(x_1,…,x_n)}}  \\
+                                         = & \lensPut{T(i)}{a'}{ (x_1,…, x_{i-1}, a, x_{i+1}, …, x_n) } \\
+                                         = & (x_1,…, x_{i-1}, a', x_{i+1}, …, x_n) \\
+                                         = & \lensPut{T(i)}{a'}{ (x_1,…,x_n) } \\
+                                         = & \lensPut{T(i)}{a'}{r} \\
+\end{align*}%}}}
+
+\end{proof}%}}}
 
 \begin{definition}[Composition de lentilles]
   \label{def:lens-comp}
@@ -460,6 +559,50 @@ effectuée en dehors de celles faites par le programmeur.
 Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
 sur une certaine classe de programmes C.
 
+% TODO mettre ailleurs ?
+
+\paragraph{Fonctions et procédures :} Un des problèmes classiques dans les
+langages impératifs est de distinguer les fonctions (qui retournent une valeur)
+et les procédures (qui n'en retournent pas). La solution choisie par C est de
+marquer les procédures comme retournant un ``faux'' type \texttt{void}. Mais
+c'est uniquement syntaxique : il n'est pas possible de manipuler cette valeur de
+retour de type \texttt{void}.
+
+L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
+faire de distinction entre ces deux cas et d'interdire les procédures. Les
+fonctions ne retournant pas de valeur ``intéressante'' renvoient alors une
+valeur d'un type à un seul élément appelé \eUnit\footnote{Cette notation évoque
+un $n$-uplet à 0 composante.}, et donc le type sera noté \tUnit.
+
+En C, puisqu'il n'y a pas de valeurs de type \texttt{void}, la notation
+\texttt{void *} a un sens particulier : elle désigne les pointeurs de type non
+défini, qui sont compatibles avec n'importe quel autre type de pointeur (c'est
+la seule forme --- rudimentaire --- de généricité qu'offre le langage). Ici, la
+valeur \eUnit est une valeur comme les autres, et on peut constuire un pointeur
+de type $\tUnit *$ qui n'aura pas de signification particulière : c'est
+seulement un pointeur vers une valeur de type \tUnit.
+
+\paragraph{Tableaux :} ce sont des valeurs composées qui contiennent un certain
+nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
+valeurs par un indice entier, qui dans le cas général n'est pas connu à la
+compilation. C'est une erreur ($Ω_{array}$) d'accéder à un tableau en dehors de
+ses bornes, c'est à dire en dehors de $[0;n-1]$ pour un tableau à $n$
+éléments\footnote{Comme le fait remarquer Dijkstra, seule la numérotation à
+partir de 0 a du sens\cite{EWD831}.}.
+
+Les tableaux sont notés $[e_1; …; e_n]$, et le cas dégénéré ($n = 0$) est
+interdit.
+
+\paragraph{Structures :} comme les tableaux, ce sont des valeurs composées mais
+hétérogènes. Les différents éléments (appelés \emph{champs}) sont désignés par
+noms $l$ (pour \emph{label}) et de manière statique (il n'y a pas de mécanisme
+pour faire référence à un nom dans le programme).
+
+Les structures sont notées $\{ l_1 : e_1 ; … ; l_n : e_n \}$ et comme dans le
+cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
+
+% TODO
+
 \section{Principes}
 
 Nous voulons capturer l'essence de C. Les traits principaux sont les suivants :
@@ -481,11 +624,9 @@ d'accéder aux variables de la portée entourante depuis la fonction intérieure
 
 \section{Syntaxe}
 
-Les figures~\ref{fig:stx}, \ref{fig:stx-data} et \ref{fig:stx-ops} présentent
+Les figures~\ref{fig:stx-data}, \ref{fig:stx} et \ref{fig:stx-ops} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
-
-%TODO ordre
 
 Un programme est organisé en fonctions, qui contiennent des instructions, qui
 elles-mêmes manipulent des expressions.
@@ -502,6 +643,8 @@ Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 
 Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
+% TODO un mot sur les constantes dont \eUnit
+
 \begin{figure}
 
   \gramlr{Constantes}{
@@ -509,6 +652,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       c \gramisa & i      & \textrm{Entier}
       \\ \gramor & d      & \textrm{Flottant}
       \\ \gramor & \eNull & \textrm{Pointeur nul}
+      \\ \gramor & \eUnit & \textrm{Valeur unité}
     \end{align*}
   }
 
@@ -642,60 +786,78 @@ La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que :
 L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
-\begin{align*}
-  \sVal = &          \sInt
-            \bigdcup \sFloat
-            \bigdcup \{ \eNull \}
-            \bigdcup \sPhi \\
-  \sInt = & ℤ/2^{32} ℤ - 2^{31} \\
-  \sFloat = & \textsc{IeeeFloat}(32) \\
-    \sPhi = & \mathrm{fix} (\sPhi') \\
-    \sPhi'(X) = & X \\
-                & \cup \sAddr \\
-                & \cup \{*φ / φ ∈ \sPhi\} \\
-                & \cup \{φ.c / φ ∈ \sPhi, c ∈ \sId\} \\
-                & \cup \{φ[n] / φ ∈ \sPhi, n ∈ \sInt\} \\
-  \sAddr = & \sId \bigdcup (ℕ × \sId) \\
-\end{align*}
+La mémoire est constituée de variables, qui contiennent des valeurs. Ces
+variables sont organisées, d'une part en un ensemble de variables globales, et
+d'autre part en une pile de contextes d'appel\footnote{qu'on appellera donc
+aussi cadres de pile pour \emph{stack frames} en anglais}. Cette structure
+empilée permet de représenter les différents contextes à chaque appel de
+fonction : par exemple, si une fonction s'appelle récursivement, plusieurs
+instances de ses variables locales sont présentes dans le programme.
 
-$\textsc{IeeeFloat}(n)$ correspond à l'ensemble des flottants IEEE 754 de $n$
-bits\cite{ieee754}. Ici, \sInt est choisi pour représenter les nombres entiers
-de $-2^{31}$ à $2^{31}-1$, mais ce choix est arbitraire : de la même manière, on
-aurait pu choisir des nombres à 64 bits ou même de précision arbitraire.
+La structure de pile des locales permet de les organiser en niveaux
+indépendants: à chaque appel de fonction, un nouveau cadre de pile est créé,
+comprenant ses paramètres et ses variables locales. Au contraire, pour les
+globales il n'y a pas de système d'empilement, puisque ces variables sont
+accessibles depuis tout point du programme.
 
-L'ensemble des états mémoire est :
+Pour identifier de manière non ambigüe une variable, on note simplement $x$ la
+variable globale nommée $x$, et $(n, x)$ la variable locale nommée $x$ dans le
+$n$\ieme cadre de pile\footnote{Les paramètres de fonction sont traités comme
+des variables locales et se retrouvent dans le cadre correspondant.}.
 
-\[
-  \sMem = ((\sId × \sVal)^*)^* × (\sId × \sVal)^*
-\]
+Les affectations peuvent avoir la forme $x ← e$ où $x$ est une variable et $e$
+est une expression, mais pas seulement. En effet, à gauche de $←$ on trouve en
+général non pas une variable mais une left-value. Pour représenter quelle partie
+de la mémoire doit être accédée par cette left-value, on introduit la notion de
+chemin $φ$. Un chemin est en quelque sorte une left-value symbolique évaluée :
+les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, $φ
+= (5, x).p$ représente le champ "$p$" de la variable $x$ dans le 5\ieme cadre de
+pile.
 
-Un état mémoire état mémoire $(s, g) ∈ \sMem$ est composé :
+Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
+figure~\ref{fig:interp-val}) :
 
 \begin{itemize}
 \item
-  d'une part, d'une pile $s$ de cadres, qui sont des listes
-  d'association (nom de variable, valeur).
+
+$\widehat{c}$ : une constante. La notation circonflexe permet de distinguer
+les constructions syntaxique des constructions sémantiques. Par exemple, à la
+syntaxe $3$ correspond la valeur $\widehat{3}$.
+
+Les valeurs entières sont les entiers signés sur 32 bits, c'est à dire entre
+$-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire : de la même manière, on
+aurait pu choisir des nombres à 64 bits ou même de précision arbitraire.
+Les flottants sont les flottants IEEE 754 de 32 bits \cite{ieee754}.
+
 \item
-  d'autre part, une liste d'association qui représente les variables
-  globales.
+
+$φ$ : une référence mémoire. Ce chemin correspond à un pointeur sur une
+left-value. Par exemple, l'expression $\&x$ s'évalue en $φ = (5, x)$ si $x$
+désigne lexicalement une variable dans le 5\ieme cadre de pile.
+
+\item
+
+$\widehat{ \{ l_1 : v_1 ; … ; l_n : v_n \} }$ : une structure. Comme
+précédemment, on note $\widehat{\{\cdot\}}$ pour dénoter les valeurs.
+
+\item
+
+$\widehat{ \{v_1 ;…; v_n\} }$ : un tableau. Pareillement, $\widehat{\{\cdot\}}$
+permet de désigner les valeurs. Par exemple, si $x$ vaut $2$ et $y$ vaut $3$,
+l'expression $\{ x, y \}$ s'évaluera en valeur $\widehat{\{ 2, 3 \}}$
+
+\item
+
+$\widehat{f}$ : une fonction. Les valeurs fonctions comportent l'intégralité de
+la définition de la fonction (liste de paramètres, de variables locales et
+corps). Remarquons que contrairement à certains langages, l'environnement n'est
+pas capturé (il n'y a pas de clôture lexicale).
+
+% TODO citer sur les closures ?
+
 \end{itemize}
 
-La structure de pile des locales permet de les organiser en niveaux indépendants:
-à chaque appel de fonction, un nouveau cadre de pile est créé, comprenant ses
-paramètres et ses variables locales.
-
-Au contraire, pour les globales il n'y a pas de système d'empilement, puisque
-ces variables sont accessibles depuis tout point du programme.
-
-Ces définitions sont résumées dans la figure~\ref{fig:interp}. Plusieurs
-constructions, comme les tableaux, sont ambigües puisqu'elle ont à la fois une
-forme syntaxique et une forme sémantique. Pour lever cette ambigüité, on note
-sous un accent circonflexe $\widehat{\cdot}$ les constructions syntaxique. Par
-exemple, si $x$ vaut $2$ et $y$ vaut $3$, l'expression $\{ x, y \}$ s'évaluera
-en valeur $\widehat{\{ 2, 3 \}}$
-
-
-\begin{figure}
+\begin{figure}%{{{
 
   \gramlr{Valeurs}{
     \begin{align*}
@@ -728,6 +890,37 @@ en valeur $\widehat{\{ 2, 3 \}}$
     \end{align*}
   }
 
+  \caption{Valeurs}
+  \label{fig:interp-val}
+\end{figure}%}}}
+
+La figure~\ref{fig:interp} résume comment ces valeurs sont organisées. Une pile
+est une liste de cadre de piles, et un cadre de pile est une liste de couples
+(nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une pile
+et $g$ un cadre de pile (qui représente les variables globales).
+
+Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
+états $Ξ$ ; ces états sont d'une des formes suivantes :
+
+\begin{itemize}
+\item
+  un couple $\msi{m}{e}$ où $e$ est une expression et $m$ un état
+  mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
+  réalisée. Par exemple $\mm{([], [x,3])}{3}{([], [x,3])}{\widehat{3}}$
+  L'évaluation des expressions est détaillée dans la
+  section~\ref{sec:eval-exp}.
+% TODO widehat sur le 3 ? est-ce qu'il faut distinguer les valeurs?
+\item
+  un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
+  mémoire. La réduction instructions est traitée dans la
+  section~\ref{sec:eval-instr}.
+\item
+  une erreur $Ω$. La propagation des erreurs est détaillée dans la
+  section~\ref{sec:eval-errors}.
+\end{itemize}
+
+\begin{figure}%{{{
+
   \gramlr{Pile}{
     \begin{align*}
       s \gramisa & []                       & \textrm{Pile vide}
@@ -743,9 +936,25 @@ en valeur $\widehat{\{ 2, 3 \}}$
     \end{align*}
   }
 
+  \gramlr{État d'interpréteur}{
+    \begin{align*}
+      Ξ \gramisa & \msi{m}{e} & \textrm{Expression, mémoire}
+      \\ \gramor & \msi{m}{i} & \textrm{Instruction, mémoire}
+      \\ \gramor & Ω          & \textrm{Erreur}
+    \end{align*}
+  }
+
+  \gramlr{Erreur}{
+    \begin{align*}
+      Ω \gramisa & Ω_{array}  & \textrm{Dépassement de tableau}
+      \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
+      \\ \gramor & Ω_{div}    & \textrm{Division par zéro}
+    \end{align*}
+  }
+
   \caption{Composantes d'un état mémoire}
   \label{fig:interp}
-\end{figure}
+\end{figure}%}}}
 
 \begin{definition}[Recherche de variable]
 
@@ -961,8 +1170,7 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
 \begin{definition}[Accès par chemin]
   \label{def:acces-phi}
 
-  L'accès par chemin $[\cdot]_Φ$ permet de lire et de modifier la mémoire en
-  profondeur.
+  L'accès par chemin $Φ$ permet de lire et de modifier la mémoire en profondeur.
 
   On peut accéder directement à une variable:
 
@@ -974,15 +1182,15 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   (définition~\ref{def:lens-comp}) :
 
   \begin{align*}
-    Φ(φ.l) = & Φ(φ) \ggg L(l) \\
+    Φ(φ.l)  = & Φ(φ) \ggg L(l) \\
     Φ(φ[i]) = & Φ(φ) \ggg I(i) \\
   \end{align*}
 
   Enfin, le déréférencement est défini comme suit :
 
   \begin{align*}
-    m[*φ]_Φ       = & m[φ']_Φ \mbox{ où } φ' = m[φ]_Φ \\
-    m[*φ ← v]_Φ   = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
+    m[*φ]_Φ     = & m[φ']_Φ     \mbox{ où } φ' = m[φ]_Φ \\
+    m[*φ ← v]_Φ = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
   \end{align*}
 
 \end{definition}
@@ -1111,8 +1319,7 @@ décrit dans la figure~\ref{fig:ctx-sub}.
 \end{figure}
 
 Par exemple, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
-v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ (cf.
-figure~\ref{fig:eval-ex-ctx}) :
+v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ :
 
 \begin{enumerate}
 \item
@@ -1144,48 +1351,8 @@ figure~\ref{fig:eval-ex-ctx}) :
 % TODO comment combiner ?
 \end{enumerate}
 
-\begin{figure} % {{{
-
-\[
-\inferrule*
-  {
-    \inferrule*[vdots=2em]
-      {
-        \inferrule*[right=(Ctx), leftskip=4cm, vdots=2em]
-          {
-            \mmstar{m}{e_1}{m'}{v_1}
-            \\
-            (C = \ctxOp{\ctxEmpty}{e_2})
-          }
-          {
-            \mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}
-          }
-        \\
-        \inferrule*[right=(Ctx), rightskip=4cm, vdots=2em]
-          {
-            \mmstar{m'}{e_2}{m''}{v_2}
-            \\
-            (C = \ctxOp{v_1}{\ctxEmpty})
-          }
-          {
-            \mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}
-          }
-      }
-      { \mmstar{m}{e}{m''}{v_1\opbin~v_2} }
-    \\
-    \inferrule*[right=(Exp-BinOp), rightskip=2cm, vdots=2em]
-      { }
-      { \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2} }
-  }
-  { \mmstar{m}{e}{m''}{v_1~\widehat{\opbin}~v_2} }
-\]
-
-\caption{Évaluation d'une expression}
-\label{fig:eval-ex-ctx}
-
-\end{figure} % }}}
-
 \section{Expressions}
+\label{sec:eval-exp}
 
 \begin{definition}[Évaluation d'une expression]
 
@@ -1213,9 +1380,6 @@ figure~\ref{fig:eval-ex-ctx}) :
   \]
 
 \end{definition}
-
-La sémantique présentée n'a pas d'erreur explicite. Si aucune règle ne peut
-s'appliquer, on considère que l'exécution est terminée.
 
 Puisque des left-values peuvent apparaitre dans les expressions, et des
 expressions dans les left-values (en indice de tableau), leurs règles
@@ -1332,6 +1496,18 @@ celles qui ont la forme $φ[n]$. On a alors :
 \begin{align*}
   φ[n] +_p m = & φ[n+m] \\
   φ[n] -_p m = & φ[n-m] \\
+\end{align*}
+
+% TODO widehats ici et ci-dessous non ?
+
+Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
+d'une même structure. Autrement c'est une erreur de manipulation de pointeurs :
+
+% TODO quoter le passage pertinent de la norme
+
+\begin{align*}
+φ +_p m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
+φ -_p m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
 \end{align*}
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
@@ -1549,6 +1725,7 @@ déréférencement de $p$ va modifier $x$.
 Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
+\label{sec:eval-instr}
 
 Contrairement à l'évaluation des expressions, on choisit une sémantique de
 réécriture à petits pas. La sémantique fonctionne de la manière suivante :
@@ -1676,6 +1853,32 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 \begin{mathpar}
   \semrule{Return}
+\end{mathpar}
+
+\section{Erreurs}
+\label{sec:eval-errors}
+
+% TODO
+% TODO déplacer en semrule
+% TODO mettre un e (ou v) ::= Ω
+
+Les erreurs se propagent des données vers l'interprète ; c'est à dire que si
+une expression ou instruction est réduite en une valeur d'erreur $Ω$, alors une
+transition est faite vers cet état d'erreur.
+
+Cela est aussi vrai d'une sous-expression ou sous-instruction : si l'évaluation
+de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
+de sous-structure est présente grâce aux contexte $C$ dans la règle suivante :
+
+\begin{mathpar}
+  \irule{Eval-Err}
+    { }
+    { \msi{m}{Ω} → Ω }
+
+  % TODO Règle à vérifier: ça suffit?
+  \irule{Eval-Err}
+    { }
+    { \msi{m}{\ctxSub{C}{Ω}} → Ω }
 \end{mathpar}
 
 \section{Phrases}
@@ -1810,29 +2013,25 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item résoudre le problème des structures
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
-\item en fait, séparer selon le truc substitué (2è arg), pas le premier
+  (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item changer les para de présentation des règles
-\item cas d'erreurs explicites $Ω_{div}$, $Ω_{ptr}$ et $Ω_{array}$
 \item widehats sur les constantes ?
 \item liste d'assos $→$ fonction
-\item résoudre le problème des structures
 \item définir les opérations d'ajout/remplacement sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
-\item dédupliquer la def de l'état mémoire
-\item syntaxe concrète
-\item procédures vs fonctions
-\item top ?
 \item return implicite en fin de fct
-\item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$ et quand il
-faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
-\item arithmétique de pointeur à préciser
-\item état mémoire : doublet/triplet
-\item notation des tableaux et structures : deux points ou point virgule ?
-\item notation des tableaux : crochets ou accolades ?
-\item syntaxique ou syntactique ?
-\item métasyntaxique ou métasyntactique ?
-\item tableau vide, structure vide
+\item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
+             et quand il faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
+\item "et" et "ou" lazy
+\end{itemize}
+
+Limitations :
+
+\begin{itemize}
+\item (ou feature) variables non initialisées
+\item tableaux de taille dynamique ?
 \end{itemize}
 
 % vim: spelllang=fr

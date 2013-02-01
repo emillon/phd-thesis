@@ -12,6 +12,10 @@
                   { }
                   { Γ ⊢ \eNull : t*}
     }
+    {Cst-Unit}{ \irule{Cst-Unit}
+                  { }
+                  { Γ ⊢ \eUnit : \tUnit }
+    }
     {Lv-Var}{ \irule{Lv-Var}
                 { x : t ∈ Γ }
                 { Γ ⊢ x : t }

@@ -115,13 +115,30 @@ Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $Ω_{array}$ ou $Ω_{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
 
-Par exemple, supposons que $x$ soit une variable globale. Alors posons
+Par exemple, supposons que $x$ soit une variable globale, et posons $e = *
+\eTaint {\& x}$.
 
-\[
-  e = * \eTaint {\& x}
-\]
+L'évaluation de $e$ provoque une erreur, comme le montre la dérivation suivante.
 
-% TODO
+\begin{mathpar}
+\inferrule*
+  {
+    \irule{Exp-Lv}
+      {
+        \inferrule*
+          { }
+          {m[*\vTainted{x}] = Ω_{taint}}
+      }
+      { \mm{m}{* \eTaint {\& x}}{m}{Ω_{taint}} }
+    \\
+    \irule{Eval-Err}
+      { }
+      {
+        \msi{m}{Ω_{taint}} → Ω_{taint}
+      }
+  }
+  {\msi{m}{* \eTaint {\& x}} → Ω_{taint}}
+\end{mathpar}
 
 \section{Extensions du système de types}
 
