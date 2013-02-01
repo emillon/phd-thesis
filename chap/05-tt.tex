@@ -546,11 +546,7 @@ On applique l'hypothèse de récurrence à $lv$.
 %}}}
 \paragraph{\textsc{Lv-Deref} :}%{{{
 
-  \[
-  \left( \disprule{Lv-Deref} \right)
-  \]
-
-  Appliquons l'hypothèse de récurrence à $e' = lv$.
+  Appliquons l'hypothèse de récurrence à $lv$ (vu en tant qu'expression).
 
 \begin{itemize}
 \item
@@ -561,6 +557,16 @@ On applique l'hypothèse de récurrence à $lv$.
   $\mms{e}{\widehat{*}φ}$.
   Dans le second, puisque $\msi{m}{*\eNull} → Ω_{ptr}$, on a
   $\msi{m}{e} → Ω_{ptr}$.
+
+\item
+  $\mm{m}{lv}{m'}{e'}$.
+  De \textsc{Ctx} avec $C = *\ctxEmpty$, on obtient
+  $\mm{m}{e}{m'}{*e'}$.
+
+\item
+  $\msi{m}{lv} → Ω$.
+  En appliquant \textsc{Eval-Err} avec $C = *\ctxEmpty$, on obtient
+  $\msi{m}{e} → Ω$.
 
 \end{itemize}
 
