@@ -1871,14 +1871,14 @@ de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-structure est présente grâce aux contexte $C$ dans la règle suivante :
 
 \begin{mathpar}
-  \irule{Eval-Err}
+  \irule{Exp-Err}
     { }
     { \msi{m}{Ω} → Ω }
 
-  % TODO Règle à vérifier: ça suffit?
+% TODO blabla sur les 2 et prouver que \ctxSub{C}{Ω} → Ω
   \irule{Eval-Err}
-    { }
-    { \msi{m}{\ctxSub{C}{Ω}} → Ω }
+    { \msi{m}{e} → Ω }
+    { \msi{m}{\ctxSub{C}{e}} → Ω }
 \end{mathpar}
 
 \section{Phrases}

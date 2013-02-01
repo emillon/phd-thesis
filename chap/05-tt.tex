@@ -504,75 +504,6 @@ variable $x$ un entier.
 \end{theorem}
 
 \begin{proof}
-  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
-  sur la dernière règle utilisée.
-
-\begin{itemize}
-
-  \item \textsc{Lv-Index}
-
-    \textsc{Phi-Index} s'applique, ou alors une erreur d'indice se produit.
-    % TODO rediger
-
-  \item \textsc{Lv-Field}
-
-    \textsc{Phi-Struct} s'applique.
-    % TODO rédiger
-    % TODO cohérence dans le nommage
-
-  \item \textsc{Op-Int}
-
-    \textsc{Exp-Binop} s'applique.
-    % TODO rédiger
-
-    Les cas \textsc{Op-Float}, \textsc{Op-Eq}, et \textsc{Op-Comparable} sont
-    similaires.
-
-  % TODO cohérence : ordre entre Unop et Binop
-
-  \item \textsc{Unop-Plus-Int}
-
-    \textsc{Exp-Unop} s'applique.
-    % TODO rédiger
-
-    Les cas \textsc{Unop-Minus-Int}, \textsc{Unop-Plus-Float},
-    \textsc{Unop-Minus-Float}, et \textsc{Unop-Not} sont similaires.
-
-  \item \textsc{Ptr-Arith}
-
-    \textsc{Exp-Binop} s'applique ou une erreur se produit
-    % TODO rédiger
-
-  \item \textsc{Addr}
-
-    \textsc{Exp-AddrOf} s'applique.
-    % TODO rédiger
-    % TODO cohérence
-    % TODO prouver que Lookup réussit
-
-  \item \textsc{Set}
-
-    \textsc{Exp-Lv} s'applique.
-    % TODO rédiger
-    % TODO cohérence
-
-  \item \textsc{Array}
-    \textsc{Exp-Array} s'applique.
-    % TODO rédiger
-
-  \item \textsc{Struct}
-    \textsc{Exp-Struct} s'applique.
-    % TODO rédiger
-
-  \item \textsc{Call}
-    \textsc{Exp-Call} s'applique.
-    % TODO rédiger
-
-\end{itemize}
-
-\end{proof}
-
-\begin{proof}[Démonstration avec une sémantique par réduction]
 
   On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
   sur la dernière règle utilisée.
@@ -586,7 +517,9 @@ $e$ est alors de la forme $d$, qui est une valeur.
   \paragraph{\textsc{Cst-Null} :} % {{{
 $e$ est alors égal à $\eNull$, qui est une valeur.
 %}}}
-  \paragraph{\textsc{Cst-Unit} :} % TODO
+  \paragraph{\textsc{Cst-Unit} :}%{{{
+$e$ est alors égal à \eUnit, qui est une valeur.
+%}}}
 \paragraph{\textsc{Lv-Var} :}%{{{
 
 Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle
@@ -611,6 +544,29 @@ On applique l'hypothèse de récurrence à $lv$.
 \end{itemize}
 
 %}}}
+\paragraph{\textsc{Lv-Deref} :}%{{{
+
+  \[
+  \left( \disprule{Lv-Deref} \right)
+  \]
+
+  Appliquons l'hypothèse de récurrence à $e' = lv$.
+
+\begin{itemize}
+\item
+  $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
+  lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
+
+  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique :
+  $\mms{e}{\widehat{*}φ}$.
+  Dans le second, puisque $\msi{m}{*\eNull} → Ω_{ptr}$, on a
+  $\msi{m}{e} → Ω_{ptr}$.
+
+\end{itemize}
+
+
+% TODO virer le 2è cas Lv-Deref au dessus
+% }}}
 \paragraph{\textsc{Lv-Index} :} % TODO
 \paragraph{\textsc{Lv-Field} :} % TODO
   \paragraph{\textsc{Op-Int} :} % {{{
@@ -637,9 +593,10 @@ On applique l'hypothèse de récurrence à $lv$.
           en déduit $\mm{m'}{v_1~\opbin~e_2}{m''}{v_1~\opbin~e'_2}$ soit
           $\mm{m}{e}{m''}{v_1~\opbin~e'_2}$.
 
-          %TODO définir Ctx et adapter la sémantique de réduction
+        \item $\msi{m'}{e_2} → Ω$.
+          De \textsc{Eval-Err} avec $C = \ctxOp{v_1}{\ctxEmpty}$
+          vient alors $\msi{m}{e} → Ω$.
 
-        \item $\msi{m'}{e_2} → Ω$. On pose alors $\msi{m}{e} → Ω$.
       \end{itemize}
 
   \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
@@ -647,22 +604,26 @@ On applique l'hypothèse de récurrence à $lv$.
     $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
     $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
 
-  \item $\msi{m}{e_1} → Ω$. On pose alors $\msi{m}{e} → Ω$.
-    %TODO définir Ω
+  \item $\msi{m}{e_1} → Ω$.
+    D'après \textsc{Eval-Err} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on a
+    $\msi{m}{e} → Ω$.
 
 \end{itemize}
 
 % }}}
 \paragraph{\textsc{Op-Float} :} % {{{
 Ce cas est similaire à \textsc{Op-Int}.
+% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
 \paragraph{\textsc{Op-Eq} :} %{{{
 Ce cas est similaire à \textsc{Op-Int}.
 % TODO expand un peu
+% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
 \paragraph{\textsc{Op-Comparable} :} %{{{
 Ce cas est similaire à \textsc{Op-Int}.
 % TODO expand un peu
+% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
 \paragraph{\textsc{Unop-Plus-Int} :} % {{{
 
@@ -678,8 +639,8 @@ Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
   soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
 avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
 \item
-  soit $\msi{m}{e_1} → Ω$. Alors on pose $\msi{m}{e} → Ω$.
-  % TODO ?
+  soit $\msi{m}{e_1} → Ω$.
+  De \textsc{Eval-Err} avec $C = +~\ctxEmpty$ il vient$\msi{m}{e} → Ω$.
 \end{itemize}
 
 % }}}
@@ -692,7 +653,9 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Unop-Minus-Float} :} % {{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 % }}}
-\paragraph{\textsc{Unop-Not} :} % TODO
+\paragraph{\textsc{Unop-Not} :}%{{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+%}}}
 \paragraph{\textsc{Ptr-Arith} :} % TODO
 \paragraph{\textsc{Addr} :} % TODO
 \paragraph{\textsc{Set} :} % TODO
@@ -700,7 +663,7 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Struct} :} % TODO
 \paragraph{\textsc{Call} :} % TODO
 \paragraph{\textsc{Fun} :} % TODO
-
+% TODO vérifier qu'il n'y a pas d'autre règle
 \end{proof}
 
 Les règles précédentes ont la particularité suivante : pour chaque forme
@@ -728,11 +691,11 @@ expression.
     \item
       si $Γ ⊢ x : t$, $x : t ∈ Γ$
     \item
-      si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t*$
+      si $Γ ⊢ *lv : t$, alors $Γ ⊢ lv : t*$
     \item
-      si $Γ ⊢ φ[] : t$, alors $Γ ⊢ φ : t[]$
+      si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[]$ et $Γ ⊢ e : \tInt$
     \item
-      si $Γ ⊢ φ.l : t$, alors $Γ ⊢ φ : \{ l: t ; … \}$
+      si $Γ ⊢ lv.l : t$, alors $Γ ⊢ lv : \{ l: t ; … \}$
     % TODO structure
   \end{itemize}
 \item
@@ -805,7 +768,7 @@ possible pour les valeurs, pas pour n'importe quelle expression (par exemple
 l'expression $x$ (variable) peut avoir n'importe quel type $t$ dans le contexte
 $Γ = x:t$).
 
-\begin{lemma}[Formes canoniques]
+\begin{lemma}[Formes canoniques] \label{lemma:canon}
 
   Il est possible de déterminer la forme syntaxique d'une valeur étant donné son
   type.
@@ -868,6 +831,7 @@ Ces lemmes permettent de prouver le théorème suivant :
 \section*{TODO}
 
 \begin{itemize}
+\item inverser les lemme et le théorème de progrès
 \item ordre des sections
 \item versions $Γ ⊢ i$ des propriétés
 \item preuve de progres : état mémoire : doublet/triplet
