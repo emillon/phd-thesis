@@ -125,8 +125,10 @@ et~\cite{LaarhovenLenses}.
 
 \begin{definition}[Lentille]
 
-Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈
-\setLens{R}{A}$ (ou \emph{accesseur}) est consistuée des opérations suivantes :
+Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈ \setLens{R}{A}$
+(ou \emph{accesseur}) est un moyen d'accéder en lecture ou en écriture à
+sous-valeur de type $A$ au sein d'une valeur de type $R$ (pour \emph{record}).
+Elle est consistuée des opérations suivantes :
 
 \begin{itemize}
 \item
@@ -1123,8 +1125,7 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
 \begin{definition}[Accès par chemin]
   \label{def:acces-phi}
 
-  L'accès par chemin $[\cdot]_Φ$ permet de lire et de modifier la mémoire en
-  profondeur.
+  L'accès par chemin $Φ$ permet de lire et de modifier la mémoire en profondeur.
 
   On peut accéder directement à une variable:
 
