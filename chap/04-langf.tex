@@ -559,6 +559,28 @@ effectuée en dehors de celles faites par le programmeur.
 Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
 sur une certaine classe de programmes C.
 
+% TODO mettre ailleurs ?
+
+Un des problèmes classiques dans les langages impératifs est de distinguer les
+fonctions (qui retournent une valeur) et les procédures (qui n'en retournent
+pas). La solution choisie par C est de marquer les procédures comme retournant
+un ``faux'' type \texttt{void}. Mais c'est uniquement syntaxique : il n'est pas
+possible de manipuler cette valeur de retour de type \texttt{void}.
+
+L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
+faire de distinction entre ces deux cas et d'interdire les procédures. Les
+fonctions ne retournant pas de valeur ``intéressante'' renvoient alors une
+valeur d'un type à un seul élément appelé \eUnit\footnote{Cette notation évoque
+un $n$-uplet à 0 composantes.}, et donc le type sera noté \tUnit.
+
+En C, puisqu'il n'y a pas de valeurs de type \texttt{void}, la notation
+\texttt{void *} a un sens particulier : elle désigne les pointeurs de type non
+défini, qui sont compatibles avec n'importe quel autre type de pointeur (c'est
+la seule forme --- rudimentaire --- de généricité qu'offre le langage). Ici, la
+valeur \eUnit est une valeur comme les autres, et on peut constuire un pointeur
+de type $\tUnit *$ qui n'aura pas de signification particulière : c'est
+seulement un pointeur vers une valeur de type \tUnit.
+
 \section{Principes}
 
 Nous voulons capturer l'essence de C. Les traits principaux sont les suivants :
@@ -601,6 +623,8 @@ Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 
 Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
+% TODO un mot sur les constantes dont \eUnit
+
 \begin{figure}
 
   \gramlr{Constantes}{
@@ -608,6 +632,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       c \gramisa & i      & \textrm{Entier}
       \\ \gramor & d      & \textrm{Flottant}
       \\ \gramor & \eNull & \textrm{Pointeur nul}
+      \\ \gramor & \eUnit & \textrm{Valeur unité}
     \end{align*}
   }
 
@@ -1967,7 +1992,6 @@ donc
 \item résoudre le problème des structures
 \item définir les opérations d'ajout/remplacement sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
-\item procédures vs fonctions ($\tVoid$)
 \item top ?
 \item return implicite en fin de fct
 \item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
