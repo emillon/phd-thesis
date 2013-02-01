@@ -590,6 +590,9 @@ ses bornes, c'est à dire en dehors de $[0;n-1]$ pour un tableau à $n$
 éléments\footnote{Comme le fait remarquer Dijkstra, seule la numérotation à
 partir de 0 a du sens\cite{EWD831}.}.
 
+Les tableaux sont notés $[e_1; …; e_n]$, et le cas dégénéré ($n = 0$) est
+interdit.
+
 \section{Principes}
 
 Nous voulons capturer l'essence de C. Les traits principaux sont les suivants :
@@ -2012,10 +2015,8 @@ donc
 \item return implicite en fin de fct
 \item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
              et quand il faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
-\item arithmétique de pointeur à préciser
 \item notation des tableaux et structures : deux points ou point virgule ?
-\item notation des tableaux : crochets ou accolades ?
-\item tableau vide, structure vide
+\item structure vide
 \item "et" et "ou" lazy
 \item tableaux de taille dynamique ?
 \end{itemize}
