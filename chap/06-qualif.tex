@@ -142,6 +142,8 @@ L'évaluation de $e$ provoque une erreur, comme le montre la dérivation suivant
 
 \section{Extensions du système de types}
 
+On définit un nouveau jugement de typage $\cdot ⊢_q \cdot : \cdot$
+
 On modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
 d'ajouter à chaque pointeur un \emph{qualificateur} qui représente qui contrôle
 sa valeur.
@@ -162,9 +164,9 @@ Règle de sûreté du déréférencement
 
 \begin{mathpar}
 \irule{Lv-Deref-Kernel}{
-  Γ ⊢ e : τ~\textsc{Kernel}*
+  Γ ⊢_q e : τ~\textsc{Kernel}*
 }{
-  Γ ⊢ *e : τ
+  Γ ⊢_q *e : τ
 }
 \end{mathpar}
 
@@ -212,8 +214,8 @@ Règle de taintage
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢ x : t~\qUser~* }
-  { Γ ⊢ \iTaint{x} }
+  { Γ ⊢_q x : t~\qUser~* }
+  { Γ ⊢_q \iTaint{x} }
 \end{mathpar}
 
 %Déréférencement
@@ -227,28 +229,77 @@ Règle de taintage
 
 \begin{mathpar}
 \irule{Taint-Struct}
-  { Γ ⊢ \&e : s~\qUser~* }
-  { Γ ⊢ e.l : t~\qUser~* }
+  { Γ ⊢_q \&e : s~\qUser~* }
+  { Γ ⊢_q e.l : t~\qUser~* }
 \end{mathpar}
+
+\begin{definition}[Union de qualificateurs]
+
+  On définit l'opérateur $\sqcup$ sur les qualificateurs de type.
+
+  \begin{tabular}{c|cc}
+             & \qKernel & \qUser \\
+    \hline \\
+    \qKernel & \qKernel & \qUser \\
+    \qUser   & \qUser   & \qUser \\
+  \end{tabular}
+
+  Et
+
+  \begin{align*}
+    t \sqcup t'~\qUser~* = & \qUser \\
+  \end{align*}
+
+  On pose aussi $\bigsqcup_∅ = \qKernel$.
+\end{definition}
+
+\begin{mathpar}
+  \irule{Taint-Addr-NonStruct}
+    { Γ ⊢ e : t
+      \\
+      ∄ (l_i), (t_i), t = \{ l_i : t_i \}
+    }
+    { Γ ⊢ e : t~\qKernel~* }
+
+  \irule{Taint-Addr-Struct}
+    { Γ ⊢ e : \{ l_1 : t_1; … ;l_n : t_n\}
+      \\
+      q = \bigsqcup_{i=1}^n t_i
+    }
+    { Γ ⊢ e : t~q~* }
+\end{mathpar}
+
+% TODO extension aux autres ? genre adresse d'un user* = ??
 
 \subsection{Propriété d'isolation mémoire}
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
 
-\begin{theorem}[Isolation]
+\begin{theorem}[Progrès pour les types qualifiés]
   \label{thm:progres-qual}
 
-  Si $Γ ⊢_k e : t$ et $\msi{m}{e} → Ω$, alors $Ω ≠ Ω_{taint}$.
+  Supposons que $Γ ⊢_q e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Alors l'un des cas suivant est vrai :
+
+\begin{itemize}
+  \item $∃ v, e = v$
+  \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{Ω_{div},Ω_{array},Ω_{ptr}\}, \msi{m}{e} → Ω$
+\end{itemize}
 \end{theorem}
 
-% TODO ou refaire en forme de progrès
+\begin{proof}
+
+  % TODO
+
+\end{proof}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
 \clearpage
 
-\section{Analyse de terminaison des chaînes C}
+\section{Analyse de terminaison des chaînes C}%{{{
 
 Dans ce chapitre, nous présentons une autre extension au système de types du
 chapitre~\ref{cha:typbase}, similaire à celle de la section précédente.
@@ -458,7 +509,7 @@ size_t strlen(const char *s);
 
 \subsection{Extensions au système de types}
 
-\subsection{Résultats}
+\subsection{Résultats}%}}}
 
 \section*{TODO}
 
