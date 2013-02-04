@@ -237,20 +237,17 @@ Règle de taintage
 
   On définit l'opérateur $\sqcup$ sur les qualificateurs de type.
 
-  \begin{tabular}{c|cc}
-             & \qKernel & \qUser \\
-    \hline \\
-    \qKernel & \qKernel & \qUser \\
-    \qUser   & \qUser   & \qUser \\
+  \begin{center}
+  \begin{tabular}{cc|c}
+    $q_a$    & $q_b$      & $q_a \sqcup q_b$ \\
+    \hline
+    \qKernel & \qKernel   & \qKernel \\
+    \qKernel & \qUser     & \qUser \\
+    \qUser   & \qKernel   & \qUser \\
+    \qUser   & \qUser     & \qUser \\
   \end{tabular}
+  \end{center}
 
-  Et
-
-  \begin{align*}
-    t \sqcup t'~\qUser~* = & \qUser \\
-  \end{align*}
-
-  On pose aussi $\bigsqcup_∅ = \qKernel$.
 \end{definition}
 
 \begin{definition}[Qualificateur d'adresse]
@@ -270,6 +267,8 @@ Règle de taintage
     Q_\& (t) = & \qKernel \textrm{, sinon} \\
   \end{align*}
 
+% TODO combinaison des 2 ? (tableau de structs, etc)
+
 \end{definition}
 
 \begin{mathpar}
@@ -280,8 +279,6 @@ Règle de taintage
     }
     { Γ ⊢ t~q~* }
 \end{mathpar}
-
-% TODO extension aux autres ? genre adresse d'un user* = ??
 
 \subsection{Propriété d'isolation mémoire}
 
