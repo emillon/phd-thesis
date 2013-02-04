@@ -142,25 +142,36 @@ L'évaluation de $e$ provoque une erreur, comme le montre la dérivation suivant
 
 \section{Extensions du système de types}
 
-On définit un nouveau jugement de typage $\cdot ⊢_q \cdot : \cdot$
+On présente ici un système de types plus expressif permettant de capturer les
+extensions de sémantique. \emph{In fine}, cela permettra de prouver le
+théorème~\ref{thm:progres-qual} qui est l'équivalent du
+théorème~\ref{thm:progres-qual} mais pour le nouveau jugement de typage.
 
-On modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
-d'ajouter à chaque pointeur un \emph{qualificateur} qui représente qui contrôle
-sa valeur.
+Définit un nouveau système de types revient à définir un nouveau jugement de
+typage $\cdot ⊢_q \cdot : \cdot$, à partir d'un ensemble de règles. Pour la
+plupart, les règles seront identiques, donc sauf mention contraire, les règles
+portant sur $\cdot ⊢ \cdot : \cdot$ s'appliqueront aussi sur $\cdot ⊢_q \cdot :
+\cdot$. Naturellement, la plupart des différences porteront sur le traitement des
+pointeurs.
 
-Les deux qualificateurs possibles sont :
+La différence principale est qu'à à chaque pointeur, on ajoute un
+\emph{qualificateur} qui représente \emph{qui} contrôle sa valeur
+(section~\ref{sec:secu-syscalls}). Les deux qualificateurs sont :
 
 \begin{itemize}
 \item
   \qKernel : il s'applique aux pointeurs contrôlés par le noyau. Par exemple,
-  prendre l'adresse d'un objet donne un pointeur noyau.
+  prendre l'adresse d'un objet de la pile noyau donne un pointeur noyau.
 \item
   \qUser : il s'applique aux pointeurs qui proviennent de l'espace utilisateur.
   Ces pointeurs proviennent toujours d'interfaces particulières, comme les
   appels système ou les paramètres de la fonction \texttt{ioctl}.
 \end{itemize}
 
-Règle de sûreté du déréférencement
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+La principale restriction est que seuls les pointeurs \qKernel peuvent être
+déréférencés de manière sûre :
 
 \begin{mathpar}
 \irule{Lv-Deref-Kernel}{
@@ -169,24 +180,6 @@ Règle de sûreté du déréférencement
   Γ ⊢_q *e : τ
 }
 \end{mathpar}
-
-%\begin{mathpar}
-%\irule{Taint-Erase}
-  %{ }
-  %{ \mmi{m}{\iTaint{x}}{m}{\iPass} }
-%\end{mathpar}
-
-%\begin{mathpar}
-%\irule{Taint-Write-Old}
-  %{ }
-  %{ \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
-%\end{mathpar}
-
-%\begin{mathpar}
-%\irule{Taint-Write}
-  %{ }
-  %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
-%\end{mathpar}
 
 \begin{figure}
 
@@ -527,5 +520,25 @@ size_t strlen(const char *s);
 \item vTaint doit se propager aux accès de champ
 \item étendre l'état mémoire aux variables utilisateur
 \end{itemize}
+
+% TODO le cimetière des règles
+
+%\begin{mathpar}
+%\irule{Taint-Erase}
+  %{ }
+  %{ \mmi{m}{\iTaint{x}}{m}{\iPass} }
+%\end{mathpar}
+
+%\begin{mathpar}
+%\irule{Taint-Write-Old}
+  %{ }
+  %{ \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
+%\end{mathpar}
+
+%\begin{mathpar}
+%\irule{Taint-Write}
+  %{ }
+  %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
+%\end{mathpar}
 
 % vim: spelllang=fr
