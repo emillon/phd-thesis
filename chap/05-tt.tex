@@ -461,238 +461,8 @@ la sémantique. Il est nécessaire de définir une relation de compatibilité en
 ces deux monde, pour exprimer par exemple qu'un état mémoire contient dans la
 variable $x$ un entier.
 
-\begin{definition}[Compatibilité mémoire]
-
-  Soient $Γ$ un environnement de typage et $m = x_1 ↦ v_1, …, x_n ↦ v_n$ un état
-  mémoire. On dit que $m$ est compatible avec $Γ$ si
-
-  \[
-    ∃ (t_1, …, t_n),
-    ∀ i ∈ [1;n],
-    \begin{cases} Γ ⊢ x_i : t_i
-               \\ Γ ⊢ v_i : t_i
-    \end{cases}
-  \]
-
-  On note alors $\mcomp{Γ}{m}$.
-
-  % TODO les états mémoires ne sont pas linéaires
-  % TODO quid de ce qui n'est pas visible (ie, le tas)
-
-\end{definition}
-
-\begin{theorem}[Progrès]
-  \label{thm:progres}
-
-  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivant est vrai :
-
-\begin{itemize}
-  \item $e$ est une valeur : $∃ v, e = v$
-  \item il existe $e'$ et $m'$ tels que $\mm{m}{e}{m'}{e'}$ et $\mcomp{Γ}{m'}$
-  \item une erreur d'accès tableau ou pointeur se produit
-\end{itemize}
-\end{theorem}
-
-\begin{proof}
-  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
-  sur la dernière règle utilisée.
-
-\begin{itemize}
-
-  \item \textsc{Lv-Index}
-
-    \textsc{Phi-Index} s'applique, ou alors une erreur d'indice se produit.
-    % TODO rediger
-
-  \item \textsc{Lv-Field}
-
-    \textsc{Phi-Struct} s'applique.
-    % TODO rédiger
-    % TODO cohérence dans le nommage
-
-  \item \textsc{Op-Int}
-
-    \textsc{Exp-Binop} s'applique.
-    % TODO rédiger
-
-    Les cas \textsc{Op-Float}, \textsc{Op-Eq}, et \textsc{Op-Comparable} sont
-    similaires.
-
-  % TODO cohérence : ordre entre Unop et Binop
-
-  \item \textsc{Unop-Plus-Int}
-
-    \textsc{Exp-Unop} s'applique.
-    % TODO rédiger
-
-    Les cas \textsc{Unop-Minus-Int}, \textsc{Unop-Plus-Float},
-    \textsc{Unop-Minus-Float}, et \textsc{Unop-Not} sont similaires.
-
-  \item \textsc{Ptr-Arith}
-
-    \textsc{Exp-Binop} s'applique ou une erreur se produit
-    % TODO rédiger
-
-  \item \textsc{Addr}
-
-    \textsc{Exp-AddrOf} s'applique.
-    % TODO rédiger
-    % TODO cohérence
-    % TODO prouver que Lookup réussit
-
-  \item \textsc{Set}
-
-    \textsc{Exp-Lv} s'applique.
-    % TODO rédiger
-    % TODO cohérence
-
-  \item \textsc{Array}
-    \textsc{Exp-Array} s'applique.
-    % TODO rédiger
-
-  \item \textsc{Struct}
-    \textsc{Exp-Struct} s'applique.
-    % TODO rédiger
-
-  \item \textsc{Call}
-    \textsc{Exp-Call} s'applique.
-    % TODO rédiger
-
-\end{itemize}
-
-\end{proof}
-
-\begin{proof}[Démonstration avec une sémantique par réduction]
-
-  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
-  sur la dernière règle utilisée.
-
-  \paragraph{\textsc{Cst-Int} :} % {{{
-$e$ est alors de la forme $n$, qui est une valeur.
-%}}}
-  \paragraph{\textsc{Cst-Float} :} % {{{
-$e$ est alors de la forme $d$, qui est une valeur.
-%}}}
-  \paragraph{\textsc{Cst-Null} :} % {{{
-$e$ est alors égal à $\eNull$, qui est une valeur.
-%}}}
-  \paragraph{\textsc{Cst-Unit} :} % TODO
-\paragraph{\textsc{Lv-Var} :}%{{{
-
-Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle
-d'évaluation \textsc{Phi-Var} s'applique donc.
-
-% TODO prouver le coup du lookup
-%}}}
-\paragraph{\textsc{Lv-Deref} :}%{{{
-On applique l'hypothèse de récurrence à $lv$.
-
-\begin{itemize}
-\item
-  si $lv = φ$, alors la règle \textsc{Phi-Deref} s'applique : et
-  $\mms{*lv}{\widehat{*}φ}$
-  % TODO ça utilise forme canonique?
-\item
-  $∃ (lv', m'), \mmlv{m}{lv}{m'}{lv'}$. On peut alors utiliser la règle
-  \textsc{Ctx} avec $C = \ctxLvDeref{\ctxEmpty}$, ce qui donne :
-  $\mmlv{m}{\ctxLvDeref{lv}}{m'}{\ctxLvDeref{lv'}}$.
-  % TODO ça utilise forme canonique?
-% TODO cas d'erreur
-\end{itemize}
-
-%}}}
-\paragraph{\textsc{Lv-Index} :} % TODO
-\paragraph{\textsc{Lv-Field} :} % TODO
-  \paragraph{\textsc{Op-Int} :} % {{{
-
-  Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
-  en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
-
-  Appliquons l'hypothèse de récurrence sur $e_1$. Trois cas peuvent se produire.
-
-\begin{itemize}
-
-  \item $e_1 = v_1$. On a alors $\mm{m}{e_1}{m'}{v_1}$ avec $m' = m$.
-
-    On applique l'hypothèse de récurrence à $e_2$.
-
-      \begin{itemize}
-
-        \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
-          peut alors appliquer \textsc{Exp-BinOp}.
-
-        \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
-
-          En appliquant \textsc{Ctx} avec $C = \ctxOp{v_1}{\ctxEmpty}$, on
-          en déduit $\mm{m'}{v_1~\opbin~e_2}{m''}{v_1~\opbin~e'_2}$ soit
-          $\mm{m}{e}{m''}{v_1~\opbin~e'_2}$.
-
-          %TODO définir Ctx et adapter la sémantique de réduction
-
-        \item $\msi{m'}{e_2} → Ω$. On pose alors $\msi{m}{e} → Ω$.
-      \end{itemize}
-
-  \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
-    En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
-    $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
-    $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
-
-  \item $\msi{m}{e_1} → Ω$. On pose alors $\msi{m}{e} → Ω$.
-    %TODO définir Ω
-
-\end{itemize}
-
-% }}}
-\paragraph{\textsc{Op-Float} :} % {{{
-Ce cas est similaire à \textsc{Op-Int}.
-%}}}
-\paragraph{\textsc{Op-Eq} :} %{{{
-Ce cas est similaire à \textsc{Op-Int}.
-% TODO expand un peu
-%}}}
-\paragraph{\textsc{Op-Comparable} :} %{{{
-Ce cas est similaire à \textsc{Op-Int}.
-% TODO expand un peu
-%}}}
-\paragraph{\textsc{Unop-Plus-Int} :} % {{{
-
-Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
-
-\begin{itemize}
-\item
-  soit $e_1 = v_1$. Alors en appliquant \textsc{Exp-UnOp},
-  $\mm{m}{+~v_1}{m}{\widehat{+}~v_1}$, c'est à dire en posant $v =
-  \widehat{+}~v_1$, $\mm{m}{e}{m}{v}$.
-% TODO écrire la règle
-\item
-  soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
-avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
-\item
-  soit $\msi{m}{e_1} → Ω$. Alors on pose $\msi{m}{e} → Ω$.
-  % TODO ?
-\end{itemize}
-
-% }}}
-\paragraph{\textsc{Unop-Plus-Float} :} % {{{
-Ce cas est similaire à \textsc{Unop-Plus-Int}.
-% }}}
-\paragraph{\textsc{Unop-Minus-Int} :} % {{{
-Ce cas est similaire à \textsc{Unop-Plus-Int}.
-% }}}
-\paragraph{\textsc{Unop-Minus-Float} :} % {{{
-Ce cas est similaire à \textsc{Unop-Plus-Int}.
-% }}}
-\paragraph{\textsc{Unop-Not} :} % TODO
-\paragraph{\textsc{Ptr-Arith} :} % TODO
-\paragraph{\textsc{Addr} :} % TODO
-\paragraph{\textsc{Set} :} % TODO
-\paragraph{\textsc{Array} :} % TODO
-\paragraph{\textsc{Struct} :} % TODO
-\paragraph{\textsc{Call} :} % TODO
-\paragraph{\textsc{Fun} :} % TODO
-
-\end{proof}
+On commence par énoncer quelques lemmes utiles dans la démonstration de ces
+théorèmes.
 
 Les règles précédentes ont la particularité suivante : pour chaque forme
 syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
@@ -719,11 +489,11 @@ expression.
     \item
       si $Γ ⊢ x : t$, $x : t ∈ Γ$
     \item
-      si $Γ ⊢ *φ : t$, alors $Γ ⊢ φ : t*$
+      si $Γ ⊢ *lv : t$, alors $Γ ⊢ lv : t*$
     \item
-      si $Γ ⊢ φ[] : t$, alors $Γ ⊢ φ : t[]$
+      si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[]$ et $Γ ⊢ e : \tInt$
     \item
-      si $Γ ⊢ φ.l : t$, alors $Γ ⊢ φ : \{ l: t ; … \}$
+      si $Γ ⊢ lv.l : t$, alors $Γ ⊢ lv : \{ l: t ; … \}$
     % TODO structure
   \end{itemize}
 \item
@@ -796,7 +566,7 @@ possible pour les valeurs, pas pour n'importe quelle expression (par exemple
 l'expression $x$ (variable) peut avoir n'importe quel type $t$ dans le contexte
 $Γ = x:t$).
 
-\begin{lemma}[Formes canoniques]
+\begin{lemma}[Formes canoniques] \label{lemma:canon}
 
   Il est possible de déterminer la forme syntaxique d'une valeur étant donné son
   type.
@@ -808,13 +578,277 @@ $Γ = x:t$).
   \item si $Γ ⊢ v : t*$, $v = φ$ ou $v = \eNull$.
   \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = f$.
   \item si $Γ ⊢ v : t*$, $v = φ$.
-  \item si $Γ ⊢ v : t[]$, $v = [v_1, …, v_n]$.
+  \item si $Γ ⊢ v : t[]$, $v = \{v_1; …; v_n\}$.
     %TODO structures
   \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \mathrm{fun}
     (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))$.
   \end{itemize}
 
 \end{lemma}
+
+Ces lemmes étant établis, on énonce maintenant le théorème de progrès accompagné
+d'une notion de compatibilité entre envionnements de typage $Γ$ et états mémoire
+$m$.
+
+\begin{definition}[Compatibilité mémoire]
+
+  Soient $Γ$ un environnement de typage et $m = x_1 ↦ v_1, …, x_n ↦ v_n$ un état
+  mémoire. On dit que $m$ est compatible avec $Γ$ si
+
+  \[
+    ∃ (t_1, …, t_n),
+    ∀ i ∈ [1;n],
+    \begin{cases} Γ ⊢ x_i : t_i
+               \\ Γ ⊢ v_i : t_i
+    \end{cases}
+  \]
+
+  On note alors $\mcomp{Γ}{m}$.
+
+  % TODO les états mémoires ne sont pas linéaires
+  % TODO quid de ce qui n'est pas visible (ie, le tas)
+
+\end{definition}
+
+\begin{theorem}[Progrès]
+  \label{thm:progres}
+
+  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Alors l'un des cas suivant est vrai :
+
+\begin{itemize}
+  \item $∃ v, e = v$
+  \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{Ω_{div},Ω_{array},Ω_{ptr}\}, \msi{m}{e} → Ω$
+\end{itemize}
+
+  C'est à dire, soit :
+
+\begin{itemize}
+  \item $e$ est complètement évaluée
+  \item un pas d'évaluation préservant la compatibilité mémoire est possible
+  \item une erreur de division, tableau ou pointeur se produit
+\end{itemize}
+
+\end{theorem}
+
+\begin{proof}
+
+  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
+  sur la dernière règle utilisée.
+
+  \paragraph{\textsc{Cst-Int} :} % {{{
+$e$ est alors de la forme $n$, qui est une valeur.
+%}}}
+  \paragraph{\textsc{Cst-Float} :} % {{{
+$e$ est alors de la forme $d$, qui est une valeur.
+%}}}
+  \paragraph{\textsc{Cst-Null} :} % {{{
+$e$ est alors égale à $\eNull$, qui est une valeur.
+%}}}
+  \paragraph{\textsc{Cst-Unit} :}%{{{
+$e$ est alors égale à \eUnit, qui est une valeur.
+%}}}
+\paragraph{\textsc{Lv-Var} :}%{{{
+
+Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle
+d'évaluation \textsc{Phi-Var} s'applique donc.
+
+% TODO prouver le coup du lookup
+%}}}
+\paragraph{\textsc{Lv-Deref} :}%{{{
+
+  Appliquons l'hypothèse de récurrence à $lv$ (vu en tant qu'expression).
+
+\begin{itemize}
+\item
+  $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
+  lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
+
+  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique :
+  $\mms{e}{\widehat{*}φ}$.
+  Dans le second, puisque $\msi{m}{*\eNull} → Ω_{ptr}$, on a
+  $\msi{m}{e} → Ω_{ptr}$.
+
+\item
+  $\mm{m}{lv}{m'}{e'}$.
+  De \textsc{Ctx} avec $C = *\ctxEmpty$, on obtient
+  $\mm{m}{e}{m'}{*e'}$.
+
+\item
+  $\msi{m}{lv} → Ω$.
+  En appliquant \textsc{Eval-Err} avec $C = *\ctxEmpty$, on obtient
+  $\msi{m}{e} → Ω$.
+
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Lv-Index} :} % %{{{
+
+De même, on applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item $lv = v$.
+
+Comme $Γ ⊢ v : t[]$, on déduit du lemme~\ref{lemma:canon} que
+$v = \{v_1; …; v_p\}$.
+Appliquons l'hypothèse de récurrence à $e$.
+
+\begin{itemize}
+\item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
+lemme~\ref{lemma:canon} et $v' = n$. Deux cas sont à distinguer :
+si $n ∈ [0;p-1]$, la règle \textsc{Phi-Array} s'applique et
+$\mm{m}{lv[e]}{m}{v_{n+1}}$.
+% TODO réécrire bien Phi-Array
+% TODO attention à l'off by one
+Sinon, $\msi{m}{lv[e]} → Ω_{array}$.
+% TODO pourquoi ?
+
+\item $\mm{m}{e}{m'}{e'}$.
+En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
+\item $\mm{m}{lv[e]}{m'}{lv[e']}$.
+
+\item $\msi{m}{e} → Ω$.
+Avec \textsc{Eval-Err} sous ce même contexte,
+$\msi{m}{lv[e]} → Ω$
+\end{itemize}
+
+\item $\mm{m}{lv}{m'}{e'}$.
+On applique alors \textsc{Ctx} avec $C = \ctxEmpty[e]$, et
+$\mm{m}{lv[e]}{m'}{e'[e]}$.
+
+\item $\msi{m}{lv} → Ω$.
+Toujours avec $C = \ctxEmpty[e]$, de \textsc{Eval-Err} il vient
+$\msi{m}{lv[e]} → Ω$.
+
+\end{itemize}
+%}}}
+\paragraph{\textsc{Lv-Field} :} % TODO
+  \paragraph{\textsc{Op-Int} :} % {{{
+
+  Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
+  en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
+
+  Appliquons l'hypothèse de récurrence sur $e_1$. Trois cas peuvent se produire.
+
+\begin{itemize}
+
+  \item $e_1 = v_1$. On a alors $\mm{m}{e_1}{m'}{v_1}$ avec $m' = m$.
+
+    On applique l'hypothèse de récurrence à $e_2$.
+
+      \begin{itemize}
+
+        \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
+          peut alors appliquer \textsc{Exp-BinOp}.
+
+        \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
+
+          En appliquant \textsc{Ctx} avec $C = \ctxOp{v_1}{\ctxEmpty}$, on
+          en déduit $\mm{m'}{v_1~\opbin~e_2}{m''}{v_1~\opbin~e'_2}$ soit
+          $\mm{m}{e}{m''}{v_1~\opbin~e'_2}$.
+
+        \item $\msi{m'}{e_2} → Ω$.
+          De \textsc{Eval-Err} avec $C = \ctxOp{v_1}{\ctxEmpty}$
+          vient alors $\msi{m}{e} → Ω$.
+
+      \end{itemize}
+
+  \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
+    En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
+    $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
+    $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
+
+  \item $\msi{m}{e_1} → Ω$.
+    D'après \textsc{Eval-Err} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on a
+    $\msi{m}{e} → Ω$.
+
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Op-Float} :} % {{{
+Ce cas est similaire à \textsc{Op-Int}.
+% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
+%}}}
+\paragraph{\textsc{Op-Eq} :} %{{{
+Ce cas est similaire à \textsc{Op-Int}.
+% TODO expand un peu
+% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
+%}}}
+\paragraph{\textsc{Op-Comparable} :} %{{{
+Ce cas est similaire à \textsc{Op-Int}.
+% TODO expand un peu
+% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
+%}}}
+\paragraph{\textsc{Unop-Plus-Int} :} % {{{
+
+Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
+
+\begin{itemize}
+\item
+  soit $e_1 = v_1$. Alors en appliquant \textsc{Exp-UnOp},
+  $\mm{m}{+~v_1}{m}{\widehat{+}~v_1}$, c'est à dire en posant $v =
+  \widehat{+}~v_1$, $\mm{m}{e}{m}{v}$.
+% TODO écrire la règle
+\item
+  soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
+avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
+\item
+  soit $\msi{m}{e_1} → Ω$.
+  De \textsc{Eval-Err} avec $C = +~\ctxEmpty$ il vient$\msi{m}{e} → Ω$.
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Unop-Plus-Float} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Minus-Int} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Minus-Float} :} % {{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+% }}}
+\paragraph{\textsc{Unop-Not} :}%{{{
+Ce cas est similaire à \textsc{Unop-Plus-Int}.
+%}}}
+\paragraph{\textsc{Ptr-Arith} :} % %{{{ TODO
+
+\[ \left( \disprule{Ptr-Arith} \right) \]
+
+%}}}
+\paragraph{\textsc{Addr} :} % {{{ TODO
+
+\[ \left( \disprule{Addr} \right) \]
+
+%}}}
+\paragraph{\textsc{Set} :} % {{{ TODO
+
+\[ \left( \disprule{Set} \right) \]
+
+%}}}
+\paragraph{\textsc{Array} :} % {{{ TODO
+
+\[ \left( \disprule{Array} \right) \]
+
+%}}}
+\paragraph{\textsc{Struct} :} % {{{ TODO
+
+\[ \left( \disprule{Struct} \right) \]
+
+%}}}
+\paragraph{\textsc{Call} :} % {{{ TODO
+
+\[ \left( \disprule{Call} \right) \]
+
+%}}}
+\paragraph{\textsc{Fun} :} % {{{ TODO
+
+\[ \left( \disprule{Fun} \right) \]
+
+%}}}
+% TODO vérifier qu'il n'y a pas d'autre règle
+% TODO général : que désigne e. Ex avec lv[e]
+\end{proof}
 
 \begin{lemma}[Permutation]
   L'ordre dans lequel les variables apparaissent dans un environnement
@@ -854,7 +888,6 @@ Ces lemmes permettent de prouver le théorème suivant :
   alors $Γ ⊢ v : t$.
 
 \end{theorem}
-
 
 \section*{TODO}
 

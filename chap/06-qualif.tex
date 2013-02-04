@@ -42,7 +42,7 @@ C \gramisa & …
 \gramlr{Chemins}{
 \begin{align*}
 φ \gramisa & …
-\\ \gramor & \vTainted{φ} & \textrm{Valeur teintée}
+\\ \gramor & \vTainted{φ} & \textrm{Valeur souillée}
 \end{align*}
 }
 
@@ -142,6 +142,8 @@ L'évaluation de $e$ provoque une erreur, comme le montre la dérivation suivant
 
 \section{Extensions du système de types}
 
+On définit un nouveau jugement de typage $\cdot ⊢_q \cdot : \cdot$
+
 On modifie légèrement le système de types (figure~\ref{fig:qualif-changes}) afin
 d'ajouter à chaque pointeur un \emph{qualificateur} qui représente qui contrôle
 sa valeur.
@@ -162,9 +164,9 @@ Règle de sûreté du déréférencement
 
 \begin{mathpar}
 \irule{Lv-Deref-Kernel}{
-  Γ ⊢ e : τ~\textsc{Kernel}*
+  Γ ⊢_q e : τ~\textsc{Kernel}*
 }{
-  Γ ⊢ *e : τ
+  Γ ⊢_q *e : τ
 }
 \end{mathpar}
 
@@ -212,8 +214,8 @@ Règle de taintage
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢ x : t~\qUser~* }
-  { Γ ⊢ \iTaint{x} }
+  { Γ ⊢_q x : t~\qUser~* }
+  { Γ ⊢_q \iTaint{x} }
 \end{mathpar}
 
 %Déréférencement
@@ -227,8 +229,55 @@ Règle de taintage
 
 \begin{mathpar}
 \irule{Taint-Struct}
-  { Γ ⊢ \&e : s~\qUser~* }
-  { Γ ⊢ e.l : t~\qUser~* }
+  { Γ ⊢_q \&e : s~\qUser~* }
+  { Γ ⊢_q e.l : t~\qUser~* }
+\end{mathpar}
+
+\begin{definition}[Union de qualificateurs]
+
+  On définit l'opérateur $\sqcup$ sur les qualificateurs de type.
+
+  \begin{center}
+  \begin{tabular}{cc|c}
+    $q_a$    & $q_b$      & $q_a \sqcup q_b$ \\
+    \hline
+    \qKernel & \qKernel   & \qKernel \\
+    \qKernel & \qUser     & \qUser \\
+    \qUser   & \qKernel   & \qUser \\
+    \qUser   & \qUser     & \qUser \\
+  \end{tabular}
+  \end{center}
+
+\end{definition}
+
+\begin{definition}[Qualificateur d'adresse]
+
+  On pose
+
+  \begin{align*}
+    \qualProj{t~q~*} = & q \\
+    \qualProj{t}     = & \qKernel \textrm{, sinon} \\
+  \end{align*}
+
+  On définit alors $Q_\&$ par
+
+  \begin{align*}
+    Q_\& (\{ l_1 : t_1 ; … ; l_n : t_n \}) = & \bigsqcup_{i=1}^n \qualProj{t_i} \\
+    Q_\& (t[]) = & Q_\& (t) \\
+    Q_\& (t) = & \qKernel \textrm{, sinon} \\
+  \end{align*}
+
+% TODO combinaison des 2 ? (tableau de structs, etc)
+
+\end{definition}
+
+\begin{mathpar}
+  \irule{Taint-Addr-Struct}
+    { Γ ⊢ e : t
+      \\
+      q = Q_\& (t)
+    }
+    { Γ ⊢ t~q~* }
 \end{mathpar}
 
 \subsection{Propriété d'isolation mémoire}
@@ -236,19 +285,30 @@ Règle de taintage
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
 
-\begin{theorem}[Isolation]
+\begin{theorem}[Progrès pour les types qualifiés]
   \label{thm:progres-qual}
 
-  Si $Γ ⊢_k e : t$ et $\msi{m}{e} → Ω$, alors $Ω ≠ Ω_{taint}$.
+  Supposons que $Γ ⊢_q e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Alors l'un des cas suivant est vrai :
+
+\begin{itemize}
+  \item $∃ v, e = v$
+  \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{Ω_{div},Ω_{array},Ω_{ptr}\}, \msi{m}{e} → Ω$
+\end{itemize}
 \end{theorem}
 
-% TODO ou refaire en forme de progrès
+%\begin{proof}
+
+  %% TODO
+
+%\end{proof}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
 \clearpage
 
-\section{Analyse de terminaison des chaînes C}
+\section{Analyse de terminaison des chaînes C}%{{{
 
 Dans ce chapitre, nous présentons une autre extension au système de types du
 chapitre~\ref{cha:typbase}, similaire à celle de la section précédente.
@@ -458,14 +518,14 @@ size_t strlen(const char *s);
 
 \subsection{Extensions au système de types}
 
-\subsection{Résultats}
+\subsection{Résultats}%}}}
 
 \section*{TODO}
 
 \begin{itemize}
 \item appliquer taint sur des sous-valeurs?
+\item vTaint doit se propager aux accès de champ
 \item étendre l'état mémoire aux variables utilisateur
-\item règle de sous-typage structurel
 \end{itemize}
 
 % vim: spelllang=fr

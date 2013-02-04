@@ -589,6 +589,7 @@ compilation. C'est une erreur ($Ω_{array}$) d'accéder à un tableau en dehors 
 ses bornes, c'est à dire en dehors de $[0;n-1]$ pour un tableau à $n$
 éléments\footnote{Comme le fait remarquer Dijkstra, seule la numérotation à
 partir de 0 a du sens\cite{EWD831}.}.
+% TODO dans les valeurs les tableaux sont numérotés à partir de 1...
 
 Les tableaux sont notés $[e_1; …; e_n]$, et le cas dégénéré ($n = 0$) est
 interdit.
@@ -1871,14 +1872,14 @@ de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-structure est présente grâce aux contexte $C$ dans la règle suivante :
 
 \begin{mathpar}
-  \irule{Eval-Err}
+  \irule{Exp-Err}
     { }
     { \msi{m}{Ω} → Ω }
 
-  % TODO Règle à vérifier: ça suffit?
+% TODO blabla sur les 2 et prouver que \ctxSub{C}{Ω} → Ω
   \irule{Eval-Err}
-    { }
-    { \msi{m}{\ctxSub{C}{Ω}} → Ω }
+    { \msi{m}{e} → Ω }
+    { \msi{m}{\ctxSub{C}{e}} → Ω }
 \end{mathpar}
 
 \section{Phrases}
@@ -2013,6 +2014,8 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item cas d'erreur pour le déref nul (quid des deref invalides?)
+\item cas d'erreur pour le débordement de tableau
 \item résoudre le problème des structures
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
