@@ -258,14 +258,14 @@ Règle de taintage
   On pose
 
   \begin{align*}
-    proj (t~q~*) = & q \\
-    proj (t)     = & \qKernel \textrm{, sinon} \\
+    \qualProj{t~q~*} = & q \\
+    \qualProj{t}     = & \qKernel \textrm{, sinon} \\
   \end{align*}
 
   On définit alors $Q_\&$ par
 
   \begin{align*}
-    Q_\& (\{ l_1 : t_1 ; … ; l_n : t_n \}) = & \bigsqcup_{i=1}^n proj (t_i) \\
+    Q_\& (\{ l_1 : t_1 ; … ; l_n : t_n \}) = & \bigsqcup_{i=1}^n \qualProj{t_i} \\
     Q_\& (t[]) = & Q_\& (t) \\
     Q_\& (t) = & \qKernel \textrm{, sinon} \\
   \end{align*}
