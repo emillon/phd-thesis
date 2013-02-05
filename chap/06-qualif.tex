@@ -211,21 +211,6 @@ Règle de taintage
   { Γ ⊢_q \iTaint{x} }
 \end{mathpar}
 
-%Déréférencement
-%
-% TODO
-%\begin{mathpar}
-%\irule{Deref-Kernel}
-  %{ }
-  %{ \mm{m}{*\vT }
-%\end{mathpar}
-
-\begin{mathpar}
-\irule{Taint-Struct}
-  { Γ ⊢_q \&e : s~\qUser~* }
-  { Γ ⊢_q e.l : t~\qUser~* }
-\end{mathpar}
-
 \begin{definition}[Union de qualificateurs]
 
   On définit l'opérateur $\sqcup$ sur les qualificateurs de type.
@@ -296,6 +281,19 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
   %% TODO
 
 %\end{proof}
+
+Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
+
+\begin{theorem}[Préservation pour les types qualifiés]
+
+  Si une expression est typable et que son évaluation produit une valeur, alors
+  cette valeur est du même type que l'expression.
+
+  Si $Γ ⊢_q e : t$ et $e → v$ % TODO
+
+  alors $Γ ⊢_q v : t$.
+
+\end{theorem}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
