@@ -898,3 +898,71 @@ Ces lemmes permettent de prouver le théorème suivant :
 \item preuve de progres : état mémoire : doublet/triplet
 \item définir les opérations d'ajout/remplacement sur les contextes de typage
 \end{itemize}
+
+(passe Sarah 17/01)
+
+\begin{itemize}
+\item
+  définition5.1 Pour moi il s'agit plutôt d'une notation. Une définition
+  serait plutôt quelque chose d'inductif sur la forme de l'expression
+\item
+  définition 5.4 $\Gamma\_f$ dans le texte n'apparaît pas dans la formule
+\item
+  5.3 left-values la règle LV-VAR suppose que x n'apparaît qu'une fois
+  dans $\Gamma$ ou alors toujours accompagné du même type
+\item
+  5.3 left-value règle LV-FIELD le S sort un peu du chapeau. Est-ce que
+  tu ne devrait pas avoir un couple $\Gamma, S$ dans tes jugements plutôt
+  que seulement $\Gamma$ ?
+\item
+  5.3 opérateurs, règle OP-EQ Que signifie l'égalité sur des tableaux ?
+\item
+  page 50 règle CALL une remarque disant que cette règle doit être
+  utilisée avec une autre qui va typer le corps de la fonction (mettre
+  la ref) parce que +sinon ça surprend
+\item
+  5.5 le fait de choisir une unique variable R t'oblige à ajouter une
+  opération de suppression du R de la fonction appelante factice.
+  Pourquoi ne pas générer des variables fraîches à partir du nom de la
+  fonction + un identifiant unique ?
+\item
+  page 52 règle fun. Tu mélanges définition en extension $(a_1
+  \ldots a_n)$ et en compréhension ($\forall i$) c'est pas très beau et ça
+  complique la règle je trouve
+\item
+  5.6 règle PH-VAR coquille : en prémice c'est x et pas e non ? L'ajout
+  d'une variable à un contexte c'est pas avec l'opérateur :: ?
+\item
+  5.6 prémice de PH-struct
+\item
+  p53 le terme de dérivation (première phrase de la preuve) n'a jamais
+  été expliqué ?
+\item
+  cette preuve est un peu longue (je ne l'ai pas relue). Tu pourrais la
+  mettre en annexe et donner juste l'intuition ``la preuve se fait par
+  induction sur la longueur de dérivation de l'expression à typer''
+\item
+  lemme 5.1 typo inforamtions
+\item
+  lemme 5.1 cas fonction, à quoi ça sert d'introduire la notation t'
+  alors qu'il n'apparaît pas dans une règle ?
+\item
+  lemme 5.1 constantes. Il faut expliquer à quel ensemble n et f
+  appartiennent
+\item
+  idem je n'ai pas relu la preuve de 5.1
+\item
+  lemme 5.2 même remarque que 5.1 concernant n et f (plus confusion f
+  float et f fonction)
+\item
+  lemme 5.3 ça ne marche que si une variable n'apparaît qu'une fois dans
+  le contexte ou avec toujours le même type (cf rem ci-dessous sur 5.3)
+\item
+  il manque les preuves de 5.3 et 5.4
+\item
+  lemme 5.4 $dom(\Gamma)$ a été défini quelque part ?
+\item
+  théormèe 5.2 rappeler où a été défini l'évaluation d'une expression et
+  dans quel cas elle produit des valeurs
+\end{itemize}
+
