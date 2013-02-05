@@ -455,7 +455,7 @@ expression.
 
 \begin{lemma}[Inversion] \label{lemma:inversion}
 
-  À partir d'un jugement de typage, on peut en déduire des inforamtions sur les
+  À partir d'un jugement de typage, on peut en déduire des informations sur les
   types de ses sous-expressions.
 
 \begin{itemize}
@@ -883,16 +883,24 @@ Ces lemmes permettent de prouver le théorème suivant :
 \item définir les opérations d'ajout/remplacement sur les contextes de typage
 \end{itemize}
 
+\subsection*{Structures}
+
+\begin{itemize}
+\item
+  5.3 left-value règle LV-FIELD le S sort un peu du chapeau. Est-ce que
+  tu ne devrait pas avoir un couple $\Gamma, S$ dans tes jugements plutôt
+  que seulement $\Gamma$ ?
+\item
+  5.6 prémice de PH-struct
+\end{itemize}
+
+\subsection*{Rq}
 (passe Sarah 17/01)
 
 \begin{itemize}
 \item
   5.3 left-values la règle LV-VAR suppose que x n'apparaît qu'une fois
   dans $\Gamma$ ou alors toujours accompagné du même type
-\item
-  5.3 left-value règle LV-FIELD le S sort un peu du chapeau. Est-ce que
-  tu ne devrait pas avoir un couple $\Gamma, S$ dans tes jugements plutôt
-  que seulement $\Gamma$ ?
 \item
   5.3 opérateurs, règle OP-EQ Que signifie l'égalité sur des tableaux ?
 \item
@@ -912,16 +920,12 @@ Ces lemmes permettent de prouver le théorème suivant :
   5.6 règle PH-VAR coquille : en prémice c'est x et pas e non ? L'ajout
   d'une variable à un contexte c'est pas avec l'opérateur :: ?
 \item
-  5.6 prémice de PH-struct
-\item
   p53 le terme de dérivation (première phrase de la preuve) n'a jamais
   été expliqué ?
 \item
   cette preuve est un peu longue (je ne l'ai pas relue). Tu pourrais la
   mettre en annexe et donner juste l'intuition ``la preuve se fait par
   induction sur la longueur de dérivation de l'expression à typer''
-\item
-  lemme 5.1 typo inforamtions
 \item
   lemme 5.1 cas fonction, à quoi ça sert d'introduire la notation t'
   alors qu'il n'apparaît pas dans une règle ?
