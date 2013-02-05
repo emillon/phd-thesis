@@ -71,7 +71,7 @@ $t*$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout $t$
 donne un pointeur), mais le type de $x$, \tInt, n'est pas de cette forme. Ce
 programme est donc mal typé.
 
-\section{Définitions}
+\section{Environnements et notations}
 
 \begin{figure}
 
@@ -115,48 +115,38 @@ Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais
 n'est qu'une notation : il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
-\begin{definition}[Typage d'une expression]
-
-  On note de la manière suivante le fait qu'une expression $e$ (telle que
-  définie dans la figure~\ref{fig:stx-data}) ait pour type $t$ dans le contexte
-  $Γ$.
+\paragraph{Typage d'une expression :} on note de la manière suivante le fait
+qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
+pour type $t$ dans le contexte $Γ$.
 
   \[
     \ty{Γ}{e}{t}
   \]
 
-\end{definition}
+\paragraph{Typage d'une instruction :} les instructions n'ont en revanche pas de
+type. Mais il est tout de même nécessaire de vérifier que troutes les
+sous-expressions apparaissant dans une instruction sont cohérentes ensemble.
 
-\begin{definition}[Typage d'une instruction]
-
-  Les instructions n'ont en revanche pas de type. Mais il est tout de même
-  nécessaire de vérifier que troutes les sous-expressions apparaissant dans une
-  instruction sont cohérentes ensemble.
-
-  On note de la manière suivante le fait que sous l'environnement $Γ$
-  l'instruction $i$ est bien typée :
+On note de la manière suivante le fait que sous l'environnement $Γ$
+l'instruction $i$ est bien typée :
 
   \[
     \tyi{Γ}{i}
   \]
 
-\end{definition}
+\paragraph{Typage d'une phrase :} De par leur nature séquentielle, les phrases
+qui composent un programme altèrent l'environnement de typage. Par exemple, la
+déclaration d'une variable globale ajoute une valeur dans l'environnement.
 
-\begin{definition}[Typage d'une phrase]
-
-  De par leur nature séquentielle, les phrases qui composent un programme
-  altèrent l'environnement de typage. Par exemple, la déclaration d'une variable
-  globale ajoute une valeur dans l'environnement.
-
-  On note
+On note
 
   \[
     \typh{Γ}{p}{Γ'}
   \]
 
-  si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
+si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
-  On étend cette notation aux suites de phrases :
+On étend cette notation aux suites de phrases :
 
   \[
     \begin{cases}
@@ -170,25 +160,19 @@ toujours présents dans un type fonctionnel.
     \end{cases}
   \]
 
-\end{definition}
-
-\begin{definition}[Typage d'un programme]
-
-  Un programme est bien typé si on peut typer sa suite de phrases en partant
-  d'un environnement vide. C'est à dire s'il existe un environnement final $Γ_f$
-  tel que
+\paragraph{Typage d'un programme :} Un programme est bien typé si on peut typer
+sa suite de phrases en partant d'un environnement vide. C'est à dire s'il existe
+un environnement final $Γ_f$ tel que
 
   \[
     \typhstar{[]}{P}{Γ_f}
   \]
 
-  Cela est indépendant de tout environnement ; on note alors :
+Cela est indépendant de tout environnement ; on note alors :
 
   \[
     ⊢ P
   \]
-
-\end{definition}
 
 \section{Expressions}
 
@@ -902,9 +886,6 @@ Ces lemmes permettent de prouver le théorème suivant :
 (passe Sarah 17/01)
 
 \begin{itemize}
-\item
-  définition5.1 Pour moi il s'agit plutôt d'une notation. Une définition
-  serait plutôt quelque chose d'inductif sur la forme de l'expression
 \item
   définition 5.4 $\Gamma\_f$ dans le texte n'apparaît pas dans la formule
 \item
