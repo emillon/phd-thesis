@@ -947,7 +947,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 
   \gramlr{Erreur}{
     \begin{align*}
-      Ω \gramisa & Ω_{array}  & \textrm{Dépassement de tableau}
+      Ω \gramisa & Ω_{array}  & \textrm{Débordement de tableau}
       \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
       \\ \gramor & Ω_{div}    & \textrm{Division par zéro}
     \end{align*}
@@ -982,6 +982,34 @@ Un certain nombre d'opérations est possibles sur les valeurs
     doit pouvoir se faire sans accéder à la mémoire.
     % TODO exemple
   }.
+\item
+  les opérations de comparaison $≤,≥,<,>$ sont définies avec leur sémantique
+  habituelle sur les entiers et les flottants. Sur les références mémoires,
+  elles sont définies dans le cas où les deux opérarandes sont de la forme
+  $φ[\cdot]$ par : $φ[n]~\opbin~φ[m] \eqdef n~\opbin~m$. Dans les autres cas,
+  l'erreur $Ω_{ptr}$ est renvoyée.
+\item
+  les opérateurs bit à bit sont définis sur les entiers. $\&$, $|$ et $\opxor$
+  représentent respectivement la conjonction, la disjonction et la disjonction
+  exclusive (XOR).
+\item
+  des versions logiques de la conjonction ($\&\&$) et de la disjonction ($||$)
+  sont également présentes. Leur sémantique est donnée par le tableau suivant :
+
+  \begin{center}
+    \begin{tabular}{rr|cc}
+       $n$ &  $m$ & $n~\&\&~m$ & $n~||~m$ \\
+      \hline
+       $0$ &  $0$ & $0$        & $0$      \\
+       $0$ & $≠0$ & $0$        & $1$      \\
+      $≠0$ &  $0$ & $0$        & $1$      \\
+      $≠0$ & $≠0$ & $1$        & $1$      \\
+    \end{tabular}
+  \end{center}
+
+\item
+  Enfin, des opérateurs de décalage à gauche ($«$) et à droite ($»$) sont
+  présents. Eux aussi ne s'appliquent qu'aux entiers.
 \end{itemize}
 
 \begin{definition}[Recherche de variable]

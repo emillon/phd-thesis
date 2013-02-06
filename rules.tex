@@ -57,7 +57,7 @@
                 {\textsc{Eq}(t)}
     }
     {Eq-Ptr}{ \irule{Eq-Ptr}
-                {\textsc{Eq}(t)}
+                { }
                 {\textsc{Eq}(t*)}
     }
     {Eq-Array}{ \irule{Eq-Array}
@@ -74,7 +74,7 @@
              }
     }
     {Op-Comparable}{ \irule{Op-Comparable}
-                       { \opbin ∈ \{=,≠,≤,≥,<,>\} \\
+                       { \opbin ∈ \{≤,≥,<,>\} \\
                          Γ ⊢ e_1 : t \\
                          Γ ⊢ e_2 : t \\
                          t ∈ \{ \tInt, \tFloat \}
