@@ -71,7 +71,7 @@ $t*$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout $t$
 donne un pointeur), mais le type de $x$, \tInt, n'est pas de cette forme. Ce
 programme est donc mal typé.
 
-\section{Définitions}
+\section{Environnements et notations}
 
 \begin{figure}
 
@@ -115,48 +115,38 @@ Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais
 n'est qu'une notation : il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
-\begin{definition}[Typage d'une expression]
-
-  On note de la manière suivante le fait qu'une expression $e$ (telle que
-  définie dans la figure~\ref{fig:stx-data}) ait pour type $t$ dans le contexte
-  $Γ$.
+\paragraph{Typage d'une expression :} on note de la manière suivante le fait
+qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
+pour type $t$ dans le contexte $Γ$.
 
   \[
     \ty{Γ}{e}{t}
   \]
 
-\end{definition}
+\paragraph{Typage d'une instruction :} les instructions n'ont en revanche pas de
+type. Mais il est tout de même nécessaire de vérifier que troutes les
+sous-expressions apparaissant dans une instruction sont cohérentes ensemble.
 
-\begin{definition}[Typage d'une instruction]
-
-  Les instructions n'ont en revanche pas de type. Mais il est tout de même
-  nécessaire de vérifier que troutes les sous-expressions apparaissant dans une
-  instruction sont cohérentes ensemble.
-
-  On note de la manière suivante le fait que sous l'environnement $Γ$
-  l'instruction $i$ est bien typée :
+On note de la manière suivante le fait que sous l'environnement $Γ$
+l'instruction $i$ est bien typée :
 
   \[
     \tyi{Γ}{i}
   \]
 
-\end{definition}
+\paragraph{Typage d'une phrase :} De par leur nature séquentielle, les phrases
+qui composent un programme altèrent l'environnement de typage. Par exemple, la
+déclaration d'une variable globale ajoute une valeur dans l'environnement.
 
-\begin{definition}[Typage d'une phrase]
-
-  De par leur nature séquentielle, les phrases qui composent un programme
-  altèrent l'environnement de typage. Par exemple, la déclaration d'une variable
-  globale ajoute une valeur dans l'environnement.
-
-  On note
+On note
 
   \[
     \typh{Γ}{p}{Γ'}
   \]
 
-  si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
+si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
-  On étend cette notation aux suites de phrases :
+On étend cette notation aux suites de phrases :
 
   \[
     \begin{cases}
@@ -170,25 +160,19 @@ toujours présents dans un type fonctionnel.
     \end{cases}
   \]
 
-\end{definition}
-
-\begin{definition}[Typage d'un programme]
-
-  Un programme est bien typé si on peut typer sa suite de phrases en partant
-  d'un environnement vide. C'est à dire s'il existe un environnement final $Γ_f$
-  tel que
+\paragraph{Typage d'un programme :} Un programme est bien typé si on peut typer
+sa suite de phrases en partant d'un environnement vide. C'est à dire s'il existe
+un environnement final $Γ_f$ tel que
 
   \[
     \typhstar{[]}{P}{Γ_f}
   \]
 
-  Cela est indépendant de tout environnement ; on note alors :
+Cela est indépendant de tout environnement ; on note alors :
 
   \[
     ⊢ P
   \]
-
-\end{definition}
 
 \section{Expressions}
 
@@ -471,7 +455,7 @@ expression.
 
 \begin{lemma}[Inversion] \label{lemma:inversion}
 
-  À partir d'un jugement de typage, on peut en déduire des inforamtions sur les
+  À partir d'un jugement de typage, on peut en déduire des informations sur les
   types de ses sous-expressions.
 
 \begin{itemize}
@@ -632,223 +616,7 @@ $m$.
 
 \end{theorem}
 
-\begin{proof}
-
-  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
-  sur la dernière règle utilisée.
-
-  \paragraph{\textsc{Cst-Int} :} % {{{
-$e$ est alors de la forme $n$, qui est une valeur.
-%}}}
-  \paragraph{\textsc{Cst-Float} :} % {{{
-$e$ est alors de la forme $d$, qui est une valeur.
-%}}}
-  \paragraph{\textsc{Cst-Null} :} % {{{
-$e$ est alors égale à $\eNull$, qui est une valeur.
-%}}}
-  \paragraph{\textsc{Cst-Unit} :}%{{{
-$e$ est alors égale à \eUnit, qui est une valeur.
-%}}}
-\paragraph{\textsc{Lv-Var} :}%{{{
-
-Puisque $(x, t) ∈ Γ$ $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle
-d'évaluation \textsc{Phi-Var} s'applique donc.
-
-% TODO prouver le coup du lookup
-%}}}
-\paragraph{\textsc{Lv-Deref} :}%{{{
-
-  Appliquons l'hypothèse de récurrence à $lv$ (vu en tant qu'expression).
-
-\begin{itemize}
-\item
-  $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
-  lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
-
-  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique :
-  $\mms{e}{\widehat{*}φ}$.
-  Dans le second, puisque $\msi{m}{*\eNull} → Ω_{ptr}$, on a
-  $\msi{m}{e} → Ω_{ptr}$.
-
-\item
-  $\mm{m}{lv}{m'}{e'}$.
-  De \textsc{Ctx} avec $C = *\ctxEmpty$, on obtient
-  $\mm{m}{e}{m'}{*e'}$.
-
-\item
-  $\msi{m}{lv} → Ω$.
-  En appliquant \textsc{Eval-Err} avec $C = *\ctxEmpty$, on obtient
-  $\msi{m}{e} → Ω$.
-
-\end{itemize}
-
-% }}}
-\paragraph{\textsc{Lv-Index} :} % %{{{
-
-De même, on applique l'hypothèse de récurrence à $lv$.
-
-\begin{itemize}
-\item $lv = v$.
-
-Comme $Γ ⊢ v : t[]$, on déduit du lemme~\ref{lemma:canon} que
-$v = \{v_1; …; v_p\}$.
-Appliquons l'hypothèse de récurrence à $e$.
-
-\begin{itemize}
-\item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
-lemme~\ref{lemma:canon} et $v' = n$. Deux cas sont à distinguer :
-si $n ∈ [0;p-1]$, la règle \textsc{Phi-Array} s'applique et
-$\mm{m}{lv[e]}{m}{v_{n+1}}$.
-% TODO réécrire bien Phi-Array
-% TODO attention à l'off by one
-Sinon, $\msi{m}{lv[e]} → Ω_{array}$.
-% TODO pourquoi ?
-
-\item $\mm{m}{e}{m'}{e'}$.
-En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
-\item $\mm{m}{lv[e]}{m'}{lv[e']}$.
-
-\item $\msi{m}{e} → Ω$.
-Avec \textsc{Eval-Err} sous ce même contexte,
-$\msi{m}{lv[e]} → Ω$
-\end{itemize}
-
-\item $\mm{m}{lv}{m'}{e'}$.
-On applique alors \textsc{Ctx} avec $C = \ctxEmpty[e]$, et
-$\mm{m}{lv[e]}{m'}{e'[e]}$.
-
-\item $\msi{m}{lv} → Ω$.
-Toujours avec $C = \ctxEmpty[e]$, de \textsc{Eval-Err} il vient
-$\msi{m}{lv[e]} → Ω$.
-
-\end{itemize}
-%}}}
-\paragraph{\textsc{Lv-Field} :} % TODO
-  \paragraph{\textsc{Op-Int} :} % {{{
-
-  Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
-  en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
-
-  Appliquons l'hypothèse de récurrence sur $e_1$. Trois cas peuvent se produire.
-
-\begin{itemize}
-
-  \item $e_1 = v_1$. On a alors $\mm{m}{e_1}{m'}{v_1}$ avec $m' = m$.
-
-    On applique l'hypothèse de récurrence à $e_2$.
-
-      \begin{itemize}
-
-        \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
-          peut alors appliquer \textsc{Exp-BinOp}.
-
-        \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
-
-          En appliquant \textsc{Ctx} avec $C = \ctxOp{v_1}{\ctxEmpty}$, on
-          en déduit $\mm{m'}{v_1~\opbin~e_2}{m''}{v_1~\opbin~e'_2}$ soit
-          $\mm{m}{e}{m''}{v_1~\opbin~e'_2}$.
-
-        \item $\msi{m'}{e_2} → Ω$.
-          De \textsc{Eval-Err} avec $C = \ctxOp{v_1}{\ctxEmpty}$
-          vient alors $\msi{m}{e} → Ω$.
-
-      \end{itemize}
-
-  \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
-    En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
-    $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
-    $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
-
-  \item $\msi{m}{e_1} → Ω$.
-    D'après \textsc{Eval-Err} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on a
-    $\msi{m}{e} → Ω$.
-
-\end{itemize}
-
-% }}}
-\paragraph{\textsc{Op-Float} :} % {{{
-Ce cas est similaire à \textsc{Op-Int}.
-% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
-%}}}
-\paragraph{\textsc{Op-Eq} :} %{{{
-Ce cas est similaire à \textsc{Op-Int}.
-% TODO expand un peu
-% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
-%}}}
-\paragraph{\textsc{Op-Comparable} :} %{{{
-Ce cas est similaire à \textsc{Op-Int}.
-% TODO expand un peu
-% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
-%}}}
-\paragraph{\textsc{Unop-Plus-Int} :} % {{{
-
-Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
-
-\begin{itemize}
-\item
-  soit $e_1 = v_1$. Alors en appliquant \textsc{Exp-UnOp},
-  $\mm{m}{+~v_1}{m}{\widehat{+}~v_1}$, c'est à dire en posant $v =
-  \widehat{+}~v_1$, $\mm{m}{e}{m}{v}$.
-% TODO écrire la règle
-\item
-  soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
-avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
-\item
-  soit $\msi{m}{e_1} → Ω$.
-  De \textsc{Eval-Err} avec $C = +~\ctxEmpty$ il vient$\msi{m}{e} → Ω$.
-\end{itemize}
-
-% }}}
-\paragraph{\textsc{Unop-Plus-Float} :} % {{{
-Ce cas est similaire à \textsc{Unop-Plus-Int}.
-% }}}
-\paragraph{\textsc{Unop-Minus-Int} :} % {{{
-Ce cas est similaire à \textsc{Unop-Plus-Int}.
-% }}}
-\paragraph{\textsc{Unop-Minus-Float} :} % {{{
-Ce cas est similaire à \textsc{Unop-Plus-Int}.
-% }}}
-\paragraph{\textsc{Unop-Not} :}%{{{
-Ce cas est similaire à \textsc{Unop-Plus-Int}.
-%}}}
-\paragraph{\textsc{Ptr-Arith} :} % %{{{ TODO
-
-\[ \left( \disprule{Ptr-Arith} \right) \]
-
-%}}}
-\paragraph{\textsc{Addr} :} % {{{ TODO
-
-\[ \left( \disprule{Addr} \right) \]
-
-%}}}
-\paragraph{\textsc{Set} :} % {{{ TODO
-
-\[ \left( \disprule{Set} \right) \]
-
-%}}}
-\paragraph{\textsc{Array} :} % {{{ TODO
-
-\[ \left( \disprule{Array} \right) \]
-
-%}}}
-\paragraph{\textsc{Struct} :} % {{{ TODO
-
-\[ \left( \disprule{Struct} \right) \]
-
-%}}}
-\paragraph{\textsc{Call} :} % {{{ TODO
-
-\[ \left( \disprule{Call} \right) \]
-
-%}}}
-\paragraph{\textsc{Fun} :} % {{{ TODO
-
-\[ \left( \disprule{Fun} \right) \]
-
-%}}}
-% TODO vérifier qu'il n'y a pas d'autre règle
-% TODO général : que désigne e. Ex avec lv[e]
-\end{proof}
+La preuve de ce théorème se trouve en annexe~\ref{proof:progres}.
 
 \begin{lemma}[Permutation]
   L'ordre dans lequel les variables apparaissent dans un environnement
@@ -879,6 +647,7 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 Ces lemmes permettent de prouver le théorème suivant :
 
 \begin{theorem}[Préservation]
+  \label{thm:preservation}
 
   Si une expression est typable et que son évaluation produit une valeur, alors
   cette valeur est du même type que l'expression.
@@ -889,6 +658,8 @@ Ces lemmes permettent de prouver le théorème suivant :
 
 \end{theorem}
 
+La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
+
 \section*{TODO}
 
 \begin{itemize}
@@ -897,3 +668,71 @@ Ces lemmes permettent de prouver le théorème suivant :
 \item preuve de progres : état mémoire : doublet/triplet
 \item définir les opérations d'ajout/remplacement sur les contextes de typage
 \end{itemize}
+
+\subsection*{Structures}
+
+\begin{itemize}
+\item
+  5.3 left-value règle LV-FIELD le S sort un peu du chapeau. Est-ce que
+  tu ne devrait pas avoir un couple $\Gamma, S$ dans tes jugements plutôt
+  que seulement $\Gamma$ ?
+\item
+  5.6 prémice de PH-struct
+\end{itemize}
+
+\subsection*{Fonctions}
+
+\begin{itemize}
+\item
+  page 50 règle CALL une remarque disant que cette règle doit être
+  utilisée avec une autre qui va typer le corps de la fonction (mettre
+  la ref) parce que +sinon ça surprend
+\item
+  5.5 le fait de choisir une unique variable R t'oblige à ajouter une
+  opération de suppression du R de la fonction appelante factice.
+  Pourquoi ne pas générer des variables fraîches à partir du nom de la
+  fonction + un identifiant unique ?
+\item
+  page 52 règle fun. Tu mélanges définition en extension $(a_1
+  \ldots a_n)$ et en compréhension ($\forall i$) c'est pas très beau et ça
+  complique la règle je trouve
+\item
+  lemme 5.1 cas fonction, à quoi ça sert d'introduire la notation t'
+  alors qu'il n'apparaît pas dans une règle ?
+\end{itemize}
+
+\subsection*{Rq}
+(passe Sarah 17/01)
+
+\begin{itemize}
+\item
+  5.3 left-values la règle LV-VAR suppose que x n'apparaît qu'une fois
+  dans $\Gamma$ ou alors toujours accompagné du même type
+\item
+  5.3 opérateurs, règle OP-EQ Que signifie l'égalité sur des tableaux ?
+\item
+  5.6 règle PH-VAR coquille : en prémice c'est x et pas e non ? L'ajout
+  d'une variable à un contexte c'est pas avec l'opérateur :: ?
+\item
+  p53 le terme de dérivation (première phrase de la preuve) n'a jamais
+  été expliqué ?
+\item
+  lemme 5.1 constantes. Il faut expliquer à quel ensemble n et f
+  appartiennent
+\item
+  idem je n'ai pas relu la preuve de 5.1
+\item
+  lemme 5.2 même remarque que 5.1 concernant n et f (plus confusion f
+  float et f fonction)
+\item
+  lemme 5.3 ça ne marche que si une variable n'apparaît qu'une fois dans
+  le contexte ou avec toujours le même type (cf rem ci-dessous sur 5.3)
+\item
+  il manque les preuves de 5.3 et 5.4
+\item
+  lemme 5.4 $dom(\Gamma)$ a été défini quelque part ?
+\item
+  théormèe 5.2 rappeler où a été défini l'évaluation d'une expression et
+  dans quel cas elle produit des valeurs
+\end{itemize}
+
