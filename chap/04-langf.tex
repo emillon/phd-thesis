@@ -731,7 +731,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \gramlr{Opérateurs binaires}{
     \begin{align*}
-      \opbin \gramisa & +,-,\times,/      & \textrm{Arithmétique entière}
+      \opbin \gramisa & +,-,\times,/,\%   & \textrm{Arithmétique entière}
       \\     \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
       \\     \gramor  & +_p, -_p          & \textrm{Arithmétique de pointeurs}
       \\     \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
@@ -956,6 +956,20 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   \caption{Composantes d'un état mémoire}
   \label{fig:interp}
 \end{figure}%}}}
+
+Un certain nombre d'opérations sont possibles sur les valeurs
+(figure~\ref{fig:stx-ops}) :
+
+\begin{itemize}
+\item
+  les opérations arithmétiques $+$, $-$, $×$, $/$ et $\%$ sur les entiers.
+  L'opérateur $\%$ correspond au modulo (reste de la division euclidienne).
+\item
+  les versions ``pointées'' $+.$, $-.$, $×.$ et $/.$ sur les flottants
+\item
+  les opérations d'arithmétique de pointeur $+_p$ et $-_p$ qui à un chemin
+  mémoire et un entier associent un chemin mémoire.
+\end{itemize}
 
 \begin{definition}[Recherche de variable]
 
