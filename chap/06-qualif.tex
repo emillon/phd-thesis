@@ -115,10 +115,31 @@ Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $Ω_{array}$ ou $Ω_{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
 
-Par exemple, supposons que $x$ soit une variable globale, et posons $e = *
-\eTaint {\& x}$.
+Par exemple, supposons que $x$ soit une variable globale entière, et posons $e =
+* \eTaint {\& x}$.
 
-L'évaluation de $e$ provoque une erreur, comme le montre la dérivation suivante.
+$e$ est alors bien typée sous $Γ = x : \tInt$ :
+
+\begin{mathpar}
+  \irule{Lv-Deref}
+    {
+      \irule{Taint-Ignore}
+        {
+          \irule{Lv-Deref}
+            {
+              \irule{Lv-Var}
+                { x:\tInt ∈ Γ }
+                { Γ ⊢ x : \tInt }
+            }
+            { Γ ⊢ \& x : \tInt*}
+        }
+        { Γ ⊢ \eTaint {\& x} : \tInt*}
+    }
+    { Γ ⊢ * \eTaint {\& x} : \tInt}
+\end{mathpar}
+
+Posons alors $m = ([[x↦0]], [])$ (on a bien $\mcomp{Γ}{m}$). L'évaluation de $e$
+sous $m$ provoque une erreur, comme le montre la dérivation suivante.
 
 \begin{mathpar}
 \inferrule*
@@ -203,16 +224,27 @@ pointeurs \qKernel peuvent être déréférencés de manière sûre :
 \end{mathpar}
 
 
-L'opérateur $\iTaint{\cdot}$ transforme un pointeur selon la règle de taintage
+L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle de souillure
 suivante :
 
 % TODO définir les stubs
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢_q x : t~\qUser~* }
-  { Γ ⊢_q \iTaint{x} }
+  { Γ ⊢_q e : t~q~* }
+  { Γ ⊢_q \eTaint{x} : t~\qUser~* }
 \end{mathpar}
+
+Pour typer les expressions composées (structures et tableaux), il faut remarquer
+que si l'utilisateur contrôle l'adresse d'une expression composée, alors il
+contrôle tous ces champs pointeurs. En quelque sorte, il faut s'assurer que si
+$Γ ⊢_q \& \{l_1:t_1;…;l_n:t_n\}$, alors aucun $t_i$ n'est de la forme
+$t~\qKernel~*$.
+
+Pour ce faire, on commence par ordonner les qualificateurs en posant $\qKernel
+\sqsubseteq \qUser$, et on définit une règle de typage telle que le
+qualificateur associé à l'adresse d'une expression soit l'union des
+qualificateurs présents dans son type.
 
 \begin{definition}[Union de qualificateurs]
 
@@ -229,7 +261,16 @@ suivante :
   \end{tabular}
   \end{center}
 
+  (cela est équivalent à définir un treillis
+  $\{\qKernel ; \qUser \}$
+  avec
+  $\qKernel \sqsubseteq \qUser$
+  )
+
 \end{definition}
+
+L'opérateur $Q_\&$ défini ci-après permet d'exprimer "le plus grand
+qualificateur présent dans un type".
 
 \begin{definition}[Qualificateur d'adresse]
 
@@ -252,13 +293,15 @@ suivante :
 
 \end{definition}
 
+Alors la règle pour typer $\&lv$ devient :
+
 \begin{mathpar}
-  \irule{Taint-Addr-Struct}
-    { Γ ⊢ e : t
+  \irule{Taint-Addr}
+    { Γ ⊢ lv : t
       \\
       q = Q_\& (t)
     }
-    { Γ ⊢ t~q~* }
+    { Γ ⊢ \&lv : t~q~* }
 \end{mathpar}
 
 \subsection{Propriété d'isolation mémoire}
@@ -535,14 +578,8 @@ size_t strlen(const char *s);
   traduction de tainted c'est plutôt sali, pollué. Tu peux aussi garder
   le terme anglais et le mettre en italique
 \item
-  p60 c'est pas gênant que les règles TAINT-ERASE et TAINT-WRITE peuvent
-  s'appliquer simultanément ?
-\item
-  \begin{itemize}
-  \item
-    j'ai arrêté de lire à partir de 6.2 parce que le texte n'est pas
-    vraiment clair
-  \end{itemize}
+  j'ai arrêté de lire à partir de 6.2 parce que le texte n'est pas
+  vraiment clair
 \end{itemize}
 
 % TODO le cimetière des règles
