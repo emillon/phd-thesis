@@ -1008,9 +1008,19 @@ Un certain nombre d'opérations est possibles sur les valeurs
   \end{center}
 
 \item
-  Enfin, des opérateurs de décalage à gauche ($«$) et à droite ($»$) sont
-  présents. Eux aussi ne s'appliquent qu'aux entiers.
+  des opérateurs de décalage à gauche ($«$) et à droite ($»$) sont présents.
+  Eux aussi ne s'appliquent qu'aux entiers.
+
+\item
+  les opérateurs arithmétiques unaires $+$, $-$, $+.$ et $-.$ sont équivalents à
+  l'opération binaire correspondante avec $0$ ou $0.$ comme première opérande.
+
+\item
+  $\sim$ inverse tous les bits de son opérande. $!$ est une version logique,
+  c'est à dire que $!0 = 1$ et si $n ≠ 0$, $!n = 0$.
 \end{itemize}
+
+% TODO que se passe-t'il dans les autres cas ? introduire un Ω_{typ} ?
 
 \begin{definition}[Recherche de variable]
 
