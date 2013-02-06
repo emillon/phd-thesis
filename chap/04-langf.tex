@@ -957,7 +957,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   \label{fig:interp}
 \end{figure}%}}}
 
-Un certain nombre d'opérations sont possibles sur les valeurs
+Un certain nombre d'opérations est possibles sur les valeurs
 (figure~\ref{fig:stx-ops}) :
 
 \begin{itemize}
@@ -969,6 +969,19 @@ Un certain nombre d'opérations sont possibles sur les valeurs
 \item
   les opérations d'arithmétique de pointeur $+_p$ et $-_p$ qui à un chemin
   mémoire et un entier associent un chemin mémoire.
+\item
+  les opérations d'égalité $=$ et $≠$. L'égalité entre entiers ou entre
+  flottants est immédiate. Deux valeurs composées (tableaux ou structures) sont
+  égales si elles ont la meme "forme" (même taille pour les tableaux, et même
+  champs pour les structures) et que toutes leurs sous-valeurs sont égales deux
+  à deux. Les références mémoire $φ$ sont égales lorsque les chemins qu'ils
+  décrivent sont syntaxiquement égaux
+  \footnote{
+    Il est donc possible que deux pointeurs pointent sur la même adresse mais
+    soient considérés différents. La raison pour ce choix est que la comparaison
+    doit pouvoir se faire sans accéder à la mémoire.
+    % TODO exemple
+  }.
 \end{itemize}
 
 \begin{definition}[Recherche de variable]
