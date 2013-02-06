@@ -270,19 +270,8 @@
                 {\mms{\opun~v}{\widehat{\opun}~v}}
     }
     {Exp-BinOp}{ \irule{Exp-BinOp}
-                   { \opbin ∉ \{/, \%\} }
+                   { }
                    {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
-    }
-    {Exp-Div}{ \irule{Exp-Div}
-                 { \opbin ∈ \{/, /., \%\} \\
-                   v_2 ≠ \widehat{0}
-                 }
-                 {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
-    }
-    {Exp-Div-Zero}{ \irule{Exp-Div-Zero}
-                 { \opbin ∈ \{/, /., \%\}
-                 }
-                 {\msi{m}{v_1~\opbin~0} → Ω_{div}}
     }
     {Exp-AddrOf}{ \irule{Exp-AddrOf}
                     { a = \mathrm{Lookup} (x, m)
@@ -370,6 +359,14 @@
                   {\ph{m}{p}{m'} \\
                    \phstar{m'}{ps}{m''}}
                   {\phstar{m}{p::ps}{m''}}
+    }
+    {Exp-Err}{ \irule{Exp-Err}
+                 { }
+                 { \msi{m}{Ω} → Ω }
+    }
+    {Eval-Err}{ \irule{Eval-Err}
+                  { \msi{m}{e} → Ω }
+                  { \msi{m}{\ctxSub{C}{e}} → Ω }
     }
     {END}
 }

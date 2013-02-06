@@ -957,6 +957,9 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   \label{fig:interp}
 \end{figure}%}}}
 
+\section{Opérations sur les valeurs}
+\label{sec:sem-ops}
+
 Un certain nombre d'opérations est possibles sur les valeurs
 (figure~\ref{fig:stx-ops}) :
 
@@ -964,6 +967,7 @@ Un certain nombre d'opérations est possibles sur les valeurs
 \item
   les opérations arithmétiques $+$, $-$, $×$, $/$ et $\%$ sur les entiers.
   L'opérateur $\%$ correspond au modulo (reste de la division euclidienne).
+  En cas de division par zéro, l'erreur $Ω_{div}$ est levée.
 \item
   les versions ``pointées'' $+.$, $-.$, $×.$ et $/.$ sur les flottants
 \item
@@ -1541,17 +1545,14 @@ Pour évaluer une expression constituée d'un opérateur, on évalue une express
 puis l'autre (l'ordre d'évaluation, est encore imposé : de gauche à droite). À
 chaque opérateur $\opbin$, correspond un opérateur sémantique $\widehat{\opbin}$
 qui agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
-classique entre entiers. Afin d'interdire la division par zéro, celle ci et le
-modulo sont traités dans une règle à part.
+classique entre entiers.
+Comme précisé dans la section~\ref{sec:sem-ops}, la division par zéro via $/$,
+$\%$ ou $/.$ provoque l'erreur $Ω_{div}$.
 
 \begin{mathpar}
   \semrule{Exp-UnOp}
 
   \semrule{Exp-BinOp}
-
-  \semrule{Exp-Div}
-
-  \semrule{Exp-Div-Zero}
 \end{mathpar}
 
 Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$
@@ -1925,8 +1926,6 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 \label{sec:eval-errors}
 
 % TODO
-% TODO déplacer en semrule
-% TODO mettre un e (ou v) ::= Ω
 
 Les erreurs se propagent des données vers l'interprète ; c'est à dire que si
 une expression ou instruction est réduite en une valeur d'erreur $Ω$, alors une
@@ -1937,15 +1936,12 @@ de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-structure est présente grâce aux contexte $C$ dans la règle suivante :
 
 \begin{mathpar}
-  \irule{Exp-Err}
-    { }
-    { \msi{m}{Ω} → Ω }
+  \semrule{Exp-Err}
+
+  \semrule{Eval-Err}
+\end{mathpar}
 
 % TODO blabla sur les 2 et prouver que \ctxSub{C}{Ω} → Ω
-  \irule{Eval-Err}
-    { \msi{m}{e} → Ω }
-    { \msi{m}{\ctxSub{C}{e}} → Ω }
-\end{mathpar}
 
 \section{Phrases}
 

@@ -110,7 +110,13 @@ $\msi{m}{lv[e]} → Ω$.
       \begin{itemize}
 
         \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
-          peut alors appliquer \textsc{Exp-BinOp}.
+          peut alors appliquer \textsc{Exp-BinOp}, sauf dans le cas d'une
+          division par zéro (
+          $ \opbin ∈ \{ / ; \% ; /. \} $
+          et
+          $ v_2 = 0 $
+          ) où alors $v_1~\widehat{\opbin}~v_2 = Ω_{div}$. Dans ce cas, on a
+          alors par \textsc{Exp-Err} $\msi{m}{e} → Ω_{div}$.
 
         \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
 
