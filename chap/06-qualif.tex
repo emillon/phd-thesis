@@ -168,20 +168,9 @@ La différence principale est qu'à à chaque pointeur, on ajoute un
   appels système ou les paramètres de la fonction \texttt{ioctl}.
 \end{itemize}
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
+Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 
-La principale restriction est que seuls les pointeurs \qKernel peuvent être
-déréférencés de manière sûre :
-
-\begin{mathpar}
-\irule{Lv-Deref-Kernel}{
-  Γ ⊢_q e : τ~\textsc{Kernel}*
-}{
-  Γ ⊢_q *e : τ
-}
-\end{mathpar}
-
-\begin{figure}
+\begin{figure}%{{{
 
 \gramlr{Qualificateurs}{
 \begin{align*}
@@ -199,11 +188,25 @@ t \gramisa & …
 }
 
 \caption{Changements liés aux qualificateurs de types}
-\label{fig:qualif-changes}
-\end{figure}
+\label{fig:qualif-changes-typ}
+\end{figure}%}}}
+
+Au niveau du système de types, la principale restriction est que seuls les
+pointeurs \qKernel peuvent être déréférencés de manière sûre :
+
+\begin{mathpar}
+\irule{Lv-Deref-Kernel}{
+  Γ ⊢_q e : τ~\textsc{Kernel}*
+}{
+  Γ ⊢_q *e : τ
+}
+\end{mathpar}
 
 
-Règle de taintage
+L'opérateur $\iTaint{\cdot}$ transforme un pointeur selon la règle de taintage
+suivante :
+
+% TODO définir les stubs
 
 \begin{mathpar}
 \irule{Taint}
