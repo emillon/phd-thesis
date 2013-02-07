@@ -1079,76 +1079,63 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   \centering
 
-  \subfloat[Empilement]{
+  \subbottom[Empilement]{
   \label{fig:stackops-push}
   \begin{tikzpicture}
     [ stack/.style={draw,shape=rectangle,minimum height=5mm,minimum width=2cm}
     , every node/.style={font=\footnotesize}
     , faded/.style={fill=black!20}
     ]
-
-
     \path (8,0)   node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     ;
-
     \path (12,0)  node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
-
     \draw [->] (9.2, 1) -- node[auto] {$\mathrm{Push}((x, 0))$} ++(1.6, 0);
   \end{tikzpicture}
   }
 
-  \subfloat[Extension de cadre]{
+  \subbottom[Extension de cadre]{
   \label{fig:stackops-extend}
-
   \begin{tikzpicture}
     [ stack/.style={draw,shape=rectangle,minimum height=5mm,minimum width=2cm}
     , every node/.style={font=\footnotesize}
     , faded/.style={fill=black!20}
     ]
-
-
     \path (4,-3)  node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
-
     \path (8,-3)  node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
     ;
-
     \draw [->] (5.2, -2) -- node[auto] {$\mathrm{Extend}((y, 3))$} ++(1.6, 0);
-
   \end{tikzpicture}
   }
 
-  \subfloat[Dépilement]{
+  \subbottom[Dépilement]{
   \label{fig:stackops-pop}
   \begin{tikzpicture}
     [ stack/.style={draw,shape=rectangle,minimum height=5mm,minimum width=2cm}
     , every node/.style={font=\footnotesize}
     , faded/.style={fill=black!20}
     ]
-
     \path (0,0)   node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$…$}
     ;
-
     \path (4,0)   node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     ;
-
     \draw [->] (1.2, 1) -- node[auto] {Pop} ++(1.6, 0);
   \end{tikzpicture}
   }

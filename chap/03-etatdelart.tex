@@ -71,61 +71,61 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 
 \begin{figure}
 \centering
-\subfloat[
+\subbottom[
   L'ensemble des états d'erreur est calculable (zone hachurée)…
 ]{
 \label{fig:ia-f1}
 % 1
 \begin{tikzpicture}[scale=0.7]%{{{
 \clip  (-1,-1) rectangle (6,5);
-
+%
 % Hachures
 \foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-
+%
 % Ensemble sûr
 \path [fill=white]
                  (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 % Ensemble sûr (redraw)
 \draw            (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 \end{tikzpicture}%}}}
 }
 \hspace{5mm}
-\subfloat[
+\subbottom[
   …mais pas celui des états atteints.
 ]{
 \label{fig:ia-f2}
 % 2
 \begin{tikzpicture}[scale=0.7]%{{{
 \clip  (-1,-1) rectangle (6,5);
-
+%
 % Hachures
 \foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-
+%
 % Ensemble sûr
 \path [fill=white]
                  (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 % Ensemble sûr (redraw)
 \draw            (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 % Comportement réel (sans erreurs)
 \draw [fill=green!50,scale=0.8] plot[smooth cycle]
       coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-
+%
 \end{tikzpicture}%}}}
 }
 
-\subfloat[
+\subbottom[
   On construit donc une surapproximation calculable de la sémantique. Si
   celle-ci n'a pas d'erreur, on est assuré que le programme n'en aura pas non
   plus.
@@ -134,35 +134,35 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 % 4
 \begin{tikzpicture}[scale=0.7]%{{{
 \clip  (-1,-1) rectangle (6,5);
-
+%
 % Hachures
 \foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-
+%
 % Ensemble sûr
 \path [fill=white]
                  (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 % Ensemble sûr (redraw)
 \draw            (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 % Approximation (précise)
 \draw [fill=blue!50,scale around={1.3:(3,3)}]
            (1,1) -- (1,2)
         -- (2,3) -- (3,3)
         -- (3,1) -- cycle;
-
+%
 % Comportement réel (sans erreurs)
 \draw [fill=green!50,scale=0.8] plot[smooth cycle]
       coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-
+%
 \end{tikzpicture}%}}}
 }
 \hspace{5mm}
-\subfloat[
+\subbottom[
   Si on détecte une intersection, il n'est pas possible de savoir si elle est
   due à une erreur atteignable ou à une approximation trop laxe.
 ]{
@@ -170,37 +170,37 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 % 6
 \begin{tikzpicture}[scale=0.7]%{{{
 \clip  (-1,-1) rectangle (6,5);
-
+%
 % Hachures
 \foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-
+%
 % Ensemble sûr
 \path [fill=white]
                  (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 % Ensemble sûr (redraw)
 \draw            (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
-
+%
 % Approximation (imprécise)
 \draw [fill=blue!50,scale around={1.3:(3,3)}]
             (1,1) -- (1,2)
          -- (3,4)
          -- (3,1) -- cycle;
-
+%
 % Comportement réel (sans erreurs)
 \draw [fill=green!50,scale=0.8] plot[smooth cycle]
       coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-
+%
 \end{tikzpicture}%}}}
 }
 
 \caption{
   Surapproximation en interprétation abstraite.
-  Il n'est donc pas possible de déterminer si l'ensemble des états atteignables
+  Il n'est pas possible de déterminer si l'ensemble des états atteignables
   est inclus dans l'ensemble des états sûrs (figure~\ref{fig:ia-f2}). En
   revanche, en construisant une surapproximation on peut parfois conclure
   (figures~\ref{fig:ia-f3} et~\ref{fig:ia-f4}).
