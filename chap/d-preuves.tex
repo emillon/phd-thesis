@@ -66,13 +66,14 @@ Appliquons l'hypothèse de récurrence à $e$.
 
 \begin{itemize}
 \item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
-lemme~\ref{lemma:canon} et $v' = n$. Deux cas sont à distinguer :
-si $n ∈ [0;p-1]$, la règle \textsc{Phi-Array} s'applique et
+lemme~\ref{lemma:canon} et $v' = n$.
+D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\{v_1; …; v_p\}\widehat{[n]}} $.
+Deux cas sont à distinguer :
+si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
-% TODO réécrire bien Phi-Array
+Sinon elle vaut $Ω_{array}$ et $\msi{m}{lv[e]} → Ω_{array}$ par \textsc{Exp-Err}.
+
 % TODO attention à l'off by one
-Sinon, $\msi{m}{lv[e]} → Ω_{array}$.
-% TODO pourquoi ?
 
 \item $\mm{m}{e}{m'}{e'}$.
 En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
