@@ -1199,6 +1199,8 @@ On définit ici quelques lentilles.
                        & ∀ i ≠ |l|-n+1, s'_i = s_i
   \end{align*}
 
+% TODO normalement grâce à clean ça fail jamais
+
 \end{definition}
 
 Les numéros de cadre qui permettent d'identifier les globales (le $n$ dans $(n,
@@ -1267,11 +1269,18 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
     Φ(φ[i]) = & Φ(φ) \ggg I(i) \\
   \end{align*}
 
-  Enfin, le déréférencement est défini comme suit :
+  Le déréférencement est défini comme suit :
 
   \begin{align*}
     m[*φ]_Φ     = & m[φ']_Φ     \mbox{ où } φ' = m[φ]_Φ \\
     m[*φ ← v]_Φ = & m[φ' ← v]_Φ \mbox{ où } φ' = m[φ]_Φ \\
+  \end{align*}
+
+  Enfin, l'accès à la mémoire par le pointeur nul provoque une erreur :
+
+  \begin{align*}
+    m[\eNull    ]_Φ = & Ω_{ptr} \\
+    m[\eNull ← v]_Φ = & Ω_{ptr} \\
   \end{align*}
 
 \end{definition}
@@ -2086,7 +2095,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item cas d'erreur pour le déref nul (quid des deref invalides?)
 \item faire une macro pour les $Ω$
 \item résoudre le problème des structures
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
