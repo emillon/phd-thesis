@@ -28,7 +28,7 @@ d'évaluation \textsc{Phi-Var} s'applique donc.
 %}}}
 \paragraph{\textsc{Lv-Deref} :}%{{{
 
-  Appliquons l'hypothèse de récurrence à $lv$ (vu en tant qu'expression).
+  Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
 
 \begin{itemize}
 \item
@@ -212,6 +212,21 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = Ω_{ptr}$. Donc d'après
 \paragraph{\textsc{Addr} :} % {{{ TODO
 
 \[ \left( \disprule{Addr} \right) \]
+
+On applique l'hypothèse de récurrence à $lv$, en faisant les mêmes remarques que
+dans le cas \textsc{Lv-Deref} par exemple.
+
+Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
+\textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. On détaille le cas où
+$lv$ est une valeur.
+
+D'après le lemme~\ref{lemma:forme-lv} ...
+
+Comme $\mcomp{Γ}{m}$ et $Γ ⊢ lv : t$,
+
+\textsc{Exp-AddrOf}
+
+% TODO expliquer un peu mieux
 
 %}}}
 \paragraph{\textsc{Set} :} % {{{ TODO
