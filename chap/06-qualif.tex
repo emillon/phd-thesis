@@ -166,7 +166,7 @@ sous $m$ provoque une erreur, comme le montre la dérivation suivante.
 On présente ici un système de types plus expressif permettant de capturer les
 extensions de sémantique. \emph{In fine}, cela permettra de prouver le
 théorème~\ref{thm:progres-qual} qui est l'équivalent du
-théorème~\ref{thm:progres-qual} mais pour le nouveau jugement de typage.
+théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
 
 Définit un nouveau système de types revient à définir un nouveau jugement de
 typage $\cdot ⊢_q \cdot : \cdot$, à partir d'un ensemble de règles. Pour la
@@ -316,7 +316,7 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
   Alors l'un des cas suivant est vrai :
 
 \begin{itemize}
-  \item $∃ v, e = v$
+  \item $∃ v ≠ Ω, e = v$
   \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
   \item $∃ Ω ∈ \{Ω_{div},Ω_{array},Ω_{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}

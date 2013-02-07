@@ -856,6 +856,10 @@ pas capturé (il n'y a pas de clôture lexicale).
 
 % TODO citer sur les closures ?
 
+\item $Ω$ : une erreur. Par exemple le résultat de $5 / 0$ est $Ω_{div}$.
+
+% TODO regrouper la présentation des différents cas d'erreur
+
 \end{itemize}
 
 \begin{figure}%{{{
@@ -872,6 +876,16 @@ pas capturé (il n'y a pas de clôture lexicale).
                    \{v_1 ;…; v_n\}
                    }               & \textrm{Tableau}
       \\ \gramor & \widehat{f}     & \textrm{Fonction}
+      \\ \gramor & Ω               & \textrm{Erreur}
+    \end{align*}
+  }
+
+  \gramlr{Chemins}{
+    \begin{align*}
+      φ \gramisa & a    & \textrm{Adresse}
+      \\ \gramor & *φ   & \textrm{Déréférencement}
+      \\ \gramor & φ.l  & \textrm{Accès à un champ}
+      \\ \gramor & φ[n] & \textrm{Accès à un élément}
     \end{align*}
   }
 
@@ -882,12 +896,11 @@ pas capturé (il n'y a pas de clôture lexicale).
     \end{align*}
   }
 
-  \gramlr{Chemins}{
+  \gramlr{Erreur}{
     \begin{align*}
-      φ \gramisa & a    & \textrm{Adresse}
-      \\ \gramor & *φ   & \textrm{Déréférencement}
-      \\ \gramor & φ.l  & \textrm{Accès à un champ}
-      \\ \gramor & φ[n] & \textrm{Accès à un élément}
+      Ω \gramisa & Ω_{array}  & \textrm{Débordement de tableau}
+      \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
+      \\ \gramor & Ω_{div}    & \textrm{Division par zéro}
     \end{align*}
   }
 
@@ -942,14 +955,6 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
       Ξ \gramisa & \msi{m}{e} & \textrm{Expression, mémoire}
       \\ \gramor & \msi{m}{i} & \textrm{Instruction, mémoire}
       \\ \gramor & Ω          & \textrm{Erreur}
-    \end{align*}
-  }
-
-  \gramlr{Erreur}{
-    \begin{align*}
-      Ω \gramisa & Ω_{array}  & \textrm{Débordement de tableau}
-      \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
-      \\ \gramor & Ω_{div}    & \textrm{Division par zéro}
     \end{align*}
   }
 
@@ -2081,7 +2086,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item ajouter un $v \gramisa Ω$ et ajuster le théorème de progrès
 \item cas d'erreur pour le déref nul (quid des deref invalides?)
 \item faire une macro pour les $Ω$
 \item résoudre le problème des structures
