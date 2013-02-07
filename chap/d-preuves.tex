@@ -131,7 +131,7 @@ $\msi{m}{lv[e]} → Ω$.
 
       \end{itemize}
 
-  \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
+  \item $∃(e_1', m'), \mm{m}{e_1}{m'}{e'_1}$.
     En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
     $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
     $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
@@ -188,9 +188,25 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Unop-Not} :}%{{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
-\paragraph{\textsc{Ptr-Arith} :} % %{{{ TODO
+\paragraph{\textsc{Ptr-Arith} :} % %{{{
 
-\[ \left( \disprule{Ptr-Arith} \right) \]
+Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
+lorsque $e_1$ et $e_2$ sont des valeurs. D'après le lemme~\ref{lemma:canon} :
+
+\begin{itemize}
+\item $e_1 = \eNull$ ou $e_1 = φ$
+\item $e_2 = n$
+\end{itemize}
+
+D'après \textsc{Exp-Binop}, $\mms{e}{e_1~\widehat{\opbin}~n}$.
+
+On se réfère ensuite à la définition de $\widehat{\opbin}$
+(page~\pageref{page:def-arith-ptr-error}) : si $e_1$ est de la forme $φ[m]$,
+alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
+
+Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
+$φ'[m]$), on a $e_1~\widehat{\opbin}~n = Ω_{ptr}$. Donc d'après
+\textsc{Exp-Err}, $\msi{m}{e} → Ω_{ptr}$.
 
 %}}}
 \paragraph{\textsc{Addr} :} % {{{ TODO
@@ -225,6 +241,7 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
 % TODO vérifier qu'il n'y a pas d'autre règle
 % TODO général : que désigne e. Ex avec lv[e]
+% TODO prouver aussi mcomp
 \end{proof}
 
 \section{Preuve du théorème~\ref{thm:preservation}}

@@ -1145,6 +1145,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \end{figure}
 
 \section{Accesseurs}
+\label{sec:mem-access}
 
 On définit ici quelques lentilles.
 
@@ -1568,20 +1569,23 @@ uniquement définies pour les références mémoire à un tableau, c'est à dire
 celles qui ont la forme $φ[n]$. On a alors :
 
 \begin{align*}
-  φ[n] +_p m = & φ[n+m] \\
-  φ[n] -_p m = & φ[n-m] \\
+  φ[n]~+_p~m = & φ[n+m] \\
+  φ[n]~-_p~m = & φ[n-m] \\
 \end{align*}
 
 % TODO widehats ici et ci-dessous non ?
 
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs :
+\label{page:def-arith-ptr-error}
 
 % TODO quoter le passage pertinent de la norme
 
 \begin{align*}
-φ +_p m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
-φ -_p m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
+φ~+_p~m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
+φ~-_p~m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
+\eNull~+_p~m = & Ω_{ptr} \\
+\eNull~-_p~m = & Ω_{ptr} \\
 \end{align*}
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
