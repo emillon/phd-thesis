@@ -401,6 +401,12 @@ environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes :
   valeur de retour de la fonction appelante
 \item
   on ajoute les types des arguments $a_i : t_i$
+\end{itemize}
+
+On vérifie alors que les initialiseurs $e_i$ ont le bon type $t'_i$. Ensuite, à
+partir de $Γ'$ :
+
+\begin{itemize}
 \item
   on ajoute les types des variables locales $l_i : t'_i$
 \item
@@ -408,13 +414,33 @@ environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes :
   $\vRet : t$
 \end{itemize}
 
-Il reste alors à vérifier que les initialiseurs $e_i$ ont le bon type $t'_i$ et
-que le corps de la fonction est bien typé sous $Γ'$. Le type de la fonction est
-alors $(t_1, …, t_n) → t$.
+Il reste alors à vérifier que dans l'environnement $Γ''$ résultant, le corps de
+la fonction est bien typé. Le type de la fonction est alors $(t_1, …, t_n) → t$.
 
 \begin{mathpar}
   \disprule{Fun}
 \end{mathpar}
+
+Cette règle utilise les notations suivantes :
+
+\begin{align*}
+\vec{a}
+\eqdef &
+(a_1, …, a_n) \textrm{ où } n = |a|
+\\
+\textrm{zip}(\vec{a}, \vec{b})
+\eqdef &
+((a_1, b_1), …, (a_n, b_n))
+\textrm{ où } n = |a| = |b|
+\\
+Γ ⊢ \vec{e} : \vec{t}
+\eqdef &
+∀ i ∈ [1;n],
+Γ ⊢ e_i : t_i
+\textrm{ où } n = |e| = |t|
+\end{align*}
+
+% TODO suppression & adjonction aux Γ
 
 \section{Phrases}
 
@@ -702,10 +728,6 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
   opération de suppression du R de la fonction appelante factice.
   Pourquoi ne pas générer des variables fraîches à partir du nom de la
   fonction + un identifiant unique ?
-\item
-  page 52 règle fun. Tu mélanges définition en extension $(a_1
-  \ldots a_n)$ et en compréhension ($\forall i$) c'est pas très beau et ça
-  complique la règle je trouve
 \item
   lemme 5.1 cas fonction, à quoi ça sert d'introduire la notation t'
   alors qu'il n'apparaît pas dans une règle ?

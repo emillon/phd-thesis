@@ -183,15 +183,17 @@
                 { Γ ⊢ \iReturn{e} }
             }
     {Fun}{ \irule{Fun}
-             { Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n,
-                    l_1 : t'_1, …, l_n : t'_p,
-                    \vRet : t \\
-               ∀ i ∈ [1;p], Γ ⊢ e_i : t'_i \\
-               Γ' ⊢ i
+             { Γ' = (Γ - \vRet),
+                    \vec{a} : \vec{t}, \\
+               Γ' ⊢ \vec{e} : \vec{t'} \\
+               Γ'' = Γ',
+                     \vec{l} : \vec{t'},
+                     \vRet : t_r \\
+               Γ'' ⊢ i
              }
-             { Γ ⊢ \mathrm{fun} (a_1, …, a_n)
-                   ((l_1, e_1), …, (l_p, e_p)) \{i\}
-                    : (t_1, …, t_n) → t
+             { Γ ⊢ \mathrm{fun} (\vec{a})
+                   (\textrm{zip}(\vec{l}, \vec{e}) \{i\}
+                    : \vec{t} → t_r
              }
          }
     {Ph-Exp}{ \irule{Ph-Exp}
