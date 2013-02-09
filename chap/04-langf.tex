@@ -602,7 +602,14 @@ pour faire référence à un nom dans le programme).
 Les structures sont notées $\{ l_1 : e_1 ; … ; l_n : e_n \}$ et comme dans le
 cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
 
-% TODO
+Dans le programme, le nom de champ $l$ est complété de la définition complète de
+la structure $S$. Celle-ci n'est pas utilisée dans l'évaluation et sera donc
+décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
+structure dans le code du programme serait fastidieux. Nous décrirons dans le
+chapitre~\ref{cha:implem} comment obtenir automatiquement ces annotations depuis
+un langage comme C qui utilise des noms de structures.
+
+% TODO le faire
 
 \section{Principes}
 
@@ -675,10 +682,10 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \gramlr{Left-values}{
     \begin{align*}
-      lv \gramisa & x     & \textrm{Variable}
-      \\  \gramor & *lv   & \textrm{Déréférencement}
-      \\  \gramor & lv.l  & \textrm{Accès à un champ}
-      \\  \gramor & lv[e] & \textrm{Accès à un élément}
+      lv \gramisa & x      & \textrm{Variable}
+      \\  \gramor & *lv    & \textrm{Déréférencement}
+      \\  \gramor & lv.l_S & \textrm{Accès à un champ}
+      \\  \gramor & lv[e]  & \textrm{Accès à un élément}
     \end{align*}
   }
   \caption{Syntaxe - expressions}
@@ -1471,7 +1478,7 @@ d'évaluation sont mutuellement récursives.
 
   \begin{tikzpicture}
     \node              (a1) {$x$};
-    \node[right of=a1] (a2) {$.l$};
+    \node[right of=a1] (a2) {$.l_S$};
     \node[right of=a2] (a3) {$[2*n]$};
     \node[right of=a3] (a4) {$.g$};
 
@@ -1500,7 +1507,9 @@ ou une variable globale ?
 
 Les règles portant sur le déréférencement et l'accès à un champ de structure
 sont similaires : on commence par évaluer la left-value sur laquelle porte ce
-modificateur, et on place le même modificateur sur le chemin résultant.
+modificateur, et on place le même modificateur sur le chemin résultant. Dans le
+cas des champs de structure, la définition de la structure $S$ n'est pas prise
+en compte.
 
 \begin{mathpar}
   \semrule{Phi-Deref}
@@ -2087,7 +2096,6 @@ donc
 
 \begin{itemize}
 \item faire une macro pour les $Ω$
-\item résoudre le problème des structures
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item C ::= \&C
