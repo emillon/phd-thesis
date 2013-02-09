@@ -694,12 +694,10 @@ Ces lemmes permettent de prouver le théorème suivant :
 \begin{theorem}[Préservation]
   \label{thm:preservation}
 
-  Si une expression est typable et que son évaluation produit une valeur, alors
-  cette valeur est du même type que l'expression.
+  Si une expression est typable, alors un pas d'évaluation ne modifie pas son
+  type :
 
-  Si $Γ ⊢ e : t$ et $e → v$ % TODO
-
-  alors $Γ ⊢ v : t$.
+  Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$, alors $Γ ⊢ e' : t$.
 
 \end{theorem}
 
@@ -722,7 +720,7 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 \item
   page 50 règle CALL une remarque disant que cette règle doit être
   utilisée avec une autre qui va typer le corps de la fonction (mettre
-  la ref) parce que +sinon ça surprend
+  la ref) parce que sinon ça surprend
 \item
   5.5 le fait de choisir une unique variable R t'oblige à ajouter une
   opération de suppression du R de la fonction appelante factice.
