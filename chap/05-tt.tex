@@ -84,8 +84,14 @@ programme est donc mal typé.
       \\ \gramor & \tFloat                       & \textrm{Flottant}
       \\ \gramor & t[]                           & \textrm{Tableau}
       \\ \gramor & t*                            & \textrm{Pointeur}
-      \\ \gramor & \tstruct{s}                   & \textrm{Structure}
+      \\ \gramor & S                             & \textrm{Structure}
       \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
+    \end{align*}
+  }
+
+  \gramlr{Structure}{
+    \begin{align*}
+      S \gramisa & \{ l_1 : t_1; … ; l_n : t_n \}  & \textrm{Structure simple}
     \end{align*}
   }
 
@@ -230,11 +236,21 @@ une fois le type de base du type tableau ($t$ pour $t[]$).
   \disprule{Lv-Index}
 \end{mathpar}
 
+Le typage de l'accès à un champ est facilité par le fait que dans le programme,
+le type complet de la structure est accessible sur le champ.
+
+Dans la définition de cette règle on utilise la notation :
+
+\[
+(l, t) ∈ \{l_1 : t_1 ; … ; l_n : t_n \}
+\eqdef
+∃ i ∈ [1;n],
+l = l_i ∧ t = t_i
+\]
+
 \begin{mathpar}
   \disprule{Lv-Field}
 \end{mathpar}
-
-% TODO
 
 \subsection*{Opérateurs}
 
@@ -326,9 +342,7 @@ Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
   \disprule{Array}
 \end{mathpar}
 
-Pour qu'un littéral de structure soit bien typé, il faut que chacun de ses noms
-de champs corresponde à un même nom de type structure, avec le bon type pour
-chaque champ.
+Un littéral de structure est bien typé si ses champs sont bien typés.
 
 \begin{mathpar}
   \disprule{Struct}
@@ -474,8 +488,8 @@ expression.
     \item
       si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[]$ et $Γ ⊢ e : \tInt$
     \item
-      si $Γ ⊢ lv.l : t$, alors $Γ ⊢ lv : \{ l: t ; … \}$
-    % TODO structure
+      si $Γ ⊢ lv.l_S : t$, alors $Γ ⊢ lv : S$
+
   \end{itemize}
 \item
   Appel de fonction : si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
@@ -496,6 +510,8 @@ expression.
 \end{itemize}
 
 \end{lemma}
+
+% TODO finir la preuve
 
 \begin{proof}
 
@@ -684,6 +700,9 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 
 \begin{itemize}
 \item résoudre le problème des structures
+\item virer la macro tstruct
+\item virer la def de struct en phrase
+\item structures récursives et corécursives
 \item
   5.3 left-value règle LV-FIELD le S sort un peu du chapeau. Est-ce que
   tu ne devrait pas avoir un couple $\Gamma, S$ dans tes jugements plutôt

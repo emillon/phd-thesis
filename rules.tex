@@ -31,10 +31,10 @@
                   { Γ ⊢ lv[e] : t }
     }
     {Lv-Field}{ \irule{Lv-Field}
-                  { (s, l, t_l) ∈ S \\
-                    Γ ⊢ lv : \tstruct{s}
+                  { (l, t) ∈ S \\
+                    Γ ⊢ lv : S
                   }
-                  { Γ ⊢ lv.l : t_l }
+                  { Γ ⊢ lv.l_S : t }
     }
     {Op-Int}{ \irule{Op-Int}
                 { \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
@@ -130,12 +130,12 @@
                }
            }
     {Struct}{ \irule{Struct}
-                { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i \\
-                  ∀ i ∈ [1;n], (s, l_i, t_i) ∈ S
+                { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i
                 }
                 { Γ ⊢ \{ l_1 : e_1 ;
                      … ; l_n : e_n \}
-                    : \tstruct{s}
+                    : \{ l_1 : t_1 ;
+                     … ; l_n : t_n \}
                 }
             }
     {Call}{ \irule{Call}
