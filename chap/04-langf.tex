@@ -723,11 +723,6 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
     \begin{align*}
       p \gramisa & x = e             & \textrm{Variable globale}
       \\ \gramor & e                 & \textrm{Évaluation d'expression}
-      \\ \gramor & \tstruct{s}
-                      \{ x_1 : t_1
-                       ; …
-                       ;  x_n : t_n
-                      \}             & \textrm{Déclaration de structure}
     \end{align*}
   }
 
@@ -1982,13 +1977,6 @@ Il est donc logique que l'évaluation d'une phrase fasse passer d'un état mémo
   \ph{m}{p}{m'}
 \]
 
-La définition d'une structure est ignorée. En effet, celle-ci ne sert qu'au
-typage.
-
-\begin{mathpar}
-  \semrule{Ph-Struct}
-\end{mathpar}
-
 L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$.
@@ -2122,6 +2110,7 @@ Limitations :
 \begin{itemize}
 \item (ou feature) variables non initialisées
 \item tableaux de taille dynamique ?
+\item structures récursives et corécursives
 \end{itemize}
 
 % vim: spelllang=fr

@@ -204,20 +204,6 @@
                 }
                 { \typh{Γ}{x=e}{Γ'} }
             }
-    {Ph-Struct}{ \irule{Ph-Struct}
-                   { S' =
-                     (x_1, t_1, s),
-                     …
-                     (x_n, t_n, s)
-                   }
-                   { \typh{Γ}{ \tstruct{s}
-                                  \{ x_1 : t_1
-                                   ; …
-                                   ;  x_n : t_n
-                                  \}
-                              }{Γ}
-                   }
-               } % TODO
     {END}
 }
 
@@ -338,10 +324,6 @@
     {Return}{ \irule{Return}
               { }
               { \mmi{m}{\iReturn{v};i}{m}{\iReturn{e}} }
-    }
-    {Ph-Struct}{ \irule{Ph-Struct}
-                   { }
-                   {\ph{m}{\tstruct{s} \{ … \}}{m}}
     }
     {Ph-Exp}{ \irule{Ph-Exp}
                 {\mm{m}{e}{m'}{v}}
