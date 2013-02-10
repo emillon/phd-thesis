@@ -240,18 +240,15 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = Ω_{ptr}$. Donc d'après
 
 \[ \left( \disprule{Addr} \right) \]
 
-On applique l'hypothèse de récurrence à $lv$, en faisant les mêmes remarques que
-dans le cas \textsc{Lv-Deref} par exemple.
+On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $lv$.
 
 Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
 \textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. On détaille le cas où
-$lv$ est une valeur.
+$lv =  φ$.
 
-D'après le lemme~\ref{lemma:forme-lv} ...
+% TODO même remarques sur les règles que Lv-Field
 
-Comme $\mcomp{Γ}{m}$ et $Γ ⊢ lv : t$,
-
-\textsc{Exp-AddrOf}
+\[ \left( \semrule{Exp-AddrOf} \right) \]
 
 % TODO expliquer un peu mieux
 
