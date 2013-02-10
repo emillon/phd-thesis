@@ -910,6 +910,7 @@ pas capturé (il n'y a pas de clôture lexicale).
       Ω \gramisa & Ω_{array}  & \textrm{Débordement de tableau}
       \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
       \\ \gramor & Ω_{div}    & \textrm{Division par zéro}
+      \\ \gramor & Ω_{field}  & \textrm{Erreur de champ}
     \end{align*}
   }
 
@@ -1214,14 +1215,21 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   L'accesseur $[ \cdot ]_L$ permet de lire et de modifier un champ de ces
   valeurs.
 
-  C'est une erreur d'accéder à un champ d'une valeur non structure ($4[l]_L$ par
-  exemple).
+  L'erreur $Ω_{field}$ est levée si on accède à un champ non existant.
 
   \begin{align*}
-    \{ l_1 : v_1; … ; l_n : v_n \}[l_i]_L = & v_i \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l_p ← v]_L = & \{ l_1 : v'_1; … ; l_n : v'_n \} \\
-          \mbox{ où } & v'_p = v \\
-                      & ∀ i ≠ p, v'_i = v_i
+    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L =
+          & v_i \mbox{ si } ∃i∈[1;n], l=l_i\\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = &
+        \{ l_1 : v_1 \\
+       & ; … \\
+       & ; l_{p-1} : v_{p-1} \\
+       & ; l_p : v \\
+       & ; l_{p+1} : v_{p+1} \\
+       & ; … \\
+       & ; l_n : v_n \} \mbox{ si } ∃p ∈ [1;n], l = l_p \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L = & Ω_{field} \mbox{ sinon} \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = & Ω_{field} \mbox{ sinon}
   \end{align*}
 
 \end{definition}
@@ -2093,6 +2101,7 @@ donc
 \item faire une macro pour les $Ω$
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
+\item cas d'erreur si on accède à un index d'une struct ou vice versa?
 \item C ::= \&C
 \item changer les para de présentation des règles
 \item widehats sur les constantes ?
