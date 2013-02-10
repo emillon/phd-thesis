@@ -334,3 +334,15 @@
 \def\lensPutX#1{\mathrm{put}_{#1}}
 \def\lensGet#1#2{\lensGetX{#1}(#2)}
 \def\lensPut#1#2#3{\lensPutX{#1}(#2, #3)}
+
+% Erreurs
+
+\def\serr#1{
+  \switch{#1}
+    {taint}{Ω_{taint}}
+    {array}{Ω_{array}}
+    {ptr}{Ω_{ptr}}
+    {div}{Ω_{div}}
+    {field}{Ω_{field}}
+    {END}
+}

@@ -592,7 +592,7 @@ seulement un pointeur vers une valeur de type \tUnit.
 \paragraph{Tableaux :} ce sont des valeurs composées qui contiennent un certain
 nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
 valeurs par un indice entier, qui dans le cas général n'est pas connu à la
-compilation. C'est une erreur ($Ω_{array}$) d'accéder à un tableau en dehors de
+compilation. C'est une erreur ($\serr{array}$) d'accéder à un tableau en dehors de
 ses bornes, c'est à dire en dehors de $[0;n-1]$ pour un tableau à $n$
 éléments\footnote{Comme le fait remarquer Dijkstra, seule la numérotation à
 partir de 0 a du sens\cite{EWD831}.}.
@@ -865,7 +865,7 @@ pas capturé (il n'y a pas de clôture lexicale).
 
 % TODO citer sur les closures ?
 
-\item $Ω$ : une erreur. Par exemple le résultat de $5 / 0$ est $Ω_{div}$.
+\item $Ω$ : une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
 
 % TODO regrouper la présentation des différents cas d'erreur
 
@@ -907,10 +907,10 @@ pas capturé (il n'y a pas de clôture lexicale).
 
   \gramlr{Erreur}{
     \begin{align*}
-      Ω \gramisa & Ω_{array}  & \textrm{Débordement de tableau}
-      \\ \gramor & Ω_{ptr}    & \textrm{Erreur de pointeur}
-      \\ \gramor & Ω_{div}    & \textrm{Division par zéro}
-      \\ \gramor & Ω_{field}  & \textrm{Erreur de champ}
+      Ω \gramisa & \serr{array}  & \textrm{Débordement de tableau}
+      \\ \gramor & \serr{ptr}    & \textrm{Erreur de pointeur}
+      \\ \gramor & \serr{div}    & \textrm{Division par zéro}
+      \\ \gramor & \serr{field}  & \textrm{Erreur de champ}
     \end{align*}
   }
 
@@ -982,7 +982,7 @@ Un certain nombre d'opérations est possibles sur les valeurs
 \item
   les opérations arithmétiques $+$, $-$, $×$, $/$ et $\%$ sur les entiers.
   L'opérateur $\%$ correspond au modulo (reste de la division euclidienne).
-  En cas de division par zéro, l'erreur $Ω_{div}$ est levée.
+  En cas de division par zéro, l'erreur $\serr{div}$ est levée.
 \item
   les versions ``pointées'' $+.$, $-.$, $×.$ et $/.$ sur les flottants
 \item
@@ -1006,7 +1006,7 @@ Un certain nombre d'opérations est possibles sur les valeurs
   habituelle sur les entiers et les flottants. Sur les références mémoires,
   elles sont définies dans le cas où les deux opérarandes sont de la forme
   $φ[\cdot]$ par : $φ[n]~\opbin~φ[m] \eqdef n~\opbin~m$. Dans les autres cas,
-  l'erreur $Ω_{ptr}$ est renvoyée.
+  l'erreur $\serr{ptr}$ est renvoyée.
 \item
   les opérateurs bit à bit sont définis sur les entiers. $\&$, $|$ et $\opxor$
   représentent respectivement la conjonction, la disjonction et la disjonction
@@ -1039,7 +1039,7 @@ Un certain nombre d'opérations est possibles sur les valeurs
   c'est à dire que $!0 = 1$ et si $n ≠ 0$, $!n = 0$.
 \end{itemize}
 
-% TODO que se passe-t'il dans les autres cas ? introduire un Ω_{typ} ?
+% TODO que se passe-t'il dans les autres cas ? introduire un \serr{typ} ?
 
 \begin{definition}[Recherche de variable]
 
@@ -1215,7 +1215,7 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   L'accesseur $[ \cdot ]_L$ permet de lire et de modifier un champ de ces
   valeurs.
 
-  L'erreur $Ω_{field}$ est levée si on accède à un champ non existant.
+  L'erreur $\serr{field}$ est levée si on accède à un champ non existant.
 
   \begin{align*}
     \{ l_1 : v_1; … ; l_n : v_n \}[l]_L =
@@ -1228,8 +1228,8 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
        & ; l_{p+1} : v_{p+1} \\
        & ; … \\
        & ; l_n : v_n \} \mbox{ si } ∃p ∈ [1;n], l = l_p \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L = & Ω_{field} \mbox{ sinon} \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = & Ω_{field} \mbox{ sinon}
+    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L = & \serr{field} \mbox{ sinon} \\
+    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = & \serr{field} \mbox{ sinon}
   \end{align*}
 
 \end{definition}
@@ -1242,13 +1242,13 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
 
   \begin{align*}
     \{ v_1 ; … ; v_n \} [i]_I   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
-    \{ v_1 ; … ; v_n \} [i]_I   = & Ω_{array} \textrm{ sinon} \\
+    \{ v_1 ; … ; v_n \} [i]_I   = & \serr{array} \textrm{ sinon} \\
     \{ v_1 ; … ; v_n \} [i←v]_I = & \{ v'_1 ; … ; v'_n \} \textrm{ si } i ∈ [0;n-1] \\
                       \mbox{ où } & \begin{cases}
                                       v'_i = v \\
                                       ∀j≠i, v'_j = v_j \\
                                     \end{cases} \\
-    \{ v_1 ; … ; v_n \} [i←v]_I = & Ω_{array} \textrm{ sinon} \\
+    \{ v_1 ; … ; v_n \} [i←v]_I = & \serr{array} \textrm{ sinon} \\
   \end{align*}
 
   % TODO off by ones...
@@ -1284,8 +1284,8 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   Enfin, l'accès à la mémoire par le pointeur nul provoque une erreur :
 
   \begin{align*}
-    m[\eNull    ]_Φ = & Ω_{ptr} \\
-    m[\eNull ← v]_Φ = & Ω_{ptr} \\
+    m[\eNull    ]_Φ = & \serr{ptr} \\
+    m[\eNull ← v]_Φ = & \serr{ptr} \\
   \end{align*}
 
 \end{definition}
@@ -1574,7 +1574,7 @@ chaque opérateur $\opbin$, correspond un opérateur sémantique $\widehat{\opbi
 qui agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
 classique entre entiers.
 Comme précisé dans la section~\ref{sec:sem-ops}, la division par zéro via $/$,
-$\%$ ou $/.$ provoque l'erreur $Ω_{div}$.
+$\%$ ou $/.$ provoque l'erreur $\serr{div}$.
 
 \begin{mathpar}
   \semrule{Exp-UnOp}
@@ -1601,10 +1601,10 @@ d'une même structure. Autrement c'est une erreur de manipulation de pointeurs :
 % TODO quoter le passage pertinent de la norme
 
 \begin{align*}
-φ~+_p~m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
-φ~-_p~m = & Ω_{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
-\eNull~+_p~m = & Ω_{ptr} \\
-\eNull~-_p~m = & Ω_{ptr} \\
+φ~+_p~m = & \serr{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
+φ~-_p~m = & \serr{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
+\eNull~+_p~m = & \serr{ptr} \\
+\eNull~-_p~m = & \serr{ptr} \\
 \end{align*}
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
@@ -2098,7 +2098,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item faire une macro pour les $Ω$
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?

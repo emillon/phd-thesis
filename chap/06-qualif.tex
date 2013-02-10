@@ -53,7 +53,7 @@ C \gramisa & …
 \gramlr{États}{
 \begin{align*}
 ms \gramisa & …
-\\  \gramor & Ω_{taint} & \textrm{Erreur de souillure}
+\\  \gramor & \serr{taint} & \textrm{Erreur de souillure}
 \end{align*}
 }
 
@@ -72,7 +72,7 @@ ms \gramisa & …
   à une valeur $\vTainted{φ}$ signifiant que l'objet pointé se situe en
   espace utilisateur
 \item
-  enfin, on définit une nouvelle erreur $Ω_{tainted}$ produite par le
+  enfin, on définit une nouvelle erreur $\serr{taint}$ produite par le
   déréférencement d'un pointeur ayant une telle valeur.
 \end{itemize}
 
@@ -101,7 +101,7 @@ redéfinir la lentille $Φ$ utilisée ci-dessus (définition~\ref{def:acces-phi}
 On rajoute donc le cas :
 
 \begin{align*}
-Φ(\vTainted{φ}) =& Ω_{taint}
+Φ(\vTainted{φ}) =& \serr{taint}
 \end{align*}
 
 \section{Insuffisance des types simples}
@@ -117,7 +117,7 @@ trivialement le système de types avec la règle suivante :
 
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
-$Ω_{array}$ ou $Ω_{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
+$\serr{array}$ ou $\serr{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
 
 Par exemple, supposons que $x$ soit une variable globale entière, et posons $e =
 * \eTaint {\& x}$.
@@ -152,17 +152,17 @@ sous $m$ provoque une erreur, comme le montre la dérivation suivante.
       {
         \inferrule*
           { }
-          {m[*\vTainted{x}] = Ω_{taint}}
+          {m[*\vTainted{x}] = \serr{taint}}
       }
-      { \mm{m}{* \eTaint {\& x}}{m}{Ω_{taint}} }
+      { \mm{m}{* \eTaint {\& x}}{m}{\serr{taint}} }
     \\
     \irule{Eval-Err}
       { }
       {
-        \msi{m}{Ω_{taint}} → Ω_{taint}
+        \msi{m}{\serr{taint}} → \serr{taint}
       }
   }
-  {\msi{m}{* \eTaint {\& x}} → Ω_{taint}}
+  {\msi{m}{* \eTaint {\& x}} → \serr{taint}}
 \end{mathpar}
 
 \section{Extensions du système de types}
@@ -322,7 +322,7 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
   \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
-  \item $∃ Ω ∈ \{Ω_{div},Ω_{array},Ω_{ptr}\}, \msi{m}{e} → Ω$
+  \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
 \end{theorem}
 

@@ -42,8 +42,8 @@ d'évaluation \textsc{Phi-Var} s'applique donc.
 
   Dans le premier cas, la règle \textsc{Phi-Deref} s'applique :
   $\mms{e}{\widehat{*}φ}$.
-  Dans le second, puisque $\msi{m}{*\eNull} → Ω_{ptr}$, on a
-  $\msi{m}{e} → Ω_{ptr}$.
+  Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
+  $\msi{m}{e} → \serr{ptr}$.
 
 \item
   $\mm{m}{lv}{m'}{e'}$.
@@ -76,7 +76,7 @@ D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\{v_1; …; v_p\}\widehat{[n]}} $.
 Deux cas sont à distinguer :
 si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
-Sinon elle vaut $Ω_{array}$ et $\msi{m}{lv[e]} → Ω_{array}$ par \textsc{Exp-Err}.
+Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
 
 % TODO attention à l'off by one
 
@@ -107,7 +107,7 @@ On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $l
 
 \item $lv = φ$
 Alors \textsc{Phi-Struct} s'applique. Puisque $(l, t) ∈ S$, l'accès au champ $l$
-ne provoque pas d'erreur $Ω_{field}$. Donc $\mm{m}{e}{m}{φ[l]}$.
+ne provoque pas d'erreur $\serr{field}$. Donc $\mm{m}{e}{m}{φ[l]}$.
 
 \item $\mm{m}{lv}{m'}{lv'}$
 En appliquant \textsc{Ctx} avec $C = \ctxEmpty.l_S$, il vient
@@ -143,8 +143,8 @@ $\msi{m}{lv} → Ω$.
           $ \opbin ∈ \{ / ; \% ; /. \} $
           et
           $ v_2 = 0 $
-          ) où alors $v_1~\widehat{\opbin}~v_2 = Ω_{div}$. Dans ce cas, on a
-          alors par \textsc{Exp-Err} $\msi{m}{e} → Ω_{div}$.
+          ) où alors $v_1~\widehat{\opbin}~v_2 = \serr{div}$. Dans ce cas, on a
+          alors par \textsc{Exp-Err} $\msi{m}{e} → \serr{div}$.
 
         \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
 
@@ -232,8 +232,8 @@ On se réfère ensuite à la définition de $\widehat{\opbin}$
 alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
 
 Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
-$φ'[m]$), on a $e_1~\widehat{\opbin}~n = Ω_{ptr}$. Donc d'après
-\textsc{Exp-Err}, $\msi{m}{e} → Ω_{ptr}$.
+$φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
+\textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
 
 %}}}
 \paragraph{\textsc{Addr} :} % {{{ TODO
