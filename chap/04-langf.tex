@@ -1365,7 +1365,7 @@ décrit dans la figure~\ref{fig:ctx-sub}.
   \ctxSub{(\ctxOp{v}{C}     )}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}}      \\
   \ctxSub{(\ctxUnOp{C}      )}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}}       \\
   \ctxSub{(\ctxLvDeref{C}   )}{e_0} = & \ctxLvDeref{\ctxSub{C}{e_0}}    \\
-  \ctxSub{(\ctxLvField{φ}{C})}{e_0} = & \ctxLvField{φ}{\ctxSub{C}{e_0}} \\
+  \ctxSub{(\ctxLvField{C}{l_S})}{e_0} = & \ctxLvField{\ctxSub{C}{e_0}}{l_S} \\
   \ctxSub{(\ctxLvIndex{φ}{C})}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
   \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
   \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
@@ -1397,7 +1397,7 @@ décrit dans la figure~\ref{fig:ctx-sub}.
 % C_L
 \ctxSubL{\ctxEmpty}{l_0} = & \ctxEmpty \\
 \ctxSubL{\ctxLvDeref{C_L}}{l_0} = & \ctxLvDeref{\ctxSubL{C_L}{l_0}} \\
-\ctxSubL{\ctxLvField{C_L}{l}}{l_0} = & \ctxLvField{\ctxSubL{C_L}{l_0}}{l} \\
+\ctxSubL{\ctxLvField{C_L}{l_S}}{l_0} = & \ctxLvField{\ctxSubL{C_L}{l_0}}{l_S} \\
 \ctxSubL{\ctxLvIndex{C_L}{e}}{l_0} = & \ctxLvIndex{\ctxSubL{C_L}{l_0}}{e} \\
 \ctxSub{\ctxLvIndex{φ}{C}}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
 \\

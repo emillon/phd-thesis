@@ -1,6 +1,11 @@
-\section{Preuve du théorème~\ref{thm:progres}}
-
+\section{Progrès}
 \label{proof:progres}
+
+On prouve de manière récursive mutuelle les
+théorèmes~\ref{thm:progres}
+et~\ref{thm:progres-lv}
+
+% TODO mouais, à préciser mieux.
 
 \begin{proof}
 
@@ -94,9 +99,27 @@ $\msi{m}{lv[e]} → Ω$.
 
 \end{itemize}
 %}}}
-\paragraph{\textsc{Lv-Field} :}%{{{ % TODO
+\paragraph{\textsc{Lv-Field} :}%{{{
 
-\[ \left( \disprule{Lv-Field} \right) \]
+On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $lv$.
+
+\begin{itemize}
+
+\item $lv = φ$
+Alors \textsc{Phi-Struct} s'applique. Puisque $(l, t) ∈ S$, l'accès au champ $l$
+ne provoque pas d'erreur $Ω_{field}$. Donc $\mm{m}{e}{m}{φ[l]}$.
+
+\item $\mm{m}{lv}{m'}{lv'}$
+En appliquant \textsc{Ctx} avec $C = \ctxEmpty.l_S$, il vient
+$\mm{m}{lv}{m'}{lv'}$.
+% TODO Ctx-Lv en fait
+
+\item $\msi{m}{lv} → Ω$
+En appliquant \textsc{Eval-Err} avec $C = \ctxEmpty.l_S$, on a
+$\msi{m}{lv} → Ω$.
+% TODO Pas une sorte de Err-Lv ?
+
+\end{itemize}
 
 %}}}
   \paragraph{\textsc{Op-Int} :} % {{{

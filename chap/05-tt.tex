@@ -603,18 +603,6 @@ $Γ = x:t$).
 
 \end{lemma}
 
-\begin{lemma}[Forme des left-values évaluées]
-  \label{lemma:forme-lv}
-
-  Si $\mmstar{m}{lv}{m'}{v}$, $v$ est de la forme $φ$ (référence mémoire) ou $Ω$
-  (erreur).
-
-  % TODO coinduction avec thm:progres ?
-
-\end{lemma}
-
-% TODO à prouver
-
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès accompagné
 d'une notion de compatibilité entre envionnements de typage $Γ$ et états mémoire
 $m$.
@@ -661,7 +649,20 @@ $m$.
 
 \end{theorem}
 
-La preuve de ce théorème se trouve en annexe~\ref{proof:progres}.
+\begin{theorem}[Progrès pour les left-values]
+  \label{thm:progres-lv}
+
+  Si $\mmstar{m}{lv}{m'}{v}$, $v$ est de la forme $φ$ (référence mémoire) ou $Ω$
+  (erreur).
+
+\end{theorem}
+
+% TODO à prouver et rerédiger
+
+La preuve des
+théorèmes~\ref{thm:progres}
+et~\ref{thm:progres-lv}
+se trouve en annexe~\ref{proof:progres}.
 
 \begin{lemma}[Permutation]
   L'ordre dans lequel les variables apparaissent dans un environnement
