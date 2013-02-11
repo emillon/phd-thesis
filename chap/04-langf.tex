@@ -290,6 +290,23 @@ r [ i ← a ]_Δ \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
 
 \end{definition}
 
+Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
+
+\begin{figure}
+
+  \begin{align*}
+    \lensGet{Δ(b)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = & \lensInnerStar{blue!30} \\
+    \lensGet{Δ(c)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = & \lensInner{blue!30} \\
+    \lensPut{Δ(b)}{\lensInnerStar{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = &
+      \lensNodeBigIdx{green!30}{blue!30}{red!30}{blue!30}{blue!30} \\
+    \lensPut{Δ(c)}{\lensInner{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = &
+      \lensNodeBigIdx{green!30}{blue!30}{blue!30}{red!30}{blue!30} \\
+  \end{align*}
+
+\caption{Fonctionnement d'une lentille indexée}
+\label{fig:lens-idx-ex}.
+\end{figure}
+
 \begin{example}[Lentille "n\ieme élément d'un tuple"]
 
 Soient $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
