@@ -959,28 +959,24 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 
 \begin{figure}%{{{
 
-  \gramlr{Pile}{
-    \begin{align*}
-      s \gramisa & []                       & \textrm{Pile vide}
-      \\ \gramor & \{ x_1 ; … ; x_n \} :: s & \textrm{Ajout d'un cadre}
-    \end{align*}
-  }
-
-  \gramlr{État mémoire}{
-    \begin{align*}
-      m \gramisa & (s,                    & \textrm{Pile}      \\
-                 & \{ x_1 ;…; x_n \},     & \textrm{Globales}  \\
-                 & \{a_1↦v_1;…;a_p↦v_p\}) & \textrm{Valeurs}
-    \end{align*}
-  }
-
-  \gramlr{État d'interpréteur}{
-    \begin{align*}
-      Ξ \gramisa & \msi{m}{e} & \textrm{Expression, mémoire}
-      \\ \gramor & \msi{m}{i} & \textrm{Instruction, mémoire}
-      \\ \gramor & Ω          & \textrm{Erreur}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Pile}{s}
+    { []                       }{Pile vide}
+    { \{ x_1 ; … ; x_n \} :: s }{Ajout d'un cadre}
+    {END}
+  \\
+  \gramdef{État mémoire}{m}
+    { (s,                    }{Pile}
+    { \{ x_1 ;…; x_n \},     }{Globales}
+    { \{a_1↦v_1;…;a_p↦v_p\}) }{Valeurs}
+    {END}
+  \\
+  \gramdef{État d'interpréteur}{Ξ}
+    { \msi{m}{e} }{Expression, mémoire}
+    { \msi{m}{i} }{Instruction, mémoire}
+    { Ω          }{Erreur}
+    {END}
+  \end{align*}
 
   \caption{Composantes d'un état mémoire}
   \label{fig:interp}
@@ -2112,6 +2108,7 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item dans figure~\ref{fig:interp} passer en doublet
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?
