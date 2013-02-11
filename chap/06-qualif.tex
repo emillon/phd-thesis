@@ -191,20 +191,18 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 
 \begin{figure}%{{{
 
-\gramlr{Qualificateurs}{
 \begin{align*}
-q \gramisa & \qKernel & \textrm{Donnée noyau (sûre)}
-\\ \gramor & \qUser   & \textrm{Donnée utilisateur (non sûre)}
+\gramdef{Qualificateurs}{q}
+  { \qKernel }{Donnée noyau (sûre)}
+  { \qUser   }{Donnée utilisateur (non sûre)}
+  {END}
+\\
+\gramdef{Types}{t}
+  { … }{}
+  { \msout{t *} }{\textrm{Pointeur}}
+  { t q* }{Pointeur qualifié}
+  {END}
 \end{align*}
-}
-
-\gramlr{Types}{
-\begin{align*}
-t \gramisa & …
-\\ \gramor & \msout{t *} & \msout{\textrm{Pointeur}}
-\\ \gramor & t q* & \textrm{Pointeur qualifié}
-\end{align*}
-}
 
 \caption{Changements liés aux qualificateurs de types}
 \label{fig:qualif-changes-typ}
