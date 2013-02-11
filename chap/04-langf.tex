@@ -58,24 +58,24 @@ où
 Plutôt que d'écrire cette définition précise mais chargée, on écrira à la place
 une définition en compréhension :
 
-\gramlr{Listes}{
 \begin{align*}
-  l \gramisa & []   & \textrm{Liste vide}
-  \\ \gramor & n::l & \textrm{Construction de liste}
+\gramdef{Listes}{l}
+  {[]}{Liste vide}
+  {n::l}{Construction de liste}
+  {END}
 \end{align*}
-}
 
 Chaque ensemble est identifié de manière unique par les noms de variables
 métasyntaxiques : $n$ pour les entiers et $l$ pour les listes ici. Si plusieurs
 métavariables du même ensemble doivent apparaître, elles sont indicées. Par
 exemple, on peut définir des arbres binaires d'entiers de la manière suivante :
 
-\gramlr{Arbres binaires}{
 \begin{align*}
-  a \gramisa & \textsc{F}           & \textrm{Feuille}
-  \\ \gramor & \textsc{N}(a_1, n, a_2) & \textrm{Nœud}
+\gramdef{Arbres binaires}{a}
+              { \textsc{F}              }{Feuille}
+              { \textsc{N}(a_1, n, a_2) }{Nœud}
+          {END}
 \end{align*}
-}
 
 Cette notation a aussi l'avantage de s'étendre facilement aux définitions
 mutuellement récursives.

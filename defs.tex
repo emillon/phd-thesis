@@ -385,11 +385,6 @@
 }
 
 % Grammar definition
-\def\gramtablebody#1#2#3#4#5{
-  \textrm{#1} & & #2 \gramisa &
-  \grambuildtable{#3}{#4}{#5}
-}
-
 \def\grambuildtable#1#2#3{
   \ifstrequal{#3}{END}{
     #1 & \textrm{#2} \\
@@ -400,5 +395,6 @@
 }
 
 \def\gramdef#1#2#3#4#5{
-  \gramtablebody{#1}{#2}{#3}{#4}{#5}
+  \textrm{#1} & & #2 \gramisa &
+  \grambuildtable{#3}{#4}{#5}
 }
