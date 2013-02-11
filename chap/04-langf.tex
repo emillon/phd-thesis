@@ -760,26 +760,24 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 \begin{figure}
 
-  \gramlr{Opérateurs binaires}{
-    \begin{align*}
-      \opbin \gramisa & +,-,\times,/,\%   & \textrm{Arithmétique entière}
-      \\     \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
-      \\     \gramor  & +_p, -_p          & \textrm{Arithmétique de pointeurs}
-      \\     \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
-      \\     \gramor  & \&,|,\opxor       & \textrm{Opérateurs bit à bit}
-      \\     \gramor  & \&\&,||           & \textrm{Opérateurs logiques}
-      \\     \gramor  & \ll, \gg          & \textrm{Décalages}
-    \end{align*}
-  }
-
-  \gramlr{Opérateurs unaires}{
-    \begin{align*}
-      \opun \gramisa & +,-   & \textrm{Arithmétique entière}
-      \\    \gramor  & +.,-. & \textrm{Arithmétique flottante}
-      \\    \gramor  & \sim  & \textrm{Négation bit à bit}
-      \\    \gramor  & !     & \textrm{Négation logique}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Opérateurs binaires}{\opbin}
+      { +,-,\times,/,\% }{Arithmétique entière}
+      { +.,-.,\times.,/.}{Arithmétique flottante}
+      { +_p, -_p        }{Arithmétique de pointeurs}
+      { =,≠,≤,≥,<,>     }{Comparaisons}
+      { \&,|,\opxor     }{Opérateurs bit à bit}
+      { \&\&,||         }{Opérateurs logiques}
+      { \ll, \gg        }{Décalages}
+      {END}
+  \\
+  \gramdef{Opérateurs unaires}{\opun}
+      { +,-   }{Arithmétique entière}
+      { +.,-. }{Arithmétique flottante}
+      { \sim  }{Négation bit à bit}
+      { !     }{Négation logique}
+      {END}
+  \end{align*}
 
   \caption{Syntaxe - opérateurs}
   \label{fig:stx-ops}
