@@ -727,37 +727,32 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 \end{figure}
 
 \begin{figure}
-  \gramlr{Instructions}{
-    \begin{align*}
-      i \gramisa & \iPass        & \textrm{Instruction vide}
-      \\ \gramor & i;i           & \textrm{Séquence}
-      \\ \gramor & e             & \textrm{Expression}
-      \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
-      \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
-      \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
-    \end{align*}
-  }
 
-  \gramlr{Fonctions}{
-    \begin{align*}
-      f \gramisa & \mathrm{fun} (x_1, …, x_n)    & \textrm{Arguments} \\
-                 & ((x'_1, e_1), …, (x'_p, e_p)) & \textrm{Variables locales} \\
-                 & \{ i \}                       & \textrm{Corps} \\
-    \end{align*}
-  }
-
-  \gramlr{Phrases}{
-    \begin{align*}
-      p \gramisa & x = e             & \textrm{Variable globale}
-      \\ \gramor & e                 & \textrm{Évaluation d'expression}
-    \end{align*}
-  }
-
-  \gramlr{Programme}{
-    \begin{align*}
-      P \gramisa & (p_1, …, p_n) & \textrm{Phrases}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Instructions}{i}
+                 { \iPass        }{Instruction vide}
+                 { i;i           }{Séquence}
+                 { e             }{Expression}
+                 { \iIf{e}{i}{i} }{Alternative}
+                 { \iWhile{e}{i} }{Boucle}
+                 { \iReturn{e}   }{Retour de fonction}
+                 {END}
+  \\
+  \gramdef{Fonctions}{f}
+                 { \mathrm{fun} (x_1, …, x_n)    }{Arguments}
+                 { ((x'_1, e_1), …, (x'_p, e_p)) }{Variables locales}
+                 { \{ i \}                       }{Corps}
+                 {END}
+  \\
+  \gramdef{Phrases}{p}
+                 { x = e }{Variable globale}
+                 { e     }{Évaluation d'expression}
+                 {END}
+  \\
+  \gramdef{Programme}{P}
+                 { (p_1, …, p_n)}{Phrases}
+                 {END}
+  \end{align*}
 
   \caption{Syntaxe - instructions}
   \label{fig:stx}
