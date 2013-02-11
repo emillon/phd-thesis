@@ -67,9 +67,7 @@ d'exploitation, qui possède de nombreux points d'entrée. D'autre part,
 il est très difficile de faire passer à l'échelle un interpréteur abstrait
 \cite{AstreeScale,coverityBillion}.
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-\begin{figure}
+\begin{figure}%{{{
 \centering
 \subbottom[
   L'ensemble des états d'erreur est calculable (zone hachurée)…
@@ -207,9 +205,7 @@ il est très difficile de faire passer à l'échelle un interpréteur abstrait
 }
 \label{fig:ia}
 
-\end{figure}
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
+\end{figure}%}}}
 
 \begin{figure}%{{{
 \centering
@@ -446,6 +442,13 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
   \label{fig:dom-abstraits}
 \end{figure}%}}}
 
+En plus des domaines numériques, il est nécessaire d'employer des domaines
+spécialisés dans la modélisation de la mémoire. Cela est nécessaire pour pouvoir
+"suivre" les pointeurs. Par exemple, on peut représenter un pointeur par un
+ensemble de variables possiblement pointées et une valeur abstraite représentant
+le décalage (\emph{offset}) du pointeur par rapport au début de la zone mémoire.
+Cette valeur peut elle-même être abstraite par un domaine numérique.
+
 \subsection*{TODO}
 
 \begin{itemize}
@@ -453,6 +456,8 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 \item CGS \cite{cgs},
 \item Astrée : presentation\cite{Astree04,Astree05},
 \item Penjili
+\item difficultés : flottants, pointeurs sur fonction, allocation dynamique,
+  casts entiers/pointeurs
 \end{itemize}
 
 \section{Typage}
