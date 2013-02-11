@@ -359,88 +359,91 @@ extremales des variables (figure~\ref{fig:dom-intvl}).
 \end{figure} % }}}
 
 Lorsque plusieurs variables sont analysées en même temps, utiliser de tels
-domaines revient à considérer un produit cartésien d'ensembles :
-
-\begin{center}
-  \begin{tikzpicture}
-  \draw[->] (0,-1) -- (0,3);
-  \draw[->] (-1,0) -- (4,0);
-
-  \draw[fill=red!30] (1,1) rectangle (3,2);
-
-  \draw[dashed] (3,1) -- (3,0);
-  \draw[dashed] (1,1) -- (1,0);
-
-  \draw[dashed] (1,2) -- (0,2);
-  \draw[dashed] (1,1) -- (0,1);
-
-  \draw[line width=3pt] (0,1) -- (0,2);
-  \draw[line width=3pt] (3,0) -- (1,0);
-
-  \end{tikzpicture}
-\end{center}
+domaines revient à considérer un produit cartésien d'ensembles
+(figure~\ref{fig:dom-cartesien})
 
 Cela revient à oublier les relations entre les variables. Des domaines abstraits
 plus précis permettent de retenir celles-ci. Pour ce faire, il faut modéliser
-l'ensemble des valeurs des variables comme un tout.
+l'ensemble des valeurs des variables comme un tout. Parmi les domaines
+relationnels courants on peut citer :
 
-\paragraph{Le domaines des polyèdres} est historiquement l'un des premiers
+\begin{itemize}
+
+\item Le domaine des polyèdres, historiquement l'un des premiers
 domaines relationnels. Il permet de retenir tous les invariants affines entre
 fonctions (figure~\ref{fig:dom-poly}).
 
-\begin{figure}%{{{
-  \centering
-
-  \begin{tikzpicture}[scale=0.5]
-  \draw[->] (0,-1) -- (0,6);
-  \draw[->] (-1,0) -- (8,0);
-
-  \draw[fill=red!30] (1,2) -- (2,4) -- (4,5) -- (6,5) -- (7,3) -- (5,1) -- cycle;
-
-  \end{tikzpicture}
-
-  \[
-  \vec{x} \in \mathcal{P}(A,B) \iff A \vec{x} \le B
-  \]
-
-\caption{Domaine des polyèdres}
-\label{fig:dom-poly}
-
-\end{figure}%}}}
-
-\paragraph{Le domaine des zones} permet de représenter des relations affines de
+\item Le domaine des zones permet de représenter des relations affines de
 forme $v_i - v_j \le c$ (figure~\ref{fig:dom-zones}).
 
-\begin{figure}%{{{
-  \centering
-  \begin{tikzpicture}
-  \draw[->] (0,-1) -- (0,5);
-  \draw[->] (-1,0) -- (5,0);
-
-  \draw[fill=red!30] (1,2) -- (3,4) -- (4,4) -- (4,3) -- (2,1) -- (1,1) -- cycle;
-
-  \end{tikzpicture}
-
-  \caption{Domaine des zones}
-  \label{fig:dom-zones}
-\end{figure}%}}}
-
-\paragraph{Le domaine des octogones} est un compromis entre les polyèdres et les
+\item Le domaine des octogones est un compromis entre les polyèdres et les
 zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 (figure~\ref{fig:dom-octo}).
 
+\end{itemize}
+
 \begin{figure}%{{{
+
   \centering
-  \begin{tikzpicture}
-  \draw[->] (0,-1) -- (0,5);
-  \draw[->] (-1,0) -- (5,0);
 
-  \draw[fill=red!30] (1,1.5) -- (1,2) -- (3,4) -- (3.5,4) -- (4,3.5) -- (4,3) -- (2,1) -- (1.5,1) -- cycle;
+  \subbottom[Un domaine non relationnel représente des produits cartésiens de%{{{
+    domaines abstraits (ici, des intervalles).
+  ]{
+    \label{fig:dom-cartesien}
+      \begin{tikzpicture}
+      \draw[->] (0,-1) -- (0,3);
+      \draw[->] (-1,0) -- (4,0);
+%
+      \draw[fill=red!30] (1,1) rectangle (3,2);
+%
+      \draw[dashed] (3,1) -- (3,0);
+      \draw[dashed] (1,1) -- (1,0);
+%
+      \draw[dashed] (1,2) -- (0,2);
+      \draw[dashed] (1,1) -- (0,1);
+%
+      \draw[line width=3pt] (0,1) -- (0,2);
+      \draw[line width=3pt] (3,0) -- (1,0);
+%
+      \end{tikzpicture}
+  }%}}}
+  \subbottom[Domaine des polyèdres]{%{{{
+    \label{fig:dom-poly}
+%
+    \begin{tikzpicture}[scale=0.5]
+    \draw[->] (0,-1) -- (0,6);
+    \draw[->] (-1,0) -- (8,0);
+%
+    \draw[fill=red!30] (1,2) -- (2,4) -- (4,5) -- (6,5) -- (7,3) -- (5,1) -- cycle;
+%
+    \end{tikzpicture}
+  }%}}}
 
-  \end{tikzpicture}
+  \subbottom[Domaine des zones]{%{{{
+    \label{fig:dom-zones}
+%
+    \begin{tikzpicture}
+    \draw[->] (0,-1) -- (0,5);
+    \draw[->] (-1,0) -- (5,0);
+%
+    \draw[fill=red!30] (1,2) -- (3,4) -- (4,4) -- (4,3) -- (2,1) -- (1,1) -- cycle;
+%
+    \end{tikzpicture}
+  }%}}}
+  \subbottom[Domaine des octaèdres]{%{{{
+    \label{fig:dom-octo}
+%
+    \begin{tikzpicture}
+    \draw[->] (0,-1) -- (0,5);
+    \draw[->] (-1,0) -- (5,0);
+%
+    \draw[fill=red!30] (1,1.5) -- (1,2) -- (3,4) -- (3.5,4) -- (4,3.5) -- (4,3) -- (2,1) -- (1.5,1) -- cycle;
+%
+    \end{tikzpicture}
+  }%}}}
 
-  \caption{Domaine des octaèdres}
-  \label{fig:dom-octo}
+  \caption{Quelques domaines abstraits}
+  \label{fig:dom-abstraits}
 \end{figure}%}}}
 
 \subsection*{TODO}
@@ -449,6 +452,7 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 \item widening \cite{granger},
 \item CGS \cite{cgs},
 \item Astrée : presentation\cite{Astree04,Astree05},
+\item Penjili
 \end{itemize}
 
 \section{Typage}
