@@ -1,3 +1,6 @@
+\epigraph{Well-typed programs don't go wrong.}
+{--- \textup{Robin Milner}}
+
 Dans ce chapitre, nous enrichissons le langage défini dans le
 chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
 programmes bien formés, comme celui de la figure~\ref{fig:progwf:good} des
@@ -25,12 +28,12 @@ f()
 
   \centering
 
-  \subfloat[][Programme bien formé]{
+  \subbottom[Programme bien formé]{
     \label{fig:progwf:good}
     \BUseVerbatim{VerbProgGood}
   }
   \hspace{2cm}
-  \subfloat[][Programme mal formé]{
+  \subbottom[Programme mal formé]{
     \label{fig:progwf:bad}
     \BUseVerbatim{VerbProgBad}
   }
@@ -81,8 +84,14 @@ programme est donc mal typé.
       \\ \gramor & \tFloat                       & \textrm{Flottant}
       \\ \gramor & t[]                           & \textrm{Tableau}
       \\ \gramor & t*                            & \textrm{Pointeur}
-      \\ \gramor & \tstruct{s}                   & \textrm{Structure}
+      \\ \gramor & S                             & \textrm{Structure}
       \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
+    \end{align*}
+  }
+
+  \gramlr{Structure}{
+    \begin{align*}
+      S \gramisa & \{ l_1 : t_1; … ; l_n : t_n \}  & \textrm{Structure simple}
     \end{align*}
   }
 
@@ -227,11 +236,21 @@ une fois le type de base du type tableau ($t$ pour $t[]$).
   \disprule{Lv-Index}
 \end{mathpar}
 
+Le typage de l'accès à un champ est facilité par le fait que dans le programme,
+le type complet de la structure est accessible sur le champ.
+
+Dans la définition de cette règle on utilise la notation :
+
+\[
+(l, t) ∈ \{l_1 : t_1 ; … ; l_n : t_n \}
+\eqdef
+∃ i ∈ [1;n],
+l = l_i ∧ t = t_i
+\]
+
 \begin{mathpar}
   \disprule{Lv-Field}
 \end{mathpar}
-
-% TODO
 
 \subsection*{Opérateurs}
 
@@ -323,9 +342,7 @@ Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
   \disprule{Array}
 \end{mathpar}
 
-Pour qu'un littéral de structure soit bien typé, il faut que chacun de ses noms
-de champs corresponde à un même nom de type structure, avec le bon type pour
-chaque champ.
+Un littéral de structure est bien typé si ses champs sont bien typés.
 
 \begin{mathpar}
   \disprule{Struct}
@@ -384,6 +401,12 @@ environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes :
   valeur de retour de la fonction appelante
 \item
   on ajoute les types des arguments $a_i : t_i$
+\end{itemize}
+
+On vérifie alors que les initialiseurs $e_i$ ont le bon type $t'_i$. Ensuite, à
+partir de $Γ'$ :
+
+\begin{itemize}
 \item
   on ajoute les types des variables locales $l_i : t'_i$
 \item
@@ -391,13 +414,33 @@ environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes :
   $\vRet : t$
 \end{itemize}
 
-Il reste alors à vérifier que les initialiseurs $e_i$ ont le bon type $t'_i$ et
-que le corps de la fonction est bien typé sous $Γ'$. Le type de la fonction est
-alors $(t_1, …, t_n) → t$.
+Il reste alors à vérifier que dans l'environnement $Γ''$ résultant, le corps de
+la fonction est bien typé. Le type de la fonction est alors $(t_1, …, t_n) → t$.
 
 \begin{mathpar}
   \disprule{Fun}
 \end{mathpar}
+
+Cette règle utilise les notations suivantes :
+
+\begin{align*}
+\vec{a}
+\eqdef &
+(a_1, …, a_n) \textrm{ où } n = |a|
+\\
+\textrm{zip}(\vec{a}, \vec{b})
+\eqdef &
+((a_1, b_1), …, (a_n, b_n))
+\textrm{ où } n = |a| = |b|
+\\
+Γ ⊢ \vec{e} : \vec{t}
+\eqdef &
+∀ i ∈ [1;n],
+Γ ⊢ e_i : t_i
+\textrm{ où } n = |e| = |t|
+\end{align*}
+
+% TODO suppression & adjonction aux Γ
 
 \section{Phrases}
 
@@ -416,21 +459,9 @@ enrichit l'environnement de cette nouvelle valeur.
   \disprule{Ph-Var}
 \end{mathpar}
 
-\begin{mathpar}
-  \disprule{Ph-Struct}
-\end{mathpar}
-
-% TODO
-
 \section{Sûreté du typage}
 
-Comme dit l'adage :
-
-\begin{quote}
-"Well-typed programs don't go wrong." (Robin Milner)
-\end{quote}
-
-C'est à dire qu'un programme bien typé possède des propriétés de sûreté.
+Un programme bien typé possède des propriétés de sûreté.
 
 \paragraph{Progrès :} l'évaluation d'un terme bien typé ne reste pas bloquée;
 il y a toujours une règle qui s'applique.
@@ -442,7 +473,7 @@ Puisqu'il s'agit de propriétés reliant la syntaxe à la sémantique, deux type
 d'environnement sont utilisés en même temps. D'une part, les environnement de
 typage $Γ$ pour la syntaxe, et d'autre part les environnements mémoire $m$ pour
 la sémantique. Il est nécessaire de définir une relation de compatibilité entre
-ces deux monde, pour exprimer par exemple qu'un état mémoire contient dans la
+ces deux mondes, pour exprimer par exemple qu'un état mémoire contient dans la
 variable $x$ un entier.
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
@@ -477,8 +508,8 @@ expression.
     \item
       si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[]$ et $Γ ⊢ e : \tInt$
     \item
-      si $Γ ⊢ lv.l : t$, alors $Γ ⊢ lv : \{ l: t ; … \}$
-    % TODO structure
+      si $Γ ⊢ lv.l_S : t$, alors $Γ ⊢ lv : S$
+
   \end{itemize}
 \item
   Appel de fonction : si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
@@ -499,6 +530,8 @@ expression.
 \end{itemize}
 
 \end{lemma}
+
+% TODO finir la preuve
 
 \begin{proof}
 
@@ -601,9 +634,9 @@ $m$.
   Alors l'un des cas suivant est vrai :
 
 \begin{itemize}
-  \item $∃ v, e = v$
+  \item $∃ v ≠ Ω, e = v$
   \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
-  \item $∃ Ω ∈ \{Ω_{div},Ω_{array},Ω_{ptr}\}, \msi{m}{e} → Ω$
+  \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
 
   C'est à dire, soit :
@@ -616,7 +649,20 @@ $m$.
 
 \end{theorem}
 
-La preuve de ce théorème se trouve en annexe~\ref{proof:progres}.
+\begin{theorem}[Progrès pour les left-values]
+  \label{thm:progres-lv}
+
+  Si $\mmstar{m}{lv}{m'}{v}$, $v$ est de la forme $φ$ (référence mémoire) ou $Ω$
+  (erreur).
+
+\end{theorem}
+
+% TODO à prouver et rerédiger
+
+La preuve des
+théorèmes~\ref{thm:progres}
+et~\ref{thm:progres-lv}
+se trouve en annexe~\ref{proof:progres}.
 
 \begin{lemma}[Permutation]
   L'ordre dans lequel les variables apparaissent dans un environnement
@@ -649,12 +695,10 @@ Ces lemmes permettent de prouver le théorème suivant :
 \begin{theorem}[Préservation]
   \label{thm:preservation}
 
-  Si une expression est typable et que son évaluation produit une valeur, alors
-  cette valeur est du même type que l'expression.
+  Si une expression est typable, alors un pas d'évaluation ne modifie pas son
+  type :
 
-  Si $Γ ⊢ e : t$ et $e → v$ % TODO
-
-  alors $Γ ⊢ v : t$.
+  Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$, alors $Γ ⊢ e' : t$.
 
 \end{theorem}
 
@@ -667,17 +711,8 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 \item versions $Γ ⊢ i$ des propriétés
 \item preuve de progres : état mémoire : doublet/triplet
 \item définir les opérations d'ajout/remplacement sur les contextes de typage
-\end{itemize}
-
-\subsection*{Structures}
-
-\begin{itemize}
-\item
-  5.3 left-value règle LV-FIELD le S sort un peu du chapeau. Est-ce que
-  tu ne devrait pas avoir un couple $\Gamma, S$ dans tes jugements plutôt
-  que seulement $\Gamma$ ?
-\item
-  5.6 prémice de PH-struct
+\item 2 pointeurs peuvent etre égaux sans comparer les valeurs pointées
+\item extension de contextes : :: ou , ?
 \end{itemize}
 
 \subsection*{Fonctions}
@@ -686,16 +721,12 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 \item
   page 50 règle CALL une remarque disant que cette règle doit être
   utilisée avec une autre qui va typer le corps de la fonction (mettre
-  la ref) parce que +sinon ça surprend
+  la ref) parce que sinon ça surprend
 \item
   5.5 le fait de choisir une unique variable R t'oblige à ajouter une
   opération de suppression du R de la fonction appelante factice.
   Pourquoi ne pas générer des variables fraîches à partir du nom de la
   fonction + un identifiant unique ?
-\item
-  page 52 règle fun. Tu mélanges définition en extension $(a_1
-  \ldots a_n)$ et en compréhension ($\forall i$) c'est pas très beau et ça
-  complique la règle je trouve
 \item
   lemme 5.1 cas fonction, à quoi ça sert d'introduire la notation t'
   alors qu'il n'apparaît pas dans une règle ?
@@ -709,18 +740,11 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
   5.3 left-values la règle LV-VAR suppose que x n'apparaît qu'une fois
   dans $\Gamma$ ou alors toujours accompagné du même type
 \item
-  5.3 opérateurs, règle OP-EQ Que signifie l'égalité sur des tableaux ?
-\item
-  5.6 règle PH-VAR coquille : en prémice c'est x et pas e non ? L'ajout
-  d'une variable à un contexte c'est pas avec l'opérateur :: ?
-\item
   p53 le terme de dérivation (première phrase de la preuve) n'a jamais
   été expliqué ?
 \item
   lemme 5.1 constantes. Il faut expliquer à quel ensemble n et f
   appartiennent
-\item
-  idem je n'ai pas relu la preuve de 5.1
 \item
   lemme 5.2 même remarque que 5.1 concernant n et f (plus confusion f
   float et f fonction)

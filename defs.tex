@@ -36,6 +36,8 @@
 \newcommand{\tFloat}{\textsc{Float}\xspace}
 \newcommand{\tUnit}{\textsc{Unit}\xspace}
 
+\def\structRec#1#2{\textsc{rec}(\&#1) #2} % TODO
+
 \newcommand{\tFV}[1]{\textrm{FreeVars}(#1)}
 
 \def\opxor{\mathbin{\char`\^}}
@@ -137,8 +139,6 @@
 \def\tyi#1#2{#1 ⊢ #2}
 \def\typh#1#2#3{#1 ⊢ #2 → #3}
 \def\typhstar#1#2#3{#1 ⊢ #2 →^* #3}
-
-\def\tstruct#1{\mathrm{struct}~#1}
 
 % Continuations
 \def\kPass{\textsc{Kpass}\xspace}
@@ -334,3 +334,15 @@
 \def\lensPutX#1{\mathrm{put}_{#1}}
 \def\lensGet#1#2{\lensGetX{#1}(#2)}
 \def\lensPut#1#2#3{\lensPutX{#1}(#2, #3)}
+
+% Erreurs
+
+\def\serr#1{
+  \switch{#1}
+    {taint}{Ω_{taint}}
+    {array}{Ω_{array}}
+    {ptr}{Ω_{ptr}}
+    {div}{Ω_{div}}
+    {field}{Ω_{field}}
+    {END}
+}

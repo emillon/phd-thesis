@@ -1,6 +1,11 @@
-\section{Preuve du théorème~\ref{thm:progres}}
-
+\section{Progrès}
 \label{proof:progres}
+
+On prouve de manière récursive mutuelle les
+théorèmes~\ref{thm:progres}
+et~\ref{thm:progres-lv}
+
+% TODO mouais, à préciser mieux.
 
 \begin{proof}
 
@@ -28,7 +33,7 @@ d'évaluation \textsc{Phi-Var} s'applique donc.
 %}}}
 \paragraph{\textsc{Lv-Deref} :}%{{{
 
-  Appliquons l'hypothèse de récurrence à $lv$ (vu en tant qu'expression).
+  Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
 
 \begin{itemize}
 \item
@@ -37,8 +42,8 @@ d'évaluation \textsc{Phi-Var} s'applique donc.
 
   Dans le premier cas, la règle \textsc{Phi-Deref} s'applique :
   $\mms{e}{\widehat{*}φ}$.
-  Dans le second, puisque $\msi{m}{*\eNull} → Ω_{ptr}$, on a
-  $\msi{m}{e} → Ω_{ptr}$.
+  Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
+  $\msi{m}{e} → \serr{ptr}$.
 
 \item
   $\mm{m}{lv}{m'}{e'}$.
@@ -66,13 +71,14 @@ Appliquons l'hypothèse de récurrence à $e$.
 
 \begin{itemize}
 \item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
-lemme~\ref{lemma:canon} et $v' = n$. Deux cas sont à distinguer :
-si $n ∈ [0;p-1]$, la règle \textsc{Phi-Array} s'applique et
+lemme~\ref{lemma:canon} et $v' = n$.
+D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\{v_1; …; v_p\}\widehat{[n]}} $.
+Deux cas sont à distinguer :
+si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
-% TODO réécrire bien Phi-Array
+Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
+
 % TODO attention à l'off by one
-Sinon, $\msi{m}{lv[e]} → Ω_{array}$.
-% TODO pourquoi ?
 
 \item $\mm{m}{e}{m'}{e'}$.
 En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
@@ -93,7 +99,29 @@ $\msi{m}{lv[e]} → Ω$.
 
 \end{itemize}
 %}}}
-\paragraph{\textsc{Lv-Field} :} % TODO
+\paragraph{\textsc{Lv-Field} :}%{{{
+
+On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $lv$.
+
+\begin{itemize}
+
+\item $lv = φ$
+Alors \textsc{Phi-Struct} s'applique. Puisque $(l, t) ∈ S$, l'accès au champ $l$
+ne provoque pas d'erreur $\serr{field}$. Donc $\mm{m}{e}{m}{φ[l]}$.
+
+\item $\mm{m}{lv}{m'}{lv'}$
+En appliquant \textsc{Ctx} avec $C = \ctxEmpty.l_S$, il vient
+$\mm{m}{lv}{m'}{lv'}$.
+% TODO Ctx-Lv en fait
+
+\item $\msi{m}{lv} → Ω$
+En appliquant \textsc{Eval-Err} avec $C = \ctxEmpty.l_S$, on a
+$\msi{m}{lv} → Ω$.
+% TODO Pas une sorte de Err-Lv ?
+
+\end{itemize}
+
+%}}}
   \paragraph{\textsc{Op-Int} :} % {{{
 
   Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
@@ -110,7 +138,13 @@ $\msi{m}{lv[e]} → Ω$.
       \begin{itemize}
 
         \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
-          peut alors appliquer \textsc{Exp-BinOp}.
+          peut alors appliquer \textsc{Exp-BinOp}, sauf dans le cas d'une
+          division par zéro (
+          $ \opbin ∈ \{ / ; \% ; /. \} $
+          et
+          $ v_2 = 0 $
+          ) où alors $v_1~\widehat{\opbin}~v_2 = \serr{div}$. Dans ce cas, on a
+          alors par \textsc{Exp-Err} $\msi{m}{e} → \serr{div}$.
 
         \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
 
@@ -124,7 +158,7 @@ $\msi{m}{lv[e]} → Ω$.
 
       \end{itemize}
 
-  \item $∃(e', m'), \mm{m}{e_1}{m'}{e'_1}$.
+  \item $∃(e_1', m'), \mm{m}{e_1}{m'}{e'_1}$.
     En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
     $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
     $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
@@ -181,14 +215,42 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Unop-Not} :}%{{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
-\paragraph{\textsc{Ptr-Arith} :} % %{{{ TODO
+\paragraph{\textsc{Ptr-Arith} :} % %{{{
 
-\[ \left( \disprule{Ptr-Arith} \right) \]
+Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
+lorsque $e_1$ et $e_2$ sont des valeurs. D'après le lemme~\ref{lemma:canon} :
+
+\begin{itemize}
+\item $e_1 = \eNull$ ou $e_1 = φ$
+\item $e_2 = n$
+\end{itemize}
+
+D'après \textsc{Exp-Binop}, $\mms{e}{e_1~\widehat{\opbin}~n}$.
+
+On se réfère ensuite à la définition de $\widehat{\opbin}$
+(page~\pageref{page:def-arith-ptr-error}) : si $e_1$ est de la forme $φ[m]$,
+alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
+
+Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
+$φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
+\textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
 
 %}}}
 \paragraph{\textsc{Addr} :} % {{{ TODO
 
 \[ \left( \disprule{Addr} \right) \]
+
+On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $lv$.
+
+Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
+\textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. On détaille le cas où
+$lv =  φ$.
+
+% TODO même remarques sur les règles que Lv-Field
+
+\[ \left( \semrule{Exp-AddrOf} \right) \]
+
+% TODO expliquer un peu mieux
 
 %}}}
 \paragraph{\textsc{Set} :} % {{{ TODO
@@ -218,6 +280,7 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
 % TODO vérifier qu'il n'y a pas d'autre règle
 % TODO général : que désigne e. Ex avec lv[e]
+% TODO prouver aussi mcomp
 \end{proof}
 
 \section{Preuve du théorème~\ref{thm:preservation}}

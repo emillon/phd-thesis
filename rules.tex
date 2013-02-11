@@ -31,10 +31,10 @@
                   { Γ ⊢ lv[e] : t }
     }
     {Lv-Field}{ \irule{Lv-Field}
-                  { (s, l, t_l) ∈ S \\
-                    Γ ⊢ lv : \tstruct{s}
+                  { (l, t) ∈ S \\
+                    Γ ⊢ lv : S
                   }
-                  { Γ ⊢ lv.l : t_l }
+                  { Γ ⊢ lv.l_S : t }
     }
     {Op-Int}{ \irule{Op-Int}
                 { \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
@@ -57,7 +57,7 @@
                 {\textsc{Eq}(t)}
     }
     {Eq-Ptr}{ \irule{Eq-Ptr}
-                {\textsc{Eq}(t)}
+                { }
                 {\textsc{Eq}(t*)}
     }
     {Eq-Array}{ \irule{Eq-Array}
@@ -74,7 +74,7 @@
              }
     }
     {Op-Comparable}{ \irule{Op-Comparable}
-                       { \opbin ∈ \{=,≠,≤,≥,<,>\} \\
+                       { \opbin ∈ \{≤,≥,<,>\} \\
                          Γ ⊢ e_1 : t \\
                          Γ ⊢ e_2 : t \\
                          t ∈ \{ \tInt, \tFloat \}
@@ -130,12 +130,12 @@
                }
            }
     {Struct}{ \irule{Struct}
-                { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i \\
-                  ∀ i ∈ [1;n], (s, l_i, t_i) ∈ S
+                { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i
                 }
                 { Γ ⊢ \{ l_1 : e_1 ;
                      … ; l_n : e_n \}
-                    : \tstruct{s}
+                    : \{ l_1 : t_1 ;
+                     … ; l_n : t_n \}
                 }
             }
     {Call}{ \irule{Call}
@@ -183,15 +183,17 @@
                 { Γ ⊢ \iReturn{e} }
             }
     {Fun}{ \irule{Fun}
-             { Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n,
-                    l_1 : t'_1, …, l_n : t'_p,
-                    \vRet : t \\
-               ∀ i ∈ [1;p], Γ ⊢ e_i : t'_i \\
-               Γ' ⊢ i
+             { Γ' = (Γ - \vRet),
+                    \vec{a} : \vec{t}, \\
+               Γ' ⊢ \vec{e} : \vec{t'} \\
+               Γ'' = Γ',
+                     \vec{l} : \vec{t'},
+                     \vRet : t_r \\
+               Γ'' ⊢ i
              }
-             { Γ ⊢ \mathrm{fun} (a_1, …, a_n)
-                   ((l_1, e_1), …, (l_p, e_p)) \{i\}
-                    : (t_1, …, t_n) → t
+             { Γ ⊢ \mathrm{fun} (\vec{a})
+                   (\textrm{zip}(\vec{l}, \vec{e}) \{i\}
+                    : \vec{t} → t_r
              }
          }
     {Ph-Exp}{ \irule{Ph-Exp}
@@ -202,22 +204,8 @@
                 { Γ ⊢ e : t \\
                   Γ' = (x, t), Γ
                 }
-                { \typh{Γ}{p}{Γ'} }
+                { \typh{Γ}{x=e}{Γ'} }
             }
-    {Ph-Struct}{ \irule{Ph-Struct}
-                   { S' =
-                     (x_1, t_1, s),
-                     …
-                     (x_n, t_n, s)
-                   }
-                   { \typh{Γ}{ \tstruct{s}
-                                  \{ x_1 : t_1
-                                   ; …
-                                   ;  x_n : t_n
-                                  \}
-                              }{Γ}
-                   }
-               } % TODO
     {END}
 }
 
@@ -247,7 +235,7 @@
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
-                    { \mms{lv.l}{lv\widehat{.}l} }
+                    { \mms{lv.l_S}{lv\widehat{.}l} }
     }
     {Phi-Array}{ \irule{Phi-Array}
                    { }
@@ -270,19 +258,8 @@
                 {\mms{\opun~v}{\widehat{\opun}~v}}
     }
     {Exp-BinOp}{ \irule{Exp-BinOp}
-                   { \opbin ∉ \{/, \%\} }
+                   { }
                    {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
-    }
-    {Exp-Div}{ \irule{Exp-Div}
-                 { \opbin ∈ \{/, \%\} \\
-                   v_2 ≠ \widehat{0}
-                 }
-                 {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
-    }
-    {Exp-Div-Zero}{ \irule{Exp-Div-Zero}
-                 { \opbin ∈ \{/, \%\}
-                 }
-                 {\msi{m}{v_1~\opbin~0} → Ω_{div}}
     }
     {Exp-AddrOf}{ \irule{Exp-AddrOf}
                     { a = \mathrm{Lookup} (x, m)
@@ -350,10 +327,6 @@
               { }
               { \mmi{m}{\iReturn{v};i}{m}{\iReturn{e}} }
     }
-    {Ph-Struct}{ \irule{Ph-Struct}
-                   { }
-                   {\ph{m}{\tstruct{s} \{ … \}}{m}}
-    }
     {Ph-Exp}{ \irule{Ph-Exp}
                 {\mm{m}{e}{m'}{v}}
                 {\ph{m}{e}{m'}}
@@ -370,6 +343,14 @@
                   {\ph{m}{p}{m'} \\
                    \phstar{m'}{ps}{m''}}
                   {\phstar{m}{p::ps}{m''}}
+    }
+    {Exp-Err}{ \irule{Exp-Err}
+                 { }
+                 { \msi{m}{Ω} → Ω }
+    }
+    {Eval-Err}{ \irule{Eval-Err}
+                  { \msi{m}{e} → Ω }
+                  { \msi{m}{\ctxSub{C}{e}} → Ω }
     }
     {END}
 }
@@ -391,7 +372,7 @@
   \\
   C_L \gramisa & \ctxEmpty
   \\   \gramor & \ctxLvDeref{C_L}
-  \\   \gramor & \ctxLvField{C_L}{l}
+  \\   \gramor & \ctxLvField{C_L}{l_S}
   \\   \gramor & \ctxLvIndex{C_L}{e}
   \\   \gramor & \ctxLvIndex{φ}{C}
   \\
