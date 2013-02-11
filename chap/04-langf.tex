@@ -893,46 +893,40 @@ pas capturé (il n'y a pas de clôture lexicale).
 
 \begin{figure}%{{{
 
-  \gramlr{Valeurs}{
-    \begin{align*}
-      v \gramisa & \widehat{c}     & \textrm{Constante}
-      \\ \gramor & φ               & \textrm{Référence mémoire}
-      \\ \gramor & \widehat{
-                    \{ l_1 : v_1 ;
-                  … ; l_n : v_n \}
-                  }                & \textrm{Structure}
-      \\ \gramor & \widehat{
-                   \{v_1 ;…; v_n\}
-                   }               & \textrm{Tableau}
-      \\ \gramor & \widehat{f}     & \textrm{Fonction}
-      \\ \gramor & Ω               & \textrm{Erreur}
-    \end{align*}
-  }
-
-  \gramlr{Chemins}{
-    \begin{align*}
-      φ \gramisa & a    & \textrm{Adresse}
-      \\ \gramor & *φ   & \textrm{Déréférencement}
-      \\ \gramor & φ.l  & \textrm{Accès à un champ}
-      \\ \gramor & φ[n] & \textrm{Accès à un élément}
-    \end{align*}
-  }
-
-  \gramlr{Adresses}{
-    \begin{align*}
-      a \gramisa & (n, x) & \textrm{Variable locale}
-      \\ \gramor & x      & \textrm{Variable globale}
-    \end{align*}
-  }
-
-  \gramlr{Erreur}{
-    \begin{align*}
-      Ω \gramisa & \serr{array}  & \textrm{Débordement de tableau}
-      \\ \gramor & \serr{ptr}    & \textrm{Erreur de pointeur}
-      \\ \gramor & \serr{div}    & \textrm{Division par zéro}
-      \\ \gramor & \serr{field}  & \textrm{Erreur de champ}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Valeurs}{v}
+      { \widehat{c}     }{Constante}
+      { φ               }{Référence mémoire}
+      { \widehat{
+         \{ l_1 : v_1 ;
+       … ; l_n : v_n \}
+       }                }{Structure}
+      { \widehat{
+        \{v_1 ;…; v_n\}
+        }               }{Tableau}
+      { \widehat{f}     }{Fonction}
+      { Ω               }{Erreur}
+      {END}
+  \\
+  \gramdef{Chemins}{φ}
+     { a    }{Adresse}
+     { *φ   }{Déréférencement}
+     { φ.l  }{Accès à un champ}
+     { φ[n] }{Accès à un élément}
+     {END}
+  \\
+  \gramdef{Adresses}{a}
+     { (n, x) }{Variable locale}
+     { x      }{Variable globale}
+     {END}
+  \\
+  \gramdef{Erreur}{Ω}
+    { \serr{array} }{Débordement de tableau}
+    { \serr{ptr}   }{Erreur de pointeur}
+    { \serr{div}   }{Division par zéro}
+    { \serr{field} }{Erreur de champ}
+    {END}
+  \end{align*}
 
   \caption{Valeurs}
   \label{fig:interp-val}
