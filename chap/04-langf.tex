@@ -692,39 +692,36 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 \begin{figure}
 
-  \gramlr{Constantes}{
-    \begin{align*}
-      c \gramisa & i      & \textrm{Entier}
-      \\ \gramor & d      & \textrm{Flottant}
-      \\ \gramor & \eNull & \textrm{Pointeur nul}
-      \\ \gramor & \eUnit & \textrm{Valeur unité}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Constantes}{c}
+                 { i      }{ Entier }
+                 { d      }{ Flottant }
+                 { \eNull }{ Pointeur nul }
+                 { \eUnit }{ Valeur unité }
+                 {END}
+  \\
+  \gramdef{Expressions}{e}
+                 { c               }{ Constante }
+                 { lv              }{ Accès mémoire }
+                 { \opun~e         }{ Opération unaire }
+                 { e~\opbin~e      }{ Opération binaire }
+                 { \& lv           }{ Pointeur }
+                 { lv ← e          }{ Affectation }
+                 { \{ l_1 : e_1 ;
+                    ; l_n : e_n \} }{ Structure }
+                 { \{e_1 ;…; e_n\} }{ Tableau }
+                 { f               }{ Fonction }
+                 { e (e_1, …, e_n) }{ Appel de fonction }
+                 {END}
+  \\
+  \gramdef{Left-values}{lv}
+                  { x      }{ Variable }
+                  { *lv    }{ Déréférencement }
+                  { lv.l_S }{ Accès à un champ }
+                  { lv[e]  }{ Accès à un élément }
+                  {END}
+  \end{align*}
 
-  \gramlr{Expressions}{
-    \begin{align*}
-      e \gramisa & c               & \textrm{Constante}
-      \\ \gramor & lv              & \textrm{Accès mémoire}
-      \\ \gramor & \opun~e         & \textrm{Opération unaire}
-      \\ \gramor & e~\opbin~e      & \textrm{Opération binaire}
-      \\ \gramor & \& lv           & \textrm{Pointeur}
-      \\ \gramor & lv ← e          & \textrm{Affectation}
-      \\ \gramor & \{ l_1 : e_1 ;
-                  … ; l_n : e_n \} & \textrm{Structure}
-      \\ \gramor & \{e_1 ;…; e_n\} & \textrm{Tableau}
-      \\ \gramor & f               & \textrm{Fonction}
-      \\ \gramor & e (e_1, …, e_n) & \textrm{Appel de fonction}
-    \end{align*}
-  }
-
-  \gramlr{Left-values}{
-    \begin{align*}
-      lv \gramisa & x      & \textrm{Variable}
-      \\  \gramor & *lv    & \textrm{Déréférencement}
-      \\  \gramor & lv.l_S & \textrm{Accès à un champ}
-      \\  \gramor & lv[e]  & \textrm{Accès à un élément}
-    \end{align*}
-  }
   \caption{Syntaxe - expressions}
   \label{fig:stx-data}
 \end{figure}
