@@ -334,6 +334,23 @@
 \def\lensPutX#1{\mathrm{put}_{#1}}
 \def\lensGet#1#2{\lensGetX{#1}(#2)}
 \def\lensPut#1#2#3{\lensPutX{#1}(#2, #3)}
+\def\lensNodeBig#1#2{
+\vcenter{\hbox{
+\begin{tikzpicture}[scale=0.7]
+\node at (0,0) (A) {};
+\draw[fill=#1] ($ (A) + (-0.5,-0.5) $) rectangle ++ (1,1);
+\draw[fill=#2] (A) circle (0.3);
+\end{tikzpicture}
+}}
+}
+\def\lensInner#1{
+\vcenter{\hbox{
+\begin{tikzpicture}[scale=0.7]
+\node at (0,0) (A) {};
+\draw[fill=#1] (A) circle (0.3);
+\end{tikzpicture}
+}}
+}
 
 % Erreurs
 
