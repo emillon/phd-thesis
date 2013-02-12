@@ -78,29 +78,25 @@ programme est donc mal typé.
 
 \begin{figure}
 
-  \gramlr{Type}{
-    \begin{align*}
-      t \gramisa & \tInt                         & \textrm{Entier}
-      \\ \gramor & \tFloat                       & \textrm{Flottant}
-      \\ \gramor & t[]                           & \textrm{Tableau}
-      \\ \gramor & t*                            & \textrm{Pointeur}
-      \\ \gramor & S                             & \textrm{Structure}
-      \\ \gramor & (t_1, …, t_n) \rightarrow t_r & \textrm{Fonction}
-    \end{align*}
-  }
-
-  \gramlr{Structure}{
-    \begin{align*}
-      S \gramisa & \{ l_1 : t_1; … ; l_n : t_n \}  & \textrm{Structure simple}
-    \end{align*}
-  }
-
-  \gramlr{Environnement de typage}{
-    \begin{align*}
-      Γ \gramisa & []         & \textrm{Environnement vide}
-      \\ \gramor & (a, t)::Γ' & \textrm{Extension}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Type}{t}
+      { \tInt                         }{Entier}
+      { \tFloat                       }{Flottant}
+      { t[]                           }{Tableau}
+      { t*                            }{Pointeur}
+      { S                             }{Structure}
+      { (t_1, …, t_n) \rightarrow t_r }{Fonction}
+      {END}
+  \\
+  \gramdef{Structure}{S}
+      { \{ l_1 : t_1; … ; l_n : t_n \} }{Structure simple}
+      {END}
+  \\
+  \gramdef{Environnement de typage}{Γ}
+      { []         }{Environnement vide}
+      { (a, t)::Γ' }{Extension}
+      {END}
+  \end{align*}
 
   \caption{Types et environnements de typage}
 

@@ -29,33 +29,27 @@ chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
 
 \begin{figure}%{{{
 
-\gramlr{Expressions}{
 \begin{align*}
-e \gramisa & …
-\\ \gramor & \eTaint{e} & \textrm{Expression souillée}
+\gramdef{Expressions}{e}
+  { … }{}
+  { \eTaint{e} }{Expression souillée}
+  {END}
+\\
+\gramdef{Contextes}{C}
+  { … }{}
+  { \eTaint{C}}{}
+  {END}
+\\
+\gramdef{Chemins}{φ}
+  { … }{}
+  { \vTainted{φ} }{Valeur souillée}
+  {END}
+\\
+\gramdef{Erreurs}{Ω}
+  { … }{}
+  { \serr{taint} }{Erreur de souillure}
+  {END}
 \end{align*}
-}
-
-\gramlr{Contextes}{
-\begin{align*}
-C \gramisa & …
-\\ \gramor & \eTaint{C}
-\end{align*}
-}
-
-\gramlr{Chemins}{
-\begin{align*}
-φ \gramisa & …
-\\ \gramor & \vTainted{φ} & \textrm{Valeur souillée}
-\end{align*}
-}
-
-\gramlr{États}{
-\begin{align*}
-ms \gramisa & …
-\\  \gramor & \serr{taint} & \textrm{Erreur de souillure}
-\end{align*}
-}
 
 \caption{Ajouts liés aux pointeurs utilisateurs}
 \label{fig:qualif-changes}
@@ -197,20 +191,18 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 
 \begin{figure}%{{{
 
-\gramlr{Qualificateurs}{
 \begin{align*}
-q \gramisa & \qKernel & \textrm{Donnée noyau (sûre)}
-\\ \gramor & \qUser   & \textrm{Donnée utilisateur (non sûre)}
+\gramdef{Qualificateurs}{q}
+  { \qKernel }{Donnée noyau (sûre)}
+  { \qUser   }{Donnée utilisateur (non sûre)}
+  {END}
+\\
+\gramdef{Types}{t}
+  { … }{}
+  { \msout{t *} }{\textrm{Pointeur}}
+  { t q* }{Pointeur qualifié}
+  {END}
 \end{align*}
-}
-
-\gramlr{Types}{
-\begin{align*}
-t \gramisa & …
-\\ \gramor & \msout{t *} & \msout{\textrm{Pointeur}}
-\\ \gramor & t q* & \textrm{Pointeur qualifié}
-\end{align*}
-}
 
 \caption{Changements liés aux qualificateurs de types}
 \label{fig:qualif-changes-typ}

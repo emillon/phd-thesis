@@ -58,24 +58,24 @@ où
 Plutôt que d'écrire cette définition précise mais chargée, on écrira à la place
 une définition en compréhension :
 
-\gramlr{Listes}{
 \begin{align*}
-  l \gramisa & []   & \textrm{Liste vide}
-  \\ \gramor & n::l & \textrm{Construction de liste}
+\gramdef{Listes}{l}
+  {[]}{Liste vide}
+  {n::l}{Construction de liste}
+  {END}
 \end{align*}
-}
 
 Chaque ensemble est identifié de manière unique par les noms de variables
 métasyntaxiques : $n$ pour les entiers et $l$ pour les listes ici. Si plusieurs
 métavariables du même ensemble doivent apparaître, elles sont indicées. Par
 exemple, on peut définir des arbres binaires d'entiers de la manière suivante :
 
-\gramlr{Arbres binaires}{
 \begin{align*}
-  a \gramisa & \textsc{F}           & \textrm{Feuille}
-  \\ \gramor & \textsc{N}(a_1, n, a_2) & \textrm{Nœud}
+\gramdef{Arbres binaires}{a}
+              { \textsc{F}              }{Feuille}
+              { \textsc{N}(a_1, n, a_2) }{Nœud}
+          {END}
 \end{align*}
-}
 
 Cette notation a aussi l'avantage de s'étendre facilement aux définitions
 mutuellement récursives.
@@ -165,6 +165,19 @@ une valeur dans le champ, c'est la valeur qui sera lue ; enfin, \textsc{PutPut}
 seule la seconde compte.
 
 \end{definition}
+
+Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
+
+\begin{figure}
+
+  \begin{align*}
+  \lensGet{ℒ}{\lensNodeBig{green!30}{blue!30}} = & \lensInner{blue!30} \\
+  \lensPut{ℒ}{\lensInner{red!30}}{\lensNodeBig{green!30}{blue!30}} = & \lensNodeBig{green!30}{red!30} \\
+  \end{align*}
+
+\caption{Fonctionnement d'une lentille}
+\label{fig:lens-howto}.
+\end{figure}
 
 \begin{example}[Lentilles de tête et de queue de liste]
 
@@ -276,6 +289,23 @@ r [ i ← a ]_Δ \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
 \end{align*}
 
 \end{definition}
+
+Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
+
+\begin{figure}
+
+  \begin{align*}
+    \lensGet{Δ(b)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = & \lensInnerStar{blue!30} \\
+    \lensGet{Δ(c)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = & \lensInner{blue!30} \\
+    \lensPut{Δ(b)}{\lensInnerStar{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = &
+      \lensNodeBigIdx{green!30}{blue!30}{red!30}{blue!30}{blue!30} \\
+    \lensPut{Δ(c)}{\lensInner{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} = &
+      \lensNodeBigIdx{green!30}{blue!30}{blue!30}{red!30}{blue!30} \\
+  \end{align*}
+
+\caption{Fonctionnement d'une lentille indexée}
+\label{fig:lens-idx-ex}.
+\end{figure}
 
 \begin{example}[Lentille "n\ieme élément d'un tuple"]
 
@@ -662,75 +692,67 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 \begin{figure}
 
-  \gramlr{Constantes}{
-    \begin{align*}
-      c \gramisa & i      & \textrm{Entier}
-      \\ \gramor & d      & \textrm{Flottant}
-      \\ \gramor & \eNull & \textrm{Pointeur nul}
-      \\ \gramor & \eUnit & \textrm{Valeur unité}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Constantes}{c}
+                 { i      }{ Entier }
+                 { d      }{ Flottant }
+                 { \eNull }{ Pointeur nul }
+                 { \eUnit }{ Valeur unité }
+                 {END}
+  \\
+  \gramdef{Expressions}{e}
+                 { c               }{ Constante }
+                 { lv              }{ Accès mémoire }
+                 { \opun~e         }{ Opération unaire }
+                 { e~\opbin~e      }{ Opération binaire }
+                 { \& lv           }{ Pointeur }
+                 { lv ← e          }{ Affectation }
+                 { \{ l_1 : e_1 ;
+                    ; l_n : e_n \} }{ Structure }
+                 { \{e_1 ;…; e_n\} }{ Tableau }
+                 { f               }{ Fonction }
+                 { e (e_1, …, e_n) }{ Appel de fonction }
+                 {END}
+  \\
+  \gramdef{Left-values}{lv}
+                  { x      }{ Variable }
+                  { *lv    }{ Déréférencement }
+                  { lv.l_S }{ Accès à un champ }
+                  { lv[e]  }{ Accès à un élément }
+                  {END}
+  \end{align*}
 
-  \gramlr{Expressions}{
-    \begin{align*}
-      e \gramisa & c               & \textrm{Constante}
-      \\ \gramor & lv              & \textrm{Accès mémoire}
-      \\ \gramor & \opun~e         & \textrm{Opération unaire}
-      \\ \gramor & e~\opbin~e      & \textrm{Opération binaire}
-      \\ \gramor & \& lv           & \textrm{Pointeur}
-      \\ \gramor & lv ← e          & \textrm{Affectation}
-      \\ \gramor & \{ l_1 : e_1 ;
-                  … ; l_n : e_n \} & \textrm{Structure}
-      \\ \gramor & \{e_1 ;…; e_n\} & \textrm{Tableau}
-      \\ \gramor & f               & \textrm{Fonction}
-      \\ \gramor & e (e_1, …, e_n) & \textrm{Appel de fonction}
-    \end{align*}
-  }
-
-  \gramlr{Left-values}{
-    \begin{align*}
-      lv \gramisa & x      & \textrm{Variable}
-      \\  \gramor & *lv    & \textrm{Déréférencement}
-      \\  \gramor & lv.l_S & \textrm{Accès à un champ}
-      \\  \gramor & lv[e]  & \textrm{Accès à un élément}
-    \end{align*}
-  }
   \caption{Syntaxe - expressions}
   \label{fig:stx-data}
 \end{figure}
 
 \begin{figure}
-  \gramlr{Instructions}{
-    \begin{align*}
-      i \gramisa & \iPass        & \textrm{Instruction vide}
-      \\ \gramor & i;i           & \textrm{Séquence}
-      \\ \gramor & e             & \textrm{Expression}
-      \\ \gramor & \iIf{e}{i}{i} & \textrm{Alternative}
-      \\ \gramor & \iWhile{e}{i} & \textrm{Boucle}
-      \\ \gramor & \iReturn{e}   & \textrm{Retour de fonction}
-    \end{align*}
-  }
 
-  \gramlr{Fonctions}{
-    \begin{align*}
-      f \gramisa & \mathrm{fun} (x_1, …, x_n)    & \textrm{Arguments} \\
-                 & ((x'_1, e_1), …, (x'_p, e_p)) & \textrm{Variables locales} \\
-                 & \{ i \}                       & \textrm{Corps} \\
-    \end{align*}
-  }
-
-  \gramlr{Phrases}{
-    \begin{align*}
-      p \gramisa & x = e             & \textrm{Variable globale}
-      \\ \gramor & e                 & \textrm{Évaluation d'expression}
-    \end{align*}
-  }
-
-  \gramlr{Programme}{
-    \begin{align*}
-      P \gramisa & (p_1, …, p_n) & \textrm{Phrases}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Instructions}{i}
+                 { \iPass        }{Instruction vide}
+                 { i;i           }{Séquence}
+                 { e             }{Expression}
+                 { \iIf{e}{i}{i} }{Alternative}
+                 { \iWhile{e}{i} }{Boucle}
+                 { \iReturn{e}   }{Retour de fonction}
+                 {END}
+  \\
+  \gramdef{Fonctions}{f}
+                 { \mathrm{fun} (x_1, …, x_n)    }{Arguments}
+                 { ((x'_1, e_1), …, (x'_p, e_p)) }{Variables locales}
+                 { \{ i \}                       }{Corps}
+                 {END}
+  \\
+  \gramdef{Phrases}{p}
+                 { x = e }{Variable globale}
+                 { e     }{Évaluation d'expression}
+                 {END}
+  \\
+  \gramdef{Programme}{P}
+                 { (p_1, …, p_n)}{Phrases}
+                 {END}
+  \end{align*}
 
   \caption{Syntaxe - instructions}
   \label{fig:stx}
@@ -738,26 +760,24 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 \begin{figure}
 
-  \gramlr{Opérateurs binaires}{
-    \begin{align*}
-      \opbin \gramisa & +,-,\times,/,\%   & \textrm{Arithmétique entière}
-      \\     \gramor  & +.,-.,\times.,/.  & \textrm{Arithmétique flottante}
-      \\     \gramor  & +_p, -_p          & \textrm{Arithmétique de pointeurs}
-      \\     \gramor  & =,≠,≤,≥,<,>       & \textrm{Comparaisons}
-      \\     \gramor  & \&,|,\opxor       & \textrm{Opérateurs bit à bit}
-      \\     \gramor  & \&\&,||           & \textrm{Opérateurs logiques}
-      \\     \gramor  & \ll, \gg          & \textrm{Décalages}
-    \end{align*}
-  }
-
-  \gramlr{Opérateurs unaires}{
-    \begin{align*}
-      \opun \gramisa & +,-   & \textrm{Arithmétique entière}
-      \\    \gramor  & +.,-. & \textrm{Arithmétique flottante}
-      \\    \gramor  & \sim  & \textrm{Négation bit à bit}
-      \\    \gramor  & !     & \textrm{Négation logique}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Opérateurs binaires}{\opbin}
+      { +,-,\times,/,\% }{Arithmétique entière}
+      { +.,-.,\times.,/.}{Arithmétique flottante}
+      { +_p, -_p        }{Arithmétique de pointeurs}
+      { =,≠,≤,≥,<,>     }{Comparaisons}
+      { \&,|,\opxor     }{Opérateurs bit à bit}
+      { \&\&,||         }{Opérateurs logiques}
+      { \ll, \gg        }{Décalages}
+      {END}
+  \\
+  \gramdef{Opérateurs unaires}{\opun}
+      { +,-   }{Arithmétique entière}
+      { +.,-. }{Arithmétique flottante}
+      { \sim  }{Négation bit à bit}
+      { !     }{Négation logique}
+      {END}
+  \end{align*}
 
   \caption{Syntaxe - opérateurs}
   \label{fig:stx-ops}
@@ -873,46 +893,40 @@ pas capturé (il n'y a pas de clôture lexicale).
 
 \begin{figure}%{{{
 
-  \gramlr{Valeurs}{
-    \begin{align*}
-      v \gramisa & \widehat{c}     & \textrm{Constante}
-      \\ \gramor & φ               & \textrm{Référence mémoire}
-      \\ \gramor & \widehat{
-                    \{ l_1 : v_1 ;
-                  … ; l_n : v_n \}
-                  }                & \textrm{Structure}
-      \\ \gramor & \widehat{
-                   \{v_1 ;…; v_n\}
-                   }               & \textrm{Tableau}
-      \\ \gramor & \widehat{f}     & \textrm{Fonction}
-      \\ \gramor & Ω               & \textrm{Erreur}
-    \end{align*}
-  }
-
-  \gramlr{Chemins}{
-    \begin{align*}
-      φ \gramisa & a    & \textrm{Adresse}
-      \\ \gramor & *φ   & \textrm{Déréférencement}
-      \\ \gramor & φ.l  & \textrm{Accès à un champ}
-      \\ \gramor & φ[n] & \textrm{Accès à un élément}
-    \end{align*}
-  }
-
-  \gramlr{Adresses}{
-    \begin{align*}
-      a \gramisa & (n, x) & \textrm{Variable locale}
-      \\ \gramor & x      & \textrm{Variable globale}
-    \end{align*}
-  }
-
-  \gramlr{Erreur}{
-    \begin{align*}
-      Ω \gramisa & \serr{array}  & \textrm{Débordement de tableau}
-      \\ \gramor & \serr{ptr}    & \textrm{Erreur de pointeur}
-      \\ \gramor & \serr{div}    & \textrm{Division par zéro}
-      \\ \gramor & \serr{field}  & \textrm{Erreur de champ}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Valeurs}{v}
+      { \widehat{c}     }{Constante}
+      { φ               }{Référence mémoire}
+      { \widehat{
+         \{ l_1 : v_1 ;
+       … ; l_n : v_n \}
+       }                }{Structure}
+      { \widehat{
+        \{v_1 ;…; v_n\}
+        }               }{Tableau}
+      { \widehat{f}     }{Fonction}
+      { Ω               }{Erreur}
+      {END}
+  \\
+  \gramdef{Chemins}{φ}
+     { a    }{Adresse}
+     { *φ   }{Déréférencement}
+     { φ.l  }{Accès à un champ}
+     { φ[n] }{Accès à un élément}
+     {END}
+  \\
+  \gramdef{Adresses}{a}
+     { (n, x) }{Variable locale}
+     { x      }{Variable globale}
+     {END}
+  \\
+  \gramdef{Erreur}{Ω}
+    { \serr{array} }{Débordement de tableau}
+    { \serr{ptr}   }{Erreur de pointeur}
+    { \serr{div}   }{Division par zéro}
+    { \serr{field} }{Erreur de champ}
+    {END}
+  \end{align*}
 
   \caption{Valeurs}
   \label{fig:interp-val}
@@ -945,28 +959,24 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 
 \begin{figure}%{{{
 
-  \gramlr{Pile}{
-    \begin{align*}
-      s \gramisa & []                       & \textrm{Pile vide}
-      \\ \gramor & \{ x_1 ; … ; x_n \} :: s & \textrm{Ajout d'un cadre}
-    \end{align*}
-  }
-
-  \gramlr{État mémoire}{
-    \begin{align*}
-      m \gramisa & (s,                    & \textrm{Pile}      \\
-                 & \{ x_1 ;…; x_n \},     & \textrm{Globales}  \\
-                 & \{a_1↦v_1;…;a_p↦v_p\}) & \textrm{Valeurs}
-    \end{align*}
-  }
-
-  \gramlr{État d'interpréteur}{
-    \begin{align*}
-      Ξ \gramisa & \msi{m}{e} & \textrm{Expression, mémoire}
-      \\ \gramor & \msi{m}{i} & \textrm{Instruction, mémoire}
-      \\ \gramor & Ω          & \textrm{Erreur}
-    \end{align*}
-  }
+  \begin{align*}
+  \gramdef{Pile}{s}
+    { []                       }{Pile vide}
+    { \{ x_1 ; … ; x_n \} :: s }{Ajout d'un cadre}
+    {END}
+  \\
+  \gramdef{État mémoire}{m}
+    { (s,                    }{Pile}
+    { \{ x_1 ;…; x_n \},     }{Globales}
+    { \{a_1↦v_1;…;a_p↦v_p\}) }{Valeurs}
+    {END}
+  \\
+  \gramdef{État d'interpréteur}{Ξ}
+    { \msi{m}{e} }{Expression, mémoire}
+    { \msi{m}{i} }{Instruction, mémoire}
+    { Ω          }{Erreur}
+    {END}
+  \end{align*}
 
   \caption{Composantes d'un état mémoire}
   \label{fig:interp}
@@ -2098,6 +2108,7 @@ donc
 \section*{TODO}
 
 \begin{itemize}
+\item dans figure~\ref{fig:interp} passer en doublet
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?
