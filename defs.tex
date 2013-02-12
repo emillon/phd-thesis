@@ -390,11 +390,19 @@
     #1 & \textrm{#2} \\
   }{
     #1 & \textrm{#2} \\
-    & & \gramor & \grambuildtable{#3}
+    & & & & \gramor & \grambuildtable{#3}
   }
 }
 
+\def\gramlblbox#1{
+  \begin{minipage}{0.2\textwidth}
+    \vbox to 0.7\baselineskip{
+      #1
+    }
+  \end{minipage}
+}
+
 \def\gramdef#1#2#3#4#5{
-  \textrm{#1} & & #2 \gramisa &
+    & \gramlblbox{\textrm{#1}} & & & #2 \gramisa &
   \grambuildtable{#3}{#4}{#5}
 }
