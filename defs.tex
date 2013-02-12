@@ -285,29 +285,6 @@
   \newcommand\thesubtitle{#1}}
 % }}}
 
-% switch {{{
-\def\switch#1#2{
-  \ifstrequal{#2}{END}{
-    \errmessage{switch : case "#1" not found}
-  }{
-    \switchnext{#1}{#2}
-  }
-}
-
-\def\switchnext#1#2#3{
-  \ifstrequal{#1}{#2}
-    {#3\switchlast}
-    {
-      \switch{#1}
-    }
-}
-
-\def\switchlast#1{
-  \ifstrequal{#1}{END}{}
-  {\switchlast}
-}
-% }}}
-
 % Strike-through in math mode
 \def\msout#1{\text{\sout{\ensuremath{#1}}}}
 
