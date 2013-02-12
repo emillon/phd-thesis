@@ -961,14 +961,12 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 
   \begin{align*}
   \gramdef{Pile}{s}
-    { []                       }{Pile vide}
-    { \{ x_1 ; … ; x_n \} :: s }{Ajout d'un cadre}
+    { [] }{Pile vide}
+    { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
     {END}
   \\
   \gramdef{État mémoire}{m}
-    { (s,                    }{Pile}
-    { \{ x_1 ;…; x_n \},     }{Globales}
-    { \{a_1↦v_1;…;a_p↦v_p\}) }{Valeurs}
+    { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
     {END}
   \\
   \gramdef{État d'interpréteur}{Ξ}
@@ -2108,7 +2106,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item dans figure~\ref{fig:interp} passer en doublet
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?
