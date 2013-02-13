@@ -165,6 +165,12 @@
              { Γ ⊢ e : t }
              { Γ ⊢ e }
          }
+    {Decl}{ \irule{Decl}
+              { Γ ⊢ e : t
+             \\ Γ, x:t ⊢ i
+              }
+              { Γ ⊢ \iDecl{x}{e}{i} }
+          }
     {If}{ \irule{If}
             { Γ ⊢ e : \tInt \\
               Γ ⊢ i_1 \\
@@ -310,6 +316,20 @@
              { }
              { \mmi{m}{v}{m}{\iPass} }
     }
+    {Decl}{ \irule{Decl}
+            { m' = \mathrm{Extend}(m, ((x, v)))
+           \\ \mmi{m'}{i}{m''}{\iPass}
+           \\ m''' = \mathrm{Clean}(m'' - x)
+            }
+            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
+    } % TODO définir le "-"
+    {Decl-Return}{ \irule{Dec-Return}
+            { m' = \mathrm{Extend}(m, ((x, v)))
+           \\ \mmi{m'}{i}{m''}{\iReturn{v_r}}
+           \\ m''' = \mathrm{Clean}(m'' - x)
+            }
+            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iReturn{v_r}} }
+    } % TODO définir le "-"
     {If-False}{ \irule{If-False}
                   { }
                   { \mmi{m}{\iIf{0}{i_t}{i_f}}{m}{i_f} }
@@ -382,6 +402,7 @@
     { C_I;i }{}
     { \iIf{C}{i_1}{i_2} }{}
     { \iReturn{C} }{}
+    { \iDecl{x}{C}{i} }{}
     { C }{}
     {END}
   \end{align*}

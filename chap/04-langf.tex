@@ -730,12 +730,13 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \begin{align*}
   \gramdef{Instructions}{i}
-                 { \iPass        }{Instruction vide}
-                 { i;i           }{Séquence}
-                 { e             }{Expression}
-                 { \iIf{e}{i}{i} }{Alternative}
-                 { \iWhile{e}{i} }{Boucle}
-                 { \iReturn{e}   }{Retour de fonction}
+                 { \iPass          }{Instruction vide}
+                 { i;i             }{Séquence}
+                 { e               }{Expression}
+                 { \iDecl{x}{e}{i} }{Déclaration de variable}
+                 { \iIf{e}{i}{i}   }{Alternative}
+                 { \iWhile{e}{i}   }{Boucle}
+                 { \iReturn{e}     }{Retour de fonction}
                  {END}
   \\
   \gramdef{Fonctions}{f}
@@ -1048,6 +1049,8 @@ Un certain nombre d'opérations est possibles sur les valeurs
 \end{itemize}
 
 % TODO que se passe-t'il dans les autres cas ? introduire un \serr{typ} ?
+
+% TODO faire un blabla similaire sur les instructions
 
 \begin{definition}[Recherche de variable]
 
@@ -1869,6 +1872,29 @@ ci-dessus.
   \semrule{Exp}
 \end{mathpar}
 
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait en trois parties :
+
+\begin{itemize}
+\item on crée un environnement mémoire $m'$ en ajoutant à $m$ l'association
+$x↦v$.
+
+\item sous $m'$, on évalue $i$ jusqu'à atteindre une instruction $\iPass$ ou
+$\iReturn{v_r}$ sous un état $m''$. C'est cette instruction qui sera retournée.
+
+\item on enlève $x$ de $m''$ et on enlève de cet état mémoire les pointeurs
+invalides.
+
+\end{itemize}
+
+\begin{mathpar}
+  \semrule{Decl}
+
+  \semrule{Decl-Return}
+\end{mathpar}
+
+% TODO que faire si la pile de locale est vide ? (declaration de "locale" dans
+% une expression au toplevel)
+
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
 manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce
 cas), c'est la règle \textsc{If-False} qui est appliquée et l'instruction
@@ -2106,7 +2132,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item ajouter declaration
 \item simplifier la fun
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)

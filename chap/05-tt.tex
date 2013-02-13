@@ -364,6 +364,13 @@ typée dans ce même contexte.
   \disprule{Exp}
 \end{mathpar}
 
+Une déclaration de variable est bien typée si son bloc interne est bien typé
+quand on ajoute à l'environnement la variable avec le type de son initialiseur.
+
+\begin{mathpar}
+  \disprule{Decl}
+\end{mathpar}
+
 Les constructions de contrôle sont bien typées si leurs sous-instructions sont
 bien typées, et si la condition est d'un type entier.
 
