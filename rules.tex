@@ -356,31 +356,33 @@
 }
 
 \def\figctx{
-  \gramlr{Contextes}{
   \begin{align*}
-  C \gramisa & C_L
-  \\ \gramor & \ctxOp{C}{e}
-  \\ \gramor & \ctxOp{v}{C}
-  \\ \gramor & \ctxUnOp{C}
-  \\ \gramor & \ctxSet{C}{e}
-  \\ \gramor & \ctxSet{φ}{C}
-  \\ \gramor & \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \}
-  \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
-  \\ \gramor & C (e_1, …, e_n)
-  \\ \gramor & f (v_1, …, C, …, e_n)
+  \gramdef{Contextes}{C}
+    { C_L }{}
+    { \ctxOp{C}{e} }{}
+    { \ctxOp{v}{C} }{}
+    { \ctxUnOp{C} }{}
+    { \ctxSet{C}{e} }{}
+    { \ctxSet{φ}{C} }{}
+    { \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \} }{}
+    { [ v_1 ; … ; C ; … ; e_n ] }{}
+    { C (e_1, …, e_n) }{}
+    { f (v_1, …, C, …, e_n) }{}
+    {END}
   \\
+  \gramdef{Contextes (left-values)}{C_L}
+    { \ctxEmpty }{}
+    { \ctxLvDeref{C_L} }{}
+    { \ctxLvField{C_L}{l_S} }{}
+    { \ctxLvIndex{C_L}{e} }{}
+    { \ctxLvIndex{φ}{C} }{}
+    {END}
   \\
-  C_L \gramisa & \ctxEmpty
-  \\   \gramor & \ctxLvDeref{C_L}
-  \\   \gramor & \ctxLvField{C_L}{l_S}
-  \\   \gramor & \ctxLvIndex{C_L}{e}
-  \\   \gramor & \ctxLvIndex{φ}{C}
-  \\
-  \\
-  C_I \gramisa & C_I;i
-  \\   \gramor & \iIf{C}{i_1}{i_2}
-  \\   \gramor & \iReturn{C}
-  \\   \gramor & C
+  \gramdef{Contextes (instructions)}{C_I}
+    { C_I;i }{}
+    { \iIf{C}{i_1}{i_2} }{}
+    { \iReturn{C} }{}
+    { C }{}
+    {END}
   \end{align*}
-  }
 }

@@ -1,33 +1,28 @@
-\gramlr{Termes}{
 \begin{align*}
-  t \gramisa & x              & \textrm{Variable} \\
-    \gramor  & λ x . t        & \textrm{Abstraction} \\
-    \gramor  & t              & \textrm{Application} \\
-    \gramor  & n              & \textrm{Entier} \\
-    \gramor  & f              & \textrm{Flottant} \\
-    \gramor  & (t, t)         & \textrm{Couple} \\
-    \gramor  & \textrm{fst}~t & \textrm{Projection gauche} \\
-    \gramor  & \textrm{snd}~t & \textrm{Projection droite}
+\gramdef{Termes}{t}
+  { x              }{Variable}
+  { λ x . t        }{Abstraction}
+  { t              }{Application}
+  { n              }{Entier}
+  { f              }{Flottant}
+  { (t, t)         }{Couple}
+  { \textrm{fst}~t }{Projection gauche}
+  { \textrm{snd}~t }{Projection droite}
+  {END}
+\\
+\gramdef{Types}{τ}
+  {  \tInt          }{Entier}
+  {  \tFloat        }{Flottant}
+  { τ \rightarrow τ }{Fonction}
+  { τ \times τ      }{Produit}
+  {END}
+\\
+\gramdef{Contextes}{Γ}
+  { ε     }{Contexte vide}
+  { Γ,x:τ }{Extension}
+  {END}
 \end{align*}
-}
 
-\gramlr{Types}{
-\begin{align*}
-  τ \gramisa &  \tInt          & \textrm{Entier}\\
-    \gramor  &  \tFloat        & \textrm{Flottant}\\
-    \gramor  & τ \rightarrow τ & \textrm{Fonction} \\
-    \gramor  & τ \times τ      & \textrm{Produit}
-\end{align*}
-}
-
-\gramlr{Contextes}{
-\begin{align*}
-  Γ \gramisa & ε     & \textrm{Contexte vide}\\
-    \gramor  & Γ,x:τ & \textrm{Extension}
-\end{align*}
-}
-
-\gramlr{Règles}{
 \begin{mathpar}
 \irule{Int}{ }{Γ⊢n:\tInt}
 \and
@@ -45,4 +40,3 @@
 \and
 \irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
 \end{mathpar}
-}
