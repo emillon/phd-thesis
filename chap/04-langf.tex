@@ -1685,8 +1685,7 @@ droite ses éléments :
     \node at ($(m1)!(m7)!(0,1)$)          (m8) {$m_8$};
     \node[below of=m8]                    (m9) {$m_9$};
 
-    \draw [->] (m0) -- node[auto] {$e → \mathrm{fun}(\vec{a})
-                                   (\vec{l}↦\vec{e'})\{i\}$}            (m1);
+    \draw [->] (m0) -- node[auto] {$e → \mathrm{fun}(\vec{a}) \{i\}$}   (m1);
     \draw [->] (m1) -- node[auto] {$\vec{e} → \vec{v}$}                 (m2);
     \draw [->] (m2) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m3);
     \draw [->] (m3) -- node[auto] {$\vec{e'} → \vec{v'}$}               (m4);
@@ -1711,10 +1710,8 @@ droite ses éléments :
 
 L'appel de fonction repose également sur cette évaluation multiple. Tout
 d'abord, les arguments sont évalués et placés dans un nouveau cadre de pile.
-Puis les expressions qui initialisent les variables locales sont elle aussi
-évaluées et ajoutées à ce même cadre de pile (opérateur $\mathrm{Extend}$).
 Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
-instruction $\iReturn{v}$. Puis, le cadre précédemment utilisé est dépilé.
+instruction $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
 
 La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
 de pile. En effet, si une référence au dernier cadre est toujours présente après
@@ -2131,7 +2128,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item simplifier la fun
 \item mettre à jour l'explication post-figure~\ref{fig:fcall-details}
 \item mettre à jour la figure~\ref{fig:fcall-details}
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$

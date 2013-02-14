@@ -190,15 +190,11 @@
             }
     {Fun}{ \irule{Fun}
              { Γ' = (Γ - \vRet),
-                    \vec{a} : \vec{t}, \\
-               Γ' ⊢ \vec{e} : \vec{t'} \\
-               Γ'' = Γ',
-                     \vec{l} : \vec{t'},
+                    \vec{a} : \vec{t},
                      \vRet : t_r \\
-               Γ'' ⊢ i
+               Γ' ⊢ i
              }
-             { Γ ⊢ \mathrm{fun} (\vec{a})
-                   (\textrm{zip}(\vec{l}, \vec{e}) \{i\}
+             { Γ ⊢ \mathrm{fun} (\vec{a}) \{i\}
                     : \vec{t} → t_r
              }
          }
@@ -290,19 +286,13 @@
                  }
     }
     {Exp-Call}{ \irule{Exp-Call}
-                  { f =
-                    \mathrm{fun} (a_1, …, a_n)
-                                 ((l'_1, e'_1), …, (l'_p, e'_p))
-                                 \{ i \} \\
+                  { f = \mathrm{fun} (a_1, …, a_n) \{ i \} \\
                     m_1 = \mathrm{Push}(m_0, ((a_1, v_1), …, (a_n, v_n))) \\
-                    \evstar{m_1}{e'_1 \\ \vdots \\ e'_p}
-                           {m_2}{v'_1 \\ \vdots \\ v'_p} \\
-                    m_3 = \mathrm{Extend}(m_2, ((l_1, v_1), …, (l_n, v_n))) \\
-                    \mm{m_3}{i}{m_4}{\iReturn{v}} \\
-                    m_5 = \mathrm{Pop}(m_4) \\
-                    m_6 = \mathrm{Cleanup}(m_5) \\
+                    \mm{m_1}{i}{m_2}{\iReturn{v}} \\
+                    m_3 = \mathrm{Pop}(m_2) \\
+                    m_4 = \mathrm{Cleanup}(m_3) \\
                   }
-                  {\mm{m_0}{f (v_1, …, v_n)}{m_6}{v}}
+                  {\mm{m_0}{f (v_1, …, v_n)}{m_4}{v}}
     }
     {Seq}{ \irule{Seq}
              { \mmi{m}{i}{m'}{\iPass} }
