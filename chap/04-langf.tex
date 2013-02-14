@@ -1049,6 +1049,9 @@ Un certain nombre d'opérations est possibles sur les valeurs
 
 % TODO que se passe-t'il dans les autres cas ? introduire un \serr{typ} ?
 
+\section{Opérations sur les états mémoire}
+\label{sec:memops}
+
 % TODO faire un blabla similaire sur les instructions
 
 \begin{definition}[Recherche de variable]
@@ -1162,6 +1165,117 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   \caption{Opérations de pile}
   \label{fig:stackops}
+\end{figure}
+
+On définit aussi une opération de nettoyage de pile, qui sera utile pour les
+retours de fonction.
+
+En effet, si une référence au dernier cadre est toujours présente après
+le retour, elle pourra se résoudre en un objet différent plus tard dans
+l'exécution du programme.
+
+La fonction $\mathrm{Cleanup}$ est donnée par :
+
+\def\cleanuplist#1#2{\mathrm{CleanupList}(#1, #2)}
+\def\cllive#1#2{\mathrm{Live}(#1, #2)}
+
+\begin{align*}
+  \mathrm{Cleanup}(s, g)  = & (s', g') \\
+                    où g' = & \cleanuplist{|s|}{g} \\
+                       s' = & [\cleanuplist{|s|}{s_1},
+                            …, \cleanuplist{|s|}{s_n}] \\
+       \cleanuplist{p}{u} = & \{(x, v) ∈ u / v\mbox{ n'est pas une adresse} \} \\
+                       \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
+    \cllive{p}{(n, x)} = & n < p \\
+    \cllive{p}{(x)}    = & \mathrm{Vrai} \\
+    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
+    \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
+    \cllive{p}{φ[n]}   = & \cllive{p}{φ}
+\end{align*}
+
+Sans cette règle, examinons le programme suivant :
+
+\begin{Verbatim}
+f ()                g (p)           h ()
+  (x=0)               (x=0.0)         (p=f())
+{                   {               {
+  return (&x);        *p = 1;         g(p);
+}                   }               }
+\end{Verbatim}
+
+L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
+déréférencement de $p$ va modifier $x$.
+
+\begin{figure}
+  \centering
+
+
+  \begin{tikzpicture}
+    [ stack/.style={draw,minimum height=5mm,minimum width=3cm ,shape=rectangle}
+    , every node/.style={font=\footnotesize}
+    , faded/.style={fill=black!20}
+    , substack/.style={draw, minimum height=5mm, }
+    , oldstack/.style={loosely dashed}
+    , fixmatrix/.style={matrix, row sep=-\pgflinewidth, column sep=-\pgflinewidth}
+    , >=stealth'
+    ]
+
+    \path (0, 0)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, minimum width=10mm}] {
+        \node (p) { }; & \node { }; & \node (q) { }; \\
+      }
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
+        \node (x) { }; & \node (y) { }; \\
+      };
+
+      \node [fixmatrix, nodes={substack, minimum width=15mm}]
+        at (5, 0) {
+          \node (r) { }; & \node { }; \\
+      };
+
+      \draw[->] (p.center) -- ++(0, 0.5);
+      \draw[->] (q.center) -| ($ (r.center) - (3mm, 0) $);
+      \draw[->] ($ (r.center) + (3mm, 0) $) |- (y.center);
+
+      %%%%%
+
+    \path (0, -3)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, minimum width=10mm}] {
+        \node (p2) { }; & \node { }; & \node (q2) { }; \\
+      }
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
+        \node (x2) { }; & \node (y2) { }; \\
+      };
+
+      \node [fixmatrix, nodes={substack, minimum width=15mm}]
+        at (5, -3) {
+          \node (r2) { }; & \node { }; \\
+      };
+
+      \draw[->] (q2.center) -| ($ (r2.center) - (3mm, 0) $);
+
+      \def\crossat#1{
+        \draw ($ #1 + (2mm, 2mm) $) -- ++ (-4mm, -4mm);
+        \draw ($ #1 + (-2mm, 2mm) $) -- ++ (4mm, -4mm);
+      }
+
+      \crossat{(r2.center) + (3mm, 0)}
+      \crossat{(p2.center)}
+
+  \end{tikzpicture}
+
+  \caption{Nettoyage d'un cadre de pile}
+  \label{fig:stackcleanup}
 \end{figure}
 
 \section{Accesseurs}
@@ -1714,113 +1828,8 @@ Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
 instruction $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
 
 La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
-de pile. En effet, si une référence au dernier cadre est toujours présente après
-le retour, elle pourra se résoudre en un objet différent plus tard dans
-l'exécution du programme.
-
-La fonction $\mathrm{Cleanup}$ est donnée par :
-
-\def\cleanuplist#1#2{\mathrm{CleanupList}(#1, #2)}
-\def\cllive#1#2{\mathrm{Live}(#1, #2)}
-
-\begin{align*}
-  \mathrm{Cleanup}(s, g)  = & (s', g') \\
-                    où g' = & \cleanuplist{|s|}{g} \\
-                       s' = & [\cleanuplist{|s|}{s_1},
-                            …, \cleanuplist{|s|}{s_n}] \\
-       \cleanuplist{p}{u} = & \{(x, v) ∈ u / v\mbox{ n'est pas une adresse} \} \\
-                       \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
-    \cllive{p}{(n, x)} = & n < p \\
-    \cllive{p}{(x)}    = & \mathrm{Vrai} \\
-    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
-    \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
-    \cllive{p}{φ[n]}   = & \cllive{p}{φ}
-\end{align*}
-
-Sans cette règle, examinons le programme suivant :
-
-\begin{Verbatim}
-f ()                g (p)           h ()
-  (x=0)               (x=0.0)         (p=f())
-{                   {               {
-  return (&x);        *p = 1;         g(p);
-}                   }               }
-\end{Verbatim}
-
-L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
-déréférencement de $p$ va modifier $x$.
-
-\begin{figure}
-  \centering
-
-
-  \begin{tikzpicture}
-    [ stack/.style={draw,minimum height=5mm,minimum width=3cm ,shape=rectangle}
-    , every node/.style={font=\footnotesize}
-    , faded/.style={fill=black!20}
-    , substack/.style={draw, minimum height=5mm, }
-    , oldstack/.style={loosely dashed}
-    , fixmatrix/.style={matrix, row sep=-\pgflinewidth, column sep=-\pgflinewidth}
-    , >=stealth'
-    ]
-
-    \path (0, 0)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, minimum width=10mm}] {
-        \node (p) { }; & \node { }; & \node (q) { }; \\
-      }
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
-        \node (x) { }; & \node (y) { }; \\
-      };
-
-      \node [fixmatrix, nodes={substack, minimum width=15mm}]
-        at (5, 0) {
-          \node (r) { }; & \node { }; \\
-      };
-
-      \draw[->] (p.center) -- ++(0, 0.5);
-      \draw[->] (q.center) -| ($ (r.center) - (3mm, 0) $);
-      \draw[->] ($ (r.center) + (3mm, 0) $) |- (y.center);
-
-      %%%%%
-
-    \path (0, -3)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, minimum width=10mm}] {
-        \node (p2) { }; & \node { }; & \node (q2) { }; \\
-      }
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
-        \node (x2) { }; & \node (y2) { }; \\
-      };
-
-      \node [fixmatrix, nodes={substack, minimum width=15mm}]
-        at (5, -3) {
-          \node (r2) { }; & \node { }; \\
-      };
-
-      \draw[->] (q2.center) -| ($ (r2.center) - (3mm, 0) $);
-
-      \def\crossat#1{
-        \draw ($ #1 + (2mm, 2mm) $) -- ++ (-4mm, -4mm);
-        \draw ($ #1 + (-2mm, 2mm) $) -- ++ (4mm, -4mm);
-      }
-
-      \crossat{(r2.center) + (3mm, 0)}
-      \crossat{(p2.center)}
-
-  \end{tikzpicture}
-
-  \caption{Nettoyage d'un cadre de pile}
-  \label{fig:stackcleanup}
-\end{figure}
+de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la
+section~\label{sec:memops}).
 
 \begin{mathpar}
   \semrule{Exp-Call}
@@ -2128,7 +2137,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item mettre à jour l'explication post-figure~\ref{fig:fcall-details}
 \item mettre à jour la figure~\ref{fig:fcall-details}
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
