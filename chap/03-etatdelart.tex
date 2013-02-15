@@ -464,7 +464,7 @@ assurée que si le treillis des valeurs abstraites est de hauteur finie, ou qu'u
 opérateur d'élargissement (\emph{widening}) $\nabla$ est employé. L'idée est
 qu'une fois qu'on a calculé quelques termes d'une suite croissante, on peut
 réaliser une projection de celle ci. Par exemple, dans le domaine des
-intervalles, $[0;2] \nabla [0;3] = [0;+\infty[$. On atteint alors un point fixe
+intervalles, $[0;2]~\nabla~[0;3] = [0;+\infty[$. On atteint alors un point fixe
 mais qui est plus grand que celui qu'on aurait obtenu sans cette accélération :
 on perd en précision. Pour en gagner, on peut redescendre sur le treillis des
 points fixe avec une suite d'itérations décroissantes \cite{granger}. Dans
@@ -492,11 +492,22 @@ qui sépare une bon analyseur d'un mauvais est sa précision. Dans le cas du
 langage C, de nombreuses constructions rendent imprécises les analyses :
 
 \begin{itemize}
-\item les nombres flottants (types `float`, `double` et `long double`) ont une
+\item les nombres flottants
+(types \texttt{float}, \texttt{double} et \texttt{long double}) ont une
 sémantique particulière, et il n'est pas correct d'"approcher" leur sémantique
 par une sémantique dans $ℝ$. Afin d'être correct, il faut établir des domaines
 spécifiques au flottant, comme~\cite{floatpoly}. Un tour d'horizon des
 difficultés liées aux flottants est effectué dans~\cite{floatpitfalls}.
+
+\item les pointeurs sur fonction
+rendent floue la limite qui est habituellement présente entre instructions et
+données. En leur présence il est impossible de faire une analyse de flot de
+contrôle indépendante du flot de données. Pour pouvoir les traiter, il faut que
+le domaine abstrait en question soit assez précis pour qu'un pointeur abstrait
+se concrétise en un ensemble réduit de fonctions. Dans le cas où le domaine ne
+peut pas borner l'ensemble des fonctions possibles et renvoie $\top$, l'analyse
+ne peut pas continuer.
+
 \end{itemize}
 
 \subsection*{TODO}
@@ -505,8 +516,6 @@ difficultés liées aux flottants est effectué dans~\cite{floatpitfalls}.
 \item difficultés :
 
 \begin{itemize}
-\item
-  pointeurs sur fonction
 \item
   allocation dynamique
 \item
