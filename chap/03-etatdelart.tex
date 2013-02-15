@@ -68,9 +68,9 @@ possible. Cette technique est très puissante mais possède plusieurs
 inconvénients. D'une part, pour réaliser une analyse interprocédurale il faut
 partir d'un point en particulier du programme (comme la fonction \texttt{main}).
 Cette hypothèse n'est pas facilement satisfaite dans un noyau de système
-d'exploitation, qui possède de nombreux points d'entrée. D'autre part,
-il est très difficile de faire passer à l'échelle un interpréteur abstrait
-\cite{AstreeScale,coverityBillion}.
+d'exploitation, qui possède de nombreux points d'entrée.
+
+% TODO virer non?
 
 \begin{figure}%{{{
 \centering
@@ -454,15 +454,47 @@ ensemble de variables possiblement pointées et une valeur abstraite représenta
 le décalage (\emph{offset}) du pointeur par rapport au début de la zone mémoire.
 Cette valeur peut elle-même être abstraite par un domaine numérique.
 
+Au delà des domaines eux-mêmes, l'analyse se fait sous forme d'un calcul de
+point fixe. La manière la plus simple est d'utiliser un algorithme de
+\emph{liste de travail}, décrit par exemple dans~\cite{tapsoft95}. Les
+raffinement en revanche sont nombreux.
+
+Dès~\cite{Cousot77} il est remarqué que la terminaison de l'analyse n'est
+assurée que si le treillis des valeurs abstraites est de hauteur finie, ou qu'un
+opérateur d'élargissement (\emph{widening}) $\nabla$ est employé. L'idée est
+qu'une fois qu'on a calculé quelques termes d'une suite croissante, on peut
+réaliser une projection de celle ci. Par exemple, dans le domaine des
+intervalles, $[0;2] \nabla [0;3] = [0;+\infty[$. On atteint alors un point fixe
+mais qui est plus grand que celui qu'on aurait obtenu sans cette accélération :
+on perd en précision. Pour en gagner, on peut redescendre sur le treillis des
+points fixe avec une suite d'itérations décroissantes \cite{granger}. Dans
+l'itération de point fixe, il est possible d'obtenir les résultats de manière
+plus efficace en choisissant un ordre particulier dans les calculs des
+sous-itérations\cite{policy}.
+
+% TODO pas clair
+
+En termes d'ingéniérie logicielle, implanter un analyseur statique est un défi
+en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le code
+source à analyser dans un langage, et traduire les résultats de l'analyse en un
+ensemble d'"alarmes" à présenter à l'utilisateur.
+
+Pour des retours d'expérience, on peut se référer aux descriptions d'
+Astrée\cite{Astree04,Astree05,AstreeScale},
+CGS \cite{cgs},
+Coverity \cite{coverityBillion},
+ou de Penjili (TODO)
+
+% TODO pas top
+
 \subsection*{TODO}
 
 \begin{itemize}
-\item widening \cite{granger},
-\item CGS \cite{cgs},
-\item Astrée : presentation\cite{Astree04,Astree05},
-\item Penjili
 \item difficultés : flottants, pointeurs sur fonction, allocation dynamique,
   casts entiers/pointeurs
+\item produit réduit
+\item CIL, autres front end
+\item polyspace?
 \end{itemize}
 
 \section{Typage}
