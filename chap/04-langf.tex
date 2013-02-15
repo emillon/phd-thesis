@@ -1750,33 +1750,13 @@ qui est celle qui a été affectée.
 
 \subsection*{Expressions composées}
 
-On commence par définir une opération d'évaluation de plusieurs expressions à la
-fois : on note
-
-\begin{mathpar}
-  \evstar{m}{e_1 \\ \vdots \\ e_n}
-         {m'}{v_1 \\ \vdots \\ v_n}
-\end{mathpar}
-
-si $∃ (m_1, …, m_n) , ∀ i ∈ [ 1; n-1 ], \mm{m_i}{e_i}{m_{i+1}}{e_{i+1}} $ avec
-$m = m_1$ et $m' = m_n$.
-
-Notons que l'évaluation se fait encore de gauche à droite. On utilise la
-notation vecteur colonne pour signifier qu'il s'agit ici de métasyntaxe (il n'y
-a pas de tuples dans le langage).
-
-Cette évaluation chaînée est au coeur de la règle suivante qui permet d'évaluer
-les structures : à une structure (syntaxique) correspond une valeur structurelle
-dont les champs sont ceux de la première structure évalués :
+Les littéraux de structures sont évalués en leurs constructions syntaxiques
+respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … ; C
+; … ; e_n ] $, l'évaluation se fait toujours de gauche à droite.
 
 \begin{mathpar}
   \semrule{Exp-Struct}
-\end{mathpar}
 
-De même, l'évaluation d'un littéral de tableau se fait en évaluant de gauche à
-droite ses éléments :
-
-\begin{mathpar}
   \semrule{Exp-Array}
 \end{mathpar}
 
@@ -1812,10 +1792,10 @@ droite ses éléments :
 \end{figure}
 \shorthandon{!}
 
-L'appel de fonction repose également sur cette évaluation multiple. Tout
-d'abord, les arguments sont évalués et placés dans un nouveau cadre de pile.
-Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
-instruction $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
+Les contextes utilisés dans l'appel de fonction sont similaires. Tout d'abord,
+les arguments sont évalués et placés dans un nouveau cadre de pile. Ensuite, le
+corps de la fonction est évalué jusqu'à se réduire en une instruction
+$\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
 
 La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
 de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la

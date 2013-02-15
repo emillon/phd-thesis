@@ -90,11 +90,6 @@
 % Reduction (left-values)
 \def\mmlv#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
 
-\def\mmbig#1#2#3#4{
-  \left\langle #2, #1 \right\rangle →
-  \left\langle #4, #3 \right\rangle
-}
-
 % Compatibilité Γ / m
 \def\mcomp#1#2{#1 ⊢_{mem} #2}
 
@@ -124,11 +119,6 @@
 \def\ph#1#2#3{#1 ⊢ #2 → #3}
 
 \def\phstar#1#2#3{#1 ⊢ #2 →^* #3}
-
-\def\evstar#1#2#3#4{
-  \mmbig{#1}{\begin{pmatrix}#2\end{pmatrix}}
-        {#3}{\begin{pmatrix}#4\end{pmatrix}}
-}
 
 % typage
 \def\ty#1#2#3{#1 ⊢ #2 : #3}
