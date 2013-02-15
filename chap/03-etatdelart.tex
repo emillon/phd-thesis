@@ -508,6 +508,24 @@ se concrétise en un ensemble réduit de fonctions. Dans le cas où le domaine n
 peut pas borner l'ensemble des fonctions possibles et renvoie $\top$, l'analyse
 ne peut pas continuer.
 
+\item l'allocation dynamique
+de données, présente dans le langage C par le biais des fonctions
+\texttt{malloc} et \texttt{free}, modifie le modèle mémoire
+nécessaire. Sans celle-ci, l'ensemble des zones mémoire possibles peut être
+décrit statiquement : ce sont les noms de variable. Ce qu'introduit
+\texttt{malloc} au langage, c'est une zone mémoire qui n'a pas de nom, et sur
+laquelle on n'a qu'un pointeur.
+
+% TODO, bof + expand
+
+\item le transtypage (\emph{casts}) entre entiers et pointeurs
+est particulièrement délicat à traiter. Dans les modèles abstraits, les
+pointeurs sur données ou sur fonctions n'ont pas de représentation numérique,
+seulement une représentation symbolique. Même dans l'exécution concrète, la
+représentation numérique d'un pointeur est lié à de nombreux choix faits par
+l'environnement d'exécution (comme la randomisation de l'espace d'adressage) qui
+ne peuvent pas facilement être modélisés.
+
 \end{itemize}
 
 \subsection*{TODO}
@@ -516,10 +534,6 @@ ne peut pas continuer.
 \item difficultés :
 
 \begin{itemize}
-\item
-  allocation dynamique
-\item
-  casts entiers/pointeurs
 \item
   récursion
 \end{itemize}
