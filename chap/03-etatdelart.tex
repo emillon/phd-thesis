@@ -487,6 +487,18 @@ ou de Penjili (TODO)
 
 % TODO pas top
 
+Une interprétation abstraite est par construction sûre et incomplète, donc ce
+qui sépare une bon analyseur d'un mauvais est sa précision. Dans le cas du
+langage C, de nombreuses constructions rendent imprécises les analyses :
+
+\begin{itemize}
+\item les nombres flottants (types `float`, `double` et `long double`) ont une
+sémantique particulière, et il n'est pas correct d'"approcher" leur sémantique
+par une sémantique dans $ℝ$. Afin d'être correct, il faut établir des domaines
+spécifiques au flottant, comme~\cite{floatpoly}. Un tour d'horizon des
+difficultés liées aux flottants est effectué dans~\cite{floatpitfalls}.
+\end{itemize}
+
 \subsection*{TODO}
 
 \begin{itemize}
@@ -495,6 +507,7 @@ ou de Penjili (TODO)
 \item produit réduit
 \item CIL, autres front end
 \item polyspace?
+\item APRON?
 \end{itemize}
 
 \section{Typage}
