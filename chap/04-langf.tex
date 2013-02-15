@@ -1789,29 +1789,19 @@ droite ses éléments :
     [node distance=2cm]
 
     \node (m0) {$m_0$};
-    \node[below of=m0]                    (m1) {$m_1$};
+    \node[right of=m0, node distance=3cm] (m1) {$m_1$};
     \node[below of=m1]                    (m2) {$m_2$};
-    \node[right of=m2, node distance=3cm] (m3) {$m_3$};
+    \node at ($(m0)!(m2)!(0,1)$)          (m3) {$m_3$};
     \node[below of=m3]                    (m4) {$m_4$};
-    \node[right of=m4, node distance=3cm] (m5) {$m_5$};
-    \node[below of=m5]                    (m6) {$m_6$};
-    \node[below of=m6]                    (m7) {$m_7$};
-    \node at ($(m1)!(m7)!(0,1)$)          (m8) {$m_8$};
-    \node[below of=m8]                    (m9) {$m_9$};
 
-    \draw [->] (m0) -- node[auto] {$e → \mathrm{fun}(\vec{a}) \{i\}$}   (m1);
-    \draw [->] (m1) -- node[auto] {$\vec{e} → \vec{v}$}                 (m2);
-    \draw [->] (m2) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m3);
-    \draw [->] (m3) -- node[auto] {$\vec{e'} → \vec{v'}$}               (m4);
-    \draw [->] (m4) -- node[auto] {$\mathrm{Extend}(\vec{l}↦\vec{v'})$} (m5);
-    \draw [->] (m5) -- node[auto] {$i → \iReturn{e}$}                   (m6);
-    \draw [->] (m6) -- node[auto] {$e → v$}                             (m7);
-    \draw [->] (m7) -- node[auto] {$\mathrm{Pop}$}                      (m8);
-    \draw [->] (m8) -- node[auto] {$\mathrm{Cleanup}$}                  (m9);
+    \draw [->] (m0) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m1);
+    \draw [->] (m1) -- node[auto] {$i → \iReturn{v_r}$}                 (m2);
+    \draw [->] (m2) -- node[auto] {$\mathrm{Pop}$}                      (m3);
+    \draw [->] (m3) -- node[auto] {$\mathrm{Cleanup}$}                  (m4);
 
     \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
                     -- node[auto, swap] {$f(\vec{e}) → v$}
-                       ($ (m9) + (-5mm, 3mm) $);
+                       ($ (m4) + (-5mm, 3mm) $);
 
   \end{tikzpicture}
 
@@ -2137,7 +2127,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item mettre à jour la figure~\ref{fig:fcall-details}
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?
