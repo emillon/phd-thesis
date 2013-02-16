@@ -569,6 +569,26 @@ règles permettant de vérifier le typage sont par exemple les suivantes :
 Cet ensemble de règles, une fois formalisé et implanté, est en général assez
 efficace pour vérifier la correction d'un programme.
 
+\paragraph{Typage fort ou faible :}
+
+Si un système de types statique permet d'éliminer totalement la nécessité de
+réaliser des tests de typage, on dit qu'il est \emph{fort}. Mais ce n'est que
+rarement le cas. En effet, il peut y avoir des constructions au sein du langage
+qui permettent de contourner le système de types, comme un opérateur de
+transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée :
+
+\begin{figure}
+  \insertcode{cast.java}
+  \caption{Transtypage en Java}
+  \label{fig:javacast}
+\end{figure}
+
+\begin{Verbatim}
+Exception in thread "main" java.lang.ClassCastException:
+    java.lang.Integer cannot be cast to java.lang.Float
+        at Cast.main(Cast.java:5)
+\end{Verbatim}
+
 \paragraph{Polymorphisme :} parfois, il est trop restrictif de donner un unique
 contrat à une fonction. Quel doit être le type d'une fonction ajoutant un
 élément à une liste ?
