@@ -387,6 +387,48 @@ On note $r = (x_1,…,x_n)$.
 
 \end{definition}
 
+\begin{figure}
+
+\centering
+
+\shorthandoff{!}
+\begin{tikzpicture}
+[node distance=2cm
+,bignode/.style={draw,shape=rectangle,minimum size=1cm,fill=green!30}
+,smallnode/.style={draw,shape=circle,minimum size=8mm,fill=blue!30}
+,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
+]
+\node[bignode] (A) {};
+\node[right of=A,smallnode] (B) {};
+\node[right of=B,trinode,fill=violet] (C) {};
+\node[below of=B,smallnode] (D) {};
+\node[below of=A,node distance=4cm,bignode] (E) {};
+
+\draw[->] (A) to node[auto] {get} (B);
+\draw[->] (B) to (D);
+\draw[->] (A) to (E);
+\draw (C) |- node[auto,near end,swap] {put} ($(B)!0.5!(D)$);
+\draw (D) |- node[auto,near end,swap] {put} ($(A)!0.75!(E)$);
+
+\node[smallnode] at (A) {};
+\node[trinode,fill=orange] at (A) {};
+
+\node[trinode,fill=orange] at (B) {};
+
+\node[trinode,fill=violet] at (D) {};
+
+\node[smallnode] at (E) {};
+\node[trinode,fill=violet] at (E) {};
+
+\end{tikzpicture}
+\shorthandoff{!}
+
+\caption{Composition de lentilles}
+\label{fig:compo-lens}
+\end{figure}
+
+Cette définition est illustrée dans la figure~\ref{fig:compo-lens}.
+
 \begin{proof}
 Pour prouver que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$, il suffit de prouver les trois
 propriétés caractéristiques.
