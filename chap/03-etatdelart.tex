@@ -568,17 +568,30 @@ vérification de types. On peut en effet l'effectuer au moment de l'exécution, 
 au contraire prévenir les erreurs à l'exécution en la faisant au moment de la
 compilation (ou avant l'interprétation).
 
-\subsubsection{Typage dynamique}
+\paragraph{Typage dynamique :} dans ce cas, chaque valeur manipulée par le
+programme est décorée d'une étiquette définissant comment interpréter la valeur
+en question. Les règles de typage sont alors réalisées à l'exécution. Par
+exemple, l'opérateur "$+$" vérifie que ces deux opérandes ont une étiquette
+"entier", et construit alors une valeur obtenue en faisant l'addition des deux
+valeurs, avec une étiquette "entier". Symboliquement :
 
-La première est le typage \emph{dynamique}. Pour différencier les différents
-types de données, on ajoute une étiquette à chaque valeur. Dans tout le
-programme, on ne manipulera que des valeurs étiquetées, c'est à dire des couples
-(donnée, nom de type). Si on veut réaliser l'opération $(\hexa{00000001}, Int) +
-(\hexa{0000f000}, Int)$, on vérifie tout d'abord qu'on peut réaliser l'opération
-$+$ entre deux $Int$. Ensuite on réalise l'opération elle même, qu'on étiquette
-avec le type du résultat : $(\hexa{0000f001}, Int)$. Si au contraire on tente
-d'ajouter deux adresses $(\hexa{2e8d5a90}, Addr) + (\hexa{76a5e0ec}, Addr)$, la
-vérification échoue et l'opération s'arrête avec une erreur.
+\begin{verbatim}
+fonction addition(x, y) {
+  if ( (etiquette_type(x) != type_entier)
+    || (etiquette_type(y) != type_entier)
+    ) {
+      erreur ("L'addition est seulement définie pour deux entiers")
+  } else {
+    vx = valeur(x)
+    vy = valeur(y)
+    v = addition_machine(vx, vy)
+    return Valeur(valeur=v, type=type_entier)
+  }
+}
+\end{verbatim}
+
+Le langage Python~\link{python} utilise cette stratégie, qui est illustrée dans
+la session interactive de la figure~\ref{fig:typage-dynamique}.
 
 \begin{figure}
   \insertcode{typage-dynamique.pycon}
@@ -586,83 +599,51 @@ vérification échoue et l'opération s'arrête avec une erreur.
   \label{fig:typage-dynamique}
 \end{figure}
 
-La figure~\ref{fig:typage-dynamique} est une session interactive Python qui
-illustre le typage dynamique. Chaque variable, en plus de sa valeur, possède une
-étiquette qui permet d'identifier le type de celle-ci. On peut accéder au type
-d'une valeur \texttt{x} avec la construction \texttt{type(x)}.
+\paragraph{Typage statique :} dans ce cas on fait les vérifications à la
+compilation. En quelque sorte, l'approche dynamique est pessimiste, puisqu'elle
+demande de traiter très souvent le cas où les types ne sont pas corrects.
+Intuitivement, dans le cas où toutes les fonctions se comportent bien, faire la
+vérification est inutile. Pour vérifier ceci, on donne à chaque fonction un
+contrat comme "si deux entiers sont passés, le fonction renverra un entier sans
+provoquer d'erreur". Cet ensemble de contrats peut être vérifié statiquement par
+le compilateur, à l'aide d'un système de types statique.
 
-Au moment de réaliser une opération comme \texttt{+}, l'interpréteur Python
-vérifie les types des opérandes : s'ils sont compatibles, il créé une valeur de
-résultat, et sinon il lève une exception.
+Ainsi la fonction "$+$" est typée \texttt{(int * int)} $→$ \texttt{int}. Les
+règles permettant de vérifier le typage sont par exemple les suivantes :
 
-Comme l'implémentation elle-même des fonction a accès aux informations de type,
-elle peut faire des traitements particuliers. Par exemple, pour l'addition de
-\texttt{a} (de type entier) et de \texttt{c} (de type flottant), la fonction
-d'addition va d'abord convertir \texttt{a} en flottant, puis réaliser l'addition
-dans le domaine des flottants.
+\begin{itemize}
+\item
+  une constante entière est toujours de type \texttt{int}.
+\item
+  si $f$ a pour type $(t_1, …, t_n) → t$, que $e_1$ a pour type $t_1$,
+  \ldots{}, que $e_n$ a pour type $t_n$, alors $f(e_1, …, e_n)$ a pour
+  type $t_n$
+\item
+  si en considérant que $e_1$ a pour type $t_n$, …, et que $e_n$ a pour type
+  $t_n$, on arrive à typer le corps de $f$ et que sa valeur de retour a alors
+  pour type $t$,
+  alors $f$ a pour type $(t_1, …, t_n) → t$
+\end{itemize}
 
-\subsubsection{Typage statique}
+Cet ensemble de règles, une fois formalisé et implanté, est en général assez
+efficace pour vérifier la correction d'un programme.
 
-Le typage dynamique est simple à comprendre puisque toute les vérifications se
-font dans la sémantique dynamique (ie, à l'exécution). C'est à double tranchant:
-d'une part, cela permet d'être plus flexible, mais d'autre part, cela permet à
-des programmes incorrects d'être exécutés.
+\paragraph{Polymorphisme :} parfois, il est trop restrictif de donner un unique
+contrat à une fonction. Quel doit être le type d'une fonction ajoutant un
+élément à une liste ?
 
-\begin{figure}
-  \insertcode{non-typable.py}
-  \caption{Fonction Python non typable statiquement.}
-  \label{fig:nontypable}
-\end{figure}
+En première approximation, on peut imaginer fournir une version du code par type
+de données à manipuler. C'est la solution retenue par les premières versions du
+langage Pascal, ce qui rendait très difficile l'écriture de
+bibliothèques\cite{PascalNoEscape}.
 
-On peut lire le code source d'un programme et essayer de ``deviner'' quels
-seront les types des différentes expressions. Dans certains cas, cela n'est pas
-possible (fig~\ref{fig:nontypable}) ; mais lorsqu'on peut conclure cela élimine
-la nécessité de faire les tests de type dynamiques car on a réalisé le typage
-\emph{statiquement}.
+Une amélioration peut être de générer à la compilation une fonction qui aurait
+le même code mais des annotations de typage différentes : on obtient alors
+plusieurs copies de la fonction qui sont chacunes spécialisées pour un type en
+particulier. C'est la solution retenue par le langage C++.
 
-Bien sûr, deviner n'est pas suffisant : il faut formaliser cette analyse. Dans
-le cas dynamique, ce sont les fonctions elles-mêmes qui réalisent les tests de
-type et qui appliquent des règles comme ``si les arguments ont pour type
-\texttt{int} alors la valeur de retour a pour type \texttt{int}'' : la
-fonction qui réalise ce test sur les valeurs. Dans le cas statique,
-c'est le compilateur (ou l'interpréteur) qui réalise ce test sur les
-expressions non évaluées. En
-appliquant de proche en proche un ensemble de règles (liées uniquement au
-langage de programmation), on finit par associer à chaque sous-expression du
-programme un type.
-
-Benjamin Pierce résume cette approche dans cette définition très générale :
-
-\begin{definition}[Système de types]
-Un système de types est une méthode syntaxique tractable qui vise à prouver
-l'absence de certains comportements de programmes en classifiant leurs phrases
-selon le genre de valeurs qu'elles produisent. \cite{TAPL}
-\end{definition}
-
-\subsection{Polymorphisme}
-
-Dans le cas du typage statique, restreindre une opération à un seul type de
-données peut être assez restrictif.
-
-Par exemple, quel doit être le type d'une fonction qui trie un tableau ?
-
-\subsubsection{Monomorphisme}
-
-Une première solution peut être de forcer des types concrets, c'est à dire
-qu'une même fonction ne pourra s'appliquer qu'à un seul type de données.
-
-Il est confortable pour le programmeur de n'avoir à écrire un algorithme qu'une
-seule fois, indépendamment du type des éléments considérés.
-
-Il existe deux grandes classes de systèmes de types introduisant du
-polymorphisme.
-
-\subsubsection{Polymorphisme paramétrique}
-
-\todo{Historique + citer le papier de Milner sur le polymorphisme}
-\cite{Milner78}
-
-\cite{PascalNoEscape}
+En fait, si à l'exécution toutes les données sont représentées de manière
+uniforme, il n'est pas nécessaire de créer plusieurs copies de la fonction.
 
 \begin{figure}
   \insertcode{listappend.ml}
@@ -670,33 +651,34 @@ polymorphisme.
   \label{fig:listappend}
 \end{figure}
 
-La fonction de la figure~\ref{fig:listappend} n'opère que sur la structure du type
-liste (en utilisant ses constructeurs \texttt{{[}{]}} et \listcons ainsi que
-le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne sont pas manipulés
-à part pour les transférer dans le résultat.
+Par exemple, la fonction de la figure~\ref{fig:listappend} n'opère que sur la
+structure du type liste (en utilisant ses constructeurs \texttt{{[}{]}} et
+\listcons ainsi que le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne
+sont pas manipulés à part pour les transférer dans le résultat.
 
-Moralement, cette fonction est donc indépendante du type de données contenu dans
-la liste : elle pourra agir sur des listes de n'importe quel type d'élément.
+Elle peut donc être typée avec n'importe quelle type 
+$a~\textrm{list} → a~\textrm{list} → a~\textrm{list}$. Pour introduire cette
+généricité, on modifie le système de types pour transformer :
 
-Plutôt qu'un type, on peut lui donner le \emph{schéma de types} suivant :
-
-\[
-  \textrm{append} : \forall a . a \textrm{list}
-                             -> a \textrm{list}
-                             -> a \textrm{list}
+\[ ∀ a. \textrm{append} :
+   a~\textrm{list} → a~\textrm{list} → a~\textrm{list}
 \]
 
-C'est à dire que \texttt{append} peut être utilisé avec n'importe quel type
-concret \texttt{a} en substituant les variables quantifiées (on parle d'
-\emph{instanciation}).
+en :
+
+\[ \textrm{append} : ∀ a.
+   a~\textrm{list} → a~\textrm{list} → a~\textrm{list}
+\]
+
+Au lieu d'associer à chaque expression un type, dans certains cas on lui associe
+un schéma de types, instanciable en un type concret. Cette technique a été
+décrite en premier dans~\cite{Milner78}.
 
 \subsection*{TODO}
 
 \begin{itemize}
 \item
   incorporer la subsection d'après
-\item
-  virer la figure~\ref{fig:nontypable} ?
 \end{itemize}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
