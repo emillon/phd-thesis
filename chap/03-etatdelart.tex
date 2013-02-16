@@ -212,65 +212,6 @@ d'exploitation, qui possède de nombreux points d'entrée.
 
 \end{figure}%}}}
 
-\begin{figure}%{{{
-\centering
-\begin{tikzpicture}
-\node at (0,0) (lbase) {};
-\path (lbase) +(0,0)  node (lb) {}
-              +(-1,1) node (lm) {}
-              +(0,1)  node (lz) {}
-              +(1,1)  node (lp) {}
-              +(0,2)  node (lt) {}
-;
-\draw (lb) -- (lm) -- (lt) -- (lz) -- (lb) -- (lp) -- (lt);
-
-\node at (4,-0.5) (mbase) {};
-\path (mbase) +(0,0)  node (mb)  {}
-              +(0,1)  node (mz)  {}
-              +(-1,2) node (mle) {}
-              +(1,2)  node (mge) {}
-              +(0,3)  node (mt)  {}
-;
-\draw (mb) -- (mz) -- (mle) -- (mt) -- (mge) -- (mz);
-
-\node at (8,-0.5) (rbase) {};
-\path (rbase) +(0,0)  node (rb)  {}
-              +(-1,1) node (rlt) {}
-              +(0,1)  node (rz)  {}
-              +(1,1)  node (rgt) {}
-              +(-1,2) node (rle) {}
-              +(0,2)  node (rnz) {}
-              +(1,2)  node (rge) {}
-              +(0,3)  node (rt)  {}
-;
-\draw (rb) -- (rlt) -- (rle) -- (rt) -- (rge) -- (rgt) -- (rb) -- (rz) -- (rge);
-\draw (rlt) -- (rnz) -- (rgt);
-\draw (rz) -- (rle);
-\draw (rnz) -- (rt);
-
-\foreach \x in {lm,lz,lp,lb,lt,mb,mle,mz,mge,mt,rb,rlt,rz,rgt,rle,rnz,rge,rt}
-  {\draw (\x) circle (2pt);}
-
-
-
-\draw[dotted] (lb) -- (mb);
-\draw[dotted] (lt) -- (mt);
-\draw[dotted] (lm) -- (mle);
-\draw[dotted] (lp) -- (mge);
-\draw[dotted] (lz) -- (mz);
-
-\draw[dotted] (mb) -- (rb);
-\draw[dotted] (mt) -- (rt);
-\draw[dotted] (mle) to [bend left=30] (rle);
-\draw[dotted] (mge) to [bend right=30] (rge);
-\draw[dotted] (mz)  to [bend right=30] (rz);
-
-\end{tikzpicture}
-
-\caption{Connexions de Galois}
-
-\end{figure}%}}}
-
 Les domaines les plus simples ne capturent aucune relation entre variables. Ce
 sont des domaines non relationnels. On peut en citer quelques uns.
 
