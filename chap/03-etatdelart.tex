@@ -632,32 +632,26 @@ en :
 \]
 
 Au lieu d'associer à chaque expression un type, dans certains cas on lui associe
-un schéma de types, instanciable en un type concret. Cette technique a été
-décrite en premier dans~\cite{Milner78}.
+un schéma de types, instanciable en un type concret. En quelque sorte, on
+déplace la vérification du site d'appel au site de définition. Cette technique a
+été décrite en premier dans~\cite{Milner78}.
+Un tour d'horizon de différents types statiques, avec en particulier du
+polymorphisme, on pourra se référer à~\cite{TAPL}.
 
-\subsection*{TODO}
+\paragraph{Expressivité :} les systèmes de types les plus simples expriment des
+contrats esssentiellement liés à la sûreté d'exécution, pour ne pas utiliser des
+valeurs de types incompatibles entre eux. Mais il est possible d'étendre le
+langage avec des annotations plus riches : par exemple en vérifiant statiquement
+que des listes ne sont pas vides\cite{lightweight-static-capabilities}, ou dans
+le domaine de la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
 
-\begin{itemize}
-\item
-  incorporer la subsection d'après
-\end{itemize}
-
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-L'approche par typage, plus légère, est séduisante. Pour les différents enjeux
-des systèmes de types statiques, on pourra se référer à~\cite{TAPL}. Il est
-possible d'encoder ce genre de propriétés dans un sytème de types, cf.
-\cite{lightweight-static-capabilities} et \cite{LZ06a}.
-
-\section{Qualificateurs de types}
-
-Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
-la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
-au code source. Un pointeur peut être décoré d'une annotation
-\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
-sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
-Sparse \link{sparse} peut être utilisé pour détecter les cas les plus simples
-d'erreurs.
+\paragraph{Qualificateurs de types :} Dans le cas particulier des vulnérabilités
+liées à une mauvaise utilisation de la mémoire, les développeurs du noyau Linux
+ont ajouté un système d'annotations au code source. Un pointeur peut être décoré
+d'une annotation \texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou
+pas. Celle-ci sont ignorées par le compilateur, mais un outil d'analyse statique
+ad-hoc nommé Sparse \link{sparse} peut être utilisé pour détecter les cas les
+plus simples d'erreurs.
 
 Ce système d'annotations sur les types a été formalisé sous le nom de
 \emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
@@ -666,6 +660,8 @@ permettent d'établir des propriétés sur le programme. Ces analyses ont été
 implantée dans l'outil CQual
 \cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}. \todo{lister les
 applications}.
+
+% TODO s'étendre un peu
 
 \section{Logique de Hoare}
 
