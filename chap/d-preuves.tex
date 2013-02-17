@@ -258,19 +258,54 @@ $lv =  φ$.
 \[ \left( \disprule{Set} \right) \]
 
 %}}}
-\paragraph{\textsc{Array} :} % {{{ TODO
+\paragraph{\textsc{Array} :} % {{{
 
-\[ \left( \disprule{Array} \right) \]
+On va appliquer l'hypothèse de récurrence à $e_1$, puis si $e_1 = v_1$, on
+l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants :
+
+\begin{itemize}
+\item $∃ p ∈ [1;n],e'_p,m: e_1 = v_1, …, e_{p-1} = v_{p-1}, \mm{m}{e_p}{m'}{e'_p}$
+  .
+  Alors on peut appliquer \textsc{Ctx} avec
+  $C = [v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n]$.
+\item $∃ p ∈ [1;n],Ω :     e_1 = v_1, …, e_{p-1} = v_{p-1}, \msi{m}{e_p} → Ω$
+  .
+  Dans ce cas \textsc{Eval-Err} est applicable avec ce même $C$.
+\item $e_1 = v_1, …, e_n = v_n$
+  .
+  Alors on peut appliquer \textsc{Exp-Array} en construisant un tableau.
+\end{itemize}
 
 %}}}
-\paragraph{\textsc{Struct} :} % {{{ TODO
+\paragraph{\textsc{Struct} :} % {{{
 
-\[ \left( \disprule{Struct} \right) \]
+Le schéma de preuve est similaire au cas \textsc{Array}.
+En cas de pas d'évaluation ou d'erreur, on utilise le contexte
+$C = \{l_1: v_1, …, l_{p-1}: v_{p-1}, \ctxEmpty, l_{p+1}: e_{p+1}, …, l_n:
+e_n\}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
+\textsc{Exp-Struct}.
 
 %}}}
-\paragraph{\textsc{Call} :} % {{{ TODO
+\paragraph{\textsc{Call} :} % {{{
 
-\[ \left( \disprule{Call} \right) \]
+On commence par appliquer l'hypothèse de récurrence à $e$. Dans le cas d'un pas
+d'évaluation ou d'erreur, on applique respectivement \textsc{Ctx} ou
+\textsc{Eval-Err} avec $C = \ctxEmpty (e_1, …, e_n)$.
+Reste le cas où $e$ est une valeur: d'après le lemme~\ref{lemma:canon}, $e$ est
+de la forme $f = \mathrm{fun} (\vec{a}) \{i\}$.
+
+Ensuite, appliquons le même schéma que pour \textsc{Array}.
+En cas de pas d'évaluation ou d'erreur, on utilise
+\textsc{Ctx} ou \textsc{Eval-Err} avec
+$C = f (v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n)$.
+Le seul cas restant est celui où l'expression considérée a pour forme
+$f (v_1, …, v_n)$
+avec
+$f = \mathrm{fun} (\vec{a}) \{i\}$
+:
+\textsc{Exp-Call} s'applique alors.
+
+% TODO cohérence mémoire
 
 %}}}
 \paragraph{\textsc{Fun} :} % {{{ TODO
@@ -287,3 +322,10 @@ $lv =  φ$.
 \label{proof:preservation}.
 
 % TODO
+
+\section*{TODO}
+
+\begin{itemize}
+\item
+  titres dans les chapeaux buggés
+\end{itemize}
