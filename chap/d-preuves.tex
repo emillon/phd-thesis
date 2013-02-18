@@ -1,3 +1,192 @@
+\section{Composition de lentilles}
+
+\label{proof:compo-lens}
+
+\begin{proof}
+Pour prouver que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$, il suffit de prouver les trois
+propriétés caractéristiques.
+
+\paragraph{GetPut}%{{{
+
+\begin{align*}
+& \lensPut{ℒ}{
+    \lensGet{ℒ}{r}
+    }{
+      r
+    } \\
+= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
+& \lensPut{ℒ}
+    {
+      \lensGet{ℒ_2}{
+        \lensGet{ℒ_1}{r}
+      }
+    }
+    { r } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut
+    {ℒ_1}
+    {
+      \lensPut
+        {ℒ_2}
+        {
+          \lensGet{ℒ_2}
+            {
+              \lensGet{ℒ_1}{r}
+            }
+        }
+        { \lensGet
+            {ℒ_1}
+            {r}
+        }
+    }
+    {r} \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_2$} \} \\
+& \lensPut
+    {ℒ_1}
+    {
+      \lensGet{ℒ_1}{r}
+    }
+    {r} \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
+& r \\
+\end{align*}%}}}
+
+\paragraph{PutGet}%{{{
+
+\begin{align*}
+& \lensGet{ℒ}
+    {
+      \lensPut{ℒ}
+        {a}
+        {r}
+    } \\
+= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
+& \lensGet{ℒ_2}
+    {
+      \lensGet{ℒ_1}
+        {
+          \lensPut{ℒ}
+            {a}
+            {r}
+        }
+    } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensGet{ℒ_2}
+    {
+      \lensGet{ℒ_1}
+        {
+          \lensPut{ℒ_1}
+            {
+              \lensPut{ℒ_2}
+                {a}
+                { \lensGet{ℒ_1}{r} }
+            }
+            { r }
+        }
+    } \\
+= & \{ \textrm{\textsc{PutGet} sur $ℒ_1$} \} \\
+& \lensGet{ℒ_2}
+    {
+      \lensPut{ℒ_2}
+        {a}
+        { \lensGet{ℒ_1}{r} }
+    } \\
+= & \{ \textrm{\textsc{PutGet} sur $ℒ_2$} \} \\
+& a \\
+\end{align*}%}}}
+
+\paragraph{PutPut}%{{{
+
+\begin{align*}
+& \lensPut{ℒ}{a'}{
+    \lensPut{ℒ}{a}{r}
+  } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut{ℒ}{a'}{
+    \lensPut{ℒ_1}
+      {
+        \lensPut{ℒ_2}
+          {a}
+          { \lensGet{ℒ_1}{r} }
+      }
+      { r }
+  } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{
+            \lensPut{ℒ_1}
+              {
+                \lensPut{ℒ_2}
+                  {a}
+                  { \lensGet{ℒ_1}{r} }
+              }
+              { r }
+          }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        {
+          \lensPut{ℒ_2}
+            {a}
+            { \lensGet{ℒ_1}{r} }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{PutPut} sur $ℒ_2$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{PutPut} sur $ℒ_1$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    { r
+    } \\
+= & \{ \textrm{définition de } \ggg \} \\
+& \lensPut{ℒ}{a'}{r} \\
+\end{align*}%}}}
+
+\end{proof}
+
 \section{Progrès}
 \label{proof:progres}
 
