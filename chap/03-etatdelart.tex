@@ -220,19 +220,26 @@ sont des domaines non relationnels. On peut en citer quelques uns.
 
 \begin{figure}%{{{
 \centering
-\begin{tikzpicture}
-\node at (1, 2) (t) {$\top$};
-\node at (0, 1) (p) {$+$};
-\node at (2, 1) (m) {$-$};
-\node at (1, 0) (b) {$\bot$};
-\draw (t) -- (p) -- (b);
-\draw (t) -- (m) -- (b);
-\end{tikzpicture}
 
-\begin{align*}
-\gamma~(+) = & \mathbb{R}^+ \\
-\gamma~(-) = & \mathbb{R}^-
-\end{align*}
+\begin{minipage}{0.4\textwidth}
+  \begin{tikzpicture}
+  \node at (1, 2) (t) {$\top$};
+  \node at (0, 1) (m) {$-$};
+  \node at (1, 1) (z) {$0$};
+  \node at (2, 1) (p) {$+$};
+  \node at (1, 0) (b) {$\bot$};
+  \draw (t) -- (p) -- (b);
+  \draw (t) -- (m) -- (b);
+  \draw (t) -- (z) -- (b);
+  \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+  \begin{align*}
+  γ~(-) = & ℝ^- \\
+  γ~(0) = & \{0\} \\
+  γ~(+) = & ℝ^+ \\
+  \end{align*}
+\end{minipage}
 
 \caption{Domaine des signes}
 \label{fig:dom-sig}
