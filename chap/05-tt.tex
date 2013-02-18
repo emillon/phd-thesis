@@ -166,17 +166,11 @@ On étend cette notation aux suites de phrases :
   \]
 
 \paragraph{Typage d'un programme :} Un programme est bien typé si on peut typer
-sa suite de phrases en partant d'un environnement vide. C'est à dire s'il existe
-un environnement final $Γ_f$ tel que
+sa suite de phrases en partant d'un environnement vide.
+On note
 
   \[
-    \typhstar{[]}{P}{Γ_f}
-  \]
-
-Cela est indépendant de tout environnement ; on note alors :
-
-  \[
-    ⊢ P
+    ⊢ P \eqdef ∃ Γ_f, \typhstar{[]}{P}{Γ_f}
   \]
 
 \section{Expressions}
@@ -370,6 +364,13 @@ typée dans ce même contexte.
   \disprule{Exp}
 \end{mathpar}
 
+Une déclaration de variable est bien typée si son bloc interne est bien typé
+quand on ajoute à l'environnement la variable avec le type de son initialiseur.
+
+\begin{mathpar}
+  \disprule{Decl}
+\end{mathpar}
+
 Les constructions de contrôle sont bien typées si leurs sous-instructions sont
 bien typées, et si la condition est d'un type entier.
 
@@ -397,21 +398,13 @@ environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes :
   valeur de retour de la fonction appelante
 \item
   on ajoute les types des arguments $a_i : t_i$
-\end{itemize}
-
-On vérifie alors que les initialiseurs $e_i$ ont le bon type $t'_i$. Ensuite, à
-partir de $Γ'$ :
-
-\begin{itemize}
-\item
-  on ajoute les types des variables locales $l_i : t'_i$
 \item
   on ajoute le type de la valeur de retour de la fonction appelée,
   $\vRet : t$
 \end{itemize}
 
-Il reste alors à vérifier que dans l'environnement $Γ''$ résultant, le corps de
-la fonction est bien typé. Le type de la fonction est alors $(t_1, …, t_n) → t$.
+Si le corps de la fonction est bien typé sous $Γ'$, alors la fonction est
+typable en $(t_1, …, t_n) → t$ sous $Γ$.
 
 \begin{mathpar}
   \disprule{Fun}
@@ -424,16 +417,10 @@ Cette règle utilise les notations suivantes :
 \eqdef &
 (a_1, …, a_n) \textrm{ où } n = |a|
 \\
-\textrm{zip}(\vec{a}, \vec{b})
+\vec{a} : \vec{t}
 \eqdef &
-((a_1, b_1), …, (a_n, b_n))
-\textrm{ où } n = |a| = |b|
-\\
-Γ ⊢ \vec{e} : \vec{t}
-\eqdef &
-∀ i ∈ [1;n],
-Γ ⊢ e_i : t_i
-\textrm{ où } n = |e| = |t|
+a_1: t_1,…
+a_n: t_n \textrm{ où } n = |a|
 \end{align*}
 
 % TODO suppression & adjonction aux Γ
@@ -518,9 +505,8 @@ expression.
     \end{cases}
   \]
 
-\item Fonction : si $Γ ⊢ \mathrm{fun} (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))
-  \{i\} : t$, alors il existe $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …,
-  t_n) → t$.
+\item Fonction : si $Γ ⊢ \mathrm{fun} (a_1, …, a_n) \{i\} : t$, alors il existe
+$(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
   % TODO ...
 \end{itemize}
@@ -566,7 +552,7 @@ expression.
 \item Fonction : la seule règle possible pour conclure une dérivation de
 
   \[
-    Γ ⊢ \mathrm{fun} (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p)) \{i\} : t
+    Γ ⊢ \mathrm{fun} (a_1, …, a_n) \{i\} : t
   \]
   est \textsc{Fun}.
 
@@ -594,7 +580,7 @@ $Γ = x:t$).
   \item si $Γ ⊢ v : t[]$, $v = \{v_1; …; v_n\}$.
     %TODO structures
   \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \mathrm{fun}
-    (a_1, …, a_n) ((l_1, e_1), …, (l_p, e_p))$.
+    (a_1, …, a_n) \{i\}$.
   \end{itemize}
 
 \end{lemma}

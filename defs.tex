@@ -26,11 +26,6 @@
 \newcommand{\gramisa}[0]{::=~}
 \newcommand{\gramor}[0]{|\hspace{3mm}}
 
-\newcommand{\gramlr}[2]{%
-  \begin{minipage}{0.2\textwidth}\raggedleft #1\end{minipage}
-  \begin{minipage}{0.8\textwidth}#2\end{minipage}
-}
-
 % Types
 \newcommand{\tInt}{\textsc{Int}\xspace}
 \newcommand{\tFloat}{\textsc{Float}\xspace}
@@ -62,6 +57,7 @@
 \def\iIf#1#2#3{\npkIf{#1}{#2}{#3}}
 \def\iWhile#1#2{\textsc{While}(#1)\{#2\}}
 \def\iReturn#1{\textsc{Return}(#1)}
+\def\iDecl#1#2#3{\textsc{Decl}~#1=#2~\textsc{in}\{#3\}}
 
 \def\iThen#1#2{\textsc{If}(#1) \{ #2 \}}
 
@@ -94,11 +90,6 @@
 % Reduction (left-values)
 \def\mmlv#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
 
-\def\mmbig#1#2#3#4{
-  \left\langle #2, #1 \right\rangle →
-  \left\langle #4, #3 \right\rangle
-}
-
 % Compatibilité Γ / m
 \def\mcomp#1#2{#1 ⊢_{mem} #2}
 
@@ -128,11 +119,6 @@
 \def\ph#1#2#3{#1 ⊢ #2 → #3}
 
 \def\phstar#1#2#3{#1 ⊢ #2 →^* #3}
-
-\def\evstar#1#2#3#4{
-  \mmbig{#1}{\begin{pmatrix}#2\end{pmatrix}}
-        {#3}{\begin{pmatrix}#4\end{pmatrix}}
-}
 
 % typage
 \def\ty#1#2#3{#1 ⊢ #2 : #3}
@@ -192,14 +178,7 @@
 \textbf{(wip)}
 }
 
-\newcommand{\listcons}[0]{%
-\texttt{(::)}%
-}
-
-\newcommand{\hexa}[1]{%
-\texttt{0x#1}%
-}
-
+\def\listcons{\texttt{(::)}\xspace}
 
 \tikzstyle{bigbrace} = [decorate,decoration={brace,amplitude=3mm}]
 
@@ -285,29 +264,6 @@
   \newcommand\thesubtitle{#1}}
 % }}}
 
-% switch {{{
-\def\switch#1#2{
-  \ifstrequal{#2}{END}{
-    \errmessage{switch : case "#1" not found}
-  }{
-    \switchnext{#1}{#2}
-  }
-}
-
-\def\switchnext#1#2#3{
-  \ifstrequal{#1}{#2}
-    {#3\switchlast}
-    {
-      \switch{#1}
-    }
-}
-
-\def\switchlast#1{
-  \ifstrequal{#1}{END}{}
-  {\switchlast}
-}
-% }}}
-
 % Strike-through in math mode
 \def\msout#1{\text{\sout{\ensuremath{#1}}}}
 
@@ -382,19 +338,4 @@
     {div}{Ω_{div}}
     {field}{Ω_{field}}
     {END}
-}
-
-% Grammar definition
-\def\grambuildtable#1#2#3{
-  \ifstrequal{#3}{END}{
-    #1 & \textrm{#2} \\
-  }{
-    #1 & \textrm{#2} \\
-    & & \gramor & \grambuildtable{#3}
-  }
-}
-
-\def\gramdef#1#2#3#4#5{
-  \textrm{#1} & & #2 \gramisa &
-  \grambuildtable{#3}{#4}{#5}
 }

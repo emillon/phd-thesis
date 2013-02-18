@@ -165,6 +165,12 @@
              { Γ ⊢ e : t }
              { Γ ⊢ e }
          }
+    {Decl}{ \irule{Decl}
+              { Γ ⊢ e : t
+             \\ Γ, x:t ⊢ i
+              }
+              { Γ ⊢ \iDecl{x}{e}{i} }
+          }
     {If}{ \irule{If}
             { Γ ⊢ e : \tInt \\
               Γ ⊢ i_1 \\
@@ -184,15 +190,11 @@
             }
     {Fun}{ \irule{Fun}
              { Γ' = (Γ - \vRet),
-                    \vec{a} : \vec{t}, \\
-               Γ' ⊢ \vec{e} : \vec{t'} \\
-               Γ'' = Γ',
-                     \vec{l} : \vec{t'},
+                    \vec{a} : \vec{t},
                      \vRet : t_r \\
-               Γ'' ⊢ i
+               Γ' ⊢ i
              }
-             { Γ ⊢ \mathrm{fun} (\vec{a})
-                   (\textrm{zip}(\vec{l}, \vec{e}) \{i\}
+             { Γ ⊢ \mathrm{fun} (\vec{a}) \{i\}
                     : \vec{t} → t_r
              }
          }
@@ -284,19 +286,13 @@
                  }
     }
     {Exp-Call}{ \irule{Exp-Call}
-                  { f =
-                    \mathrm{fun} (a_1, …, a_n)
-                                 ((l'_1, e'_1), …, (l'_p, e'_p))
-                                 \{ i \} \\
+                  { f = \mathrm{fun} (a_1, …, a_n) \{ i \} \\
                     m_1 = \mathrm{Push}(m_0, ((a_1, v_1), …, (a_n, v_n))) \\
-                    \evstar{m_1}{e'_1 \\ \vdots \\ e'_p}
-                           {m_2}{v'_1 \\ \vdots \\ v'_p} \\
-                    m_3 = \mathrm{Extend}(m_2, ((l_1, v_1), …, (l_n, v_n))) \\
-                    \mm{m_3}{i}{m_4}{\iReturn{v}} \\
-                    m_5 = \mathrm{Pop}(m_4) \\
-                    m_6 = \mathrm{Cleanup}(m_5) \\
+                    \mm{m_1}{i}{m_2}{\iReturn{v}} \\
+                    m_3 = \mathrm{Pop}(m_2) \\
+                    m_4 = \mathrm{Cleanup}(m_3) \\
                   }
-                  {\mm{m_0}{f (v_1, …, v_n)}{m_6}{v}}
+                  {\mm{m_0}{f (v_1, …, v_n)}{m_4}{v}}
     }
     {Seq}{ \irule{Seq}
              { \mmi{m}{i}{m'}{\iPass} }
@@ -310,6 +306,20 @@
              { }
              { \mmi{m}{v}{m}{\iPass} }
     }
+    {Decl}{ \irule{Decl}
+            { m' = \mathrm{Extend}(m, ((x, v)))
+           \\ \mmi{m'}{i}{m''}{\iPass}
+           \\ m''' = \mathrm{Clean}(m'' - x)
+            }
+            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
+    } % TODO définir le "-"
+    {Decl-Return}{ \irule{Dec-Return}
+            { m' = \mathrm{Extend}(m, ((x, v)))
+           \\ \mmi{m'}{i}{m''}{\iReturn{v_r}}
+           \\ m''' = \mathrm{Clean}(m'' - x)
+            }
+            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iReturn{v_r}} }
+    } % TODO définir le "-"
     {If-False}{ \irule{If-False}
                   { }
                   { \mmi{m}{\iIf{0}{i_t}{i_f}}{m}{i_f} }
@@ -356,31 +366,34 @@
 }
 
 \def\figctx{
-  \gramlr{Contextes}{
   \begin{align*}
-  C \gramisa & C_L
-  \\ \gramor & \ctxOp{C}{e}
-  \\ \gramor & \ctxOp{v}{C}
-  \\ \gramor & \ctxUnOp{C}
-  \\ \gramor & \ctxSet{C}{e}
-  \\ \gramor & \ctxSet{φ}{C}
-  \\ \gramor & \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \}
-  \\ \gramor & [ v_1 ; … ; C ; … ; e_n ]
-  \\ \gramor & C (e_1, …, e_n)
-  \\ \gramor & f (v_1, …, C, …, e_n)
+  \gramdef{Contextes}{C}
+    { C_L }{}
+    { \ctxOp{C}{e} }{}
+    { \ctxOp{v}{C} }{}
+    { \ctxUnOp{C} }{}
+    { \ctxSet{C}{e} }{}
+    { \ctxSet{φ}{C} }{}
+    { \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \} }{}
+    { [ v_1 ; … ; C ; … ; e_n ] }{}
+    { C (e_1, …, e_n) }{}
+    { f (v_1, …, C, …, e_n) }{}
+    {END}
   \\
+  \gramdef{Contextes (left-values)}{C_L}
+    { \ctxEmpty }{}
+    { \ctxLvDeref{C_L} }{}
+    { \ctxLvField{C_L}{l_S} }{}
+    { \ctxLvIndex{C_L}{e} }{}
+    { \ctxLvIndex{φ}{C} }{}
+    {END}
   \\
-  C_L \gramisa & \ctxEmpty
-  \\   \gramor & \ctxLvDeref{C_L}
-  \\   \gramor & \ctxLvField{C_L}{l_S}
-  \\   \gramor & \ctxLvIndex{C_L}{e}
-  \\   \gramor & \ctxLvIndex{φ}{C}
-  \\
-  \\
-  C_I \gramisa & C_I;i
-  \\   \gramor & \iIf{C}{i_1}{i_2}
-  \\   \gramor & \iReturn{C}
-  \\   \gramor & C
+  \gramdef{Contextes (instructions)}{C_I}
+    { C_I;i }{}
+    { \iIf{C}{i_1}{i_2} }{}
+    { \iReturn{C} }{}
+    { \iDecl{x}{C}{i} }{}
+    { C }{}
+    {END}
   \end{align*}
-  }
 }

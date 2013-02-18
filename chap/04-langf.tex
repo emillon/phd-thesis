@@ -176,7 +176,7 @@ Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
   \end{align*}
 
 \caption{Fonctionnement d'une lentille}
-\label{fig:lens-howto}.
+\label{fig:lens-howto}
 \end{figure}
 
 \begin{example}[Lentilles de tête et de queue de liste]
@@ -304,7 +304,7 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
   \end{align*}
 
 \caption{Fonctionnement d'une lentille indexée}
-\label{fig:lens-idx-ex}.
+\label{fig:lens-idx-ex}
 \end{figure}
 
 \begin{example}[Lentille "n\ieme élément d'un tuple"]
@@ -386,6 +386,48 @@ On note $r = (x_1,…,x_n)$.
   On notera alors $ℒ = ℒ_1 \ggg ℒ_2$.
 
 \end{definition}
+
+\begin{figure}
+
+\centering
+
+\shorthandoff{!}
+\begin{tikzpicture}
+[node distance=2cm
+,bignode/.style={draw,shape=rectangle,minimum size=1cm,fill=green!30}
+,smallnode/.style={draw,shape=circle,minimum size=8mm,fill=blue!30}
+,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
+]
+\node[bignode] (A) {};
+\node[right of=A,smallnode] (B) {};
+\node[right of=B,trinode,fill=violet] (C) {};
+\node[below of=B,smallnode] (D) {};
+\node[below of=A,node distance=4cm,bignode] (E) {};
+
+\draw[->] (A) to node[auto] {get} (B);
+\draw[->] (B) to (D);
+\draw[->] (A) to (E);
+\draw (C) |- node[auto,near end,swap] {put} ($(B)!0.5!(D)$);
+\draw (D) |- node[auto,near end,swap] {put} ($(A)!0.75!(E)$);
+
+\node[smallnode] at (A) {};
+\node[trinode,fill=orange] at (A) {};
+
+\node[trinode,fill=orange] at (B) {};
+
+\node[trinode,fill=violet] at (D) {};
+
+\node[smallnode] at (E) {};
+\node[trinode,fill=violet] at (E) {};
+
+\end{tikzpicture}
+\shorthandoff{!}
+
+\caption{Composition de lentilles}
+\label{fig:compo-lens}
+\end{figure}
+
+Cette définition est illustrée dans la figure~\ref{fig:compo-lens}.
 
 \begin{proof}
 Pour prouver que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$, il suffit de prouver les trois
@@ -730,17 +772,17 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \begin{align*}
   \gramdef{Instructions}{i}
-                 { \iPass        }{Instruction vide}
-                 { i;i           }{Séquence}
-                 { e             }{Expression}
-                 { \iIf{e}{i}{i} }{Alternative}
-                 { \iWhile{e}{i} }{Boucle}
-                 { \iReturn{e}   }{Retour de fonction}
+                 { \iPass          }{Instruction vide}
+                 { i;i             }{Séquence}
+                 { e               }{Expression}
+                 { \iDecl{x}{e}{i} }{Déclaration de variable}
+                 { \iIf{e}{i}{i}   }{Alternative}
+                 { \iWhile{e}{i}   }{Boucle}
+                 { \iReturn{e}     }{Retour de fonction}
                  {END}
   \\
   \gramdef{Fonctions}{f}
                  { \mathrm{fun} (x_1, …, x_n)    }{Arguments}
-                 { ((x'_1, e_1), …, (x'_p, e_p)) }{Variables locales}
                  { \{ i \}                       }{Corps}
                  {END}
   \\
@@ -961,14 +1003,12 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 
   \begin{align*}
   \gramdef{Pile}{s}
-    { []                       }{Pile vide}
-    { \{ x_1 ; … ; x_n \} :: s }{Ajout d'un cadre}
+    { [] }{Pile vide}
+    { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
     {END}
   \\
   \gramdef{État mémoire}{m}
-    { (s,                    }{Pile}
-    { \{ x_1 ;…; x_n \},     }{Globales}
-    { \{a_1↦v_1;…;a_p↦v_p\}) }{Valeurs}
+    { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
     {END}
   \\
   \gramdef{État d'interpréteur}{Ξ}
@@ -1050,6 +1090,11 @@ Un certain nombre d'opérations est possibles sur les valeurs
 \end{itemize}
 
 % TODO que se passe-t'il dans les autres cas ? introduire un \serr{typ} ?
+
+\section{Opérations sur les états mémoire}
+\label{sec:memops}
+
+% TODO faire un blabla similaire sur les instructions
 
 \begin{definition}[Recherche de variable]
 
@@ -1162,6 +1207,117 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   \caption{Opérations de pile}
   \label{fig:stackops}
+\end{figure}
+
+On définit aussi une opération de nettoyage de pile, qui sera utile pour les
+retours de fonction.
+
+En effet, si une référence au dernier cadre est toujours présente après
+le retour, elle pourra se résoudre en un objet différent plus tard dans
+l'exécution du programme.
+
+La fonction $\mathrm{Cleanup}$ est donnée par :
+
+\def\cleanuplist#1#2{\mathrm{CleanupList}(#1, #2)}
+\def\cllive#1#2{\mathrm{Live}(#1, #2)}
+
+\begin{align*}
+  \mathrm{Cleanup}(s, g)  = & (s', g') \\
+                    où g' = & \cleanuplist{|s|}{g} \\
+                       s' = & [\cleanuplist{|s|}{s_1},
+                            …, \cleanuplist{|s|}{s_n}] \\
+       \cleanuplist{p}{u} = & \{(x, v) ∈ u / v\mbox{ n'est pas une adresse} \} \\
+                       \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
+    \cllive{p}{(n, x)} = & n < p \\
+    \cllive{p}{(x)}    = & \mathrm{Vrai} \\
+    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
+    \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
+    \cllive{p}{φ[n]}   = & \cllive{p}{φ}
+\end{align*}
+
+Sans cette règle, examinons le programme suivant :
+
+\begin{Verbatim}
+f ()                g (p)           h ()
+  (x=0)               (x=0.0)         (p=f())
+{                   {               {
+  return (&x);        *p = 1;         g(p);
+}                   }               }
+\end{Verbatim}
+
+L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
+déréférencement de $p$ va modifier $x$.
+
+\begin{figure}
+  \centering
+
+
+  \begin{tikzpicture}
+    [ stack/.style={draw,minimum height=5mm,minimum width=3cm ,shape=rectangle}
+    , every node/.style={font=\footnotesize}
+    , faded/.style={fill=black!20}
+    , substack/.style={draw, minimum height=5mm, }
+    , oldstack/.style={loosely dashed}
+    , fixmatrix/.style={matrix, row sep=-\pgflinewidth, column sep=-\pgflinewidth}
+    , >=stealth'
+    ]
+
+    \path (0, 0)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, minimum width=10mm}] {
+        \node (p) { }; & \node { }; & \node (q) { }; \\
+      }
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
+        \node (x) { }; & \node (y) { }; \\
+      };
+
+      \node [fixmatrix, nodes={substack, minimum width=15mm}]
+        at (5, 0) {
+          \node (r) { }; & \node { }; \\
+      };
+
+      \draw[->] (p.center) -- ++(0, 0.5);
+      \draw[->] (q.center) -| ($ (r.center) - (3mm, 0) $);
+      \draw[->] ($ (r.center) + (3mm, 0) $) |- (y.center);
+
+      %%%%%
+
+    \path (0, -3)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [stack, faded] {}
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, minimum width=10mm}] {
+        \node (p2) { }; & \node { }; & \node (q2) { }; \\
+      }
+      -- ++ (0, 0.5)
+      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
+        \node (x2) { }; & \node (y2) { }; \\
+      };
+
+      \node [fixmatrix, nodes={substack, minimum width=15mm}]
+        at (5, -3) {
+          \node (r2) { }; & \node { }; \\
+      };
+
+      \draw[->] (q2.center) -| ($ (r2.center) - (3mm, 0) $);
+
+      \def\crossat#1{
+        \draw ($ #1 + (2mm, 2mm) $) -- ++ (-4mm, -4mm);
+        \draw ($ #1 + (-2mm, 2mm) $) -- ++ (4mm, -4mm);
+      }
+
+      \crossat{(r2.center) + (3mm, 0)}
+      \crossat{(p2.center)}
+
+  \end{tikzpicture}
+
+  \caption{Nettoyage d'un cadre de pile}
+  \label{fig:stackcleanup}
 \end{figure}
 
 \section{Accesseurs}
@@ -1636,33 +1792,13 @@ qui est celle qui a été affectée.
 
 \subsection*{Expressions composées}
 
-On commence par définir une opération d'évaluation de plusieurs expressions à la
-fois : on note
-
-\begin{mathpar}
-  \evstar{m}{e_1 \\ \vdots \\ e_n}
-         {m'}{v_1 \\ \vdots \\ v_n}
-\end{mathpar}
-
-si $∃ (m_1, …, m_n) , ∀ i ∈ [ 1; n-1 ], \mm{m_i}{e_i}{m_{i+1}}{e_{i+1}} $ avec
-$m = m_1$ et $m' = m_n$.
-
-Notons que l'évaluation se fait encore de gauche à droite. On utilise la
-notation vecteur colonne pour signifier qu'il s'agit ici de métasyntaxe (il n'y
-a pas de tuples dans le langage).
-
-Cette évaluation chaînée est au coeur de la règle suivante qui permet d'évaluer
-les structures : à une structure (syntaxique) correspond une valeur structurelle
-dont les champs sont ceux de la première structure évalués :
+Les littéraux de structures sont évalués en leurs constructions syntaxiques
+respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … ; C
+; … ; e_n ] $, l'évaluation se fait toujours de gauche à droite.
 
 \begin{mathpar}
   \semrule{Exp-Struct}
-\end{mathpar}
 
-De même, l'évaluation d'un littéral de tableau se fait en évaluant de gauche à
-droite ses éléments :
-
-\begin{mathpar}
   \semrule{Exp-Array}
 \end{mathpar}
 
@@ -1675,30 +1811,19 @@ droite ses éléments :
     [node distance=2cm]
 
     \node (m0) {$m_0$};
-    \node[below of=m0]                    (m1) {$m_1$};
+    \node[right of=m0, node distance=3cm] (m1) {$m_1$};
     \node[below of=m1]                    (m2) {$m_2$};
-    \node[right of=m2, node distance=3cm] (m3) {$m_3$};
+    \node at ($(m0)!(m2)!(0,1)$)          (m3) {$m_3$};
     \node[below of=m3]                    (m4) {$m_4$};
-    \node[right of=m4, node distance=3cm] (m5) {$m_5$};
-    \node[below of=m5]                    (m6) {$m_6$};
-    \node[below of=m6]                    (m7) {$m_7$};
-    \node at ($(m1)!(m7)!(0,1)$)          (m8) {$m_8$};
-    \node[below of=m8]                    (m9) {$m_9$};
 
-    \draw [->] (m0) -- node[auto] {$e → \mathrm{fun}(\vec{a})
-                                   (\vec{l}↦\vec{e'})\{i\}$}            (m1);
-    \draw [->] (m1) -- node[auto] {$\vec{e} → \vec{v}$}                 (m2);
-    \draw [->] (m2) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m3);
-    \draw [->] (m3) -- node[auto] {$\vec{e'} → \vec{v'}$}               (m4);
-    \draw [->] (m4) -- node[auto] {$\mathrm{Extend}(\vec{l}↦\vec{v'})$} (m5);
-    \draw [->] (m5) -- node[auto] {$i → \iReturn{e}$}                   (m6);
-    \draw [->] (m6) -- node[auto] {$e → v$}                             (m7);
-    \draw [->] (m7) -- node[auto] {$\mathrm{Pop}$}                      (m8);
-    \draw [->] (m8) -- node[auto] {$\mathrm{Cleanup}$}                  (m9);
+    \draw [->] (m0) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m1);
+    \draw [->] (m1) -- node[auto] {$i → \iReturn{v_r}$}                 (m2);
+    \draw [->] (m2) -- node[auto] {$\mathrm{Pop}$}                      (m3);
+    \draw [->] (m3) -- node[auto] {$\mathrm{Cleanup}$}                  (m4);
 
     \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
                     -- node[auto, swap] {$f(\vec{e}) → v$}
-                       ($ (m9) + (-5mm, 3mm) $);
+                       ($ (m4) + (-5mm, 3mm) $);
 
   \end{tikzpicture}
 
@@ -1709,121 +1834,14 @@ droite ses éléments :
 \end{figure}
 \shorthandon{!}
 
-L'appel de fonction repose également sur cette évaluation multiple. Tout
-d'abord, les arguments sont évalués et placés dans un nouveau cadre de pile.
-Puis les expressions qui initialisent les variables locales sont elle aussi
-évaluées et ajoutées à ce même cadre de pile (opérateur $\mathrm{Extend}$).
-Ensuite, le corps de la fonction est évalué jusqu'à se réduire en une
-instruction $\iReturn{v}$. Puis, le cadre précédemment utilisé est dépilé.
+Les contextes utilisés dans l'appel de fonction sont similaires. Tout d'abord,
+les arguments sont évalués et placés dans un nouveau cadre de pile. Ensuite, le
+corps de la fonction est évalué jusqu'à se réduire en une instruction
+$\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
 
 La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
-de pile. En effet, si une référence au dernier cadre est toujours présente après
-le retour, elle pourra se résoudre en un objet différent plus tard dans
-l'exécution du programme.
-
-La fonction $\mathrm{Cleanup}$ est donnée par :
-
-\def\cleanuplist#1#2{\mathrm{CleanupList}(#1, #2)}
-\def\cllive#1#2{\mathrm{Live}(#1, #2)}
-
-\begin{align*}
-  \mathrm{Cleanup}(s, g)  = & (s', g') \\
-                    où g' = & \cleanuplist{|s|}{g} \\
-                       s' = & [\cleanuplist{|s|}{s_1},
-                            …, \cleanuplist{|s|}{s_n}] \\
-       \cleanuplist{p}{u} = & \{(x, v) ∈ u / v\mbox{ n'est pas une adresse} \} \\
-                       \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
-    \cllive{p}{(n, x)} = & n < p \\
-    \cllive{p}{(x)}    = & \mathrm{Vrai} \\
-    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
-    \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
-    \cllive{p}{φ[n]}   = & \cllive{p}{φ}
-\end{align*}
-
-Sans cette règle, examinons le programme suivant :
-
-\begin{Verbatim}
-f ()                g (p)           h ()
-  (x=0)               (x=0.0)         (p=f())
-{                   {               {
-  return (&x);        *p = 1;         g(p);
-}                   }               }
-\end{Verbatim}
-
-L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
-déréférencement de $p$ va modifier $x$.
-
-\begin{figure}
-  \centering
-
-
-  \begin{tikzpicture}
-    [ stack/.style={draw,minimum height=5mm,minimum width=3cm ,shape=rectangle}
-    , every node/.style={font=\footnotesize}
-    , faded/.style={fill=black!20}
-    , substack/.style={draw, minimum height=5mm, }
-    , oldstack/.style={loosely dashed}
-    , fixmatrix/.style={matrix, row sep=-\pgflinewidth, column sep=-\pgflinewidth}
-    , >=stealth'
-    ]
-
-    \path (0, 0)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, minimum width=10mm}] {
-        \node (p) { }; & \node { }; & \node (q) { }; \\
-      }
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
-        \node (x) { }; & \node (y) { }; \\
-      };
-
-      \node [fixmatrix, nodes={substack, minimum width=15mm}]
-        at (5, 0) {
-          \node (r) { }; & \node { }; \\
-      };
-
-      \draw[->] (p.center) -- ++(0, 0.5);
-      \draw[->] (q.center) -| ($ (r.center) - (3mm, 0) $);
-      \draw[->] ($ (r.center) + (3mm, 0) $) |- (y.center);
-
-      %%%%%
-
-    \path (0, -3)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, minimum width=10mm}] {
-        \node (p2) { }; & \node { }; & \node (q2) { }; \\
-      }
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
-        \node (x2) { }; & \node (y2) { }; \\
-      };
-
-      \node [fixmatrix, nodes={substack, minimum width=15mm}]
-        at (5, -3) {
-          \node (r2) { }; & \node { }; \\
-      };
-
-      \draw[->] (q2.center) -| ($ (r2.center) - (3mm, 0) $);
-
-      \def\crossat#1{
-        \draw ($ #1 + (2mm, 2mm) $) -- ++ (-4mm, -4mm);
-        \draw ($ #1 + (-2mm, 2mm) $) -- ++ (4mm, -4mm);
-      }
-
-      \crossat{(r2.center) + (3mm, 0)}
-      \crossat{(p2.center)}
-
-  \end{tikzpicture}
-
-  \caption{Nettoyage d'un cadre de pile}
-  \label{fig:stackcleanup}
-\end{figure}
+de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la
+section~\label{sec:memops}).
 
 \begin{mathpar}
   \semrule{Exp-Call}
@@ -1870,6 +1888,29 @@ ci-dessus.
 
   \semrule{Exp}
 \end{mathpar}
+
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait en trois parties :
+
+\begin{itemize}
+\item on crée un environnement mémoire $m'$ en ajoutant à $m$ l'association
+$x↦v$.
+
+\item sous $m'$, on évalue $i$ jusqu'à atteindre une instruction $\iPass$ ou
+$\iReturn{v_r}$ sous un état $m''$. C'est cette instruction qui sera retournée.
+
+\item on enlève $x$ de $m''$ et on enlève de cet état mémoire les pointeurs
+invalides.
+
+\end{itemize}
+
+\begin{mathpar}
+  \semrule{Decl}
+
+  \semrule{Decl-Return}
+\end{mathpar}
+
+% TODO que faire si la pile de locale est vide ? (declaration de "locale" dans
+% une expression au toplevel)
 
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
 manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce
@@ -2108,7 +2149,6 @@ donc
 \section*{TODO}
 
 \begin{itemize}
-\item dans figure~\ref{fig:interp} passer en doublet
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
   (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?
