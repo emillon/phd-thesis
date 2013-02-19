@@ -485,7 +485,7 @@ expression.
 \item Références mémoire :
   \begin{itemize}
     \item
-      si $Γ ⊢ x : t$, $x : t ∈ Γ$
+      si $Γ ⊢ x : t$, alors $x : t ∈ Γ$
     \item
       si $Γ ⊢ *lv : t$, alors $Γ ⊢ lv : t*$
     \item
@@ -493,6 +493,51 @@ expression.
     \item
       si $Γ ⊢ lv.l_S : t$, alors $Γ ⊢ lv : S$
 
+  \end{itemize}
+
+\item Opérations :
+  \begin{itemize}
+    \item si $ Γ ⊢ \opun~e : t $, alors on est dans un des cas suivants :
+      \begin{itemize}
+        \item
+          $\opun ∈ \{+,-,\sim, ! \}$,
+          $t = \tInt$,
+          $Γ ⊢ e : \tInt$
+        \item
+          $\opun ∈ \{+.,-.\}$,
+          $t = \tFloat$,
+          $Γ ⊢ e : \tFloat$
+      \end{itemize}
+    \item si $ Γ ⊢ e_1~\opbin~e_2 : t $, un des cas suivants se présente :
+      \begin{itemize}
+        \item
+          $\opbin ∈ \opbinintset{}$,
+          $Γ ⊢ e_1 : \tInt$,
+          $Γ ⊢ e_2 : \tInt$,
+          $t = \tInt$
+        \item
+          $\opbin ∈ \opbinfloatset{}$,
+          $Γ ⊢ e_1 : \tFloat$,
+          $Γ ⊢ e_2 : \tFloat$,
+          $t = \tFloat$
+        \item
+          $\opbin ∈ \{=,≠\}$,
+          $Γ ⊢ e_1 : t'$,
+          $Γ ⊢ e_2 : t'$,
+          $\textsc{Eq}(t')$,
+          $t = \tInt$
+        \item
+          $\opbin ∈ \{≤,≥,<,>\}$,
+          $t = \tInt$,
+          $Γ ⊢ e_1 : t'$,
+          $Γ ⊢ e_2 : t'$,
+          $t' ∈ \{ \tInt, \tFloat \}$
+        \item
+          $\opbin ∈ \{+_p, -_p\}$,
+          $∃t', t = t'*$,
+          $Γ ⊢ e_1 : t'*$,
+          $Γ ⊢ e_2 : \tInt$
+      \end{itemize}
   \end{itemize}
 \item
   Appel de fonction : si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$

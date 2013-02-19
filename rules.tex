@@ -1,3 +1,6 @@
+\def\opbinintset{ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} }
+\def\opbinfloatset{ \{+.,-.,\times.,/.\} }
+
 \def\disprule#1{
   \switch{#1}
     {Cst-Int}{ \irule{Cst-Int}
@@ -37,7 +40,7 @@
                   { Γ ⊢ lv.l_S : t }
     }
     {Op-Int}{ \irule{Op-Int}
-                { \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
+                { \opbin ∈ \opbinintset{} \\
                   Γ ⊢ e_1 : \tInt \\
                   Γ ⊢ e_2 : \tInt
                 }{
@@ -45,7 +48,7 @@
                 }
     }
     {Op-Float}{ \irule{Op-Float}
-                { \opbin ∈ \{+.,-.,\times.,/.\} \\
+                { \opbin ∈ \opbinfloatset{} \\
                   Γ ⊢ e_1 : \tFloat \\
                   Γ ⊢ e_2 : \tFloat
                 }{
