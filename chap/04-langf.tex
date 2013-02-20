@@ -324,6 +324,18 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 \node[smallnode] at (E) {};
 \node[trinode,fill=violet] at (E) {};
 
+\node[left of=A, node distance=4cm,bignode] (GA) {};
+\node[below of=GA,smallnode] (GB) {};
+\node[below of=GB,trinode,fill=orange] (GC) {};
+
+\node[smallnode] at (GA) {};
+
+\node[trinode, fill=orange] at (GA) {};
+\node[trinode, fill=orange] at (GB) {};
+
+\draw [->] (GA) to node[auto] {$\mathrm{get}_{ℒ_1}$} (GB);
+\draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
+
 \end{tikzpicture}
 \shorthandoff{!}
 
