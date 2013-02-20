@@ -308,11 +308,11 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 \node[below of=B,smallnode] (D) {};
 \node[below of=A,node distance=4cm,bignode] (E) {};
 
-\draw[->] (A) to node[auto] {get} (B);
+\draw[->] (A) to node[auto] {$\mathrm{get}_{ℒ_1}$} (B);
 \draw[->] (B) to (D);
 \draw[->] (A) to (E);
-\draw (C) |- node[auto,near end,swap] {put} ($(B)!0.5!(D)$);
-\draw (D) |- node[auto,near end,swap] {put} ($(A)!0.75!(E)$);
+\draw (C) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_2}$} ($(B)!0.5!(D)$);
+\draw (D) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_1}$} ($(A)!0.75!(E)$);
 
 \node[smallnode] at (A) {};
 \node[trinode,fill=orange] at (A) {};
