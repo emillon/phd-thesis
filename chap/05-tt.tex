@@ -654,6 +654,35 @@ $m$.
 
 \end{definition}
 
+\begin{definition}[Typage de la mémoire]
+
+\[
+  Γ ⊧ m \eqdef ∀ x ∈ \mathrm{Visible}(m). Γ, m ⊧ x
+\]
+
+\[
+  Γ, m ⊧ x \eqdef ∃ t. Γ, m ⊧ x : t
+\]
+
+La définition de $Γ, m ⊧ x : t$ dépend de $v = m[x]_Φ$. On pose $Γ, m ⊧ x : t
+\eqdef P(v)$ avec :
+
+\begin{itemize}
+  \item $P(c) \eqdef Γ ⊢ c : t$
+  \item $P(f) \eqdef Γ ⊢ f : t$
+  \item $P(φ) \eqdef ∃t'. t = t'* ∧ Γ, m ⊧ y : t'$ où $y = m[φ]_Φ$
+  \item $P(\{v_1;…;v_n\}) \eqdef
+    ∃ t'. t = t'[~]
+        ∧ ∀ i ∈ [1;n]. Γ ⊢ v_i : t'$
+  \item $P(\{l_1:v_1;…;l_n:v_n\}) \eqdef
+    ∃ (t_1, …, t_n). t = \{l_1:t_1;…;l_n:t_n\}
+                   ∧ ∀ i ∈ [1;n]. Γ ⊢ v_i : t_i$
+\end{itemize}
+
+\end{definition}
+
+% TODO definit Visible
+
 \begin{theorem}[Progrès]
   \label{thm:progres}
 
