@@ -148,11 +148,11 @@ telles que pour tous $a∈A, a'∈A, r∈R$ :
 
 \begin{align*}
 \tag{GetPut}
-\mathrm{put}_ℒ(\mathrm{get}_ℒ(r), r) = & r \\
+\mathrm{put}_ℒ(\mathrm{get}_ℒ(r), r) &= r \\
 \tag{PutGet}
-\mathrm{get}_ℒ(\mathrm{put}_ℒ(a, r)) = & a \\
+\mathrm{get}_ℒ(\mathrm{put}_ℒ(a, r)) &= a \\
 \tag{PutPut}
-\mathrm{put}_ℒ(a', \mathrm{put}_ℒ(a, r)) = & \mathrm{put}_ℒ(a', r) \\
+\mathrm{put}_ℒ(a', \mathrm{put}_ℒ(a, r)) &= \mathrm{put}_ℒ(a', r) \\
 \end{align*}
 
 On note $ℒ =
@@ -1099,7 +1099,7 @@ On définit ici quelques lentilles.
 
 \end{definition}
 
-Les numéros de cadre qui permettent d'identifier les globales (le $n$ dans $(n,
+Les numéros de cadre qui permettent d'identifier les locales (le $n$ dans $(n,
 x)$) croissent avec la pile. D'autre part, l'empilement se fait en tête de liste
 (près de l'indice 1). Donc pour accéder aux plus vieilles locales (numérotées
 1), il faut accéder au dernier élément de la liste. Ceci explique pourquoi un
@@ -1895,6 +1895,8 @@ donc
 \item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
              et quand il faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
 \item "et" et "ou" lazy
+\item dans les lentilles, L désigne à la fois celle des champs et celle des
+listes d'asso
 \end{itemize}
 
 Limitations :
