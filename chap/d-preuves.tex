@@ -255,13 +255,13 @@ De même, on applique l'hypothèse de récurrence à $lv$.
 \item $lv = v$.
 
 Comme $Γ ⊢ v : t[]$, on déduit du lemme~\ref{lemma:canon} que
-$v = \{v_1; …; v_p\}$.
+$v = \eArray{v_1; …; v_p}$.
 Appliquons l'hypothèse de récurrence à $e$.
 
 \begin{itemize}
 \item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
 lemme~\ref{lemma:canon} et $v' = n$.
-D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\{v_1; …; v_p\}\widehat{[n]}} $.
+D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\eArray{v_1; …; v_p}\widehat{[n]}} $.
 Deux cas sont à distinguer :
 si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
@@ -470,8 +470,8 @@ l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants :
 
 Le schéma de preuve est similaire au cas \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise le contexte
-$C = \{l_1: v_1, …, l_{p-1}: v_{p-1}, \ctxEmpty, l_{p+1}: e_{p+1}, …, l_n:
-e_n\}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
+$C = \eStruct{l_1: v_1, …, l_{p-1}: v_{p-1}, \ctxEmpty, l_{p+1}: e_{p+1}, …, l_n:
+e_n}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
 \textsc{Exp-Struct}.
 
 %}}}
@@ -542,10 +542,10 @@ D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 \paragraph{ Affectation }           $ lv ← e $ % {{{ TODO
 
 % }}}
-\paragraph{ Structure }             $ \{ l_1 : e_1 ; ; l_n : e_n \} $ % {{{ TODO
+\paragraph{ Structure }             $ \eStruct{ l_1 : e_1 ; ; l_n : e_n } $ % {{{ TODO
 
 % }}}
-\paragraph{ Tableau }               $ \{e_1 ;…; e_n\} $ % {{{ TODO
+\paragraph{ Tableau }               $ \eArray{e_1 ;…; e_n} $ % {{{ TODO
 
 % }}}
 \paragraph{ Fonction }              $ f $ % {{{ TODO

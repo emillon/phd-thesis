@@ -118,18 +118,15 @@
          }
     {Array}{ \irule{Array}
                { ∀ i ∈ [1;n] , Γ ⊢ e_i : t }
-               { Γ ⊢ [ e_1 ;
-                       … ; e_n ]
+               { Γ ⊢ \eArray{ e_1 ; … ; e_n }
                        : t[~]
                }
            }
     {Struct}{ \irule{Struct}
                 { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i
                 }
-                { Γ ⊢ \{ l_1 : e_1 ;
-                     … ; l_n : e_n \}
-                    : \{ l_1 : t_1 ;
-                     … ; l_n : t_n \}
+                { Γ ⊢ \eStruct{ l_1 : e_1 ; … ; l_n : e_n }
+                    : \tStruct{ l_1 : t_1 ; … ; l_n : t_n }
                 }
             }
     {Call}{ \irule{Call}
@@ -279,15 +276,15 @@
     }
     {Exp-Struct}{ \irule{Exp-Struct}
                    { }
-                   { \mms{ \{ l_1 : v_1 ; … ; l_n : v_n \} }
-                         { \widehat{\{ l_1 : v_1 ; … ; l_n : v_n \}} }
+                   { \mms{          \eStruct{ l_1 : v_1 ; … ; l_n : v_n } }
+                         { \widehat{\eStruct{ l_1 : v_1 ; … ; l_n : v_n } }}
                    }
     }
     {Exp-Array}{ \irule{Exp-Array}
                  { }
                  {
-                   \mms{ [ v_1, … , v_n ] }
-                       { \widehat{[ v_1, … , v_n ]} }
+                   \mms{      \eArray{ v_1, … , v_n } }
+                   { \widehat{\eArray{ v_1, … , v_n } }}
                  }
     }
     {Exp-Call}{ \irule{Exp-Call}
@@ -379,8 +376,8 @@
     { \ctxUnOp{C} }{}
     { \ctxSet{C}{e} }{}
     { \ctxSet{φ}{C} }{}
-    { \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \} }{}
-    { [ v_1 ; … ; C ; … ; e_n ] }{}
+    { \eStruct{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n } }{}
+    { \eArray{ v_1 ; … ; C ; … ; e_n } }{}
     { C (e_1, …, e_n) }{}
     { f (v_1, …, C, …, e_n) }{}
     {END}

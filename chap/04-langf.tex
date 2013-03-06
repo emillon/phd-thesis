@@ -410,7 +410,7 @@ hétérogènes. Les différents éléments (appelés \emph{champs}) sont désign
 noms $l$ (pour \emph{label}) et de manière statique (il n'y a pas de mécanisme
 pour faire référence à un nom dans le programme).
 
-Les structures sont notées $\{ l_1 : e_1 ; … ; l_n : e_n \}$ et comme dans le
+Les structures sont notées $\eStruct{ l_1 : e_1 ; … ; l_n : e_n }$ et comme dans le
 cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
 
 Dans le programme, le nom de champ $l$ est complété de la définition complète de
@@ -481,10 +481,11 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { e~\opbin~e      }{ Opération binaire }
                  { \& lv           }{ Pointeur }
                  { lv ← e          }{ Affectation }
-                 { \{ l_1 : e_1
+                 { \eStruct{
+                    l_1 : e_1
                     ; …
-                    ; l_n : e_n \} }{ Structure }
-                 { \{e_1 ;…; e_n\} }{ Tableau }
+                    ; l_n : e_n }  }{ Structure }
+                 { \eArray{e_1 ;…; e_n} }{ Tableau }
                  { f               }{ Fonction }
                  { e (e_1, …, e_n) }{ Appel de fonction }
                  {END}
@@ -641,14 +642,14 @@ désigne lexicalement une variable dans le 5\ieme cadre de pile.
 
 \item
 
-$\widehat{ \{ l_1 : v_1 ; … ; l_n : v_n \} }$ : une structure. Comme
-précédemment, on note $\widehat{\{\cdot\}}$ pour dénoter les valeurs.
+$\widehat{ \eStruct{ l_1 : v_1 ; … ; l_n : v_n } }$ : une structure. Comme
+précédemment, on note $\widehat{\eStruct{\cdot}}$ pour dénoter les valeurs.
 
 \item
 
-$\widehat{ \{v_1 ;…; v_n\} }$ : un tableau. Pareillement, $\widehat{\{\cdot\}}$
+$\widehat{ \eArray{v_1 ;…; v_n} }$ : un tableau. Pareillement, $\widehat{\eArray{\cdot}}$
 permet de désigner les valeurs. Par exemple, si $x$ vaut $2$ et $y$ vaut $3$,
-l'expression $\{ x, y \}$ s'évaluera en valeur $\widehat{\{ 2, 3 \}}$
+l'expression $\eArray{ x, y }$ s'évaluera en valeur $\widehat{\eArray{ 2, 3 }}$
 
 \item
 
@@ -672,11 +673,11 @@ pas capturé (il n'y a pas de clôture lexicale).
       { \widehat{c}     }{Constante}
       { φ               }{Référence mémoire}
       { \widehat{
-         \{ l_1 : v_1 ;
-       … ; l_n : v_n \}
+         \eStruct{ l_1 : v_1 ;
+       … ; l_n : v_n }
        }                }{Structure}
       { \widehat{
-        \{v_1 ;…; v_n\}
+        \eArray{v_1 ;…; v_n}
         }               }{Tableau}
       { \widehat{f}     }{Fonction}
       { Ω               }{Erreur}
@@ -1116,18 +1117,18 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   L'erreur $\serr{field}$ est levée si on accède à un champ non existant.
 
   \begin{align*}
-    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L =
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l]_L =
           & v_i \mbox{ si } ∃i∈[1;n], l=l_i\\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = &
-        \{ l_1 : v_1 \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l ← v]_L = &
+        \eStruct{ l_1 : v_1 \\
        & ; … \\
        & ; l_{p-1} : v_{p-1} \\
        & ; l_p : v \\
        & ; l_{p+1} : v_{p+1} \\
        & ; … \\
-       & ; l_n : v_n \} \mbox{ si } ∃p ∈ [1;n], l = l_p \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L = & \serr{field} \mbox{ sinon} \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = & \serr{field} \mbox{ sinon}
+       & ; l_n : v_n } \mbox{ si } ∃p ∈ [1;n], l = l_p \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l]_L = & \serr{field} \mbox{ sinon} \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l ← v]_L = & \serr{field} \mbox{ sinon}
   \end{align*}
 
 \end{definition}
@@ -1139,14 +1140,14 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   une expression arbitraire.
 
   \begin{align*}
-    \{ v_1 ; … ; v_n \} [i]_I   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
-    \{ v_1 ; … ; v_n \} [i]_I   = & \serr{array} \textrm{ sinon} \\
-    \{ v_1 ; … ; v_n \} [i←v]_I = & \{ v'_1 ; … ; v'_n \} \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } [i]_I   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } [i]_I   = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } [i←v]_I = & \eArray{ v'_1 ; … ; v'_n } \textrm{ si } i ∈ [0;n-1] \\
                       \mbox{ où } & \begin{cases}
                                       v'_i = v \\
                                       ∀j≠i, v'_j = v_j \\
                                     \end{cases} \\
-    \{ v_1 ; … ; v_n \} [i←v]_I = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } [i←v]_I = & \serr{array} \textrm{ sinon} \\
   \end{align*}
 
   % TODO off by ones...
@@ -1268,9 +1269,9 @@ décrit dans la figure~\ref{fig:ctx-sub}.
   \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
   \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
   \ctxSub{(\ctxSet{φ}{C})    }{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}}     \\
-  \ctxSub{\{ l_1:v_1 ; …
-     ; l_i:C ; … ; l_n:e_n \}}{e_0} = & \{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n \} \\
-  \ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ]    \\
+  \ctxSub{\eStruct{ l_1:v_1 ; …
+     ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
+  \ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n }    \\
   \ctxSub{C (e_1, …, e_n)          }{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n)              \\
   \ctxSub{f (v_1, …, C, …, e_n)    }{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n)        \\
   \\
@@ -1287,8 +1288,8 @@ décrit dans la figure~\ref{fig:ctx-sub}.
 \ctxSub{\ctxUnOp{C}}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}} \\
 \ctxSub{\ctxSet{C}{e}}{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e} \\
 \ctxSub{\ctxSet{φ}{C}}{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}} \\
-\ctxSub{\{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \}}{e_0} = & \{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n \} \\
-\ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ] \\
+\ctxSub{\eStruct{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
+\ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n } \\
 \ctxSub{C (e_1, …, e_n)}{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n) \\
 \ctxSub{f (v_1, …, C, …, e_n)}{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n) \\
 \\

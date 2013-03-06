@@ -26,9 +26,9 @@ Les types des valeurs sont :
 \\ \gramor  & (τ_1, …, τ_n) \rightarrow τ_r & \textrm{Fonction}
 \\ \gramor  & [τ]                           & \textrm{Tableau}
 \\ \gramor  & τ*                            & \textrm{Pointeur}
-\\ \gramor  & \{ f_1:τ_1
+\\ \gramor  & \eStruct{ f_1:τ_1
               ,    …
-              , f_n:τ_n \}                  & \textrm{Structure}
+              , f_n:τ_n }                  & \textrm{Structure}
 \end{align*}
 }
 
@@ -70,7 +70,7 @@ $s$ est une substitution, $\overline{s}$ est son extension définie par :
 \overline{s}([τ]) =~& [\overline{s}(τ)] & \\
 \overline{s}(τ*)  =~& \overline{s}(τ)*   & \\
 \overline{s}(τ_1, …, τ_n) \rightarrow τ_r =~& (\overline{s}(τ_1), …, \overline{s}(τ_n)) \rightarrow \overline{s}(τ_r) \\
-\overline{s}(\{ f_1:τ_1, … ,f_n:τ_n \}) =~& \{ f_1:\overline{s}(τ_1), …, f_n:\overline{s}(τ_n) \}
+\overline{s}(\eStruct{ f_1:τ_1, … ,f_n:τ_n }) =~& \eStruct{ f_1:\overline{s}(τ_1), …, f_n:\overline{s}(τ_n) }
 \end{align*}
 
 Par souci de simplicité, on notera $s$ pour $\overline{s}$.
@@ -98,7 +98,7 @@ apparaissent dans celui-ci :
 \tFV{[τ]} =~& \tFV{τ} & \\
 \tFV{τ*}  =~& \tFV{τ} & \\
 \tFV{(τ_1, …, τ_n) \rightarrow τ_r} =~& \bigcup_{i=1}^n \tFV{τ_i} ∪ \tFV{τ_r} \\
-\tFV{\{ f_1:τ_1, … ,f_n:τ_n \}} =~& \bigcup_{i=1}^n \tFV{τ_i}
+\tFV{\eStruct{ f_1:τ_1, … ,f_n:τ_n }} =~& \bigcup_{i=1}^n \tFV{τ_i}
 \end{align*}
 
 On étend cette définition aux schémas de types :
