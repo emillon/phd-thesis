@@ -248,74 +248,7 @@ Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante
     \disprule{PutU}
 \end{mathpar}
 
-Pour typer les expressions composées (structures et tableaux), il faut remarquer
-que si l'utilisateur contrôle l'adresse d'une expression composée, alors il
-contrôle tous ces champs pointeurs. En quelque sorte, il faut s'assurer que si
-$Γ ⊢_q \& \{l_1:t_1;…;l_n:t_n\}$, alors aucun $t_i$ n'est de la forme
-$t~\qKernel~*$.
-
-Pour ce faire, on commence par ordonner les qualificateurs en posant $\qKernel
-\sqsubseteq \qUser$, et on définit une règle de typage telle que le
-qualificateur associé à l'adresse d'une expression soit l'union des
-qualificateurs présents dans son type.
-
-\begin{definition}[Union de qualificateurs]
-
-  On définit l'opérateur $\sqcup$ sur les qualificateurs de type.
-
-  \begin{center}
-  \begin{tabular}{cc|c}
-    $q_a$    & $q_b$      & $q_a \sqcup q_b$ \\
-    \hline
-    \qKernel & \qKernel   & \qKernel \\
-    \qKernel & \qUser     & \qUser \\
-    \qUser   & \qKernel   & \qUser \\
-    \qUser   & \qUser     & \qUser \\
-  \end{tabular}
-  \end{center}
-
-  (cela est équivalent à définir un treillis
-  $\{\qKernel ; \qUser \}$
-  avec
-  $\qKernel \sqsubseteq \qUser$
-  )
-
-\end{definition}
-
-L'opérateur $Q_\&$ défini ci-après permet d'exprimer "le plus grand
-qualificateur présent dans un type".
-
-\begin{definition}[Qualificateur d'adresse]
-
-  On pose
-
-  \begin{align*}
-    \qualProj{t~q~*} = & q \\
-    \qualProj{t}     = & \qKernel \textrm{, sinon} \\
-  \end{align*}
-
-  On définit alors $Q_\&$ par
-
-  \begin{align*}
-    Q_\& (\{ l_1 : t_1 ; … ; l_n : t_n \}) = & \bigsqcup_{i=1}^n \qualProj{t_i} \\
-    Q_\& (t[]) = & Q_\& (t) \\
-    Q_\& (t) = & \qKernel \textrm{, sinon} \\
-  \end{align*}
-
-% TODO combinaison des 2 ? (tableau de structs, etc)
-
-\end{definition}
-
-Alors la règle pour typer $\&lv$ devient :
-
-\begin{mathpar}
-  \irule{Taint-Addr}
-    { Γ ⊢ lv : t
-      \\
-      q = Q_\& (t)
-    }
-    { Γ ⊢ \&lv : t~q~* }
-\end{mathpar}
+% TODO adresse = kernel
 
 \subsection{Propriété d'isolation mémoire}
 
