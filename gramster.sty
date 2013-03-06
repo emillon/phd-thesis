@@ -1,4 +1,5 @@
 \RequirePackage{etoolbox}
+\RequirePackage{relsize}
 \RequirePackage{xspace}
 
 \def\gramisa{::=~\xspace}
@@ -6,7 +7,7 @@
 
 \def\gramster@buildtable#1#2#3{
   \ifstrequal{#3}{END}{
-    #1 & \textrm{#2} \\
+    #1 & \textrm{#2}
   }{
     #1 & \textrm{#2} \\
     & & & & \gramor & \gramster@buildtable{#3}
@@ -33,7 +34,7 @@
 
 \def\gramster@buildtableshort#1#2#3{
   \ifstrequal{#3}{END}{
-    \gramor & #1 & \textrm{#2} \\
+    \gramor & #1 & \textrm{#2}
   }{
     \gramor & #1 & \textrm{#2} \\
     \gramster@buildtableshort{#3}
@@ -41,6 +42,10 @@
 }
 
 \newcommand{\gramdefshort}[5]{
-  #2 \gramisa & & \textrm{\large \bf #1} \\
+  \gramheadershort{#1}{#2} \\
   \gramster@buildtableshort{#3}{#4}{#5}
+}
+
+\newcommand{\gramheadershort}[2]{
+  #2 \gramisa & & \textrm{\larger \bf #1}
 }
