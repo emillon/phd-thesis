@@ -211,6 +211,18 @@
                 }
                 { \typh{Γ}{x=e}{Γ'} }
             }
+    {GetU}{ \irule{GetU}
+              { Γ ⊢ lv : t
+             \\ Γ ⊢ e : t~\qUser~*
+              }
+              { Γ ⊢ \uGet{lv}{e} : \tInt }
+    }
+    {PutU}{ \irule{PutU}
+              { Γ ⊢ e_1 : t
+             \\ Γ ⊢ e_2 : t~\qUser~*
+              }
+              { Γ ⊢ \uPut{e_1}{e_2} : \tInt }
+    }
     {END}
 }
 

@@ -33,6 +33,8 @@ chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
 \gramdef{Expressions}{e}
   { … }{}
   { \eTaint{e} }{Expression souillée}
+  { \uGet{lv}{e}}{ Lecture depuis l'espace utilisateur}
+  { \uPut{e}{e}}{ Écriture dans l'espace utilisateur}
   {END}
 \\
 \gramdef{Contextes}{C}
@@ -60,7 +62,8 @@ chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
 \begin{itemize}
 \item
   tout d'abord, on ajoute une expression d'annotation sur les variables que
-  celles-ci sont contrôlés par un utilisateur non privilégié.
+  celles-ci sont contrôlés par un utilisateur non privilégié, ainsi que des
+  opérateurs de copie sûre.
 \item
   ensuite, on étend l'ensemble des valeurs possibles pour les pointeurs
   à une valeur $\vTainted{φ}$ signifiant que l'objet pointé se situe en
@@ -98,6 +101,11 @@ On rajoute donc le cas :
 Φ(\vTainted{φ}) =& \serr{taint}
 \end{align*}
 
+Pour accéder à ces valeurs, il faut utiliser les opérateurs $\phxx\uGet$ et 
+$\phxx\uPut$.
+
+% TODO leur sémantique
+
 \section{Insuffisance des types simples}
 
 Étant donné \langname augmenté de cette extension sémantique, on peut étendre
@@ -111,7 +119,8 @@ trivialement le système de types avec la règle suivante :
 
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
-$\serr{array}$ ou $\serr{ptr}$, violant ainsi le théorème~\ref{thm:progres}.
+$\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
+théorème~\ref{thm:progres}.
 
 Par exemple, supposons que $x$ soit une variable globale entière, et posons $e =
 * \eTaint {\& x}$.
@@ -229,6 +238,14 @@ suivante :
 \irule{Taint}
   { Γ ⊢_q e : t~q~* }
   { Γ ⊢_q \eTaint{x} : t~\qUser~* }
+\end{mathpar}
+
+Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante :
+
+\begin{mathpar}
+    \disprule{GetU}
+
+    \disprule{PutU}
 \end{mathpar}
 
 Pour typer les expressions composées (structures et tableaux), il faut remarquer
