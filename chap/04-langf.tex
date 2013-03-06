@@ -1773,14 +1773,14 @@ exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$.
 
 \begin{mathpar}
-  \semrule{Ph-Exp}
+  \semrule{T-Exp}
 \end{mathpar}
 
 La déclaration d'une variable globale (avec un initialiseur) consiste à évaluer
 cet initialiseur et à étendre l'état mémoire avec ce couple (variable, valeur).
 
 \begin{mathpar}
-  \semrule{Ph-Var}
+  \semrule{T-Var}
 \end{mathpar}
 
 \section{Exécution}
@@ -1791,9 +1791,9 @@ unes à la suite des autres.
 On commence par étendre l'extension $→^*$ au listes de la relation $→$ :
 
 \begin{mathpar}
-  \semrule{Ph*-Nil}
+  \semrule{T*-Nil}
 
-  \semrule{Ph*-Cons}
+  \semrule{T*-Cons}
 \end{mathpar}
 
 L'exécution d'un programme est alors :

@@ -273,12 +273,7 @@ opérateurs $=$ et $≠$ renvoient alors un \tInt.
 
 %TODO Eq-Struct
 
-Les comparaisons sont plus restrictives, et ne s'appliquent qu'aux types
-primitifs (on ne peut pas comparer deux pointeurs, ou deux tableaux).
-
-\begin{mathpar}
-  \disprule{Op-Comparable}
-\end{mathpar}
+% TODO rajouter les ops de comparaison
 
 % TODO extensions aux structs et tableaux
 
@@ -432,14 +427,14 @@ L'évaluation d'une expression est le cas le plus simple. En effet, il y a juste
 départ. L'environnement n'est pas modifié.
 
 \begin{mathpar}
-  \disprule{Ph-Exp}
+  \disprule{T-Exp}
 \end{mathpar}
 
 La déclaration d'une variable globale commence de la même manière, mais on
 enrichit l'environnement de cette nouvelle valeur.
 
 \begin{mathpar}
-  \disprule{Ph-Var}
+  \disprule{T-Var}
 \end{mathpar}
 
 \section{Sûreté du typage}
