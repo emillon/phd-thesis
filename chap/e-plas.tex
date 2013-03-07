@@ -81,8 +81,7 @@ also possible, but harder, to use this technique for compiled
 languages~\cite{clause-etal-issta07}.
 
 Adding a strong type system to C is the core idea of
-%CCured~\cite{ccured_toplas}. It copes with the loose memory model of C by
-%adding % TODO
+CCured~\cite{ccured-toplas}. It copes with the loose memory model of C by adding
 dynamic checks when static guarantees cannot be obtained. However, it requires
 dynamic instrumentation and is meant to stay activated, incurring a
 non-negligible run-time cost.
@@ -359,8 +358,7 @@ where two frames hold a variable with the same name; for example in the presence
 of recursive functions.
 
 The semantics described here are given in the style of Plotkin's Structural
-%Operational Semantics\cite{sos_jlap}: expressions are gradually reduced to %
-%TODO
+Operational Semantics\cite{sos-jlap}: expressions are gradually reduced to
 constants, and instructions are simplified until a terminal instruction of the
 form $\iPass$ or $\iReturn{v}$.
 
