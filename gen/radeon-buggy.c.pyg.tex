@@ -80,6 +80,13 @@
 	\PY{k}{return} \PY{l+m+mi}{0}\PY{p}{;}
 \PY{p}{\PYZcb{}}
 
+\PY{c+cm}{/* from include/drm/radeon\PYZus{}drm.h */}
+\PY{k}{struct} \PY{n}{drm\PYZus{}radeon\PYZus{}info} \PY{p}{\PYZob{}}
+	\PY{k+kt}{uint32\PYZus{}t}		\PY{n}{request}\PY{p}{;}
+	\PY{k+kt}{uint32\PYZus{}t}		\PY{n}{pad}\PY{p}{;}
+	\PY{k+kt}{uint64\PYZus{}t}		\PY{n}{value}\PY{p}{;}
+\PY{p}{\PYZcb{}}\PY{p}{;}
+
 \PY{c+cm}{/* from drivers/gpu/drm/radeon/radeon\PYZus{}kms.c */}
 \PY{k}{struct} \PY{n}{drm\PYZus{}ioctl\PYZus{}desc} \PY{n}{radeon\PYZus{}ioctls\PYZus{}kms}\PY{p}{[}\PY{p}{]} \PY{o}{=} \PY{p}{\PYZob{}}
 	\PY{c+cm}{/* KMS */}
