@@ -671,7 +671,7 @@ pas capturé (il n'y a pas de clôture lexicale).
   \begin{align*}
   \gramdef{Valeurs}{v}
       { \widehat{c}     }{Constante}
-      { φ               }{Référence mémoire}
+      { \widehat{\&}~φ  }{Référence mémoire}
       { \widehat{
          \eStruct{ l_1 : v_1 ;
        … ; l_n : v_n }
@@ -692,7 +692,7 @@ pas capturé (il n'y a pas de clôture lexicale).
   \\
   \gramdef{Adresses}{a}
      { (n, x) }{Variable locale}
-     { x      }{Variable globale}
+     { (x)    }{Variable globale}
      {END}
   \\
   \gramdef{Erreur}{Ω}
