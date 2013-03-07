@@ -220,19 +220,26 @@ sont des domaines non relationnels. On peut en citer quelques uns.
 
 \begin{figure}%{{{
 \centering
-\begin{tikzpicture}
-\node at (1, 2) (t) {$\top$};
-\node at (0, 1) (p) {$+$};
-\node at (2, 1) (m) {$-$};
-\node at (1, 0) (b) {$\bot$};
-\draw (t) -- (p) -- (b);
-\draw (t) -- (m) -- (b);
-\end{tikzpicture}
 
-\begin{align*}
-\gamma~(+) = & \mathbb{R}^+ \\
-\gamma~(-) = & \mathbb{R}^-
-\end{align*}
+\begin{minipage}{0.4\textwidth}
+  \begin{tikzpicture}
+  \node at (1, 2) (t) {$\top$};
+  \node at (0, 1) (m) {$-$};
+  \node at (1, 1) (z) {$0$};
+  \node at (2, 1) (p) {$+$};
+  \node at (1, 0) (b) {$\bot$};
+  \draw (t) -- (p) -- (b);
+  \draw (t) -- (m) -- (b);
+  \draw (t) -- (z) -- (b);
+  \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+  \begin{align*}
+  γ~(-) = & ℝ^- \\
+  γ~(0) = & \{0\} \\
+  γ~(+) = & ℝ^+ \\
+  \end{align*}
+\end{minipage}
 
 \caption{Domaine des signes}
 \label{fig:dom-sig}
@@ -301,7 +308,7 @@ extremales des variables (figure~\ref{fig:dom-intvl}).
 \end{figure} % }}}
 
 Lorsque plusieurs variables sont analysées en même temps, utiliser de tels
-domaines revient à considérer un produit cartésien d'ensembles
+domaines consiste à considérer un produit cartésien d'ensembles abstraits
 (figure~\ref{fig:dom-cartesien})
 
 Cela revient à oublier les relations entre les variables. Des domaines abstraits
@@ -328,13 +335,12 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 
   \centering
 
-  \subbottom[Un domaine non relationnel représente des produits cartésiens de%{{{
-    domaines abstraits (ici, des intervalles).
-  ]{
+  %{{{
+  \subbottom[Domaine non relationnel]{
     \label{fig:dom-cartesien}
       \begin{tikzpicture}
-      \draw[->] (0,-1) -- (0,3);
-      \draw[->] (-1,0) -- (4,0);
+      \draw[->] (0,-0.5) -- (0,3);
+      \draw[->] (-0.5,0) -- (4,0);
 %
       \draw[fill=red!30] (1,1) rectangle (3,2);
 %
@@ -353,8 +359,7 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
     \label{fig:dom-poly}
 %
     \begin{tikzpicture}[scale=0.5]
-    \draw[->] (0,-1) -- (0,6);
-    \draw[->] (-1,0) -- (8,0);
+    \path[use as bounding box] (0,0) rectangle (8, 6);
 %
     \draw[fill=red!30] (1,2) -- (2,4) -- (4,5) -- (6,5) -- (7,3) -- (5,1) -- cycle;
 %
@@ -365,10 +370,9 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
     \label{fig:dom-zones}
 %
     \begin{tikzpicture}
-    \draw[->] (0,-1) -- (0,5);
-    \draw[->] (-1,0) -- (5,0);
+    \path[use as bounding box] (0,0) rectangle (4,4);
 %
-    \draw[fill=red!30] (1,2) -- (3,4) -- (4,4) -- (4,3) -- (2,1) -- (1,1) -- cycle;
+    \draw[fill=red!30] (1,2) -- (2,3) -- (3,3) -- (3,2) -- (2,1) -- (1,1) -- cycle;
 %
     \end{tikzpicture}
   }%}}}
@@ -376,10 +380,9 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
     \label{fig:dom-octo}
 %
     \begin{tikzpicture}
-    \draw[->] (0,-1) -- (0,5);
-    \draw[->] (-1,0) -- (5,0);
+    \path[use as bounding box] (0,0) rectangle (4,4);
 %
-    \draw[fill=red!30] (1,1.5) -- (1,2) -- (3,4) -- (3.5,4) -- (4,3.5) -- (4,3) -- (2,1) -- (1.5,1) -- cycle;
+    \draw[fill=red!30] (1,1.5) -- (1,2) -- (2,3) -- (2.5,3) -- (3,2.5) -- (3,2) -- (2,1) -- (1.5,1) -- cycle;
 %
     \end{tikzpicture}
   }%}}}
@@ -424,7 +427,7 @@ Pour des retours d'expérience, on peut se référer aux descriptions d'
 Astrée\cite{Astree04,Astree05,AstreeScale},
 CGS \cite{cgs},
 Coverity \cite{coverityBillion},
-ou de Penjili (TODO)
+ou de Penjili.
 
 % TODO pas top
 
@@ -467,22 +470,6 @@ représentation numérique d'un pointeur est lié à de nombreux choix faits par
 l'environnement d'exécution (comme la randomisation de l'espace d'adressage) qui
 ne peuvent pas facilement être modélisés.
 
-\end{itemize}
-
-\subsection*{TODO}
-
-\begin{itemize}
-\item difficultés :
-
-\begin{itemize}
-\item
-  récursion
-\end{itemize}
-
-\item produit réduit
-\item CIL, autres front end
-\item polyspace?
-\item APRON?
 \end{itemize}
 
 \section{Typage}
@@ -728,9 +715,29 @@ de chaînes en C.
 Ce type d'annotations a été implanté par exemple pour le langage Java dans le
 système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
 
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+\clearpage
+
 \subsection*{TODO}
 
 \begin{itemize}
+\item IA :
+\begin{itemize}
+\item citer pour penjili\cite{AllamigeonHymansSSTIC07}
+\item difficultés :
+
+\begin{itemize}
+\item
+  récursion
+\end{itemize}
+
+\item produit réduit
+\item CIL, autres front end
+\item polyspace?
+\item APRON?
+\end{itemize}
+
 \item
   hoare : quand est-ce que le compile time suffit ? et le runtime nécessaire ?
 \item

@@ -89,7 +89,7 @@ programme est donc mal typé.
       {END}
   \\
   \gramdef{Structure}{S}
-      { \{ l_1 : t_1; … ; l_n : t_n \} }{Structure simple}
+      { \eStruct{ l_1 : t_1; … ; l_n : t_n } }{Structure simple}
       {END}
   \\
   \gramdef{Environnement de typage}{Γ}
@@ -232,7 +232,7 @@ le type complet de la structure est accessible sur le champ.
 Dans la définition de cette règle on utilise la notation :
 
 \[
-(l, t) ∈ \{l_1 : t_1 ; … ; l_n : t_n \}
+(l, t) ∈ \eStruct{l_1 : t_1 ; … ; l_n : t_n }
 \eqdef
 ∃ i ∈ [1;n],
 l = l_i ∧ t = t_i
@@ -273,12 +273,7 @@ opérateurs $=$ et $≠$ renvoient alors un \tInt.
 
 %TODO Eq-Struct
 
-Les comparaisons sont plus restrictives, et ne s'appliquent qu'aux types
-primitifs (on ne peut pas comparer deux pointeurs, ou deux tableaux).
-
-\begin{mathpar}
-  \disprule{Op-Comparable}
-\end{mathpar}
+% TODO rajouter les ops de comparaison
 
 % TODO extensions aux structs et tableaux
 
@@ -432,14 +427,14 @@ L'évaluation d'une expression est le cas le plus simple. En effet, il y a juste
 départ. L'environnement n'est pas modifié.
 
 \begin{mathpar}
-  \disprule{Ph-Exp}
+  \disprule{T-Exp}
 \end{mathpar}
 
 La déclaration d'une variable globale commence de la même manière, mais on
 enrichit l'environnement de cette nouvelle valeur.
 
 \begin{mathpar}
-  \disprule{Ph-Var}
+  \disprule{T-Var}
 \end{mathpar}
 
 \section{Sûreté du typage}
@@ -485,7 +480,7 @@ expression.
 \item Références mémoire :
   \begin{itemize}
     \item
-      si $Γ ⊢ x : t$, $x : t ∈ Γ$
+      si $Γ ⊢ x : t$, alors $x : t ∈ Γ$
     \item
       si $Γ ⊢ *lv : t$, alors $Γ ⊢ lv : t*$
     \item
@@ -493,6 +488,51 @@ expression.
     \item
       si $Γ ⊢ lv.l_S : t$, alors $Γ ⊢ lv : S$
 
+  \end{itemize}
+
+\item Opérations :
+  \begin{itemize}
+    \item si $ Γ ⊢ \opun~e : t $, alors on est dans un des cas suivants :
+      \begin{itemize}
+        \item
+          $\opun ∈ \{+,-,\sim, ! \}$,
+          $t = \tInt$,
+          $Γ ⊢ e : \tInt$
+        \item
+          $\opun ∈ \{+.,-.\}$,
+          $t = \tFloat$,
+          $Γ ⊢ e : \tFloat$
+      \end{itemize}
+    \item si $ Γ ⊢ e_1~\opbin~e_2 : t $, un des cas suivants se présente :
+      \begin{itemize}
+        \item
+          $\opbin ∈ \opbinintset{}$,
+          $Γ ⊢ e_1 : \tInt$,
+          $Γ ⊢ e_2 : \tInt$,
+          $t = \tInt$
+        \item
+          $\opbin ∈ \opbinfloatset{}$,
+          $Γ ⊢ e_1 : \tFloat$,
+          $Γ ⊢ e_2 : \tFloat$,
+          $t = \tFloat$
+        \item
+          $\opbin ∈ \{=,≠\}$,
+          $Γ ⊢ e_1 : t'$,
+          $Γ ⊢ e_2 : t'$,
+          $\textsc{Eq}(t')$,
+          $t = \tInt$
+        \item
+          $\opbin ∈ \{≤,≥,<,>\}$,
+          $t = \tInt$,
+          $Γ ⊢ e_1 : t'$,
+          $Γ ⊢ e_2 : t'$,
+          $t' ∈ \{ \tInt, \tFloat \}$
+        \item
+          $\opbin ∈ \{+_p, -_p\}$,
+          $∃t', t = t'*$,
+          $Γ ⊢ e_1 : t'*$,
+          $Γ ⊢ e_2 : \tInt$
+      \end{itemize}
   \end{itemize}
 \item
   Appel de fonction : si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
@@ -541,7 +581,7 @@ $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
     \item $Γ ⊢ φ.l : t$
 
-      $Γ ⊢ φ : \{ l: t ; … \}$ %TODO sûrement différent sans S
+      $Γ ⊢ φ : \eStruct{ l: t ; … }$ %TODO sûrement différent sans S
 
   \end{itemize}
 
@@ -577,7 +617,7 @@ $Γ = x:t$).
   \item si $Γ ⊢ v : t*$, $v = φ$ ou $v = \eNull$.
   \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = f$.
   \item si $Γ ⊢ v : t*$, $v = φ$.
-  \item si $Γ ⊢ v : t[]$, $v = \{v_1; …; v_n\}$.
+  \item si $Γ ⊢ v : t[]$, $v = \eArray{v_1; …; v_n}$.
     %TODO structures
   \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \mathrm{fun}
     (a_1, …, a_n) \{i\}$.
@@ -608,6 +648,35 @@ $m$.
   % TODO quid de ce qui n'est pas visible (ie, le tas)
 
 \end{definition}
+
+\begin{definition}[Typage de la mémoire]
+
+\[
+  Γ ⊧ m \eqdef ∀ x ∈ \mathrm{Visible}(m). Γ, m ⊧ x
+\]
+
+\[
+  Γ, m ⊧ x \eqdef ∃ t. Γ, m ⊧ x : t
+\]
+
+La définition de $Γ, m ⊧ x : t$ dépend de $v = m[x]_Φ$. On pose $Γ, m ⊧ x : t
+\eqdef P(v)$ avec :
+
+\begin{itemize}
+  \item $P(c) \eqdef Γ ⊢ c : t$
+  \item $P(f) \eqdef Γ ⊢ f : t$
+  \item $P(φ) \eqdef ∃t'. t = t'* ∧ Γ, m ⊧ y : t'$ où $y = m[φ]_Φ$
+  \item $P(\eArray{v_1;…;v_n}) \eqdef
+    ∃ t'. t = t'[~]
+        ∧ ∀ i ∈ [1;n]. Γ ⊢ v_i : t'$
+  \item $P(\eStruct{l_1:v_1;…;l_n:v_n}) \eqdef
+    ∃ (t_1, …, t_n). t = \eStruct{l_1:t_1;…;l_n:t_n}
+                   ∧ ∀ i ∈ [1;n]. Γ ⊢ v_i : t_i$
+\end{itemize}
+
+\end{definition}
+
+% TODO definit Visible
 
 \begin{theorem}[Progrès]
   \label{thm:progres}

@@ -1,3 +1,192 @@
+\section{Composition de lentilles}
+
+\label{proof:compo-lens}
+
+\begin{proof}
+Pour prouver que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$, il suffit de prouver les trois
+propriétés caractéristiques.
+
+\paragraph{GetPut}%{{{
+
+\begin{align*}
+& \lensPut{ℒ}{
+    \lensGet{ℒ}{r}
+    }{
+      r
+    } \\
+= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
+& \lensPut{ℒ}
+    {
+      \lensGet{ℒ_2}{
+        \lensGet{ℒ_1}{r}
+      }
+    }
+    { r } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut
+    {ℒ_1}
+    {
+      \lensPut
+        {ℒ_2}
+        {
+          \lensGet{ℒ_2}
+            {
+              \lensGet{ℒ_1}{r}
+            }
+        }
+        { \lensGet
+            {ℒ_1}
+            {r}
+        }
+    }
+    {r} \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_2$} \} \\
+& \lensPut
+    {ℒ_1}
+    {
+      \lensGet{ℒ_1}{r}
+    }
+    {r} \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
+& r \\
+\end{align*}%}}}
+
+\paragraph{PutGet}%{{{
+
+\begin{align*}
+& \lensGet{ℒ}
+    {
+      \lensPut{ℒ}
+        {a}
+        {r}
+    } \\
+= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
+& \lensGet{ℒ_2}
+    {
+      \lensGet{ℒ_1}
+        {
+          \lensPut{ℒ}
+            {a}
+            {r}
+        }
+    } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensGet{ℒ_2}
+    {
+      \lensGet{ℒ_1}
+        {
+          \lensPut{ℒ_1}
+            {
+              \lensPut{ℒ_2}
+                {a}
+                { \lensGet{ℒ_1}{r} }
+            }
+            { r }
+        }
+    } \\
+= & \{ \textrm{\textsc{PutGet} sur $ℒ_1$} \} \\
+& \lensGet{ℒ_2}
+    {
+      \lensPut{ℒ_2}
+        {a}
+        { \lensGet{ℒ_1}{r} }
+    } \\
+= & \{ \textrm{\textsc{PutGet} sur $ℒ_2$} \} \\
+& a \\
+\end{align*}%}}}
+
+\paragraph{PutPut}%{{{
+
+\begin{align*}
+& \lensPut{ℒ}{a'}{
+    \lensPut{ℒ}{a}{r}
+  } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut{ℒ}{a'}{
+    \lensPut{ℒ_1}
+      {
+        \lensPut{ℒ_2}
+          {a}
+          { \lensGet{ℒ_1}{r} }
+      }
+      { r }
+  } \\
+= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{
+            \lensPut{ℒ_1}
+              {
+                \lensPut{ℒ_2}
+                  {a}
+                  { \lensGet{ℒ_1}{r} }
+              }
+              { r }
+          }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        {
+          \lensPut{ℒ_2}
+            {a}
+            { \lensGet{ℒ_1}{r} }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{PutPut} sur $ℒ_2$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    } \\
+= & \{ \textrm{\textsc{PutPut} sur $ℒ_1$} \} \\
+& \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    { r
+    } \\
+= & \{ \textrm{définition de } \ggg \} \\
+& \lensPut{ℒ}{a'}{r} \\
+\end{align*}%}}}
+
+\end{proof}
+
 \section{Progrès}
 \label{proof:progres}
 
@@ -66,13 +255,13 @@ De même, on applique l'hypothèse de récurrence à $lv$.
 \item $lv = v$.
 
 Comme $Γ ⊢ v : t[]$, on déduit du lemme~\ref{lemma:canon} que
-$v = \{v_1; …; v_p\}$.
+$v = \eArray{v_1; …; v_p}$.
 Appliquons l'hypothèse de récurrence à $e$.
 
 \begin{itemize}
 \item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
 lemme~\ref{lemma:canon} et $v' = n$.
-D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\{v_1; …; v_p\}\widehat{[n]}} $.
+D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\eArray{v_1; …; v_p}\widehat{[n]}} $.
 Deux cas sont à distinguer :
 si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
@@ -281,8 +470,8 @@ l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants :
 
 Le schéma de preuve est similaire au cas \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise le contexte
-$C = \{l_1: v_1, …, l_{p-1}: v_{p-1}, \ctxEmpty, l_{p+1}: e_{p+1}, …, l_n:
-e_n\}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
+$C = \eStruct{l_1: v_1, …, l_{p-1}: v_{p-1}, \ctxEmpty, l_{p+1}: e_{p+1}, …, l_n:
+e_n}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
 \textsc{Exp-Struct}.
 
 %}}}
@@ -321,7 +510,52 @@ Ce cas est direct : la règle \textsc{Exp-Fun} s'applique.
 \section{Preuve du théorème~\ref{thm:preservation}}
 \label{proof:preservation}.
 
-% TODO
+\begin{proof}
+
+On procède par induction sur la forme de l'expression $e$.
+
+\paragraph{ Constante }             $c$ % {{{ TODO
+On détaille par exemple le cas d'une constante entière.
+
+D'une part, $Γ ⊢ e : t$ donc d'après le lemme~\ref{lemma:canon}, $t = \tInt$.
+
+D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
+évalue en une constante entière.
+
+% TODO check si c'est vrai aussi pour Null
+% TODO ajouter un typage des valeurs?
+
+% }}}
+\paragraph{ Accès mémoire }         $ lv $ % {{{ TODO
+
+% }}}
+\paragraph{ Opération unaire }      $ \opun~e $ % {{{ TODO
+
+
+% }}}
+\paragraph{ Opération binaire }     $ e~\opbin~e $ % {{{ TODO
+
+% }}}
+\paragraph{ Pointeur }              $ \& lv $ % {{{ TODO
+
+% }}}
+\paragraph{ Affectation }           $ lv ← e $ % {{{ TODO
+
+% }}}
+\paragraph{ Structure }             $ \eStruct{ l_1 : e_1 ; ; l_n : e_n } $ % {{{ TODO
+
+% }}}
+\paragraph{ Tableau }               $ \eArray{e_1 ;…; e_n} $ % {{{ TODO
+
+% }}}
+\paragraph{ Fonction }              $ f $ % {{{ TODO
+
+% }}}
+\paragraph{ Appel de fonction }     $ e (e_1, …, e_n) $ % {{{ TODO
+
+% }}}
+
+\end{proof}
 
 \section*{TODO}
 

@@ -1,3 +1,6 @@
+\def\opbinintset{\{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg,≤,≥,<,> \}}
+\def\opbinfloatset{\{+_.,-_.,\times_.,/_.,≤_.,≥_.,<_.,>_.\}}
+
 \def\disprule#1{
   \switch{#1}
     {Cst-Int}{ \irule{Cst-Int}
@@ -26,7 +29,7 @@
     }
     {Lv-Index}{ \irule{Lv-Index}
                   { Γ ⊢ e : \tInt \\
-                    Γ ⊢ lv : t[]
+                    Γ ⊢ lv : t[~]
                   }
                   { Γ ⊢ lv[e] : t }
     }
@@ -37,7 +40,7 @@
                   { Γ ⊢ lv.l_S : t }
     }
     {Op-Int}{ \irule{Op-Int}
-                { \opbin ∈ \{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg \} \\
+                { \opbin ∈ \opbinintset{} \\
                   Γ ⊢ e_1 : \tInt \\
                   Γ ⊢ e_2 : \tInt
                 }{
@@ -45,7 +48,7 @@
                 }
     }
     {Op-Float}{ \irule{Op-Float}
-                { \opbin ∈ \{+.,-.,\times.,/.\} \\
+                { \opbin ∈ \opbinfloatset{} \\
                   Γ ⊢ e_1 : \tFloat \\
                   Γ ⊢ e_2 : \tFloat
                 }{
@@ -62,7 +65,7 @@
     }
     {Eq-Array}{ \irule{Eq-Array}
                   {\textsc{Eq}(t)}
-                  {\textsc{Eq}(t[])}
+                  {\textsc{Eq}(t[~])}
     }
     {Op-Eq}{ \irule{Op-Eq}
              { \opbin ∈ \{=,≠\} \\
@@ -72,15 +75,6 @@
              }{
                Γ ⊢ e_1~\opbin~e_2 : \tInt
              }
-    }
-    {Op-Comparable}{ \irule{Op-Comparable}
-                       { \opbin ∈ \{≤,≥,<,>\} \\
-                         Γ ⊢ e_1 : t \\
-                         Γ ⊢ e_2 : t \\
-                         t ∈ \{ \tInt, \tFloat \}
-                       }{
-                         Γ ⊢ e_1~\opbin~e_2 : \tInt
-                       }
     }
     {Unop-Plus-Int}{ \irule{Unop-Plus-Int}
                        { Γ ⊢ e : \tInt }
@@ -124,18 +118,15 @@
          }
     {Array}{ \irule{Array}
                { ∀ i ∈ [1;n] , Γ ⊢ e_i : t }
-               { Γ ⊢ \{ e_1 ;
-                       … ; e_n \}
-                       : t[]
+               { Γ ⊢ \eArray{ e_1 ; … ; e_n }
+                       : t[~]
                }
            }
     {Struct}{ \irule{Struct}
                 { ∀ i ∈ [1;n], Γ ⊢ e_i : t_i
                 }
-                { Γ ⊢ \{ l_1 : e_1 ;
-                     … ; l_n : e_n \}
-                    : \{ l_1 : t_1 ;
-                     … ; l_n : t_n \}
+                { Γ ⊢ \eStruct{ l_1 : e_1 ; … ; l_n : e_n }
+                    : \tStruct{ l_1 : t_1 ; … ; l_n : t_n }
                 }
             }
     {Call}{ \irule{Call}
@@ -198,16 +189,28 @@
                     : \vec{t} → t_r
              }
          }
-    {Ph-Exp}{ \irule{Ph-Exp}
+    {T-Exp}{ \irule{T-Exp}
                 { Γ ⊢ e : t }
                 { \typh{Γ}{e}{Γ} }
             }
-    {Ph-Var}{ \irule{Ph-Var}
+    {T-Var}{ \irule{T-Var}
                 { Γ ⊢ e : t \\
                   Γ' = (x, t), Γ
                 }
                 { \typh{Γ}{x=e}{Γ'} }
             }
+    {GetU}{ \irule{GetU}
+              { Γ ⊢ lv : t
+             \\ Γ ⊢ e : t~\qUser~*
+              }
+              { Γ ⊢ \uGet{lv}{e} : \tInt }
+    }
+    {PutU}{ \irule{PutU}
+              { Γ ⊢ e_1 : t
+             \\ Γ ⊢ e_2 : t~\qUser~*
+              }
+              { Γ ⊢ \uPut{e_1}{e_2} : \tInt }
+    }
     {END}
 }
 
@@ -264,30 +267,29 @@
                    {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
     }
     {Exp-AddrOf}{ \irule{Exp-AddrOf}
-                    { a = \mathrm{Lookup} (x, m)
-                    }
-                    {\mm{m}{\&x}{m}{a}}
+                    { }
+                    {\mm{m}{\&~φ}{m}{\widehat{\&}~φ}}
     }
     {Exp-Set}{ \irule{Exp-Set}
                  { }
-                 {\mm{m}{φ ← v}{m[φ ← v]}{v}}
+                 {\mm{m}{φ ← v}{m[φ ← v]_Φ}{v}}
     }
     {Exp-Struct}{ \irule{Exp-Struct}
                    { }
-                   { \mms{ \{ l_1 : v_1 ; … ; l_n : v_n \} }
-                         { \widehat{\{ l_1 : v_1 ; … ; l_n : v_n \}} }
+                   { \mms{          \eStruct{ l_1 : v_1 ; … ; l_n : v_n } }
+                         { \widehat{\eStruct{ l_1 : v_1 ; … ; l_n : v_n } }}
                    }
     }
     {Exp-Array}{ \irule{Exp-Array}
                  { }
                  {
-                   \mms{ [ v_1, … , v_n ] }
-                       { \widehat{[ v_1, … , v_n ]} }
+                   \mms{      \eArray{ v_1, … , v_n } }
+                   { \widehat{\eArray{ v_1, … , v_n } }}
                  }
     }
     {Exp-Call}{ \irule{Exp-Call}
                   { f = \mathrm{fun} (a_1, …, a_n) \{ i \} \\
-                    m_1 = \mathrm{Push}(m_0, ((a_1, v_1), …, (a_n, v_n))) \\
+                    m_1 = \mathrm{Push}(m_0, ((a_1 ↦ v_1), …, (a_n ↦ v_n))) \\
                     \mm{m_1}{i}{m_2}{\iReturn{v}} \\
                     m_3 = \mathrm{Pop}(m_2) \\
                     m_4 = \mathrm{Cleanup}(m_3) \\
@@ -307,16 +309,16 @@
              { \mmi{m}{v}{m}{\iPass} }
     }
     {Decl}{ \irule{Decl}
-            { m' = \mathrm{Extend}(m, ((x, v)))
+            { m' = \mathrm{Extend}(m, x, v)
            \\ \mmi{m'}{i}{m''}{\iPass}
-           \\ m''' = \mathrm{Clean}(m'' - x)
+           \\ m''' = \mathrm{Cleanup}(m'' - x)
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
     } % TODO définir le "-"
     {Decl-Return}{ \irule{Dec-Return}
-            { m' = \mathrm{Extend}(m, ((x, v)))
+            { m' = \mathrm{Extend}(m, x, v)
            \\ \mmi{m'}{i}{m''}{\iReturn{v_r}}
-           \\ m''' = \mathrm{Clean}(m'' - x)
+           \\ m''' = \mathrm{Cleanup}(m'' - x)
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iReturn{v_r}} }
     } % TODO définir le "-"
@@ -337,19 +339,19 @@
               { }
               { \mmi{m}{\iReturn{v};i}{m}{\iReturn{e}} }
     }
-    {Ph-Exp}{ \irule{Ph-Exp}
+    {T-Exp}{ \irule{T-Exp}
                 {\mm{m}{e}{m'}{v}}
                 {\ph{m}{e}{m'}}
             }
-    {Ph-Var}{ \irule{Ph-Var}
+    {T-Var}{ \irule{T-Var}
                 {\mm{m}{e}{m'}{v}}
-                {\ph{(s,g)}{x = e}{(s, (x, v)::g)}}
+                {\ph{(s,g)}{x = e}{(s, (x ↦ v)::g)}}
     }
-    {Ph*-Nil}{ \irule{Ph*-Nil}
+    {T*-Nil}{ \irule{T*-Nil}
                  { }
-                 {\phstar{m}{[]}{m}}
+                 {\phstar{m}{[~]}{m}}
     }
-    {Ph*-Cons}{ \irule{Ph*-Cons}
+    {T*-Cons}{ \irule{T*-Cons}
                   {\ph{m}{p}{m'} \\
                    \phstar{m'}{ps}{m''}}
                   {\phstar{m}{p::ps}{m''}}
@@ -374,8 +376,8 @@
     { \ctxUnOp{C} }{}
     { \ctxSet{C}{e} }{}
     { \ctxSet{φ}{C} }{}
-    { \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \} }{}
-    { [ v_1 ; … ; C ; … ; e_n ] }{}
+    { \eStruct{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n } }{}
+    { \eArray{ v_1 ; … ; C ; … ; e_n } }{}
     { C (e_1, …, e_n) }{}
     { f (v_1, …, C, …, e_n) }{}
     {END}

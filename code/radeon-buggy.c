@@ -79,6 +79,13 @@ int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 	return 0;
 }
 
+/* from include/drm/radeon_drm.h */
+struct drm_radeon_info {
+	uint32_t		request;
+	uint32_t		pad;
+	uint64_t		value;
+};
+
 /* from drivers/gpu/drm/radeon/radeon_kms.c */
 struct drm_ioctl_desc radeon_ioctls_kms[] = {
 	/* KMS */

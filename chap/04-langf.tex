@@ -148,11 +148,11 @@ telles que pour tous $a∈A, a'∈A, r∈R$ :
 
 \begin{align*}
 \tag{GetPut}
-\mathrm{put}_ℒ(\mathrm{get}_ℒ(r), r) = & r \\
+\mathrm{put}_ℒ(\mathrm{get}_ℒ(r), r) &= r \\
 \tag{PutGet}
-\mathrm{get}_ℒ(\mathrm{put}_ℒ(a, r)) = & a \\
+\mathrm{get}_ℒ(\mathrm{put}_ℒ(a, r)) &= a \\
 \tag{PutPut}
-\mathrm{put}_ℒ(a', \mathrm{put}_ℒ(a, r)) = & \mathrm{put}_ℒ(a', r) \\
+\mathrm{put}_ℒ(a', \mathrm{put}_ℒ(a, r)) &= \mathrm{put}_ℒ(a', r) \\
 \end{align*}
 
 On note $ℒ =
@@ -208,67 +208,6 @@ et :
 $\mathrm{put}_Q (7, 3::6::1::5::[]) = 7::6::1::5::[]$.
 
 \end{example}
-
-\begin{proof}%{{{
-
-Prouvons les trois propriétés pour $T$ et $Q$. En ignorant les cas d'erreur, on
-peut toujours écrire une liste $l ∈ L(E)$ avec la forme $t::q$.
-
-\paragraph{GetPut pour $T$}%{{{
-
-\begin{align*}
-\lensPut{T}{\lensGet{T}{l}}{l} & = \lensPut{T}{\lensGet{T}{t::q}}{t::q} \\
-                               & = \lensPut{T}{t}{t::q} \\
-                               & = t::q \\
-                               & = l \\
-\end{align*}%}}}
-
-\paragraph{PutGet pour $T$}%{{{
-
-\begin{align*}
-\lensGet{T}{\lensPut{T}{a}{l}} & = \lensGet{T}{\lensPut{T}{a}{t::q}} \\
-                               & = \lensGet{T}{a::q} \\
-                               & = a \\
-\end{align*}%}}}
-
-\paragraph{PutPut pour $T$}%{{{
-
-\begin{align*}
-\lensPut{T}{a'}{\lensPut{T}{a}{l}} & = \lensPut{T}{a'}{\lensPut{T}{a}{t::q}} \\
-                                   & = \lensPut{T}{a'}{a::q} \\
-                                   & = a'::q \\
-                                   & = \lensPut{T}{a'}{t::q} \\
-                                   & = \lensPut{T}{a'}{l} \\
-\end{align*}%}}}
-
-\paragraph{GetPut pour $Q$}%{{{
-
-\begin{align*}
-\lensPut{Q}{\lensGet{Q}{l}}{l} & = \lensPut{Q}{\lensGet{Q}{t::q}}{t::q} \\
-                               & = \lensPut{Q}{q}{t::q} \\
-                               & = t::q \\
-                               & = l \\
-\end{align*}%}}}
-
-\paragraph{PutGet pour $Q$}%{{{
-
-\begin{align*}
-\lensGet{Q}{\lensPut{Q}{a}{l}} & = \lensGet{Q}{\lensPut{Q}{a}{t::q}} \\
-                               & = \lensGet{Q}{t::a} \\
-                               & = a \\
-\end{align*}%}}}
-
-\paragraph{PutPut pour $Q$}%{{{
-
-\begin{align*}
-\lensPut{Q}{a'}{\lensPut{Q}{a}{l}} & = \lensPut{Q}{a'}{\lensPut{Q}{a}{t::q}} \\
-                                   & = \lensPut{Q}{a'}{t::a} \\
-                                   & = t::a' \\
-                                   & = \lensPut{Q}{a'}{t::q} \\
-                                   & = \lensPut{Q}{a'}{l} \\
-\end{align*}%}}}
-
-\end{proof}%}}}
 
 \begin{definition}[Lentille indexée]
 
@@ -331,41 +270,6 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 \end{align*}
 \end{example}
 
-\begin{proof}%{{{
-Soit $i ∈ [1; n]$. On montre que $T(i) ∈ \setLens{(E_1×…×E_n)}{E_i}$.
-
-
-\paragraph{GetPut}%{{{
-
-On note $r = (x_1,…,x_n)$.
-
-\begin{align*}
-\lensPut{T(i)}{\lensGet{T(i)}{r}}{r} = & \lensPut{T(i)}{\lensGet{T(i)}{ (x_1,…,x_n) }}{ (x_1,…,x_n) } \\
-                                     = & \lensPut{T(i)}{x_i}{ (x_1,…,x_n) } \\
-                                     = & (x_1,…,x_{i-1},x_i,x_{i+1},…,x_n) \\
-                                     = & r \\
-\end{align*}%}}}
-
-\paragraph{PutGet}%{{{
-
-\begin{align*}
-\lensGet{T(i)}{\lensPut{T(i)}{a}{r}} = & \lensGet{T(i)}{\lensPut{T(i)}{a}{ (x_1,…,x_n) }}  \\
-                                     = & \lensGet{T(i)}{(x_1,…,x_{i-1},a,x_{i+1},…,x_n)} \\
-                                     = & a \\
-\end{align*}%}}}
-
-\paragraph{PutPut}%{{{
-
-\begin{align*}
-\lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{r}} = & \lensPut{T(i)}{a'}{\lensPut{T(i)}{a}{(x_1,…,x_n)}}  \\
-                                         = & \lensPut{T(i)}{a'}{ (x_1,…, x_{i-1}, a, x_{i+1}, …, x_n) } \\
-                                         = & (x_1,…, x_{i-1}, a', x_{i+1}, …, x_n) \\
-                                         = & \lensPut{T(i)}{a'}{ (x_1,…,x_n) } \\
-                                         = & \lensPut{T(i)}{a'}{r} \\
-\end{align*}%}}}
-
-\end{proof}%}}}
-
 \begin{definition}[Composition de lentilles]
   \label{def:lens-comp}
 
@@ -404,11 +308,11 @@ On note $r = (x_1,…,x_n)$.
 \node[below of=B,smallnode] (D) {};
 \node[below of=A,node distance=4cm,bignode] (E) {};
 
-\draw[->] (A) to node[auto] {get} (B);
+\draw[->] (A) to node[auto] {$\mathrm{get}_{ℒ_1}$} (B);
 \draw[->] (B) to (D);
 \draw[->] (A) to (E);
-\draw (C) |- node[auto,near end,swap] {put} ($(B)!0.5!(D)$);
-\draw (D) |- node[auto,near end,swap] {put} ($(A)!0.75!(E)$);
+\draw (C) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_2}$} ($(B)!0.5!(D)$);
+\draw (D) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_1}$} ($(A)!0.75!(E)$);
 
 \node[smallnode] at (A) {};
 \node[trinode,fill=orange] at (A) {};
@@ -420,6 +324,18 @@ On note $r = (x_1,…,x_n)$.
 \node[smallnode] at (E) {};
 \node[trinode,fill=violet] at (E) {};
 
+\node[left of=A, node distance=4cm,bignode] (GA) {};
+\node[below of=GA,smallnode] (GB) {};
+\node[below of=GB,trinode,fill=orange] (GC) {};
+
+\node[smallnode] at (GA) {};
+
+\node[trinode, fill=orange] at (GA) {};
+\node[trinode, fill=orange] at (GB) {};
+
+\draw [->] (GA) to node[auto] {$\mathrm{get}_{ℒ_1}$} (GB);
+\draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
+
 \end{tikzpicture}
 \shorthandoff{!}
 
@@ -427,192 +343,8 @@ On note $r = (x_1,…,x_n)$.
 \label{fig:compo-lens}
 \end{figure}
 
-Cette définition est illustrée dans la figure~\ref{fig:compo-lens}.
-
-\begin{proof}
-Pour prouver que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$, il suffit de prouver les trois
-propriétés caractéristiques.
-
-\paragraph{GetPut}%{{{
-
-\begin{align*}
-& \lensPut{ℒ}{
-    \lensGet{ℒ}{r}
-    }{
-      r
-    } \\
-= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
-& \lensPut{ℒ}
-    {
-      \lensGet{ℒ_2}{
-        \lensGet{ℒ_1}{r}
-      }
-    }
-    { r } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensPut
-    {ℒ_1}
-    {
-      \lensPut
-        {ℒ_2}
-        {
-          \lensGet{ℒ_2}
-            {
-              \lensGet{ℒ_1}{r}
-            }
-        }
-        { \lensGet
-            {ℒ_1}
-            {r}
-        }
-    }
-    {r} \\
-= & \{ \textrm{\textsc{GetPut} sur $ℒ_2$} \} \\
-& \lensPut
-    {ℒ_1}
-    {
-      \lensGet{ℒ_1}{r}
-    }
-    {r} \\
-= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
-& r \\
-\end{align*}%}}}
-
-\paragraph{PutGet}%{{{
-
-\begin{align*}
-& \lensGet{ℒ}
-    {
-      \lensPut{ℒ}
-        {a}
-        {r}
-    } \\
-= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
-& \lensGet{ℒ_2}
-    {
-      \lensGet{ℒ_1}
-        {
-          \lensPut{ℒ}
-            {a}
-            {r}
-        }
-    } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensGet{ℒ_2}
-    {
-      \lensGet{ℒ_1}
-        {
-          \lensPut{ℒ_1}
-            {
-              \lensPut{ℒ_2}
-                {a}
-                { \lensGet{ℒ_1}{r} }
-            }
-            { r }
-        }
-    } \\
-= & \{ \textrm{\textsc{PutGet} sur $ℒ_1$} \} \\
-& \lensGet{ℒ_2}
-    {
-      \lensPut{ℒ_2}
-        {a}
-        { \lensGet{ℒ_1}{r} }
-    } \\
-= & \{ \textrm{\textsc{PutGet} sur $ℒ_2$} \} \\
-& a \\
-\end{align*}%}}}
-
-\paragraph{PutPut}%{{{
-
-\begin{align*}
-& \lensPut{ℒ}{a'}{
-    \lensPut{ℒ}{a}{r}
-  } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensPut{ℒ}{a'}{
-    \lensPut{ℒ_1}
-      {
-        \lensPut{ℒ_2}
-          {a}
-          { \lensGet{ℒ_1}{r} }
-      }
-      { r }
-  } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        { \lensGet{ℒ_1}{
-            \lensPut{ℒ_1}
-              {
-                \lensPut{ℒ_2}
-                  {a}
-                  { \lensGet{ℒ_1}{r} }
-              }
-              { r }
-          }
-        }
-    }
-    {
-        \lensPut{ℒ_1}
-          {
-            \lensPut{ℒ_2}
-              {a}
-              { \lensGet{ℒ_1}{r} }
-          }
-          { r }
-    } \\
-= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
-& \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        {
-          \lensPut{ℒ_2}
-            {a}
-            { \lensGet{ℒ_1}{r} }
-        }
-    }
-    {
-        \lensPut{ℒ_1}
-          {
-            \lensPut{ℒ_2}
-              {a}
-              { \lensGet{ℒ_1}{r} }
-          }
-          { r }
-    } \\
-= & \{ \textrm{\textsc{PutPut} sur $ℒ_2$} \} \\
-& \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        { \lensGet{ℒ_1}{r} }
-    }
-    {
-        \lensPut{ℒ_1}
-          {
-            \lensPut{ℒ_2}
-              {a}
-              { \lensGet{ℒ_1}{r} }
-          }
-          { r }
-    } \\
-= & \{ \textrm{\textsc{PutPut} sur $ℒ_1$} \} \\
-& \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        { \lensGet{ℒ_1}{r} }
-    }
-    { r
-    } \\
-= & \{ \textrm{définition de } \ggg \} \\
-& \lensPut{ℒ}{a'}{r} \\
-\end{align*}%}}}
-
-\end{proof}
+Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
+que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
 \section{But et comparaison à C}
 
@@ -678,7 +410,7 @@ hétérogènes. Les différents éléments (appelés \emph{champs}) sont désign
 noms $l$ (pour \emph{label}) et de manière statique (il n'y a pas de mécanisme
 pour faire référence à un nom dans le programme).
 
-Les structures sont notées $\{ l_1 : e_1 ; … ; l_n : e_n \}$ et comme dans le
+Les structures sont notées $\eStruct{ l_1 : e_1 ; … ; l_n : e_n }$ et comme dans le
 cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
 
 Dans le programme, le nom de champ $l$ est complété de la définition complète de
@@ -749,9 +481,11 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { e~\opbin~e      }{ Opération binaire }
                  { \& lv           }{ Pointeur }
                  { lv ← e          }{ Affectation }
-                 { \{ l_1 : e_1 ;
-                    ; l_n : e_n \} }{ Structure }
-                 { \{e_1 ;…; e_n\} }{ Tableau }
+                 { \eStruct{
+                    l_1 : e_1
+                    ; …
+                    ; l_n : e_n }  }{ Structure }
+                 { \eArray{e_1 ;…; e_n} }{ Tableau }
                  { f               }{ Fonction }
                  { e (e_1, …, e_n) }{ Appel de fonction }
                  {END}
@@ -782,8 +516,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  {END}
   \\
   \gramdef{Fonctions}{f}
-                 { \mathrm{fun} (x_1, …, x_n)    }{Arguments}
-                 { \{ i \}                       }{Corps}
+                 { \mathrm{fun} (x_1, …, x_n) \{ i \} }{Arguments, corps}
                  {END}
   \\
   \gramdef{Phrases}{p}
@@ -909,14 +642,14 @@ désigne lexicalement une variable dans le 5\ieme cadre de pile.
 
 \item
 
-$\widehat{ \{ l_1 : v_1 ; … ; l_n : v_n \} }$ : une structure. Comme
-précédemment, on note $\widehat{\{\cdot\}}$ pour dénoter les valeurs.
+$\widehat{ \eStruct{ l_1 : v_1 ; … ; l_n : v_n } }$ : une structure. Comme
+précédemment, on note $\widehat{\eStruct{\cdot}}$ pour dénoter les valeurs.
 
 \item
 
-$\widehat{ \{v_1 ;…; v_n\} }$ : un tableau. Pareillement, $\widehat{\{\cdot\}}$
+$\widehat{ \eArray{v_1 ;…; v_n} }$ : un tableau. Pareillement, $\widehat{\eArray{\cdot}}$
 permet de désigner les valeurs. Par exemple, si $x$ vaut $2$ et $y$ vaut $3$,
-l'expression $\{ x, y \}$ s'évaluera en valeur $\widehat{\{ 2, 3 \}}$
+l'expression $\eArray{ x, y }$ s'évaluera en valeur $\widehat{\eArray{ 2, 3 }}$
 
 \item
 
@@ -938,13 +671,13 @@ pas capturé (il n'y a pas de clôture lexicale).
   \begin{align*}
   \gramdef{Valeurs}{v}
       { \widehat{c}     }{Constante}
-      { φ               }{Référence mémoire}
+      { \widehat{\&}~φ  }{Référence mémoire}
       { \widehat{
-         \{ l_1 : v_1 ;
-       … ; l_n : v_n \}
+         \eStruct{ l_1 : v_1 ;
+       … ; l_n : v_n }
        }                }{Structure}
       { \widehat{
-        \{v_1 ;…; v_n\}
+        \eArray{v_1 ;…; v_n}
         }               }{Tableau}
       { \widehat{f}     }{Fonction}
       { Ω               }{Erreur}
@@ -959,7 +692,7 @@ pas capturé (il n'y a pas de clôture lexicale).
   \\
   \gramdef{Adresses}{a}
      { (n, x) }{Variable locale}
-     { x      }{Variable globale}
+     { (x)    }{Variable globale}
      {END}
   \\
   \gramdef{Erreur}{Ω}
@@ -1367,7 +1100,7 @@ On définit ici quelques lentilles.
 
 \end{definition}
 
-Les numéros de cadre qui permettent d'identifier les globales (le $n$ dans $(n,
+Les numéros de cadre qui permettent d'identifier les locales (le $n$ dans $(n,
 x)$) croissent avec la pile. D'autre part, l'empilement se fait en tête de liste
 (près de l'indice 1). Donc pour accéder aux plus vieilles locales (numérotées
 1), il faut accéder au dernier élément de la liste. Ceci explique pourquoi un
@@ -1384,18 +1117,18 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   L'erreur $\serr{field}$ est levée si on accède à un champ non existant.
 
   \begin{align*}
-    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L =
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l]_L =
           & v_i \mbox{ si } ∃i∈[1;n], l=l_i\\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = &
-        \{ l_1 : v_1 \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l ← v]_L = &
+        \eStruct{ l_1 : v_1 \\
        & ; … \\
        & ; l_{p-1} : v_{p-1} \\
        & ; l_p : v \\
        & ; l_{p+1} : v_{p+1} \\
        & ; … \\
-       & ; l_n : v_n \} \mbox{ si } ∃p ∈ [1;n], l = l_p \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l]_L = & \serr{field} \mbox{ sinon} \\
-    \{ l_1 : v_1; … ; l_n : v_n \}[l ← v]_L = & \serr{field} \mbox{ sinon}
+       & ; l_n : v_n } \mbox{ si } ∃p ∈ [1;n], l = l_p \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l]_L = & \serr{field} \mbox{ sinon} \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }[l ← v]_L = & \serr{field} \mbox{ sinon}
   \end{align*}
 
 \end{definition}
@@ -1407,14 +1140,14 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   une expression arbitraire.
 
   \begin{align*}
-    \{ v_1 ; … ; v_n \} [i]_I   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
-    \{ v_1 ; … ; v_n \} [i]_I   = & \serr{array} \textrm{ sinon} \\
-    \{ v_1 ; … ; v_n \} [i←v]_I = & \{ v'_1 ; … ; v'_n \} \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } [i]_I   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } [i]_I   = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } [i←v]_I = & \eArray{ v'_1 ; … ; v'_n } \textrm{ si } i ∈ [0;n-1] \\
                       \mbox{ où } & \begin{cases}
                                       v'_i = v \\
                                       ∀j≠i, v'_j = v_j \\
                                     \end{cases} \\
-    \{ v_1 ; … ; v_n \} [i←v]_I = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } [i←v]_I = & \serr{array} \textrm{ sinon} \\
   \end{align*}
 
   % TODO off by ones...
@@ -1488,7 +1221,7 @@ $C = 1+\ctxEmpty$.
 Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires :
 
 \begin{itemize}
-\item comment découper une expression selon un contextes
+\item comment découper une expression selon un contexte
 \item comment appliquer une règle d'évaluation sous un contexte
 \item comment regrouper une expression et un contexte
 \end{itemize}
@@ -1536,9 +1269,9 @@ décrit dans la figure~\ref{fig:ctx-sub}.
   \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
   \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
   \ctxSub{(\ctxSet{φ}{C})    }{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}}     \\
-  \ctxSub{\{ l_1:v_1 ; …
-     ; l_i:C ; … ; l_n:e_n \}}{e_0} = & \{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n \} \\
-  \ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ]    \\
+  \ctxSub{\eStruct{ l_1:v_1 ; …
+     ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
+  \ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n }    \\
   \ctxSub{C (e_1, …, e_n)          }{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n)              \\
   \ctxSub{f (v_1, …, C, …, e_n)    }{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n)        \\
   \\
@@ -1555,8 +1288,8 @@ décrit dans la figure~\ref{fig:ctx-sub}.
 \ctxSub{\ctxUnOp{C}}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}} \\
 \ctxSub{\ctxSet{C}{e}}{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e} \\
 \ctxSub{\ctxSet{φ}{C}}{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}} \\
-\ctxSub{\{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \}}{e_0} = & \{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n \} \\
-\ctxSub{[ v_1 ; … ; C ; … ; e_n ]}{e_0} = & [ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n ] \\
+\ctxSub{\eStruct{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
+\ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n } \\
 \ctxSub{C (e_1, …, e_n)}{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n) \\
 \ctxSub{f (v_1, …, C, …, e_n)}{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n) \\
 \\
@@ -1602,7 +1335,7 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ :
   En combinant les résultats de 2. et 4. on en déduit que
   $\mmstar{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
 % TODO comment combiner ?
-\item D'après la règle~\textsc{Exp_Binop},
+\item D'après la règle~\textsc{Exp-Binop},
   $ \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5. et 6., on a par combinaison
   $\mmstar{m}{e_1~\opbin~e_2}{m''}{v}$
@@ -2041,14 +1774,14 @@ exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$.
 
 \begin{mathpar}
-  \semrule{Ph-Exp}
+  \semrule{T-Exp}
 \end{mathpar}
 
 La déclaration d'une variable globale (avec un initialiseur) consiste à évaluer
 cet initialiseur et à étendre l'état mémoire avec ce couple (variable, valeur).
 
 \begin{mathpar}
-  \semrule{Ph-Var}
+  \semrule{T-Var}
 \end{mathpar}
 
 \section{Exécution}
@@ -2059,9 +1792,9 @@ unes à la suite des autres.
 On commence par étendre l'extension $→^*$ au listes de la relation $→$ :
 
 \begin{mathpar}
-  \semrule{Ph*-Nil}
+  \semrule{T*-Nil}
 
-  \semrule{Ph*-Cons}
+  \semrule{T*-Cons}
 \end{mathpar}
 
 L'exécution d'un programme est alors :
@@ -2163,6 +1896,8 @@ donc
 \item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
              et quand il faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
 \item "et" et "ou" lazy
+\item dans les lentilles, L désigne à la fois celle des champs et celle des
+listes d'asso
 \end{itemize}
 
 Limitations :

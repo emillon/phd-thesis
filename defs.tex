@@ -23,9 +23,6 @@
 \def\opbin{\boxplus\xspace}
 \def\opun{\boxminus\xspace}
 
-\newcommand{\gramisa}[0]{::=~}
-\newcommand{\gramor}[0]{|\hspace{3mm}}
-
 % Types
 \newcommand{\tInt}{\textsc{Int}\xspace}
 \newcommand{\tFloat}{\textsc{Float}\xspace}
@@ -268,7 +265,7 @@
 \def\msout#1{\text{\sout{\ensuremath{#1}}}}
 
 % Language name
-\def\langname{\ensuremath{C_{ML}}\xspace}
+\def\langname{\textsc{Safespeak}\xspace}
 
 % Center vertically + remove header & footer
 \newenvironment{headingpage}{
@@ -339,3 +336,16 @@
     {field}{Ω_{field}}
     {END}
 }
+
+\def\uGet#1#2{#1 ⇐_U #2}
+\def\uPut#1#2{#1 ⇒_U #2}
+
+% Litteral notation
+
+\def\eStruct#1{\{#1\}}
+\def\eArray#1{[#1]}
+\def\tStruct#1{\eStruct{#1}}
+
+\def\gramorx{\hspace{3mm}\gramor\xspace}
+\def\stFun#1{\textsc{Fun}_n}
+\def\tComp#1#2{\mathrm{Comp}(#1, #2)}

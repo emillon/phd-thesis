@@ -1,0 +1,1155 @@
+Manipulating user-provided pointers in the kernel of an operating system can
+lead to security flaws if done in an incautious manner. We present an efficient
+system to detect and prevent this class of erroneous memory manipulation.
+
+At the core of our approach is \langname, an imperative language that we equip
+with a qualified type system, where two kinds of pointers are distinguished:
+\emph{safe} pointers, whose value is statically proved to be controlled by the
+kernel, and \emph{unsafe} ones, whose value comes from userspace through
+run-time system calls. Dereferencing unsafe pointers is forbidden in a static
+manner by the means of a strong type system.
+
+A concrete case study is described based on a bug that affected a video driver
+in the Linux kernel. We also explain a technique to automatically translate GNU
+C code to our core language, which will enable us to analyze larger fractions of
+the kernel in order to find similar vulnerabilities.
+
+\section{Introduction}
+
+Modern operating systems such as GNU/Linux are comprised of several independent
+programs: the kernel, which handles the machine's hardware as well as trusted
+core features; and user applications.
+
+These programs run with different privilege levels: low-level operations can
+only be executed by the kernel. They also have different views on the memory. If
+a user program had access to the kernel's internal data structures, it could use
+it to obtain information it is normally denied, or gain extra privileges (for
+example getting access to the \texttt{root} account). This is why the kernel
+stores its code and data in a place in memory that is not accessible to
+unprivileged programs. On an Intel 32-bit system, it corresponds to addresses
+higher than \texttt{0xc0000000}, or 3 GiB.
+
+Because user-mode programs cannot run low-level instructions, they cannot do
+anything interesting on their own. They have to use the kernel's facilities to
+perform input/output or manipulate the operating system's abstractions (such as
+creating a new process). To this end, they can communicate with the kernel
+via the narrow interface of \emph{system calls}.
+
+For example, every time a user process calls the \texttt{read()} function, an
+architecture-specific mechanism invokes the kernel-mode function
+\texttt{sys\_read()}. The user passes a file descriptor, a pointer and an amount
+of bytes to fill and the kernel will actually perform input/output and copy the
+resulting bytes on the user's buffer.
+
+But if the user supplies a pointer whose value is in the kernel's reserved area,
+this zone will be overwritten, potentially leading to a security breach. In a
+sense, the kernel has been abused because it accessed the memory with its own
+privileges instead of the originator's. This is known as the \emph{confused
+deputy problem}\cite{hardy88confused}.
+
+When implementing a system call, it is thus necessary to forbid direct
+dereference of a pointer whose value can be controlled by the user. In case of a
+system call with a pointer argument, one has to dynamically verify that the
+address provided by the user lies within the process's memory space.
+
+The object of this work is to detect the places where it is necessary to insert
+dynamic checks. To this end, we augment the type system of a subset of the C
+programming language with \emph{type qualifiers}: instead of having a single
+pointer type, we add syntactic rules to distinguish between safe pointers that
+can be dereferenced with the \texttt{*}, \texttt{->} and \texttt{[]} operators ;
+and unsafe pointers that have to go through a special API provided by the
+kernel, consisting most notably of the two functions \texttt{copy\_from\_user}
+and \texttt{copy\_to\_user}.
+
+In Section~\ref{sec:related}, we present the different techniques that have been
+used to tackle this issue. Then we present our solution, consisting of an
+imperative language (Sections~\ref{sec:lang} and~\ref{sec:eval}) that is
+equipped by a static type system (Section~\ref{sec:types}), whose safety is
+discussed (Section~\ref{sec:safety}). In Section~\ref{sec:implem}, we present
+our implementation, and in Section~\ref{sec:exp} how we used it on a bug
+affecting a video driver in the Linux kernel. Section~\ref{sec:limit} describes
+the limitations of our current approach. Finally, Section~\ref{sec:concl}
+concludes and discusses future work.
+
+\section{Related Work}
+\label{sec:related}
+
+Dynamic taint checking consists in adding taint labels to data, so that every
+sensitive access is checked at run-time. This goes well with dynamic languages,
+with the famous example of Perl's ``tainted mode''~\cite{perlCamelBook}. It is
+also possible, but harder, to use this technique for compiled
+languages~\cite{clause-etal-issta07}.
+
+Adding a strong type system to C is the core idea of
+CCured~\cite{ccured-toplas}. It copes with the loose memory model of C by adding
+dynamic checks when static guarantees cannot be obtained. However, it requires
+dynamic instrumentation and is meant to stay activated, incurring a
+non-negligible run-time cost.
+
+%, similar to the work on typestates~\cite{tse12-typestate}
+The CQual system\cite{toplas-quals} provides a generic type qualifier framework
+on top of existing type systems. It has been used to infer \texttt{const}
+annotations~\cite{pldi99}, tainting analysis for format strings~\cite{usenix01}
+and flow-sensitive properties such as locking invariants~\cite{pldi02}. It has even been applied to
+the class of user/kernel vulnerabilities discussed here~\cite{cquk-usenix04}.
+Because it adds a qualifier at every level, it is more generic but also more
+complex than our method.
+
+% ~\cite{Cousot77}
+Abstract interpretation is a generic framework to analyze
+dynamic properties of programs. As such, it can be used to follow data
+flow between objects~\cite{liang2012taint}. It has the disadvantage of detecting
+a lot of false positive errors because it requires a relatively precise view of
+the program. It is also best used for programs that have a single entry point,
+unlike kernel modules.
+
+Saturn~\cite{paste07} is a system for analyzing system code written in C. It
+tackles the problem of user pointers using points-to analysis~\cite{oakland08}.
+Like abstract interpretation, it aims at being precise at the expense of time in
+some corner cases.
+
+For the development of the Linux kernel, the Sparse~\cite{TorvaldsSparse} custom
+tool is used to check the origin of pointers. However, it requires the
+programmer to manually annotate the program, and is not sound.
+
+\section{Core Language}
+\label{sec:lang}
+
+We present \langname, a memory-safe imperative programming language. Let us go
+through its major features.
+
+\paragraph{Scalar data:} there are four types of scalars: integers, floats,
+pointers and a special ``unit'' value. Integers are 32 bit wide signed integers,
+akin to the \texttt{int32\_t} data type in C, but this size is arbitrary. Floats
+are 32 bit wide floating point numbers with their usual semantics,
+Pointers are used to reference any modifiable piece of data, as embodied by the
+concept of \emph{left-values} described below. Finally, the special unit value,
+written \eUnit is the one that is returned by procedures that do not return a
+useful value. It is similar to the \texttt{unit} type of some functional
+languages. A particular $\eTaint{e}$ construct allows us to construct
+expressions annotated as coming from userspace, emulating a system call, and two
+operators $\uGet{\cdot}{\cdot}$ and $\uPut{\cdot}{\cdot}$ provide safe copy from
+and to userspace.
+
+{ \small
+\begin{align*}
+  \gramdefshort{Expressions}{e}
+                 { c               }{ Constant }
+                 { lv              }{ Left-value }
+                 { \opun~e         }{ Unary operation }
+                 { e~\opbin~e      }{ Binary operation }
+                 { \&~lv           }{ Pointer }
+                 { lv ← e          }{ Assignment }
+                 { \{ l_1 : e_1
+                    ; …
+                    ; l_n : e_n \} }{ Structure }
+                 { [ e_1 ;…; e_n ] }{ Array }
+                 { \mathrm{fun} (x_1, …, x_n) \{ i \} }{ Function }
+                 { e (e_1, …, e_n) }{ Function call }
+                 { \eTaint{e}      }{ Tainted value }
+                 { \uGet{lv}{e}    }{ Load from userspace }
+                 { \uPut{e}{e}     }{ Store to userspace }
+                 {END} \\
+  \\
+  \gramdefshort{Constants}{c}
+               { n      }{ Integer }
+               { d      }{ Float }
+               { \eNull }{ Null pointer }
+               { \eUnit }{ Unit value }
+               {END}
+\end{align*} }%
+
+
+\paragraph{Composite data:} there are two kinds of composite data: arrays and
+structures. Arrays are homogeneous pieces of memory with a fixed, statically
+known size. Elements within an array can be accessed with an integer
+index.
+In the case of an array with $n$ elements,
+the first one is accessed with the index $0$,
+and the last one with $n-1$.
+Trying to access to an element
+with any other index results in a run-time error.
+Arrays are written $[ e_1; …; e_n ]$ with $n>0$. Unlike in C, there is no
+particular relation between arrays and pointers: arrays are plain values that
+can be passed around.
+
+The other kind of composite data is structures, that are an heterogeneous
+collection of variables of a fixed size. Elements are accessed with a
+\emph{label} $l_S$, that is always statically known (labels are not first-class
+elements of the language). The subscript $S$ index is placed here by our
+translator to guide type inference, and is ignored by the evaluator. Structures
+are written $\{ l_1 : e_1 ; … ; l_n : e_n \}$ with $n>0$.
+
+\paragraph{Memory} is organised in variables, that hold scalar or composite
+data. It is split between a stack of local variables, and a set of global
+variables. Local variables are structured in a list of stack frames that are
+used to hold information for each function call. Global variables are on the
+other hand an unstructured set accessible anywhere in the program. We suppose
+that inside every function, all locals have a distinct name ; same goes for
+globals. Local variables from two different function can have the same name.
+
+\paragraph{Left-values:} Inside expressions, it is possible to directly access
+visible variables, that is the ones that are part of the most recent stack
+frame, and global ones. It is also possible to manipulate other parts of the
+memory by the means of a pointer. Pointers hold enough information
+to address in a non ambiguous manner any part of the memory.%
+{\small \begin{align*}
+  \gramdefshort{Left-values}{lv}
+                  { x      }{ Variable }
+                  { \hspace{-2pt}*lv    }{ Dereference }
+                  { lv.l_S }{ Field access }
+                  { lv[e]  }{ Indexed access }
+                  {END}
+\end{align*}}%
+\paragraph{Operators} are used to combine expressions together. We support C's
+operators on scalar data. To help the type system, we distinguish between
+integer operations and floating point operations by writing the latter with an
+extra dot: for example $3 + 2 = 5$ and $3.14~+_.~2.72 = 5.86$. Equality (and
+difference) tests can be done on scalar data as well as on composite data. In
+that case, it is done recursively on their members. Pointers are equal if they
+describe the same path in memory. Pointer arithmetic is possible by the means of
+operators $+_p$ and $-_p$, that move a pointer inside an array (if it used on
+another type of pointer, it results in a run-rime error $\serr{ptr}$).
+
+\paragraph{Functions} are first-class expressions that can be assigned to
+variables that can then be called. However, unlike in some other programming
+languages, they are not lexical closures, meaning that no capture of variables
+from enclosing scopes happen at the site of a function declaration.
+
+This is a compromise between C where functions can only be global, and
+functional languages where it is necessary to build closures containing (pointers
+to) captured variables at each function call. This also eliminates the need for
+special-cased ``function pointers''.
+
+Each function call creates a stack frame to hold room for the function's
+parameters and local variables. Upon return, the most recent frame is destroyed.
+A specificity of our system is that at this moment, we also clear references
+that are about to become invalid. More precisely, we turn to \eNull every
+pointer that refer to the latest stack frame. Using this technique, we can avoid
+so-called \emph{dangling} pointers.
+
+Note that this is a dynamic step and requires a full memory scan, which is very
+inefficient. This is done only for soundness reasons ; as discussed in
+Section~\ref{sec:limit}, if a preliminary analysis proves that this is
+unnecessary we can skip this step.
+
+\paragraph{Instructions} inside functions includes the empty instruction,
+sequence, evaluation of an expression (including assignment), or variable
+declation. Control flow is restricted to alternative (\textsc{If}) and loops
+(\textsc{While}). The \textsc{Return} construct also exits early from the
+current function.
+%%%%%
+{ \small \begin{align*}
+  \gramdefshort{Instructions}{i}
+                 { \iPass          }{Empty instruction}
+                 { i_1;i_2         }{Sequence}
+                 { e               }{Expression}
+                 { \iDecl{x}{e}{i} }{Declaration}
+                 { \iIf{e}{i}{i}   }{Alternative}
+                 { \iWhile{e}{i}   }{Loop}
+                 { \iReturn{e}     }{Function return}
+                 {END}
+\end{align*}}
+\vspace{-5mm}
+\paragraph{A program} is a sequence of top-level sentences, of the form of
+global declarations or expressions. A declaration creates a global variable
+that is accessible everywhere after in the whole program.
+On the other hand, a plain expression is only evaluated for its side-effects
+\footnote{
+  There is no implicit entry point such as a $\mathrm{main}()$ function, so
+  it is necessary to manually insert a call it.
+}
+.%
+{ \small
+\begin{align*}
+  \gramdefshort{Toplevel sentences}{s}
+                 { x = e }{Global variable}
+                 { e     }{Expression evaluation}
+                 {END}
+  \\
+  P \gramisa & (s_1, …, s_n) & {\textrm{\larger \textbf{Program}}}
+\end{align*}}%
+\begin{figure*}
+
+  \centering
+  {\small {
+
+  \begin{minipage}{0.29\textwidth}
+  \begin{align*}
+  \gramdefshort{Values}{v}
+      { \widehat{c}     }{Constant}
+      { \widehat{f}     }{Function}
+      { \widehat{\&}~φ  }{Reference}
+      { \widehat{
+         \{ l_i : v_i;… \}
+       }                }{Structure}
+      { \widehat{
+        [ v_i ;… ]
+        }               }{Array}
+      { Ω               }{Error}
+      {END}
+  \\
+  \gramdefshort{Paths}{φ}
+     { a    }{Address}
+     { *φ   }{Dereference}
+     { φ.l  }{Field}
+     { φ[n] }{Index}
+     { \vTainted{φ} }{Tainted value}
+     {END}
+  \end{align*}
+  \end{minipage}
+  \begin{minipage}{0.4\textwidth}
+  \begin{align*}
+  \gramdefshort{Stack}{s}
+    { [~] }{Empty stack}
+    { \{ x_i ↦v_i; …\} :: s}{Extra frame}{END}
+  \\
+  \gramheadershort{Memory}{m} \\
+    & (s, & \textrm{Stack,} \\
+    & \{ x_1 ↦v_1; … \}) & \textrm{globals} \\
+  \\
+  \gramdefshort{Addresses}{a}
+     { (n, x) }{Local variable}
+     { (x)    }{Global variable}
+     {END}
+  \end{align*}
+  \end{minipage}
+  \begin{minipage}{0.3\textwidth}
+  \begin{align*}
+  \gramdefshort{Errors}{Ω}
+    { \serr{array} }{Buffer overflow}
+    { \serr{ptr}   }{Invalid dereference}
+    { \serr{div}   }{Division by zero}
+    { \serr{field} }{Bad field}
+    { \serr{taint} }{Isolation error}
+    {END}
+  \\
+  \gramdefshort{Interpreter}{Ξ}
+    { \msi{m}{e} }{Expression, memory}
+    { \msi{m}{i} }{Instruction, memory}
+    { Ω          }{Error}
+    {END}
+  \end{align*}
+  \end{minipage}
+}}
+  \caption{Memory and values}
+  \label{fig:interp}
+\end{figure*}%
+\vspace{-7mm}
+\section{Evaluation}
+\label{sec:eval}
+
+Operational semantics described thereafter are a binary relation between states
+$Ξ$ of an interpreter described in Figure~\ref{fig:interp}.
+
+Every syntactic constant $c$ has a corresponding value $\widehat{c}$. The same
+holds for functions, because as they do not capture their lexical
+environment, there is no need to build a closure.
+
+Composite values also have their matching semantic parts: an array of values is
+a value, and a structure of values is a value. The same $\widehat{\cdot}$
+notation is used to remove the ambiguity.
+
+Pointers are reduced to a memory path $φ$ that is an evaluated left-value: type
+information is removed from the field names, and array indices are evaluated to
+integers. Also, names are made explicit by adjoining the name of local variables
+with the index of the stack frame they belong to. This is necessary in the cases
+where two frames hold a variable with the same name; for example in the presence
+of recursive functions.
+
+The semantics described here are given in the style of Plotkin's Structural
+Operational Semantics\cite{sos-jlap}: expressions are gradually reduced to
+constants, and instructions are simplified until a terminal instruction of the
+form $\iPass$ or $\iReturn{v}$.
+
+\paragraph{Reading memory}
+
+A variable is evaluated in two steps ; first, its address is computed.%
+{ \small \[
+  \semrule{Phi-Var}
+\] }%
+$\mathrm{Lookup} : \textsc{Mem} × \textsc{Id} → \textsc{Addr}$
+is an operator mapping variable names to addresses. That is,
+it performs name resolution. It returns $(n, x)$ where $n$ is the size of the
+stack if a local variable of this name exists ; or then $(x)$ if a global of
+this name exists.
+
+Then, an address is a path $φ$, that is used to access the corresponding value
+stored in $m$.
+
+{\small \[
+  \semrule{Exp-Lv}
+\]}%
+
+We omit here a formal definition of $m[\cdot]_Φ$. In a nutshell, it walks the
+memory to return the value ultimately described by $φ$. It can raise
+$\serr{array}$ if a bad array access occurs or $\serr{ptr}$ if \eNull is
+dereferenced.
+
+\paragraph{Writing memory}
+
+The $m[\cdot]_Φ$ notation is extended to perform updates. We note $m[φ ← v]_Φ$
+the memory state obtained by replacing the value at $φ$ by $v$. The same kind of
+errors can occur.
+
+{\[ \small
+  \semrule{Exp-Set}
+\] }%
+
+\paragraph{Variable declaration} extends the current stack frame with a new
+binding $x↦v$.%
+{ \small \[ \semrule{Decl} \]}%
+It relies on the following operator:%
+{ \small
+\begin{align*}
+  \mathrm{Extend} : \textsc{Mem}×\textsc{Id}×\textsc{Val} &→ \textsc{Mem}\\
+  \mathrm{Extend}(f::fs, g), x) &= (((x↦v)::f) :: fs), g) \\
+\end{align*} }%
+\paragraph{Function call} uses a complex rule, because it handles the calling
+convention (pushing and popping parameters on the stack). We suppose that all
+functions exit through a $\iReturn{\cdot}$ instruction.%
+{\small \[ \semrule{Exp-Call} \] }%
+$\mathrm{Push} : \textsc{Mem} × \textsc{Frame} → \textsc{Mem}$
+adds a new stack frame, and
+$\mathrm{Pop} : \textsc{Mem} → \textsc{Mem}$
+removes it.
+
+$\mathrm{Cleanup} : \textsc{Mem} → \textsc{Mem}$ removes references to dangling
+pointers. It walk all the memory and replaces references to the current stack
+frame\footnote{That is, every address of the form $(n,x)$
+where $n$ is the current size of the stack.}
+with $\eNull$. For example:%
+{\small \begin{align*}
+  \mathrm{Cleanup} &
+  ([ [x ↦ 0 ] ; [ p → \{t: \&(2, x); u: 5\} ] ], [~]) \\
+                   &
+  ([ [x ↦ 0 ] ; [ p → \{t: \eNull; u: 5\} ] ], [~]) \\
+\end{align*} }%
+\paragraph{System calls} are emulated through the $\eTaint{\cdot}$ operator. For
+example, the bridge between the functions \texttt{read()} and
+\texttt{sys\_read()} is the following. Integer parameters don't need to be
+converted, as they do not have qualifiers.
+
+\begin{verbatim}
+read = fun (fd, p, n) {
+  Decl up = Taint(p) in {
+    sys_read (fd, up, n)
+  }
+}
+\end{verbatim}
+
+Its evaluation is:%
+%{\small \[ \semrule{Exp-Tainted} \]} % TODO
+
+To allow a safe copy between userspace and the kernel, the Linux kernel provides
+the macros \texttt{get\_user()} or \texttt{put\_user()}, which check and copy
+scalar data, or \url{copy_from_user()} and \texttt{copy\_to\_user()} which act
+similarly to \texttt{memcpy()}. All of these constructs return the error
+\texttt{-EFAULT} when the user pointer is within the bounds of the kernel's
+memory. To model them, we provide the $\uGet{\cdot}{\cdot}$ and
+$\uPut{\cdot}{\cdot}$ operators that can copy a value at a time.%
+
+Their semantics is not detailed, but it consists in checking that the user
+pointer is of the form $\vTainted{φ}$. If it is the case, then a copy from $φ$
+(in the case of $⇐_U$) or to $φ$ (in the case of $⇒_U$) is performed and the
+expressions reduces to $1$. Else, no copy is done and it reduces to $0$.
+
+\paragraph{Contexts}
+
+To simplify the presentation of evaluation rules, we use reduction contexts, as
+described by Felleisen \emph{et al.}~\cite{wright92syntactic,tcs92-fh}. The idea
+is that if it is possible to reduce an expression $e_1$ to an expression $e_2$,
+then it is possible to reduce a bigger expression where $e_1$ appears by
+substituting it by $e_2$.
+
+To make this work we have to proceed in three steps: split an expression
+according to a context, apply a reduction under a context, and merge the reduced
+expression with a context.
+
+\begin{figure}
+
+  {\small {
+
+\begin{align*}
+  C \gramisa & \ctxEmpty \\
+     \gramor & \ctxOp{C}{e} \gramorx \ctxOp{v}{C} \gramorx \ctxUnOp{C} \\
+     \gramor & \ctxSet{C}{e} \gramorx \ctxSet{φ}{C} \\
+     \gramor & \{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n \} \\
+     \gramor & [ v_1 ; … ; C ; … ; e_n ] \\
+     \gramor & C (e_1, …, e_n) \gramorx f (v_1, …, C, …, e_n) \\
+     \gramor & \eTaint{C} \\
+     \gramor & \uGet{C}{e} \gramorx \uGet{φ}{C} \\
+     \gramor & \uPut{C}{e} \gramorx \uPut{v}{C} \\
+     \gramor & \&~C  \\
+     \gramor & \ctxLvDeref{C}
+               \gramorx \ctxLvField{C}{l_S}
+               \gramorx \ctxLvIndex{C}{e}
+               \gramorx \ctxLvIndex{φ}{C} \\
+     \gramor & C;i \\
+     \gramor & \iIf{C}{i_1}{i_2} \\
+     \gramor & \iReturn{C} \\
+     \gramor & \iDecl{x}{C}{i}
+\end{align*}}\vspace{-5mm}}%
+
+\caption{Reduction contexts}
+\label{fig:ctxs}
+
+\end{figure}
+
+Splitting across a context corresponds to defining a grammar of contexts. By
+defining these (Figure~\ref{fig:ctxs}), we make an explicit choice of evaluating some constructs in a
+left-to-right order. For example, the contexts for binary operations are
+$C~\opbin~e$ and $v~\opbin~C$, so it is impossible to start reducing the right
+part before the left one has been fully evaluated.
+
+
+A similar remark can be done for $n$-ary constructs (structure and array
+literals, as well as function calls): because there are always values on the
+left hand of $C$, arguments are evaluated left-to-right.
+
+The second step is expressed in the following rule. Any transition between
+interpreter states can be lifted in a bigger context.%
+{\small \[
+    \semrule{Ctx}
+\]}%
+The $\ctxSub{C}{\cdot}$ operator corresponds to the last operation: it pastes an
+expression in place of the unique "hole" $\ctxEmpty{}$ that appears in each
+context \footnote{ In the definition of C, every alternative produces exactly
+  one nonterminal $C$ or one terminal $\ctxEmpty{}$. So, every derivation tree
+is linear, and $\ctxEmpty{}$ appears exactly once in every evaluation context. }
+.
+
+For example, let us unroll the evaluation of
+$3+x$ to the value $\widehat{5}$
+starting from a memory state $m = ([~], \{x ↦ \widehat{2}\}) $.
+It is also depicted in Figure~\ref{fig:eval-steps}.
+
+\begin{enumerate}[(a)]
+\item % (a)
+  Let us first remark that $\mm{m}{3}{m}{\widehat{3}}$
+  (because of \textsc{Exp-Cst})
+\item % (b)
+  By applying \textsc{Ctx} from (a)
+  with $C = \ctxEmpty{} + x$, we obtain
+  $\mm{m}{3+x}{m}{\widehat{3}+x}$.
+  Note that with such an evaluation context, the right hand operand does not
+  have to be evaluated.
+\item % (c)
+  $x$, as a variable name, is a left-value. To evaluate it, the first step is to
+  turn it into a path $φ = \mathrm{Lookup}(x, m)$ (because of rule
+  \textsc{Phi-Var}). Because there are no local variables and a global variable
+  named $x$, $φ = (x)$. Note that in this step, no memory lookup was involved
+  (only the names of variables were used). So $\mm{m}{x}{m}{(x)}$.
+\item % (d)
+  In order to evaluate this path into a value, we have to perform a memory
+  lookup. The global variable $(x)$ maps to $2$ in $m$, so according to
+  \textsc{Exp-Lv}, $\mm{m}{(x)}{m}{\widehat{2}}$.
+\item % (e)
+  Because of closure of $→$, we get from (c) and (d) that
+  $\mm{m}{x}{m}{\widehat{2}}$.
+\item % (f)
+  By applying \textsc{Ctx} with $C = \widehat{3} + \ctxEmpty{}$ to (e),
+  $\mm{m}{\widehat{3} + x}{m}{\widehat{3} + \widehat{2}}$ holds.
+  The fact that the left hand operand is a value is important.
+\item % (g)
+  Because of \textsc{Exp-BinOp},
+  $\mm{m}{
+  \widehat{3} + \widehat{2}
+  }{m}{
+  \widehat{3} \widehat{+} \widehat{2}
+  }$, ie
+  $\mm{m}{
+  \widehat{3} + \widehat{2}
+  }{m}{
+  \widehat{5}
+  }$.
+\item % (h)
+  By closure of $→$, we get from
+  (b), (f) and (g) that
+  $\mm{m}{3+x}{m}{\widehat{5}}$
+  .
+\end{enumerate}
+
+\begin{figure}
+  \small
+
+\begin{mathpar}
+
+  \inferrule*[left=({\normalfont b})]{
+    \inferrule*[left=({\normalfont a})]{ }{\mms{3}{\widehat{3}}}
+  }{
+    \mms{3+x}{\widehat{3}+x}
+  }
+
+  \inferrule*[left=({\normalfont f})]{
+    \inferrule*[left=({\normalfont e})]{
+      \inferrule*[left=({\normalfont c})]{ }{ \mms{x}{(x)} }
+      \\
+      \inferrule*[left=({\normalfont d})]{ }{ \mms{(x)}{\widehat{2}} }
+    }{
+      \mms{x}{\widehat{2}}
+    }
+  }{
+    \mms{\widehat{3}+x}{\widehat{3}+\widehat{2}}
+  }
+
+  \inferrule*[left=({\normalfont h})]
+    {
+      (b)
+      \\
+      (f)
+      \\
+  \inferrule*[left=({\normalfont g})]
+    { }
+    {
+      \mms{\widehat{3}+\widehat{2}}{\widehat{3}\widehat{+}\widehat{2}}
+    }
+    }
+    {
+      \mms{3+x}{\widehat{5}}
+    }
+\end{mathpar}
+
+\caption{Evaluation of $3+x$ into $\widehat{5}$}
+\label{fig:eval-steps}
+
+\end{figure}
+
+Evaluation rules are given in annex in Figures~\ref{fig:eval-exp}
+and~\ref{fig:rules}. Most are simple, but a few deserve to be explained in
+detail.
+
+\paragraph{Error propagation} is done in two cases. First, if an expression
+produces an error (seen as a value), then the same error (seen as a state $Ξ$)
+propagates to the interpreter. Second, if a sub-expression causes an error, then
+a bigger expression causes the same error.%
+{ \small
+\begin{mathpar}
+    \semrule{Exp-Err}
+
+    \semrule{Eval-Err}
+\end{mathpar}}%
+
+\paragraph{Programs} are evaluated one sentence after another. Declarations add
+a global variable.
+
+\begin{mathpar}
+    \semrule{T-Exp}
+
+    \semrule{T-Var}
+\end{mathpar}
+
+\section{Typing}
+\label{sec:types}
+
+We add a static type system to \langname. The goal is to devise a tractable
+syntactic method to reject a class of buggy programs.
+
+\begin{figure}
+
+  \centering
+  {\small{
+
+  \begin{align*}
+  \gramdefshort{Types}{t}
+      { \tInt,\tFloat,\tUnit        }{Ground types}
+      { t[~]                        }{Array}
+      { t~q*                        }{Qualified pointer}
+      { S                           }{Structure}
+      { (t_1, …, t_n) \rightarrow t }{Function}
+      {END}
+  \\
+  \gramdefshort{Qualifiers}{q}
+    { \qKernel }{Kernel data (safe)}
+    { \qUser   }{User data (unsafe)}
+    {END}
+  \\
+  \gramheadershort{Structure}{S} \\
+  &  \{ l_1 : t_1; … ; l_n : t_n \} & \textrm{Simple structure} \\
+  \\
+  \gramdefshort{Typing environment}{Γ}
+      { [~]        }{Empty environment}
+      { (a, t)::Γ' }{Extension}
+      {END}
+\end{align*}}\vspace{-0.5cm}}
+
+  \caption{Types and typing environments}
+
+  \label{fig:les-types}
+
+\end{figure}%
+%
+Our types (Figure~\ref{fig:les-types}) are all ground types ; no polymorphism is
+present. The main distinctiveness is that instead of having a plain pointer type
+$t~*$, our one is decorated with a type qualifier $q$. This annotation expresses
+who controls the value of the pointer. If the kernel controls the value of the
+pointer, then it cannot be abused. On the other hand, one has to be careful
+with user-controlled pointers, because the caller can abuse the kernel and
+access reserved memory. The only safe case when dereferencing such a pointer is
+if its value is outside the kernel's memory.
+
+In order to avoid dangerous cases, we have to dynamically check that the
+destination of every user-controlled pointer is in userspace. Kernel pointers
+(that is to say, kernel-controlled pointers) can be dereferenced without further
+check, but user pointers have to be manipulated with a restricted interface that
+will check whether their destination is in userspace.
+
+As mentioned before, this is done using the following constructs:%
+{\small
+\begin{mathpar}
+    \disprule{GetU}
+
+    \disprule{PutU}
+\end{mathpar}}%
+To add qualifiers to a type system, the rules of interest are those that
+manipulate pointers: dereferencing, pointer arithmetic and referencing (taking
+the address of a left-value).
+
+Dereferencing the easiest one ; our goal is to authorize dereferencing only
+\qKernel pointers:
+
+{\small \[ \disprule{Lv-Deref} \]}%
+
+Pointer arithmetic can be done inside a \qUser or \qKernel memory zone. There is
+no concern of jumping from userspace to kernelspace, because pointer arithmetic
+is checked at runtime: if these operators overflow or are applied to a bad
+pointer (such as a pointer to an integer field), $\serr{ptr}$ is raised.
+
+{\small \[ \disprule{Ptr-Arith} \]}%
+
+The reference case is trickier because a type qualifier has to be synthesized.
+Because it is created on the kernel stack, it has a \qKernel qualifier in all
+cases:
+{\small \[
+  \disprule{Addr}
+\]}%
+
+The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
+It is an important rule, because it is the only source of \qUser pointers in the
+type system.
+%{\small \[ \disprule{Taint} \] }% TODO
+The return value of a function is emulated with a virtual left-value $\vRet$.%
+{\small \begin{mathpar}
+  \disprule{Return}
+
+  \disprule{Fun}
+\end{mathpar}}%
+
+Toplevel sentences are typed one after another. Because they can extend an
+environment, the general form of toplevel typing is $\typh{Γ}{p}{Γ'}$.
+
+\begin{mathpar}
+    \disprule{T-Exp}
+
+    \disprule{T-Var}
+\end{mathpar}
+
+The whole set of typing rules can be found in annex in Figures~\ref{fig:typ-exp}
+and~\ref{fig:typ-inst}.
+
+\section{Type Safety}
+\label{sec:safety}
+
+This type system is sound with respect to the semantics defined in
+Section~\ref{sec:eval}; that is, we have the desired property that
+\emph{well-typed programs cannot go wrong}.
+
+Let us start by defining a semantic typing relation between typing environments,
+memory states, variable names and types.
+
+Variables in memory have store types $τ$, depending only on a memory state $m$.
+They are very similar to the previous types $t$, but the arrow function type is
+replaced by $\stFun{n}$, denoting a $n$-ary function. This is because at runtime,
+no type information for functions is left.
+
+We define a relation $m ⊧ x : τ$ to express that $x$ is semantically typed $τ$
+under $m$ (Figure~\ref{fig:st}). Constants are easy to type as there is
+enough information to recognize them; functions have a simple dynamic type, only
+retaining the arity. For memory references, anything that can be dereferenced to
+a $τ$ is a $τ~\qKernel~*$; and user memory references are ``untainted'' to
+access the underlying storage.
+\begin{figure}[hbt]
+  \centering
+  \small
+\begin{mathpar}
+  \irule{S-Int}{ }{m ⊧ n : \tInt}
+
+  \irule{S-Float}{ }{m ⊧ d : \tFloat}
+
+  \irule{S-Unit}{ }{m ⊧ \eUnit : \tUnit}
+
+  \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~\qKernel~*}
+
+  \irule{S-Null}{ }{m ⊧ \eNull : t~q~*}
+
+  \irule{S-Tainted}
+    { m ⊧           φ'  : t~\qKernel~* }
+    { m ⊧ \vTainted{φ'} : t~\qUser~* }
+
+  \irule{S-Fun}{ } {m ⊧ \mathrm{fun} (x_1, …, x_n) \{ i \} : \stFun{n}}
+
+  \irule{S-Array}
+    { ∀i ∈ [1;n]. m ⊧ v_i : t }
+    { m ⊧ \widehat{ [ v_1;…;v_n ] } : t[~] }
+
+  \irule{S-Struct}
+    { ∀i ∈ [1;n]. m ⊧ v_i : t_i
+   \\ S = \{ l_1:t_1;…;l_n:t_n \}
+    }
+    { m ⊧ \widehat{ \{ l_1:v_1;…;l_n:v_n \} } : S }
+\end{mathpar}
+
+\caption{Semantic typing rules}
+\label{fig:st}
+\end{figure}%
+
+We also need a $\tComp{\cdot}{\cdot}$ relation to express compatibility between
+types of expressions and semantic types (of values): ground types are
+compatible with themselves, type constructors are compatible if their components
+are compatible, and we add a rule for functions:%
+\[ \tComp{\stFun{n}}{(t_1, …, t_n) → t} \]
+
+Then a memory state $m$ is well-typed under a typing environment $Γ$, which we
+will write $Γ ⊧ m$, if the semantic types of visible variable coincide with
+their static types
+\footnote{
+  $\mathrm{dom}(Γ)$ returns the set of variables present in
+  $Γ$, which also corresponds to visible variables.
+}
+:%
+{ \small \[
+  ∀ x ∈ \mathrm{dom}(Γ). ∃ τ,t.
+  \begin{cases}
+      \tComp{τ}{t} \\
+      m ⊧ x : τ \\
+      Γ ⊢ x : t
+  \end{cases}
+\] }%
+
+\begin{theorem}[Progress]
+
+  Let us suppose that $Γ ⊢ e : t$.
+
+  Then let $m$ be a memory state such that
+  $Γ ⊧ m$.
+
+  Then one of the following cases holds:
+
+\begin{itemize}
+  \item $∃ v ≠ Ω, e = v$
+  \item $∃ (e', m'), Γ ⊧ m' ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
+\end{itemize}
+
+  That is, either:
+
+\begin{itemize}
+  \item $e$ is fully evaluated
+  \item an evaluation step is possible, that preserves memory compatibility
+  \item a division, array or pointer error occurs
+\end{itemize}
+\end{theorem}
+
+\begin{theorem}[Preservation]
+
+  If an expression is well-typed, then an evaluation step does not modify its
+  type:
+
+  If $Γ ⊢ e : t$, $Γ ⊧ m$ and $\mm{m}{e}{m'}{e'}$, then $Γ ⊢ e' : t$.
+\end{theorem}
+
+This proves that no term stays stuck, and that that typing is well-behaved we
+respect to the semantics. It means that the type is really a contract between
+expressions and functions: if their evaluation converge, then a value of the
+inferred type will be produced.
+
+\section{Implementation}
+\label{sec:implem}
+
+The language described above, as well as a type inference algorithm, have been
+implemented in OCaml as part of the Newspeak framework of program
+analysis\cite{newspeak}. It is released under the GNU Lesser General Public
+License, and is available on \texttt{http://penjili.org} (directory
+\texttt{src/ptrtype} in the distribution). Our implementation consists of the
+following steps.
+
+The first one consists in preprocessing the C files that compose the kernel. We
+have to manually define macros that are usually defined by the kernel's build
+system. The configuration system for Linux uses \texttt{cpp} macros too (named
+\texttt{CONFIG\_*}), so we have make a choice of configuration file. We just
+used the default one, but to analyze larger parts of the kernel, it may be
+necessary to define a ``maximal'' configuration file (which is impossible
+because of incompatibilities between some options).
+
+Once we have a set of preprocessed C files\footnote{
+  As \texttt{cpp}'s \texttt{\#include} statement is textual, headers get
+  included in every file, leading to a lot of duplicate work for the next
+  passes.
+},
+we run it through the \texttt{c2newspeak} utility that compiles it to the
+Newspeak. In that step, types and
+names are resolved, and the program is decorated with enough annotation to make
+the next steps context-free.
+
+Because Linux is written in the GNU C dialect, it required to adapt
+\texttt{c2newspeak}. Two kinds of extensions were encountered: the main
+particularity is the \texttt{\_\_attribute\_\_} notation that
+decorates declarations. In the vast majority of cases, they can be ignored as
+they are either compiler hints (e.g. \texttt{used} disables the ``variable is
+not used'' warning), optimizations (e.g. \texttt{hot} groups variable together
+so they are put in cache together) or too low-level to be taken in account (e.g.
+\texttt{aligned(n)} specifies that a variable needs to be aligned on \texttt{n}
+bits). Besides attributes, GNU C allows advanced uses of \texttt{typeof}, as
+well as statement-expressions (expressions of the form \texttt{(\{stmt\})}), and
+first-class labels (\texttt{\&\&lbl} and \texttt{goto *p} constructs) that had
+to be properly supported.
+
+Newspeak is designed for static analysis by abstract interpretation and has
+quite a low-level view on programs. For example, it does not distinguish between
+field access and indexed access: as in an assembly language, it represents both
+of them with a numeric offset (static or dynamic) from the start of a memory
+zone. To remove such an ambiguity, we have to hook into \texttt{c2newspeak}'s
+internal data structures, where this information is still available, and with it
+we can emit \langname code.
+
+Then, different files are linked together. This step consists in ensuring that
+the assumptions made by the different files are consistent. \texttt{static}
+variables, not visible outside the file they are defined in, are renamed so that
+they have a unique name.
+
+Finally, the implementation of an inference algorithm for the above type system
+is quite straightforward. As it is similar enough to simply typed lambda
+calculus, we can use a variant of Damas and Milner's Algorithm
+W\cite{DamasMilner}. As usual, instead of explicit substitutions we rely on
+sharing of references to implement unification. As our type system is
+monomorphic, we raise an error whenever free type variables occur.
+
+At the end of this step, we have either a fully annotated program, or a type
+error.
+
+Let us run the analysis on a small example:
+
+\begin{verbatim}
+int f(int *x) { return (*x + 1); }
+\end{verbatim}
+
+Running our analyzer outputs a fully annotated program:
+
+\begin{verbatim}
+ % ptrtype example.c
+f : (Ptr (Int)) -> (Int)
+Int (example.c:1#4)^f(Ptr (Int) x) {
+  (.c:3#4)^!return =(int32)
+    (coerce[-2147483648,2147483647]
+      ( ( ([(x_Ptr (Int) : Ptr (Int))]32_Int
+            : Int
+          )
+          + (1 : Int)
+        ) : Int
+      ) : Int
+    );
+}
+\end{verbatim}
+
+The \texttt{coerce[a,b]} operator is a Newspeak artifact to detect integer
+overflows when doing a value analysis by abstract interpretation. For the
+purposes of this paper, it can be seen as the identity function typed
+$(\tInt) → \tInt$.
+
+\emph{A contrario}, when it is not possible to type check, the analyzer bails
+out with an error.
+
+\begin{verbatim}
+void f(int *p) {
+    /*!npk userptr p */
+    *p = 3;
+}
+\end{verbatim}
+
+The \texttt{/*!npk userptr p */} comment is interpreted by the analyzer and
+causes it to unify the type of \texttt{p} with $t~\qUser~*$, effectively
+forcing its qualifier.
+
+\begin{verbatim}
+04-addrof.c:4#4 - Cannot unify qualifiers:
+  Kernel
+  User
+\end{verbatim}
+
+We just signal the location where a unification failed, but it is possible to
+keep track of all the unification sites to create a trace, easier to debug.
+
+\section{Experimentation}
+\label{sec:exp}
+
+We now describe the case of a linux kernel video driver that involved a
+user/kernel pointer bug. It is listed on the \url{http://freedesktop.org} bug
+tracker as \#29340.
+
+To switch graphic modes, GPU drivers can support Kernel Mode Setting (KMS). To
+configure a device, the user has to communicate with the kernel driver with a
+mechanism known as \emph{ioctls} Named after the function \texttt{ioctl()} for
+Input/Output Control, they are a sort of device-specific system call mechanism.
+As such, these class of functions manipulate user-supplied pointers and need to
+be written with care.
+
+The following code is part of the KMS driver for AMD Radeon devices:
+
+\begin{verbatim}
+/* from drivers/gpu/drm/radeon/radeon_kms.c */
+int radeon_info_ioctl(struct drm_device *dev,
+                      void *data,
+                      struct drm_file *filp) {
+	struct radeon_device *rdev =
+            dev->dev_private;
+	struct drm_radeon_info *info;
+	struct radeon_mode_info *minfo =
+            &rdev->mode_info;
+	uint32_t *value_ptr;
+	uint32_t value;
+	struct drm_crtc *crtc;
+	int i, found;
+
+	info = data;
+	value_ptr = (uint32_t *)
+            ((unsigned long)info->value);
+	value = *value_ptr;
+        [...]
+}
+\end{verbatim}
+
+We can see that the argument \texttt{data} is converted to a \texttt{struct
+drm\_radeon\_info *}. A pointer \texttt{value\_ptr} is extracted from its
+\texttt{value} field, and finally this pointer is dereferenced.
+
+However, the argument \texttt{data} is a pointer to a (kernel-allocated)
+structure of the following type, whose fields come from a userland
+\texttt{ioctl} invocation.
+
+\begin{verbatim}
+/* from include/drm/radeon_drm.h */
+struct drm_radeon_info {
+  uint32_t    request;
+  uint32_t    pad;
+  uint64_t    value;
+};
+\end{verbatim}
+
+To show that this is buggy, we annotated the function
+\texttt{radeon\_info\_ioctl} so that its second parameter is a kernel pointer to
+a structure containing a \qUser field \texttt{value}. This is possible because
+we erase the types present in the C program before translation. So, an pointer
+cannot be distinguished from a integer casted to a pointer. Using this, we
+obtain a type error at line 16.
+
+The good way to proceed was recorded as commit number \texttt{d8ab3557} by
+replacing line 16 by:
+
+\begin{verbatim}
+if (DRM_COPY_FROM_USER(&value, value_ptr,
+                       sizeof(value)))
+        return -EFAULT;
+\end{verbatim}
+
+(\texttt{DRM\_COPY\_FROM\_USER} being a simple wrapper macro for
+\texttt{copy\_from\_user}). In that case, we obtain no type error.
+
+\section{Limitations}
+\label{sec:limit}
+
+Our system has several limitations.
+
+First, as we used static typing, it is impossible to capture a lot of constructs
+that are possible or even idiomatic in C: unions, type casts, type punning. The
+first two ones are equivalent constructs. We can replace each cast from a type
+$t_1$ to a type $t_2$ by the call of a function $\mathrm{cast}_{t_1,t_2}$ but
+this means adding a flaw in the type system: it would be typed $(t_1) → t_2$,
+in other words the dreaded type $α → β$ of \texttt{Obj.magic} in OCaml
+or \texttt{unsafeCoerce} in Haskell.
+
+Type punning consists in modifying the bit pattern of some data to manipulate it
+in an efficient way. For example, it is common to define a set of macros to
+access low-level parts of IEEE754 floats, for exemple their exponent. Usually, a
+combination of unions and bit masks is used. In such cases, strong typing is of
+course impossible. To handle this, we could wrap the manipulation in a macro and
+add an explicit type information such as $\texttt{float\_exponent} : (\tFloat) →
+\tInt$.
+
+The operational semantics uses runtime support for several cases. Contrary to C,
+we dynamically check for buffer overflows and \eNull dereference, but this is
+not critical to our approach: if we suppose that the programs we analyze are
+correct with respect to these properties, we could provide a lower-level
+implementation without those checks.
+
+A more concerning place where we add a runtime behaviour is when the memory is
+searched for dangling pointers at every function return (with the
+$\mathrm{Cleanup(\cdot)}$ operator). Removing this check makes the analysis
+unsound, because it is then possible to make reference to the current stack
+frame with a former one. However, contrary to type punning, there are few cases
+where such a behaviour is desired. If we can have a static guarantee that the
+address of a local variable will not be accessible after the function has
+returned, we can remove the $\mathrm{Cleanup(\cdot)}$ step. This can be done
+with a dedicated static analysis\cite{ifm10}.
+
+Dynamic memory allocation, embodied in userspace by the \texttt{malloc()} and
+\texttt{free()} functions, has not been implemented. Similarly to
+\texttt{get\_\{from,to\}\_user()}, it manipulates data as memory zones, with a
+pointer and a size in bytes. We would have to define a higher level operator
+taking an expression and returning the address of a freshly allocated cell in a
+heap. Then typing is straightforward:
+
+{ \small
+\begin{mathpar}
+  \inferrule*
+    { Γ ⊢ e : t }
+    { Γ ⊢ \textsc{Alloc}(e) : t~\qKernel~* }
+
+  \inferrule*
+    { Γ ⊢ e : t~\qKernel~* }
+    { Γ ⊢ \textsc{Free}(e) }
+\end{mathpar}}%
+
+To define evaluation, we can expand the memory states to include an explicit
+heap of values, mapping unique labels to values. Deallocation is problematic
+because we rely on the programmer not to access deallocated memory zones. Once
+again, it is possible to dedicate an analysis like~\cite{ifm10} to enforce this.
+It is also sound, albeit impractical, to ignore deallocation constructs.
+
+Another limitation is that our system does not allow recursive structures,
+containing a pointer to a field of the same type. For simple (not mutually)
+recursive structures, it is possible to extend the grammar of type annotation to
+allow the following, where $p$ binds a pointer type to the structure.
+
+{\small \[
+    S \gramisa … \gramorx \mathrm{fix}(p → S)
+\]}%
+
+\section{Conclusion}
+\label{sec:concl}
+
+We showed that type theory can be a useful tool for verifying the absence of
+certain run-time properties. While adding static labels to variables seems to be
+a crude approximation of reality, in some cases it has enough power to capture
+real-world problems.
+
+In this particular example, we work around C's lack of abstract types in order
+to disallow dereference for a certain class of pointers, distinguished by
+syntactic rules.
+
+We defined an imperative language with an explicit stack, and described
+operational semantics for it modelling that of the C programming language. It
+includes a memory model that expresses the separation between user and kernel
+spaces present in most operating systems. We added a type system that is sound
+with respect to a property of isolation between this two memory spaces.
+
+Finally, we demonstrate an implementation on this analysis on a bug that
+affected the Linux kernel.
+
+A first step towards making this analysis more practical is to demonstrate its
+scalability by running it on larger fragments of the kernel.
+
+There are also several places where we can improve significantly the
+expressivity of our type system. For example, our current type system is only
+monomorphic; but it would make sense to generalize free qualifier variables in
+the type of global functions.
+
