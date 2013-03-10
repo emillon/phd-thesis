@@ -766,19 +766,22 @@ dans~\cite{sm-jsac03}.
 \item CCurred ?
 \end{itemize}
 
+\section*{Divers à intégrer}
+
+L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
+leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
+l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
+montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
+Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
+cette technique à des langages compilés~\cite{clause-etal-issta07}.
+
+Ajouter un système de types forts à C est l'idée centrale de
+CCured~\cite{ccured-toplas}. Dans les cas où il n'est pas possible de conclure,
+des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite une
+instrumentation dynamique qui est faite pour rester active, ce qui se paye en
+performances.
+
 \section*{Extrait PLAS}
-
-Dynamic taint checking consists in adding taint labels to data, so that every
-sensitive access is checked at run-time. This goes well with dynamic languages,
-with the famous example of Perl's ``tainted mode''~\cite{perlCamelBook}. It is
-also possible, but harder, to use this technique for compiled
-languages~\cite{clause-etal-issta07}.
-
-Adding a strong type system to C is the core idea of
-CCured~\cite{ccured-toplas}. It copes with the loose memory model of C by adding
-dynamic checks when static guarantees cannot be obtained. However, it requires
-dynamic instrumentation and is meant to stay activated, incurring a
-non-negligible run-time cost.
 
 The CQual system\cite{toplas-quals} provides a generic type qualifier framework
 on top of existing type systems. It has been used to infer \texttt{const}
