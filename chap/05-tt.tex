@@ -439,7 +439,34 @@ enrichit l'environnement de cette nouvelle valeur.
 
 \section{Sûreté du typage}
 
-Un programme bien typé possède des propriétés de sûreté.
+\subsection{But}
+
+Comme nous l'évoquions au début de ce chapitre, le but du typage est de rejeter
+certains programmes afin de ne garder que ceux qui ne provoquent pas un certain
+type d'erreurs à l'exécution.
+
+Dans cette section, nous donnons des propriétés que respectent tous les
+programmes bien typés. Il est traditionnel de rappeler l'adage de Robin Milner :
+
+\begin{quote}
+  Well-typed programs don't go wrong.
+\end{quote}
+
+\emph{To go wrong} reste bien sûr à définir ! Cette sûreté du typage repose sur
+les deux théorèmes :
+
+\begin{itemize}
+\item progrès :
+  si un terme est bien typé, il y a toujours une règle
+  d'évaluation qui s'applique.
+\item
+  préservation (ou \emph{subject reduction}) :
+  l'évaluation transforme un terme bien typé en un terme du même type.
+\end{itemize}
+
+\subsection{Typage des valeurs}
+
+\subsection{Progrès et Préservation}
 
 \paragraph{Progrès :} l'évaluation d'un terme bien typé ne reste pas bloquée;
 il y a toujours une règle qui s'applique.
@@ -995,38 +1022,6 @@ their static types
       Γ ⊢ x : t
   \end{cases}
 \] }%
-
-\begin{theorem}[Progress]
-
-  Let us suppose that $Γ ⊢ e : t$.
-
-  Then let $m$ be a memory state such that
-  $Γ ⊧ m$.
-
-  Then one of the following cases holds:
-
-\begin{itemize}
-  \item $∃ v ≠ Ω, e = v$
-  \item $∃ (e', m'), Γ ⊧ m' ∧ \mm{m}{e}{m'}{e'}$
-  \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
-\end{itemize}
-
-  That is, either:
-
-\begin{itemize}
-  \item $e$ is fully evaluated
-  \item an evaluation step is possible, that preserves memory compatibility
-  \item a division, array or pointer error occurs
-\end{itemize}
-\end{theorem}
-
-\begin{theorem}[Preservation]
-
-  If an expression is well-typed, then an evaluation step does not modify its
-  type:
-
-  If $Γ ⊢ e : t$, $Γ ⊧ m$ and $\mm{m}{e}{m'}{e'}$, then $Γ ⊢ e' : t$.
-\end{theorem}
 
 This proves that no term stays stuck, and that that typing is well-behaved we
 respect to the semantics. It means that the type is really a contract between
