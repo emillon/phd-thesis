@@ -82,8 +82,8 @@ programme est donc mal typé.
   \gramdef{Type}{t}
       { \tInt                         }{Entier}
       { \tFloat                       }{Flottant}
-      { t[]                           }{Tableau}
       { t*                            }{Pointeur}
+      { t[]                           }{Tableau}
       { S                             }{Structure}
       { (t_1, …, t_n) \rightarrow t_r }{Fonction}
       {END}
@@ -465,6 +465,39 @@ les deux théorèmes :
 \end{itemize}
 
 \subsection{Typage des valeurs}
+
+Puisque nous allons manipuler les propriétés statiques et dynamiques des
+programmes, nous allons avoir à traiter des environnements de typage $Γ$ et des
+états mémoires $m$. La première chose à faire est donc d'établir une
+correspondance entre ces deux mondes.
+
+Étant donné un état mémoire $m$, on associe un type de valeur (ou type
+sémantique) aux valeurs $v$.
+
+Ces types sémantiques ne sont pas exactement les mêmes que les types statiques.
+Pour les calculer, on n'a pas accès au code du programme, seulement à ses
+données. Il est par exemple possible de reconnaître le type des constantes,
+mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
+impossible de déterminer statiquement. On le remplace donc par un cas plus
+simple où seul l'arité est conservée, et on obtient les types de la
+figure~\ref{fig:typ-sem}.
+
+\begin{figure}
+
+  \centering
+
+  \begin{align*}
+  \gramdef[2.5cm]{Type\\sémantique}{τ}
+      { \tInt                         }{Entier}
+      { \tFloat                       }{Flottant}
+      { t*                            }{Pointeur}
+      { t[]                           }{Tableau}
+      { S                             }{Structure}
+      { (t_1, …, t_n) \rightarrow t_r }{Fonction}
+      {END}
+  \end{align*}
+  
+\end{figure}
 
 \subsection{Progrès et Préservation}
 
@@ -946,10 +979,6 @@ The whole set of typing rules can be found in annex in Figures~\ref{fig:typ-exp}
 and~\ref{fig:typ-inst}.
 
 \section*{Type Safety}
-
-This type system is sound with respect to the semantics defined in
-Section~\ref{sec:eval}; that is, we have the desired property that
-\emph{well-typed programs cannot go wrong}.
 
 Let us start by defining a semantic typing relation between typing environments,
 memory states, variable names and types.
