@@ -472,6 +472,13 @@ ne peuvent pas facilement être modélisés.
 
 \end{itemize}
 
+L'interprétation abstraite a été utilisée pour analyser le flot de données entre
+objets~\cite{liang2012taint}.
+
+Elle a l'inconvénient de remonter de nombreuses fausses alarmes, puisqu'elle
+nécessite d'avoir une vue précise du programme. Elle est aussi plus adaptée aux
+programmes qui n'ont qu'un point d'entrée.
+
 \section{Typage}
 
 La plupart des langages de programmation incorporent la notion de type, qui
@@ -637,8 +644,10 @@ liées à une mauvaise utilisation de la mémoire, les développeurs du noyau Li
 ont ajouté un système d'annotations au code source. Un pointeur peut être décoré
 d'une annotation \texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou
 pas. Celle-ci sont ignorées par le compilateur, mais un outil d'analyse statique
-ad-hoc nommé Sparse \link{sparse} peut être utilisé pour détecter les cas les
-plus simples d'erreurs.
+ad-hoc nommé Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul
+peut être utilisé pour détecter les cas les plus simples d'erreurs.
+Il demande aussi au programmeur d'ajouter beaucoup d'annotations dans le
+programme. % TODO quantifier
 
 Ce système d'annotations sur les types a été formalisé sous le nom de
 \emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
@@ -786,22 +795,10 @@ des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite un
 instrumentation dynamique qui est faite pour rester active, ce qui se paye en
 performances.
 
-\section*{Extrait PLAS}
-
-Abstract interpretation~\cite{Cousot77} is a generic framework to analyze
-dynamic properties of programs. As such, it can be used to follow data
-flow between objects~\cite{liang2012taint}. It has the disadvantage of detecting
-a lot of false positive errors because it requires a relatively precise view of
-the program. It is also best used for programs that have a single entry point,
-unlike kernel modules.
-
-Saturn~\cite{paste07} is a system for analyzing system code written in C. It
-tackles the problem of user pointers using points-to analysis~\cite{oakland08}.
-Like abstract interpretation, it aims at being precise at the expense of time in
-some corner cases.
-
-For the development of the Linux kernel, the Sparse~\cite{TorvaldsSparse} custom
-tool is used to check the origin of pointers. However, it requires the
-programmer to manually annotate the program, and is not sound.
+Saturn~\cite{paste07} est un système pour analyser du code système écrit en C.
+Il traite le problème des pointeurs utilisateur en utilisant une analyse de
+forme ``pointe-sur''~\cite{oakland08}. Comme l'interprétation abstraite, son but
+est d'être très précis, au détriment d'un temps de calcul important dans
+certains cas.
 
 % vim: spelllang=fr
