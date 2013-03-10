@@ -811,3 +811,225 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
   dans quel cas elle produit des valeurs
 \end{itemize}
 
+\section*{Extrait PLAS}
+
+We add a static type system to \langname. The goal is to devise a tractable
+syntactic method to reject a class of buggy programs.
+
+\begin{figure}
+
+  \centering
+  {\small{
+
+  \begin{align*}
+  \gramdefshort{Types}{t}
+      { \tInt,\tFloat,\tUnit        }{Ground types}
+      { t[~]                        }{Array}
+      { t~q*                        }{Qualified pointer}
+      { S                           }{Structure}
+      { (t_1, …, t_n) \rightarrow t }{Function}
+      {END}
+  \\
+  \gramdefshort{Qualifiers}{q}
+    { \qKernel }{Kernel data (safe)}
+    { \qUser   }{User data (unsafe)}
+    {END}
+  \\
+  \gramheadershort{Structure}{S} \\
+  &  \{ l_1 : t_1; … ; l_n : t_n \} & \textrm{Simple structure} \\
+  \\
+  \gramdefshort{Typing environment}{Γ}
+      { [~]        }{Empty environment}
+      { (a, t)::Γ' }{Extension}
+      {END}
+\end{align*}}}
+
+  \caption{Types and typing environments}
+
+  \label{fig:les-types}
+
+\end{figure}%
+%
+Our types (Figure~\ref{fig:les-types}) are all ground types ; no polymorphism is
+present. The main distinctiveness is that instead of having a plain pointer type
+$t~*$, our one is decorated with a type qualifier $q$. This annotation expresses
+who controls the value of the pointer. If the kernel controls the value of the
+pointer, then it cannot be abused. On the other hand, one has to be careful
+with user-controlled pointers, because the caller can abuse the kernel and
+access reserved memory. The only safe case when dereferencing such a pointer is
+if its value is outside the kernel's memory.
+
+In order to avoid dangerous cases, we have to dynamically check that the
+destination of every user-controlled pointer is in userspace. Kernel pointers
+(that is to say, kernel-controlled pointers) can be dereferenced without further
+check, but user pointers have to be manipulated with a restricted interface that
+will check whether their destination is in userspace.
+
+As mentioned before, this is done using the following constructs:%
+{\small
+\begin{mathpar}
+    \disprule{GetU}
+
+    \disprule{PutU}
+\end{mathpar}}%
+To add qualifiers to a type system, the rules of interest are those that
+manipulate pointers: dereferencing, pointer arithmetic and referencing (taking
+the address of a left-value).
+
+Dereferencing the easiest one ; our goal is to authorize dereferencing only
+\qKernel pointers:
+
+{\small \[ \disprule{Lv-Deref} \]}%
+
+Pointer arithmetic can be done inside a \qUser or \qKernel memory zone. There is
+no concern of jumping from userspace to kernelspace, because pointer arithmetic
+is checked at runtime: if these operators overflow or are applied to a bad
+pointer (such as a pointer to an integer field), $\serr{ptr}$ is raised.
+
+{\small \[ \disprule{Ptr-Arith} \]}%
+
+The reference case is trickier because a type qualifier has to be synthesized.
+Because it is created on the kernel stack, it has a \qKernel qualifier in all
+cases:
+{\small \[
+  \disprule{Addr}
+\]}%
+
+The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
+It is an important rule, because it is the only source of \qUser pointers in the
+type system.
+%{\small \[ \disprule{Taint} \] }% TODO
+The return value of a function is emulated with a virtual left-value $\vRet$.%
+{\small \begin{mathpar}
+  \disprule{Return}
+
+  \disprule{Fun}
+\end{mathpar}}%
+
+Toplevel sentences are typed one after another. Because they can extend an
+environment, the general form of toplevel typing is $\typh{Γ}{p}{Γ'}$.
+
+\begin{mathpar}
+    \disprule{T-Exp}
+
+    \disprule{T-Var}
+\end{mathpar}
+
+The whole set of typing rules can be found in annex in Figures~\ref{fig:typ-exp}
+and~\ref{fig:typ-inst}.
+
+\section*{Type Safety}
+
+This type system is sound with respect to the semantics defined in
+Section~\ref{sec:eval}; that is, we have the desired property that
+\emph{well-typed programs cannot go wrong}.
+
+Let us start by defining a semantic typing relation between typing environments,
+memory states, variable names and types.
+
+Variables in memory have store types $τ$, depending only on a memory state $m$.
+They are very similar to the previous types $t$, but the arrow function type is
+replaced by $\stFun{n}$, denoting a $n$-ary function. This is because at runtime,
+no type information for functions is left.
+
+We define a relation $m ⊧ x : τ$ to express that $x$ is semantically typed $τ$
+under $m$ (Figure~\ref{fig:st}). Constants are easy to type as there is
+enough information to recognize them; functions have a simple dynamic type, only
+retaining the arity. For memory references, anything that can be dereferenced to
+a $τ$ is a $τ~\qKernel~*$; and user memory references are ``untainted'' to
+access the underlying storage.
+\begin{figure}[hbt]
+  \centering
+  \small
+\begin{mathpar}
+  \irule{S-Int}{ }{m ⊧ n : \tInt}
+
+  \irule{S-Float}{ }{m ⊧ d : \tFloat}
+
+  \irule{S-Unit}{ }{m ⊧ \eUnit : \tUnit}
+
+  \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~\qKernel~*}
+
+  \irule{S-Null}{ }{m ⊧ \eNull : t~q~*}
+
+  \irule{S-Tainted}
+    { m ⊧           φ'  : t~\qKernel~* }
+    { m ⊧ \vTainted{φ'} : t~\qUser~* }
+
+  \irule{S-Fun}{ } {m ⊧ \mathrm{fun} (x_1, …, x_n) \{ i \} : \stFun{n}}
+
+  \irule{S-Array}
+    { ∀i ∈ [1;n]. m ⊧ v_i : t }
+    { m ⊧ \widehat{ [ v_1;…;v_n ] } : t[~] }
+
+  \irule{S-Struct}
+    { ∀i ∈ [1;n]. m ⊧ v_i : t_i
+   \\ S = \{ l_1:t_1;…;l_n:t_n \}
+    }
+    { m ⊧ \widehat{ \{ l_1:v_1;…;l_n:v_n \} } : S }
+\end{mathpar}
+
+\caption{Semantic typing rules}
+\label{fig:st}
+\end{figure}%
+
+We also need a $\tComp{\cdot}{\cdot}$ relation to express compatibility between
+types of expressions and semantic types (of values): ground types are
+compatible with themselves, type constructors are compatible if their components
+are compatible, and we add a rule for functions:%
+\[ \tComp{\stFun{n}}{(t_1, …, t_n) → t} \]
+
+Then a memory state $m$ is well-typed under a typing environment $Γ$, which we
+will write $Γ ⊧ m$, if the semantic types of visible variable coincide with
+their static types
+\footnote{
+  $\mathrm{dom}(Γ)$ returns the set of variables present in
+  $Γ$, which also corresponds to visible variables.
+}
+:%
+{ \small \[
+  ∀ x ∈ \mathrm{dom}(Γ). ∃ τ,t.
+  \begin{cases}
+      \tComp{τ}{t} \\
+      m ⊧ x : τ \\
+      Γ ⊢ x : t
+  \end{cases}
+\] }%
+
+\begin{theorem}[Progress]
+
+  Let us suppose that $Γ ⊢ e : t$.
+
+  Then let $m$ be a memory state such that
+  $Γ ⊧ m$.
+
+  Then one of the following cases holds:
+
+\begin{itemize}
+  \item $∃ v ≠ Ω, e = v$
+  \item $∃ (e', m'), Γ ⊧ m' ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
+\end{itemize}
+
+  That is, either:
+
+\begin{itemize}
+  \item $e$ is fully evaluated
+  \item an evaluation step is possible, that preserves memory compatibility
+  \item a division, array or pointer error occurs
+\end{itemize}
+\end{theorem}
+
+\begin{theorem}[Preservation]
+
+  If an expression is well-typed, then an evaluation step does not modify its
+  type:
+
+  If $Γ ⊢ e : t$, $Γ ⊧ m$ and $\mm{m}{e}{m'}{e'}$, then $Γ ⊢ e' : t$.
+\end{theorem}
+
+This proves that no term stays stuck, and that that typing is well-behaved we
+respect to the semantics. It means that the type is really a contract between
+expressions and functions: if their evaluation converge, then a value of the
+inferred type will be produced.
+

@@ -765,3 +765,43 @@ dans~\cite{sm-jsac03}.
 \item Frama-C ?
 \item CCurred ?
 \end{itemize}
+
+\section*{Extrait PLAS}
+
+Dynamic taint checking consists in adding taint labels to data, so that every
+sensitive access is checked at run-time. This goes well with dynamic languages,
+with the famous example of Perl's ``tainted mode''~\cite{perlCamelBook}. It is
+also possible, but harder, to use this technique for compiled
+languages~\cite{clause-etal-issta07}.
+
+Adding a strong type system to C is the core idea of
+CCured~\cite{ccured-toplas}. It copes with the loose memory model of C by adding
+dynamic checks when static guarantees cannot be obtained. However, it requires
+dynamic instrumentation and is meant to stay activated, incurring a
+non-negligible run-time cost.
+
+The CQual system\cite{toplas-quals} provides a generic type qualifier framework
+on top of existing type systems. It has been used to infer \texttt{const}
+annotations~\cite{pldi99}, tainting analysis for format strings~\cite{usenix01}
+and flow-sensitive properties such as locking invariants~\cite{pldi02}, similar
+to the work on typestates~\cite{tse12-typestate}. It has even been applied to
+the class of user/kernel vulnerabilities discussed here~\cite{cquk-usenix04}.
+Because it adds a qualifier at every level, it is more generic but also more
+complex than our method.
+
+Abstract interpretation~\cite{Cousot77} is a generic framework to analyze
+dynamic properties of programs. As such, it can be used to follow data
+flow between objects~\cite{liang2012taint}. It has the disadvantage of detecting
+a lot of false positive errors because it requires a relatively precise view of
+the program. It is also best used for programs that have a single entry point,
+unlike kernel modules.
+
+Saturn~\cite{paste07} is a system for analyzing system code written in C. It
+tackles the problem of user pointers using points-to analysis~\cite{oakland08}.
+Like abstract interpretation, it aims at being precise at the expense of time in
+some corner cases.
+
+For the development of the Linux kernel, the Sparse~\cite{TorvaldsSparse} custom
+tool is used to check the origin of pointers. However, it requires the
+programmer to manually annotate the program, and is not sound.
+
