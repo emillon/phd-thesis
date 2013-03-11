@@ -548,4 +548,25 @@ size_t strlen(const char *s);
   %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
 %\end{mathpar}
 
+\section*{Extrait PLAS}
+
+and user memory references are ``untainted'' to
+access the underlying storage.
+
+
+\begin{figure}[hbt]
+  \centering
+  \small
+\begin{mathpar}
+
+  \irule{S-Tainted}
+    { m ⊧           φ'  : t~\qKernel~* }
+    { m ⊧ \vTainted{φ'} : t~\qUser~* }
+
+\end{mathpar}
+
+\caption{Semantic typing rules}
+\label{fig:st}
+\end{figure}%
+
 % vim: spelllang=fr

@@ -423,20 +423,30 @@ a_n: t_n \textrm{ où } n = |a|
 
 \section{Phrases}
 
-L'évaluation d'une expression est le cas le plus simple. En effet, il y a juste
-à vérifier que celle-ci est bien typable (avec ce type) dans l'environnement de
-départ. L'environnement n'est pas modifié.
+\begin{figure}
 
-\begin{mathpar}
-  \disprule{T-Exp}
-\end{mathpar}
+  \begin{minipage}{\linewidth}
+    \raggedleft
+    \fbox{$\typh{Γ}{p}{Γ'}$}
+  \end{minipage}
 
-La déclaration d'une variable globale commence de la même manière, mais on
-enrichit l'environnement de cette nouvelle valeur.
+  \begin{mathpar}
+    \disprule{T-Exp}
 
-\begin{mathpar}
-  \disprule{T-Var}
-\end{mathpar}
+    \disprule{T-Var}
+  \end{mathpar}
+
+  \caption{Typage des phrases}
+  \label{fig:typ-ph}
+
+\end{figure}
+
+Le typage des phrases est détaillé dans la figure~\ref{fig:typ-ph}. Le typage
+d'une expression est le cas le plus simple. En effet, il y a juste à vérifier
+que celle-ci est bien typable (avec ce type) dans l'environnement de départ :
+l'environnement n'est pas modifié. En revanche, la déclaration d'une variable
+globale commence de la même manière, mais on enrichit l'environnement de cette
+nouvelle valeur.
 
 \section{Sûreté du typage}
 
@@ -860,6 +870,11 @@ Ces lemmes permettent de prouver le théorème suivant :
 
 La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 
+Cela prouve qu'aucun terme ne reste ``bloqué'' parce qu'aucune règle ne
+s'applique, et que la sémantique respecte le typage. En quelque sorte, les types
+sont un contrat entre les expressions et les fonctions : si leur évaluation
+converge, alors une valeur du type inféré sera produite.
+
 \section*{TODO}
 
 \begin{itemize}
@@ -1024,37 +1039,5 @@ environment, the general form of toplevel typing is $\typh{Γ}{p}{Γ'}$.
 
 The whole set of typing rules can be found in annex in Figures~\ref{fig:typ-exp}
 and~\ref{fig:typ-inst}.
-
-\section*{Type Safety}
-
-and user memory references are ``untainted'' to
-access the underlying storage.
-
-
-\begin{figure}[hbt]
-  \centering
-  \small
-\begin{mathpar}
-
-  \irule{S-Tainted}
-    { m ⊧           φ'  : t~\qKernel~* }
-    { m ⊧ \vTainted{φ'} : t~\qUser~* }
-
-\end{mathpar}
-
-\caption{Semantic typing rules}
-\label{fig:st}
-\end{figure}%
-
-We also need a $\tComp{\cdot}{\cdot}$ relation to express compatibility between
-types of expressions and semantic types (of values): ground types are
-compatible with themselves, type constructors are compatible if their components
-are compatible, and we add a rule for functions:%
-\[ \tComp{\stFun{n}}{(t_1, …, t_n) → t} \]
-
-This proves that no term stays stuck, and that that typing is well-behaved we
-respect to the semantics. It means that the type is really a contract between
-expressions and functions: if their evaluation converge, then a value of the
-inferred type will be produced.
 
 % vim: spelllang=fr
