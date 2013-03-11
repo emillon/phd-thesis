@@ -425,10 +425,7 @@ a_n: t_n \textrm{ où } n = |a|
 
 \begin{figure}
 
-  \begin{minipage}{\linewidth}
-    \raggedleft
-    \fbox{$\typh{Γ}{p}{Γ'}$}
-  \end{minipage}
+  \ruleheader{$\typh{Γ}{p}{Γ'}$}
 
   \begin{mathpar}
     \disprule{T-Exp}
@@ -506,10 +503,7 @@ simple où seul l'arité est conservée.
 \end{align*}
 
 \begin{figure}
-  \begin{minipage}{\linewidth}
-    \raggedleft
-    \fbox{$m ⊧ v : τ$}
-  \end{minipage}
+  \ruleheader{$m ⊧ v : τ$}
 
   \begin{mathpar}
     \irule{S-Int}{ }{m ⊧ n : \tInt}
@@ -553,10 +547,7 @@ $\tComp{τ}{t}$. Les règles sont décrites dans la
 figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
 
 \begin{figure}
-  \begin{minipage}{\linewidth}
-    \raggedleft
-    \fbox{$\tComp{τ}{t}$}
-  \end{minipage}
+  \ruleheader{$\tComp{τ}{t}$}
 
   \begin{mathpar}
     \irule{Comp-Ground}
@@ -884,8 +875,6 @@ converge, alors une valeur du type inféré sera produite.
 \item définir les opérations d'ajout/remplacement sur les contextes de typage
 \item 2 pointeurs peuvent etre égaux sans comparer les valeurs pointées
 \item extension de contextes : :: ou , ?
-\item généraliser la fbox de la fig~\ref{fig:regles-typ-sem}
-      (p~\pageref{fig:regles-typ-sem})
 \end{itemize}
 
 \subsection*{Fonctions}
