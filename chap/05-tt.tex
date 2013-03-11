@@ -472,32 +472,67 @@ programmes, nous allons avoir à traiter des environnements de typage $Γ$ et de
 correspondance entre ces deux mondes.
 
 Étant donné un état mémoire $m$, on associe un type de valeur (ou type
-sémantique) aux valeurs $v$.
+sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement $m ⊧
+v : τ$.
 
 Ces types sémantiques ne sont pas exactement les mêmes que les types statiques.
 Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes,
 mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
 impossible de déterminer statiquement. On le remplace donc par un cas plus
-simple où seul l'arité est conservée, et on obtient les types de la
-figure~\ref{fig:typ-sem}.
+simple où seul l'arité est conservée.
+
+\begin{align*}
+\gramdef[2.5cm]{Type\\sémantique}{τ}
+    { \tInt                       }{Entier}
+    { \tFloat                     }{Flottant}
+    { τ~*                         }{Pointeur}
+    { τ[~]                        }{Tableau}
+    { S                           }{Structure}
+    { (τ_1, …, τ_n) \rightarrow τ }{Fonction}
+    {END}
+\end{align*}
 
 \begin{figure}
+  \begin{minipage}{\linewidth}
+    \raggedleft
+    \fbox{$m ⊧ v : τ$}
+  \end{minipage}
 
-  \centering
+  \begin{mathpar}
+    \irule{S-Int}{ }{m ⊧ n : \tInt}
 
-  \begin{align*}
-  \gramdef[2.5cm]{Type\\sémantique}{τ}
-      { \tInt                         }{Entier}
-      { \tFloat                       }{Flottant}
-      { t*                            }{Pointeur}
-      { t[]                           }{Tableau}
-      { S                             }{Structure}
-      { (t_1, …, t_n) \rightarrow t_r }{Fonction}
-      {END}
-  \end{align*}
-  
+    \irule{S-Float}{ }{m ⊧ d : \tFloat}
+
+    \irule{S-Unit}{ }{m ⊧ \eUnit : \tUnit}
+
+    \irule{S-Null}{ }{m ⊧ \eNull : t~*}
+
+    \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~\qKernel~*}
+
+    \irule{S-Array}
+      { ∀i ∈ [1;n]. m ⊧ v_i : t }
+      { m ⊧ \widehat{ [ v_1;…;v_n ] } : t[~] }
+
+    \irule{S-Struct}
+      { ∀i ∈ [1;n]. m ⊧ v_i : t_i
+     \\ S = \{ l_1:t_1;…;l_n:t_n \}
+      }
+      { m ⊧ \widehat{ \{ l_1:v_1;…;l_n:v_n \} } : S }
+
+    \irule{S-Fun}{ } {m ⊧ \mathrm{fun} (x_1, …, x_n) \{ i \} : \stFun{n}}
+  \end{mathpar}
+
+  \caption{Règles de typage sémantique}
+  \label{fig:regles-typ-sem}
+
 \end{figure}
+
+Les règles sont détaillées dans la figure~\ref{fig:regles-typ-sem} : les types
+des constantes sont simples à retrouver car il y a assez d'information en
+mémoire. Pour les références, ce qui peut être déréférencé en une valeur de type
+$τ$ est un $τ~*$. Le typage des valeurs composées se fait en profondeur. Enfin,
+la seule information restant à l'exécution sur les fonctions est son arité.
 
 \subsection{Progrès et Préservation}
 
@@ -824,6 +859,8 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 \item définir les opérations d'ajout/remplacement sur les contextes de typage
 \item 2 pointeurs peuvent etre égaux sans comparer les valeurs pointées
 \item extension de contextes : :: ou , ?
+\item généraliser la fbox de la fig~\ref{fig:regles-typ-sem}
+      (p~\pageref{fig:regles-typ-sem})
 \end{itemize}
 
 \subsection*{Fonctions}
@@ -980,49 +1017,19 @@ and~\ref{fig:typ-inst}.
 
 \section*{Type Safety}
 
-Let us start by defining a semantic typing relation between typing environments,
-memory states, variable names and types.
-
-Variables in memory have store types $τ$, depending only on a memory state $m$.
-They are very similar to the previous types $t$, but the arrow function type is
-replaced by $\stFun{n}$, denoting a $n$-ary function. This is because at runtime,
-no type information for functions is left.
-
-We define a relation $m ⊧ x : τ$ to express that $x$ is semantically typed $τ$
-under $m$ (Figure~\ref{fig:st}). Constants are easy to type as there is
-enough information to recognize them; functions have a simple dynamic type, only
-retaining the arity. For memory references, anything that can be dereferenced to
-a $τ$ is a $τ~\qKernel~*$; and user memory references are ``untainted'' to
+and user memory references are ``untainted'' to
 access the underlying storage.
+
+
 \begin{figure}[hbt]
   \centering
   \small
 \begin{mathpar}
-  \irule{S-Int}{ }{m ⊧ n : \tInt}
-
-  \irule{S-Float}{ }{m ⊧ d : \tFloat}
-
-  \irule{S-Unit}{ }{m ⊧ \eUnit : \tUnit}
-
-  \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~\qKernel~*}
-
-  \irule{S-Null}{ }{m ⊧ \eNull : t~q~*}
 
   \irule{S-Tainted}
     { m ⊧           φ'  : t~\qKernel~* }
     { m ⊧ \vTainted{φ'} : t~\qUser~* }
 
-  \irule{S-Fun}{ } {m ⊧ \mathrm{fun} (x_1, …, x_n) \{ i \} : \stFun{n}}
-
-  \irule{S-Array}
-    { ∀i ∈ [1;n]. m ⊧ v_i : t }
-    { m ⊧ \widehat{ [ v_1;…;v_n ] } : t[~] }
-
-  \irule{S-Struct}
-    { ∀i ∈ [1;n]. m ⊧ v_i : t_i
-   \\ S = \{ l_1:t_1;…;l_n:t_n \}
-    }
-    { m ⊧ \widehat{ \{ l_1:v_1;…;l_n:v_n \} } : S }
 \end{mathpar}
 
 \caption{Semantic typing rules}
