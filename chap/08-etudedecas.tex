@@ -138,3 +138,78 @@ Le principe de cette technique (associer des types aux valeurs puis restreindre
 les opérations sur certains types) peut être repris. Par exemple, si on définit
 un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peut
 considérer que multiplier deux telles valeurs est une erreur.
+
+\section*{Extrait PLAS}
+
+We now describe the case of a linux kernel video driver that involved a
+user/kernel pointer bug. It is listed on the \url{http://freedesktop.org} bug
+tracker as \#29340.
+
+To switch graphic modes, GPU drivers can support Kernel Mode Setting (KMS). To
+configure a device, the user has to communicate with the kernel driver with a
+mechanism known as \emph{ioctls} Named after the function \texttt{ioctl()} for
+Input/Output Control, they are a sort of device-specific system call mechanism.
+As such, these class of functions manipulate user-supplied pointers and need to
+be written with care.
+
+The following code is part of the KMS driver for AMD Radeon devices:
+
+\begin{verbatim}
+/* from drivers/gpu/drm/radeon/radeon_kms.c */
+int radeon_info_ioctl(struct drm_device *dev,
+                      void *data,
+                      struct drm_file *filp) {
+	struct radeon_device *rdev =
+            dev->dev_private;
+	struct drm_radeon_info *info;
+	struct radeon_mode_info *minfo =
+            &rdev->mode_info;
+	uint32_t *value_ptr;
+	uint32_t value;
+	struct drm_crtc *crtc;
+	int i, found;
+
+	info = data;
+	value_ptr = (uint32_t *)
+            ((unsigned long)info->value);
+	value = *value_ptr;
+        [...]
+}
+\end{verbatim}
+
+We can see that the argument \texttt{data} is converted to a \texttt{struct
+drm\_radeon\_info *}. A pointer \texttt{value\_ptr} is extracted from its
+\texttt{value} field, and finally this pointer is dereferenced.
+
+However, the argument \texttt{data} is a pointer to a (kernel-allocated)
+structure of the following type, whose fields come from a userland
+\texttt{ioctl} invocation.
+
+\begin{verbatim}
+/* from include/drm/radeon_drm.h */
+struct drm_radeon_info {
+  uint32_t    request;
+  uint32_t    pad;
+  uint64_t    value;
+};
+\end{verbatim}
+
+To show that this is buggy, we annotated the function
+\texttt{radeon\_info\_ioctl} so that its second parameter is a kernel pointer to
+a structure containing a \qUser field \texttt{value}. This is possible because
+we erase the types present in the C program before translation. So, an pointer
+cannot be distinguished from a integer casted to a pointer. Using this, we
+obtain a type error at line 16.
+
+The good way to proceed was recorded as commit number \texttt{d8ab3557} by
+replacing line 16 by:
+
+\begin{verbatim}
+if (DRM_COPY_FROM_USER(&value, value_ptr,
+                       sizeof(value)))
+        return -EFAULT;
+\end{verbatim}
+
+(\texttt{DRM\_COPY\_FROM\_USER} being a simple wrapper macro for
+\texttt{copy\_from\_user}). In that case, we obtain no type error.
+

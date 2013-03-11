@@ -541,4 +541,121 @@ TODO :
 Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
 (figure~\ref{fig:exunif:tpk}).
 
+\section*{Extrait PLAS}
+
+The language described above, as well as a type inference algorithm, have been
+implemented in OCaml as part of the Newspeak framework of program
+analysis\cite{newspeak}. It is released under the GNU Lesser General Public
+License, and is available on \texttt{http://penjili.org} (directory
+\texttt{src/ptrtype} in the distribution). Our implementation consists of the
+following steps.
+
+The first one consists in preprocessing the C files that compose the kernel. We
+have to manually define macros that are usually defined by the kernel's build
+system. The configuration system for Linux uses \texttt{cpp} macros too (named
+\texttt{CONFIG\_*}), so we have make a choice of configuration file. We just
+used the default one, but to analyze larger parts of the kernel, it may be
+necessary to define a ``maximal'' configuration file (which is impossible
+because of incompatibilities between some options).
+
+Once we have a set of preprocessed C files\footnote{
+  As \texttt{cpp}'s \texttt{\#include} statement is textual, headers get
+  included in every file, leading to a lot of duplicate work for the next
+  passes.
+},
+we run it through the \texttt{c2newspeak} utility that compiles it to the
+Newspeak. In that step, types and
+names are resolved, and the program is decorated with enough annotation to make
+the next steps context-free.
+
+Because Linux is written in the GNU C dialect, it required to adapt
+\texttt{c2newspeak}. Two kinds of extensions were encountered: the main
+particularity is the \texttt{\_\_attribute\_\_} notation that
+decorates declarations. In the vast majority of cases, they can be ignored as
+they are either compiler hints (e.g. \texttt{used} disables the ``variable is
+not used'' warning), optimizations (e.g. \texttt{hot} groups variable together
+so they are put in cache together) or too low-level to be taken in account (e.g.
+\texttt{aligned(n)} specifies that a variable needs to be aligned on \texttt{n}
+bits). Besides attributes, GNU C allows advanced uses of \texttt{typeof}, as
+well as statement-expressions (expressions of the form \texttt{(\{stmt\})}), and
+first-class labels (\texttt{\&\&lbl} and \texttt{goto *p} constructs) that had
+to be properly supported.
+
+Newspeak is designed for static analysis by abstract interpretation and has
+quite a low-level view on programs. For example, it does not distinguish between
+field access and indexed access: as in an assembly language, it represents both
+of them with a numeric offset (static or dynamic) from the start of a memory
+zone. To remove such an ambiguity, we have to hook into \texttt{c2newspeak}'s
+internal data structures, where this information is still available, and with it
+we can emit \langname code.
+
+Then, different files are linked together. This step consists in ensuring that
+the assumptions made by the different files are consistent. \texttt{static}
+variables, not visible outside the file they are defined in, are renamed so that
+they have a unique name.
+
+Finally, the implementation of an inference algorithm for the above type system
+is quite straightforward. As it is similar enough to simply typed lambda
+calculus, we can use a variant of Damas and Milner's Algorithm
+W\cite{DamasMilner}. As usual, instead of explicit substitutions we rely on
+sharing of references to implement unification. As our type system is
+monomorphic, we raise an error whenever free type variables occur.
+
+At the end of this step, we have either a fully annotated program, or a type
+error.
+
+Let us run the analysis on a small example:
+
+\begin{verbatim}
+int f(int *x) { return (*x + 1); }
+\end{verbatim}
+
+Running our analyzer outputs a fully annotated program:
+
+\begin{verbatim}
+ % ptrtype example.c
+f : (Ptr (Int)) -> (Int)
+Int (example.c:1#4)^f(Ptr (Int) x) {
+  (.c:3#4)^!return =(int32)
+    (coerce[-2147483648,2147483647]
+      ( ( ([(x_Ptr (Int) : Ptr (Int))]32_Int
+            : Int
+          )
+          + (1 : Int)
+        ) : Int
+      ) : Int
+    );
+}
+\end{verbatim}
+
+The \texttt{coerce[a,b]} operator is a Newspeak artifact to detect integer
+overflows when doing a value analysis by abstract interpretation. For the
+purposes of this paper, it can be seen as the identity function typed
+$(\tInt) → \tInt$.
+
+\emph{A contrario}, when it is not possible to type check, the analyzer bails
+out with an error.
+
+\begin{verbatim}
+void f(int *p) {
+    /*!npk userptr p */
+    *p = 3;
+}
+\end{verbatim}
+
+The \texttt{/*!npk userptr p */} comment is interpreted by the analyzer and
+causes it to unify the type of \texttt{p} with $t~\qUser~*$, effectively
+forcing its qualifier.
+
+\begin{verbatim}
+04-addrof.c:4#4 - Cannot unify qualifiers:
+  Kernel
+  User
+\end{verbatim}
+
+We just signal the location where a unification failed, but it is possible to
+keep track of all the unification sites to create a trace, easier to debug.
+
+
+
 % vim: spelllang=fr

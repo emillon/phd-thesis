@@ -472,6 +472,13 @@ ne peuvent pas facilement être modélisés.
 
 \end{itemize}
 
+L'interprétation abstraite a été utilisée pour analyser le flot de données entre
+objets~\cite{liang2012taint}.
+
+Elle a l'inconvénient de remonter de nombreuses fausses alarmes, puisqu'elle
+nécessite d'avoir une vue précise du programme. Elle est aussi plus adaptée aux
+programmes qui n'ont qu'un point d'entrée.
+
 \section{Typage}
 
 La plupart des langages de programmation incorporent la notion de type, qui
@@ -637,18 +644,25 @@ liées à une mauvaise utilisation de la mémoire, les développeurs du noyau Li
 ont ajouté un système d'annotations au code source. Un pointeur peut être décoré
 d'une annotation \texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou
 pas. Celle-ci sont ignorées par le compilateur, mais un outil d'analyse statique
-ad-hoc nommé Sparse \link{sparse} peut être utilisé pour détecter les cas les
-plus simples d'erreurs.
+ad-hoc nommé Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul
+peut être utilisé pour détecter les cas les plus simples d'erreurs.
+Il demande aussi au programmeur d'ajouter beaucoup d'annotations dans le
+programme. % TODO quantifier
 
 Ce système d'annotations sur les types a été formalisé sous le nom de
 \emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
 qualificateurs (à la manière de \texttt{const}), et des règles de typage
 permettent d'établir des propriétés sur le programme. Ces analyses ont été
-implantée dans l'outil CQual
-\cite{pldi99,usenix01,pldi02,cquk-usenix04,toplas-quals}. \todo{lister les
-applications}.
-
-% TODO s'étendre un peu
+implantée dans l'outil CQual~\cite{toplas-quals}. Ce système peut servir à
+inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
+pour les chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ?
+et des propriétés dépendantes du flot de contrôle, comme des invariants sur les
+verrous~\cite{pldi02}, à rapprocher du concept de \emph{typestates}
+~\cite{tse12-typestate}. Il a également été appliqué à la classe de
+vulnérabilités sur les pointeurs utilisateurs dont il est ici
+l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur à
+chaque étage de type, cette approche est plus générique mais plus complexe que
+la notre. % TODO bof
 
 \section{Logique de Hoare}
 
@@ -765,3 +779,31 @@ dans~\cite{sm-jsac03}.
 \item Frama-C ?
 \item CCurred ?
 \end{itemize}
+
+\section*{Divers à intégrer}
+
+L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
+leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
+l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
+montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
+Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
+cette technique à des langages compilés~\cite{clause-etal-issta07}.
+
+Ajouter un système de types forts à C est l'idée centrale de
+CCured~\cite{ccured-toplas}. Dans les cas où il n'est pas possible de conclure,
+des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite une
+instrumentation dynamique qui est faite pour rester active, ce qui se paye en
+performances.
+
+Saturn~\cite{paste07} est un système pour analyser du code système écrit en C.
+Il traite le problème des pointeurs utilisateur en utilisant une analyse de
+forme ``pointe-sur''~\cite{oakland08}. Comme l'interprétation abstraite, son but
+est d'être très précis, au détriment d'un temps de calcul important dans
+certains cas.
+
+% TODO
+\cite{jfp92}
+\cite{popl94}
+\cite{ToTa1993}
+
+% vim: spelllang=fr

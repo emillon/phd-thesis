@@ -80,12 +80,13 @@ programme est donc mal typé.
 
   \begin{align*}
   \gramdef{Type}{t}
-      { \tInt                         }{Entier}
-      { \tFloat                       }{Flottant}
-      { t[]                           }{Tableau}
-      { t*                            }{Pointeur}
-      { S                             }{Structure}
-      { (t_1, …, t_n) \rightarrow t_r }{Fonction}
+      { \tInt                       }{Entier}
+      { \tFloat                     }{Flottant}
+      { \tUnit                      }{Unité}
+      { t*                          }{Pointeur}
+      { t[]                         }{Tableau}
+      { S                           }{Structure}
+      { (t_1, …, t_n) \rightarrow t }{Fonction}
       {END}
   \\
   \gramdef{Structure}{S}
@@ -439,7 +440,175 @@ enrichit l'environnement de cette nouvelle valeur.
 
 \section{Sûreté du typage}
 
-Un programme bien typé possède des propriétés de sûreté.
+\subsection{But}
+
+Comme nous l'évoquions au début de ce chapitre, le but du typage est de rejeter
+certains programmes afin de ne garder que ceux qui ne provoquent pas un certain
+type d'erreurs à l'exécution.
+
+Dans cette section, nous donnons des propriétés que respectent tous les
+programmes bien typés. Il est traditionnel de rappeler l'adage de Robin Milner :
+
+\begin{quote}
+  Well-typed programs don't go wrong.
+\end{quote}
+
+\emph{To go wrong} reste bien sûr à définir ! Cette sûreté du typage repose sur
+les deux théorèmes :
+
+\begin{itemize}
+\item progrès :
+  si un terme est bien typé, il y a toujours une règle
+  d'évaluation qui s'applique.
+\item
+  préservation (ou \emph{subject reduction}) :
+  l'évaluation transforme un terme bien typé en un terme du même type.
+\end{itemize}
+
+\subsection{Typage des valeurs}
+
+Puisque nous allons manipuler les propriétés statiques et dynamiques des
+programmes, nous allons avoir à traiter des environnements de typage $Γ$ et des
+états mémoires $m$. La première chose à faire est donc d'établir une
+correspondance entre ces deux mondes.
+
+Étant donné un état mémoire $m$, on associe un type de valeur (ou type
+sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement $m ⊧
+v : τ$.
+
+Ces types sémantiques ne sont pas exactement les mêmes que les types statiques.
+Pour les calculer, on n'a pas accès au code du programme, seulement à ses
+données. Il est par exemple possible de reconnaître le type des constantes,
+mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
+impossible de déterminer statiquement. On le remplace donc par un cas plus
+simple où seul l'arité est conservée.
+
+\begin{align*}
+\gramdef[2.5cm]{Type\\sémantique}{τ}
+    { \tInt                       }{Entier}
+    { \tFloat                     }{Flottant}
+    { \tUnit                      }{Unité}
+    { τ~*                         }{Pointeur}
+    { τ[~]                        }{Tableau}
+    { \tStruct{l_1:τ_1;…;l_n:τ_n} }{Structure}
+    { (τ_1, …, τ_n) \rightarrow τ }{Fonction}
+    {END}
+\end{align*}
+
+\begin{figure}
+  \begin{minipage}{\linewidth}
+    \raggedleft
+    \fbox{$m ⊧ v : τ$}
+  \end{minipage}
+
+  \begin{mathpar}
+    \irule{S-Int}{ }{m ⊧ n : \tInt}
+
+    \irule{S-Float}{ }{m ⊧ d : \tFloat}
+
+    \irule{S-Unit}{ }{m ⊧ \eUnit : \tUnit}
+
+    \irule{S-Null}{ }{m ⊧ \eNull : t~*}
+
+    \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~\qKernel~*}
+
+    \irule{S-Array}
+      { ∀i ∈ [1;n]. m ⊧ v_i : t }
+      { m ⊧ \widehat{ \eArray{ v_1;…;v_n } } : t[~] }
+
+    \irule{S-Struct}
+      { ∀i ∈ [1;n]. m ⊧ v_i : t_i
+      }
+      { m ⊧ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } }
+          :           \tStruct{ l_1:t_1;…;l_n:t_n }
+      }
+
+    \irule{S-Fun}{ } {m ⊧ \mathrm{fun} (x_1, …, x_n) \{ i \} : \stFun{n}}
+  \end{mathpar}
+
+  \caption{Règles de typage sémantique}
+  \label{fig:regles-typ-sem}
+
+\end{figure}
+
+Les règles sont détaillées dans la figure~\ref{fig:regles-typ-sem} : les types
+des constantes sont simples à retrouver car il y a assez d'information en
+mémoire. Pour les références, ce qui peut être déréférencé en une valeur de type
+$τ$ est un $τ~*$. Le typage des valeurs composées se fait en profondeur. Enfin,
+la seule information restant à l'exécution sur les fonctions est son arité.
+
+La prochaine étape est de définir une relation de compatibilité entre les types
+sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
+$\tComp{τ}{t}$. Les règles sont décrites dans la
+figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
+
+\begin{figure}
+  \begin{minipage}{\linewidth}
+    \raggedleft
+    \fbox{$\tComp{τ}{t}$}
+  \end{minipage}
+
+  \begin{mathpar}
+    \irule{Comp-Ground}
+      { t ∈ \{ \tInt, \tFloat, \tUnit \} }
+      { \tComp{t}{t} }
+
+    \irule{Comp-Ptr}
+      { \tComp{τ}{t} }
+      { \tComp{τ~*}{t~*} }
+
+    \irule{Comp-Array}
+      { \tComp{τ}{t} }
+      { \tComp{τ[~]}{t[~]} }
+
+    \irule{Comp-Struct}
+      { ∀ i ∈ [1;n]. \tComp{τ_i}{t_i} }
+      { \tComp{\tStruct{l_1:τ_1;…;l_n:τ_n}}
+              {\tStruct{l_1:t_1;…;l_n:t_n}}
+      }
+
+    \irule{Comp-Fun}
+      { }
+      { \tComp{\stFun{n}}
+              {(t_1, …, t_n) → t}
+      }
+  \end{mathpar}
+
+  \caption{Compatibilité entre types sémantiques et statiques}
+  \label{fig:regles-comp-typ}
+\end{figure}
+
+Grâce à ce jugement, on peut donner la définition suivante.
+
+\begin{definition}
+  On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
+  l'on note $Γ ⊧ m$, si les types sémantiques des variables visibles coïncident
+  avec leurs types statiques.
+
+  \[
+    Γ ⊧ m \eqdef
+  \]
+
+\end{definition}
+
+
+, if the semantic types of visible variable coincide with
+their static types
+\footnote{
+  $\mathrm{dom}(Γ)$ returns the set of variables present in
+  $Γ$, which also corresponds to visible variables.
+}
+:%
+{ \small \[
+  ∀ x ∈ \mathrm{dom}(Γ). ∃ τ,t.
+  \begin{cases}
+      \tComp{τ}{t} \\
+      m ⊧ x : τ \\
+      Γ ⊢ x : t
+  \end{cases}
+\] }%
+
+\subsection{Progrès et Préservation}
 
 \paragraph{Progrès :} l'évaluation d'un terme bien typé ne reste pas bloquée;
 il y a toujours une règle qui s'applique.
@@ -764,6 +933,8 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 \item définir les opérations d'ajout/remplacement sur les contextes de typage
 \item 2 pointeurs peuvent etre égaux sans comparer les valeurs pointées
 \item extension de contextes : :: ou , ?
+\item généraliser la fbox de la fig~\ref{fig:regles-typ-sem}
+      (p~\pageref{fig:regles-typ-sem})
 \end{itemize}
 
 \subsection*{Fonctions}
@@ -811,3 +982,143 @@ La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
   dans quel cas elle produit des valeurs
 \end{itemize}
 
+\section*{Extrait PLAS}
+
+We add a static type system to \langname. The goal is to devise a tractable
+syntactic method to reject a class of buggy programs.
+
+\begin{figure}
+
+  \centering
+  {\small{
+
+  \begin{align*}
+  \gramdefshort{Types}{t}
+      { \tInt,\tFloat,\tUnit        }{Ground types}
+      { t[~]                        }{Array}
+      { t~q*                        }{Qualified pointer}
+      { S                           }{Structure}
+      { (t_1, …, t_n) \rightarrow t }{Function}
+      {END}
+  \\
+  \gramdefshort{Qualifiers}{q}
+    { \qKernel }{Kernel data (safe)}
+    { \qUser   }{User data (unsafe)}
+    {END}
+  \\
+  \gramheadershort{Structure}{S} \\
+  &  \{ l_1 : t_1; … ; l_n : t_n \} & \textrm{Simple structure} \\
+  \\
+  \gramdefshort{Typing environment}{Γ}
+      { [~]        }{Empty environment}
+      { (a, t)::Γ' }{Extension}
+      {END}
+\end{align*}}}
+
+  \caption{Types and typing environments}
+
+  \label{fig:les-types}
+
+\end{figure}%
+%
+Our types (Figure~\ref{fig:les-types}) are all ground types ; no polymorphism is
+present. The main distinctiveness is that instead of having a plain pointer type
+$t~*$, our one is decorated with a type qualifier $q$. This annotation expresses
+who controls the value of the pointer. If the kernel controls the value of the
+pointer, then it cannot be abused. On the other hand, one has to be careful
+with user-controlled pointers, because the caller can abuse the kernel and
+access reserved memory. The only safe case when dereferencing such a pointer is
+if its value is outside the kernel's memory.
+
+In order to avoid dangerous cases, we have to dynamically check that the
+destination of every user-controlled pointer is in userspace. Kernel pointers
+(that is to say, kernel-controlled pointers) can be dereferenced without further
+check, but user pointers have to be manipulated with a restricted interface that
+will check whether their destination is in userspace.
+
+As mentioned before, this is done using the following constructs:%
+{\small
+\begin{mathpar}
+    \disprule{GetU}
+
+    \disprule{PutU}
+\end{mathpar}}%
+To add qualifiers to a type system, the rules of interest are those that
+manipulate pointers: dereferencing, pointer arithmetic and referencing (taking
+the address of a left-value).
+
+Dereferencing the easiest one ; our goal is to authorize dereferencing only
+\qKernel pointers:
+
+{\small \[ \disprule{Lv-Deref} \]}%
+
+Pointer arithmetic can be done inside a \qUser or \qKernel memory zone. There is
+no concern of jumping from userspace to kernelspace, because pointer arithmetic
+is checked at runtime: if these operators overflow or are applied to a bad
+pointer (such as a pointer to an integer field), $\serr{ptr}$ is raised.
+
+{\small \[ \disprule{Ptr-Arith} \]}%
+
+The reference case is trickier because a type qualifier has to be synthesized.
+Because it is created on the kernel stack, it has a \qKernel qualifier in all
+cases:
+{\small \[
+  \disprule{Addr}
+\]}%
+
+The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
+It is an important rule, because it is the only source of \qUser pointers in the
+type system.
+%{\small \[ \disprule{Taint} \] }% TODO
+The return value of a function is emulated with a virtual left-value $\vRet$.%
+{\small \begin{mathpar}
+  \disprule{Return}
+
+  \disprule{Fun}
+\end{mathpar}}%
+
+Toplevel sentences are typed one after another. Because they can extend an
+environment, the general form of toplevel typing is $\typh{Γ}{p}{Γ'}$.
+
+\begin{mathpar}
+    \disprule{T-Exp}
+
+    \disprule{T-Var}
+\end{mathpar}
+
+The whole set of typing rules can be found in annex in Figures~\ref{fig:typ-exp}
+and~\ref{fig:typ-inst}.
+
+\section*{Type Safety}
+
+and user memory references are ``untainted'' to
+access the underlying storage.
+
+
+\begin{figure}[hbt]
+  \centering
+  \small
+\begin{mathpar}
+
+  \irule{S-Tainted}
+    { m ⊧           φ'  : t~\qKernel~* }
+    { m ⊧ \vTainted{φ'} : t~\qUser~* }
+
+\end{mathpar}
+
+\caption{Semantic typing rules}
+\label{fig:st}
+\end{figure}%
+
+We also need a $\tComp{\cdot}{\cdot}$ relation to express compatibility between
+types of expressions and semantic types (of values): ground types are
+compatible with themselves, type constructors are compatible if their components
+are compatible, and we add a rule for functions:%
+\[ \tComp{\stFun{n}}{(t_1, …, t_n) → t} \]
+
+This proves that no term stays stuck, and that that typing is well-behaved we
+respect to the semantics. It means that the type is really a contract between
+expressions and functions: if their evaluation converge, then a value of the
+inferred type will be produced.
+
+% vim: spelllang=fr
