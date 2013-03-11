@@ -587,41 +587,26 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
   \[
     Γ ⊧ m \eqdef
+      ∀ (x ↦ v) ∈ \mathrm{Visible}(m).
+      ∃ τ,t.
+      \begin{cases}
+          Γ ⊢ x : t
+          \\
+          m ⊧ v : τ
+          \\
+          \tComp{τ}{t}
+      \end{cases}
   \]
+
+  $\mathrm{Visible}(m)$ désigne l'ensemble des couples d'associations (variable,
+  valeur) du cadre de pile le plus récents ainsi que des variables globales.
+  Cela correspond aussi aux variables présentes dans l'environnement de typage.
+
+  % TODO def plus précise?
 
 \end{definition}
 
-
-, if the semantic types of visible variable coincide with
-their static types
-\footnote{
-  $\mathrm{dom}(Γ)$ returns the set of variables present in
-  $Γ$, which also corresponds to visible variables.
-}
-:%
-{ \small \[
-  ∀ x ∈ \mathrm{dom}(Γ). ∃ τ,t.
-  \begin{cases}
-      \tComp{τ}{t} \\
-      m ⊧ x : τ \\
-      Γ ⊢ x : t
-  \end{cases}
-\] }%
-
 \subsection{Progrès et Préservation}
-
-\paragraph{Progrès :} l'évaluation d'un terme bien typé ne reste pas bloquée;
-il y a toujours une règle qui s'applique.
-
-\paragraph{Préservation :} l'évaluation d'un terme bien typé produit un terme
-bien typé.
-
-Puisqu'il s'agit de propriétés reliant la syntaxe à la sémantique, deux types
-d'environnement sont utilisés en même temps. D'une part, les environnement de
-typage $Γ$ pour la syntaxe, et d'autre part les environnements mémoire $m$ pour
-la sémantique. Il est nécessaire de définir une relation de compatibilité entre
-ces deux mondes, pour exprimer par exemple qu'un état mémoire contient dans la
-variable $x$ un entier.
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
 théorèmes.
@@ -794,56 +779,7 @@ $Γ = x:t$).
 
 \end{lemma}
 
-Ces lemmes étant établis, on énonce maintenant le théorème de progrès accompagné
-d'une notion de compatibilité entre envionnements de typage $Γ$ et états mémoire
-$m$.
-
-\begin{definition}[Compatibilité mémoire]
-
-  Soient $Γ$ un environnement de typage et $m = x_1 ↦ v_1, …, x_n ↦ v_n$ un état
-  mémoire. On dit que $m$ est compatible avec $Γ$ si
-
-  \[
-    ∃ (t_1, …, t_n),
-    ∀ i ∈ [1;n],
-    \begin{cases} Γ ⊢ x_i : t_i
-               \\ Γ ⊢ v_i : t_i
-    \end{cases}
-  \]
-
-  On note alors $\mcomp{Γ}{m}$.
-
-  % TODO les états mémoires ne sont pas linéaires
-  % TODO quid de ce qui n'est pas visible (ie, le tas)
-
-\end{definition}
-
-\begin{definition}[Typage de la mémoire]
-
-\[
-  Γ ⊧ m \eqdef ∀ x ∈ \mathrm{Visible}(m). Γ, m ⊧ x
-\]
-
-\[
-  Γ, m ⊧ x \eqdef ∃ t. Γ, m ⊧ x : t
-\]
-
-La définition de $Γ, m ⊧ x : t$ dépend de $v = m[x]_Φ$. On pose $Γ, m ⊧ x : t
-\eqdef P(v)$ avec :
-
-\begin{itemize}
-  \item $P(c) \eqdef Γ ⊢ c : t$
-  \item $P(f) \eqdef Γ ⊢ f : t$
-  \item $P(φ) \eqdef ∃t'. t = t'* ∧ Γ, m ⊧ y : t'$ où $y = m[φ]_Φ$
-  \item $P(\eArray{v_1;…;v_n}) \eqdef
-    ∃ t'. t = t'[~]
-        ∧ ∀ i ∈ [1;n]. Γ ⊢ v_i : t'$
-  \item $P(\eStruct{l_1:v_1;…;l_n:v_n}) \eqdef
-    ∃ (t_1, …, t_n). t = \eStruct{l_1:t_1;…;l_n:t_n}
-                   ∧ ∀ i ∈ [1;n]. Γ ⊢ v_i : t_i$
-\end{itemize}
-
-\end{definition}
+Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 
 % TODO definit Visible
 
