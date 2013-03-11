@@ -80,12 +80,13 @@ programme est donc mal typé.
 
   \begin{align*}
   \gramdef{Type}{t}
-      { \tInt                         }{Entier}
-      { \tFloat                       }{Flottant}
-      { t*                            }{Pointeur}
-      { t[]                           }{Tableau}
-      { S                             }{Structure}
-      { (t_1, …, t_n) \rightarrow t_r }{Fonction}
+      { \tInt                       }{Entier}
+      { \tFloat                     }{Flottant}
+      { \tUnit                      }{Unité}
+      { t*                          }{Pointeur}
+      { t[]                         }{Tableau}
+      { S                           }{Structure}
+      { (t_1, …, t_n) \rightarrow t }{Fonction}
       {END}
   \\
   \gramdef{Structure}{S}
@@ -486,9 +487,10 @@ simple où seul l'arité est conservée.
 \gramdef[2.5cm]{Type\\sémantique}{τ}
     { \tInt                       }{Entier}
     { \tFloat                     }{Flottant}
+    { \tUnit                      }{Unité}
     { τ~*                         }{Pointeur}
     { τ[~]                        }{Tableau}
-    { S                           }{Structure}
+    { \tStruct{l_1:τ_1;…;l_n:τ_n} }{Structure}
     { (τ_1, …, τ_n) \rightarrow τ }{Fonction}
     {END}
 \end{align*}
@@ -512,13 +514,14 @@ simple où seul l'arité est conservée.
 
     \irule{S-Array}
       { ∀i ∈ [1;n]. m ⊧ v_i : t }
-      { m ⊧ \widehat{ [ v_1;…;v_n ] } : t[~] }
+      { m ⊧ \widehat{ \eArray{ v_1;…;v_n } } : t[~] }
 
     \irule{S-Struct}
       { ∀i ∈ [1;n]. m ⊧ v_i : t_i
-     \\ S = \{ l_1:t_1;…;l_n:t_n \}
       }
-      { m ⊧ \widehat{ \{ l_1:v_1;…;l_n:v_n \} } : S }
+      { m ⊧ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } }
+          :           \tStruct{ l_1:t_1;…;l_n:t_n }
+      }
 
     \irule{S-Fun}{ } {m ⊧ \mathrm{fun} (x_1, …, x_n) \{ i \} : \stFun{n}}
   \end{mathpar}
@@ -533,6 +536,77 @@ des constantes sont simples à retrouver car il y a assez d'information en
 mémoire. Pour les références, ce qui peut être déréférencé en une valeur de type
 $τ$ est un $τ~*$. Le typage des valeurs composées se fait en profondeur. Enfin,
 la seule information restant à l'exécution sur les fonctions est son arité.
+
+La prochaine étape est de définir une relation de compatibilité entre les types
+sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
+$\tComp{τ}{t}$. Les règles sont décrites dans la
+figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
+
+\begin{figure}
+  \begin{minipage}{\linewidth}
+    \raggedleft
+    \fbox{$\tComp{τ}{t}$}
+  \end{minipage}
+
+  \begin{mathpar}
+    \irule{Comp-Ground}
+      { t ∈ \{ \tInt, \tFloat, \tUnit \} }
+      { \tComp{t}{t} }
+
+    \irule{Comp-Ptr}
+      { \tComp{τ}{t} }
+      { \tComp{τ~*}{t~*} }
+
+    \irule{Comp-Array}
+      { \tComp{τ}{t} }
+      { \tComp{τ[~]}{t[~]} }
+
+    \irule{Comp-Struct}
+      { ∀ i ∈ [1;n]. \tComp{τ_i}{t_i} }
+      { \tComp{\tStruct{l_1:τ_1;…;l_n:τ_n}}
+              {\tStruct{l_1:t_1;…;l_n:t_n}}
+      }
+
+    \irule{Comp-Fun}
+      { }
+      { \tComp{\stFun{n}}
+              {(t_1, …, t_n) → t}
+      }
+  \end{mathpar}
+
+  \caption{Compatibilité entre types sémantiques et statiques}
+  \label{fig:regles-comp-typ}
+\end{figure}
+
+Grâce à ce jugement, on peut donner la définition suivante.
+
+\begin{definition}
+  On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
+  l'on note $Γ ⊧ m$, si les types sémantiques des variables visibles coïncident
+  avec leurs types statiques.
+
+  \[
+    Γ ⊧ m \eqdef
+  \]
+
+\end{definition}
+
+
+, if the semantic types of visible variable coincide with
+their static types
+\footnote{
+  $\mathrm{dom}(Γ)$ returns the set of variables present in
+  $Γ$, which also corresponds to visible variables.
+}
+:%
+{ \small \[
+  ∀ x ∈ \mathrm{dom}(Γ). ∃ τ,t.
+  \begin{cases}
+      \tComp{τ}{t} \\
+      m ⊧ x : τ \\
+      Γ ⊢ x : t
+  \end{cases}
+\] }%
 
 \subsection{Progrès et Préservation}
 
@@ -1042,25 +1116,9 @@ compatible with themselves, type constructors are compatible if their components
 are compatible, and we add a rule for functions:%
 \[ \tComp{\stFun{n}}{(t_1, …, t_n) → t} \]
 
-Then a memory state $m$ is well-typed under a typing environment $Γ$, which we
-will write $Γ ⊧ m$, if the semantic types of visible variable coincide with
-their static types
-\footnote{
-  $\mathrm{dom}(Γ)$ returns the set of variables present in
-  $Γ$, which also corresponds to visible variables.
-}
-:%
-{ \small \[
-  ∀ x ∈ \mathrm{dom}(Γ). ∃ τ,t.
-  \begin{cases}
-      \tComp{τ}{t} \\
-      m ⊧ x : τ \\
-      Γ ⊢ x : t
-  \end{cases}
-\] }%
-
 This proves that no term stays stuck, and that that typing is well-behaved we
 respect to the semantics. It means that the type is really a contract between
 expressions and functions: if their evaluation converge, then a value of the
 inferred type will be produced.
 
+% vim: spelllang=fr
