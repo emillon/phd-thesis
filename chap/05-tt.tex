@@ -153,8 +153,8 @@ On note
 
 si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
-On étend cette notation aux suites de phrases
-(figure~\ref{fig:typ-suite-phrases}).
+On étend cette notation aux suites de phrases, ce qui définit le typage d'un
+programme, ce que l'on note $⊢ P$ (figure~\ref{fig:typ-suite-phrases}).
 
 \begin{figure}
   \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
@@ -162,26 +162,26 @@ On étend cette notation aux suites de phrases
   \begin{mathpar}
     \irule{T*-Nil}
       { }
-      { \typhstar{Γ}{[]}{Γ} }
+      { \typhstar{Γ}{[~]}{Γ} }
 
     \irule{T*-Cons}
-      { \typh{Γ}{p}{Γ''}
-     \\ \typhstar{Γ''}{ps}{Γ'}
+      { \typh{Γ_1}{p}{Γ_2}
+     \\ \typhstar{Γ_2}{ps}{Γ_3}
       }
-      { \typhstar{Γ}{p::ps}{Γ'} }
+      { \typhstar{Γ_1}{p::ps}{Γ_3} }
   \end{mathpar}
 
-  \caption{Typage d'une suite de phrases}
+  \ruleheader{$Γ ⊢ P$}
+
+  \begin{mathpar}
+    \irule{Prog}
+      { \typhstar{[~]}{P}{Γ} }
+      { ⊢ P }
+  \end{mathpar}
+
+  \caption{Typage d'une suite de phrases et d'un programme}
   \label{fig:typ-suite-phrases}
 \end{figure}
-
-\paragraph{Typage d'un programme :} Un programme est bien typé si on peut typer
-sa suite de phrases en partant d'un environnement vide.
-On note
-
-  \[
-    ⊢ P \eqdef ∃ Γ_f, \typhstar{[]}{P}{Γ_f}
-  \]
 
 \section{Expressions}
 
