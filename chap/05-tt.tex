@@ -87,11 +87,11 @@ programme est donc mal typé.
       { t[]                         }{Tableau}
       { S                           }{Structure}
       { (t_1, …, t_n) \rightarrow t }{Fonction}
-      {END}
+      {END} \\
   \\
   \gramdef{Structure}{S}
       { \eStruct{ l_1 : t_1; … ; l_n : t_n } }{Structure simple}
-      {END}
+      {END} \\
   \\
   \gramdef{Environnement de typage}{Γ}
       { []         }{Environnement vide}
@@ -106,7 +106,8 @@ programme est donc mal typé.
 \end{figure}
 
 Les types associés aux expressions sont décrits dans la
-figure~\ref{fig:les-types}.
+figure~\ref{fig:les-types}. Tous sont des types concrets : il n'y a pas de
+polymorphisme.
 
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
@@ -152,19 +153,27 @@ On note
 
 si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
-On étend cette notation aux suites de phrases :
+On étend cette notation aux suites de phrases
+(figure~\ref{fig:typ-suite-phrases}).
 
-  \[
-    \begin{cases}
-      \typhstar{Γ}{[]}{Γ}  \\
-      \typhstar{Γ}{p::ps}{Γ'} \mbox{ si }
-        ∃ Γ'',
-            \begin{cases}
-              \typh{Γ}{p}{Γ''}  \\
-              \typhstar{Γ''}{ps}{Γ'}
-            \end{cases}
-    \end{cases}
-  \]
+\begin{figure}
+  \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
+
+  \begin{mathpar}
+    \irule{T*-Nil}
+      { }
+      { \typhstar{Γ}{[]}{Γ} }
+
+    \irule{T*-Cons}
+      { \typh{Γ}{p}{Γ''}
+     \\ \typhstar{Γ''}{ps}{Γ'}
+      }
+      { \typhstar{Γ}{p::ps}{Γ'} }
+  \end{mathpar}
+
+  \caption{Typage d'une suite de phrases}
+  \label{fig:typ-suite-phrases}
+\end{figure}
 
 \paragraph{Typage d'un programme :} Un programme est bien typé si on peut typer
 sa suite de phrases en partant d'un environnement vide.
@@ -921,100 +930,5 @@ converge, alors une valeur du type inféré sera produite.
   théormèe 5.2 rappeler où a été défini l'évaluation d'une expression et
   dans quel cas elle produit des valeurs
 \end{itemize}
-
-\section*{Extrait PLAS}
-
-We add a static type system to \langname. The goal is to devise a tractable
-syntactic method to reject a class of buggy programs.
-
-\begin{figure}
-
-  \centering
-  {\small{
-
-  \begin{align*}
-  \gramdefshort{Types}{t}
-      { \tInt,\tFloat,\tUnit        }{Ground types}
-      { t[~]                        }{Array}
-      { t~q*                        }{Qualified pointer}
-      { S                           }{Structure}
-      { (t_1, …, t_n) \rightarrow t }{Function}
-      {END}
-  \\
-  \gramdefshort{Qualifiers}{q}
-    { \qKernel }{Kernel data (safe)}
-    { \qUser   }{User data (unsafe)}
-    {END}
-  \\
-  \gramheadershort{Structure}{S} \\
-  &  \{ l_1 : t_1; … ; l_n : t_n \} & \textrm{Simple structure} \\
-  \\
-  \gramdefshort{Typing environment}{Γ}
-      { [~]        }{Empty environment}
-      { (a, t)::Γ' }{Extension}
-      {END}
-\end{align*}}}
-
-  \caption{Types and typing environments}
-
-  \label{fig:les-types}
-
-\end{figure}%
-%
-Our types (Figure~\ref{fig:les-types}) are all ground types ; no polymorphism is
-present. The main distinctiveness is that instead of having a plain pointer type
-$t~*$, our one is decorated with a type qualifier $q$. This annotation expresses
-who controls the value of the pointer. If the kernel controls the value of the
-pointer, then it cannot be abused. On the other hand, one has to be careful
-with user-controlled pointers, because the caller can abuse the kernel and
-access reserved memory. The only safe case when dereferencing such a pointer is
-if its value is outside the kernel's memory.
-
-In order to avoid dangerous cases, we have to dynamically check that the
-destination of every user-controlled pointer is in userspace. Kernel pointers
-(that is to say, kernel-controlled pointers) can be dereferenced without further
-check, but user pointers have to be manipulated with a restricted interface that
-will check whether their destination is in userspace.
-
-As mentioned before, this is done using the following constructs:%
-{\small
-\begin{mathpar}
-    \disprule{GetU}
-
-    \disprule{PutU}
-\end{mathpar}}%
-To add qualifiers to a type system, the rules of interest are those that
-manipulate pointers: dereferencing, pointer arithmetic and referencing (taking
-the address of a left-value).
-
-Dereferencing the easiest one ; our goal is to authorize dereferencing only
-\qKernel pointers:
-
-{\small \[ \disprule{Lv-Deref} \]}%
-
-Pointer arithmetic can be done inside a \qUser or \qKernel memory zone. There is
-no concern of jumping from userspace to kernelspace, because pointer arithmetic
-is checked at runtime: if these operators overflow or are applied to a bad
-pointer (such as a pointer to an integer field), $\serr{ptr}$ is raised.
-
-{\small \[ \disprule{Ptr-Arith} \]}%
-
-The reference case is trickier because a type qualifier has to be synthesized.
-Because it is created on the kernel stack, it has a \qKernel qualifier in all
-cases:
-{\small \[
-  \disprule{Addr}
-\]}%
-
-The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
-It is an important rule, because it is the only source of \qUser pointers in the
-type system.
-%{\small \[ \disprule{Taint} \] }% TODO
-The return value of a function is emulated with a virtual left-value $\vRet$.%
-{\small \begin{mathpar}
-  \disprule{Return}
-
-  \disprule{Fun}
-\end{mathpar}}%
 
 % vim: spelllang=fr

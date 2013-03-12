@@ -558,4 +558,61 @@ size_t strlen(const char *s);
   %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
 %\end{mathpar}
 
+\section*{Extrait PLAS}
+
+The main distinctiveness is that instead of having a plain pointer type
+$t~*$, our one is decorated with a type qualifier $q$. This annotation expresses
+who controls the value of the pointer. If the kernel controls the value of the
+pointer, then it cannot be abused. On the other hand, one has to be careful
+with user-controlled pointers, because the caller can abuse the kernel and
+access reserved memory. The only safe case when dereferencing such a pointer is
+if its value is outside the kernel's memory.
+
+In order to avoid dangerous cases, we have to dynamically check that the
+destination of every user-controlled pointer is in userspace. Kernel pointers
+(that is to say, kernel-controlled pointers) can be dereferenced without further
+check, but user pointers have to be manipulated with a restricted interface that
+will check whether their destination is in userspace.
+
+As mentioned before, this is done using the following constructs:%
+{\small
+\begin{mathpar}
+    \disprule{GetU}
+
+    \disprule{PutU}
+\end{mathpar}}%
+To add qualifiers to a type system, the rules of interest are those that
+manipulate pointers: dereferencing, pointer arithmetic and referencing (taking
+the address of a left-value).
+
+Dereferencing the easiest one ; our goal is to authorize dereferencing only
+\qKernel pointers:
+
+{\small \[ \disprule{Lv-Deref} \]}%
+
+Pointer arithmetic can be done inside a \qUser or \qKernel memory zone. There is
+no concern of jumping from userspace to kernelspace, because pointer arithmetic
+is checked at runtime: if these operators overflow or are applied to a bad
+pointer (such as a pointer to an integer field), $\serr{ptr}$ is raised.
+
+{\small \[ \disprule{Ptr-Arith} \]}%
+
+The reference case is trickier because a type qualifier has to be synthesized.
+Because it is created on the kernel stack, it has a \qKernel qualifier in all
+cases:
+{\small \[
+  \disprule{Addr}
+\]}%
+
+The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
+It is an important rule, because it is the only source of \qUser pointers in the
+type system.
+%{\small \[ \disprule{Taint} \] }% TODO
+The return value of a function is emulated with a virtual left-value $\vRet$.%
+{\small \begin{mathpar}
+  \disprule{Return}
+
+  \disprule{Fun}
+\end{mathpar}}%
+
 % vim: spelllang=fr
