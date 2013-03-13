@@ -113,9 +113,11 @@
 \def\qualProj#1{\mathrm{proj}(#1)}
 
 % Eval de phrase
-\def\ph#1#2#3{#1 ⊢ #2 → #3}
+\def\ph#1#2#3{#1 ⊩ #2 → #3}
 
-\def\phstar#1#2#3{#1 ⊢ #2 →^* #3}
+\def\phstar#1#2#3{#1 ⊩ #2 →^* #3}
+
+\def\phprog#1#2{⊩ #1 →^* #2}
 
 % typage
 \def\ty#1#2#3{#1 ⊢ #2 : #3}
@@ -349,3 +351,11 @@
 \def\gramorx{\hspace{3mm}\gramor\xspace}
 \def\stFun#1{\textsc{Fun}_n}
 \def\tComp#1#2{\mathrm{Comp}(#1, #2)}
+
+% Box on top on rules fig
+\def\ruleheader#1{
+  \begin{minipage}{\linewidth}
+    \raggedleft
+    \fbox{#1}
+  \end{minipage}
+}

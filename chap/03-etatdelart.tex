@@ -64,11 +64,11 @@ L'interprétation abstraite est une technique d'analyse générique qui permet d
 simuler statiquement tous les comportements d'un programme Cousot
 \cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer les bornes
 de variations des variables pour s'assurer qu'aucun débordement de tableau n'est
-possible. Cette technique est très puissante mais possède plusieurs
-inconvénients. D'une part, pour réaliser une analyse interprocédurale il faut
-partir d'un point en particulier du programme (comme la fonction \texttt{main}).
-Cette hypothèse n'est pas facilement satisfaite dans un noyau de système
-d'exploitation, qui possède de nombreux points d'entrée.
+possible~\cite{AllamigeonHymansSSTIC07}. Cette technique est très puissante mais
+possède plusieurs inconvénients. D'une part, pour réaliser une analyse
+interprocédurale il faut partir d'un point en particulier du programme (comme la
+fonction \texttt{main}). Cette hypothèse n'est pas facilement satisfaite dans un
+noyau de système d'exploitation, qui possède de nombreux points d'entrée.
 
 % TODO virer non?
 
@@ -213,10 +213,11 @@ d'exploitation, qui possède de nombreux points d'entrée.
 \end{figure}%}}}
 
 Les domaines les plus simples ne capturent aucune relation entre variables. Ce
-sont des domaines non relationnels. On peut en citer quelques uns.
+sont des domaines non relationnels. Par exemple le
 
-\paragraph{Le domaine des signes} capture uniquement le signe des variables
-(figure~\ref{fig:dom-sig}).
+domaine des signes capture uniquement le signe des variables
+(figure~\ref{fig:dom-sig}), et le domaine des intervalles retient les bornes de
+variations extremales des variables (figure~\ref{fig:dom-intvl}).
 
 \begin{figure}%{{{
 \centering
@@ -244,9 +245,6 @@ sont des domaines non relationnels. On peut en citer quelques uns.
 \caption{Domaine des signes}
 \label{fig:dom-sig}
 \end{figure}%}}}
-
-\paragraph{Le domaine des intervalles} retient les bornes de variations
-extremales des variables (figure~\ref{fig:dom-intvl}).
 
 \begin{figure} % {{{
 \centering
@@ -424,10 +422,9 @@ source à analyser dans un langage, et traduire les résultats de l'analyse en u
 ensemble d'"alarmes" à présenter à l'utilisateur.
 
 Pour des retours d'expérience, on peut se référer aux descriptions d'
-Astrée\cite{Astree04,Astree05,AstreeScale},
-CGS \cite{cgs},
-Coverity \cite{coverityBillion},
-ou de Penjili.
+Astrée~\cite{Astree04,Astree05,AstreeScale},
+CGS~\cite{cgs},
+ou Coverity~\cite{coverityBillion},
 
 % TODO pas top
 
@@ -534,6 +531,13 @@ la session interactive de la figure~\ref{fig:typage-dynamique}.
   \label{fig:typage-dynamique}
 \end{figure}
 
+L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
+leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
+l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
+montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
+Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
+cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
+
 \paragraph{Typage statique :} dans ce cas on fait les vérifications à la
 compilation. En quelque sorte, l'approche dynamique est pessimiste, puisqu'elle
 demande de traiter très souvent le cas où les types ne sont pas corrects.
@@ -595,7 +599,8 @@ bibliothèques\cite{PascalNoEscape}.
 Une amélioration peut être de générer à la compilation une fonction qui aurait
 le même code mais des annotations de typage différentes : on obtient alors
 plusieurs copies de la fonction qui sont chacunes spécialisées pour un type en
-particulier. C'est la solution retenue par le langage C++.
+particulier. C'est la solution retenue par le langage C++ et son système de
+\emph{templates}.
 
 En fait, si à l'exécution toutes les données sont représentées de manière
 uniforme, il n'est pas nécessaire de créer plusieurs copies de la fonction.
@@ -664,18 +669,34 @@ l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur �
 chaque étage de type, cette approche est plus générique mais plus complexe que
 la notre. % TODO bof
 
+\section{Analyse de code système}
+
+Les logiciels système demandant des garanties de sécurité et de fiabilité, de
+nombreuses analyses \emph{ad-hoc} ciblent les noyaux de systèmes d'exploitation.
+
+Ajouter un système de types forts à C est l'idée centrale de
+CCured~\cite{ccured-toplas}. Dans les cas où il n'est pas possible de conclure,
+des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite une
+instrumentation dynamique qui est faite pour rester active, ce qui se paye en
+performances.
+
+Saturn~\cite{paste07} est un système pour analyser du code système écrit en C.
+Il traite le problème des pointeurs utilisateur en utilisant une analyse de
+forme ``pointe-sur''~\cite{oakland08}. Comme l'interprétation abstraite, son but
+est d'être très précis, au détriment d'un temps de calcul important dans
+certains cas.
+
 \section{Logique de Hoare}
 
 Une technique pour vérifier statiquement des propriétés sur la sémantique d'un
-programme a été formalisée par Robert Floyd\cite{FloydMeaning} et Tony
-Hoare\cite{hoare}.
+programme a été formalisée par Robert Floyd~\cite{FloydMeaning} et Tony
+Hoare~\cite{hoare}.
 
 Elle consiste à écrire les invariants qui sont maintenus à un point donné du
 programme. Ces propositions sont écrites dans une logique $\mathcal{L}$.
-
-Chaque instruction (ou \emph{commande}) $c$ est annotée d'une pré-condition $P$
-et d'une post-condition $Q$, ce que l'on note $\hoare{P}{c}{Q}$. Cela signifie
-que si $P$ est vérifiée et que l'exécution de $c$ se termine
+Chaque instruction $i$ est annotée d'une pré-condition $P$
+et d'une post-condition $Q$, ce que l'on note $\hoare{P}{i}{Q}$. Cela signifie
+que si $P$ est vérifiée et que l'exécution de $i$ se termine
 \footnote{
   Comme dans la plupart des cas, la vérification de la terminaison d'un
   algorithme est réalisée de manière séparée.
@@ -683,30 +704,29 @@ que si $P$ est vérifiée et que l'exécution de $c$ se termine
   % 1/ Terminaison
   % 2/ Correction
   % 3/ Complexité
-}
-, alors $Q$ sera vérifiée.
+}, alors $Q$ sera vérifiée.
 
 En plus des règles de $\mathcal{L}$, des règles d'inférence traduisent la
 sémantique du programme ; par exemple la règle de composition est :
 
 \begin{mathpar}
   \irule{Hoare-Seq}
-    { \hoare{P}{c_1}{Q} \\
-      \hoare{Q}{c_2}{R}
+    { \hoare{P}{i_1}{Q} \\
+      \hoare{Q}{i_2}{R}
     }{
-      \hoare{P}{c_1;c_2}{R}
+      \hoare{P}{i_1;i_2}{R}
     }
 \end{mathpar}
 
-Les pré-conditions peuvent être renforcées et les post-conditions relaxées :
+Les pré-conditions peuvent être renforcées et les post-conditions relâchées :
 
 \begin{mathpar}
   \irule{Hoare-Consequence}
     { ⊢_{\mathcal{L}} P  ⇒ P' \\
-      \hoare{P}{c}{Q} \\
+      \hoare{P}{i}{Q} \\
       ⊢_{\mathcal{L}} Q' ⇒ Q
     }
-    { \hoare{P'}{c}{Q'} }
+    { \hoare{P'}{i}{Q'} }
 \end{mathpar}
 
 Il est alors possible d'annoter le programme avec ses invariants formalisés de
@@ -716,7 +736,7 @@ manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilati
 La règle de conséquence permet de découpler les propriétés du programme lui-même
 : plusieurs niveaux d'annotations sont possibles, du moins précis au plus
 précis. En fait, il est même possible d'annoter chaque point de contrôle par
-l'ensemble d'annotations vide : \hoare{T}{c}{T} est toujours vrai.
+l'ensemble d'annotations vide : \hoare{T}{i}{T} est toujours vrai.
 
 Augmenter graduellement les pré- et post-conditions est néanmoins assez
 difficile, puisqu'il peut être nécessaire de modifier l'ensemble des conditions
@@ -738,7 +758,6 @@ système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
 \begin{itemize}
 \item IA :
 \begin{itemize}
-\item citer pour penjili\cite{AllamigeonHymansSSTIC07}
 \item difficultés :
 
 \begin{itemize}
@@ -768,8 +787,6 @@ système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
   \end{itemize}
 
 \item
-  Analyse dynamique \cite{oakland10} et Perl ?.
-\item
   Analyse de flot :
 Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un tour
 d'horizon des problèmes et techniques existantes peut être trouvé
@@ -777,29 +794,9 @@ dans~\cite{sm-jsac03}.
 
 \item Divers : Taint sequences \cite{mdv10},
 \item Frama-C ?
-\item CCurred ?
 \end{itemize}
 
 \section*{Divers à intégrer}
-
-L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
-leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
-l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
-montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
-Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
-cette technique à des langages compilés~\cite{clause-etal-issta07}.
-
-Ajouter un système de types forts à C est l'idée centrale de
-CCured~\cite{ccured-toplas}. Dans les cas où il n'est pas possible de conclure,
-des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite une
-instrumentation dynamique qui est faite pour rester active, ce qui se paye en
-performances.
-
-Saturn~\cite{paste07} est un système pour analyser du code système écrit en C.
-Il traite le problème des pointeurs utilisateur en utilisant une analyse de
-forme ``pointe-sur''~\cite{oakland08}. Comme l'interprétation abstraite, son but
-est d'être très précis, au détriment d'un temps de calcul important dans
-certains cas.
 
 % TODO
 \cite{jfp92}

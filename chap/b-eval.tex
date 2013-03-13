@@ -16,6 +16,8 @@
 \begin{figure}
 
 \begin{mathpar}
+    \ruleheader{$Ξ → Ω$}
+
     \semrule{Exp-Err}
 
     \semrule{Eval-Err}
@@ -27,6 +29,7 @@
 \begin{figure}
 
 \begin{mathpar}
+    \ruleheader{$\mm{m}{lv}{m}{φ}$}
 
     \semrule{Phi-Var}
 
@@ -36,19 +39,13 @@
 
     \semrule{Phi-Array}
 
+    \ruleheader{$\mm{m}{e}{m}{v}$}
+
     \semrule{Exp-Cst}
 
     \semrule{Exp-Fun}
 
     \semrule{Exp-Lv}
-\end{mathpar}
-
-\caption{Règles d'évaluation - constantes et left-values}
-\end{figure}
-
-\begin{figure}
-
-\begin{mathpar}
 
     \semrule{Exp-UnOp}
 
@@ -57,28 +54,22 @@
     \semrule{Exp-AddrOf}
 
     \semrule{Exp-Set}
-\end{mathpar}
 
-\caption{Règles d'évaluation - opérations}
-\end{figure}
-
-\begin{figure}
-
-\begin{mathpar}
     \semrule{Exp-Struct}
 
     \semrule{Exp-Array}
 
     \semrule{Exp-Call}
-
 \end{mathpar}
 
-\caption{Règles d'évaluation - expressions composées}
+\caption{Règles d'évaluation - left-values et expressions }
 \end{figure}
 
 \begin{figure}
 
 \begin{mathpar}
+    \ruleheader{$\mm{m}{i}{m}{i'}$}
+
     \semrule{Seq}
 
     \semrule{Pass}
@@ -97,14 +88,23 @@
 
     \semrule{Return}
 
+    \ruleheader{$\ph{m}{p}{m'}$}
+
     \semrule{T-Exp}
 
     \semrule{T-Var}
 
+    \ruleheader{$\phstar{m}{p}{m'}$}
+
     \semrule{T*-Nil}
 
     \semrule{T*-Cons}
+
+    \ruleheader{$\phprog{P}{m}$}
+
+    \semrule{Prog}
 \end{mathpar}
 
-\caption{Règles d'évaluation}
+\caption{Règles d'évaluation - instructions et phrases}
+% TODO programmes
 \end{figure}

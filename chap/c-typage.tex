@@ -1,6 +1,8 @@
-\begin{figure}
+\begin{figure}[h]
 
 \begin{mathpar}
+    \ruleheader{$Γ ⊢ c : t$}
+
     \disprule{Cst-Int}
 
     \disprule{Cst-Float}
@@ -8,6 +10,8 @@
     \disprule{Cst-Null}
 
     \disprule{Cst-Unit}
+
+    \ruleheader{$Γ ⊢ lv : t$}
 
     \disprule{Lv-Var}
 
@@ -22,17 +26,7 @@
 
 \begin{figure}
 \begin{mathpar}
-    \disprule{Op-Int}
-
-    \disprule{Op-Float}
-
-    \disprule{Eq-Num}
-
-    \disprule{Eq-Ptr}
-
-    \disprule{Eq-Array}
-
-    \disprule{Op-Eq}
+    \ruleheader{$Γ ⊢ \opun~e : t$}
 
     \disprule{Unop-Plus-Int}
 
@@ -44,22 +38,44 @@
 
     \disprule{Unop-Not}
 
+    \ruleheader{$Γ ⊢ e_1~\opbin~e_2 : t$}
+
+    \disprule{Op-Int}
+
+    \disprule{Op-Float}
+
+    \disprule{Op-Eq}
+
     \disprule{Ptr-Arith}
+
+    \ruleheader{$\textsc{Eq}(t)$}
+
+    \disprule{Eq-Num}
+
+    \disprule{Eq-Ptr}
+
+    \disprule{Eq-Array}
 \end{mathpar}
 \caption{Règles de typage - opérateurs}
 \end{figure}
 
 \begin{figure}
 \begin{mathpar}
+    \ruleheader{$Γ ⊢ e : t$}
+
     \disprule{Addr}
+
+    \disprule{Struct}
+
+    \disprule{Call}
 
     \disprule{Set}
 
     \disprule{Array}
 
-    \disprule{Struct}
+    \disprule{Fun}
 
-    \disprule{Call}
+    \ruleheader{$Γ ⊢ i$}
 
     \disprule{Pass}
 
@@ -75,7 +91,7 @@
 
     \disprule{Return}
 
-    \disprule{Fun}
+    \ruleheader{$\typh{Γ}{p}{Γ'}$}
 
     \disprule{T-Exp}
 

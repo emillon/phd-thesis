@@ -315,7 +315,7 @@
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
     } % TODO définir le "-"
-    {Decl-Return}{ \irule{Dec-Return}
+    {Decl-Return}{ \irule{Decl-Return}
             { m' = \mathrm{Extend}(m, x, v)
            \\ \mmi{m'}{i}{m''}{\iReturn{v_r}}
            \\ m''' = \mathrm{Cleanup}(m'' - x)
@@ -363,6 +363,10 @@
     {Eval-Err}{ \irule{Eval-Err}
                   { \msi{m}{e} → Ω }
                   { \msi{m}{\ctxSub{C}{e}} → Ω }
+    }
+    {Prog}{ \irule{Prog}
+              {\phstar{([~], [~])}{P}{m}}
+              {\phprog{P}{m}}
     }
     {END}
 }
