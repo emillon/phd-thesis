@@ -6,97 +6,31 @@ décrit dans le chapitre~\ref{cha:lang}. Enfin, nous donnons les détails d'un
 algorithme d'inférence de types à la Hindley-Milner, reposant sur l'unification
 et le partage de références.
 
-\section{Langages intermédiaires}
-
-Le langage C \cite{KandR,AnsiC} a été conçu pour être une sorte d'assembleur
-portable, permettant décrire du code indépendamment de l'architecture sur
-laquelle il sera compilé. Historiquement, c'est il a permis de créer Unix, et
-ainsi de nombreux logiciels bas niveau sont écrits en C. En particulier, il
-existe des compilateurs de C vers les différents langages machine pour à peu
-près toutes les architectures.
-
-\begin{figure}
-  \centering
-
-  \input{fig/middle-end.tex}
-
-  \caption{Décomposition d'un compilateur : front-ends, middle-end, back-ends}
-  \label{fig:middle-end}
-\end{figure}
-
-Lors de l'écriture d'un compilateur, on a besoin d'un langage intermédiaire qui
-fasse l'intermédiaire entre \emph{front-end} et \emph{back-end}
-(figure~\ref{fig:middle-end}). Depuis ce langage on doit pouvoir exprimer des
-transformations intermédiaires sur cette représentation (analyses sémantiques,
-optimisations, etc), mais aussi compiler ce langage vers un langage machine.
-
-L'idée de prendre C comme langage intermédiaire est très séduisante, mais
-malheureusement sa sémantique est trop complexe et trop peu spécifiée. Il est
-donc judicieux d'utiliser un langage plus simple à cet effet. Dans de nombreux
-projets, des sous-ensembles de C ont été définis pour aller dans ce sens.
-
-\subsubsection{Langages}
-
-Les premiers candidats sont bien entendu les représentations intermédiaires
-utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
-standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
-plupart des logiciels. En particulier, le noyau Linux repose fortement sur les
-extensions GNU.
-
-\paragraph{GCC} utilise une représentation interne nommée
-GIMPLE\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C, reposant
-sur de nombreuses macros afin de cacher les détails d'implémentation pouvant
-varier entre deux versions de GCC. Cette représentation étant réputée difficile
-à manipuler, le projet MELT\cite{gcc-melt} permet de générer une passe de
-compilation à partir d'un dialecte de Lisp.
-
-\paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
-puis sponsorisé Apple. À la différence de GCC, sa base de code est écrite en
-C++. Il utilise une représentation intermédiaire qui peut être manipulée soit
-sous forme d'une structure de données C++, soit d'un fichier de code-octet
-compact, soit sous forme textuelle.
-
-\paragraph{Objective Caml}\link{ocamlManual} utilise pour sa génération de code
-une représentation interne nommée Cmm, disponible dans les sources du
-compilateur sous le chemin \texttt{asmcomp/cmm.mli} (il s'agit donc d'une
-structure de données OCaml). Ce langage a l'avantage d'être très restreint, mais
-malheureusement il n'existe pas directement de traducteur permettant de compiler
-C vers Cmm.
-
-\paragraph{C--}\cite{spjcmm} \link{cmm}, dont le nom est inspiré du précédent,
-est un projet qui visait à unifier les langages intermédiaires utilisés par les
-compilateurs. L'idée est que si un front-end peut émettre du C-- (sous forme de
-texte), il est possible d'obtenir du code machine efficace. Le compilateur
-Haskell GHC utilise une représentation intermédiaire très similaire à C--.
-
-Comme le problème de construire une représentation intermédiaire adaptée à une
-analyse statique n'est pas nouveau, plusieurs projets ont déjà essayé d'y
-apporter une solution. Puisque qu'ils sont développés en parallèle des
-compilateurs, le support des extensions est en général moins important dans ces
-langages.
-
-\paragraph{CIL}\cite{NeculaCil} \link{kerneisCil} est une représentation en
-OCaml d'un programme C, développée depuis 2002. Grâce à un mécanisme de
-greffons, elle permet de prototyper rapidement des analyses statiques de
-programmes.
-
-\paragraph{Newspeak}\cite{newspeak} est un langage intermédiaire développé par
-EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
-interprétation abstraite. Il sera décrit plus en détails dans la
-section~\ref{sec:npk}.
-
-\paragraph{Compcert} est un projet qui vise à produire un compilateur certifié
-pour C. C'est à dire que le fait que les transformations conservent la
-sémantique est prouvé. Il utilise de nombreux langages intermédiaires, dont CIL.
-Pour le front-end, le langage se nomme Clight\cite{cfront}. Les passes de
-middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
-
 %\input{fig/il-features.tex}
 
 \section{Newspeak}
 \label{sec:npk}
 
-\wip{}
+Newspeak~\cite{newspeak} est un langage conçu pour être à la fois :
+
+\begin{itemize}
+  \item \textbf{Précis} : sa sémantique est définie formellement
+  \cite{HymansLevillainEADS08}
+  \item \textbf{Expressif} : la plupart des primitives présentes dans les
+    langages de bas niveau sont compilables en Newspeak \footnote{Penjili étant
+    spécialisé dans l'aéronautique, les constructions complexes comme
+    \texttt{longjmp} / \texttt{setjmp} ou les exceptions ne sont pas nécessaires.}
+    % TODO adapter la footnote
+  \item \textbf{Simple} : peu de primitives sont présentes.
+  \item \textbf{Minimal} : aucun élément syntaxique ne peut être exprimé
+    comme combinaison d'autres.
+  \item \textbf{Explicite} : les constructions sont toutes indépendantes du
+    contexte.
+  \item \textbf{Orienté analyse} : les primitives sont décorées d'informations
+    reflétant leur validité (tests de bornes, etc)
+  \item \textbf{Indépendant de l'architecture} : toutes les caractéristiques comme
+    la taille des types ou l'alignement des structures sont rendues explicites.
+\end{itemize}
 
 \section{Chaîne de compilation}
 
@@ -112,6 +46,68 @@ middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
 La compilation vers C est faite en trois étapes (figure~\ref{fig:compil-npk}) :
 prétraitement du code source, compilation de C prétraité vers \newspeak{}, puis
 compilation de \newspeak{} vers ce langage.
+
+\section*{Trad}
+
+La première étape consiste à prétraiter les fichiers C source avec le logiciel
+\texttt{cpp}, comme pour une compilation normale. Cette étape interprète les
+directives comme \texttt{\#include}, \texttt{\#ifdef}, À cet étape, les
+commentaires sont aussi supprimés.
+
+% TODO comment interpréter les /*!npk xxx */ ?
+
+Pour que le code noyau soit compilable, il est nécessaire de définir certaines
+macros. En particulier, le système de configuration de Linux utilise des macros
+nommées \texttt{CONFIG\_*} pour inclure ou non certaines fonctionnalités. Il a
+donc fallu faire un choix ; nous avons choisi la configuration par défaut. Pour
+analyser des morceaux plus importants du noyau, il faudrait définir un fichier
+de configuration plus important.
+
+% TODO ce para peut aller dans le chapitre cas d'étude
+
+Une fois cette passe effectuée, nous avons des fichiers C prétraités,
+c'est à dire des unités de compilation autocontenues. % TODO bof
+
+Puisque la directive \texttt{\#include} est textuelle, ces fichiers sont très
+grands et donnent lieu à beaucoup de duplication dans les passes suivantes.
+
+À ce niveau, les fichiers sont passés à l'outil \texttt{c2newspeak} qui les
+traduit vers Newspeak. Dans cette étape, les types et les noms sont résolus, et
+le programme est annoté de manière à rendre les prochaines étapes indépendante
+du contexte. Par exemple, chaque déclaration de variable est adjointe d'une
+description complète du type.
+
+Puisque Linux est écrit dans le dialecte ``GNU C'', il a été nécessaire
+d'adapter \texttt{c2newspeak}. La principale particularité est la notation
+\texttt{\_\_attribute\_\_((...))} qui peut décorer les déclarations de
+fonctions, de variables ou de types. De nouvelles fonctionnalités sont aussi
+présentes.
+
+Par exemple, il est possible de manipuler des étiquettes de première classe : si
+\texttt{lbl:} est présent avant une instruction, on peut capturer l'adresse de
+celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement avec
+\texttt{goto *p}.
+
+Une autre fonctionnalité est le concept d'instruction-expression :
+\texttt{(\{bloc\})}) est une expression, dont la valeur est celle de la dernière
+expression évaluée lors de \texttt{i}.
+
+Les attributs, quant à eux, rentrent dans trois catégories :
+
+\begin{itemize}
+  \item les annotations de compilation ; par exemple, \texttt{used} désactive
+    l'avertissement ``cette variable n'est pas utilisée ''.
+
+  \item les optimisations ; par exemple, les objets marqués \texttt{hot} sont
+    groupés de telle manière qu'ils se retrouvent en cache ensemble.
+
+  \item les annotations de bas niveau ; par exemple, \texttt{aligned(n)}
+    spécifie qu'un objet doit être aligné sur au moins \texttt{n} bits.
+\end{itemize}
+
+Dans notre cas, toutes ces annotations peuvent être ignorées.
+
+% TODO pê tout ça dans le chap suivant
 
 \subsection{Prétraitement}
 
@@ -550,36 +546,11 @@ License, and is available on \texttt{http://penjili.org} (directory
 \texttt{src/ptrtype} in the distribution). Our implementation consists of the
 following steps.
 
-The first one consists in preprocessing the C files that compose the kernel. We
-have to manually define macros that are usually defined by the kernel's build
-system. The configuration system for Linux uses \texttt{cpp} macros too (named
-\texttt{CONFIG\_*}), so we have make a choice of configuration file. We just
-used the default one, but to analyze larger parts of the kernel, it may be
+but to analyze larger parts of the kernel, it may be
 necessary to define a ``maximal'' configuration file (which is impossible
 because of incompatibilities between some options).
 
-Once we have a set of preprocessed C files\footnote{
-  As \texttt{cpp}'s \texttt{\#include} statement is textual, headers get
-  included in every file, leading to a lot of duplicate work for the next
-  passes.
-},
-we run it through the \texttt{c2newspeak} utility that compiles it to the
-Newspeak. In that step, types and
-names are resolved, and the program is decorated with enough annotation to make
-the next steps context-free.
 
-Because Linux is written in the GNU C dialect, it required to adapt
-\texttt{c2newspeak}. Two kinds of extensions were encountered: the main
-particularity is the \texttt{\_\_attribute\_\_} notation that
-decorates declarations. In the vast majority of cases, they can be ignored as
-they are either compiler hints (e.g. \texttt{used} disables the ``variable is
-not used'' warning), optimizations (e.g. \texttt{hot} groups variable together
-so they are put in cache together) or too low-level to be taken in account (e.g.
-\texttt{aligned(n)} specifies that a variable needs to be aligned on \texttt{n}
-bits). Besides attributes, GNU C allows advanced uses of \texttt{typeof}, as
-well as statement-expressions (expressions of the form \texttt{(\{stmt\})}), and
-first-class labels (\texttt{\&\&lbl} and \texttt{goto *p} constructs) that had
-to be properly supported.
 
 Newspeak is designed for static analysis by abstract interpretation and has
 quite a low-level view on programs. For example, it does not distinguish between
