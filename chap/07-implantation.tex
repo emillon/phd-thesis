@@ -125,6 +125,33 @@ toujours un saut vers l'avant (similaire à un "break" généralisé).
 La sémantique de Newspeak et la traduction de C vers Newspeak sont décrites dans
 \cite{newspeak}.
 
+Newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
+donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
+n'est faite entre l'accès à un champ et l'accès un l'élément d'un tableau (tous
+deux sont traduits par un décalage numérique depuis le début de la zone
+mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
+structures internes de \texttt{c2newspeak}, où les informations nécessaires sont
+encore présentes.
+
+Ensuite, les différents fichiers sont liés ensemble. Cet étape consiste
+principalement à s'assurer que les hypothèses faites par les différentes unités
+de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
+invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
+aient un nom unique.
+
+Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
+décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
+simple. Puisqu'ils sont suffisament proches du lambda calcul simplement typé, on
+peut utiliser une variante de l'algorithme W de Damas et
+Milner~\cite{DamasMilner}. On utilise l'optimisation classique qui consiste à se
+reposer sur le partage de références pour réaliser l'unification, plutôt que de
+faire des substitutions explicites. Puisque ces systèmes de types sont
+monomorphes, on présente une erreur si des variable de type libres sont
+présentes.
+
+À la fin de cette étape, on obtient soit un programme complètement annoté, soit
+une erreur de type.
+
 \subsection{Prétraitement}
 
 \ctonewspeak{} travaillant uniquement sur du code prétraité (dans directives de
@@ -549,29 +576,6 @@ necessary to define a ``maximal'' configuration file (which is impossible
 because of incompatibilities between some options).
 
 
-
-Newspeak is designed for static analysis by abstract interpretation and has
-quite a low-level view on programs. For example, it does not distinguish between
-field access and indexed access: as in an assembly language, it represents both
-of them with a numeric offset (static or dynamic) from the start of a memory
-zone. To remove such an ambiguity, we have to hook into \texttt{c2newspeak}'s
-internal data structures, where this information is still available, and with it
-we can emit \langname code.
-
-Then, different files are linked together. This step consists in ensuring that
-the assumptions made by the different files are consistent. \texttt{static}
-variables, not visible outside the file they are defined in, are renamed so that
-they have a unique name.
-
-Finally, the implementation of an inference algorithm for the above type system
-is quite straightforward. As it is similar enough to simply typed lambda
-calculus, we can use a variant of Damas and Milner's Algorithm
-W\cite{DamasMilner}. As usual, instead of explicit substitutions we rely on
-sharing of references to implement unification. As our type system is
-monomorphic, we raise an error whenever free type variables occur.
-
-At the end of this step, we have either a fully annotated program, or a type
-error.
 
 Let us run the analysis on a small example:
 

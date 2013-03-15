@@ -17,7 +17,15 @@
 \usepackage{fancyvrb}
 \input{gen/pygments-style.tex}
 
-\floatstyle{boxed}
+\makeatletter
+\newcommand\fs@plainruled{\def\@fs@cfont{\rmfamily}\let\@fs@capt\floatc@plain%
+  \def\@fs@pre{\hrule\kern2pt}%
+  \def\@fs@mid{\kern2pt\hrule\vspace\abovecaptionskip\relax}%
+  \def\@fs@post{}%
+  \let\@fs@iftopcapt\iffalse}
+\makeatother
+
+\floatstyle{plainruled}
 \restylefloat{figure}
 \newsubfloat{figure}
 
