@@ -109,6 +109,22 @@ Dans notre cas, toutes ces annotations peuvent être ignorées.
 
 % TODO pê tout ça dans le chap suivant
 
+Lors de cette étape, le flôt de contrôle est également simplifié. C en effet
+propose de nombreuses constructions ambigües ou redondantes.
+
+Au contraire, Newspeak propose un nombre réduit de constructions. Rappelons que
+le but de ce langage est de faciliter l'analyse statique : des constructions
+orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
+code lors de l'implémentation d'un analyseur.
+
+Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
+\emph{do/while} et une boucle for, Newspeak fournit une unique boucle
+\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui est
+toujours un saut vers l'avant (similaire à un "break" généralisé).
+
+La sémantique de Newspeak et la traduction de C vers Newspeak sont décrites dans
+\cite{newspeak}.
+
 \subsection{Prétraitement}
 
 \ctonewspeak{} travaillant uniquement sur du code prétraité (dans directives de
@@ -119,25 +135,7 @@ commentaires supprimés, les fichiers d'en-tête inclus, etc.
 \subsection{Compilation (levée des ambigüités)}
 
 Cette passe est réalisée par l'utilitaire \ctonewspeak{}. L'essentiel de la
-compilation consiste à mettre à plat les définition de types, et à simplifier le
-flot de contrôle. C en effet propose de nombreuses constructions ambigües ou
-redondantes.
-
-Au contraire, \newspeak{} propose un nombre réduit de constructions. Rappelons
-que le but de ce langage est de faciliter l'analyse statique : des constructions
-orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
-code lors de l'implémentation d'un analyseur.
-
-Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
-\emph{do/while} et une boucle for, \newspeak{} fournit une unique boucle
-\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}, qui est
-toujours un saut vers l'avant (similaire à un "break" généralisé).
-
-La sémantique de \newspeak{} et la traduction de C vers \newspeak{} sont
-décrites dans \cite{newspeak}. En ce qui concerne l'élimination des sauts vers
-l'arrière, on peut se référer à \cite{goto}.
-
-\subsection{Annotations}
+compilation consiste à mettre à plat les définition de types, et \subsection{Annotations}
 
 \newspeak{} a de nombreux avantages, mais pour une analyse par typage il est
 trop bas niveau. Par exemple, dans le code suivant
