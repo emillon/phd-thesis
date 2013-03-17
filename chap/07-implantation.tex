@@ -205,12 +205,12 @@ let f x y =
     y
 \end{Verbatim}
 
-On voit que puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce
-doit être un tuple. En outre on additionne ces deux composantes ensemble, donc
-elles doivent être de type \tInt (et le résultat aussi). Par le même argument,
+Puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce doit être
+un tuple. En outre on additionne ces deux composantes ensemble, donc elles
+doivent être de type \tInt (et le résultat aussi). Par le même argument,
 \texttt{y} doit aussi être de type \tInt. En conclusion, \texttt{x} est de type
-$\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt
-\times \tInt \rightarrow \tInt \rightarrow \tInt$.
+$\tInt × \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt × \tInt
+→ \tInt → \tInt$.
 
 Pour implanter cette analyse, on peut remarquer qu'étant donné la forme d'un
 terme, on peut savoir quelle règle de typage a été utilisée en dernier. Il est
@@ -231,16 +231,18 @@ moment, on ne connait pas les types.
 \label{fig:inftree-rules}
 \end{figure} % }}}
 
-Une fois à cette étape, on peut donner un nom à chaque type inconnu : $τ_1, τ_2,
+Une fois à cette étape, on peut donner un nom à chaque type inconnu : $t_1, t_2,
 \ldots$. L'utilisation qui en est faite permet de générer un ensemble de
 contraintes d'unification. Par exemple, pour chaque application de la règle
-\textsc{(App)} :
+\textsc{(App)} de la forme :
 
 \[
-\irule{App}{Γ⊢\ldots:τ_3 \\ Γ ⊢ \ldots : τ_1}{Γ ⊢ \ldots : τ_2}
+\irule{App}{Γ⊢\ldots:t_3 \\ Γ ⊢ \ldots : t_1}{Γ ⊢ \ldots : t_2}
 \]
 
-on doit déduire que $τ_3 = τ_1 \rightarrow τ_2$.
+on doit déduire que $t_3 = t_1 \rightarrow t_2$.
+
+On en déduit donc un ensemble de contraintes d'égalité.
 
 \clearpage
 
@@ -248,12 +250,12 @@ Ce signe $=$ est à prendre comme une contrainte d'égalité : partant d'un
 ensemble de contraintes de la forme "type avec inconnue = type avec inconnue",
 on veut obtenir une substitution "inconnue -> type concret".
 
-Pour résoudre ces contraintes, on commence par les simplifier : si $τ_a
-\rightarrow τ_b = τ_c \rightarrow τ_d$, alors $τ_a = τ_c$ et $τ_b = τ_d$. De
-même si $τ_a \times τ_b = τ_c \times τ_d$. Au contraire, si $τ_a \rightarrow τ_b
-= τ_c \times τ_d$, il est impossible d'unifier les types et il faut abandonner
-l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = τ_1
-\rightarrow τ_2$ ou $\tInt = \tFloat$.
+Pour résoudre ces contraintes, on commence par les simplifier : si $t_a
+\rightarrow t_b = t_c \rightarrow t_d$, alors $t_a = t_c$ et $t_b = t_d$. De
+même si $t_a \times t_b = t_c \times t_d$. Au contraire, si $t_a \rightarrow t_b
+= t_c \times t_d$, il est impossible d'unifier les types et il faut abandonner
+l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = t_1
+\rightarrow t_2$ ou $\tInt = \tFloat$.
 
 \begin{figure} % {{{ Fig full tree
 \def\disptypeL#1{:#1}
@@ -270,12 +272,12 @@ formes suivantes :
 
 \begin{itemize}
 \item
-  $τ_i = τ_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
+  $t_i = t_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
 \item
-  $τ_i = τ_j$ avec $i \ne j$ : toutes les occurrences de $τ_j$ dans les autres
-  contraintes peuvent être remplacées par $τ_i$.
+  $t_i = t_j$ avec $i \ne j$ : toutes les occurrences de $t_j$ dans les autres
+  contraintes peuvent être remplacées par $t_i$.
 \item
-  $τ_i = x$ (ou $x = τ_i$) où $x$ est un type concret : idem.
+  $t_i = x$ (ou $x = t_i$) où $x$ est un type concret : idem.
 \end{itemize}
 
 %TODO C'est faux
@@ -340,8 +342,8 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 
 \end{figure} % }}}
 
-Plutôt que de modifier toutes les occurrences d'un type $τ_i$, on va affecter à
-$τ_i$ la valeur du nouveau type.
+Plutôt que de modifier toutes les occurrences d'un type $t_i$, on va affecter à
+$t_i$ la valeur du nouveau type.
 
 L'implémentation de cet algorithme utilise le partage et les références
 (figure~\ref{fig:unifpartage}).
