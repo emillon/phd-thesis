@@ -222,8 +222,7 @@ moment, on ne connait pas les types.
 % TODO quel prop cela utilise t'il?
 
 \begin{figure} % {{{ Fig règles
-\def\disptypeL#1{}
-\def\disptypeR#1{}
+\def\disptypeR#1#2{:#1}
 
 \input{fig/inftree.tex}
 
@@ -258,8 +257,7 @@ l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = t_1
 \rightarrow t_2$ ou $\tInt = \tFloat$.
 
 \begin{figure} % {{{ Fig full tree
-\def\disptypeL#1{:#1}
-\def\disptypeR#1{:#1}
+\def\disptypeR#1#2{:#2}
 
 \input{fig/inftree.tex}
 
