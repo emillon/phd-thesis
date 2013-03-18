@@ -241,7 +241,68 @@ contraintes d'unification. Par exemple, pour chaque application de la règle
 
 on doit déduire que $t_3 = t_1 \rightarrow t_2$.
 
-On en déduit donc un ensemble de contraintes d'égalité.
+\begin{figure}
+\centering
+
+\subbottom[Contraintes]{
+  \label{fig:inf-constr-ex}
+  \begin{minipage}{0.5\linewidth}
+  \begin{align}
+  t_1    &= t_x → t_2             \tag{Abs1} \\
+  t_2    &= t_y → t_3             \tag{Abs2} \\
+  t_5    &= t_4 → t_3             \tag{App1} \\
+  t_4    &= t_y                   \tag{Var1} \\
+  t_6    &= t_7 → t_5             \tag{App2} \\
+  t_6    &= \tInt → \tInt → \tInt \tag{Var2} \\
+  t_{10} &= t_8 → t_7             \tag{App3} \\
+  t_9    &= ? × t_8               \tag{Proj-D1} \\
+  t_9    &= t_x                   \tag{Var3} \\
+  t_{11} &= t_{12} → t_{10}       \tag{App4} \\
+  t_{11} &= \tInt → \tInt → \tInt \tag{Var4} \\
+  t_{13} &= t_{12} × ?            \tag{Proj-G1} \\
+  t_{13} &= t_x                   \tag{Var5}
+  \end{align}
+  \end{minipage}
+}
+\subbottom[Solution]{
+  \label{fig:inf-sol-ex}
+  \begin{minipage}{0.3\linewidth}
+  \begin{align*}
+  t_{1}  &= \tInt × \tInt → \tInt \\
+  t_{2}  &= \tInt → \tInt         \\
+  t_{3}  &= \tInt                 \\
+  t_{4}  &= \tInt                 \\
+  t_{5}  &= \tInt → \tInt         \\
+  t_{6}  &= \tInt → \tInt → \tInt \\
+  t_{7}  &= \tInt                 \\
+  t_{8}  &= \tInt                 \\
+  t_{9}  &= \tInt × \tInt         \\
+  t_{10} &= \tInt → \tInt         \\
+  t_{11} &= \tInt → \tInt → \tInt \\
+  t_{12} &= \tInt                 \\
+  t_{13} &= \tInt × \tInt         \\
+  t_{x}  &= \tInt × \tInt         \\
+  t_{y}  &= \tInt
+  \end{align*}
+  \end{minipage}
+}
+
+\caption{Contraintes d'égalité et solution obtenues à partir de la
+figure~\ref{fig:inftree-rules}}
+
+\end{figure}
+
+% TODO mal numéroté
+
+On en déduit donc un ensemble de contraintes d'égalité
+(figure~\ref{fig:inf-constr-ex}). D'après (App1) et (App2), $t_6 = t_7 → t_4 →
+t_3$ d'où par (Var2), $t_7 → t_4 → t_3 = \tInt → \tInt → \tInt$. Le constructeur
+$→$ étant injectif, on a donc $t_3 = t_4 = t_7 = \tInt$. En procédant de même
+avec (App3) et (App4), on obtient $t_8 = t_{12} = \tInt$. D'après (Proj-G1),
+(Var5), (Var3), et (Proj-D1) on a $t_{12} × ? = t_{13} = t_{x} = t_9 = ? ×
+t_{8}$, donc $t_x = t_{12} × t_8 = \tInt × \tInt$. En remplaçant, on obtient
+tous les autres types (figure~\ref{fig:inf-sol-ex}).
+
 
 \clearpage
 
