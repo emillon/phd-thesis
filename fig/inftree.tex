@@ -26,7 +26,7 @@
                 \inferrule*[right=(Var), leftskip=3em, rightskip=7em]
                   { }
                   {\gammaXY ⊢ \textrm{plus}
-                  \disptypeR{t_{12}}{\tInt \rightarrow \tInt \rightarrow \tInt}
+                  \disptypeR{t_{6}}{\tInt \rightarrow \tInt \rightarrow \tInt}
                   }
                 \\
                 \inferrule*[right=(App),vdots=3em,leftskip=7em,rightskip=3em]
@@ -45,15 +45,15 @@
                               {Var}
                               { }
                               {\gammaXY ⊢ x
-                              \disptypeR{t_{10}}{\tInt \times \tInt}
+                              \disptypeR{t_{13}}{\tInt \times \tInt}
                               }
                           }
                           {\gammaXY ⊢ \fstx
-                          \disptypeR{t_9}{\tInt}
+                          \disptypeR{t_{12}}{\tInt}
                           }
                       }
                       {\gammaXY ⊢ \textrm{plus} (\fstx)
-                      \disptypeR{t_8}{\tInt \rightarrow \tInt}
+                      \disptypeR{t_{10}}{\tInt \rightarrow \tInt}
                       }
                     \\
                     \inferrule*[right=(Proj-D), leftskip=5em, rightskip=4em]
@@ -62,15 +62,15 @@
                           {Var}
                           { }
                           {\gammaXY ⊢ x
-                          \disptypeR{t_7}{\tInt \times \tInt}
+                          \disptypeR{t_{9}}{\tInt \times \tInt}
                           }
                       }
                       {\gammaXY ⊢ \sndx
-                      \disptypeR{t_6}{\tInt}
+                      \disptypeR{t_{8}}{\tInt}
                       }
                   }
                   {\gammaXY ⊢ \textrm{plus} (\fstx) (\sndx)
-                  \disptypeR{t_{13}}{\tInt}
+                  \disptypeR{t_{7}}{\tInt}
                   }
               }
               {\gammaXY ⊢ \textrm{plus} (\textrm{plus} (\fstx) (\sndx))
