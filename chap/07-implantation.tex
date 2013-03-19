@@ -15,7 +15,7 @@ Newspeak~\cite{newspeak} est un langage conçu pour être à la fois :
 
 \begin{itemize}
   \item \textbf{Précis} : sa sémantique est définie formellement
-  \cite{HymansLevillainEADS08}
+  \cite{newspeak}
   \item \textbf{Expressif} : la plupart des primitives présentes dans les
     langages de bas niveau sont compilables en Newspeak \footnote{Penjili étant
     spécialisé dans l'aéronautique, les constructions complexes comme
@@ -195,6 +195,7 @@ f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
 
 Soit en syntaxe ML :
 
+\begin{center}
 \begin{Verbatim}
 let f x y =
   plus
@@ -204,6 +205,7 @@ let f x y =
     )
     y
 \end{Verbatim}
+\end{center}
 
 Puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce doit être
 un tuple. En outre on additionne ces deux composantes ensemble, donc elles
@@ -232,14 +234,97 @@ moment, on ne connait pas les types.
 
 Une fois à cette étape, on peut donner un nom à chaque type inconnu : $t_1, t_2,
 \ldots$. L'utilisation qui en est faite permet de générer un ensemble de
-contraintes d'unification. Par exemple, pour chaque application de la règle
-\textsc{(App)} de la forme :
+contraintes d'unification (figure~\ref{fig:stlc-const}).
 
-\[
-\irule{App}{Γ⊢\ldots:t_3 \\ Γ ⊢ \ldots : t_1}{Γ ⊢ \ldots : t_2}
-\]
+Le symbole $?$ qui apparait dans les règles correspond à ``n'importe quel
+type'', dans le sens où l'unification avec ce symbole est toujours possible.
 
-on doit déduire que $t_3 = t_1 \rightarrow t_2$.
+\begin{figure} % {{{
+  \def\stlcConst#1#2{
+  \fbox{
+    \begin{tabular}{m{3.5cm}||c}
+      \raggedleft \fbox{\raggedleft \ensuremath{#1}} & \fbox{\ensuremath{#2}}
+    \end{tabular}
+  }
+  }
+  \centering
+  \begin{tabular}{m{4cm}||lm{4cm}||l}
+    \raggedleft
+    $
+    \irule{Var}
+      { (x, t_x) ∈ Γ }
+      { Γ ⊢ x : t_1 }
+    $
+    &
+    $
+      t_1 = t_x
+    $
+    &
+    \raggedleft
+    $
+    \irule{Abs}
+      { Γ, (x:t_x) ⊢     e : t_2 }
+      { Γ          ⊢ λx. e : t_1 }
+    $
+    &
+    $
+      t_1 = t_x → t_2
+    $
+    \\
+    \multicolumn{4}{c}{} \\
+    \raggedleft
+    $
+    \irule{App}
+      { Γ ⊢ e_1 : t_1
+     \\ Γ ⊢ e_2 : t_2
+      }
+      { Γ ⊢ e_1~e_2 : t_3 }
+    $
+    &
+    $
+      t_1 = t_2 → t_3
+    $
+    &
+    \raggedleft
+    $
+    \irule{Proj-G}
+      { Γ ⊢ e : t_2 }
+      { Γ ⊢ \termFst{e} : t_1 }
+    $
+    &
+    $
+      t_2 = t_1 × ?
+    $
+    \\
+    \multicolumn{4}{c}{} \\
+    \raggedleft
+    $
+    \irule{Proj-D}
+      { Γ ⊢ e : t_2 }
+      { Γ ⊢ \termSnd{e} : t_1 }
+    $
+    &
+    $
+      t_2 = ? × t_1
+    $
+    &
+    \raggedleft
+    $
+    \irule{Tup}
+       { Γ⊢e_1:t_1
+      \\ Γ⊢e_2:t_2
+      }{
+        Γ⊢(e_1,e_2):t_3
+      }
+    $
+    &
+    $
+    t_3 = t_1 \times t_2
+    $
+  \end{tabular}
+\caption{Contraintes crées par les applications de règles}
+\label{fig:stlc-const}
+\end{figure} %}}}
 
 \begin{figure}
 \centering
@@ -295,27 +380,15 @@ figure~\ref{fig:inftree-rules}}
 % TODO mal numéroté
 
 On en déduit donc un ensemble de contraintes d'égalité
-(figure~\ref{fig:inf-constr-ex}). D'après (App1) et (App2), $t_6 = t_7 → t_4 →
-t_3$ d'où par (Var2), $t_7 → t_4 → t_3 = \tInt → \tInt → \tInt$. Le constructeur
-$→$ étant injectif, on a donc $t_3 = t_4 = t_7 = \tInt$. En procédant de même
-avec (App3) et (App4), on obtient $t_8 = t_{12} = \tInt$. D'après (Proj-G1),
-(Var5), (Var3), et (Proj-D1) on a $t_{12} × ? = t_{13} = t_{x} = t_9 = ? ×
-t_{8}$, donc $t_x = t_{12} × t_8 = \tInt × \tInt$. En remplaçant, on obtient
-tous les autres types (figure~\ref{fig:inf-sol-ex}).
-
-
-\clearpage
-
-Ce signe $=$ est à prendre comme une contrainte d'égalité : partant d'un
-ensemble de contraintes de la forme "type avec inconnue = type avec inconnue",
-on veut obtenir une substitution "inconnue -> type concret".
-
-Pour résoudre ces contraintes, on commence par les simplifier : si $t_a
-\rightarrow t_b = t_c \rightarrow t_d$, alors $t_a = t_c$ et $t_b = t_d$. De
-même si $t_a \times t_b = t_c \times t_d$. Au contraire, si $t_a \rightarrow t_b
-= t_c \times t_d$, il est impossible d'unifier les types et il faut abandonner
-l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = t_1
-\rightarrow t_2$ ou $\tInt = \tFloat$.
+(figure~\ref{fig:inf-constr-ex}). La prochaine étape est de résoudre ce système.
+D'après (App1) et (App2), $t_6 = t_7 → t_4 → t_3$ d'où par (Var2), $t_7 → t_4 →
+t_3 = \tInt → \tInt → \tInt$. Le constructeur $→$ étant injectif, on a donc $t_3
+= t_4 = t_7 = \tInt$. En procédant de même avec (App3) et (App4), on obtient
+$t_8 = t_{12} = \tInt$. D'après (Proj-G1), (Var5), (Var3), et (Proj-D1) on a
+$t_{12} × ? = t_{13} = t_{x} = t_9 = ? × t_{8}$, donc $t_x = t_{12} × t_8 =
+\tInt × \tInt$. En remplaçant, on obtient tous les autres types
+(figures~\ref{fig:inf-sol-ex}) et donc un arbre de typage complet
+(figure~\ref{fig:inftree-full}).
 
 \begin{figure} % {{{ Fig full tree
 \def\disptypeR#1#2{:#2}
@@ -325,6 +398,21 @@ l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = t_1
 \caption{Arbre d'inférence complet}
 \label{fig:inftree-full}
 \end{figure} % }}}
+
+
+Pour effectuer une résolution de manière automatique, il faut une technique
+d'unification. La manière la plus classique de procéder est due à
+Robinson~\cite{robinson} et se déroule par substitution.
+
+
+\clearpage
+
+Pour résoudre ces contraintes, on commence par les simplifier : si $t_a
+\rightarrow t_b = t_c \rightarrow t_d$, alors $t_a = t_c$ et $t_b = t_d$. De
+même si $t_a \times t_b = t_c \times t_d$. Au contraire, si $t_a \rightarrow t_b
+= t_c \times t_d$, il est impossible d'unifier les types et il faut abandonner
+l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = t_1
+\rightarrow t_2$ ou $\tInt = \tFloat$.
 
 Une fois ces simplifications réalisées, les contraintes restantes sont d'une des
 formes suivantes :
@@ -340,9 +428,6 @@ formes suivantes :
 \end{itemize}
 
 %TODO C'est faux
-
-Une fois toutes les substitutions effectuées, on obtient un arbre de typage
-correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 
 \clearpage
 
