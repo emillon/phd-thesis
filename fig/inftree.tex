@@ -1,9 +1,10 @@
 \def\gammaXY{Γ_2}
 \def\gammaX{Γ_1}
-\def\gammaXYdef{\gammaX{},y\disptypeR{t_y}{}}
-\def\gammaXdef{Γ_0, x\disptypeR{t_x}{}}
-\def\termFst#1{\ensuremath{\textrm{fst}~x}}
-\def\termSnd#1{\ensuremath{\textrm{snd}~x}}
+\def\gammaZerodef{\textrm{plus} : \tInt → \tInt → \tInt }
+\def\gammaXYdef{\gammaXdef{},y\disptypeR{t_y}{\tInt}}
+\def\gammaXdef{\gammaZerodef{}, x\disptypeR{t_x}{\tInt × \tInt}}
+\def\termFst#1{\ensuremath{\textrm{fst}~#1}}
+\def\termSnd#1{\ensuremath{\textrm{snd}~#1}}
 \def\fstx{\termFst{x}}
 \def\sndx{\termSnd{x}}
 \begin{mathpar}
@@ -91,7 +92,7 @@
 \end{mathpar}
 
 \begin{align*}
-  Γ_0      &\eqdef \textrm{plus} : \tInt → \tInt → \tInt \\
+  Γ_0      &\eqdef \gammaZerodef{} \\
   \gammaX  &\eqdef \gammaXdef \\
   \gammaXY &\eqdef \gammaXYdef \\
 \end{align*}
