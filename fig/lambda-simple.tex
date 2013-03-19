@@ -1,42 +1,45 @@
 \begin{align*}
-\gramdef{Termes}{t}
-  { x              }{Variable}
-  { λ x . t        }{Abstraction}
-  { t              }{Application}
+\gramdef{Expressions}{e}
   { n              }{Entier}
-  { f              }{Flottant}
-  { (t, t)         }{Couple}
-  { \textrm{fst}~t }{Projection gauche}
-  { \textrm{snd}~t }{Projection droite}
+  { d              }{Flottant}
+  { x              }{Variable}
+  { λ x . e        }{Abstraction}
+  { e_1~e_2        }{Application}
+  { (e_1, e_2)     }{Couple}
+  { \textrm{fst}~e }{Projection gauche}
+  { \textrm{snd}~e }{Projection droite}
   {END}
 \\
-\gramdef{Types}{τ}
+\\
+\gramdef{Types}{t}
   {  \tInt          }{Entier}
   {  \tFloat        }{Flottant}
-  { τ \rightarrow τ }{Fonction}
-  { τ \times τ      }{Produit}
+  { t \rightarrow t }{Fonction}
+  { t \times t      }{Produit}
   {END}
+\\
 \\
 \gramdef{Contextes}{Γ}
   { ε     }{Contexte vide}
-  { Γ,x:τ }{Extension}
+  { Γ,x:t }{Extension}
   {END}
 \end{align*}
 
+\ruleheader{$Γ ⊢ e : t$}
 \begin{mathpar}
 \irule{Int}{ }{Γ⊢n:\tInt}
-\and
-\irule{Float}{ }{Γ⊢f:\tFloat}
-\and
-\irule{Var}{x:τ∈Γ}{Γ⊢x:τ}
-\and
-\irule{App}{Γ⊢f:τ_1 \rightarrow τ_2 \\ Γ ⊢ x : τ_1}{Γ ⊢ f x : τ_2}
-\and
-\irule{Abs}{Γ,x:τ_1⊢ y : τ_2}{Γ⊢ λx.y:τ_1 \rightarrow τ_2}
-\and
-\irule{Proj-g}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{fst}~x:τ_1}
-\and
-\irule{Proj-d}{Γ⊢x:τ_1\times τ_2}{Γ⊢\textrm{snd}~x:τ_2}
-\and
-\irule{Tup}{Γ⊢x:τ_1 \\ Γ⊢y:τ_2}{Γ⊢(x,y):τ_1 \times τ_2}
+
+\irule{Float}{ }{Γ⊢d:\tFloat}
+
+\irule{Var}{(x:t)∈Γ}{Γ⊢x:t}
+
+\irule{Abs}{Γ,(x:t_1)⊢ e : t_2}{Γ⊢ λx.e:t_1 \rightarrow t_2}
+
+\irule{App}{Γ⊢e:t_1 \rightarrow t_2 \\ Γ ⊢ e' : t_1}{Γ ⊢ e~e' : t_2}
+
+\irule{Proj-g}{Γ⊢x:t_1\times t_2}{Γ⊢\textrm{fst}~x:t_1}
+
+\irule{Proj-d}{Γ⊢x:t_1\times t_2}{Γ⊢\textrm{snd}~x:t_2}
+
+\irule{Tup}{Γ⊢e_1:t_1 \\ Γ⊢e_2:t_2}{Γ⊢(e_1,e_2):t_1 \times t_2}
 \end{mathpar}

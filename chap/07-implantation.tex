@@ -15,7 +15,7 @@ Newspeak~\cite{newspeak} est un langage conçu pour être à la fois :
 
 \begin{itemize}
   \item \textbf{Précis} : sa sémantique est définie formellement
-  \cite{HymansLevillainEADS08}
+  \cite{newspeak}
   \item \textbf{Expressif} : la plupart des primitives présentes dans les
     langages de bas niveau sont compilables en Newspeak \footnote{Penjili étant
     spécialisé dans l'aéronautique, les constructions complexes comme
@@ -41,7 +41,7 @@ Newspeak~\cite{newspeak} est un langage conçu pour être à la fois :
   \label{fig:compil-npk}
 \end{figure}
 
-\todo{Mettre à jour la figure}
+%TODO Mettre à jour la figure
 
 La compilation vers C est faite en trois étapes (figure~\ref{fig:compil-npk}) :
 prétraitement du code source, compilation de C prétraité vers \newspeak{}, puis
@@ -109,6 +109,49 @@ Dans notre cas, toutes ces annotations peuvent être ignorées.
 
 % TODO pê tout ça dans le chap suivant
 
+Lors de cette étape, le flôt de contrôle est également simplifié. C en effet
+propose de nombreuses constructions ambigües ou redondantes.
+
+Au contraire, Newspeak propose un nombre réduit de constructions. Rappelons que
+le but de ce langage est de faciliter l'analyse statique : des constructions
+orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
+code lors de l'implémentation d'un analyseur.
+
+Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
+\emph{do/while} et une boucle for, Newspeak fournit une unique boucle
+\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui est
+toujours un saut vers l'avant (similaire à un "break" généralisé).
+
+La sémantique de Newspeak et la traduction de C vers Newspeak sont décrites dans
+\cite{newspeak}.
+
+Newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
+donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
+n'est faite entre l'accès à un champ et l'accès un l'élément d'un tableau (tous
+deux sont traduits par un décalage numérique depuis le début de la zone
+mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
+structures internes de \texttt{c2newspeak}, où les informations nécessaires sont
+encore présentes.
+
+Ensuite, les différents fichiers sont liés ensemble. Cet étape consiste
+principalement à s'assurer que les hypothèses faites par les différentes unités
+de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
+invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
+aient un nom unique.
+
+Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
+décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
+simple. Puisqu'ils sont suffisament proches du lambda calcul simplement typé, on
+peut utiliser une variante de l'algorithme W de Damas et
+Milner~\cite{DamasMilner}. On utilise l'optimisation classique qui consiste à se
+reposer sur le partage de références pour réaliser l'unification, plutôt que de
+faire des substitutions explicites. Puisque ces systèmes de types sont
+monomorphes, on présente une erreur si des variable de type libres sont
+présentes.
+
+À la fin de cette étape, on obtient soit un programme complètement annoté, soit
+une erreur de type.
+
 \subsection{Prétraitement}
 
 \ctonewspeak{} travaillant uniquement sur du code prétraité (dans directives de
@@ -119,25 +162,7 @@ commentaires supprimés, les fichiers d'en-tête inclus, etc.
 \subsection{Compilation (levée des ambigüités)}
 
 Cette passe est réalisée par l'utilitaire \ctonewspeak{}. L'essentiel de la
-compilation consiste à mettre à plat les définition de types, et à simplifier le
-flot de contrôle. C en effet propose de nombreuses constructions ambigües ou
-redondantes.
-
-Au contraire, \newspeak{} propose un nombre réduit de constructions. Rappelons
-que le but de ce langage est de faciliter l'analyse statique : des constructions
-orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
-code lors de l'implémentation d'un analyseur.
-
-Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
-\emph{do/while} et une boucle for, \newspeak{} fournit une unique boucle
-\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}, qui est
-toujours un saut vers l'avant (similaire à un "break" généralisé).
-
-La sémantique de \newspeak{} et la traduction de C vers \newspeak{} sont
-décrites dans \cite{newspeak}. En ce qui concerne l'élimination des sauts vers
-l'arrière, on peut se référer à \cite{goto}.
-
-\subsection{Annotations}
+compilation consiste à mettre à plat les définition de types, et \subsection{Annotations}
 
 \newspeak{} a de nombreux avantages, mais pour une analyse par typage il est
 trop bas niveau. Par exemple, dans le code suivant
@@ -148,8 +173,8 @@ trop bas niveau. Par exemple, dans le code suivant
 
 \subsection{Implantation de l'algorithme de typage}
 
-Commençons par étudier le cas du lambda-calcul simplement typé
-(figure~\ref{fig:stlc}).
+On prend l'exemple d'un lambda-calcul simplement typé avec entiers, flottants et
+couples (figure~\ref{fig:stlc}).
 
 \begin{figure}
 
@@ -168,25 +193,38 @@ est une fonction de l'environnement global qui a pour type $\tInt \rightarrow
 f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
 \]
 
-On voit que puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce
-doit être un tuple. En outre on additionne ces deux composantes ensemble, donc
-elles doivent être de type \tInt (et le résultat aussi). Par le même argument,
+Soit en syntaxe ML :
+
+\begin{center}
+\begin{Verbatim}
+let f x y =
+  plus
+    (plus
+      (fst x)
+      (snd x)
+    )
+    y
+\end{Verbatim}
+\end{center}
+
+Puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce doit être
+un tuple. En outre on additionne ces deux composantes ensemble, donc elles
+doivent être de type \tInt (et le résultat aussi). Par le même argument,
 \texttt{y} doit aussi être de type \tInt. En conclusion, \texttt{x} est de type
-$\tInt \times \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt
-\times \tInt \rightarrow \tInt \rightarrow \tInt$.
+$\tInt × \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt × \tInt
+→ \tInt → \tInt$.
 
-Mais comment faire pour implanter cette analyse ? En fait le système de types de
-la figure~\ref{fig:stlc} a une propriété particulièrement intéressante : chaque
-forme syntaxique (variable, abstraction, etc) est en conclusion exactement d'une
-règle de typage. Cela permet de toujours savoir quelle règle il faut appliquer.
+Pour implanter cette analyse, on peut remarquer qu'étant donné la forme d'un
+terme, on peut savoir quelle règle de typage a été utilisée en dernier. Il est
+ainsi possible de ``remonter'' l'arbre d'inférence afin de savoir quelles règles
+ont été employées (figure~\ref{fig:inftree-rules})\footnote{Par souci de clarté,
+les prémisses des applications de \textsc{(Var)} ne sont pas notées.}. Pour le
+moment, on ne connait pas les types.
 
-Partant du terme de conclusion ($f$), on peut donc en déduire un squelette
-d'arbre d'inférence (figure~\ref{fig:inftree-rules})\footnote{Par souci de
-clarté, les prémisses des applications de \textsc{(Var)} ne sont pas notées.}
+% TODO quel prop cela utilise t'il?
 
 \begin{figure} % {{{ Fig règles
-\def\disptypeL#1{}
-\def\disptypeR#1{}
+\def\disptypeR#1#2{:#1}
 
 \input{fig/inftree.tex}
 
@@ -194,9 +232,166 @@ clarté, les prémisses des applications de \textsc{(Var)} ne sont pas notées.}
 \label{fig:inftree-rules}
 \end{figure} % }}}
 
+Une fois à cette étape, on peut donner un nom à chaque type inconnu : $t_1, t_2,
+\ldots$. L'utilisation qui en est faite permet de générer un ensemble de
+contraintes d'unification (figure~\ref{fig:stlc-const}).
+
+Le symbole $?$ qui apparait dans les règles correspond à ``n'importe quel
+type'', dans le sens où l'unification avec ce symbole est toujours possible.
+
+\begin{figure} % {{{
+  \def\stlcConst#1#2{
+  \fbox{
+    \begin{tabular}{m{3.5cm}||c}
+      \raggedleft \fbox{\raggedleft \ensuremath{#1}} & \fbox{\ensuremath{#2}}
+    \end{tabular}
+  }
+  }
+  \centering
+  \begin{tabular}{m{4cm}||lm{4cm}||l}
+    \raggedleft
+    $
+    \irule{Var}
+      { (x, t_x) ∈ Γ }
+      { Γ ⊢ x : t_1 }
+    $
+    &
+    $
+      t_1 = t_x
+    $
+    &
+    \raggedleft
+    $
+    \irule{Abs}
+      { Γ, (x:t_x) ⊢     e : t_2 }
+      { Γ          ⊢ λx. e : t_1 }
+    $
+    &
+    $
+      t_1 = t_x → t_2
+    $
+    \\
+    \multicolumn{4}{c}{} \\
+    \raggedleft
+    $
+    \irule{App}
+      { Γ ⊢ e_1 : t_1
+     \\ Γ ⊢ e_2 : t_2
+      }
+      { Γ ⊢ e_1~e_2 : t_3 }
+    $
+    &
+    $
+      t_1 = t_2 → t_3
+    $
+    &
+    \raggedleft
+    $
+    \irule{Proj-G}
+      { Γ ⊢ e : t_2 }
+      { Γ ⊢ \termFst{e} : t_1 }
+    $
+    &
+    $
+      t_2 = t_1 × ?
+    $
+    \\
+    \multicolumn{4}{c}{} \\
+    \raggedleft
+    $
+    \irule{Proj-D}
+      { Γ ⊢ e : t_2 }
+      { Γ ⊢ \termSnd{e} : t_1 }
+    $
+    &
+    $
+      t_2 = ? × t_1
+    $
+    &
+    \raggedleft
+    $
+    \irule{Tup}
+       { Γ⊢e_1:t_1
+      \\ Γ⊢e_2:t_2
+      }{
+        Γ⊢(e_1,e_2):t_3
+      }
+    $
+    &
+    $
+    t_3 = t_1 \times t_2
+    $
+  \end{tabular}
+\caption{Contraintes crées par les applications de règles}
+\label{fig:stlc-const}
+\end{figure} %}}}
+
+\begin{figure}
+\centering
+
+\subbottom[Contraintes]{
+  \label{fig:inf-constr-ex}
+  \begin{minipage}{0.5\linewidth}
+  \begin{align}
+  t_1    &= t_x → t_2             \tag{Abs1} \\
+  t_2    &= t_y → t_3             \tag{Abs2} \\
+  t_5    &= t_4 → t_3             \tag{App1} \\
+  t_4    &= t_y                   \tag{Var1} \\
+  t_6    &= t_7 → t_5             \tag{App2} \\
+  t_6    &= \tInt → \tInt → \tInt \tag{Var2} \\
+  t_{10} &= t_8 → t_7             \tag{App3} \\
+  t_9    &= ? × t_8               \tag{Proj-D1} \\
+  t_9    &= t_x                   \tag{Var3} \\
+  t_{11} &= t_{12} → t_{10}       \tag{App4} \\
+  t_{11} &= \tInt → \tInt → \tInt \tag{Var4} \\
+  t_{13} &= t_{12} × ?            \tag{Proj-G1} \\
+  t_{13} &= t_x                   \tag{Var5}
+  \end{align}
+  \end{minipage}
+}
+\subbottom[Solution]{
+  \label{fig:inf-sol-ex}
+  \begin{minipage}{0.3\linewidth}
+  \begin{align*}
+  t_{1}  &= \tInt × \tInt → \tInt \\
+  t_{2}  &= \tInt → \tInt         \\
+  t_{3}  &= \tInt                 \\
+  t_{4}  &= \tInt                 \\
+  t_{5}  &= \tInt → \tInt         \\
+  t_{6}  &= \tInt → \tInt → \tInt \\
+  t_{7}  &= \tInt                 \\
+  t_{8}  &= \tInt                 \\
+  t_{9}  &= \tInt × \tInt         \\
+  t_{10} &= \tInt → \tInt         \\
+  t_{11} &= \tInt → \tInt → \tInt \\
+  t_{12} &= \tInt                 \\
+  t_{13} &= \tInt × \tInt         \\
+  t_{x}  &= \tInt × \tInt         \\
+  t_{y}  &= \tInt
+  \end{align*}
+  \end{minipage}
+}
+
+\caption{Contraintes d'égalité et solution obtenues à partir de la
+figure~\ref{fig:inftree-rules}}
+
+\end{figure}
+
+% TODO mal numéroté
+
+On en déduit donc un ensemble de contraintes d'égalité
+(figure~\ref{fig:inf-constr-ex}). La prochaine étape est de résoudre ce système.
+D'après (App1) et (App2), $t_6 = t_7 → t_4 → t_3$ d'où par (Var2), $t_7 → t_4 →
+t_3 = \tInt → \tInt → \tInt$. Le constructeur $→$ étant injectif, on a donc $t_3
+= t_4 = t_7 = \tInt$. En procédant de même avec (App3) et (App4), on obtient
+$t_8 = t_{12} = \tInt$. D'après (Proj-G1), (Var5), (Var3), et (Proj-D1) on a
+$t_{12} × ? = t_{13} = t_{x} = t_9 = ? × t_{8}$, donc $t_x = t_{12} × t_8 =
+\tInt × \tInt$. En remplaçant, on obtient tous les autres types
+(figures~\ref{fig:inf-sol-ex}) et donc un arbre de typage complet
+(figure~\ref{fig:inftree-full}).
+
 \begin{figure} % {{{ Fig full tree
-\def\disptypeL#1{:#1}
-\def\disptypeR#1{:#1}
+\def\disptypeR#1#2{:#2}
 
 \input{fig/inftree.tex}
 
@@ -204,47 +399,35 @@ clarté, les prémisses des applications de \textsc{(Var)} ne sont pas notées.}
 \label{fig:inftree-full}
 \end{figure} % }}}
 
-Une fois à cette étape, on peut donner un nom à chaque type inconnu : $τ_1, τ_2,
-\ldots$. L'utilisation qui en est faite permet de générer un ensemble de
-contraintes d'unification. Par exemple, pour chaque application de la règle
-\textsc{(App)} :
 
-\[
-\irule{App}{Γ⊢\ldots:τ_3 \\ Γ ⊢ \ldots : τ_1}{Γ ⊢ \ldots : τ_2}
-\]
+Pour effectuer une résolution de manière automatique, il faut une technique
+d'unification. La manière la plus classique de procéder est due à
+Robinson~\cite{robinson} et se déroule par substitution.
 
-on doit déduire que $τ_3 = τ_1 \rightarrow τ_2$.
 
 \clearpage
 
-Ce signe $=$ est à prendre comme une contrainte d'égalité : partant d'un
-ensemble de contraintes de la forme "type avec inconnue = type avec inconnue",
-on veut obtenir une substitution "inconnue -> type concret".
-
-Pour résoudre ces contraintes, on commence par les simplifier : si $τ_a
-\rightarrow τ_b = τ_c \rightarrow τ_d$, alors $τ_a = τ_c$ et $τ_b = τ_d$. De
-même si $τ_a \times τ_b = τ_c \times τ_d$. Au contraire, si $τ_a \rightarrow τ_b
-= τ_c \times τ_d$, il est impossible d'unifier les types et il faut abandonner
-l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = τ_1
-\rightarrow τ_2$ ou $\tInt = \tFloat$.
+Pour résoudre ces contraintes, on commence par les simplifier : si $t_a
+\rightarrow t_b = t_c \rightarrow t_d$, alors $t_a = t_c$ et $t_b = t_d$. De
+même si $t_a \times t_b = t_c \times t_d$. Au contraire, si $t_a \rightarrow t_b
+= t_c \times t_d$, il est impossible d'unifier les types et il faut abandonner
+l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = t_1
+\rightarrow t_2$ ou $\tInt = \tFloat$.
 
 Une fois ces simplifications réalisées, les contraintes restantes sont d'une des
 formes suivantes :
 
 \begin{itemize}
 \item
-  $τ_i = τ_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
+  $t_i = t_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
 \item
-  $τ_i = τ_j$ avec $i \ne j$ : toutes les occurrences de $τ_j$ dans les autres
-  contraintes peuvent être remplacées par $τ_i$.
+  $t_i = t_j$ avec $i \ne j$ : toutes les occurrences de $t_j$ dans les autres
+  contraintes peuvent être remplacées par $t_i$.
 \item
-  $τ_i = x$ (ou $x = τ_i$) où $x$ est un type concret : idem.
+  $t_i = x$ (ou $x = t_i$) où $x$ est un type concret : idem.
 \end{itemize}
 
-\todo{C'est faux}
-
-Une fois toutes les substitutions effectuées, on obtient un arbre de typage
-correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
+%TODO C'est faux
 
 \clearpage
 
@@ -303,8 +486,8 @@ correct (figure~\ref{fig:inftree-full}, donc un programme totalement inféré.
 
 \end{figure} % }}}
 
-Plutôt que de modifier toutes les occurrences d'un type $τ_i$, on va affecter à
-$τ_i$ la valeur du nouveau type.
+Plutôt que de modifier toutes les occurrences d'un type $t_i$, on va affecter à
+$t_i$ la valeur du nouveau type.
 
 L'implémentation de cet algorithme utilise le partage et les références
 (figure~\ref{fig:unifpartage}).
@@ -551,29 +734,6 @@ necessary to define a ``maximal'' configuration file (which is impossible
 because of incompatibilities between some options).
 
 
-
-Newspeak is designed for static analysis by abstract interpretation and has
-quite a low-level view on programs. For example, it does not distinguish between
-field access and indexed access: as in an assembly language, it represents both
-of them with a numeric offset (static or dynamic) from the start of a memory
-zone. To remove such an ambiguity, we have to hook into \texttt{c2newspeak}'s
-internal data structures, where this information is still available, and with it
-we can emit \langname code.
-
-Then, different files are linked together. This step consists in ensuring that
-the assumptions made by the different files are consistent. \texttt{static}
-variables, not visible outside the file they are defined in, are renamed so that
-they have a unique name.
-
-Finally, the implementation of an inference algorithm for the above type system
-is quite straightforward. As it is similar enough to simply typed lambda
-calculus, we can use a variant of Damas and Milner's Algorithm
-W\cite{DamasMilner}. As usual, instead of explicit substitutions we rely on
-sharing of references to implement unification. As our type system is
-monomorphic, we raise an error whenever free type variables occur.
-
-At the end of this step, we have either a fully annotated program, or a type
-error.
 
 Let us run the analysis on a small example:
 
