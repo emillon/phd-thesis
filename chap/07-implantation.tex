@@ -56,15 +56,6 @@ commentaires sont aussi supprimés.
 
 % TODO comment interpréter les /*!npk xxx */ ?
 
-Pour que le code noyau soit compilable, il est nécessaire de définir certaines
-macros. En particulier, le système de configuration de Linux utilise des macros
-nommées \texttt{CONFIG\_*} pour inclure ou non certaines fonctionnalités. Il a
-donc fallu faire un choix ; nous avons choisi la configuration par défaut. Pour
-analyser des morceaux plus importants du noyau, il faudrait définir un fichier
-de configuration plus important.
-
-% TODO ce para peut aller dans le chapitre cas d'étude
-
 Une fois cette passe effectuée, nous avons des fichiers C prétraités,
 c'est à dire des unités de compilation autocontenues. % TODO bof
 
@@ -76,38 +67,6 @@ traduit vers Newspeak. Dans cette étape, les types et les noms sont résolus, e
 le programme est annoté de manière à rendre les prochaines étapes indépendante
 du contexte. Par exemple, chaque déclaration de variable est adjointe d'une
 description complète du type.
-
-Puisque Linux est écrit dans le dialecte ``GNU C'', il a été nécessaire
-d'adapter \texttt{c2newspeak}. La principale particularité est la notation
-\texttt{\_\_attribute\_\_((...))} qui peut décorer les déclarations de
-fonctions, de variables ou de types. De nouvelles fonctionnalités sont aussi
-présentes.
-
-Par exemple, il est possible de manipuler des étiquettes de première classe : si
-\texttt{lbl:} est présent avant une instruction, on peut capturer l'adresse de
-celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement avec
-\texttt{goto *p}.
-
-Une autre fonctionnalité est le concept d'instruction-expression :
-\texttt{(\{bloc\})}) est une expression, dont la valeur est celle de la dernière
-expression évaluée lors de \texttt{i}.
-
-Les attributs, quant à eux, rentrent dans trois catégories :
-
-\begin{itemize}
-  \item les annotations de compilation ; par exemple, \texttt{used} désactive
-    l'avertissement ``cette variable n'est pas utilisée ''.
-
-  \item les optimisations ; par exemple, les objets marqués \texttt{hot} sont
-    groupés de telle manière qu'ils se retrouvent en cache ensemble.
-
-  \item les annotations de bas niveau ; par exemple, \texttt{aligned(n)}
-    spécifie qu'un objet doit être aligné sur au moins \texttt{n} bits.
-\end{itemize}
-
-Dans notre cas, toutes ces annotations peuvent être ignorées.
-
-% TODO pê tout ça dans le chap suivant
 
 Lors de cette étape, le flôt de contrôle est également simplifié. C en effet
 propose de nombreuses constructions ambigües ou redondantes.
@@ -697,7 +656,6 @@ constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 \item TODO sous typage pour les structures
 
 \end{itemize}
-
 
 TODO :
 
