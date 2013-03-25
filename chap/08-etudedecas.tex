@@ -1,6 +1,146 @@
 Dans ce chapitre, un exemple de mise en œuvre du système de type décrit dans le
 chapitre~\ref{cha:qualifs} et implanté dans le chapitre~\ref{cha:implem}.
 
+\section{Linux}
+
+Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
+d'exploitation développé depuis le début des années 90 et ``figure de proue'' du
+mouvement open-source. Au départ écrit par Linus Torvalds sur son ordinateur
+personnel, il a au fil des années était porté sur de nombreuses architectures et
+s'est enrichi de nombreux pilotes de périphériques. En 20XX, son code source
+comporte 8.8 millions de lignes de code (en grande majorité du C) dont 55\% de
+pilotes.
+
+% TODO fix le XX
+% TODO mettre à jour
+
+Même si le noyau est monolithique (la majeure partie des traitements s'effectue
+au sein d'un même fichier objet), les sous-systèmes sont indépendants. C'est ce
+qui permet d'écrire des pilotes de périphériques et des modules.
+
+\section{GNU C}
+
+Linux est écrit dans le langage C, mais pas sa version normalisée. Il utilise le
+dialecte GNU C qui est celui que supporte GCC.
+
+Pour traduire ce dialecte, il a été nécessaire d'adapter \texttt{c2newspeak}. La
+principale particularité est la notation \texttt{\_\_attribute\_\_((...))} qui
+peut décorer les déclarations de fonctions, de variables ou de types. De
+nouvelles fonctionnalités sont aussi présentes.
+
+Par exemple, il est possible de manipuler des étiquettes de première classe : si
+\texttt{lbl:} est présent avant une instruction, on peut capturer l'adresse de
+celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement avec
+\texttt{goto *p}.
+
+Une autre fonctionnalité est le concept d'instruction-expression :
+\texttt{(\{bloc\})}) est une expression, dont la valeur est celle de la dernière
+expression évaluée lors de \texttt{i}.
+
+Les attributs, quant à eux, rentrent dans trois catégories :
+
+\begin{itemize}
+  \item les annotations de compilation ; par exemple, \texttt{used} désactive
+    l'avertissement ``cette variable n'est pas utilisée ''.
+
+  \item les optimisations ; par exemple, les objets marqués \texttt{hot} sont
+    groupés de telle manière qu'ils se retrouvent en cache ensemble.
+
+  \item les annotations de bas niveau ; par exemple, \texttt{aligned(n)}
+    spécifie qu'un objet doit être aligné sur au moins \texttt{n} bits.
+\end{itemize}
+
+Dans notre cas, toutes ces annotations peuvent être ignorées.
+
+\section{Configuration}
+
+Pour que le code noyau soit compilable, il est nécessaire de définir certaines
+macros. En particulier, le système de configuration de Linux utilise des macros
+nommées \texttt{CONFIG\_*} pour inclure ou non certaines fonctionnalités. Il a
+donc fallu faire un choix ; nous avons choisi la configuration par défaut. Pour
+analyser des morceaux plus importants du noyau, il faudrait définir un fichier
+de configuration plus important.
+
+\section{Bug}
+
+On décrit le cas d'un pilote video qui contenait un bug de pointeur utilisateur.
+Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340. 
+
+Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
+\emph{Kernel Mode Setting}(KMS).
+
+Pour configurer un périphérique, l'utilisateur communique avec le pilote noyau
+avec le mécanisme d'\emph{ioctls}\footnote{
+  Ce nom vient de la fonction \texttt{ioctl()} pour
+  \emph{Input/Output Control}
+}.
+Ils sont similaires à des appels système, mais spécifique à un périphérique
+particulier. Les fonctions implantant un \emph{ioctl} sont donc vulnérables à la
+même classe d'attaques que les appels système, et donc doivent être écrits avec
+une attention particulière.
+
+Le code suivant est présent dans le pilote KMS pour les GPU AMD Radeon :
+
+\begin{verbatim}
+/* from drivers/gpu/drm/radeon/radeon_kms.c */
+int radeon_info_ioctl(struct drm_device *dev,
+                      void *data,
+                      struct drm_file *filp) {
+	struct radeon_device *rdev =
+            dev->dev_private;
+	struct drm_radeon_info *info;
+	struct radeon_mode_info *minfo =
+            &rdev->mode_info;
+	uint32_t *value_ptr;
+	uint32_t value;
+	struct drm_crtc *crtc;
+	int i, found;
+
+	info = data;
+	value_ptr = (uint32_t *)
+            ((unsigned long)info->value);
+	value = *value_ptr;
+        [...]
+}
+\end{verbatim}
+
+On peut voit que l'argument \texttt{data} est converti en un \texttt{struct
+drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
+\texttt{value}, et finalement ce pointeur est déréferencé.
+
+Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
+en espace noyau) du type suivant, dont les champs proviennent d'un appel
+utilisateur de \texttt{ioctl}.
+
+\begin{verbatim}
+/* from include/drm/radeon_drm.h */
+struct drm_radeon_info {
+  uint32_t    request;
+  uint32_t    pad;
+  uint64_t    value;
+};
+\end{verbatim}
+
+Pour mettre ce problème en évidence, nous avons annoté la fonction
+\texttt{radeon\_info\_ioctl} de telle manière que son second paramètre soit un
+pointeur noyau vers une structure contenant un champ \qUser, \texttt{value}.
+Ceci est possible puisqu'avant la traduction, on efface les types présents dans
+le programme C. Ainsi, un pointeur ne peut pas être distingué d'un entier
+transtypé en un pointeur. Avec cette configuration, nous obtenons une erreur de
+type à la ligne 16.
+
+La bonne manière de faire a été publiée avec le numéro de \emph{commit}
+\texttt{d8ab3557} et consiste à remplacer la ligne 16 par :
+
+\begin{verbatim}
+if (DRM_COPY_FROM_USER(&value, value_ptr,
+                       sizeof(value)))
+        return -EFAULT;
+\end{verbatim}
+
+(\texttt{DRM\_COPY\_FROM\_USER} étant une simple macro pout
+\texttt{copy\_from\_user}). Dans ce cas, on n'obtient pas d'erreur de typage.
+
 \section{Description du problème}
 
 \wip{}
@@ -141,78 +281,3 @@ Le principe de cette technique (associer des types aux valeurs puis restreindre
 les opérations sur certains types) peut être repris. Par exemple, si on définit
 un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peut
 considérer que multiplier deux telles valeurs est une erreur.
-
-\section*{Extrait PLAS}
-
-We now describe the case of a linux kernel video driver that involved a
-user/kernel pointer bug. It is listed on the \url{http://freedesktop.org} bug
-tracker as \#29340.
-
-To switch graphic modes, GPU drivers can support Kernel Mode Setting (KMS). To
-configure a device, the user has to communicate with the kernel driver with a
-mechanism known as \emph{ioctls} Named after the function \texttt{ioctl()} for
-Input/Output Control, they are a sort of device-specific system call mechanism.
-As such, these class of functions manipulate user-supplied pointers and need to
-be written with care.
-
-The following code is part of the KMS driver for AMD Radeon devices:
-
-\begin{verbatim}
-/* from drivers/gpu/drm/radeon/radeon_kms.c */
-int radeon_info_ioctl(struct drm_device *dev,
-                      void *data,
-                      struct drm_file *filp) {
-	struct radeon_device *rdev =
-            dev->dev_private;
-	struct drm_radeon_info *info;
-	struct radeon_mode_info *minfo =
-            &rdev->mode_info;
-	uint32_t *value_ptr;
-	uint32_t value;
-	struct drm_crtc *crtc;
-	int i, found;
-
-	info = data;
-	value_ptr = (uint32_t *)
-            ((unsigned long)info->value);
-	value = *value_ptr;
-        [...]
-}
-\end{verbatim}
-
-We can see that the argument \texttt{data} is converted to a \texttt{struct
-drm\_radeon\_info *}. A pointer \texttt{value\_ptr} is extracted from its
-\texttt{value} field, and finally this pointer is dereferenced.
-
-However, the argument \texttt{data} is a pointer to a (kernel-allocated)
-structure of the following type, whose fields come from a userland
-\texttt{ioctl} invocation.
-
-\begin{verbatim}
-/* from include/drm/radeon_drm.h */
-struct drm_radeon_info {
-  uint32_t    request;
-  uint32_t    pad;
-  uint64_t    value;
-};
-\end{verbatim}
-
-To show that this is buggy, we annotated the function
-\texttt{radeon\_info\_ioctl} so that its second parameter is a kernel pointer to
-a structure containing a \qUser field \texttt{value}. This is possible because
-we erase the types present in the C program before translation. So, an pointer
-cannot be distinguished from a integer casted to a pointer. Using this, we
-obtain a type error at line 16.
-
-The good way to proceed was recorded as commit number \texttt{d8ab3557} by
-replacing line 16 by:
-
-\begin{verbatim}
-if (DRM_COPY_FROM_USER(&value, value_ptr,
-                       sizeof(value)))
-        return -EFAULT;
-\end{verbatim}
-
-(\texttt{DRM\_COPY\_FROM\_USER} being a simple wrapper macro for
-\texttt{copy\_from\_user}). In that case, we obtain no type error.
-
