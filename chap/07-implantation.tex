@@ -676,6 +676,132 @@ TODO :
 Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
 (figure~\ref{fig:exunif:tpk}).
 
+\section{Unification}
+
+% template {{{
+%\begin{Verbatim}
+%\end{Verbatim} % }}}
+
+Fonction \texttt{shorten} :
+
+% shorten {{{
+\begin{Verbatim}
+let rec shorten = function
+  | Var ({contents = Instanciated (Var _ as t)} as vt) ->
+      let t2 = shorten t in
+      vt := Instanciated t;
+      t2
+  | Var {contents = Instanciated t} -> t
+  | t -> t
+\end{Verbatim}
+% }}}
+
+Fonction \texttt{unify_now} :
+
+% unify_now % {{{
+\begin{Verbatim}
+let rec unify_now ta tb =
+  let sta = shorten ta in
+  let stb = shorten tb in
+  match (sta, stb) with
+  | ((Var ({contents = Unknown na} as ra)),
+     (Var  {contents = Unknown nb})) ->
+       begin
+         if na <> nb then
+           ra := Instanciated stb
+       end
+  | ((Var ({contents = Unknown {id = n}} as r)), t)
+    ->
+      begin
+        if occurs n t then
+          occurs_check_failed sta stb
+        else
+          r := Instanciated t
+      end
+  | (_, (Var ({contents = Unknown _}))) -> unify_now stb sta
+
+  | Int, Int
+  | Float, Float -> ()
+
+  | Ptr (qa, ta), Ptr (qb, tb) ->
+      unify_quals qa qb;
+      unify_now ta tb
+
+  | Array a, Array b -> unify_now a b
+
+  | Fun (args_a, rets_a), Fun (args_b, rets_b) ->
+      List.iter2 unify_now args_a args_b;
+      List.iter2 unify_now rets_a rets_b
+
+  | Struct rfa, Struct rfb ->
+      let fa = !rfa in
+      let fb = !rfb in
+
+      let new_a = ref [] in
+      let new_b = ref [] in
+
+      let unify_fields = function
+        | _, InBoth (ta, tb) -> unify_now ta tb
+        | k, OnlyL f -> new_b := (k,f) :: !new_b
+        | k, OnlyR f -> new_a := (k,f) :: !new_a
+      in
+
+      List.iter unify_fields (compare_lists fa fb);
+      let by_offset (x, _) (y, _) =
+        compare x y
+      in
+      rfa := List.sort by_offset (!new_a @ !rfa);
+      rfb := List.sort by_offset (!new_b @ !rfb)
+
+  | _ -> type_clash sta stb
+\end{Verbatim}
+% }}}
+
+Sur les qualificateurs :
+
+% shorten_q {{{
+\begin{Verbatim}
+let rec shorten_q = function
+  | QVar ({contents = Instanciated (QVar _ as t)} as vt) ->
+      let t2 = shorten_q t in
+      vt := Instanciated t;
+      t2
+  | QVar {contents = Instanciated t} -> t
+  | t -> t
+\end{Verbatim}
+% }}}
+
+et :
+
+% unify_quals {{{
+\begin{Verbatim}
+let rec unify_quals a b =
+  let sa = shorten_q a in
+  let sb = shorten_q b in
+  match (sa, sb) with
+  | User, User -> ()
+  | Kernel, Kernel -> ()
+  | ((QVar ({contents = Unknown na} as ra)),
+     (QVar  {contents = Unknown nb})) ->
+       begin
+         if na <> nb then
+           ra := Instanciated sb
+       end
+  | ((QVar ({contents = Unknown {id = n}} as r)), q)
+    ->
+      begin
+        if occurs_q n q then
+          occurs_q_check_failed sa sb
+        else
+          r := Instanciated q
+      end
+  | (_, (QVar ({contents = Unknown _}))) -> unify_quals sb sa
+  | _ -> Utils.error "Cannot unify qualifiers:\n  %s\n  %s\n"
+                        (string_of_qual sa)
+                        (string_of_qual sb)
+\end{Verbatim}
+% }}}
+
 \section{Exemple}
 
 Lançons l'analyse sur un petit exemple :
