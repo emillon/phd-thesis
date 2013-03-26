@@ -67,7 +67,7 @@ On décrit le cas d'un pilote video qui contenait un bug de pointeur utilisateur
 Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340. 
 
 Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
-\emph{Kernel Mode Setting}(KMS).
+\emph{Kernel Mode Setting} (KMS).
 
 Pour configurer un périphérique, l'utilisateur communique avec le pilote noyau
 avec le mécanisme d'\emph{ioctls}\footnote{
@@ -110,7 +110,7 @@ drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
 
 Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
 en espace noyau) du type suivant, dont les champs proviennent d'un appel
-utilisateur de \texttt{ioctl}.
+utilisateur de \texttt{ioctl()}.
 
 \begin{verbatim}
 /* from include/drm/radeon_drm.h */
@@ -129,6 +129,8 @@ le programme C. Ainsi, un pointeur ne peut pas être distingué d'un entier
 transtypé en un pointeur. Avec cette configuration, nous obtenons une erreur de
 type à la ligne 16.
 
+L'intégralité de ce code peut être trouvée en annexe~\ref{cha:code-noyau}.
+
 La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 \texttt{d8ab3557} et consiste à remplacer la ligne 16 par :
 
@@ -140,6 +142,22 @@ if (DRM_COPY_FROM_USER(&value, value_ptr,
 
 (\texttt{DRM\_COPY\_FROM\_USER} étant une simple macro pout
 \texttt{copy\_from\_user}). Dans ce cas, on n'obtient pas d'erreur de typage.
+
+\section{Détails}
+
+Pour utiliser notre système de types, plusieurs étapes sont nécessaires en plus
+de traduire le noyau linux en \langname.
+
+% TODO et l'assembleur inline?
+
+\begin{itemize}
+\item
+  annotation des sources
+\item
+  réécriture des fonctions sures avec $\phxx{\uGet}$ et $\phxx{\uPut}$
+\item
+  inférence de type
+\end{itemize}
 
 \section{Description du problème}
 
