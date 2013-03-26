@@ -56,15 +56,6 @@ commentaires sont aussi supprimés.
 
 % TODO comment interpréter les /*!npk xxx */ ?
 
-Pour que le code noyau soit compilable, il est nécessaire de définir certaines
-macros. En particulier, le système de configuration de Linux utilise des macros
-nommées \texttt{CONFIG\_*} pour inclure ou non certaines fonctionnalités. Il a
-donc fallu faire un choix ; nous avons choisi la configuration par défaut. Pour
-analyser des morceaux plus importants du noyau, il faudrait définir un fichier
-de configuration plus important.
-
-% TODO ce para peut aller dans le chapitre cas d'étude
-
 Une fois cette passe effectuée, nous avons des fichiers C prétraités,
 c'est à dire des unités de compilation autocontenues. % TODO bof
 
@@ -76,38 +67,6 @@ traduit vers Newspeak. Dans cette étape, les types et les noms sont résolus, e
 le programme est annoté de manière à rendre les prochaines étapes indépendante
 du contexte. Par exemple, chaque déclaration de variable est adjointe d'une
 description complète du type.
-
-Puisque Linux est écrit dans le dialecte ``GNU C'', il a été nécessaire
-d'adapter \texttt{c2newspeak}. La principale particularité est la notation
-\texttt{\_\_attribute\_\_((...))} qui peut décorer les déclarations de
-fonctions, de variables ou de types. De nouvelles fonctionnalités sont aussi
-présentes.
-
-Par exemple, il est possible de manipuler des étiquettes de première classe : si
-\texttt{lbl:} est présent avant une instruction, on peut capturer l'adresse de
-celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement avec
-\texttt{goto *p}.
-
-Une autre fonctionnalité est le concept d'instruction-expression :
-\texttt{(\{bloc\})}) est une expression, dont la valeur est celle de la dernière
-expression évaluée lors de \texttt{i}.
-
-Les attributs, quant à eux, rentrent dans trois catégories :
-
-\begin{itemize}
-  \item les annotations de compilation ; par exemple, \texttt{used} désactive
-    l'avertissement ``cette variable n'est pas utilisée ''.
-
-  \item les optimisations ; par exemple, les objets marqués \texttt{hot} sont
-    groupés de telle manière qu'ils se retrouvent en cache ensemble.
-
-  \item les annotations de bas niveau ; par exemple, \texttt{aligned(n)}
-    spécifie qu'un objet doit être aligné sur au moins \texttt{n} bits.
-\end{itemize}
-
-Dans notre cas, toutes ces annotations peuvent être ignorées.
-
-% TODO pê tout ça dans le chap suivant
 
 Lors de cette étape, le flôt de contrôle est également simplifié. C en effet
 propose de nombreuses constructions ambigües ou redondantes.
@@ -195,7 +154,6 @@ f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
 
 Soit en syntaxe ML :
 
-\begin{center}
 \begin{Verbatim}
 let f x y =
   plus
@@ -205,7 +163,6 @@ let f x y =
     )
     y
 \end{Verbatim}
-\end{center}
 
 Puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce doit être
 un tuple. En outre on additionne ces deux composantes ensemble, donc elles
@@ -698,7 +655,6 @@ constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 
 \end{itemize}
 
-
 TODO :
 
 \begin{itemize}
@@ -720,28 +676,212 @@ TODO :
 Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
 (figure~\ref{fig:exunif:tpk}).
 
-\section*{Extrait PLAS}
+\section{Unification}
 
-The language described above, as well as a type inference algorithm, have been
-implemented in OCaml as part of the Newspeak framework of program
-analysis\cite{newspeak}. It is released under the GNU Lesser General Public
-License, and is available on \texttt{http://penjili.org} (directory
-\texttt{src/ptrtype} in the distribution). Our implementation consists of the
-following steps.
+% template {{{
+%\begin{Verbatim}
+%\end{Verbatim} % }}}
 
-but to analyze larger parts of the kernel, it may be
-necessary to define a ``maximal'' configuration file (which is impossible
-because of incompatibilities between some options).
+Fonction \texttt{shorten} :
 
+% shorten {{{
+\begin{Verbatim}
+let rec shorten = function
+  | Var ({contents = Instanciated (Var _ as t)} as vt) ->
+      let t2 = shorten t in
+      vt := Instanciated t;
+      t2
+  | Var {contents = Instanciated t} -> t
+  | t -> t
+\end{Verbatim}
+% }}}
 
+Fonction \texttt{unify_now} :
 
-Let us run the analysis on a small example:
+% unify_now % {{{
+\begin{Verbatim}
+let rec unify_now ta tb =
+  let sta = shorten ta in
+  let stb = shorten tb in
+  match (sta, stb) with
+  | ((Var ({contents = Unknown na} as ra)),
+     (Var  {contents = Unknown nb})) ->
+       begin
+         if na <> nb then
+           ra := Instanciated stb
+       end
+  | ((Var ({contents = Unknown {id = n}} as r)), t)
+    ->
+      begin
+        if occurs n t then
+          occurs_check_failed sta stb
+        else
+          r := Instanciated t
+      end
+  | (_, (Var ({contents = Unknown _}))) -> unify_now stb sta
+
+  | Int, Int
+  | Float, Float -> ()
+
+  | Ptr (qa, ta), Ptr (qb, tb) ->
+      unify_quals qa qb;
+      unify_now ta tb
+
+  | Array a, Array b -> unify_now a b
+
+  | Fun (args_a, rets_a), Fun (args_b, rets_b) ->
+      List.iter2 unify_now args_a args_b;
+      List.iter2 unify_now rets_a rets_b
+
+  | Struct rfa, Struct rfb ->
+      let fa = !rfa in
+      let fb = !rfb in
+
+      let new_a = ref [] in
+      let new_b = ref [] in
+
+      let unify_fields = function
+        | _, InBoth (ta, tb) -> unify_now ta tb
+        | k, OnlyL f -> new_b := (k,f) :: !new_b
+        | k, OnlyR f -> new_a := (k,f) :: !new_a
+      in
+
+      List.iter unify_fields (compare_lists fa fb);
+      let by_offset (x, _) (y, _) =
+        compare x y
+      in
+      rfa := List.sort by_offset (!new_a @ !rfa);
+      rfb := List.sort by_offset (!new_b @ !rfb)
+
+  | _ -> type_clash sta stb
+\end{Verbatim}
+% }}}
+
+Sur les qualificateurs :
+
+% shorten_q {{{
+\begin{Verbatim}
+let rec shorten_q = function
+  | QVar ({contents = Instanciated (QVar _ as t)} as vt) ->
+      let t2 = shorten_q t in
+      vt := Instanciated t;
+      t2
+  | QVar {contents = Instanciated t} -> t
+  | t -> t
+\end{Verbatim}
+% }}}
+
+et :
+
+% unify_quals {{{
+\begin{Verbatim}
+let rec unify_quals a b =
+  let sa = shorten_q a in
+  let sb = shorten_q b in
+  match (sa, sb) with
+  | User, User -> ()
+  | Kernel, Kernel -> ()
+  | ((QVar ({contents = Unknown na} as ra)),
+     (QVar  {contents = Unknown nb})) ->
+       begin
+         if na <> nb then
+           ra := Instanciated sb
+       end
+  | ((QVar ({contents = Unknown {id = n}} as r)), q)
+    ->
+      begin
+        if occurs_q n q then
+          occurs_q_check_failed sa sb
+        else
+          r := Instanciated q
+      end
+  | (_, (QVar ({contents = Unknown _}))) -> unify_quals sb sa
+  | _ -> Utils.error "Cannot unify qualifiers:\n  %s\n  %s\n"
+                        (string_of_qual sa)
+                        (string_of_qual sb)
+\end{Verbatim}
+% }}}
+
+\section{Système de type}
+
+% infer_stmtkind {{{
+\begin{Verbatim}
+let rec infer_stmtkind env sk =
+  match sk with
+  | T.Set (lv, e, st) ->
+      let lv' = infer_lv env lv in
+      let tlv = lval_type env lv in
+      let (_, te) as e' = infer_exp env e in
+      unify te tlv;
+      T.Set (lv', e', st)
+  | T.Select (a, b) ->
+      let a' = infer_blk env a in
+      let b' = infer_blk env b in
+      T.Select (a', b')
+  | T.InfLoop blk ->
+      let blk' = infer_blk env blk in
+      T.InfLoop blk'
+  | T.DoWith (blk, lbl) ->
+      let new_env = Env.add_lbl lbl env in
+      let blk' = infer_blk new_env blk in
+      T.DoWith (blk', lbl)
+  | T.Goto lbl ->
+      Env.assert_lbl lbl env;
+      T.Goto lbl
+  | T.Decl (n, nty, _ty, blk) ->
+      let var = T.Local n in
+      let t0 = new_unknown () in
+      let new_env = Env.add (VLocal n) (Some nty) t0 env in
+      let blk' = infer_blk new_env blk in
+      let ty = lval_type new_env var in
+      T.Decl (n, nty, ty, blk')
+  | T.UserSpec a -> T.UserSpec (infer_assertion env a)
+  | T.Copy (dst, src, sz) ->
+      let dst' = infer_lv env dst in
+      let src' = infer_lv env src in
+      T.Copy (dst', src', sz)
+  | T.Guard e -> T.Guard (infer_exp env e)
+  | T.Call (args, fexp, rets) ->
+      (*
+       * Warning : plumbing ahead.
+       *
+       * Nothing interesting here : we just construct a Fun type corresponding
+       * to the actual arguments and unify it with the formal arguments from
+       * the environment.
+       *)
+
+      let infer_arg (e, nt) =
+        let et = infer_exp env e in
+        (et, nt)
+      in
+
+      let infer_ret (lv, nt) =
+        (infer_lv env lv, nt)
+      in
+
+      let args' = List.map infer_arg args in
+      let rets' = List.map infer_ret rets in
+
+      let t_args = List.map (fun ((_, t), _) -> t) args' in
+      let t_rets = List.map (fun (lv, _) -> lval_type env lv) rets' in
+
+      let (fexp', tf) = infer_funexp env fexp in
+      let call_type = Fun (t_args, t_rets) in
+      unify tf call_type;
+
+      T.Call (args', fexp', rets')
+\end{Verbatim}
+% }}}
+
+\section{Exemple}
+
+Lançons l'analyse sur un petit exemple :
 
 \begin{verbatim}
 int f(int *x) { return (*x + 1); }
 \end{verbatim}
 
-Running our analyzer outputs a fully annotated program:
+L'exécution de notre analyseur affiche un programme complètement annoté :
 
 \begin{verbatim}
  % ptrtype example.c
@@ -759,13 +899,13 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 }
 \end{verbatim}
 
-The \texttt{coerce[a,b]} operator is a Newspeak artifact to detect integer
-overflows when doing a value analysis by abstract interpretation. For the
-purposes of this paper, it can be seen as the identity function typed
-$(\tInt) → \tInt$.
+L'opérateur \texttt{coerce[a,b]} est un artefact de Newspeak, destiné à détecter
+les débordements d'entiers lors d'une analyse de valeurs par interprétation
+abstraite. Dans le cas de notre analyse, les valeurs ne sont pas pertinentes et
+cet opérateur peut être vu que comme un ``plus'' unaire typé $(\tInt) → \tInt$.
 
-\emph{A contrario}, when it is not possible to type check, the analyzer bails
-out with an error.
+\emph{A contrario}, lorsqu'il n'est pas possible d'inférer des types
+compatibles, l'analyseur s'arrête avec une erreur.
 
 \begin{verbatim}
 void f(int *p) {
@@ -774,9 +914,9 @@ void f(int *p) {
 }
 \end{verbatim}
 
-The \texttt{/*!npk userptr p */} comment is interpreted by the analyzer and
-causes it to unify the type of \texttt{p} with $t~\qUser~*$, effectively
-forcing its qualifier.
+Le commentaire \texttt{/*!npk userptr p */} est interpréter par l'analyseur et
+le fait unifier le type de \texttt{p} avec $t~\qUser~*$, c'est à dire qu'il
+force son qualificateur à être \qUser.
 
 \begin{verbatim}
 04-addrof.c:4#4 - Cannot unify qualifiers:
@@ -784,9 +924,20 @@ forcing its qualifier.
   User
 \end{verbatim}
 
-We just signal the location where a unification failed, but it is possible to
-keep track of all the unification sites to create a trace, easier to debug.
+On signale l'emplacement où la dernière unification a échoué.
 
+\section*{Extrait PLAS}
+
+The language described above, as well as a type inference algorithm, have been
+implemented in OCaml as part of the Newspeak framework of program
+analysis\cite{newspeak}. It is released under the GNU Lesser General Public
+License, and is available on \texttt{http://penjili.org} (directory
+\texttt{src/ptrtype} in the distribution). Our implementation consists of the
+following steps.
+
+but to analyze larger parts of the kernel, it may be
+necessary to define a ``maximal'' configuration file (which is impossible
+because of incompatibilities between some options).
 
 
 % vim: spelllang=fr
