@@ -676,28 +676,15 @@ TODO :
 Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
 (figure~\ref{fig:exunif:tpk}).
 
-\section*{Extrait PLAS}
+\section{Exemple}
 
-The language described above, as well as a type inference algorithm, have been
-implemented in OCaml as part of the Newspeak framework of program
-analysis\cite{newspeak}. It is released under the GNU Lesser General Public
-License, and is available on \texttt{http://penjili.org} (directory
-\texttt{src/ptrtype} in the distribution). Our implementation consists of the
-following steps.
-
-but to analyze larger parts of the kernel, it may be
-necessary to define a ``maximal'' configuration file (which is impossible
-because of incompatibilities between some options).
-
-
-
-Let us run the analysis on a small example:
+Lançons l'analyse sur un petit exemple :
 
 \begin{verbatim}
 int f(int *x) { return (*x + 1); }
 \end{verbatim}
 
-Running our analyzer outputs a fully annotated program:
+L'exécution de notre analyseur affiche un programme complètement annoté :
 
 \begin{verbatim}
  % ptrtype example.c
@@ -715,13 +702,13 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 }
 \end{verbatim}
 
-The \texttt{coerce[a,b]} operator is a Newspeak artifact to detect integer
-overflows when doing a value analysis by abstract interpretation. For the
-purposes of this paper, it can be seen as the identity function typed
-$(\tInt) → \tInt$.
+L'opérateur \texttt{coerce[a,b]} est un artefact de Newspeak, destiné à détecter
+les débordements d'entiers lors d'une analyse de valeurs par interprétation
+abstraite. Dans le cas de notre analyse, les valeurs ne sont pas pertinentes et
+cet opérateur peut être vu que comme un ``plus'' unaire typé $(\tInt) → \tInt$.
 
-\emph{A contrario}, when it is not possible to type check, the analyzer bails
-out with an error.
+\emph{A contrario}, lorsqu'il n'est pas possible d'inférer des types
+compatibles, l'analyseur s'arrête avec une erreur.
 
 \begin{verbatim}
 void f(int *p) {
@@ -730,9 +717,9 @@ void f(int *p) {
 }
 \end{verbatim}
 
-The \texttt{/*!npk userptr p */} comment is interpreted by the analyzer and
-causes it to unify the type of \texttt{p} with $t~\qUser~*$, effectively
-forcing its qualifier.
+Le commentaire \texttt{/*!npk userptr p */} est interpréter par l'analyseur et
+le fait unifier le type de \texttt{p} avec $t~\qUser~*$, c'est à dire qu'il
+force son qualificateur à être \qUser.
 
 \begin{verbatim}
 04-addrof.c:4#4 - Cannot unify qualifiers:
@@ -740,9 +727,20 @@ forcing its qualifier.
   User
 \end{verbatim}
 
-We just signal the location where a unification failed, but it is possible to
-keep track of all the unification sites to create a trace, easier to debug.
+On signale l'emplacement où la dernière unification a échoué.
 
+\section*{Extrait PLAS}
+
+The language described above, as well as a type inference algorithm, have been
+implemented in OCaml as part of the Newspeak framework of program
+analysis\cite{newspeak}. It is released under the GNU Lesser General Public
+License, and is available on \texttt{http://penjili.org} (directory
+\texttt{src/ptrtype} in the distribution). Our implementation consists of the
+following steps.
+
+but to analyze larger parts of the kernel, it may be
+necessary to define a ``maximal'' configuration file (which is impossible
+because of incompatibilities between some options).
 
 
 % vim: spelllang=fr
