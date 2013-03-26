@@ -802,6 +802,77 @@ let rec unify_quals a b =
 \end{Verbatim}
 % }}}
 
+\section{Système de type}
+
+% infer_stmtkind {{{
+\begin{Verbatim}
+let rec infer_stmtkind env sk =
+  match sk with
+  | T.Set (lv, e, st) ->
+      let lv' = infer_lv env lv in
+      let tlv = lval_type env lv in
+      let (_, te) as e' = infer_exp env e in
+      unify te tlv;
+      T.Set (lv', e', st)
+  | T.Select (a, b) ->
+      let a' = infer_blk env a in
+      let b' = infer_blk env b in
+      T.Select (a', b')
+  | T.InfLoop blk ->
+      let blk' = infer_blk env blk in
+      T.InfLoop blk'
+  | T.DoWith (blk, lbl) ->
+      let new_env = Env.add_lbl lbl env in
+      let blk' = infer_blk new_env blk in
+      T.DoWith (blk', lbl)
+  | T.Goto lbl ->
+      Env.assert_lbl lbl env;
+      T.Goto lbl
+  | T.Decl (n, nty, _ty, blk) ->
+      let var = T.Local n in
+      let t0 = new_unknown () in
+      let new_env = Env.add (VLocal n) (Some nty) t0 env in
+      let blk' = infer_blk new_env blk in
+      let ty = lval_type new_env var in
+      T.Decl (n, nty, ty, blk')
+  | T.UserSpec a -> T.UserSpec (infer_assertion env a)
+  | T.Copy (dst, src, sz) ->
+      let dst' = infer_lv env dst in
+      let src' = infer_lv env src in
+      T.Copy (dst', src', sz)
+  | T.Guard e -> T.Guard (infer_exp env e)
+  | T.Call (args, fexp, rets) ->
+      (*
+       * Warning : plumbing ahead.
+       *
+       * Nothing interesting here : we just construct a Fun type corresponding
+       * to the actual arguments and unify it with the formal arguments from
+       * the environment.
+       *)
+
+      let infer_arg (e, nt) =
+        let et = infer_exp env e in
+        (et, nt)
+      in
+
+      let infer_ret (lv, nt) =
+        (infer_lv env lv, nt)
+      in
+
+      let args' = List.map infer_arg args in
+      let rets' = List.map infer_ret rets in
+
+      let t_args = List.map (fun ((_, t), _) -> t) args' in
+      let t_rets = List.map (fun (lv, _) -> lval_type env lv) rets' in
+
+      let (fexp', tf) = infer_funexp env fexp in
+      let call_type = Fun (t_args, t_rets) in
+      unify tf call_type;
+
+      T.Call (args', fexp', rets')
+\end{Verbatim}
+% }}}
+
 \section{Exemple}
 
 Lançons l'analyse sur un petit exemple :
