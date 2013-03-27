@@ -131,17 +131,19 @@ type à la ligne 16.
 
 L'intégralité de ce code peut être trouvée en annexe~\ref{cha:code-noyau}.
 
+\begin{figure}
+  \insertcode{radeon-git-mini.diff}
+
+  \caption{Patch résolvant le problème de pointeur utilisateur.}
+  \label{fig:linux-patch}
+\end{figure}
+
+% TODO décrire syntaxe unified diff
+
 La bonne manière de faire a été publiée avec le numéro de \emph{commit}
-\texttt{d8ab3557} et consiste à remplacer la ligne 16 par :
-
-\begin{verbatim}
-if (DRM_COPY_FROM_USER(&value, value_ptr,
-                       sizeof(value)))
-        return -EFAULT;
-\end{verbatim}
-
-(\texttt{DRM\_COPY\_FROM\_USER} étant une simple macro pout
-\texttt{copy\_from\_user}). Dans ce cas, on n'obtient pas d'erreur de typage.
+\texttt{d8ab3557} (figure~\ref{fig:linux-patch}) (\texttt{DRM\_COPY\_FROM\_USER}
+étant une simple macro pout \texttt{copy\_from\_user}). Dans ce cas, on
+n'obtient pas d'erreur de typage.
 
 \section{Détails}
 
