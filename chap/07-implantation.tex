@@ -758,7 +758,24 @@ let rec shorten = function
 La fonction d'unification, quant à elle, commence par raccourcir ses deux
 arguments puis faire une analyse de cas par filtrage.
 
-Les cas principaux sont :
+Les cas principaux pour unifier deux types réduits \texttt{sta} et \texttt{stb}
+sont :
+
+\begin{itemize}
+
+\item \texttt{sta} et \texttt{stb} sont deux inconnues. Alors on modifie l'un
+  pour pointer sur l'autre. Les références étant uniques et partagées, cela
+  revient à substituer l'un par l'autre dans toutes les représentations de
+  types.
+
+\item Un type est concret, l'autre une inconnue. Dans ce cas on modifie le
+  second comme étant un \texttt{Instanciated} du premier. Il faut vérifier que
+  le type inconnu remplacé n'apparaît pas dans le type concret, sinon on créé un
+  cycle. Ce cas a lieu par exemple quand on cherche à unifier $a$ avec
+  $a~\qKernel~*$. Il faut alors signaler une erreur, ce que fait la fonction
+  \texttt{occurs\_check\_failed}.
+
+\end{itemize}
 
 fonction \texttt{unify_now} (figure~\ref{fig:implem-unify-now}).
 
