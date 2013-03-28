@@ -775,9 +775,25 @@ sont :
   $a~\qKernel~*$. Il faut alors signaler une erreur, ce que fait la fonction
   \texttt{occurs\_check\_failed}.
 
+\item Les deux types sont des types concrets. Alors ils sont de la forme
+  respective
+  $C (t_1, …, t_n)$
+  et
+  $D (u_1, …, u_m)$ où $C$ et $D$ sont des constructeurs de type avec
+  respectivement $n$ et $m$ arguments
+  \footnote{
+    Le cas $n = 0$ ou $m = 0$ correspond aux types concrets comme $\tInt$ ou
+    $\tFloat$.
+  }. Si $C = D$ et
+  $n = m$, alors on unifie récursivementchaque $t_i$ avec $u_i$. Sinon on lève une erreur
+  (fonction \texttt{type\_clash}).
+
+  % TODO structures
+
 \end{itemize}
 
-fonction \texttt{unify_now} (figure~\ref{fig:implem-unify-now}).
+Cette analyse de cas est implantée dans la fonction \texttt{unify_now}
+(figure~\ref{fig:implem-unify-now}).
 
 \begin{figure}
 % unify_now % {{{
@@ -855,11 +871,11 @@ let unify_structs rfa rfb =
 \label{fig:implem-unify-structs}
 \end{figure}
 
+Pour les pointeurs, il est nécessaire de définir des fonctions similaires sur
+les qualificateurs (figure~\ref{fig:implem-qualifs}).
 
-
-Sur les qualificateurs :
-
-% shorten_q {{{
+\begin{figure}
+% qualifs {{{
 \begin{Verbatim}
 let rec shorten_q = function
   | QVar ({contents = Instanciated (QVar _ as t)} as vt) ->
@@ -868,13 +884,7 @@ let rec shorten_q = function
       t2
   | QVar {contents = Instanciated t} -> t
   | t -> t
-\end{Verbatim}
-% }}}
 
-et :
-
-% unify_quals {{{
-\begin{Verbatim}
 let rec unify_quals a b =
   let sa = shorten_q a in
   let sb = shorten_q b in
@@ -901,6 +911,12 @@ let rec unify_quals a b =
                         (string_of_qual sb)
 \end{Verbatim}
 % }}}
+
+\caption{Implantation - qualificateurs}
+% TODO mettre des emdash
+\label{fig:implem-qualifs}
+
+\end{figure}
 
 \section{Système de types}
 
