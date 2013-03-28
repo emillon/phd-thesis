@@ -676,6 +676,62 @@ TODO :
 Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
 (figure~\ref{fig:exunif:tpk}).
 
+\clearpage
+
+\section{Architecture de \ptrtype}
+
+L'outil \ptrtype lit un programme Newspeak (ou un fichier C), et réalise
+l'inférence de qualificateurs. En sortie, il affiche soit le programme
+complètement annoté, soit une erreur. Le cœur de l'outil est dans la
+
+Si l'argument à \ptrtype est un fichier C, il est tout d'abord compilé vers
+Newspeak grâce à l'utilitaire \texttt{c2newspeak}. Ensuite, les autres passes
+travaillent sur une représentation intermédiaire proche de Newspeak, mais où des
+étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
+intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}.
+
+\begin{figure}
+\insertcode{implem-process.ml}
+\caption{Implantation -- fonction principale de \ptrtype}
+\label{fig:implem-process}
+\end{figure}
+
+Le reste de l'outil est résumé dans la fonction
+\texttt{process\_npk} (figure~\ref{fig:implem-process}) :
+
+\begin{itemize}
+
+\item Grâce à la fonction \texttt{convert_unit : Newspeak.t -> unit Tyspeak.t},
+  on ajoute des étiquettes ``vides'' (toutes égales à \texttt{() : unit}).
+
+\item L'ensemble des fonctions du programme est trié topologiquement selon la
+  relation $\prec$ définie par $f \prec g \eqdef \textrm{``} g \textrm{ apparaît
+  dans la définition de } f \textrm{''}$. Cela est fait en construisant une
+  représentation de $\prec$ sous forme de graphe, puis en faisant un parcours en
+  largeur de celui-ci.
+
+\item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
+  qui permet de créer un environnement initial.
+
+\item Les types de chaque fonction sont inférés, par le biais de la fonction
+  suivante :
+
+\begin{Verbatim}
+val infer : Newspeak.fid list
+         -> Types.simple Env.t
+         -> 'a Tyspeak.t
+         -> Types.simple Tyspeak.t
+\end{Verbatim}
+
+\item Ces types sont vérifiés. Cette étape est normalement redondante et est
+  donc optionnelle (l'option \texttt{--no-check} permet de la désactiver).
+
+\item Le programme obtenu, de type \texttt{Types.simple Tyspeak.t}, est affiché
+  sur le terminal.
+
+\end{itemize}
+
+
 \section{Unification}
 
 \begin{figure}
@@ -689,7 +745,11 @@ Les types \langname sont représentés soit par un constructeur de type ``résol
 immutable comme \texttt{Int}, soit par une référence dans le cas d'une variable
 inconnue (placée alors derrière le constructeur \texttt{Var}).
 
-Ces références contiennent une valeur du type \texttt{simple var\_type}, c'est à
+Ces références contiennent une valeur du type
+\texttt{simple var\_type}\footnote{
+  Ce type est polymorphe pour pouvoir être repris dans l'unification des
+  qualificateurs (figure~\ref{fig:implem-qualifs})..
+}, c'est à
 dire :
 
 \begin{itemize}
