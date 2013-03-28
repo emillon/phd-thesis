@@ -1,0 +1,25 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{let} \PY{n}{process\PYZus{}npk} \PY{n}{npk} \PY{o}{=}
+  \PY{k}{let} \PY{n}{tpk} \PY{o}{=} \PY{n+nn}{Npk2tpk}\PY{p}{.}\PY{n}{convert\PYZus{}unit} \PY{n}{npk} \PY{k}{in}
+  \PY{k}{let} \PY{n}{order} \PY{o}{=} \PY{n+nn}{Topological}\PY{p}{.}\PY{n}{topological\PYZus{}sort} \PY{o}{(}\PY{n+nn}{Topological}\PY{p}{.}\PY{n}{make\PYZus{}graph} \PY{n}{npk}\PY{o}{)} \PY{k}{in}
+
+  \PY{k}{let} \PY{n}{function\PYZus{}is\PYZus{}defined} \PY{n}{f} \PY{o}{=}
+    \PY{n+nn}{Hashtbl}\PY{p}{.}\PY{n}{mem} \PY{n}{tpk}\PY{o}{.}\PY{n+nn}{Tyspeak}\PY{p}{.}\PY{n}{fundecs} \PY{n}{f}
+  \PY{k}{in}
+
+  \PY{k}{let} \PY{o}{(}\PY{n}{internal\PYZus{}funcs}\PY{o}{,} \PY{n}{external\PYZus{}funcs}\PY{o}{)} \PY{o}{=}
+    \PY{n+nn}{List}\PY{p}{.}\PY{n}{partition} \PY{n}{function\PYZus{}is\PYZus{}defined} \PY{n}{order}
+  \PY{k}{in}
+
+  \PY{k}{let} \PY{n}{exttbl} \PY{o}{=} \PY{n+nn}{Printer}\PY{p}{.}\PY{n}{parse\PYZus{}external\PYZus{}type\PYZus{}annotations} \PY{n}{tpk} \PY{k}{in}
+
+  \PY{k}{let} \PY{n}{env} \PY{o}{=}
+    \PY{n}{env\PYZus{}add\PYZus{}external\PYZus{}fundecs} \PY{n}{exttbl} \PY{n}{external\PYZus{}funcs} \PY{n+nn}{Env}\PY{p}{.}\PY{n}{empty}
+  \PY{k}{in}
+  \PY{k}{let} \PY{n}{s} \PY{o}{=} \PY{n+nn}{Infer}\PY{p}{.}\PY{n}{infer} \PY{n}{internal\PYZus{}funcs} \PY{n}{env} \PY{n}{tpk} \PY{k}{in}
+  \PY{k}{begin}
+    \PY{k}{if} \PY{o}{!}\PY{n+nn}{Options}\PY{p}{.}\PY{n}{do\PYZus{}checks} \PY{k}{then}
+      \PY{n+nn}{Check}\PY{p}{.}\PY{n}{check} \PY{n}{env} \PY{n}{s}
+  \PY{k}{end}\PY{o}{;}
+  \PY{n+nn}{Printer}\PY{p}{.}\PY{n}{dump} \PY{n}{s}
+\end{Verbatim}

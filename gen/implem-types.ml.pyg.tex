@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{type} \PY{n}{unknown} \PY{o}{=} \PY{o}{\PYZob{}} \PY{n}{id} \PY{o}{:} \PY{k+kt}{int} \PY{o}{\PYZcb{}}
+
+\PY{k}{type} \PY{k}{'}\PY{n}{a} \PY{n}{var\PYZus{}type} \PY{o}{=}
+  \PY{o}{|} \PY{n+nc}{Unknown} \PY{k}{of} \PY{n}{unknown}
+  \PY{o}{|} \PY{n+nc}{Instanciated} \PY{k}{of} \PY{k}{'}\PY{n}{a}
+
+\PY{o+ow}{and} \PY{n}{qual} \PY{o}{=}
+  \PY{o}{|} \PY{n+nc}{Kernel}
+  \PY{o}{|} \PY{n+nc}{User}
+  \PY{o}{|} \PY{n+nc}{QVar} \PY{k}{of} \PY{n}{qual} \PY{n}{var\PYZus{}type} \PY{n}{ref}
+
+\PY{o+ow}{and} \PY{n}{simple} \PY{o}{=}
+  \PY{o}{|} \PY{n+nc}{Int}
+  \PY{o}{|} \PY{n+nc}{Float}
+  \PY{o}{|} \PY{n+nc}{Fun} \PY{k}{of} \PY{n}{simple} \PY{k+kt}{list} \PY{o}{*} \PY{n}{simple} \PY{k+kt}{list}
+  \PY{o}{|} \PY{n+nc}{Ptr} \PY{k}{of} \PY{n}{qual} \PY{o}{*} \PY{n}{simple}
+  \PY{o}{|} \PY{n+nc}{Array} \PY{k}{of} \PY{n}{simple}
+  \PY{o}{|} \PY{n+nc}{Struct} \PY{k}{of} \PY{o}{(}\PY{k+kt}{int} \PY{o}{*} \PY{n}{simple}\PY{o}{)} \PY{k+kt}{list} \PY{n}{ref}
+  \PY{o}{|} \PY{n+nc}{Var} \PY{k}{of} \PY{n}{simple} \PY{n}{var\PYZus{}type} \PY{n}{ref}
+\end{Verbatim}

@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{let} \PY{n}{unify\PYZus{}structs} \PY{n}{rfa} \PY{n}{rfb} \PY{o}{=}
+  \PY{k}{let} \PY{n}{fa} \PY{o}{=} \PY{o}{!}\PY{n}{rfa} \PY{k}{in}
+  \PY{k}{let} \PY{n}{fb} \PY{o}{=} \PY{o}{!}\PY{n}{rfb} \PY{k}{in}
+
+  \PY{k}{let} \PY{n}{new\PYZus{}a} \PY{o}{=} \PY{n}{ref} \PY{n+nb+bp}{[]} \PY{k}{in}
+  \PY{k}{let} \PY{n}{new\PYZus{}b} \PY{o}{=} \PY{n}{ref} \PY{n+nb+bp}{[]} \PY{k}{in}
+
+  \PY{k}{let} \PY{n}{unify\PYZus{}fields} \PY{o}{=} \PY{k}{function}
+    \PY{o}{|} \PY{o}{\PYZus{}}\PY{o}{,} \PY{n+nc}{InBoth} \PY{o}{(}\PY{n}{ta}\PY{o}{,} \PY{n}{tb}\PY{o}{)} \PY{o}{-\PYZgt{}} \PY{n}{unify\PYZus{}now} \PY{n}{ta} \PY{n}{tb}
+    \PY{o}{|} \PY{n}{k}\PY{o}{,} \PY{n+nc}{OnlyL} \PY{n}{f} \PY{o}{-\PYZgt{}} \PY{n}{new\PYZus{}b} \PY{o}{:=} \PY{o}{(}\PY{n}{k}\PY{o}{,}\PY{n}{f}\PY{o}{)} \PY{o}{::} \PY{o}{!}\PY{n}{new\PYZus{}b}
+    \PY{o}{|} \PY{n}{k}\PY{o}{,} \PY{n+nc}{OnlyR} \PY{n}{f} \PY{o}{-\PYZgt{}} \PY{n}{new\PYZus{}a} \PY{o}{:=} \PY{o}{(}\PY{n}{k}\PY{o}{,}\PY{n}{f}\PY{o}{)} \PY{o}{::} \PY{o}{!}\PY{n}{new\PYZus{}a}
+  \PY{k}{in}
+
+  \PY{n+nn}{List}\PY{p}{.}\PY{n}{iter} \PY{n}{unify\PYZus{}fields} \PY{o}{(}\PY{n}{compare\PYZus{}lists} \PY{n}{fa} \PY{n}{fb}\PY{o}{)}\PY{o}{;}
+  \PY{k}{let} \PY{n}{by\PYZus{}offset} \PY{o}{(}\PY{n}{x}\PY{o}{,} \PY{o}{\PYZus{}}\PY{o}{)} \PY{o}{(}\PY{n}{y}\PY{o}{,} \PY{o}{\PYZus{}}\PY{o}{)} \PY{o}{=}
+    \PY{n}{compare} \PY{n}{x} \PY{n}{y}
+  \PY{k}{in}
+  \PY{n}{rfa} \PY{o}{:=} \PY{n+nn}{List}\PY{p}{.}\PY{n}{sort} \PY{n}{by\PYZus{}offset} \PY{o}{(}\PY{o}{!}\PY{n}{new\PYZus{}a} \PY{o}{@} \PY{o}{!}\PY{n}{rfa}\PY{o}{)}\PY{o}{;}
+  \PY{n}{rfb} \PY{o}{:=} \PY{n+nn}{List}\PY{p}{.}\PY{n}{sort} \PY{n}{by\PYZus{}offset} \PY{o}{(}\PY{o}{!}\PY{n}{new\PYZus{}b} \PY{o}{@} \PY{o}{!}\PY{n}{rfb}\PY{o}{)}
+\end{Verbatim}

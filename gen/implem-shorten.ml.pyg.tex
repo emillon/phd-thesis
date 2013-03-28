@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{let} \PY{k}{rec} \PY{n}{shorten} \PY{o}{=} \PY{k}{function}
+  \PY{o}{|} \PY{n+nc}{Var} \PY{o}{(}\PY{o}{\PYZob{}}\PY{n}{contents} \PY{o}{=} \PY{n+nc}{Instanciated} \PY{o}{(}\PY{n+nc}{Var} \PY{o}{\PYZus{}} \PY{k}{as} \PY{n}{t}\PY{o}{)}\PY{o}{\PYZcb{}} \PY{k}{as} \PY{n}{vt}\PY{o}{)} \PY{o}{-\PYZgt{}}
+      \PY{k}{let} \PY{n}{t2} \PY{o}{=} \PY{n}{shorten} \PY{n}{t} \PY{k}{in}
+      \PY{n}{vt} \PY{o}{:=} \PY{n+nc}{Instanciated} \PY{n}{t}\PY{o}{;}
+      \PY{n}{t2}
+  \PY{o}{|} \PY{n+nc}{Var} \PY{o}{\PYZob{}}\PY{n}{contents} \PY{o}{=} \PY{n+nc}{Instanciated} \PY{n}{t}\PY{o}{\PYZcb{}} \PY{o}{-\PYZgt{}} \PY{n}{t}
+  \PY{o}{|} \PY{n}{t} \PY{o}{-\PYZgt{}} \PY{n}{t}
+\end{Verbatim}

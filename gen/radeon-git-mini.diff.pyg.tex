@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{g+gd}{--- a/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c}
+\PY{g+gi}{+++ b/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c}
+\PY{g+gu}{@@ -112,7 +112,9 @@}
+
+        info = data;
+        value\PYZus{}ptr = (uint32\PYZus{}t *)((unsigned long)info-\PYZgt{}value);
+\PY{g+gd}{-       value = *value\PYZus{}ptr;}
+\PY{g+gi}{+       if (DRM\PYZus{}COPY\PYZus{}FROM\PYZus{}USER(\PYZam{}value, value\PYZus{}ptr, sizeof(value)))}
+\PY{g+gi}{+               return -EFAULT;}
+\PY{g+gi}{+}
+        switch (info-\PYZgt{}request) \PYZob{}
+        case RADEON\PYZus{}INFO\PYZus{}DEVICE\PYZus{}ID:
+                value = dev-\PYZgt{}pci\PYZus{}device;
+\PY{g+gd}{-- }
+1.7.5.4
+\end{Verbatim}

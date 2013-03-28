@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{let} \PY{n}{unify} \PY{n}{a} \PY{n}{b} \PY{o}{=}
+  \PY{k}{if} \PY{o}{!}\PY{n+nn}{Options}\PY{p}{.}\PY{n}{lazy\PYZus{}unification} \PY{k}{then}
+    \PY{n+nn}{Queue}\PY{p}{.}\PY{n}{add} \PY{o}{(}\PY{n+nc}{Unify} \PY{o}{(}\PY{n}{a}\PY{o}{,} \PY{n}{b}\PY{o}{)}\PY{o}{)} \PY{n}{unify\PYZus{}queue}
+  \PY{k}{else}
+    \PY{n}{unify\PYZus{}now} \PY{n}{a} \PY{n}{b}
+\end{Verbatim}
