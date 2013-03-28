@@ -682,8 +682,64 @@ Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
 %\begin{Verbatim}
 %\end{Verbatim} % }}}
 
-Fonction \texttt{shorten} :
+\begin{figure}
+% types {{{
+\begin{Verbatim}
+type unknown = { id : int }
 
+type 'a var_type =
+  | Unknown of unknown
+  | Instanciated of 'a
+
+and qual =
+  | Kernel
+  | User
+  | QVar of qual var_type ref
+
+and simple =
+  | Int
+  | Float
+  | Fun of simple list * simple list
+  | Ptr of qual * simple
+  | Array of simple
+  | Struct of (int * simple) list ref
+  | Var of simple var_type ref
+\end{Verbatim}
+% }}}
+\caption{Implantation - types}
+\label{fig:implem-typ}
+\end{figure}
+
+Les types de données utilisés sont donnés dans la figure~\ref{fig:implem-typ}.
+Les types \langname sont représentés soit par un constructeur de type ``résolu''
+immutable comme \texttt{Int}, soit par une référence dans le cas d'une variable
+inconnue (placée alors derrière le constructeur \texttt{Var}).
+
+Ces références contiennent une valeur du type \texttt{simple var\_type}, c'est à
+dire :
+
+\begin{itemize}
+\item soit un numéro d'inconnue (constructeur \texttt{Unknown})\footnote{On
+  place le numéro dans un enregistrement pour abstraire l'entier sous-jacent, en
+  empêchant par exemple de faire de l'arithmétique sur celui-ci.}.
+
+\item soit un type concret (constructeur \texttt{Instanciated}) si cette
+  inconnue a été unifiée avec un type concret.
+\end{itemize}
+
+Ce système peut créer des représentations de types arbitrairement longues, comme
+par exemple :
+
+\texttt{Var (ref (Instanciated (Var (ref (Instanciated Int)))))}
+
+Cela est dû au fait que \texttt{fun x -> Var (ref (Instanciated x))} est typé
+\texttt{simple -> simple} et peut donc être appliquée à loisir. Pour éviter cet
+effet d'allongement, on définit une fonction \texttt{shorten} qui supprime ces
+chaînes (figure~\ref{fig:implem-shorten}).
+
+% TODO décrire la première branche du pattern matching
+
+\begin{figure}
 % shorten {{{
 \begin{Verbatim}
 let rec shorten = function
@@ -695,9 +751,18 @@ let rec shorten = function
   | t -> t
 \end{Verbatim}
 % }}}
+\caption{Implantation : fonction de racourcissement des représentations de types}
+\label{fig:implem-shorten}
+\end{figure}
 
-Fonction \texttt{unify_now} :
+La fonction d'unification, quant à elle, commence par raccourcir ses deux
+arguments puis faire une analyse de cas par filtrage.
 
+Les cas principaux sont :
+
+fonction \texttt{unify_now} (figure~\ref{fig:implem-unify-now}).
+
+\begin{figure}
 % unify_now % {{{
 \begin{Verbatim}
 let rec unify_now ta tb =
@@ -734,28 +799,46 @@ let rec unify_now ta tb =
       List.iter2 unify_now rets_a rets_b
 
   | Struct rfa, Struct rfb ->
-      let fa = !rfa in
-      let fb = !rfb in
-
-      let new_a = ref [] in
-      let new_b = ref [] in
-
-      let unify_fields = function
-        | _, InBoth (ta, tb) -> unify_now ta tb
-        | k, OnlyL f -> new_b := (k,f) :: !new_b
-        | k, OnlyR f -> new_a := (k,f) :: !new_a
-      in
-
-      List.iter unify_fields (compare_lists fa fb);
-      let by_offset (x, _) (y, _) =
-        compare x y
-      in
-      rfa := List.sort by_offset (!new_a @ !rfa);
-      rfb := List.sort by_offset (!new_b @ !rfb)
+      unify_structs rfa rfb
 
   | _ -> type_clash sta stb
 \end{Verbatim}
 % }}}
+\caption{Implantation - fonction d'unification}
+\label{fig:implem-unify-now}
+\end{figure}
+
+cas structure (figure~\ref{fig:implem-unify-structs}).
+
+\begin{figure}
+% unify_structs % {{{
+\begin{Verbatim}
+let unify_structs rfa rfb =
+  let fa = !rfa in
+  let fb = !rfb in
+
+  let new_a = ref [] in
+  let new_b = ref [] in
+
+  let unify_fields = function
+    | _, InBoth (ta, tb) -> unify_now ta tb
+    | k, OnlyL f -> new_b := (k,f) :: !new_b
+    | k, OnlyR f -> new_a := (k,f) :: !new_a
+  in
+
+  List.iter unify_fields (compare_lists fa fb);
+  let by_offset (x, _) (y, _) =
+    compare x y
+  in
+  rfa := List.sort by_offset (!new_a @ !rfa);
+  rfb := List.sort by_offset (!new_b @ !rfb)
+\end{Verbatim}
+% }}}
+\caption{Implantation - structures}
+\label{fig:implem-unify-structs}
+\end{figure}
+
+
 
 Sur les qualificateurs :
 
@@ -802,7 +885,7 @@ let rec unify_quals a b =
 \end{Verbatim}
 % }}}
 
-\section{Système de type}
+\section{Système de types}
 
 % infer_stmtkind {{{
 \begin{Verbatim}
