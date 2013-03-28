@@ -731,6 +731,91 @@ val infer : Newspeak.fid list
 
 \end{itemize}
 
+\section{Inférence de types}
+
+L'inférence de types consiste à remplacer les étiquettes de type \texttt{unit}
+par des étiquettes de type \texttt{simple} (autrement dit de vraies
+représentations de types).
+
+Cette étape se fait de manière impérative : on peut créer de nouveaux types avec
+\texttt{new\_unknown} et unifier deux types
+avec \texttt{unify}. Leurs types sont :
+
+\begin{verbatim}
+val new_unknown : unit -> Types.simple
+val unify : Types.simple -> Types.simple -> unit
+\end{verbatim}
+
+La fonction \texttt{infer} s'appuie sur un ensemble de fonctions récursivement
+définies portant sur chaque type de fragment : \texttt{infer\_fdec} pour les
+déclarations de fonction, \texttt{infer\_exp} pour les expressions,
+\texttt{infer\_stmtkind} pour les instructions, etc.
+
+\begin{figure}
+
+% TODO expliquer pourquoi il y a plusieurs left-values, et toutes les
+% différences avec safespeak ainsi que décrit dans les chapitres précédents
+
+\insertcode{infer-unif-stmt.ml}
+
+\caption{Implantation -- inférence des déclarations de variable et appels de
+         fonction}
+
+% TODO ces "Implantation -- " sont ils vraiment indispensables ?
+\label{fig:implem-unif-stmt}
+\end{figure}
+
+% TODO s/lval_type/infer_lval/ ?
+
+Les règles de typage sont implantées par \texttt{new\_unknown} et
+\texttt{unify}. Par exemple, pour typer une déclaration
+(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
+type \texttt{t0}. On étend l'environnement courant avec cette nouvelle
+association et sous ce nouvel environnement, on type le bloc de portée de la
+déclaration.
+
+De même, pour typer un appel de fonction, on infère le type de ses arguments et
+left-values de retour. On obtient également le type de la fonction (à partir du
+type de la fonction présent dans l'environnement, ou du type du pointeur de
+fonction qui est déréférencé), et on unifie ces deux informations.
+
+On peut donner quelques exemples, comme :
+
+\begin{itemize}
+  \item addition de deux flottant (dans \texttt{infer\_binop}) :
+
+\begin{verbatim}
+let infer_binop op (_, a) (_, b) =
+  match op with
+    (* [...] *)
+    | N.PlusF _ ->
+        unify a Float;
+        unify b Float;
+        Float
+\end{verbatim}
+
+  \item adresse d'une left-value (dans \texttt{lval\_type}) :
+
+\begin{verbatim}
+| T.AddrOf lv ->
+    let lv' = infer_lv env lv in
+    let ty = lval_type env lv in
+    (T.AddrOf lv', Ptr (Kernel, ty))
+\end{verbatim}
+
+  \item déréférencement d'une left-value (dans \texttt{lval\_type}) :
+
+\begin{verbatim}
+| T.Deref(e, _sz) ->
+    let (_, te) = infer_exp env e in
+    let t = new_unknown () in
+    unify (Ptr (Kernel, t)) te;
+    t
+\end{verbatim}
+
+\end{itemize}
+
+\section{Vérification de types}
 
 \section{Unification}
 
@@ -766,7 +851,7 @@ par exemple :
 
 \texttt{Var (ref (Instanciated (Var (ref (Instanciated Int)))))}
 
-Cela est dû au fait que \texttt{fun x -> Var (ref (Instanciated x))} est typé
+Cela est dû au fait que \texttt{fun x -> Var (ref (Instanciated x))} est typée
 \texttt{simple -> simple} et peut donc être appliquée à loisir. Pour éviter cet
 effet d'allongement, on définit une fonction \texttt{shorten} qui supprime ces
 chaînes (figure~\ref{fig:implem-shorten}).
@@ -860,77 +945,6 @@ peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la
 paire de types à unifier est mise dans une liste d'attente qui sera unifiée
 après le parcours du programme. Le but est d'instrumenter l'inférence de types
 afin de pouvoir en faire une exécution ``pas à pas''.
-
-\section{Système de types}
-
-% infer_stmtkind {{{
-\begin{Verbatim}
-let rec infer_stmtkind env sk =
-  match sk with
-  | T.Set (lv, e, st) ->
-      let lv' = infer_lv env lv in
-      let tlv = lval_type env lv in
-      let (_, te) as e' = infer_exp env e in
-      unify te tlv;
-      T.Set (lv', e', st)
-  | T.Select (a, b) ->
-      let a' = infer_blk env a in
-      let b' = infer_blk env b in
-      T.Select (a', b')
-  | T.InfLoop blk ->
-      let blk' = infer_blk env blk in
-      T.InfLoop blk'
-  | T.DoWith (blk, lbl) ->
-      let new_env = Env.add_lbl lbl env in
-      let blk' = infer_blk new_env blk in
-      T.DoWith (blk', lbl)
-  | T.Goto lbl ->
-      Env.assert_lbl lbl env;
-      T.Goto lbl
-  | T.Decl (n, nty, _ty, blk) ->
-      let var = T.Local n in
-      let t0 = new_unknown () in
-      let new_env = Env.add (VLocal n) (Some nty) t0 env in
-      let blk' = infer_blk new_env blk in
-      let ty = lval_type new_env var in
-      T.Decl (n, nty, ty, blk')
-  | T.UserSpec a -> T.UserSpec (infer_assertion env a)
-  | T.Copy (dst, src, sz) ->
-      let dst' = infer_lv env dst in
-      let src' = infer_lv env src in
-      T.Copy (dst', src', sz)
-  | T.Guard e -> T.Guard (infer_exp env e)
-  | T.Call (args, fexp, rets) ->
-      (*
-       * Warning : plumbing ahead.
-       *
-       * Nothing interesting here : we just construct a Fun type corresponding
-       * to the actual arguments and unify it with the formal arguments from
-       * the environment.
-       *)
-
-      let infer_arg (e, nt) =
-        let et = infer_exp env e in
-        (et, nt)
-      in
-
-      let infer_ret (lv, nt) =
-        (infer_lv env lv, nt)
-      in
-
-      let args' = List.map infer_arg args in
-      let rets' = List.map infer_ret rets in
-
-      let t_args = List.map (fun ((_, t), _) -> t) args' in
-      let t_rets = List.map (fun (lv, _) -> lval_type env lv) rets' in
-
-      let (fexp', tf) = infer_funexp env fexp in
-      let call_type = Fun (t_args, t_rets) in
-      unify tf call_type;
-
-      T.Call (args', fexp', rets')
-\end{Verbatim}
-% }}}
 
 \section{Exemple}
 
