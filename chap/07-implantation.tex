@@ -705,10 +705,10 @@ Le reste de l'outil est résumé dans la fonction
   on ajoute des étiquettes ``vides'' (toutes égales à \texttt{() : unit}).
 
 \item L'ensemble des fonctions du programme est trié topologiquement selon la
-  relation $\prec$ définie par $f \prec g \eqdef \textrm{``} g \textrm{ apparaît
-  dans la définition de } f \textrm{''}$. Cela est fait en construisant une
-  représentation de $\prec$ sous forme de graphe, puis en faisant un parcours en
-  largeur de celui-ci.
+  relation~$\prec$ définie par $f \prec g \eqdef \textrm{``} g
+  \textrm{ apparaît dans la définition de } f \textrm{''}$. Cela est fait en
+  construisant une représentation de $\prec$ sous forme de graphe, puis en
+  faisant un parcours en largeur de celui-ci.
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial.
@@ -724,7 +724,7 @@ val infer : Newspeak.fid list
 \end{Verbatim}
 
 \item Ces types sont vérifiés. Cette étape est normalement redondante et est
-  donc optionnelle (l'option \texttt{--no-check} permet de la désactiver).
+  donc optionnelle (l'option \texttt{-{}-no-check} permet de la désactiver).
 
 \item Le programme obtenu, de type \texttt{Types.simple Tyspeak.t}, est affiché
   sur le terminal.
@@ -748,7 +748,7 @@ inconnue (placée alors derrière le constructeur \texttt{Var}).
 Ces références contiennent une valeur du type
 \texttt{simple var\_type}\footnote{
   Ce type est polymorphe pour pouvoir être repris dans l'unification des
-  qualificateurs (figure~\ref{fig:implem-qualifs})..
+  qualificateurs (figure~\ref{fig:implem-qualifs}).
 }, c'est à
 dire :
 
@@ -757,7 +757,7 @@ dire :
   place le numéro dans un enregistrement pour abstraire l'entier sous-jacent, en
   empêchant par exemple de faire de l'arithmétique sur celui-ci.}.
 
-\item soit un type concret (constructeur \texttt{Instanciated}) si cette
+\item soit un type résolu (constructeur \texttt{Instanciated}) si cette
   inconnue a été unifiée avec un type concret.
 \end{itemize}
 
