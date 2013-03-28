@@ -787,6 +787,20 @@ les qualificateurs (figure~\ref{fig:implem-qualifs}).
 
 \end{figure}
 
+\begin{figure}
+
+\insertcode{unify-main.ml}
+
+\caption{Implantation -- unification directe ou retardée}
+\label{fig:implem-lazy}
+\end{figure}
+
+La fonction appellée directement par le reste du code, appellée \texttt{unify},
+peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la
+paire de types à unifier est mise dans une liste d'attente qui sera unifiée
+après le parcours du programme. Le but est d'instrumenter l'inférence de types
+afin de pouvoir en faire une exécution ``pas à pas''.
+
 \section{Système de types}
 
 % infer_stmtkind {{{
