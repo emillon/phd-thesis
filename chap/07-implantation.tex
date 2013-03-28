@@ -817,6 +817,18 @@ let infer_binop op (_, a) (_, b) =
 
 \section{Vérification de types}
 
+La passe de vérification de types, optionnelle et en théorie redondante, est
+présente pour s'assurer que les types inférés ne sont pas aberrants.
+
+Là encore, on travaille par effet de bord : si tout ne se passe pas bien, on
+lève une erreur. La fonction principale a le type suivant :
+
+\begin{verbatim}
+val check : Types.simple Env.t -> Types.simple Tyspeak.t -> unit
+\end{verbatim}
+
+% TODO
+
 \section{Unification}
 
 \begin{figure}
