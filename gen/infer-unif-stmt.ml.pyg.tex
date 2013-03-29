@@ -1,0 +1,33 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{let} \PY{k}{rec} \PY{n}{infer\PYZus{}stmtkind} \PY{n}{env} \PY{n}{sk} \PY{o}{=}
+  \PY{k}{match} \PY{n}{sk} \PY{k}{with}
+  \PY{c}{(*}\PY{c}{ [...] }\PY{c}{*)}
+  \PY{o}{|} \PY{n+nn}{T}\PY{p}{.}\PY{n+nc}{Decl} \PY{o}{(}\PY{n}{n}\PY{o}{,} \PY{n}{nty}\PY{o}{,} \PY{o}{\PYZus{}}\PY{n}{ty}\PY{o}{,} \PY{n}{blk}\PY{o}{)} \PY{o}{-\PYZgt{}}
+      \PY{k}{let} \PY{n}{var} \PY{o}{=} \PY{n+nn}{T}\PY{p}{.}\PY{n+nc}{Local} \PY{n}{n} \PY{k}{in}
+      \PY{k}{let} \PY{n}{t0} \PY{o}{=} \PY{n}{new\PYZus{}unknown} \PY{n+nb+bp}{()} \PY{k}{in}
+      \PY{k}{let} \PY{n}{new\PYZus{}env} \PY{o}{=} \PY{n+nn}{Env}\PY{p}{.}\PY{n}{add} \PY{o}{(}\PY{n+nc}{VLocal} \PY{n}{n}\PY{o}{)} \PY{o}{(}\PY{n+nc}{Some} \PY{n}{nty}\PY{o}{)} \PY{n}{t0} \PY{n}{env} \PY{k}{in}
+      \PY{k}{let} \PY{n}{blk'} \PY{o}{=} \PY{n}{infer\PYZus{}blk} \PY{n}{new\PYZus{}env} \PY{n}{blk} \PY{k}{in}
+      \PY{k}{let} \PY{n}{ty} \PY{o}{=} \PY{n}{lval\PYZus{}type} \PY{n}{new\PYZus{}env} \PY{n}{var} \PY{k}{in}
+      \PY{n+nn}{T}\PY{p}{.}\PY{n+nc}{Decl} \PY{o}{(}\PY{n}{n}\PY{o}{,} \PY{n}{nty}\PY{o}{,} \PY{n}{ty}\PY{o}{,} \PY{n}{blk'}\PY{o}{)}
+  \PY{c}{(*}\PY{c}{ [...] }\PY{c}{*)}
+  \PY{o}{|} \PY{n+nn}{T}\PY{p}{.}\PY{n+nc}{Call} \PY{o}{(}\PY{n}{args}\PY{o}{,} \PY{n}{fexp}\PY{o}{,} \PY{n}{rets}\PY{o}{)} \PY{o}{-\PYZgt{}}
+      \PY{k}{let} \PY{n}{infer\PYZus{}arg} \PY{o}{(}\PY{n}{e}\PY{o}{,} \PY{n}{nt}\PY{o}{)} \PY{o}{=}
+        \PY{k}{let} \PY{n}{et} \PY{o}{=} \PY{n}{infer\PYZus{}exp} \PY{n}{env} \PY{n}{e} \PY{k}{in}
+        \PY{o}{(}\PY{n}{et}\PY{o}{,} \PY{n}{nt}\PY{o}{)}
+      \PY{k}{in}
+
+      \PY{k}{let} \PY{n}{infer\PYZus{}ret} \PY{o}{(}\PY{n}{lv}\PY{o}{,} \PY{n}{nt}\PY{o}{)} \PY{o}{=}
+        \PY{o}{(}\PY{n}{infer\PYZus{}lv} \PY{n}{env} \PY{n}{lv}\PY{o}{,} \PY{n}{nt}\PY{o}{)}
+      \PY{k}{in}
+
+      \PY{k}{let} \PY{n}{args'} \PY{o}{=} \PY{n+nn}{List}\PY{p}{.}\PY{n}{map} \PY{n}{infer\PYZus{}arg} \PY{n}{args} \PY{k}{in}
+      \PY{k}{let} \PY{n}{rets'} \PY{o}{=} \PY{n+nn}{List}\PY{p}{.}\PY{n}{map} \PY{n}{infer\PYZus{}ret} \PY{n}{rets} \PY{k}{in}
+
+      \PY{k}{let} \PY{n}{t\PYZus{}args} \PY{o}{=} \PY{n+nn}{List}\PY{p}{.}\PY{n}{map} \PY{o}{(}\PY{k}{fun} \PY{o}{(}\PY{o}{(}\PY{o}{\PYZus{}}\PY{o}{,} \PY{n}{t}\PY{o}{)}\PY{o}{,} \PY{o}{\PYZus{}}\PY{o}{)} \PY{o}{-\PYZgt{}} \PY{n}{t}\PY{o}{)} \PY{n}{args'} \PY{k}{in}
+      \PY{k}{let} \PY{n}{t\PYZus{}rets} \PY{o}{=} \PY{n+nn}{List}\PY{p}{.}\PY{n}{map} \PY{o}{(}\PY{k}{fun} \PY{o}{(}\PY{n}{lv}\PY{o}{,} \PY{o}{\PYZus{}}\PY{o}{)} \PY{o}{-\PYZgt{}} \PY{n}{lval\PYZus{}type} \PY{n}{env} \PY{n}{lv}\PY{o}{)} \PY{n}{rets'} \PY{k}{in}
+
+      \PY{k}{let} \PY{o}{(}\PY{n}{fexp'}\PY{o}{,} \PY{n}{tf}\PY{o}{)} \PY{o}{=} \PY{n}{infer\PYZus{}funexp} \PY{n}{env} \PY{n}{fexp} \PY{k}{in}
+      \PY{k}{let} \PY{n}{call\PYZus{}type} \PY{o}{=} \PY{n+nc}{Fun} \PY{o}{(}\PY{n}{t\PYZus{}args}\PY{o}{,} \PY{n}{t\PYZus{}rets}\PY{o}{)} \PY{k}{in}
+      \PY{n}{unify} \PY{n}{tf} \PY{n}{call\PYZus{}type}\PY{o}{;}
+      \PY{n+nn}{T}\PY{p}{.}\PY{n+nc}{Call} \PY{o}{(}\PY{n}{args'}\PY{o}{,} \PY{n}{fexp'}\PY{o}{,} \PY{n}{rets'}\PY{o}{)}
+\end{Verbatim}
