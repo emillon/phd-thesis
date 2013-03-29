@@ -145,21 +145,29 @@ La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 étant une simple macro pout \texttt{copy\_from\_user}). Dans ce cas, on
 n'obtient pas d'erreur de typage.
 
+% TODO et l'assembleur inline?
+
 \section{Détails}
 
 Pour utiliser notre système de types, plusieurs étapes sont nécessaires en plus
 de traduire le noyau linux en \langname.
 
-% TODO et l'assembleur inline?
+Afin de réaliser l'analyse, il faut annoter les sources pour créer un
+environnement initial (via la variable \texttt{exttbl} décrite en
+section~\ref{sec:ptrtype-archi}).
 
-\begin{itemize}
-\item
-  annotation des sources
-\item
-  réécriture des fonctions sures avec $\phxx{\uGet}$ et $\phxx{\uPut}$
-\item
-  inférence de type
-\end{itemize}
+% TODO dire ce qu'on annote : les sources de pointeurs souillés
+
+Ensuite, il faut réécrire les fonctions de manipulation de pointeurs fournies
+par le noyau : \texttt{get\_user}, \texttt{put\_user},
+\texttt{copy\_from\_user}, \texttt{copy\_to\_user}, etc. Leur implantation
+revient à réaliser un test puis à faire la copie. À leur place on utilise les
+primitives $\phxx{\uGet}$ et $\phxx{\uPut}$.
+
+% TODO ... ou on ne met pas ces primitives là en tyspeak et on ajoute juste un
+% bon type dans l'environnement initial
+
+Enfin, on peut lancer l'inférence de type.
 
 \section{Description du problème}
 
