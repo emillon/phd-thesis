@@ -11,5 +11,3 @@
         switch (info->request) {
         case RADEON_INFO_DEVICE_ID:
                 value = dev->pci_device;
--- 
-1.7.5.4
