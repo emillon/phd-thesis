@@ -20,7 +20,6 @@ de s'assurer qu'il est bien le seul à pouvoir y accéder. En particulier, il fa
 pouvoir vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent
 pas détourner ce dernier et lui faire fuiter des informations confidentielles.
 
-
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
 là: on estime qu'avant relecture, une erreur de programmation est présente
@@ -141,23 +140,6 @@ présentées.
 
 
 \clearpage
-
-\section*{Extrait PLAS}
-Manipulating user-provided pointers in the kernel of an operating system can
-lead to security flaws if done in an incautious manner. We present an efficient
-system to detect and prevent this class of erroneous memory manipulation.
-
-At the core of our approach is \langname, an imperative language that we equip
-with a qualified type system, where two kinds of pointers are distinguished:
-\emph{safe} pointers, whose value is statically proved to be controlled by the
-kernel, and \emph{unsafe} ones, whose value comes from userspace through
-run-time system calls. Dereferencing unsafe pointers is forbidden in a static
-manner by the means of a strong type system.
-
-A concrete case study is described based on a bug that affected a video driver
-in the Linux kernel. We also explain a technique to automatically translate GNU
-C code to our core language, which will enable us to analyze larger fractions of
-the kernel in order to find similar vulnerabilities.
 
 \section{Introduction}
 
