@@ -1,34 +1,150 @@
-\section*{Extrait PLAS}
-Manipulating user-provided pointers in the kernel of an operating system can
-lead to security flaws if done in an incautious manner. We present an efficient
-system to detect and prevent this class of erroneous memory manipulation.
+Les logiciels sont de plus en plus présents partout, même dans des endroits
+incongrus. Le plus petit appareil électrique contient maintenant des composants
+matériels programmables nécessitant des logiciels.
 
-At the core of our approach is \langname, an imperative language that we equip
-with a qualified type system, where two kinds of pointers are distinguished:
-\emph{safe} pointers, whose value is statically proved to be controlled by the
-kernel, and \emph{unsafe} ones, whose value comes from userspace through
-run-time system calls. Dereferencing unsafe pointers is forbidden in a static
-manner by the means of a strong type system.
+Autant certains de ces systèmes embarqués ont un rôle très délimité et ne
+comportent que peu de code, certains comportent des millions de lignes de code.
+En cette époque, on pense bien sûr aux téléphones portables qui se rapproche
+de très près des ordinateurs. Ainsi le système Android de Google est basé sur le
+noyau Linux, né comme un clone gratuit d'Unix pour les micro-ordinateurs dans
+les années 90.
 
-A concrete case study is described based on a bug that affected a video driver
-in the Linux kernel. We also explain a technique to automatically translate GNU
-C code to our core language, which will enable us to analyze larger fractions of
-the kernel in order to find similar vulnerabilities.
+Au cœur de chacun de ces systèmes, se trouve un noyau de système d'exploitation,
+chargé d'abstraire le matériel à la vue des logiciels utilisateurs (comme les
+applications de téléphones) et de garantir la sécurité et l'isolation de
+celles-ci.
 
-\section{Introduction}
+En tant que tiers de confiance, le noyau a un certain nombre de responsabilités
+et est le seul à avoir accès à certaines informations sensibles. Il est capital
+de s'assurer qu'il est bien le seul à pouvoir y accéder. En particulier, il faut
+pouvoir vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent
+pas détourner ce dernier et lui faire fuiter des informations confidentielles.
 
-Modern operating systems such as GNU/Linux are comprised of several independent
-programs: the kernel, which handles the machine's hardware as well as trusted
-core features; and user applications.
+Le problème est que comme tous les logiciels, les noyaux de système
+d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
+là: on estime qu'avant relecture, une erreur de programmation est présente
+toutes les N lignes de code en moyenne. Les activités de relecture et de % TODO
+débogage ont beau prendre la majeure partie du temps de développement, elles ne
+laissent pas un logiciel de qualité parfaite à la sortie, loin de là. En effet,
+même avec des tests les plus exhaustifs il n'est pas possible de simuler le code
+d'une manière qui recouvre tous les cas d'utilisation et permette de s'assurer
+de sa correction.
 
-These programs run with different privilege levels: low-level operations can
-only be executed by the kernel. They also have different views on the memory. If
-a user program had access to the kernel's internal data structures, it could use
-it to obtain information it is normally denied, or gain extra privileges (for
-example getting access to the \texttt{root} account). This is why the kernel
-stores its code and data in a place in memory that is not accessible to
-unprivileged programs. On an Intel 32-bit system, it corresponds to addresses
-higher than \texttt{0xc0000000}, or 3 GiB.
+De plus, les tests ne permettent que de s'assurer qu'il y a un bug ; pas de
+prouver leur absence. S'assurer qu'un programme n'a pas de bug est
+particulièrement délicat, et ne peut pas être fait automatiquement dans le cas
+général. Une solution est en effet de restreindre l'expressivité du langage de
+programmation afin de n'accepter que des programmes sans un certain type
+d'erreur.
+
+Le but de cette thèse est de montrer que les techniques de typage statique
+permettent de vérifier que les pointeurs utilisateurs sont manipulés d'une
+manière qui préserve l'intégrité du noyau d'un système d'exploitation.
+
+\section{Rôle d'un système d'exploitation}
+
+Pour une description plus détaillée des rôles d'un système d'exploitation ainsi
+que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbaum}.
+
+Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
+mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, des
+dizaines de logiciels permettent d'effectuer toutes sortes de calculs et de
+communications. Le système d'exploitation permet de faire l'interface entre ces
+niveaux d'abstraction.
+
+Au cours de l'histoire des systèmes informatiques, la manière de les programmer
+a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
+son intégralité : toute la mémoire pouvait être accédée, toutes les instructions
+pouvaient être utilisées.
+
+Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à une personne
+d'interagir avec le système. Dans la seconde moitié des années 60, sont apparus
+les premiers systèmes ``à temps partagé'', permettant à plusieurs utilisateurs
+de travailler en même temps.
+
+Permettre l'exécution de plusieurs programmes en même temps est une idée
+révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
+ressources de la machine doivent être aussi partagées entre les utilisateurs et
+les programmes. Par exemple, plusieurs programmes vont utiliser le processeur
+les uns à la suite des autres (partage \emph{temporel}) ; et chaque programme
+aura à sa disposition une partie de la mémoire principale, ou du disque dur
+(partage \emph{spatial}).
+
+Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
+matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
+l'autre, ou que les deux utilisent la carte réseau les uns à la suite des
+autres. Ce sont des rôles du système d'exploitation.
+
+Cela passe donc par une limitation des possibilités du programme : plutôt que de
+permettre n'importe quel type d'instruction, il communique avec le système
+d'exploitation. Celui-ci centralise donc les appels au matériel, ce qui permet
+d'abstraire certaines opérations.
+
+Par exemple, si un programme veut copier des données depuis un cédérom vers la
+mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
+la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
+de trame des données sur le disque, demander la lecture, puis déclencher une
+copie de la mémoire.
+
+Si dans un autre cas il désire récupérer des données depuis une mémorette USB,
+il devrait interroger le bus USB, rechercher le bon numéro de périphérique, le
+bon numéro de canal dans celui-ci, lui appliquer une commande de lecture au bon
+numéro de bloc, puis copier la mémoire.
+
+Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
+depuis un périphérique amovible), ne sont pas effectuées en pratique de la même
+manière. C'est pourquoi le système d'exploitation fournit les notions de
+fichier, lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de
+haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
+fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
+actions appropriées.
+
+En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
+le matériel, et en particulier assure les rôles suivants :
+
+% TODO À affiner ou supprimer
+
+\begin{itemize}
+\item
+  Gestion des processus : un système d'exploitation peut permettre
+  d'exécuter plusieurs programmes à la fois. Il faut alors orchestrer
+  ces différents processus et les séparer en terme de temps et de
+  ressources partagées.
+\item
+  Gestion de la mémoire : chaque processus, en plus du noyau, doit
+  disposer d'un espace mémoire différent. C'est-à-dire qu'un processus
+  ne doit pas pouvoir interférer avec un autre.
+\item
+  Gestion des fichiers : les processus peuvent accéder à une hiérarchie de
+  fichiers, indépendamment de la manière d'y accéder.
+\item
+  Gestion des périphériques : le noyau étant le seul code ayant des privilèges,
+  c'est lui qui doit communiquer avec les périphériques matériels.
+\item
+  Abstractions : le noyau fournit aux programmes une interface unifiée,
+  permettant de stocker des informations de la même manière sur un
+  disque dur ou une clef USB (alors que l'accès se déroulera de manière
+  très différente en pratique).
+\end{itemize}
+
+
+\section{Noyaux de systèmes d'exploitation}
+
+Les programmes qui composent un système d'exploitation sont exécutés avec un
+niveau de privilège différent, correspondant à un jeu d'instructions plus ou
+moins important. Cette vérification est faite directement pas le processeur,
+d'une manière matérielle. En plus de cette distinction, les programmes ont une
+vue différente de la mémoire. Si un programme utilisateur avait accès aux
+structures de données internes du noyau, il pourrait obtenir des informations
+auquel il n'a pas normalement accès, ou obtenir des privilège supplémentaires
+(par exemple en obtenant les privilèges de l'administrateur sur la machine).
+
+C'est pourquoi les noyau stockent leur code et données dans un endroit en
+mémoire qui n'est pas accessible aux programmes utilisateur. Sur un système
+Intel 32 bits, cela correspond aux adresses supérieures à \texttt{0xc0000000},
+ou 3 Gio.
+
+% TODO trad
 
 Because user-mode programs cannot run low-level instructions, they cannot do
 anything interesting on their own. They have to use the kernel's facilities to
@@ -61,3 +177,41 @@ can be dereferenced with the \texttt{*}, \texttt{->} and \texttt{[]} operators ;
 and unsafe pointers that have to go through a special API provided by the
 kernel, consisting most notably of the two functions \texttt{copy\_from\_user}
 and \texttt{copy\_to\_user}.
+
+\section{Systèmes de types}
+
+\section{Plan de la thèse}
+
+Cette thèse comporte trois parties.
+
+\paragraph{La partie~\ref{part:ctx}} présente le contexte de ces travaux. Le
+fonctionnement général d'un système d'exploitation y est détaillé, et les
+problèmes de manipulation de pointeurs contrôlés par l'utilisateur y sont
+introduits. On fait ensuite un tour d'horizon des techniques existantes
+permettant de traiter ce problème.
+
+\paragraph{La partie~\ref{part:lang}} décrit notre solution : \langname, un
+langage impératif. On y décrit sa syntaxe, sa sémantique ainsi qu'un système de
+types statiques. On l'étend ensuite pour capturer les problèmes d'adressage
+mémoire présents dans les systèmes d'exploitation en ajoutant des pointeurs
+contrôlés par l'utilisateur. Le système de types est également étendu. Pour
+chacune de ces variantes, on établit la propriété de sûreté de typage reliant la
+sémantique dynamique aux types statiques.
+
+\paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
+à ces travaux. L'implantation du système de types est décrite, afin que la
+manière de transformer automatiquement du code C en \langname. Un cas d'étude
+est déroulé, consistant d'un bug ayant touché le noyau Linux. Il est démontré
+que le système de type capture précisément ce genre d'erreur de programmation.
+Enfin, les possibilités d'extension tant théoriques qu'expérimentales sont
+présentées.
+
+%  - omniprésence
+%  - complexité
+%  - vérification
+%  - taux de bugs après relecture
+%  - vérification automatique obligatoire
+%  - historique des techniques
+%  - analyse non intrusive
+%  - méthodes de développement du noyau
+%  - syntaxe, sémantique, typage
