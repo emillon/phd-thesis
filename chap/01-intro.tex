@@ -24,6 +24,28 @@ même avec des tests les plus exhaustifs il n'est pas possible de simuler le cod
 d'une manière qui recouvre tous les cas d'utilisation et permette de s'assurer
 de sa correction.
 
+\section{Plan de la thèse}
+
+Cette thèse comporte trois parties.
+
+\paragraph{La partie~\ref{part:ctx}} présente le contexte de ces travaux. Le
+fonctionnement général d'un système d'exploitation y est détaillé, et les
+problèmes de manipulation de pointeurs contrôlés par l'utilisateur y sont
+introduits. On fait ensuite un tour d'horizon des techniques existantes
+permettant de traiter ce problème.
+
+\paragraph{La partie~\ref{part:lang}} décrit notre solution : \langname, un
+langage impératif. On y décrit sa syntaxe, sa sémantique ainsi qu'un système de
+types statiques. On l'étend ensuite pour capturer les problèmes d'adressage
+mémoire présents dans les systèmes d'exploitation en ajoutant des pointeurs
+contrôlés par l'utilisateur. Le système de types est également étendu. Pour
+chacune de ces variantes, on établit la propriété de sûreté de typage reliant la
+sémantique dynamique aux types statiques.
+
+\paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
+à ces travaux. L'implantation du système de types est décrite, afin que la
+manière de transformer automatiquement du code C en \langname. % TODO ...
+
 
 
 \begin{itemize}
