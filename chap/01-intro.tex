@@ -14,6 +14,13 @@ chargé d'abstraire le matériel à la vue des logiciels utilisateurs (comme les
 applications de téléphones) et de garantir la sécurité et l'isolation de
 celles-ci.
 
+En tant que tiers de confiance, le noyau a un certain nombre de responsabilités
+et est le seul à avoir accès à certaines informations sensibles. Il est capital
+de s'assurer qu'il est bien le seul à pouvoir y accéder. En particulier, il faut
+pouvoir vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent
+pas détourner ce dernier et lui faire fuiter des informations confidentielles.
+
+
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
 là: on estime qu'avant relecture, une erreur de programmation est présente
