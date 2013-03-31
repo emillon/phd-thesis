@@ -39,20 +39,21 @@ d'erreur.
 
 \section{Noyaux de systèmes d'exploitation}
 
+Les programmes qui composent un système d'exploitation sont exécutés avec un
+niveau de privilège différent, correspondant à un jeu d'instructions plus ou
+moins important. Cette vérification est faite directement pas le processeur,
+d'une manière matérielle. En plus de cette distinction, les programmes ont une
+vue différente de la mémoire. Si un programme utilisateur avait accès aux
+structures de données internes du noyau, il pourrait obtenir des informations
+auquel il n'a pas normalement accès, ou obtenir des privilège supplémentaires
+(par exemple en obtenant les privilèges de l'administrateur sur la machine).
+
+C'est pourquoi les noyau stockent leur code et données dans un endroit en
+mémoire qui n'est pas accessible aux programmes utilisateur. Sur un système
+Intel 32 bits, cela correspond aux adresses supérieures à \texttt{0xc0000000},
+ou 3 Gio.
+
 % TODO trad
-
-Modern operating systems such as GNU/Linux are comprised of several independent
-programs: the kernel, which handles the machine's hardware as well as trusted
-core features; and user applications.
-
-These programs run with different privilege levels: low-level operations can
-only be executed by the kernel. They also have different views on the memory. If
-a user program had access to the kernel's internal data structures, it could use
-it to obtain information it is normally denied, or gain extra privileges (for
-example getting access to the \texttt{root} account). This is why the kernel
-stores its code and data in a place in memory that is not accessible to
-unprivileged programs. On an Intel 32-bit system, it corresponds to addresses
-higher than \texttt{0xc0000000}, or 3 GiB.
 
 Because user-mode programs cannot run low-level instructions, they cannot do
 anything interesting on their own. They have to use the kernel's facilities to
