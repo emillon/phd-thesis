@@ -24,6 +24,13 @@ même avec des tests les plus exhaustifs il n'est pas possible de simuler le cod
 d'une manière qui recouvre tous les cas d'utilisation et permette de s'assurer
 de sa correction.
 
+De plus, les tests ne permettent que de s'assurer qu'il y a un bug ; pas de
+prouver leur absence. S'assurer qu'un programme n'a pas de bug est
+particulièrement délicat, et ne peut pas être fait automatiquement dans le cas
+général. Une solution est en effet de restreindre l'expressivité du langage de
+programmation afin de n'accepter que des programmes sans un certain type
+d'erreur.
+
 \section{Plan de la thèse}
 
 Cette thèse comporte trois parties.
@@ -44,9 +51,11 @@ sémantique dynamique aux types statiques.
 
 \paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
 à ces travaux. L'implantation du système de types est décrite, afin que la
-manière de transformer automatiquement du code C en \langname. % TODO ...
-
-
+manière de transformer automatiquement du code C en \langname. Un cas d'étude
+est déroulé, consistant d'un bug ayant touché le noyau Linux. Il est démontré
+que le système de type capture précisément ce genre d'erreur de programmation.
+Enfin, les possibilités d'extension tant théoriques qu'expérimentales sont
+présentées.
 
 \begin{itemize}
 \item
