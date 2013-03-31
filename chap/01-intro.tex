@@ -37,6 +37,57 @@ général. Une solution est en effet de restreindre l'expressivité du langage d
 programmation afin de n'accepter que des programmes sans un certain type
 d'erreur.
 
+\section{Noyaux de systèmes d'exploitation}
+
+% TODO trad
+
+Modern operating systems such as GNU/Linux are comprised of several independent
+programs: the kernel, which handles the machine's hardware as well as trusted
+core features; and user applications.
+
+These programs run with different privilege levels: low-level operations can
+only be executed by the kernel. They also have different views on the memory. If
+a user program had access to the kernel's internal data structures, it could use
+it to obtain information it is normally denied, or gain extra privileges (for
+example getting access to the \texttt{root} account). This is why the kernel
+stores its code and data in a place in memory that is not accessible to
+unprivileged programs. On an Intel 32-bit system, it corresponds to addresses
+higher than \texttt{0xc0000000}, or 3 GiB.
+
+Because user-mode programs cannot run low-level instructions, they cannot do
+anything interesting on their own. They have to use the kernel's facilities to
+perform input/output or manipulate the operating system's abstractions (such as
+creating a new process). To this end, they can communicate with the kernel
+via the narrow interface of \emph{system calls}.
+
+For example, every time a user process calls the \texttt{read()} function, an
+architecture-specific mechanism invokes the kernel-mode function
+\texttt{sys\_read()}. The user passes a file descriptor, a pointer and an amount
+of bytes to fill and the kernel will actually perform input/output and copy the
+resulting bytes on the user's buffer.
+
+But if the user supplies a pointer whose value is in the kernel's reserved area,
+this zone will be overwritten, potentially leading to a security breach. In a
+sense, the kernel has been abused because it accessed the memory with its own
+privileges instead of the originator's. This is known as the \emph{confused
+deputy problem}\cite{hardy88confused}.
+
+When implementing a system call, it is thus necessary to forbid direct
+dereference of a pointer whose value can be controlled by the user. In case of a
+system call with a pointer argument, one has to dynamically verify that the
+address provided by the user lies within the process's memory space.
+
+The object of this work is to detect the places where it is necessary to insert
+dynamic checks. To this end, we augment the type system of a subset of the C
+programming language with \emph{type qualifiers}: instead of having a single
+pointer type, we add syntactic rules to distinguish between safe pointers that
+can be dereferenced with the \texttt{*}, \texttt{->} and \texttt{[]} operators ;
+and unsafe pointers that have to go through a special API provided by the
+kernel, consisting most notably of the two functions \texttt{copy\_from\_user}
+and \texttt{copy\_to\_user}.
+
+\section{Systèmes de types}
+
 \section{Plan de la thèse}
 
 Cette thèse comporte trois parties.
@@ -83,107 +134,3 @@ présentées.
 \item
   syntaxe, sémantique, typage
 \end{itemize}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\clearpage
-
-\section{Introduction}
-
-Modern operating systems such as GNU/Linux are comprised of several independent
-programs: the kernel, which handles the machine's hardware as well as trusted
-core features; and user applications.
-
-These programs run with different privilege levels: low-level operations can
-only be executed by the kernel. They also have different views on the memory. If
-a user program had access to the kernel's internal data structures, it could use
-it to obtain information it is normally denied, or gain extra privileges (for
-example getting access to the \texttt{root} account). This is why the kernel
-stores its code and data in a place in memory that is not accessible to
-unprivileged programs. On an Intel 32-bit system, it corresponds to addresses
-higher than \texttt{0xc0000000}, or 3 GiB.
-
-Because user-mode programs cannot run low-level instructions, they cannot do
-anything interesting on their own. They have to use the kernel's facilities to
-perform input/output or manipulate the operating system's abstractions (such as
-creating a new process). To this end, they can communicate with the kernel
-via the narrow interface of \emph{system calls}.
-
-For example, every time a user process calls the \texttt{read()} function, an
-architecture-specific mechanism invokes the kernel-mode function
-\texttt{sys\_read()}. The user passes a file descriptor, a pointer and an amount
-of bytes to fill and the kernel will actually perform input/output and copy the
-resulting bytes on the user's buffer.
-
-But if the user supplies a pointer whose value is in the kernel's reserved area,
-this zone will be overwritten, potentially leading to a security breach. In a
-sense, the kernel has been abused because it accessed the memory with its own
-privileges instead of the originator's. This is known as the \emph{confused
-deputy problem}\cite{hardy88confused}.
-
-When implementing a system call, it is thus necessary to forbid direct
-dereference of a pointer whose value can be controlled by the user. In case of a
-system call with a pointer argument, one has to dynamically verify that the
-address provided by the user lies within the process's memory space.
-
-The object of this work is to detect the places where it is necessary to insert
-dynamic checks. To this end, we augment the type system of a subset of the C
-programming language with \emph{type qualifiers}: instead of having a single
-pointer type, we add syntactic rules to distinguish between safe pointers that
-can be dereferenced with the \texttt{*}, \texttt{->} and \texttt{[]} operators ;
-and unsafe pointers that have to go through a special API provided by the
-kernel, consisting most notably of the two functions \texttt{copy\_from\_user}
-and \texttt{copy\_to\_user}.
