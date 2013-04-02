@@ -1,18 +1,18 @@
-Les logiciels sont de plus en plus présents partout, même dans des endroits
-incongrus. Le plus petit appareil électrique contient maintenant des composants
-matériels programmables nécessitant des logiciels.
+De plus en plus, les logiciels sont présents partout. Le plus petit appareil
+électrique contient maintenant des composants matériels programmables
+nécessitant des logiciels.
 
 Autant certains de ces systèmes embarqués ont un rôle très délimité et ne
 comportent que peu de code, certains comportent des millions de lignes de code.
-En cette époque, on pense bien sûr aux téléphones portables qui se rapproche
-de très près des ordinateurs. Ainsi le système Android de Google est basé sur le
-noyau Linux, né comme un clone gratuit d'Unix pour les micro-ordinateurs dans
-les années 90.
+En 2013, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
+complexité les rapprochent plus des ordinateurs que de la génération précédente
+qu'ils remplacent. Par exemple, le système Android de Google est basé sur le noyau
+Linux, destiné à la base aux micro-ordinateurs.
 
-Au cœur de chacun de ces systèmes, se trouve un noyau de système d'exploitation,
-chargé d'abstraire le matériel à la vue des logiciels utilisateurs (comme les
-applications de téléphones) et de garantir la sécurité et l'isolation de
-celles-ci.
+Le noyau de système d'exploitation est chargé de faire l'intermédiaire entre le
+matériel (processeur, mémoire, périphériques, …) et les applications exécutées
+sur celui-ci (par exemple un navigateur internet, une calculatrice ou un carnet
+d'adresses). Il doit aussi garantir la sécurité et l'isolation de celles-ci.
 
 En tant que tiers de confiance, le noyau a un certain nombre de responsabilités
 et est le seul à avoir accès à certaines informations sensibles. Il est capital
@@ -22,20 +22,24 @@ pas détourner ce dernier et lui faire fuiter des informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
-là: on estime qu'avant relecture, une erreur de programmation est présente
-toutes les N lignes de code en moyenne. Les activités de relecture et de % TODO
+là: on estime qu'avant relecture, 100 lignes de code contiennent entre 0.5 et 10
+erreurs de programmation en moyenne.
+% TODO sourcer
+Les activités de relecture et de
 débogage ont beau prendre la majeure partie du temps de développement, elles ne
-laissent pas un logiciel de qualité parfaite à la sortie, loin de là. En effet,
+laissent pas un logiciel de qualité parfaite à la sortie. En effet,
 même avec des tests les plus exhaustifs il n'est pas possible de simuler le code
 d'une manière qui recouvre tous les cas d'utilisation et permette de s'assurer
 de sa correction.
 
-De plus, les tests ne permettent que de s'assurer qu'il y a un bug ; pas de
-prouver leur absence. S'assurer qu'un programme n'a pas de bug est
-particulièrement délicat, et ne peut pas être fait automatiquement dans le cas
-général. Une solution est en effet de restreindre l'expressivité du langage de
-programmation afin de n'accepter que des programmes sans un certain type
-d'erreur.
+De plus, les tests ne permettent que de s'assurer qu'une erreur est présente.
+S'assurer qu'un programme est correct est particulièrement délicat, et ne peut
+pas être fait automatiquement dans le cas général.
+
+Le typage statique permet d'associer à chaque fragment d'un programme, une
+étiquette décrivant quel genre de valeur sera produite par son évaluation. Cette
+analyse, faite à la compilation, permet de rejeter les programmes incorrects du
+point de vue de cette catégorisation.
 
 Le but de cette thèse est de montrer que les techniques de typage statique
 permettent de vérifier que les pointeurs utilisateurs sont manipulés d'une
@@ -43,8 +47,8 @@ manière qui préserve l'intégrité du noyau d'un système d'exploitation.
 
 \section{Rôle d'un système d'exploitation}
 
-Pour une description plus détaillée des rôles d'un système d'exploitation ainsi
-que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbaum}.
+On décrit ici la fonction générale d'un système d'exploitation. Ce sujet est
+détaillé en profondeur, y compris avec des cas d'étude, dans~\cite{tanenbaum}.
 
 Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
 mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, des
@@ -66,38 +70,42 @@ Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
 ressources de la machine doivent être aussi partagées entre les utilisateurs et
 les programmes. Par exemple, plusieurs programmes vont utiliser le processeur
-les uns à la suite des autres (partage \emph{temporel}) ; et chaque programme
-aura à sa disposition une partie de la mémoire principale, ou du disque dur
-(partage \emph{spatial}).
+les uns à la suite des autres ; et chaque programme aura à sa disposition une
+partie de la mémoire principale, ou du disque dur.
 
 Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
 matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
 l'autre, ou que les deux utilisent la carte réseau les uns à la suite des
 autres. Ce sont des rôles du système d'exploitation.
 
-Cela passe donc par une limitation des possibilités du programme : plutôt que de
-permettre n'importe quel type d'instruction, il communique avec le système
-d'exploitation. Celui-ci centralise donc les appels au matériel, ce qui permet
-d'abstraire certaines opérations.
+Ainsi, au lieu d'accéder directement au matériel via des instructions de bas
+niveau, les programmes communiquent avec le noyau, qui centralise donc les
+appels au matériel, et abstrait certaines opérations.
 
-Par exemple, si un programme veut copier des données depuis un cédérom vers la
-mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
-la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
-de trame des données sur le disque, demander la lecture, puis déclencher une
-copie de la mémoire.
+Par exemple, comparons ce qui se passe concrètement lors de la copie de données
+depuis un cédérom ou une mémorette USB.
 
-Si dans un autre cas il désire récupérer des données depuis une mémorette USB,
-il devrait interroger le bus USB, rechercher le bon numéro de périphérique, le
-bon numéro de canal dans celui-ci, lui appliquer une commande de lecture au bon
-numéro de bloc, puis copier la mémoire.
+\begin{itemize}
+
+  \item Dans le cas du cédérom, il faut interroger le bus SATA, interroger le
+    lecteur sur la présence d'un disque dans le lecteur, activer le moteur,
+    calculer le numéro de trame des données sur le disque, demander la lecture,
+    puis déclencher une
+    copie de la mémoire.
+
+  \item Avec une mémorette USB, il faut interroger le bus USB, rechercher le bon
+    numéro de périphérique, le bon numéro de canal dans celui-ci, lui appliquer
+    une commande de lecture au bon numéro de bloc, puis copier la mémoire.
+
+\end{itemize}
 
 Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
-depuis un périphérique amovible), ne sont pas effectuées en pratique de la même
-manière. C'est pourquoi le système d'exploitation fournit les notions de
-fichier, lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de
-haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
-fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
-actions appropriées.
+depuis un périphérique amovible), ne sont pas effectuées de la même manière.
+C'est pourquoi le système d'exploitation fournit les notions de fichier,
+lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de haut
+niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un fichier'')
+et selon le type de lecteur, le système d'exploitation effectuera les actions
+appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
 le matériel, et en particulier assure les rôles suivants :
