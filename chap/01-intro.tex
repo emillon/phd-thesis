@@ -1,18 +1,18 @@
-Les logiciels sont de plus en plus présents partout, même dans des endroits
-incongrus. Le plus petit appareil électrique contient maintenant des composants
-matériels programmables nécessitant des logiciels.
+De plus en plus, les logiciels sont présents partout. Le plus petit appareil
+électrique contient maintenant des composants matériels programmables
+nécessitant des logiciels.
 
 Autant certains de ces systèmes embarqués ont un rôle très délimité et ne
 comportent que peu de code, certains comportent des millions de lignes de code.
-En cette époque, on pense bien sûr aux téléphones portables qui se rapproche
-de très près des ordinateurs. Ainsi le système Android de Google est basé sur le
-noyau Linux, né comme un clone gratuit d'Unix pour les micro-ordinateurs dans
-les années 90.
+En 2013, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
+complexité les rapprochent plus des ordinateurs que de la génération précédente
+qu'ils remplacent. Par exemple, le système Android de Google est basé sur le noyau
+Linux, destiné à la base aux micro-ordinateurs.
 
-Au cœur de chacun de ces systèmes, se trouve un noyau de système d'exploitation,
-chargé d'abstraire le matériel à la vue des logiciels utilisateurs (comme les
-applications de téléphones) et de garantir la sécurité et l'isolation de
-celles-ci.
+Le noyau de système d'exploitation est chargé de faire l'intermédiaire entre le
+matériel (processeur, mémoire, périphériques, …) et les applications exécutées
+sur celui-ci (par exemple un navigateur internet, une calculatrice ou un carnet
+d'adresses). Il doit aussi garantir la sécurité et l'isolation de celles-ci.
 
 En tant que tiers de confiance, le noyau a un certain nombre de responsabilités
 et est le seul à avoir accès à certaines informations sensibles. Il est capital
@@ -22,20 +22,24 @@ pas détourner ce dernier et lui faire fuiter des informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
-là: on estime qu'avant relecture, une erreur de programmation est présente
-toutes les N lignes de code en moyenne. Les activités de relecture et de % TODO
+là: on estime qu'avant relecture, 100 lignes de code contiennent entre 0.5 et 10
+erreurs de programmation en moyenne.
+% TODO sourcer
+Les activités de relecture et de
 débogage ont beau prendre la majeure partie du temps de développement, elles ne
-laissent pas un logiciel de qualité parfaite à la sortie, loin de là. En effet,
+laissent pas un logiciel de qualité parfaite à la sortie. En effet,
 même avec des tests les plus exhaustifs il n'est pas possible de simuler le code
 d'une manière qui recouvre tous les cas d'utilisation et permette de s'assurer
 de sa correction.
 
-De plus, les tests ne permettent que de s'assurer qu'il y a un bug ; pas de
-prouver leur absence. S'assurer qu'un programme n'a pas de bug est
-particulièrement délicat, et ne peut pas être fait automatiquement dans le cas
-général. Une solution est en effet de restreindre l'expressivité du langage de
-programmation afin de n'accepter que des programmes sans un certain type
-d'erreur.
+De plus, les tests ne permettent que de s'assurer qu'une erreur est présente.
+S'assurer qu'un programme est correct est particulièrement délicat, et ne peut
+pas être fait automatiquement dans le cas général.
+
+Le typage statique permet d'associer à chaque fragment d'un programme, une
+étiquette décrivant quel genre de valeur sera produite par son évaluation. Cette
+analyse, faite à la compilation, permet de rejeter les programmes incorrects du
+point de vue de cette catégorisation.
 
 Le but de cette thèse est de montrer que les techniques de typage statique
 permettent de vérifier que les pointeurs utilisateurs sont manipulés d'une
