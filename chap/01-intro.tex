@@ -47,8 +47,8 @@ manière qui préserve l'intégrité du noyau d'un système d'exploitation.
 
 \section{Rôle d'un système d'exploitation}
 
-Pour une description plus détaillée des rôles d'un système d'exploitation ainsi
-que plusieurs cas d'étude détaillés, on pourra se référer à \cite{tanenbaum}.
+On décrit ici la fonction générale d'un système d'exploitation. Ce sujet est
+détaillé en profondeur, y compris avec des cas d'étude, dans~\cite{tanenbaum}.
 
 Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
 mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, des
@@ -70,38 +70,42 @@ Permettre l'exécution de plusieurs programmes en même temps est une idée
 révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
 ressources de la machine doivent être aussi partagées entre les utilisateurs et
 les programmes. Par exemple, plusieurs programmes vont utiliser le processeur
-les uns à la suite des autres (partage \emph{temporel}) ; et chaque programme
-aura à sa disposition une partie de la mémoire principale, ou du disque dur
-(partage \emph{spatial}).
+les uns à la suite des autres ; et chaque programme aura à sa disposition une
+partie de la mémoire principale, ou du disque dur.
 
 Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
 matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
 l'autre, ou que les deux utilisent la carte réseau les uns à la suite des
 autres. Ce sont des rôles du système d'exploitation.
 
-Cela passe donc par une limitation des possibilités du programme : plutôt que de
-permettre n'importe quel type d'instruction, il communique avec le système
-d'exploitation. Celui-ci centralise donc les appels au matériel, ce qui permet
-d'abstraire certaines opérations.
+Ainsi, au lieu d'accéder directement au matériel via des instructions de bas
+niveau, les programmes communiquent avec le noyau, qui centralise donc les
+appels au matériel, et abstrait certaines opérations.
 
-Par exemple, si un programme veut copier des données depuis un cédérom vers la
-mémoire principale, il devra interroger le bus SATA, interroger le lecteur sur
-la présence d'un disque dans le lecteur, activer le moteur, calculer le numéro
-de trame des données sur le disque, demander la lecture, puis déclencher une
-copie de la mémoire.
+Par exemple, comparons ce qui se passe concrètement lors de la copie de données
+depuis un cédérom ou une mémorette USB.
 
-Si dans un autre cas il désire récupérer des données depuis une mémorette USB,
-il devrait interroger le bus USB, rechercher le bon numéro de périphérique, le
-bon numéro de canal dans celui-ci, lui appliquer une commande de lecture au bon
-numéro de bloc, puis copier la mémoire.
+\begin{itemize}
+
+  \item Dans le cas du cédérom, il faut interroger le bus SATA, interroger le
+    lecteur sur la présence d'un disque dans le lecteur, activer le moteur,
+    calculer le numéro de trame des données sur le disque, demander la lecture,
+    puis déclencher une
+    copie de la mémoire.
+
+  \item Avec une mémorette USB, il faut interroger le bus USB, rechercher le bon
+    numéro de périphérique, le bon numéro de canal dans celui-ci, lui appliquer
+    une commande de lecture au bon numéro de bloc, puis copier la mémoire.
+
+\end{itemize}
 
 Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
-depuis un périphérique amovible), ne sont pas effectuées en pratique de la même
-manière. C'est pourquoi le système d'exploitation fournit les notions de
-fichier, lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de
-haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
-fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
-actions appropriées.
+depuis un périphérique amovible), ne sont pas effectuées de la même manière.
+C'est pourquoi le système d'exploitation fournit les notions de fichier,
+lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de haut
+niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un fichier'')
+et selon le type de lecteur, le système d'exploitation effectuera les actions
+appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
 le matériel, et en particulier assure les rôles suivants :
