@@ -763,3 +763,57 @@ but to analyze larger parts of the kernel, it may be
 necessary to define a ``maximal'' configuration file (which is impossible
 because of incompatibilities between some options).
 
+\section{Étude de cas}
+
+Le paramètre \texttt{data} provient de l'espace utilisateur via un appel
+système. Un appelant malveillant peut se servir de cette fonction pour lire la
+mémoire du noyau à travers le message d'erreur.
+
+Le problème est modélisé de la façon suivante : on associe à chaque variable
+\texttt{x} un type de données \texttt{t}, ce que l'on note \texttt{x:t}. En
+plus des types présents dans le langage C, on ajoute une distinction
+supplémentaire pour les pointeurs. D'une part, les pointeurs ``noyau'' (de type
+\texttt{t~*}) sont créés en prenant l'adresse d'un objet présent dans le code
+source. D'autre part, les pointeurs ``utilisateurs'' (leur type est noté
+\texttt{t user*}) proviennent des interfaces avec l'espace utilisateur.
+
+Il est sûr de déréférencer un pointeur noyau, mais pas un pointeur
+utilisateur. L'opérateur \texttt{*} prend donc un \texttt{t *} en entrée
+et produit un \texttt{t}.
+
+Pour faire la vérification de type sur le code du programme, on a besoin de
+quelques règles. Tout d'abord, les types suivent le flot de données.
+C'est-à-dire que si on trouve dans le code \texttt{a = b}, \texttt{a} et
+\texttt{b} doivent avoir un type compatible. Ensuite, le qualificateur
+\texttt{user} est récursif : si on a un pointeur utilisateur sur une structure,
+tous les champs pointeurs de la structure sont également utilisateur. Enfin, le
+déréférencement s'applique aux pointeurs noyau seulement : si le code contient
+l'expression \texttt{*x}, alors il existe un type \texttt{t} tel que
+\texttt{x:t*} et \texttt{*x:t}.
+
+Appliquons ces règles à l'exemple de la figure \ref{fig:radeon-bug} : on suppose
+que l'interface avec l'espace utilisateur a été correctement annotée. Cela
+permet de déduire que \texttt{data:void user*}. En appliquant la première règle
+à la ligne 6, on en déduit que \texttt{info:struct drm\_radeon\_info user*}
+(comme en C, on peut toujours convertir de et vers un pointeur sur
+\texttt{void}).
+
+Pour déduire le type de \texttt{value\_ptr} dans la ligne 7, c'est la
+deuxième règle qu'il faut appliquer : le champ \texttt{value} de
+la structure est de type \texttt{uint32\_t~*} mais on y accède à travers
+un pointeur utilisateur, donc \texttt{value\_ptr:uint32\_t user*}.
+
+% TODO faux
+
+À la ligne 8, on peut appliquer la troisième règle : à cause du déréférencement,
+on en déduit que \texttt{value\_ptr:t *}, ce qui est une contradiction puisque
+d'après les lignes précédentes, \texttt{value\_ptr:uint32\_t user*}.
+
+Si la ligne 3 était remplacée par l'appel à \texttt{copy\_from\_user}, il n'y
+aurait pas d'erreur de typage car cette fonction peut accepter les arguments
+\texttt{(uint32\_t~*, uint32\_t user*, size\_t)}.
+
+Le principe de cette technique (associer des types aux valeurs puis restreindre
+les opérations sur certains types) peut être repris. Par exemple, si on définit
+un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peut
+considérer que multiplier deux telles valeurs est une erreur.
