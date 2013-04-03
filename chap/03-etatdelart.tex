@@ -751,60 +751,6 @@ de chaînes en C.
 Ce type d'annotations a été implanté par exemple pour le langage Java dans le
 système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-\clearpage
-
-\subsection*{TODO}
-
-\begin{itemize}
-\item IA :
-\begin{itemize}
-\item difficultés :
-
-\begin{itemize}
-\item
-  récursion
-\end{itemize}
-
-\item produit réduit
-\item CIL, autres front end
-\item polyspace?
-\item APRON?
-\end{itemize}
-
-\item
-  hoare : quand est-ce que le compile time suffit ? et le runtime nécessaire ?
-\item
-  types : citer H98\cite{haskell98}, perl \cite{perlCamelBook}, DAOC\cite{DAOC}
-  \& RWH\cite{rwh}?
-\item proof assistants
-  \begin{itemize}
-  \item Dependent types
-  \item proof $:$ theorem $::$ type $:$ term
-  \item Coq
-  \item Agda, termination checker
-  \item proof irrelevance
-  \item Theorems for Free\cite{theoremsforfree}
-  \end{itemize}
-
-\item
-  Analyse de flot :
-Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un tour
-d'horizon des problèmes et techniques existantes peut être trouvé
-dans~\cite{sm-jsac03}.
-
-\item Divers : Taint sequences \cite{mdv10},
-\item Frama-C ?
-\end{itemize}
-
-\section*{Divers à intégrer}
-
-% TODO
-\cite{jfp92}
-\cite{popl94}
-\cite{ToTa1993}
-
 \section{Langages intermédiaires}
 
 Le langage C \cite{KandR,AnsiC} a été conçu pour être une sorte d'assembleur
@@ -833,8 +779,6 @@ L'idée de prendre C comme langage intermédiaire est très séduisante, mais
 malheureusement sa sémantique est trop complexe et trop peu spécifiée. Il est
 donc judicieux d'utiliser un langage plus simple à cet effet. Dans de nombreux
 projets, des sous-ensembles de C ont été définis pour aller dans ce sens.
-
-\subsubsection{Langages}
 
 Les premiers candidats sont bien entendu les représentations intermédiaires
 utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
@@ -889,5 +833,65 @@ middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
 EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
 interprétation abstraite. Il sera décrit plus en détails dans la
 section~\ref{sec:npk}.
+
+\section{Proposition}
+
+% TODO
+
+Le but de cette thèse est de montrer que les techniques de typage statique
+permettent de vérifier que les pointeurs utilisateurs sont manipulés d'une
+manière qui préserve l'intégrité du noyau d'un système d'exploitation.
+
+\clearpage
+
+\subsection*{TODO}
+
+\begin{itemize}
+\item IA :
+\begin{itemize}
+\item difficultés :
+
+\begin{itemize}
+\item
+  récursion
+\end{itemize}
+
+\item produit réduit
+\item CIL, autres front end
+\item polyspace?
+\item APRON?
+\end{itemize}
+
+\item
+  hoare : quand est-ce que le compile time suffit ? et le runtime nécessaire ?
+\item
+  types : citer H98\cite{haskell98}, perl \cite{perlCamelBook}, DAOC\cite{DAOC}
+  \& RWH\cite{rwh}?
+\item proof assistants
+  \begin{itemize}
+  \item Dependent types
+  \item proof $:$ theorem $::$ type $:$ term
+  \item Coq
+  \item Agda, termination checker
+  \item proof irrelevance
+  \item Theorems for Free\cite{theoremsforfree}
+  \end{itemize}
+
+\item
+  Analyse de flot :
+Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un tour
+d'horizon des problèmes et techniques existantes peut être trouvé
+dans~\cite{sm-jsac03}.
+
+\item Divers : Taint sequences \cite{mdv10},
+\item Frama-C ?
+\end{itemize}
+
+\section*{Divers à intégrer}
+
+% TODO
+\cite{jfp92}
+\cite{popl94}
+\cite{ToTa1993}
 
 % vim: spelllang=fr
