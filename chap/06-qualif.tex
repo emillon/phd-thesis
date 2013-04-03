@@ -101,7 +101,7 @@ On rajoute donc le cas :
 Φ(\vTainted{φ}) =& \serr{taint}
 \end{align*}
 
-Pour accéder à ces valeurs, il faut utiliser les opérateurs $\phxx\uGet$ et 
+Pour accéder à ces valeurs, il faut utiliser les opérateurs $\phxx\uGet$ et
 $\phxx\uPut$.
 
 % TODO leur sémantique
@@ -512,107 +512,5 @@ size_t strlen(const char *s);
 \subsection{Extensions au système de types}
 
 \subsection{Résultats}%}}}
-
-\section*{TODO}
-
-\begin{itemize}
-\item appliquer taint sur des sous-valeurs?
-\item vTaint doit se propager aux accès de champ
-\item étendre l'état mémoire aux variables utilisateur
-\end{itemize}
-
-(passe Sarah)
-
-\begin{itemize}
-\item
-  6.1.1 français dans ``qui représente qui contrôle sa valeur''
-\item
-  6.1.1 mettre une ref sur la description du noyau linux
-\item
-  la traduction de taintage par teintage est incorrecte (et des fois du
-  garde la même orthographe que celle anglaise avec le `a') La
-  traduction de tainted c'est plutôt sali, pollué. Tu peux aussi garder
-  le terme anglais et le mettre en italique
-\item
-  j'ai arrêté de lire à partir de 6.2 parce que le texte n'est pas
-  vraiment clair
-\end{itemize}
-
-% TODO le cimetière des règles
-
-%\begin{mathpar}
-%\irule{Taint-Erase}
-  %{ }
-  %{ \mmi{m}{\iTaint{x}}{m}{\iPass} }
-%\end{mathpar}
-
-%\begin{mathpar}
-%\irule{Taint-Write-Old}
-  %{ }
-  %{ \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
-%\end{mathpar}
-
-%\begin{mathpar}
-%\irule{Taint-Write}
-  %{ }
-  %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
-%\end{mathpar}
-
-\section*{Extrait PLAS}
-
-The main distinctiveness is that instead of having a plain pointer type
-$t~*$, our one is decorated with a type qualifier $q$. This annotation expresses
-who controls the value of the pointer. If the kernel controls the value of the
-pointer, then it cannot be abused. On the other hand, one has to be careful
-with user-controlled pointers, because the caller can abuse the kernel and
-access reserved memory. The only safe case when dereferencing such a pointer is
-if its value is outside the kernel's memory.
-
-In order to avoid dangerous cases, we have to dynamically check that the
-destination of every user-controlled pointer is in userspace. Kernel pointers
-(that is to say, kernel-controlled pointers) can be dereferenced without further
-check, but user pointers have to be manipulated with a restricted interface that
-will check whether their destination is in userspace.
-
-As mentioned before, this is done using the following constructs:%
-{\small
-\begin{mathpar}
-    \disprule{GetU}
-
-    \disprule{PutU}
-\end{mathpar}}%
-To add qualifiers to a type system, the rules of interest are those that
-manipulate pointers: dereferencing, pointer arithmetic and referencing (taking
-the address of a left-value).
-
-Dereferencing the easiest one ; our goal is to authorize dereferencing only
-\qKernel pointers:
-
-{\small \[ \disprule{Lv-Deref} \]}%
-
-Pointer arithmetic can be done inside a \qUser or \qKernel memory zone. There is
-no concern of jumping from userspace to kernelspace, because pointer arithmetic
-is checked at runtime: if these operators overflow or are applied to a bad
-pointer (such as a pointer to an integer field), $\serr{ptr}$ is raised.
-
-{\small \[ \disprule{Ptr-Arith} \]}%
-
-The reference case is trickier because a type qualifier has to be synthesized.
-Because it is created on the kernel stack, it has a \qKernel qualifier in all
-cases:
-{\small \[
-  \disprule{Addr}
-\]}%
-
-The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
-It is an important rule, because it is the only source of \qUser pointers in the
-type system.
-%{\small \[ \disprule{Taint} \] }% TODO
-The return value of a function is emulated with a virtual left-value $\vRet$.%
-{\small \begin{mathpar}
-  \disprule{Return}
-
-  \disprule{Fun}
-\end{mathpar}}%
 
 % vim: spelllang=fr
