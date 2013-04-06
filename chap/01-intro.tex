@@ -112,29 +112,32 @@ le matériel, et en particulier assure les rôles suivants :
 
 % TODO À affiner ou supprimer
 
-\begin{itemize}
-\item
-  Gestion des processus : un système d'exploitation peut permettre
-  d'exécuter plusieurs programmes à la fois. Il faut alors orchestrer
-  ces différents processus et les séparer en terme de temps et de
-  ressources partagées.
-\item
-  Gestion de la mémoire : chaque processus, en plus du noyau, doit
-  disposer d'un espace mémoire différent. C'est-à-dire qu'un processus
-  ne doit pas pouvoir interférer avec un autre.
-\item
-  Gestion des fichiers : les processus peuvent accéder à une hiérarchie de
-  fichiers, indépendamment de la manière d'y accéder.
-\item
-  Gestion des périphériques : le noyau étant le seul code ayant des privilèges,
-  c'est lui qui doit communiquer avec les périphériques matériels.
-\item
-  Abstractions : le noyau fournit aux programmes une interface unifiée,
-  permettant de stocker des informations de la même manière sur un
-  disque dur ou une clef USB (alors que l'accès se déroulera de manière
-  très différente en pratique).
-\end{itemize}
+\paragraph{Gestion des processus}
 
+Un système d'exploitation peut permettre d'exécuter plusieurs programmes à la
+fois. Il faut alors orchestrer ces différents processus et les séparer en terme
+de temps et de ressources partagées.
+
+\paragraph{Gestion de la mémoire}
+
+Chaque processus, en plus du noyau, doit disposer d'un espace mémoire différent.
+C'est-à-dire qu'un processus ne doit pas pouvoir interférer avec un autre.
+
+\paragraph{Gestion des fichiers}
+
+Les processus peuvent accéder à une hiérarchie de fichiers, indépendamment de la
+manière d'y accéder.
+
+\paragraph{Gestion des périphériques}
+
+Le noyau étant le seul code ayant des privilèges, c'est lui qui doit communiquer
+avec les périphériques matériels.
+
+\paragraph{Abstractions}
+
+Le noyau fournit aux programmes une interface unifiée, permettant de stocker des
+informations de la même manière sur un disque dur ou une clef USB (alors que
+l'accès se déroulera de manière très différente en pratique).
 
 \section{Noyaux de systèmes d'exploitation}
 
@@ -189,6 +192,51 @@ and \texttt{copy\_to\_user}.
 \section{Systèmes de types}
 
 \section{Langages d'implantation}
+
+% TODO C
+
+% TODO Ada
+
+% TODO Rust
+
+Difficultés pour analyser C
+
+\begin{itemize}
+\item les nombres flottants
+(types \texttt{float}, \texttt{double} et \texttt{long double}) ont une
+sémantique particulière, et il n'est pas correct d'"approcher" leur sémantique
+par une sémantique dans $ℝ$. Afin d'être correct, il faut établir des domaines
+spécifiques au flottant, comme~\cite{floatpoly}. Un tour d'horizon des
+difficultés liées aux flottants est effectué dans~\cite{floatpitfalls}.
+
+\item les pointeurs sur fonction
+rendent floue la limite qui est habituellement présente entre instructions et
+données. En leur présence il est impossible de faire une analyse de flot de
+contrôle indépendante du flot de données. Pour pouvoir les traiter, il faut que
+le domaine abstrait en question soit assez précis pour qu'un pointeur abstrait
+se concrétise en un ensemble réduit de fonctions. Dans le cas où le domaine ne
+peut pas borner l'ensemble des fonctions possibles et renvoie $\top$, l'analyse
+ne peut pas continuer.
+
+\item l'allocation dynamique
+de données, présente dans le langage C par le biais des fonctions
+\texttt{malloc} et \texttt{free}, modifie le modèle mémoire
+nécessaire. Sans celle-ci, l'ensemble des zones mémoire possibles peut être
+décrit statiquement : ce sont les noms de variable. Ce qu'introduit
+\texttt{malloc} au langage, c'est une zone mémoire qui n'a pas de nom, et sur
+laquelle on n'a qu'un pointeur.
+
+% TODO, bof + expand
+
+\item le transtypage (\emph{casts}) entre entiers et pointeurs
+est particulièrement délicat à traiter. Dans les modèles abstraits, les
+pointeurs sur données ou sur fonctions n'ont pas de représentation numérique,
+seulement une représentation symbolique. Même dans l'exécution concrète, la
+représentation numérique d'un pointeur est lié à de nombreux choix faits par
+l'environnement d'exécution (comme la randomisation de l'espace d'adressage) qui
+ne peuvent pas facilement être modélisés.
+
+\end{itemize}
 
 \section{Langages d'analyse}
 
