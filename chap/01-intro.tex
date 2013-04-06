@@ -2,12 +2,15 @@ De plus en plus, les logiciels sont présents partout. Le plus petit appareil
 électrique contient maintenant des composants matériels programmables
 nécessitant des logiciels.
 
+% TODO faire une intro "la vie est numérique" avec du Berry @ CdF
+
 Autant certains de ces systèmes embarqués ont un rôle très délimité et ne
 comportent que peu de code, certains comportent des millions de lignes de code.
+% TODO [E] md
 En 2013, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
-complexité les rapprochent plus des ordinateurs que de la génération précédente
-qu'ils remplacent. Par exemple, le système Android de Google est basé sur le noyau
-Linux, destiné à la base aux micro-ordinateurs.
+complexité les rapprochent des ordinateurs de bureau. . Par exemple, le système
+Android de Google est basé sur le noyau Linux, destiné à la base aux
+micro-ordinateurs.
 
 Le noyau de système d'exploitation est chargé de faire l'intermédiaire entre le
 matériel (processeur, mémoire, périphériques, …) et les applications exécutées
@@ -22,7 +25,7 @@ pas détourner ce dernier et lui faire fuiter des informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
-là: on estime qu'avant relecture, 100 lignes de code contiennent entre 0.5 et 10
+là: on estime qu'avant relecture, 1000 lignes de code contiennent entre 5 et 100
 erreurs de programmation en moyenne.
 % TODO sourcer
 Les activités de relecture et de
@@ -32,6 +35,7 @@ même avec des tests les plus exhaustifs il n'est pas possible de simuler le cod
 d'une manière qui recouvre tous les cas d'utilisation et permette de s'assurer
 de sa correction.
 
+% TODO [E] Attention au politiquement correct
 De plus, les tests ne permettent que de s'assurer qu'une erreur est présente.
 S'assurer qu'un programme est correct est particulièrement délicat, et ne peut
 pas être fait automatiquement dans le cas général.
@@ -71,8 +75,8 @@ partie de la mémoire principale, ou du disque dur.
 
 Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
 matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
-l'autre, ou que les deux utilisent la carte réseau les uns à la suite des
-autres. Ce sont des rôles du système d'exploitation.
+l'autre, ou que les deux n'utilisent pas la carte réseau en même temps. Ce sont
+des rôles du système d'exploitation.
 
 Ainsi, au lieu d'accéder directement au matériel via des instructions de bas
 niveau, les programmes communiquent avec le noyau, qui centralise donc les
@@ -143,7 +147,7 @@ structures de données internes du noyau, il pourrait obtenir des informations
 auquel il n'a pas normalement accès, ou obtenir des privilège supplémentaires
 (par exemple en obtenant les privilèges de l'administrateur sur la machine).
 
-C'est pourquoi les noyau stockent leur code et données dans un endroit en
+C'est pourquoi les noyaux stockent leur code et données dans un endroit en
 mémoire qui n'est pas accessible aux programmes utilisateur. Sur un système
 Intel 32 bits, cela correspond aux adresses supérieures à \texttt{0xc0000000},
 ou 3 Gio.
@@ -219,3 +223,5 @@ présentées.
 %  - analyse non intrusive
 %  - méthodes de développement du noyau
 %  - syntaxe, sémantique, typage
+
+% vim: spelllang=fr
