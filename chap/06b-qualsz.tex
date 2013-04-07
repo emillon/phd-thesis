@@ -1,0 +1,210 @@
+Dans ce chapitre, nous présentons une autre extension au système de types du
+chapitre~\ref{cha:typbase}, similaire à celle de la section précédente.
+Il s'agit cette fois-ci de détecter les pointeurs sur caractères (\texttt{char
+*}) qui sont terminés par un caractère NUL et donc une chaîne C correcte. La
+bibliothèque C propose quantité de fonctions manipulant ces chaînes et appeler
+une fonction comme \texttt{strcpy} sur un pointeur quelconque est un problème de
+sécurité que nous cherchons à détecter.
+
+\section{But}
+
+Le langage C ne fournit pas directement de type "chaîne de caractère". C'est au
+programmeur de les gérer via des pointeurs sur caractère (\texttt{char *}).
+
+En théorie le programmeur est libre de choisir une représentation : des chaînes
+préfixées par la longueur, une structure contenant la taille et un pointeur vers
+les données, ou encore une chaîne avec un terminateur comme 0.
+
+Néanmoins c'est ce dernier style qui est le plus idiomatique : par exemple, les
+littéraux de chaîne (\texttt{"comme ceci"}) ajoutent un octet nul à la fin. De
+plus, le standard décrit dans la bibliothèque d'exécution de nombreuses
+fonctions destinées à les manipuler --- c'est le fichier
+\texttt{\textless{}string.h\textgreater{}} (\cite{AnsiC} section 7.21).
+
+Ainsi la fonction \texttt{strcpy} a pour protoype :
+
+\begin{Verbatim}
+char *strcpy(char *dest, const char *src);
+\end{Verbatim}
+
+Elle réalise la copie de la chaîne pointée par \texttt{src} à l'endroit pointé
+par \texttt{dest}. Pour détecter la fin de la chaîne, cette fonction parcourt la
+mémoire jusqu'à trouver un caractère nul. Une implémentation naïve pourrait être:
+
+\insertcode{strcpy.c}
+
+La copie n'est arrêtée que lorsqu'un 0 est lu. Autrement dit, si quelqu'un
+contrôle la valeur pointée par \texttt{src}, il pourra écraser autant de données
+qu'il le désire. On est dans le cas d'école du débordement de tampon sur la pile
+tel que décrit dans \cite{SmashingTheStack}. Considérons la fonction suivante :
+
+\insertcode{strcpy-caller.c}
+
+Si le pointeur \texttt{src} pointe sur une chaîne de longueur supérieure à 100
+(ou une zone mémoire qui n'est pas une chaîne et ne contient pas de 0), les
+valeurs placées sur la pile juste avant \texttt{buf} (à une adresse supérieure)
+seront écrasées. Avec les conventions d'appel habituelles, il s'agit de
+l'adresse de retour de la fonction. Un attaquant pourra donc détourner le flot
+d'exécution du programme.
+
+Pour éviter ces cas de fonctions vulnérables, on peut introduire une distinction
+entre les pointeurs \texttt{char *} classiques (représentant l'adresse d'un
+caractère par exemple) et les pointeurs sur une chaîne terminée par un caractère
+nul.
+
+Dans certaines bases de code (la plus célèbre étant celle de Microsoft), une
+convention syntaxique est utilisée : les pointeurs vers des chaînes terminées
+par 0 ont un nom qui commence par \texttt{sz}, comme \texttt{"szTitle"}. C'est
+pourquoi nous appellerons ce qualificateur de type \texttt{sz}.
+
+\section{Approche}
+
+Cette propriété est un peu différente de la séparation entre espace utilisateur
+et espace noyau modélisée précédemment : autant un pointeur reste contrôlé par
+l'utilisateur (ou sûr) toute sa vie, autant le fait d'être terminé par un octet
+nul dépend de l'ensemble de l'état mémoire. Il y a deux problèmes principaux à
+considérer.
+
+D'une part, l'\emph{aliasing} rend l'analyse difficile : si \texttt{p} et
+\texttt{q} pointent tous les deux vers une même zone mémoire, le fait de
+modifier l'un peut modifier l'autre. D'autre part, ce n'est pas parce qu'une
+fonction maintient l'invariant de terminaison, qu'elle le maintient à chaque
+instruction.
+
+On peut résoudre en partie le problème d'\emph{aliasing} en étant très
+conservateur, c'est à dire en sous-approximant l'ensemble des chaînes du
+programme (on traitera une chaîne légitime comme une chaîne non terminée,
+interdisant par excès de zèle les fonctions comme \texttt{strcpy}).
+
+Le second problème est plus délicat puisqu'il casse l'hypothèse habituelle que
+chaque variable conserve le même type au long de sa vie. Plusieurs techniques
+sont possibles pour contourner ce problème : la première est d'être encore une
+fois conservateur et d'interdire ces constructions (on ne pourrait alors
+analyser que les programmes ne manipulant les chaînes qu'à travers les fonctions
+de la bibliothèque standard). Une autre est d'insérer des annotations permettant
+de s'affranchir localement du système de types. Enfin, il est possible
+d'utiliser un système de types où les variables ont en plus d'un type, un
+automate d'états possible dépendant de la position dans le programme : c'est le
+concept de \emph{typestates}\cite{tse12-typestate}.
+
+\section{Annotation de \texttt{string.h}}
+
+Une première étape est d'annoter l'ensemble des fonctions manipulant les chaînes
+de caractères.
+
+\subsection{Fonctions de copie}
+
+\paragraph{memcpy}
+
+\begin{Verbatim}
+void *memcpy(void *dest, const void *src, size_t n);
+\end{Verbatim}
+
+\paragraph{memmove}
+
+\begin{Verbatim}
+void *memmove(void *dest, const void *src, size_t n);
+\end{Verbatim}
+
+\paragraph{strcpy}
+
+\begin{Verbatim}
+char *strcpy(char *dest, const char *src);
+\end{Verbatim}
+
+\paragraph{strncpy}
+
+\begin{Verbatim}
+char *strncpy(char *dest, const char *src, size_t n);
+\end{Verbatim}
+
+\subsection{Fonctions de concaténation}
+
+\paragraph{strcat}
+\begin{Verbatim}
+char *strcat(char *dest, const char *src);
+\end{Verbatim}
+\paragraph{strncat}
+\begin{Verbatim}
+char *strncat(char *dest, const char *src, size_t n);
+\end{Verbatim}
+
+\subsection{Fonctions de comparaison}
+
+\paragraph{memcmp}
+\begin{Verbatim}
+int memcmp(const void *s1, const void *s2, size_t n);
+\end{Verbatim}
+\paragraph{strcmp}
+\begin{Verbatim}
+int strcmp(const char *s1, const char *s2);
+\end{Verbatim}
+\paragraph{strncmp}
+\begin{Verbatim}
+int strncmp(const char *s1, const char *s2, size_t n);
+\end{Verbatim}
+\paragraph{strcoll}
+\begin{Verbatim}
+int strcoll(const char *s1, const char *s2);
+\end{Verbatim}
+\paragraph{strxfrm}
+\begin{Verbatim}
+size_t strxfrm(char *dest, const char *src, size_t n);
+\end{Verbatim}
+
+\subsection{Fonctions de recherche}
+
+\paragraph{memchr}
+\begin{Verbatim}
+void *memchr(const void *s, int c, size_t n);
+\end{Verbatim}
+\paragraph{strchr}
+\begin{Verbatim}
+char *strchr(const char *s, int c);
+\end{Verbatim}
+\paragraph{strcspn}
+\begin{Verbatim}
+size_t strcspn(const char *s, const char *reject);
+\end{Verbatim}
+\paragraph{strpbrk}
+\begin{Verbatim}
+char *strpbrk(const char *s, const char *accept);
+\end{Verbatim}
+\paragraph{strrchr}
+\begin{Verbatim}
+char *strrchr(const char *s, int c);
+\end{Verbatim}
+\paragraph{strspn}
+\begin{Verbatim}
+size_t strspn(const char *s, const char *accept);
+\end{Verbatim}
+\paragraph{strstr}
+\begin{Verbatim}
+char *strstr(const char *haystack, const char *needle);
+\end{Verbatim}
+\paragraph{strtok}
+\begin{Verbatim}
+char *strtok(char *str, const char *delim);
+\end{Verbatim}
+
+\subsection{Fonctions diverses}
+
+\paragraph{memset}
+\begin{Verbatim}
+void *memset(void *s, int c, size_t n);
+\end{Verbatim}
+\paragraph{strerror}
+\begin{Verbatim}
+char *strerror(int errnum);
+\end{Verbatim}
+\paragraph{strlen}
+\begin{Verbatim}
+size_t strlen(const char *s);
+\end{Verbatim}
+
+\section{Typage des primitives}
+
+\section{Extensions au système de types}
+
+\section{Résultats}%}}}
+

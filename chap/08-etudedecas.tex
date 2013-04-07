@@ -61,6 +61,128 @@ donc fallu faire un choix ; nous avons choisi la configuration par défaut. Pour
 analyser des morceaux plus importants du noyau, il faudrait définir un fichier
 de configuration plus important.
 
+\section{Appels systèmes sous Linux}
+
+Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
+le noyau Linux. Une description plus détaillée pourra être trouvée dans
+\cite{UnderstandingTheLinuxKernel}, ou pour le cas de la mémoire virtuelle,
+\cite{LinuxVMM}.
+
+Deux rings sont utilisés : en \ring{0}, le code noyau et en \ring{3}, le code
+utilisateur.
+
+Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
+existe : elles s'exécutent l'une après l'autre, le changement s'effectuant sur
+interruptions.
+
+Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
+des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
+doit donc avoir deux piles : une pile ``utilisateur'' qui sert pour
+l'application elle-même, et une pile ``noyau'' qui sert aux appels système.
+
+\begin{figure} % fig:memmap {{{
+\centering
+\input{fig/memmap.tex}
+
+\caption[Espace d'adressage d'un processus]{L'espace d'adressage d'un processus.
+En gris clair, les zones accessibles à tous les niveaux de privilèges : code du
+programme, bibliothèques, tas, pile. En gris foncé, la mémoire du noyau,
+réservée au mode privilégié.}
+
+\label{fig:memmap}
+\end{figure}
+% }}}
+
+Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun
+un ensemble de tables de pages et une valeur de \crtrois associée. Au moment de
+changer le processus en cours, l'ordonnanceur charge donc le \crtrois du nouveau
+processus.
+
+Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
+\texttt{0xc0000000}) sont réservées à l'utilisateur. On y trouvera par exemple :
+
+\begin{itemize}
+\item le code du programme
+\item les données du programmes (variables globales)
+\item la pile utilisateur
+\item le tas (mémoire allouée par \texttt{malloc} et fonctions similaires)
+\item les bibliothèques partagées
+\end{itemize}
+
+Au dessus de \texttt{PAGE\_OFFSET}, se trouve la mémoire réservée au noyau.
+Cette zone contient le code du noyau, les piles noyau des processus, etc.
+
+\subsection{Appels système}
+\label{sec:impl-syscall}
+
+%TODO clarifier encore tout ça
+
+Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas
+contenir d'instructions privilégiées, et donc ne peuvent pas accéder directement
+au matériel (c'était le but !). Pour qu'ils puissent interagir avec le système
+(afficher une sortie, écrire sur le disque...), le mécanisme des appels système
+est nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings}
+3 et 0. Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
+``magiques'' qui font appel au système d'exploitation pour effectuer des
+opérations.
+
+Voyons ce qui se passe derrière la magie apparente. Une explication plus
+détaillée est disponible dans la documentation fournie par Intel
+\cite{intelsys}.
+
+\subsubsection{Dans la bibliothèque C}
+
+Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
+système. C'est la fonction qui est directement appelée par le programme. Cette
+fonction commence par placer le numéro de l'appel système (noté
+\texttt{\_\_NR\_getpid}, valant 20 ici) dans \eax, puis les arguments éventuels
+dans les registres (\ebx, \ecx, \edx, \esi puis \edi). Une interruption
+logicielle est ensuite déclenchée (\texttt{int 0x80}).
+
+\subsubsection{Dans la routine de traitement d'interruption}
+
+Étant donné la configuration du processeur\footnote{Il est impropre de dire que
+le processeur est configuré --- tout dépend uniquement de l'état de certains
+registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
+Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
+prédéfini (\texttt{arch/x86/kernel/entry\_32.S}, \texttt{ENTRY(system\_call)}).
+
+\insertcode{entry-syscall.s}
+
+L'exécution reprend donc en \ring{0}, avec dans \esp le pointeur de pile noyau
+du processus. Les valeurs des registres ont été préservées, la macro
+\texttt{SAVE\_ALL} les place sur la pile. Ensuite, à l'étiquette
+\texttt{syscall\_call}, le numéro d'appel système (toujours dans \eax) sert
+d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
+
+
+\subsubsection{Dans l'implantation de l'appel système}
+
+Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
+fonction ``classique'', la convention d'appel \emph{cdecl} est respectée. La
+fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc être
+écrite en C.
+
+On trouve cette fonction dans \texttt{kernel/timer.c} :
+
+\insertcode{syscall-definition.c}
+
+La macro \texttt{SYSCALL_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
+définit entre autres des points d'entrée pour les fonctionnalités de débogage du
+noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
+conformément à la convention \emph{cdecl}.
+
+\subsubsection{Retour vers le ring 3}
+
+Au retour de la fonction, la valeur de retour est placée à la place de \eax là
+où les registres ont été sauvegardés sur la pile noyau
+(\texttt{PT\_EFLAGS(\%esp)}). L'instruction \texttt{iret} (derrière la macro
+\texttt{INTERRUPT\_RETURN}) permet de restaurer les registres et de repasser en
+mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
+peut alors retourner au programme appelant.
+
+
 \section{Bug}
 
 On décrit le cas d'un pilote video qui contenait un bug de pointeur utilisateur.
@@ -168,61 +290,3 @@ primitives $\phxx{\uGet}$ et $\phxx{\uPut}$.
 % bon type dans l'environnement initial
 
 Enfin, on peut lancer l'inférence de type.
-
-%  \caption[Bug freedesktop.org \#29340]{Bug freedesktop.org \#29340. Le
-%  paramètre \texttt{data} provient de l'espace utilisateur via un appel système.
-%  Un appelant malveillant peut se servir de cette fonction pour lire la mémoire
-%  du noyau à travers le message d'erreur.}
-
-\section{Principes de l'analyse}
-
-\wip{}
-
-Le problème est modélisé de la façon suivante : on associe à chaque variable
-\texttt{x} un type de données \texttt{t}, ce que l'on note \texttt{x:t}. En
-plus des types présents dans le langage C, on ajoute une distinction
-supplémentaire pour les pointeurs. D'une part, les pointeurs ``noyau'' (de type
-\texttt{t~*}) sont créés en prenant l'adresse d'un objet présent dans le code
-source. D'autre part, les pointeurs ``utilisateurs'' (leur type est noté
-\texttt{t user*}) proviennent des interfaces avec l'espace utilisateur.
-
-Il est sûr de déréférencer un pointeur noyau, mais pas un pointeur
-utilisateur. L'opérateur \texttt{*} prend donc un \texttt{t *} en entrée
-et produit un \texttt{t}.
-
-Pour faire la vérification de type sur le code du programme, on a besoin de
-quelques règles. Tout d'abord, les types suivent le flot de données.
-C'est-à-dire que si on trouve dans le code \texttt{a = b}, \texttt{a} et
-\texttt{b} doivent avoir un type compatible. Ensuite, le qualificateur
-\texttt{user} est récursif : si on a un pointeur utilisateur sur une structure,
-tous les champs pointeurs de la structure sont également utilisateur. Enfin, le
-déréférencement s'applique aux pointeurs noyau seulement : si le code contient
-l'expression \texttt{*x}, alors il existe un type \texttt{t} tel que
-\texttt{x:t*} et \texttt{*x:t}.
-
-Appliquons ces règles à l'exemple de la figure \ref{fig:radeon-bug} : on suppose
-que l'interface avec l'espace utilisateur a été correctement annotée. Cela
-permet de déduire que \texttt{data:void user*}. En appliquant la première règle
-à la ligne 6, on en déduit que \texttt{info:struct drm\_radeon\_info user*}
-(comme en C, on peut toujours convertir de et vers un pointeur sur
-\texttt{void}).
-
-Pour déduire le type de \texttt{value\_ptr} dans la ligne 7, c'est la
-deuxième règle qu'il faut appliquer : le champ \texttt{value} de
-la structure est de type \texttt{uint32\_t~*} mais on y accède à travers
-un pointeur utilisateur, donc \texttt{value\_ptr:uint32\_t user*}.
-
-% TODO faux
-
-À la ligne 8, on peut appliquer la troisième règle : à cause du déréférencement,
-on en déduit que \texttt{value\_ptr:t *}, ce qui est une contradiction puisque
-d'après les lignes précédentes, \texttt{value\_ptr:uint32\_t user*}.
-
-Si la ligne 3 était remplacée par l'appel à \texttt{copy\_from\_user}, il n'y
-aurait pas d'erreur de typage car cette fonction peut accepter les arguments
-\texttt{(uint32\_t~*, uint32\_t user*, size\_t)}.
-
-Le principe de cette technique (associer des types aux valeurs puis restreindre
-les opérations sur certains types) peut être repris. Par exemple, si on définit
-un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peut
-considérer que multiplier deux telles valeurs est une erreur.

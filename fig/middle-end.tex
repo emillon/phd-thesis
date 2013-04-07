@@ -16,9 +16,9 @@
 
   \coordinate (legbase) at ($ (me) + (0,-2cm) $);
 
-  \draw[bigbrace] (me.south east |- legbase)
+  \draw[bigbrace] ($ (me.south east |- legbase) + (-2mm, 0) $)
                to node [yshift=-5mm] {Middle-end}
-                  (me.south west |- legbase);
+                  ($ (me.south west |- legbase) + (2mm, 0) $);
   \draw[bigbrace] (me.south west |- legbase)
                to node [yshift=-5mm]{Front-end}
                   (fe2.south west |- legbase);
