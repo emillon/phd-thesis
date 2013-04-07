@@ -141,6 +141,8 @@ l'accès se déroulera de manière très différente en pratique).
 
 \section{Noyaux de systèmes d'exploitation}
 
+% TODO [E] ??? privilèges ?
+
 Les programmes qui composent un système d'exploitation sont exécutés avec un
 niveau de privilège différent, correspondant à un jeu d'instructions plus ou
 moins important. Cette vérification est faite directement pas le processeur,
@@ -179,6 +181,9 @@ When implementing a system call, it is thus necessary to forbid direct
 dereference of a pointer whose value can be controlled by the user. In case of a
 system call with a pointer argument, one has to dynamically verify that the
 address provided by the user lies within the process's memory space.
+
+% TODO [E] est-ce ici que tu veux le placer ? rien ne t'empêche de le dire
+% plusieurs fois
 
 The object of this work is to detect the places where it is necessary to insert
 dynamic checks. To this end, we augment the type system of a subset of the C
@@ -523,6 +528,8 @@ problèmes de manipulation de pointeurs contrôlés par l'utilisateur y sont
 introduits. On fait ensuite un tour d'horizon des techniques existantes
 permettant de traiter ce problème.
 
+% TODO [E] + proposition
+
 \paragraph{La partie~\ref{part:lang}} décrit notre solution : \langname, un
 langage impératif. On y décrit sa syntaxe, sa sémantique ainsi qu'un système de
 types statiques. On l'étend ensuite pour capturer les problèmes d'adressage
@@ -530,6 +537,8 @@ mémoire présents dans les systèmes d'exploitation en ajoutant des pointeurs
 contrôlés par l'utilisateur. Le système de types est également étendu. Pour
 chacune de ces variantes, on établit la propriété de sûreté de typage reliant la
 sémantique dynamique aux types statiques.
+
+% TODO [E] dire un mot de Newspeak dès l'intro ou l'état de l'art
 
 \paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
 à ces travaux. L'implantation du système de types est décrite, afin que la
@@ -548,5 +557,9 @@ présentées.
 %  - analyse non intrusive
 %  - méthodes de développement du noyau
 %  - syntaxe, sémantique, typage
+
+% TODO [E] dire au début que c'est tendance Unix si c'est bien le cas
+
+% TODO [E] + besoins EADS
 
 % vim: spelllang=fr
