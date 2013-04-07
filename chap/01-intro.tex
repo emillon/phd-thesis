@@ -272,18 +272,18 @@ règles permettant de vérifier le typage sont par exemple les suivantes :
 \item
   une constante entière est toujours de type \texttt{int}.
 \item
-  si $f$ a pour type $(t_1, …, t_n) → t$, que $e_1$ a pour type $t_1$,
-  \ldots{}, que $e_n$ a pour type $t_n$, alors $f(e_1, …, e_n)$ a pour
-  type $t_n$
+  si $f$ a pour type $(t_1, …, t_n) → t$, et que chaque $e_i$ a pour type $t_i$
+  ($i ∈ [1;n]$), alors $f(e_1, …, e_n)$ a pour type $t$.
 \item
-  si en considérant que $e_1$ a pour type $t_n$, …, et que $e_n$ a pour type
-  $t_n$, on arrive à typer le corps de $f$ et que sa valeur de retour a alors
+  si en considérant que chaque $e_i$ a pour type $t_i$ ($i ∈ [1;n]$),
+  on arrive à typer le corps de $f$ et que sa valeur de retour a alors
   pour type $t$,
-  alors $f$ a pour type $(t_1, …, t_n) → t$
+  alors $f$ a pour type $(t_1, …, t_n) → t$.
 \end{itemize}
 
 Cet ensemble de règles, une fois formalisé et implanté, est en général assez
 efficace pour vérifier la correction d'un programme.
+% TODO [E] ?
 
 \paragraph{Typage fort ou faible :}
 
