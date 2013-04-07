@@ -1,3 +1,11 @@
+% TODO [E]: Cela part sur les chapeaux de roues, ensuite on a l'impression qu'il
+% n'y a que l'IA comme analyse statique et un peu le typage ; sur le typage il y
+% a qq remarques dans le texte.
+% Il y a beaucoup de choses dans le TODO... ty penses toute les mettre ?
+
+% TODO [E]!: je ne me souviens plus de ce qu'il y a dans le chapitre 1 / intro
+% et le chapitre 2 : problème de sûreté d'exécution
+
 Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
 permettant d'analyser des programmes. Un accent est mis sur la propriété de
 sûreté décrite dans le chapitre~\ref{cha:os}, mais on ne se limite pas à
@@ -18,6 +26,9 @@ possible --- peut se traduire par un impact en performances). L'approche
 statique, en revanche, nécessite de construire à l'arrêt une carte mentale du
 programme, ce qui n'est pas toujours possible dans certains langages.
 
+% TODO [E]: ne faut-il pas préciser un peu plus ou du moins le justifier :
+% pourquoi statique plutôt que dynamique ?
+
 Dans la suite, nous considérerons essentiellement des techniques statiques,
 précisant le contraire lorsque c'est nécessaire.
 
@@ -29,6 +40,8 @@ catégoriser les programmes selon leurs caractéristiques à l'exécution. Or,
   indécidable.\cite{rice}
 \end{theorem}
 % TODO formaliser un peu plus?
+
+% TODO [E]: est-ce un théorème ? tout dépend de la définition de "non triviale"
 
 Autrement dit, il n'est pas possible d'écrire un analyseur statique parfait,
 c'est à dire ne se trompant jamais. Toute technique statique va donc de se
@@ -74,6 +87,7 @@ noyau de système d'exploitation, qui possède de nombreux points d'entrée.
 
 % TODO virer non?
 
+% TODO [E] bien
 \begin{figure}%{{{
 \centering
 \subbottom[
@@ -221,6 +235,7 @@ uniquement le signe des variables (figure~\ref{fig:dom-sig}), et le domaine des
 intervalles retient les bornes de variations extrémales des variables
 (figure~\ref{fig:dom-intvl}).
 
+% TODO [E] ??
 \begin{figure}%{{{
 \centering
 
@@ -462,6 +477,8 @@ forme ``pointe-sur''~\cite{oakland08}. Comme l'interprétation abstraite, son bu
 est d'être très précis, au détriment d'un temps de calcul important dans
 certains cas.
 
+% TODO [E] est-ce joauble dans le cas de vrais programmes ?
+
 \section{Logique de Hoare}
 
 Une technique pour vérifier statiquement des propriétés sur la sémantique d'un
@@ -509,6 +526,8 @@ Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation.
 % TODO à la compil?
 
+% TODO [E] si c'est possible
+
 La règle de conséquence permet de découpler les propriétés du programme lui-même
 : plusieurs niveaux d'annotations sont possibles, du moins précis au plus
 précis. En fait, il est même possible d'annoter chaque point de contrôle par
@@ -524,6 +543,8 @@ de chaînes en C.
 
 Ce type d'annotations a été implanté par exemple pour le langage Java dans le
 système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
+
+% TODO [E] ce sont justes des langages d'annotations : qu'en fait-on après ?
 
 \section{Proposition}
 

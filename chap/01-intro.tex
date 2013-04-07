@@ -255,6 +255,7 @@ l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme l
 montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
 Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
 cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
+% TODO [E]: à préciser
 
 \paragraph{Typage statique :} dans ce cas on fait les vérifications à la
 compilation. En quelque sorte, l'approche dynamique est pessimiste, puisqu'elle
@@ -264,6 +265,8 @@ vérification est inutile. Pour vérifier ceci, on donne à chaque fonction un
 contrat comme "si deux entiers sont passés, le fonction renverra un entier sans
 provoquer d'erreur". Cet ensemble de contrats peut être vérifié statiquement par
 le compilateur, à l'aide d'un système de types statique.
+
+% TODO [E]: division par zéro
 
 Ainsi la fonction "$+$" est typée \texttt{(int * int)} $→$ \texttt{int}. Les
 règles permettant de vérifier le typage sont par exemple les suivantes :
@@ -334,6 +337,9 @@ structure du type liste (en utilisant ses constructeurs \texttt{{[}{]}} et
 \listcons ainsi que le filtrage) : les éléments de \texttt{lx} et \texttt{ly} ne
 sont pas manipulés à part pour les transférer dans le résultat.
 
+% TODO [E] tu parles uniquement du polymorphisme paramétrique : attention il y a
+% la classe de polymorphisme et son implantation qui peuvent diverger
+
 Elle peut donc être typée avec n'importe quelle type 
 $a~\textrm{list} → a~\textrm{list} → a~\textrm{list}$. Pour introduire cette
 généricité, on modifie le système de types pour transformer :
@@ -347,6 +353,10 @@ en :
 \[ \textrm{append} : ∀ a.
    a~\textrm{list} → a~\textrm{list} → a~\textrm{list}
 \]
+
+% TODO [E] que veux tu dire ?
+
+% TODO [E] où la variable de types peut prendre n'importe quelle valeur de type
 
 Au lieu d'associer à chaque expression un type, dans certains cas on lui associe
 un schéma de types, instanciable en un type concret. En quelque sorte, on
@@ -387,6 +397,7 @@ l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur �
 chaque étage de type, cette approche est plus générique mais plus complexe que
 la notre. % TODO bof
 
+% TODO [E] préciser pourquoi
 
 \section{Langages d'implantation}
 
