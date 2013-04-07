@@ -1,27 +1,31 @@
-De plus en plus, les logiciels sont présents partout. Le plus petit appareil
-électrique contient maintenant des composants matériels programmables
-nécessitant des logiciels.
+Communication,
+audiovisuel,
+transports,
+médecine :
+tout ces domaines se sont transformés dans les dernières décennies,
+en particulier grâce à la révolution numérique.
+En effet le plus petit appareil électrique contient maintenant des composants
+matériels programmables.
 
 % TODO faire une intro "la vie est numérique" avec du Berry @ CdF
 
-Autant certains de ces systèmes embarqués ont un rôle très délimité et ne
-comportent que peu de code, certains comportent des millions de lignes de code.
-% TODO [E] md
 En 2013, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
-complexité les rapprochent des ordinateurs de bureau. . Par exemple, le système
-Android de Google est basé sur le noyau Linux, destiné à la base aux
-micro-ordinateurs.
+complexité les rapprochent des ordinateurs de bureau. Par exemple, le système
+d'exploitation Android de Google est basé sur le noyau Linux, destiné à la base
+aux micro-ordinateurs.
 
-Le noyau de système d'exploitation est chargé de faire l'intermédiaire entre le
-matériel (processeur, mémoire, périphériques, …) et les applications exécutées
-sur celui-ci (par exemple un navigateur internet, une calculatrice ou un carnet
-d'adresses). Il doit aussi garantir la sécurité et l'isolation de celles-ci.
+Le noyau d'un système d'exploitation est chargé de faire l'intermédiaire entre
+le matériel (processeur, mémoire, périphériques, …) et les applications
+exécutées sur celui-ci (par exemple un navigateur web, une calculatrice ou un
+carnet d'adresses). Il doit aussi garantir la sécurité et l'isolation de
+celles-ci.
 
-En tant que tiers de confiance, le noyau a un certain nombre de responsabilités
-et est le seul à avoir accès à certaines informations sensibles. Il est capital
-de s'assurer qu'il est bien le seul à pouvoir y accéder. En particulier, il faut
-pouvoir vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent
-pas détourner ce dernier et lui faire fuiter des informations confidentielles.
+En tant qu'intermédiaire de confiance, le noyau a un certain nombre de
+responsabilités et est le seul à avoir accès à certaines informations sensibles.
+Il est capital de s'assurer qu'il est bien le seul à pouvoir y accéder. En
+particulier, il faut pouvoir vérifier que les requêtes faites par l'utilisateur
+au noyau ne peuvent pas détourner ce dernier et lui faire fuiter des
+informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
@@ -29,21 +33,25 @@ là: on estime qu'avant relecture, 1000 lignes de code contiennent entre 5 et 10
 erreurs de programmation en moyenne.
 % TODO sourcer
 Les activités de relecture et de
-débogage ont beau prendre la majeure partie du temps de développement, elles ne
-laissent pas un logiciel de qualité parfaite à la sortie. En effet,
-même avec des tests les plus exhaustifs il n'est pas possible de simuler le code
-d'une manière qui recouvre tous les cas d'utilisation et permette de s'assurer
-de sa correction.
+débogage ont beau prendre la majeure partie du temps de développement, il est
+facile de laisser passer des défauts de programmation.
 
-% TODO [E] Attention au politiquement correct
-De plus, les tests ne permettent que de s'assurer qu'une erreur est présente.
-S'assurer qu'un programme est correct est particulièrement délicat, et ne peut
-pas être fait automatiquement dans le cas général.
+Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le code
+du programme sous un environnement contrôlé. On peut alors détecter des
+comportements non désirés. Mais même avec des tests les plus exhaustifs il n'est
+pas possible de couvrir tous les cas d'utilisation.
 
-Le typage statique permet d'associer à chaque fragment d'un programme, une
-étiquette décrivant quel genre de valeur sera produite par son évaluation. Cette
-analyse, faite à la compilation, permet de rejeter les programmes incorrects du
-point de vue de cette catégorisation.
+Parmi les techniques communes pour éliminer les ``bugs'', on peut ajouter à un
+langage de programmation un \emph{système de types statiques}.
+
+Celui-ci permet d'associer à chaque fragment d'un programme, une étiquette
+décrivant quel genre de valeur sera produite par son évaluation. Cette analyse,
+faite à la compilation, permet de rejeter les programmes incorrects du point de
+vue de cette catégorisation.
+
+Le but de cet thèse est de montrer que le typage statique peut être utilisé pour
+détecter et interdire certains bugs présents dans les noyaux de systèmes
+d'exploitation.
 
 \section{Rôle d'un système d'exploitation}
 
@@ -395,7 +403,7 @@ verrous~\cite{pldi02}, à rapprocher du concept de \emph{typestates}
 vulnérabilités sur les pointeurs utilisateurs dont il est ici
 l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur à
 chaque étage de type, cette approche est plus générique mais plus complexe que
-la notre. % TODO bof
+la nôtre. % TODO bof
 
 % TODO [E] préciser pourquoi
 
@@ -403,16 +411,13 @@ la notre. % TODO bof
 
 % TODO C
 
-% TODO Ada
-
-% TODO Rust
-
-Difficultés pour analyser C
+Le langage C~\cite{KandR} présente des difficultés pour être analysé
+automatiquement.
 
 \begin{itemize}
 \item les nombres flottants
 (types \texttt{float}, \texttt{double} et \texttt{long double}) ont une
-sémantique particulière, et il n'est pas correct d'"approcher" leur sémantique
+sémantique particulière, et il n'est pas correct d'approcher leur sémantique
 par une sémantique dans $ℝ$. Afin d'être correct, il faut établir des domaines
 spécifiques au flottant, comme~\cite{floatpoly}. Un tour d'horizon des
 difficultés liées aux flottants est effectué dans~\cite{floatpitfalls}.
@@ -445,6 +450,12 @@ l'environnement d'exécution (comme la randomisation de l'espace d'adressage) qu
 ne peuvent pas facilement être modélisés.
 
 \end{itemize}
+
+% TODO Ada
+
+% TODO ASM
+
+% TODO Rust
 
 \section{Langages d'analyse}
 
