@@ -24,7 +24,7 @@ Cela pose problème car il est alors possible de créer une fonction qui convert
 n'importe quel type pointeur en n'importe quel autre type pointeur :
 
 \[
-  ⊢ \mathrm{fun} (p) \{ \iReturn{(\textsc{Ptr})~(\tInt)~p} \}
+  ⊢ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} }
   : (t_a~q_a~*) → t_b~q_b~*
 \]
 

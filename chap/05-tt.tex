@@ -536,7 +536,7 @@ simple où seul l'arité est conservée.
           :           \tStruct{ l_1:t_1;…;l_n:t_n }
       }
 
-    \irule{S-Fun}{ } {m ⊧ \mathrm{fun} (x_1, …, x_n) \{ i \} : \stFun{n}}
+    \irule{S-Fun}{ } {m ⊧ \eFun{x_1, …, x_n}{i} : \stFun{n}}
   \end{mathpar}
 
   \caption{Règles de typage sémantique}
@@ -709,7 +709,7 @@ expression.
     \end{cases}
   \]
 
-\item Fonction : si $Γ ⊢ \mathrm{fun} (a_1, …, a_n) \{i\} : t$, alors il existe
+\item Fonction : si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
 $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
   % TODO ...
@@ -756,7 +756,7 @@ $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 \item Fonction : la seule règle possible pour conclure une dérivation de
 
   \[
-    Γ ⊢ \mathrm{fun} (a_1, …, a_n) \{i\} : t
+    Γ ⊢ \eFun{a_1, …, a_n}{i} : t
   \]
   est \textsc{Fun}.
 
@@ -783,8 +783,7 @@ $Γ = x:t$).
   \item si $Γ ⊢ v : t*$, $v = φ$.
   \item si $Γ ⊢ v : t[]$, $v = \eArray{v_1; …; v_n}$.
     %TODO structures
-  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \mathrm{fun}
-    (a_1, …, a_n) \{i\}$.
+  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \eFun{a_1, …, a_n}{i}$.
   \end{itemize}
 
 \end{lemma}

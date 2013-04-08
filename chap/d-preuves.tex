@@ -482,7 +482,7 @@ On commence par appliquer l'hypothèse de récurrence à $e$. Dans le cas d'un p
 d'évaluation ou d'erreur, on applique respectivement \textsc{Ctx} ou
 \textsc{Eval-Err} avec $C = \ctxEmpty (e_1, …, e_n)$.
 Reste le cas où $e$ est une valeur: d'après le lemme~\ref{lemma:canon}, $e$ est
-de la forme $f = \mathrm{fun} (\vec{a}) \{i\}$.
+de la forme $f = \eFun{\vec{a}}{i}$.
 
 Ensuite, appliquons le même schéma que pour \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise
@@ -491,7 +491,7 @@ $C = f (v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n)$.
 Le seul cas restant est celui où l'expression considérée a pour forme
 $f (v_1, …, v_n)$
 avec
-$f = \mathrm{fun} (\vec{a}) \{i\}$
+$f = \eFun{\vec{a}}{i}$
 :
 \textsc{Exp-Call} s'applique alors.
 
