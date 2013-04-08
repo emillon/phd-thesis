@@ -1,0 +1,38 @@
+\section{Limitations}
+
+Un seul type d'entier est supporté.
+
+Notre système ne supporte pas certains cas de transtypage (\emph{casts}). Les
+casts entre types entiers ne posent pas de problèmes. Ceux entre types pointeurs
+ne posent pas de problème non plus puisqu'au moment de la traduction en
+\langname on efface les étiquettes de types sur les pointeurs.
+
+Cependant, les casts entre entiers et pointeurs posent problème : si on autorise
+les casts, la seule manière sensible de les typer est la suivante.
+
+\begin{mathpar}
+\irule{PtrInt-Bad}
+  { Γ ⊢ e : t~q~*}
+  { Γ ⊢ (\tInt)~e : \tInt }
+
+\irule{IntPtr-Bad}
+  { Γ ⊢ e : \tInt }
+  { Γ ⊢ (\textsc{Ptr})~e : t~q~*}
+\end{mathpar}
+
+Cela pose problème car il est alors possible de créer une fonction qui convertit
+n'importe quel type pointeur en n'importe quel autre type pointeur :
+
+\[
+  ⊢ \mathrm{fun} (p) \{ \iReturn{(\textsc{Ptr})~(\tInt)~p} \}
+  : (t_a~q_a~*) → t_b~q_b~*
+\]
+
+% TODO et à l'exec?
+% TODO on peut faire un dynamic check ou un type UInt ou un qualif sur tous les
+% types
+
+% TODO le modèle mémoire de Newspeak est bcp plus bas niveau que celui de
+% Safespeak
+
+\section{Travaux futurs}
