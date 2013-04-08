@@ -361,7 +361,7 @@ passe lorsque le pointeur fourni est dans l'espace d'adressage du processus :
 c'est le cas d'utilisation normal et l'écriture est donc possible.
 
 Si l'utilisateur passe un pointeur dont la valeur est supérieure à
-\texttt{0xc0000000} (figure~\ref{fig:mzone2}), que se passe-t'il ? Comme le
+\texttt{0xc0000000} (figure~\ref{fig:mzone2}), que se passe-t-il ? Comme le
 déréférencement est fait dans le code du noyau, il est également fait en
 \ring{0}, et va pouvoir être réalisé sans erreur : l'écriture se fait et
 potentiellement une structure importante du noyau est écrasée.
