@@ -81,3 +81,16 @@ depuis un entier.
 
 La solution la plus sûre est donc d'interdire totalement ces conversions.
 
+\subsection{Analyse du noyau Linux}
+
+Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
+d'une interface programmation particulière. Mais le principe de l'analyse est
+applicable à toutes les fonctions de traitement d'\texttt{ioctl}s des pilotes
+KMS, et même à toutes les fonctions faisant partie des différentes interfaces
+recevant un pointeur de l'espace utilisateur.
+
+\subsection{Autres types abstraits}
+
+Notre approche est basée sur le fait de rendre abstrait un type de C et
+d'y interdire certaines opérations : ici, on marque un certain type de pointeur
+comme ``utilisateur'' et on interdit l'opérateur \texttt{*} dessus.
