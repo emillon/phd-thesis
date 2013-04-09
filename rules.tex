@@ -185,7 +185,7 @@
                      \vRet : t_r \\
                Γ' ⊢ i
              }
-             { Γ ⊢ \mathrm{fun} (\vec{a}) \{i\}
+             { Γ ⊢ \eFun{\vec{a}}{i}
                     : \vec{t} → t_r
              }
          }
@@ -288,7 +288,7 @@
                  }
     }
     {Exp-Call}{ \irule{Exp-Call}
-                  { f = \mathrm{fun} (a_1, …, a_n) \{ i \} \\
+                  { f = \eFun{a_1, …, a_n}{i} \\
                     m_1 = \mathrm{Push}(m_0, ((a_1 ↦ v_1), …, (a_n ↦ v_n))) \\
                     \mm{m_1}{i}{m_2}{\iReturn{v}} \\
                     m_3 = \mathrm{Pop}(m_2) \\

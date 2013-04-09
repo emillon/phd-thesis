@@ -1,0 +1,96 @@
+\section{Limitations}
+
+Un seul type d'entier est supporté.
+
+Notre système ne supporte pas certains cas de transtypage (\emph{casts}).
+
+
+\section{Travaux futurs}
+
+\subsection{Transtypage}
+
+Les casts entre types entiers ne posent pas de problèmes. Ceux entre types
+pointeurs ne posent pas de problème non plus puisqu'au moment de la traduction
+en \langname on efface les étiquettes de types sur les pointeurs.
+
+Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
+casts, la seule manière sensible de les typer est la suivante.
+
+\begin{mathpar}
+\irule{PtrInt-Bad}
+  { Γ ⊢ e : t~q~*}
+  { Γ ⊢ (\tInt)~e : \tInt }
+
+\irule{IntPtr-Bad}
+  { Γ ⊢ e : \tInt }
+  { Γ ⊢ (\textsc{Ptr})~e : t~q~*}
+\end{mathpar}
+
+Cela pose problème car il est alors possible de créer une fonction qui convertit
+n'importe quel type pointeur en n'importe quel autre type pointeur :
+
+\[
+  ⊢ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} }
+  : (t_a~q_a~*) → t_b~q_b~*
+\]
+
+% TODO et à l'exec?
+% TODO on peut faire un dynamic check ou un type UInt ou un qualif sur tous les
+% types
+
+% TODO le modèle mémoire de Newspeak est bcp plus bas niveau que celui de
+% Safespeak, ex types de deref, tailles dans Lv etc
+
+L'opération problématique est en fait l'opérateur $(\tInt)$ de conversion d'un
+pointeur vers un entier, car l'entier résultant ne pose pas de problème de
+sûreté ni de sécurité. Pour lui donner une sémantique, on peut supposer que
+l'environnement d'exécution est paramétré par une fonction de placement en
+mémoire $\addrInt : Φ → \tInt$ qui à un chemin associe un entier.
+On étend alors la sémantique par la règle suivante.
+
+\[
+  \irule{CastInt}
+    { }
+    { \mms{(\tInt)~\widehat{\&}φ}{\addrInt(φ)} }
+\]
+
+% TODO nommer les ensembles
+% TODO mettre la syntaxe en annexe
+
+Quant au transtypage dans le sens inverse, il est plus compliqué à traiter.
+À l'exécution il est en effet nécessaire d'avoir à disposition une fonction
+$\interpPtr{t~q~*} : \tInt → t~q~*$ qui permette d'interpréter un entier comme
+pointeur qualifié $q$ vers un objet de type $t$ de manière qu'on ajoute la règle
+suivante.
+
+\[
+  \irule{CastPtr}
+    { }
+    { \mms{(\textsc{Ptr})~\widehat{n}}{\interpPtr{t~q~*}(\widehat{n})} }
+\]
+
+% TODO les widehat...
+
+L'exécution de l'analogue de $\addrInt$ demanderait de créer un pointeur
+depuis un entier.
+
+% TODO il n'y a pas de t q en mémoire, doncil faut juste un interp : Int -> Φ
+% TODO problème car ça peut correspondre à plusieurs pointeurs
+% TODO problème de layout mémoire : ça marche qd tout est boxé mais pas si c'est
+% unboxé
+
+La solution la plus sûre est donc d'interdire totalement ces conversions.
+
+\subsection{Analyse du noyau Linux}
+
+Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
+d'une interface programmation particulière. Mais le principe de l'analyse est
+applicable à toutes les fonctions de traitement d'\texttt{ioctl}s des pilotes
+KMS, et même à toutes les fonctions faisant partie des différentes interfaces
+recevant un pointeur de l'espace utilisateur.
+
+\subsection{Autres types abstraits}
+
+Notre approche est basée sur le fait de rendre abstrait un type de C et
+d'y interdire certaines opérations : ici, on marque un certain type de pointeur
+comme ``utilisateur'' et on interdit l'opérateur \texttt{*} dessus.

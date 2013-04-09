@@ -147,60 +147,109 @@ Le noyau fournit aux programmes une interface unifiée, permettant de stocker de
 informations de la même manière sur un disque dur ou une clef USB (alors que
 l'accès se déroulera de manière très différente en pratique).
 
-\section{Noyaux de systèmes d'exploitation}
+\section{Séparation entre noyau et espace utilisateur}
 
-% TODO [E] ??? privilèges ?
+Le noyau n'est pas le seul programme exécuté par le processeur : des programmes
+peuvent être aussi être exécutés. Ce sont ceux-ci qui sont d'ailleurs visibles
+pour l'utilisateur.
 
-Les programmes qui composent un système d'exploitation sont exécutés avec un
-niveau de privilège différent, correspondant à un jeu d'instructions plus ou
-moins important. Cette vérification est faite directement pas le processeur,
-d'une manière matérielle. En plus de cette distinction, les programmes ont une
-vue différente de la mémoire. Si un programme utilisateur avait accès aux
-structures de données internes du noyau, il pourrait obtenir des informations
-auquel il n'a pas normalement accès, ou obtenir des privilège supplémentaires
-(par exemple en obtenant les privilèges de l'administrateur sur la machine).
+Puisque le noyau est garant du bon fonctionnement du système, il ne doit pas
+pouvoir être manipulé directement par l'utilisateur ou les programmes exécutés.
+Ainsi, il est nécessaire de mettre en place des protections entre les espaces
+noyau et utilisateur.
 
-C'est pourquoi les noyaux stockent leur code et données dans un endroit en
-mémoire qui n'est pas accessible aux programmes utilisateur. Sur un système
-Intel 32 bits, cela correspond aux adresses supérieures à \texttt{0xc0000000},
-ou 3 Gio.
+Au niveau matériel, on utilise la notion de \emph{niveaux de privilèges} pour
+déterminer s'il est possible d'exécuter une instruction.
 
-% TODO trad
+D'une part, le processeur contient un niveau de privilège intrinsèque. D'autre
+part, chaque zone mémoire contenant du code ou des données possède également un
+niveau de privilège minimum nécessaire. L'exécution d'une instruction est alors
+possible si et seulement si le niveau de privilège du processeur est supérieur à
+celui de l'instruction et des opérandes mémoires qui y sont présentes
+\footnote{
+  Ici ``supérieur'' est synonyme de ``plus privilégié''. Dans l'implantation
+  d'Intel présentée dans le chapitre~\ref{cha:os}, les niveaux sont numérotés de
+  0 à 3 où le niveau 0 est le plus privilégié.
+}.
 
-Because user-mode programs cannot run low-level instructions, they cannot do
-anything interesting on their own. They have to use the kernel's facilities to
-perform input/output or manipulate the operating system's abstractions (such as
-creating a new process). To this end, they can communicate with the kernel
-via the narrow interface of \emph{system calls}.
+Ainsi, pour une instruction manipulant des données en mémoire, les accès sont
+possibles dans les cas suivants :
 
-For example, every time a user process calls the \texttt{read()} function, an
-architecture-specific mechanism invokes the kernel-mode function
-\texttt{sys\_read()}. The user passes a file descriptor, a pointer and an amount
-of bytes to fill and the kernel will actually perform input/output and copy the
-resulting bytes on the user's buffer.
+\begin{center}
+\def\modeK{Superviseur\xspace}
+\def\modeU{Utilisateur\xspace}
+\begin{tabular}{cccc}
+  Mode du processeur
+& Privilège (code)
+& Privilège (données)
+& Accès possible \\
+\hline
+  \modeK & \modeK & \modeK & \CheckedBox \\
+  \modeK & \modeK & \modeU & \CheckedBox \\
+  \modeK & \modeU & \modeK & \CheckedBox \\
+  \modeK & \modeU & \modeU & \CheckedBox \\
+  \modeU & \modeK & \modeK & \Square \\
+  \modeU & \modeK & \modeU & \Square \\
+  \modeU & \modeU & \modeK & \Square \\
+  \modeU & \modeU & \modeU & \CheckedBox \\
+\end{tabular}
+\end{center}
 
-But if the user supplies a pointer whose value is in the kernel's reserved area,
-this zone will be overwritten, potentially leading to a security breach. In a
-sense, the kernel has been abused because it accessed the memory with its own
-privileges instead of the originator's. This is known as the \emph{confused
-deputy problem}\cite{hardy88confused}.
+% TODO que se passe-t'il si ça plante ?
 
-When implementing a system call, it is thus necessary to forbid direct
-dereference of a pointer whose value can be controlled by the user. In case of a
-system call with a pointer argument, one has to dynamically verify that the
-address provided by the user lies within the process's memory space.
+En plus de cette vérification, certains types d'instructions sont explicitement
+réservés au mode le plus privilégié : par exemple les lectures ou écritures sur
+des ports matériels, ou celles qui permettent de définir les niveaux de
+privilèges des différentes zones mémoire.
 
-% TODO [E] est-ce ici que tu veux le placer ? rien ne t'empêche de le dire
-% plusieurs fois
+Les programmes utilisateur ne pouvant pas accéder à ces instructions de bas
+niveau, ils sont très limités dans ce qu'ils peuvent faire. Puisque
+l'interaction avec le matériel (comme l'écriture sur un disque dur) se fait
+uniquement via des instructions privilégiées, ils sont limités à l'utilisation
+du processeur et de la mémoire, permettant uniquement de réaliser des calculs.
 
-The object of this work is to detect the places where it is necessary to insert
-dynamic checks. To this end, we augment the type system of a subset of the C
-programming language with \emph{type qualifiers}: instead of having a single
-pointer type, we add syntactic rules to distinguish between safe pointers that
-can be dereferenced with the \texttt{*}, \texttt{->} and \texttt{[]} operators ;
-and unsafe pointers that have to go through a special API provided by the
-kernel, consisting most notably of the two functions \texttt{copy\_from\_user}
-and \texttt{copy\_to\_user}.
+Pour utiliser le matériel ou accéder à des abstractions de haut niveau (comme
+créer un nouveau processus), ils doivent donc passer par l'intermédiaire du
+noyau. La communication entre le noyau et les programmes utilisateur est
+constituée par le mécanisme des \emph{appels système}.
+
+Lors d'un appel système, une fonction du noyau est invoquée (en mode noyau) avec
+des paramètres provenant de l'utilisateur. Il faut donc être particulièrement
+précautionneux dans le traitement de ces données.
+
+Par exemple, considérons un appel système de lecture depuis un disque : on passe
+au noyau les arguments $(d, o, n, a)$ où $d$ est le nom du disque, $o$ l'adresse
+sur le disque où commencer la lecture (\emph{offset}), $n$ le nombre d'octets à
+lire et $a$ l'adresse en mémoire où commencer à stocker les résultats.
+
+Dans le cas d'utilisation prévu, le noyau va copier la mémoire lue dans $a$. On
+est en mode noyau, en train d'exécuter une instruction du noyau manipulant des
+données utilisateur. D'après le tableau précédent, % TODO figure pê ?
+aucune erreur ne se produit.
+
+Mais même si ce cas ne produit pas d'erreur à l'exécution, il est tout de même
+erroné. En effet, si on passe à l'appel système une adresse $a$ faisant partie
+de l'espace noyau, que se passe-t-il ?
+
+L'exécution est presque identique : au moment de la copie on est en mode noyau,
+en train d'exécuter une instruction du noyau manipulant des données noyau.
+Encore une fois il n'y a pas d'erreur à l'exécution.
+
+On peut donc écrire n'importe où en mémoire. De même, une fonction d'écriture
+sur un disque (et lisant en mémoire) permettrait de lire de la mémoire du noyau.
+À partir de ces primitives, on peut accéder aux autres processus exécutés, ou
+détourner l'exécution vers du code arbitraire. L'isolation est totalement
+brisée à cause des appels système.
+
+La cause de ceci est qu'on a accédé à la mémoire en testant les privilèges du
+noyau au lieu de tester les privilèges de celui qui a fait la requête
+(l'utilisateur). Ce problème est connu sous le nom de \emph{confused deputy
+problem}\cite{hardy88confused}.
+
+La bonne manière d'implanter un appel système est donc d'interdire le
+déréférencement direct des pointeurs dont la valeur peut être controllée par
+l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
+vérifier à l'exécution que celle-ci a bien les mêmes privilèges que l'appelant.
 
 \section{Systèmes de types}
 
