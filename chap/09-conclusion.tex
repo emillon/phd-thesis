@@ -94,3 +94,28 @@ recevant un pointeur de l'espace utilisateur.
 Notre approche est basée sur le fait de rendre abstrait un type de C et
 d'y interdire certaines opérations : ici, on marque un certain type de pointeur
 comme ``utilisateur'' et on interdit l'opérateur \texttt{*} dessus.
+
+Le langage C n'ayant pas de types abstraits
+\footnote{
+  La seule abstraction possible est lorsqu'on manipule une structure par
+  pointeur. Il n'est alors pas nécessaire de connaître sa définition totale.
+  L'idiome est alors de placer uniquement une déclaration en avance
+  (\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner
+  la définition complète dans l'implantation (\texttt{.c}).
+}
+, on ne peut pas séparer la réprésentation d'un type (par exemple : entier signé
+de 32 bits) des opérations qui y sont attachées.
+
+Dans de nombreuses interface, on emploie des types entiers qui servent
+d'étiquette. Par exemple, les descripteurs de fichiers renvoyés par la fonction
+\texttt{open()} et passés au fonctions \texttt{read()} et \texttt{write()} ont
+le type \texttt{int}. Le langage autorise donc par exemple de multiplier entre
+eux deux descripteurs de fichiers, ce qui ne correspond pas à une opération
+concrète.
+
+On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si un
+encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de codec
+tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
+une fonction prenant en paramètre un numéro de \emph{frame}.
+
+% TODO check : les footnotes commençent par une majuscule
