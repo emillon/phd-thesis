@@ -40,6 +40,53 @@ dans~\cite{sm-jsac03}.
 % TODO [E] idem
 \end{itemize}
 
+
+L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
+leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
+l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
+montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
+Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
+cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
+% TODO [E]: à préciser
+
+% ----
+
+Les systèmes de types les plus simples expriment des
+contrats esssentiellement liés à la sûreté d'exécution, pour ne pas utiliser des
+valeurs de types incompatibles entre eux. Mais il est possible d'étendre le
+langage avec des annotations plus riches : par exemple en vérifiant statiquement
+que des listes ne sont pas vides\cite{lightweight-static-capabilities}, ou dans
+le domaine de la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
+
+\paragraph{Qualificateurs de types}
+
+Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
+la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
+au code source. Un pointeur peut être décoré d'une annotation
+\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
+sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
+Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul peut être
+utilisé pour détecter les cas les plus simples d'erreurs. Il demande aussi au
+programmeur d'ajouter beaucoup d'annotations dans le programme. % TODO
+quantifier
+
+Ce système d'annotations sur les types a été formalisé sous le nom de
+\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
+qualificateurs (à la manière de \texttt{const}), et des règles de typage
+permettent d'établir des propriétés sur le programme. Ces analyses ont été
+implantée dans l'outil CQual~\cite{toplas-quals}. Ce système peut servir à
+inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
+pour les chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ?
+et des propriétés dépendantes du flot de contrôle, comme des invariants sur les
+verrous~\cite{pldi02}, à rapprocher du concept de \emph{typestates}
+~\cite{tse12-typestate}. Il a également été appliqué à la classe de
+vulnérabilités sur les pointeurs utilisateurs dont il est ici
+l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur à
+chaque étage de type, cette approche est plus générique mais plus complexe que
+la nôtre. % TODO bof
+
+% TODO [E] préciser pourquoi
+
 \section{Évaluateur}
 
 \begin{itemize}
