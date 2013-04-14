@@ -173,10 +173,12 @@ celui de l'instruction et des opérandes mémoires qui y sont présentes
 }.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès sont
-possibles dans les cas suivants :
+possibles sont décrits dans la figure~\ref{fig:erreursec}. En cas d'erreur
+(signalée par un \Square), une erreur à l'exécution se produit.
 
+\begin{figure}
 \begin{center}
-\def\modeK{Superviseur\xspace}
+\def\modeK{Noyau\xspace}
 \def\modeU{Utilisateur\xspace}
 \begin{tabular}{cccc}
   Mode du processeur
@@ -195,7 +197,10 @@ possibles dans les cas suivants :
 \end{tabular}
 \end{center}
 
-% TODO que se passe-t'il si ça plante ?
+\caption{ Règles d'exécution de code et d'accès à la mémoire. }
+\label{fig:erreursec}
+
+\end{figure}
 
 En plus de cette vérification, certains types d'instructions sont explicitement
 réservés au mode le plus privilégié : par exemple les lectures ou écritures sur
