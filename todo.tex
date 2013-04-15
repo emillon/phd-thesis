@@ -58,6 +58,49 @@ langage avec des annotations plus riches : par exemple en vérifiant statiquemen
 que des listes ne sont pas vides\cite{lightweight-static-capabilities}, ou dans
 le domaine de la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
 
+% ---
+
+% TODO à mettre où?
+
+\begin{itemize}
+\item
+Les pointeurs sur fonction rendent floue la limite qui est habituellement
+présente entre instructions et données. En leur présence il est impossible de
+faire une analyse de flot de contrôle indépendante du flot de données. Pour
+pouvoir les traiter, il faut que le domaine abstrait en question soit assez
+précis pour qu'un pointeur abstrait se concrétise en un ensemble réduit de
+fonctions. Dans le cas où le domaine ne peut pas borner l'ensemble des fonctions
+possibles et renvoie $\top$, l'analyse ne peut pas continuer.
+
+\item
+L'allocation dynamique de données, présente dans le langage C par le biais des
+fonctions \texttt{malloc} et \texttt{free}, modifie le modèle mémoire
+nécessaire. Sans celle-ci, l'ensemble des zones mémoire possibles peut être
+décrit statiquement : ce sont les noms de variable. Ce qu'introduit
+\texttt{malloc} au langage, c'est une zone mémoire qui n'a pas de nom, et sur
+laquelle on n'a qu'un pointeur.
+
+% TODO, bof + expand
+
+\item
+Le transtypage (\emph{casts}) entre entiers et pointeurs est particulièrement
+délicat à traiter. Dans les modèles abstraits, les pointeurs sur données ou sur
+fonctions n'ont pas de représentation numérique, seulement une représentation
+symbolique. Même dans l'exécution concrète, la représentation numérique d'un
+pointeur est lié à de nombreux choix faits par l'environnement d'exécution
+(comme la randomisation de l'espace d'adressage) qui ne peuvent pas facilement
+être modélisés.
+
+\item
+Les nombres flottants (types \texttt{float}, \texttt{double} et \texttt{long
+double}) ont une sémantique particulière, et il n'est pas correct d'approcher
+leur sémantique par une sémantique dans $ℝ$. Afin d'être correct, il faut
+établir des domaines spécifiques au flottant, comme~\cite{floatpoly}. Un tour
+d'horizon des difficultés liées aux flottants est effectué
+dans~\cite{floatpitfalls}.
+
+\end{itemize}
+
 \paragraph{Qualificateurs de types}
 
 Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
