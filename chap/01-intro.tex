@@ -389,6 +389,8 @@ un ``assembleur portable'', le langage C.
 Le langage C~\cite{KandR} présente des difficultés pour être analysé
 automatiquement.
 
+\begin{itemize}
+\item
 Les nombres flottants (types \texttt{float}, \texttt{double} et \texttt{long
 double}) ont une sémantique particulière, et il n'est pas correct d'approcher
 leur sémantique par une sémantique dans $ℝ$. Afin d'être correct, il faut
@@ -396,6 +398,7 @@ leur sémantique par une sémantique dans $ℝ$. Afin d'être correct, il faut
 d'horizon des difficultés liées aux flottants est effectué
 dans~\cite{floatpitfalls}.
 
+\item
 Les pointeurs sur fonction rendent floue la limite qui est habituellement
 présente entre instructions et données. En leur présence il est impossible de
 faire une analyse de flot de contrôle indépendante du flot de données. Pour
@@ -404,6 +407,7 @@ précis pour qu'un pointeur abstrait se concrétise en un ensemble réduit de
 fonctions. Dans le cas où le domaine ne peut pas borner l'ensemble des fonctions
 possibles et renvoie $\top$, l'analyse ne peut pas continuer.
 
+\item
 L'allocation dynamique de données, présente dans le langage C par le biais des
 fonctions \texttt{malloc} et \texttt{free}, modifie le modèle mémoire
 nécessaire. Sans celle-ci, l'ensemble des zones mémoire possibles peut être
@@ -413,6 +417,7 @@ laquelle on n'a qu'un pointeur.
 
 % TODO, bof + expand
 
+\item
 Le transtypage (\emph{casts}) entre entiers et pointeurs est particulièrement
 délicat à traiter. Dans les modèles abstraits, les pointeurs sur données ou sur
 fonctions n'ont pas de représentation numérique, seulement une représentation
@@ -420,6 +425,8 @@ symbolique. Même dans l'exécution concrète, la représentation numérique d'u
 pointeur est lié à de nombreux choix faits par l'environnement d'exécution
 (comme la randomisation de l'espace d'adressage) qui ne peuvent pas facilement
 être modélisés.
+
+\end{itemize}
 
 % TODO Ada
 
