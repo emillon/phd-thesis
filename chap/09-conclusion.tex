@@ -1,9 +1,169 @@
+\epigraph{
+Many C programmers
+believe that "strong typing" just means pounding extra hard on the keyboard.
+}{Peter van den Linden}
+
 \section{Limitations}
 
 Un seul type d'entier est supporté.
 
-Notre système ne supporte pas certains cas de transtypage (\emph{casts}).
+% TODO
 
+\paragraph{Transtypage}
+
+Puisque l'approche retenue est basée sur le typage statique, il est impossible
+de capturer de nombreuses constructions qui sont possibles, où même idiomatiques
+en C : les unions, les conversions de types (explicites ou implicites) et le
+\emph{type punning}. Les deux premières sont équivalentes. Bien qu'on puisse
+remplacer chaque conversion explicite d'un type $t_1$ vers un type $t_2$ par
+l'appel à une $\mathrm{cast}_{t_1,t_2}$, on ajoute alors un ``trou'' dans le
+système de types. Cette fonction devrait en effet être typée $(t_1) → t_2$,
+autrement dit le type ``maudit'' $α → β$ de \texttt{Obj.magic} en OCaml ou
+\texttt{unsafeCoerce} en Haskell.
+
+Le \emph{type punning} consiste à modifier directement la suite de bits de
+certaines données pour la manipuler d'une manière efficace. Par exemple, il est
+commun de définir un ensemble de macros pour accéder à la mantisse et à
+l'exposant de flottants IEEE754. Ceci peut être fait avec des unions ou des
+masques de bits.
+
+Dans de tels cas, le typage statique est bien sûr impossible. Pour traiter ces
+cas, il faudrait encapsuler la manipulation dans une fonction et y ajouter une
+information de type explicite, comme $\texttt{float\_exponent} : (\tFloat) →
+\tInt$.
+
+\paragraph{Environnement d'exécution}
+
+La sémantique opérationnelle utilise un environnement d'exécution pour certains
+cas. Contrairement à C, les débordements de tampon et les déréférencements de
+pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une caractéristique
+cruciale de cette approche : en effet, si on suppose que les programmes que l'on
+analayse sont corrects de ce point de vue, on peut désactiver ces vérifications
+et le reste des propriétés est toujours valable.
+
+Un autre endroit, plus problématique, où des tests dynamiques sont faits est
+lorsqu'on recherche en mémoire des pointeurs référençant un cadre d'appel qui
+n'est plus valide (à l'aide de l'opérateur $\mathrm{Cleanup}(\cdot)$). Supprimer
+ce test rend l'analyse incorrecte, car il est alors possible de faire référence
+à une variable avec un type différent.
+
+De même, si on peut avoir une garantie statique que les adresses des variables
+locales ne seront plus accessibles au retour d'une fonction, alors on peut
+supprimer le nettoyage en posant $\mathrm{Cleanup}(m) = m$. Cette garantie peut
+être obtenue avec une analyse statique préalable~\cite{ifm10}.
+
+\paragraph{Allocation dynamique}
+
+La plupart des programmes, et le noyau Linux en particulier, utilisent la notion
+d'allocation dynamique de mémoire. C'est une manière de créer dynamiquement une
+zone de mémoire qui restera accessible après l'exécution de la fonction
+courante. Cette mémoire pourra être libérée à l'aide d'une fonction dédiée. Dans
+l'espace utilisateur, les programmes peuvent utiliser les fonctions
+\texttt{malloc()}, \texttt{calloc()}, et \texttt{realloc()} pour allouer des
+zones de mémoire et \texttt{free()} pour les libérer. Dans le noyau Linux, ces
+fonctions existent sous la forme de \texttt{kmalloc()}, \texttt{kfree()}, etc.
+
+% TODO citer the linux memory manager ?
+
+Ces fonctions manipulent les données en tant que zones mémoires opaques, à
+en renvoyant un pointeur vers une zone mémoire d'un nombre d'octets donnés.
+Cela présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
+sémantique de \langname, une manière de faire est de définir un opérateur de
+plus haut niveau prenant une expression et retournant l'adresse d'une cellule
+mémoire contenant cette valeur. Le typage est alors direct :
+
+\begin{mathpar}
+  \irule{Malloc}
+    { Γ ⊢ e : t }
+    { Γ ⊢ \textsc{Alloc}(e) : t~\qKernel~* }
+
+  \irule{Free}
+    { Γ ⊢ e : t~\qKernel~* }
+    { Γ ⊢ \textsc{Free}(e) }
+\end{mathpar}
+
+En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
+états mémoire : $m = (s, g, h)$ où $h$ associe à une étiquette numérique une
+valeur (comme les globales mais indexées par des entiers plutôt que par leur
+nom). La libération de mémoire est problématique parce qu'il faut faire
+confiance au programmeur pour ne pas accéder aux zones mémoires libérées. Encore
+une fois, on peut utiliser une analyse préalable comme~ \cite{ifm10}. Il est sûr
+(mais pas possible en pratique) d'ignorer les commandes de libérations de
+mémoire. 
+
+\paragraph{Structures récursives}
+
+Une autre limitation est que seules structures simples sont supportées. Les
+structures récursives, contenant un pointeur vers un objet du même type
+structure, ne sont pas typables. La raison est syntaxique : l'accès à un
+champ est noté $lv.l_S$ afin d'avoir à disposition le type complet de la
+structure.
+
+Par exemple, une liste chaînée d'entiers peut être décrite de la manière
+suivante en C :
+
+\begin{verbatim}
+struct int_list {
+    int value;
+    struct int_list *next;
+};
+\end{verbatim}
+
+% TODO et les listes chainées de Linux ? safety + typage
+
+La compilation est possible car la définition complète de \texttt{struct
+int\_list} n'est pas nécessaire pour connaître la taille d'un pointeur vers un
+objet de ce type.
+
+Pour compiler \texttt{l.next} en \langname, il faudrait écrire le type en
+extension :
+
+\[
+  l.next_{ value:\tInt ; next : \{ value : \tInt ; next : … \}~*}
+\]
+
+On peut fermer cette récursion infinie en ajoutant directement un opérateur de
+point fixe qui rend accessible le type d'un pointeur vers le type structure en
+train d'être défini.
+
+\begin{align*}
+    S \gramisa & … \gramorx \mathrm{fix}(p → S)
+\end{align*}
+
+On écrit alors :
+
+\[
+  l.next_{ \mathrm{fix}(p → \{ value : \tInt ; next : p \}) }
+\]
+
+Les structures mutuellement récursives peuvent être également exprimée de cette
+manière.
+
+\begin{verbatim}
+struct a {
+    int value;
+    struct b *next;
+};
+
+struct b {
+    float value;
+    struct a *next;
+};
+\end{verbatim}
+
+Ces structures sont respectivement traduites en :
+
+\begin{align*}
+  A &= \mathrm{fix} (p → \{ value : \tInt   ; next : \{ value : \tFloat ; next : p \}~* \}) \\
+  B &= \mathrm{fix} (p → \{ value : \tFloat ; next : \{ value : \tInt   ; next : p \}~* \})
+\end{align*}
+
+Ce schéma suffit à compiler toutes les types de structures possibles en C. En
+effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
+structure en cours de définition ; et il n'est alors possible que d'y accéder
+que par pointeur.
+
+% TODO est-ce vrai ? Y'a-t-il des cas où les forward decl sont nécessaires?
 
 \section{Travaux futurs}
 
@@ -94,3 +254,28 @@ recevant un pointeur de l'espace utilisateur.
 Notre approche est basée sur le fait de rendre abstrait un type de C et
 d'y interdire certaines opérations : ici, on marque un certain type de pointeur
 comme ``utilisateur'' et on interdit l'opérateur \texttt{*} dessus.
+
+Le langage C n'ayant pas de types abstraits
+\footnote{
+  La seule abstraction possible est lorsqu'on manipule une structure par
+  pointeur. Il n'est alors pas nécessaire de connaître sa définition totale.
+  L'idiome est alors de placer uniquement une déclaration en avance
+  (\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner
+  la définition complète dans l'implantation (\texttt{.c}).
+}
+, on ne peut pas séparer la réprésentation d'un type (par exemple : entier signé
+de 32 bits) des opérations qui y sont attachées.
+
+Dans de nombreuses interface, on emploie des types entiers qui servent
+d'étiquette. Par exemple, les descripteurs de fichiers renvoyés par la fonction
+\texttt{open()} et passés au fonctions \texttt{read()} et \texttt{write()} ont
+le type \texttt{int}. Le langage autorise donc par exemple de multiplier entre
+eux deux descripteurs de fichiers, ce qui ne correspond pas à une opération
+concrète.
+
+On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si un
+encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de codec
+tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
+une fonction prenant en paramètre un numéro de \emph{frame}.
+
+% TODO check : les footnotes commençent par une majuscule

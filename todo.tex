@@ -40,6 +40,96 @@ dans~\cite{sm-jsac03}.
 % TODO [E] idem
 \end{itemize}
 
+
+L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
+leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
+l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
+montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
+Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
+cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
+% TODO [E]: à préciser
+
+% ----
+
+Les systèmes de types les plus simples expriment des
+contrats esssentiellement liés à la sûreté d'exécution, pour ne pas utiliser des
+valeurs de types incompatibles entre eux. Mais il est possible d'étendre le
+langage avec des annotations plus riches : par exemple en vérifiant statiquement
+que des listes ne sont pas vides\cite{lightweight-static-capabilities}, ou dans
+le domaine de la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
+
+% ---
+
+% TODO à mettre où?
+
+\begin{itemize}
+\item
+Les pointeurs sur fonction rendent floue la limite qui est habituellement
+présente entre instructions et données. En leur présence il est impossible de
+faire une analyse de flot de contrôle indépendante du flot de données. Pour
+pouvoir les traiter, il faut que le domaine abstrait en question soit assez
+précis pour qu'un pointeur abstrait se concrétise en un ensemble réduit de
+fonctions. Dans le cas où le domaine ne peut pas borner l'ensemble des fonctions
+possibles et renvoie $\top$, l'analyse ne peut pas continuer.
+
+\item
+L'allocation dynamique de données, présente dans le langage C par le biais des
+fonctions \texttt{malloc} et \texttt{free}, modifie le modèle mémoire
+nécessaire. Sans celle-ci, l'ensemble des zones mémoire possibles peut être
+décrit statiquement : ce sont les noms de variable. Ce qu'introduit
+\texttt{malloc} au langage, c'est une zone mémoire qui n'a pas de nom, et sur
+laquelle on n'a qu'un pointeur.
+
+% TODO, bof + expand
+
+\item
+Le transtypage (\emph{casts}) entre entiers et pointeurs est particulièrement
+délicat à traiter. Dans les modèles abstraits, les pointeurs sur données ou sur
+fonctions n'ont pas de représentation numérique, seulement une représentation
+symbolique. Même dans l'exécution concrète, la représentation numérique d'un
+pointeur est lié à de nombreux choix faits par l'environnement d'exécution
+(comme la randomisation de l'espace d'adressage) qui ne peuvent pas facilement
+être modélisés.
+
+\item
+Les nombres flottants (types \texttt{float}, \texttt{double} et \texttt{long
+double}) ont une sémantique particulière, et il n'est pas correct d'approcher
+leur sémantique par une sémantique dans $ℝ$. Afin d'être correct, il faut
+établir des domaines spécifiques au flottant, comme~\cite{floatpoly}. Un tour
+d'horizon des difficultés liées aux flottants est effectué
+dans~\cite{floatpitfalls}.
+
+\end{itemize}
+
+\paragraph{Qualificateurs de types}
+
+Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
+la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
+au code source. Un pointeur peut être décoré d'une annotation
+\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
+sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
+Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul peut être
+utilisé pour détecter les cas les plus simples d'erreurs. Il demande aussi au
+programmeur d'ajouter beaucoup d'annotations dans le programme. % TODO
+quantifier
+
+Ce système d'annotations sur les types a été formalisé sous le nom de
+\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
+qualificateurs (à la manière de \texttt{const}), et des règles de typage
+permettent d'établir des propriétés sur le programme. Ces analyses ont été
+implantée dans l'outil CQual~\cite{toplas-quals}. Ce système peut servir à
+inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
+pour les chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ?
+et des propriétés dépendantes du flot de contrôle, comme des invariants sur les
+verrous~\cite{pldi02}, à rapprocher du concept de \emph{typestates}
+~\cite{tse12-typestate}. Il a également été appliqué à la classe de
+vulnérabilités sur les pointeurs utilisateurs dont il est ici
+l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur à
+chaque étage de type, cette approche est plus générique mais plus complexe que
+la nôtre. % TODO bof
+
+% TODO [E] préciser pourquoi
+
 \section{Évaluateur}
 
 \begin{itemize}
@@ -822,75 +912,6 @@ un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peu
 considérer que multiplier deux telles valeurs est une erreur.
 
 \section{Conclusion}
-
-\subsection{Limitations}
-
-Our system has several limitations.
-
-First, as we used static typing, it is impossible to capture a lot of constructs
-that are possible or even idiomatic in C: unions, type casts, type punning. The
-first two ones are equivalent constructs. We can replace each cast from a type
-$t_1$ to a type $t_2$ by the call of a function $\mathrm{cast}_{t_1,t_2}$ but
-this means adding a flaw in the type system: it would be typed $(t_1) → t_2$,
-in other words the dreaded type $α → β$ of \texttt{Obj.magic} in OCaml
-or \texttt{unsafeCoerce} in Haskell.
-
-Type punning consists in modifying the bit pattern of some data to manipulate it
-in an efficient way. For example, it is common to define a set of macros to
-access low-level parts of IEEE754 floats, for exemple their exponent. Usually, a
-combination of unions and bit masks is used. In such cases, strong typing is of
-course impossible. To handle this, we could wrap the manipulation in a macro and
-add an explicit type information such as $\texttt{float\_exponent} : (\tFloat) →
-\tInt$.
-
-The operational semantics uses runtime support for several cases. Contrary to C,
-we dynamically check for buffer overflows and \eNull dereference, but this is
-not critical to our approach: if we suppose that the programs we analyze are
-correct with respect to these properties, we could provide a lower-level
-implementation without those checks.
-
-A more concerning place where we add a runtime behaviour is when the memory is
-searched for dangling pointers at every function return (with the
-$\mathrm{Cleanup(\cdot)}$ operator). Removing this check makes the analysis
-unsound, because it is then possible to make reference to the current stack
-frame with a former one. However, contrary to type punning, there are few cases
-where such a behaviour is desired. If we can have a static guarantee that the
-address of a local variable will not be accessible after the function has
-returned, we can remove the $\mathrm{Cleanup(\cdot)}$ step. This can be done
-with a dedicated static analysis\cite{ifm10}.
-
-Dynamic memory allocation, embodied in userspace by the \texttt{malloc()} and
-\texttt{free()} functions, has not been implemented. Similarly to
-\texttt{get\_\{from,to\}\_user()}, it manipulates data as memory zones, with a
-pointer and a size in bytes. We would have to define a higher level operator
-taking an expression and returning the address of a freshly allocated cell in a
-heap. Then typing is straightforward:
-
-{ \small
-\begin{mathpar}
-  \inferrule*
-    { Γ ⊢ e : t }
-    { Γ ⊢ \textsc{Alloc}(e) : t~\qKernel~* }
-
-  \inferrule*
-    { Γ ⊢ e : t~\qKernel~* }
-    { Γ ⊢ \textsc{Free}(e) }
-\end{mathpar}}%
-
-To define evaluation, we can expand the memory states to include an explicit
-heap of values, mapping unique labels to values. Deallocation is problematic
-because we rely on the programmer not to access deallocated memory zones. Once
-again, it is possible to dedicate an analysis like~\cite{ifm10} to enforce this.
-It is also sound, albeit impractical, to ignore deallocation constructs.
-
-Another limitation is that our system does not allow recursive structures,
-containing a pointer to a field of the same type. For simple (not mutually)
-recursive structures, it is possible to extend the grammar of type annotation to
-allow the following, where $p$ binds a pointer type to the structure.
-
-{\small \[
-    S \gramisa … \gramorx \mathrm{fix}(p → S)
-\]}%
 
 \subsection{Future work}
 
