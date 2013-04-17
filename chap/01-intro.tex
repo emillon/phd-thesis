@@ -27,6 +27,8 @@ particulier, il faut pouvoir vérifier que les requêtes faites par l'utilisateu
 au noyau ne peuvent pas détourner ce dernier et lui faire fuiter des
 informations confidentielles.
 
+% TODO [E] volontairement ou involontairement ?
+
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
 là: on estime qu'avant relecture, 1000 lignes de code contiennent entre 5 et 100
@@ -49,9 +51,17 @@ décrivant quel genre de valeur sera produite par son évaluation. Cette analyse
 faite à la compilation, permet de rejeter les programmes incorrects du point de
 vue de cette catégorisation.
 
+% TODO [E] dis un mot sur les analyses statiques de programmes qui permettent de
+% détecter des erreurs avant l'exécution des programmes quitte à limiter la
+% possibilité d'en écrire certains, et ensuite tu parles du typage statique qui
+% vérifie...
+
 Le but de cet thèse est de montrer que le typage statique peut être utilisé pour
 détecter et interdire certains bugs présents dans les noyaux de systèmes
 d'exploitation.
+
+% TODO [E] peut être dire qu'ils proviennent souvent d'une utilisation
+% litigieuse de pointeurs
 
 \section{Rôle d'un système d'exploitation}
 
@@ -146,12 +156,13 @@ avec les périphériques matériels.
 Le noyau fournit aux programmes une interface unifiée, permettant de stocker des
 informations de la même manière sur un disque dur ou une clef USB (alors que
 l'accès se déroulera de manière très différente en pratique).
+% TODO [E] est-ce du même niveau ?
 
 \section{Séparation entre noyau et espace utilisateur}
 
-Le noyau n'est pas le seul programme exécuté par le processeur : des programmes
-peuvent être aussi être exécutés. Ce sont ceux-ci qui sont d'ailleurs visibles
-pour l'utilisateur.
+Le noyau n'est pas le seul programme exécuté par le processeur : d'autres
+programmes peuvent être aussi être exécutés. Ce sont ceux-ci qui sont d'ailleurs
+visibles pour l'utilisateur. % TODO rep: exécutés
 
 Puisque le noyau est garant du bon fonctionnement du système, il ne doit pas
 pouvoir être manipulé directement par l'utilisateur ou les programmes exécutés.
@@ -218,6 +229,7 @@ créer un nouveau processus), ils doivent donc passer par l'intermédiaire du
 noyau. La communication entre le noyau et les programmes utilisateur est
 constituée par le mécanisme des \emph{appels système}.
 
+% TODO [E] lien mode noyau et privilège superviseur
 Lors d'un appel système, une fonction du noyau est invoquée (en mode noyau) avec
 des paramètres provenant de l'utilisateur. Il faut donc être particulièrement
 précautionneux dans le traitement de ces données.
@@ -256,6 +268,8 @@ déréférencement direct des pointeurs dont la valeur peut être controllée pa
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celle-ci a bien les mêmes privilèges que l'appelant.
 
+% TODO [E] faire le lien avec le début de l'intro : source fréquente de bugs
+
 \section{Systèmes de types}
 
 La plupart des langages de programmation incorporent la notion de type, qui
@@ -268,6 +282,8 @@ effectuées, ils seront interprétés comme des entiers, des adresses mémoires,
 des caractères. Pourtant il est clair que certaines opérations n'ont pas de
 sens: par exemple, ajouter deux adresses, ou déréférencer le résultat d'une
 division sont des comportements qu'on voudrait pouvoir empêcher.
+
+% TODO [E] ajouter deux adresses : si :-)
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
 opérations possibles selon la classe d'un objet : ``ne pas ajouter des pommes et
@@ -328,19 +344,21 @@ spectre, les systèmes de types forts permettent d'éliminer totalement la
 nécessité de réaliser des tests de typage. Mais souvent ce n'est pas le cas, car
 il peut y avoir des constructions au sein du langage qui permettent de
 contourner le système de types, comme un opérateur de
-transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée :
+transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée.
 
 \begin{figure}
   \insertcode{cast.java}
+
+  \begin{Verbatim}
+  Exception in thread "main" java.lang.ClassCastException:
+      java.lang.Integer cannot be cast to java.lang.Float
+          at Cast.main(Cast.java:5)
+  \end{Verbatim}
+
   \caption{Transtypage en Java}
+
   \label{fig:javacast}
 \end{figure}
-
-\begin{Verbatim}
-Exception in thread "main" java.lang.ClassCastException:
-    java.lang.Integer cannot be cast to java.lang.Float
-        at Cast.main(Cast.java:5)
-\end{Verbatim}
 
 \paragraph{Polymorphisme}
 
@@ -462,6 +480,8 @@ middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
 EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
 interprétation abstraite. Il sera décrit plus en détails dans la
 section~\ref{sec:npk}.
+
+% TODO [E] il manque un lien entre la fin des langages d'analyse et la suite!!!
 
 \section{Plan de la thèse}
 
