@@ -362,6 +362,10 @@ transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée.
 
 \paragraph{Polymorphisme}
 
+% TODO [E] il y a deux types de polymorphisme :
+% - code différent selon le type des arguments
+% - même code quelque soit le type des arguments
+
 Parfois, il est trop restrictif de donner un unique contrat à une fonction. Quel
 doit être le type d'une fonction ajoutant un élément à une liste ?
 
@@ -399,6 +403,8 @@ bas niveau, c'est-à-dire proches de la machine. Puisqu'ils doivent communiquer
 avec le matériel, il est en effet nécessaire d'en écrire au moins une partie en
 assembleur.
 
+% TODO [E] pourquoi ?
+
 \paragraph{C}
 
 Le système Unix, développé à partir de 1969, a tout d'abord été développé en
@@ -411,9 +417,13 @@ programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
 machine : ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
 taille concrète. Ceci dit, le système de types est assez rudimentaire : toutes
-les formes de transtypage est acceptée, certaines conversions sont insérées
+les formes de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables.
+
+% TODO [E]
+% http://anil.recoil.org/papers/2013-asplos-mirage.pdf
+% http://web.cecs.pdx.edu/~apt/icfp05.pdf
 
 % TODO Ada
 % TODO en Ada les access type sont liés à un pool en particulier
@@ -426,6 +436,8 @@ comportements implicites. Pour analyser du code source, il est plus pratique
 d'avoir une représentation intermédiaire plus simple afin d'avoir moins de
 traitements dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été
 définis pour aller dans ce sens.
+
+% TODO tu peux en citer certains : CMinor, C--, Newspeak...
 
 Les premiers candidats sont bien entendu les représentations intermédiaires
 utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
