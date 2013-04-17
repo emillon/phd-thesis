@@ -2,19 +2,30 @@
          one error message "you lied to me when you told me this was a program".
         }{--- \textup{Pete Fenelon}}
 
+% TODO[E] le chapeau est à reformuler complètement, c'est trop rapide à suivre,
+% par contre c'est clair à partir de 6.1 mais ensuite il faudrait détailler
+
 Dans le chapitre~\ref{cha:typbase}, nous avons vu comment ajouter un système de
 types forts statiques à un langage impératif (défini dans le
 chapitre~\ref{cha:lang}).
 
+% TODO[E] 1è phrase à revoir
+
 Ici, nous étendons l'expressivité de \langname avec un système d'annotations de
-"souillure" (\emph{tainting} en anglais). Un cas d'erreur est ajouté, lorsqu'on
-tente d'accéder à une valeur souillée. Avec cet ajout, la propriété de progrès
-(théorème~\ref{thm:progres}) n'est donc plus valable.
+``souillure'' (\emph{tainting} en anglais). Un cas d'erreur est ajouté,
+%TODO[E] trop tôt
+lorsqu'on tente d'accéder à une valeur souillée. Avec cet ajout, la propriété de
+progrès (théorème~\ref{thm:progres}) n'est donc plus valable.
+
+% TODO[E] un peu péjoratif ?
+
 
 Afin de retrouver cette adéquation entre la sémantique et le systme de typage,
 ce dernier est étendu d'un système de \emph{qualificateurs de type} qui
 décrivent l'origine des données. Ils permettent de restreindre certaines
 opérations sensibles à des expressions dont la valeur est sûre.
+
+% TODO[E] peu clair
 
 La propriété de progrès est alors retrouvée (théorème~\ref{thm:progres-qual}).
 
@@ -61,12 +72,13 @@ chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
 
 \begin{itemize}
 \item
-  tout d'abord, on ajoute une expression d'annotation sur les variables que
-  celles-ci sont contrôlés par un utilisateur non privilégié, ainsi que des
-  opérateurs de copie sûre.
+  tout d'abord, on ajoute une expression d'annotation sur les variables
+  indiquant que celles-ci sont contrôlés par un utilisateur non privilégié,
+  ainsi que des opérateurs de copie sûre.
 \item
   ensuite, on étend l'ensemble des valeurs possibles pour les pointeurs
   à une valeur $\vTainted{φ}$ signifiant que l'objet pointé se situe en
+  % TODO [E] ?
   espace utilisateur
 \item
   enfin, on définit une nouvelle erreur $\serr{taint}$ produite par le
@@ -76,8 +88,10 @@ chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
 Pour adapter l'évaluation, plusieurs cas sont à rajouter. D'une part, la
 présence de $\phx{\eTaint}$ dans une instruction consiste à ajouter un
 $\phx{\vTainted}$ dans la valeur construite. Ceci ne peut être fait que dans le
-cas où la valeur est un chemin $φ$, c'est à dire que la construction
+cas où la valeur est un chemin $φ$, c'est-à-dire que la construction
 $\phx{\eTaint}$ ne peut se faire que sur une expression de type pointeur.
+
+% TODO passe globale c'est-a-dire & co (pas de ')
 
 \begin{mathpar}
   \irule{Expr-Tainted}
@@ -95,6 +109,8 @@ rappel :
 Puisque la définition des chemins $φ$ a été changée, il est aussi nécessaire de
 redéfinir la lentille $Φ$ utilisée ci-dessus (définition~\ref{def:acces-phi}).
 
+% TODO [E] à détailler
+
 On rajoute donc le cas :
 
 \begin{align*}
@@ -107,6 +123,8 @@ $\phxx\uPut$.
 % TODO leur sémantique
 
 \section{Insuffisance des types simples}
+
+% TODO[E] c'est ok
 
 Étant donné \langname augmenté de cette extension sémantique, on peut étendre
 trivialement le système de types avec la règle suivante :
@@ -175,14 +193,16 @@ extensions de sémantique. \emph{In fine}, cela permettra de prouver le
 théorème~\ref{thm:progres-qual} qui est l'équivalent du
 théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
 
-Définit un nouveau système de types revient à définir un nouveau jugement de
+% TODO [E] ??
+
+Définir un nouveau système de types revient à définir un nouveau jugement de
 typage $\cdot ⊢_q \cdot : \cdot$, à partir d'un ensemble de règles. Pour la
 plupart, les règles seront identiques, donc sauf mention contraire, les règles
 portant sur $\cdot ⊢ \cdot : \cdot$ s'appliqueront aussi sur $\cdot ⊢_q \cdot :
 \cdot$. Naturellement, la plupart des différences porteront sur le traitement des
 pointeurs.
 
-La différence principale est qu'à à chaque pointeur, on ajoute un
+La différence principale est qu'à chaque pointeur, on ajoute un
 \emph{qualificateur} qui représente \emph{qui} contrôle sa valeur
 (section~\ref{sec:secu-syscalls}). Les deux qualificateurs sont :
 
@@ -194,6 +214,7 @@ La différence principale est qu'à à chaque pointeur, on ajoute un
   \qUser : il s'applique aux pointeurs qui proviennent de l'espace utilisateur.
   Ces pointeurs proviennent toujours d'interfaces particulières, comme les
   appels système ou les paramètres de la fonction \texttt{ioctl}.
+% TODO [E] tu comptes malloc ? &x ?
 \end{itemize}
 
 Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
@@ -208,8 +229,8 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 \\
 \gramdef{Types}{t}
   { … }{}
-  { \msout{t *} }{\textrm{Pointeur}}
-  { t q* }{Pointeur qualifié}
+  { \msout{t~*} }{\textrm{Pointeur}}
+  { t~q~* }{Pointeur qualifié}
   {END}
 \end{align*}
 
@@ -228,6 +249,8 @@ pointeurs \qKernel peuvent être déréférencés de manière sûre :
 }
 \end{mathpar}
 
+% TODO [E] et que se passe-t'il quand on a une expression e de type τ K* que
+% l'on cherche à déréférencer ?
 
 L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle de souillure
 suivante :
@@ -249,6 +272,8 @@ Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante
 \end{mathpar}
 
 % TODO adresse = kernel
+
+% TODO parler de sous typage
 
 La définition du typage sémantique doit aussi être étendue au cas $φ =
 \vTainted{φ'}$. Les références mémoires sont ``nettoyées'' pour accéder à la
