@@ -278,10 +278,8 @@ Nous avons vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
 seules données qu'un ordinateur manipule sont des nombres. Selon les opérations
 effectuées, ils seront interprétés comme des entiers, des adresses mémoires, ou
 des caractères. Pourtant il est clair que certaines opérations n'ont pas de
-sens: par exemple, ajouter deux adresses, ou déréférencer le résultat d'une
-division sont des comportements qu'on voudrait pouvoir empêcher.
-
-% TODO [E] ajouter deux adresses : si :-)
+sens: par exemple, multiplier un nombre par une adresse, ou déréférencer le
+résultat d'une division sont des comportements qu'on voudrait pouvoir empêcher.
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
 opérations possibles selon la classe d'un objet : ``ne pas ajouter des pommes et
@@ -315,8 +313,6 @@ valeur\footnote{
   ne renvoie pas de valeur.
 }, alors cette valeur sera un entier''. Cet ensemble de contrats peut être vérifié statiquement
 par le compilateur, à l'aide d'un système de types statique.
-
-% TODO [E]: division par zéro
 
 Ainsi la fonction "$+$" est typée \texttt{(int, int)} $→$ \texttt{int}. Les
 règles permettant de vérifier le typage sont par exemple les suivantes :
