@@ -24,10 +24,8 @@ En tant qu'intermédiaire de confiance, le noyau a un certain nombre de
 responsabilités et est le seul à avoir accès à certaines informations sensibles.
 Il est capital de s'assurer qu'il est bien le seul à pouvoir y accéder. En
 particulier, il faut pouvoir vérifier que les requêtes faites par l'utilisateur
-au noyau ne peuvent pas détourner ce dernier et lui faire fuiter des
-informations confidentielles.
-
-% TODO [E] volontairement ou involontairement ?
+au noyau ne peuvent pas volontairement ou involontairement détourner ce dernier
+et lui faire fuiter des informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
@@ -38,30 +36,27 @@ Les activités de relecture et de
 débogage ont beau prendre la majeure partie du temps de développement, il est
 facile de laisser passer des défauts de programmation.
 
-Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le code
-du programme sous un environnement contrôlé. On peut alors détecter des
+Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le
+programme sous un environnement contrôlé. On peut alors détecter des
 comportements non désirés. Mais même avec des tests les plus exhaustifs il n'est
 pas possible de couvrir tous les cas d'utilisation.
 
-Parmi les techniques communes pour éliminer les ``bugs'', on peut ajouter à un
-langage de programmation un \emph{système de types statiques}.
+Une autre approche est d'analyser le code source du programme avant de
+l'exécuter et de refuser de lancer les programmes qui contiennent des erreurs,
+quitte à limiter la possibilité d'en écrire certains. C'est l'analyse statique
+de programmes.
 
-Celui-ci permet d'associer à chaque fragment d'un programme, une étiquette
-décrivant quel genre de valeur sera produite par son évaluation. Cette analyse,
-faite à la compilation, permet de rejeter les programmes incorrects du point de
-vue de cette catégorisation.
+Une des techniques d'analyse statique les plus répandues est le typage statique,
+qui consiste à associer à chaque morceau de programme, une étiquette
+décrivant quel genre de valeur sera produite par son évaluation. Par exemple, si
+$n$ est le nom d'une variable entière, alors $n + 2$ produira toujours une
+valeur entière.
 
-% TODO [E] dis un mot sur les analyses statiques de programmes qui permettent de
-% détecter des erreurs avant l'exécution des programmes quitte à limiter la
-% possibilité d'en écrire certains, et ensuite tu parles du typage statique qui
-% vérifie...
-
-Le but de cet thèse est de montrer que le typage statique peut être utilisé pour
-détecter et interdire certains bugs présents dans les noyaux de systèmes
-d'exploitation.
-
-% TODO [E] peut être dire qu'ils proviennent souvent d'une utilisation
-% litigieuse de pointeurs
+Pour garantir l'isolation d'un noyau de système d'exploitation, un des points
+cruciaux est de restreindre la manière dont sont traitées les informations
+provenant des programmes utilisateur. Le but de cet thèse est de montrer que le
+typage statique peut être utilisé pour détecter et interdire ces manipulations
+dangereuses.
 
 \section{Rôle d'un système d'exploitation}
 
