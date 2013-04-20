@@ -156,8 +156,8 @@ l'accès se déroulera de manière très différente en pratique).
 \section{Séparation entre noyau et espace utilisateur}
 
 Le noyau n'est pas le seul programme exécuté par le processeur : d'autres
-programmes peuvent être aussi être exécutés. Ce sont ceux-ci qui sont d'ailleurs
-visibles pour l'utilisateur. % TODO rep: exécutés
+programmes peuvent être aussi être lancés. Ce sont ceux-ci qui sont d'ailleurs
+visibles pour l'utilisateur.
 
 Puisque le noyau est garant du bon fonctionnement du système, il ne doit pas
 pouvoir être manipulé directement par l'utilisateur ou les programmes exécutés.
@@ -224,7 +224,6 @@ créer un nouveau processus), ils doivent donc passer par l'intermédiaire du
 noyau. La communication entre le noyau et les programmes utilisateur est
 constituée par le mécanisme des \emph{appels système}.
 
-% TODO [E] lien mode noyau et privilège superviseur
 Lors d'un appel système, une fonction du noyau est invoquée (en mode noyau) avec
 des paramètres provenant de l'utilisateur. Il faut donc être particulièrement
 précautionneux dans le traitement de ces données.
@@ -236,8 +235,8 @@ lire et $a$ l'adresse en mémoire où commencer à stocker les résultats.
 
 Dans le cas d'utilisation prévu, le noyau va copier la mémoire lue dans $a$. On
 est en mode noyau, en train d'exécuter une instruction du noyau manipulant des
-données utilisateur. D'après le tableau précédent, % TODO figure pê ?
-aucune erreur ne se produit.
+données utilisateur. D'après la figure~\ref{fig:erreursec} aucune erreur ne se
+produit.
 
 Mais même si ce cas ne produit pas d'erreur à l'exécution, il est tout de même
 erroné. En effet, si on passe à l'appel système une adresse $a$ faisant partie
@@ -263,7 +262,11 @@ déréférencement direct des pointeurs dont la valeur peut être controllée pa
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celle-ci a bien les mêmes privilèges que l'appelant.
 
-% TODO [E] faire le lien avec le début de l'intro : source fréquente de bugs
+Il est facile d'oublier d'ajouter cette vérification, puisque le cas ``normal''
+fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
+fréquemment et pourquoi il est aussi capital de les détecter avant l'exécution.
+
+% TODO définir "bugs" non?
 
 \section{Systèmes de types}
 
