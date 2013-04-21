@@ -10,8 +10,6 @@
 
 Un seul type d'entier est supporté.
 
-% TODO assembleur
-
 % TODO
 
 % TODO [E] tu parles de safespeak et de la traduction c-safespeak?
@@ -179,15 +177,24 @@ par pointeur.
 
 % TODO est-ce vrai ? Y'a-t-il des cas où les forward decl sont nécessaires?
 
+\subsection{Assembleur}
+
+Comme la plupart des outils d'analyse de code C, il est impossible de traiter
+l'assembleur en ligne qui peut se trouver entre deux instructions. Dans le cas
+de Linux, le code est fait pour être portable, et les parties dépendantes d'une
+certaine architecture (et donc le code assembleur) sont isolées explicitement.
+On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
+l'implantation est faite en assembleur, mais au sein de cette implantation on ne
+peut bien sûr rien dire.
+
 \section{Travaux futurs}
 
 \subsection{Transtypage}
 
-% TODO [E] pourquoi?
-
-Les casts entre types entiers ne posent pas de problèmes. Ceux entre types
-pointeurs ne posent pas de problème non plus puisqu'au moment de la traduction
-en \langname on efface les étiquettes de types sur les pointeurs.
+Les casts entre types entiers ne posent pas de problèmes. % TODO [E] pourquoi?
+Ceux entre types pointeurs ne posent pas de problème non plus puisqu'au moment
+de la traduction en \langname on efface les étiquettes de types sur les
+pointeurs.
 
 Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
 casts, la seule manière sensible de les typer est la suivante.
