@@ -121,37 +121,10 @@ et selon le type de lecteur, le système d'exploitation effectuera les actions
 appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
-le matériel, et en particulier assure les rôles suivants :
-
-% TODO À affiner ou supprimer
-
-\paragraph{Gestion des processus}
-
-Un système d'exploitation peut permettre d'exécuter plusieurs programmes à la
-fois. Il faut alors orchestrer ces différents processus et les séparer en terme
-de temps et de ressources partagées.
-
-\paragraph{Gestion de la mémoire}
-
-Chaque processus, en plus du noyau, doit disposer d'un espace mémoire différent.
-C'est-à-dire qu'un processus ne doit pas pouvoir interférer avec un autre.
-
-\paragraph{Gestion des fichiers}
-
-Les processus peuvent accéder à une hiérarchie de fichiers, indépendamment de la
-manière d'y accéder.
-
-\paragraph{Gestion des périphériques}
-
-Le noyau étant le seul code ayant des privilèges, c'est lui qui doit communiquer
-avec les périphériques matériels.
-
-\paragraph{Abstractions}
-
-Le noyau fournit aux programmes une interface unifiée, permettant de stocker des
-informations de la même manière sur un disque dur ou une clef USB (alors que
-l'accès se déroulera de manière très différente en pratique).
-% TODO [E] est-ce du même niveau ?
+le matériel, et particulier est responsable de la gestion de la mémoire, des
+périphériques et des processus. Les détails d'implantation ne sont pas présentés
+à l'utilisateur ; à la place il manipule des abstractions, comme la notion de
+fichier.
 
 \section{Séparation entre noyau et espace utilisateur}
 
