@@ -329,32 +329,31 @@ Exception in thread "main" java.lang.ClassCastException:
 
 \paragraph{Polymorphisme}
 
-% TODO [E] il y a deux types de polymorphisme :
-% - code différent selon le type des arguments
-% - même code quelque soit le type des arguments
-
 Parfois, il est trop restrictif de donner un unique contrat à une fonction. Quel
-doit être le type d'une fonction ajoutant un élément à une liste ?
+doit être le type d'une fonction ajoutant un élément à une liste, ou celui d'une
+fonction triant un tableau en place ?
 
 En première approximation, on peut imaginer fournir une version du code par type
 de données à manipuler. C'est la solution retenue par les premières versions du
 langage Pascal, ce qui rendait très difficile l'écriture de
-bibliothèques\cite{PascalNoEscape}.
+bibliothèques\cite{PascalNoEscape}. On parle alors de monomorphisme.
 
-Une amélioration peut être de générer à la compilation une fonction qui aurait
-le même code mais des annotations de typage différentes : on obtient alors
-plusieurs copies de la fonction qui sont chacunes spécialisées pour un type en
-particulier. C'est la solution retenue par le langage C++ et son système de
-\emph{templates}.
+Une autre manière de procéder est d'autoriser plusieurs fonctions à avoir le
+même nom, mais avec des types d'arguments différents. Par exemple, on peut
+définir séparément l'addition entre deux entiers, entre deux flottants, ou entre
+un entier et un flottant. Selon les informations connues à la compilation, la
+bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
+On parle de polymorphisme \emph{ad hoc}.
 
-En fait, si à l'exécution toutes les données sont représentées de manière
-uniforme, il n'est pas nécessaire de créer plusieurs copies de la fonction.
+La dernière possibilité est le polymorphisme universel, qui consiste à utiliser
+le même code quelque soit le type des arguments. Dans ce cas, on utilise une
+seule fonction pour retourner une liste d'entiers ou une liste de flottants, par
+exemple. Au lieu d'associer à chaque fonction un type, dans certains cas on lui
+associe un schéma de types, instanciable en un type concret. En quelque sorte,
+on déplace la vérification du site d'appel au site de définition. Cette
+technique a été décrite en premier dans~\cite{Milner78}.
 
-Au lieu d'associer à chaque expression un type, dans certains cas on lui associe
-un schéma de types, instanciable en un type concret. En quelque sorte, on
-déplace la vérification du site d'appel au site de définition. Cette technique a
-été décrite en premier dans~\cite{Milner78}.
-Un tour d'horizon de différents types statiques, avec en particulier du
+Un tour d'horizon de différents systèmes types statiques, avec en particulier du
 polymorphisme, on pourra se référer à~\cite{TAPL}.
 
 \section{Langages d'implantation}
