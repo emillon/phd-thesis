@@ -69,8 +69,8 @@ l'espace utilisateur, les programmes peuvent utiliser les fonctions
 \texttt{malloc()}, \texttt{calloc()}, et \texttt{realloc()} pour allouer des
 zones de mémoire et \texttt{free()} pour les libérer. Dans le noyau Linux, ces
 fonctions existent sous la forme de \texttt{kmalloc()}, \texttt{kfree()}, etc.
-
-% TODO citer the linux memory manager ?
+Une explication détaillée de ces mécanismes peut être trouvée
+dans~\cite{LinuxVMM}.
 
 Ces fonctions manipulent les données en tant que zones mémoires opaques, à
 en renvoyant un pointeur vers une zone mémoire d'un nombre d'octets donnés.
