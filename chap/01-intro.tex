@@ -404,8 +404,6 @@ d'avoir une représentation intermédiaire plus simple afin d'avoir moins de
 traitements dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été
 définis pour aller dans ce sens.
 
-% TODO tu peux en citer certains : CMinor, C--, Newspeak...
-
 Les premiers candidats sont bien entendu les représentations intermédiaires
 utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
 standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
@@ -462,6 +460,8 @@ section~\ref{sec:npk}.
 
 % TODO [E] il manque un lien entre la fin des langages d'analyse et la suite!!!
 
+% TODO [E] dire un mot de Newspeak dès l'intro ou l'état de l'art
+
 \section{Plan de la thèse}
 
 Cette thèse comporte trois parties.
@@ -470,9 +470,8 @@ Cette thèse comporte trois parties.
 fonctionnement général d'un système d'exploitation y est détaillé, et les
 problèmes de manipulation de pointeurs contrôlés par l'utilisateur y sont
 introduits. On fait ensuite un tour d'horizon des techniques existantes
-permettant de traiter ce problème.
-
-% TODO [E] + proposition
+permettant de traiter ce problème. Cette partie se conclut par la proposition au
+cœur de cette thèse.
 
 \paragraph{La partie~\ref{part:lang}} décrit notre solution : \langname, un
 langage impératif. On y décrit sa syntaxe, sa sémantique ainsi qu'un système de
@@ -482,8 +481,6 @@ contrôlés par l'utilisateur. Le système de types est également étendu. Pour
 chacune de ces variantes, on établit la propriété de sûreté de typage reliant la
 sémantique dynamique aux types statiques.
 
-% TODO [E] dire un mot de Newspeak dès l'intro ou l'état de l'art
-
 \paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
 à ces travaux. L'implantation du système de types est décrite, afin que la
 manière de transformer automatiquement du code C en \langname. Un cas d'étude
@@ -492,17 +489,10 @@ que le système de type capture précisément ce genre d'erreur de programmation
 Enfin, les possibilités d'extension tant théoriques qu'expérimentales sont
 présentées.
 
-%  - omniprésence
-%  - complexité
-%  - vérification
-%  - taux de bugs après relecture
-%  - vérification automatique obligatoire
 %  - historique des techniques
 %  - analyse non intrusive
 %  - méthodes de développement du noyau
 %  - syntaxe, sémantique, typage
-
-% TODO [E] dire au début que c'est tendance Unix si c'est bien le cas
 
 % TODO [E] + besoins EADS
 
