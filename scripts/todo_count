@@ -1,0 +1,2 @@
+#!/bin/bash
+grep -c TODO -r . --include='*.tex' | awk -F : '{total += $2} END { print "Total:", total }'
