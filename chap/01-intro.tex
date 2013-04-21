@@ -364,12 +364,13 @@ ils sont écrits.
 
 \paragraph{Assembleur}
 
-Historiquement, les systèmes d'exploitation étaient écrits dans des langages de
-bas niveau, c'est-à-dire proches de la machine. Puisqu'ils doivent communiquer
-avec le matériel, il est en effet nécessaire d'en écrire au moins une partie en
-assembleur.
-
-% TODO [E] pourquoi ?
+Le noyau d'un système d'exploitation nécessite d'accéder au matériel, donc il
+est naturellement bas niveau. Pour accéder aux fonctionnalités spécifiques de
+chaque processeur, il est donc nécessaire d'en implanter une partie dans le
+langage d'assemblage natif de chaque architecture. Historiquement, les premiers
+système d'exploitations étaient entièrement écrits en assembleur. Cela est de
+plus en plus rare, sauf dans les cas où les ressources sont trop limitées pour
+exécuter du code compilé, comme dans les systèmes embarqués ou temps-réel.
 
 \paragraph{C}
 
