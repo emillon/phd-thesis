@@ -346,31 +346,7 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
 que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
-\section{But et comparaison à C}
-
-Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
-``assembleur portable''. Ses types de données et les opérations associées sont
-donc naturellement très bas niveau.
-
-Les types de données de C sont établis pour représenter les mots mémoire
-manipulables par les processeurs : essentiellement des entiers et flottants de
-plusieurs tailles. Les types composés correespondent à des zones de mémoire
-contigües, homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
-structures).
-
-Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
-c'est à dire des variables qui représentent directement une adresse en mémoire.
-Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
-stocké à cette adresse) ou non typés.
-
-Le système de types rudimentaire de C ne permet pas d'avoir beaucoup de
-garanties sur la sûreté du programme. En effet, aucune vérification n'est
-effectuée en dehors de celles faites par le programmeur.
-
-Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
-sur une certaine classe de programmes C.
-
-% TODO mettre ailleurs ?
+\section{Fonctionnalités}
 
 \paragraph{Fonctions et procédures :} Un des problèmes classiques dans les
 langages impératifs est de distinguer les fonctions (qui retournent une valeur)
