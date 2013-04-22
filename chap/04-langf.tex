@@ -450,6 +450,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { \eUnit }{ Valeur unité }
                  {END}
   \\
+  \\
   \gramdef{Expressions}{e}
                  { c               }{ Constante }
                  { lv              }{ Accès mémoire }
@@ -466,12 +467,18 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { e (e_1, …, e_n) }{ Appel de fonction }
                  {END}
   \\
+  \\
   \gramdef{Left-values}{lv}
                   { x      }{ Variable }
                   { *lv    }{ Déréférencement }
                   { lv.l_S }{ Accès à un champ }
                   { lv[e]  }{ Accès à un élément }
                   {END}
+  \\
+  \\
+  \gramdef{Fonctions}{f}
+                 { \eFun{x_1, …, x_n}{i} }{Arguments, corps}
+                 {END}
   \end{align*}
 
   \caption{Syntaxe -- expressions}
@@ -491,14 +498,12 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { \iReturn{e}     }{Retour de fonction}
                  {END}
   \\
-  \gramdef{Fonctions}{f}
-                 { \eFun{x_1, …, x_n}{i} }{Arguments, corps}
-                 {END}
   \\
   \gramdef{Phrases}{p}
                  { x = e }{Variable globale}
                  { e     }{Évaluation d'expression}
                  {END}
+  \\
   \\
   \gramdef{Programme}{P}
                  { (p_1, …, p_n)}{Phrases}
@@ -508,8 +513,6 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
   \caption{Syntaxe -- instructions}
   \label{fig:stx}
 \end{figure}
-
-% TODO mettre fonction dans expression?
 
 \begin{figure}
 
@@ -523,6 +526,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       { \&\&,||         }{Opérateurs logiques}
       { \ll, \gg        }{Décalages}
       {END}
+  \\
   \\
   \gramdef{Opérateurs unaires}{\opun}
       { +,-   }{Arithmétique entière}
@@ -661,6 +665,7 @@ pas capturé (il n'y a pas de clôture lexicale).
       { Ω               }{Erreur}
       {END}
   \\
+  \\
   \gramdef{Chemins}{φ}
      { a    }{Adresse}
      { *φ   }{Déréférencement}
@@ -668,10 +673,12 @@ pas capturé (il n'y a pas de clôture lexicale).
      { φ[n] }{Accès à un élément}
      {END}
   \\
+  \\
   \gramdef{Adresses}{a}
      { (n, x) }{Variable locale}
      { (x)    }{Variable globale}
      {END}
+  \\
   \\
   \gramdef{Erreur}{Ω}
     { \serr{array} }{Débordement de tableau}
@@ -718,9 +725,11 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
     { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
     {END}
   \\
+  \\
   \gramdef{État mémoire}{m}
     { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
     {END}
+  \\
   \\
   \gramdef{État d'interpréteur}{Ξ}
     { \msi{m}{e} }{Expression, mémoire}
