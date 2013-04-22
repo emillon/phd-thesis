@@ -269,26 +269,36 @@ De même sur \tFloat.
   \disprule{Op-Float}
 \end{mathpar}
 
+\begin{figure}
+
+  \ruleheader{$\textsc{Eq}(t)$}
+
+  \begin{mathpar}
+    \disprule{Eq-Num}
+
+    \disprule{Eq-Ptr}
+
+    \disprule{Eq-Array}
+
+    \disprule{Eq-Struct}
+  \end{mathpar}
+
+\caption{Jugements d'égalité sur les types}
+\label{fig:jugement-eq}
+\end{figure}
+
 Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
 type qui supporte l'égalité. Ceci est représenté par un jugement
-$\textsc{Eq}(t)$ qui est vrai pour les types \tInt, \tFloat et pointeurs. Les
-opérateurs $=$ et $≠$ renvoient alors un \tInt.
+$\textsc{Eq}(t)$ qui est vrai pour les types \tInt, \tFloat  et pointeurs, ainsi
+que les types composés si les types de leurs composantes
+(figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
+\tInt :
 
 \begin{mathpar}
-\disprule{Eq-Num}
-
-\disprule{Eq-Ptr}
-
-\disprule{Eq-Array}
-
-\disprule{Op-Eq}
+  \disprule{Op-Eq}
 \end{mathpar}
 
-%TODO Eq-Struct
-
 % TODO rajouter les ops de comparaison
-
-% TODO extensions aux structs et tableaux
 
 Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
 "$+.$" et "$-.$" aux \tFloat.
