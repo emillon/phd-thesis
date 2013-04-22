@@ -455,7 +455,7 @@ l'alternative ("if") et la boucle "while". Les autres formes de boucle
 ("do/while" et "for") peuvent être émulées par une boucle "while".
 
 Les fonctionnalités manquantes, et comment les émuler, seront discutés dans le
-chapitre~\ref{cha:conclusion}. % TODO vraiment ?
+chapitre~\ref{cha:conclusion}.
 
 Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 \iIf{e}{i}{\iPass}$.
@@ -1454,13 +1454,11 @@ associe le nombre (entier) $\widehat{3}$.
   \semrule{Exp-Cst}
 \end{mathpar}
 
-De même, une fonction n'est pas évaluée plus :
+De même, une fonction est déjà évaluée :
 
 \begin{mathpar}
   \semrule{Exp-Fun}
 \end{mathpar}
-
-% TODO vraiment?
 
 Pour lire le contenu d'un emplacement mémoire (left-value), il faut tout d'abord
 l'évaluer en un chemin.
