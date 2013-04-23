@@ -1,16 +1,20 @@
 \begin{headingpage}
 
-Le chapitre~\ref{cha:os} décrit le contexte de ces travaux, notamment le
-fonctionnement général d'un système d'exploitation et la séparation du code en
-plusieurs niveaux de privilèges. Le mécanisme d'appels système est décrit, et on
-montre qu'une implantation naïve de la communication entre espaces utilisateur
-et noyau casse toute isolation. On présente la situation prise par le noyau
-Linux : séparer deux classes de pointeurs sensées être indépendante.
+Après avoir décrit le contexte général de ces travaux, nous on décrivons les
+enjeux.
+
+Le chapitre~\ref{cha:os} explore plus en détail le fonctionnement d'un système
+d'exploitation, y compris la séparation du code en plusieurs niveaux de
+privilèges. L'architecture Intel 32 bits est prise comme support. En
+particulier, le mécanisme des appels système est décrit et on montre qu'une
+implantation naïve de la communication entre espaces utilisateur et noyau casse
+toute isolation.
 
 Le chapitre~\ref{cha:etatdelart} consiste en un tour d'horizon des techniques
 existantes en analyses de programmes. Ces analyses se centrent sur, mais ne se
 limitent pas au problème de manipulation mémoire évoqué dans le
-chapitre~\ref{cha:os}.
+chapitre~\ref{cha:os}. Plusieurs systèmes de types sont comparés, et en
+particulier le système CQual est présenté en détail.
 
 % TODO
 \end{headingpage}
