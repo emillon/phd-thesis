@@ -725,7 +725,6 @@ expression.
 \item Fonction : si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
 $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
-  % TODO ...
 \end{itemize}
 
 \end{lemma}
@@ -750,7 +749,7 @@ $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
     \item $Γ ⊢ *φ : t$
 
-      De même, seule la règle \textsc{Lv-Deref} convient. On en conclut que $Γ ⊢ φ : t*$.
+      Idem avec \textsc{Lv-Deref}.
 
     \item $Γ ⊢ φ[] : t$
 
@@ -758,7 +757,7 @@ $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
     \item $Γ ⊢ φ.l : t$
 
-      $Γ ⊢ φ : \eStruct{ l: t ; … }$ %TODO sûrement différent sans S
+      Idem avec \textsc{Lv-Field}.
 
   \end{itemize}
 
@@ -785,19 +784,22 @@ $Γ = x:t$).
 \begin{lemma}[Formes canoniques] \label{lemma:canon}
 
   Il est possible de déterminer la forme syntaxique d'une valeur étant donné son
-  type.
+  type, comme décrit dans le tableau suivant. Par exemple, d'après la première
+  ligne, si $Γ ⊢ v : \tInt$, alors $∃ n, v = d$.
 
-  \begin{itemize}
-  \item si $Γ ⊢ v : \tInt$, $v = n$.
-  \item si $Γ ⊢ v : \tFloat$, $v = d$.
-  \item si $Γ ⊢ v : \tUnit$, $v = \eUnit$.
-  \item si $Γ ⊢ v : t*$, $v = φ$ ou $v = \eNull$.
-  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = f$.
-  \item si $Γ ⊢ v : t*$, $v = φ$.
-  \item si $Γ ⊢ v : t[]$, $v = \eArray{v_1; …; v_n}$.
-  \item si $Γ ⊢ v : \tStruct{l_1 : t_1;…;l_n:t_n}$, $v = \eStruct{l_1 : v_1;…;l_n:v_n}$
-  \item si $Γ ⊢ v : (t_1, …, t_n) → t$, $v = \eFun{a_1, …, a_n}{i}$.
-  \end{itemize}
+  \begin{center}
+  \begin{tabular}{cc}
+  Type de $v$                     & Forme de $v$ \\
+  \hline
+  $\tInt$                         & $n$ \\
+  $\tFloat$                       & $d$ \\
+  $\tUnit$                        & $\eUnit$ \\
+  $t*$                            & $φ$ ou $\eNull$ \\
+  $t[]$                           & $\eArray{v_1; …; v_n}$ \\
+  $\tStruct{l_1 : t_1;…;l_n:t_n}$ & $\eStruct{l_1 : v_1;…;l_n:v_n}$ \\
+  $(t_1, …, t_n) → t$             & $\eFun{a_1, …, a_n}{i}$ \\
+  \end{tabular}
+  \end{center}
 
 \end{lemma}
 
