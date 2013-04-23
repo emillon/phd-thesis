@@ -520,7 +520,7 @@ simple où seul l'arité est conservée.
     { τ~*                         }{Pointeur}
     { τ[~]                        }{Tableau}
     { \tStruct{l_1:τ_1;…;l_n:τ_n} }{Structure}
-    { (τ_1, …, τ_n) \rightarrow τ }{Fonction}
+    { \stFun{n}                   }{Fonction}
     {END}
 \end{align*}
 
@@ -766,10 +766,7 @@ $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
   règle \textsc{Call} s'applique, ce qui permet de conclure.
 
 \item Fonction : la seule règle possible pour conclure une dérivation de
-
-  \[
-    Γ ⊢ \eFun{a_1, …, a_n}{i} : t
-  \]
+  $ Γ ⊢ \eFun{a_1, …, a_n}{i} : t$
   est \textsc{Fun}.
 
 \end{itemize}
