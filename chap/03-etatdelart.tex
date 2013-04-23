@@ -16,24 +16,30 @@ l'apparition de la science informatique.
 
 \section{Taxonomie}
 
-\paragraph{Techniques statiques et dynamiques :} l'analyse peut être faite au
-moment de la compilation, ou au moment de l'exécution. En général on peut
-obtenir des informations plus précises de manière dynamique, mais cela ne prend
-en compte que les parties du programme qui seront vraiment exécutées. Un autre
-problème des techniques dynamiques est qu'il est souvent nécessaire
-d'instrumenter l'environnement d'exécution (ce qui --- dans le cas où cela est
-possible --- peut se traduire par un impact en performances). L'approche
-statique, en revanche, nécessite de construire à l'arrêt une carte mentale du
-programme, ce qui n'est pas toujours possible dans certains langages.
+\paragraph{Techniques statiques et dynamiques}
 
-% TODO [E]: ne faut-il pas préciser un peu plus ou du moins le justifier :
-% pourquoi statique plutôt que dynamique ?
+L'analyse peut être faite au moment de la compilation, ou au moment de
+l'exécution. En général on peut obtenir des informations plus précises de
+manière dynamique, mais cela ne prend en compte que les parties du programme qui
+seront vraiment exécutées. Un autre problème des techniques dynamiques est qu'il
+est souvent nécessaire d'instrumenter l'environnement d'exécution (ce qui ---
+dans le cas où cela est possible --- peut se traduire par un impact en
+performances). L'approche statique, en revanche, nécessite de construire à
+l'arrêt une carte mentale du programme, ce qui n'est pas toujours possible dans
+certains langages.
 
-Dans la suite, nous considérerons essentiellement des techniques statiques,
-précisant le contraire lorsque c'est nécessaire.
+Pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
+uniquement sur des tests --- ou de manière générale sur des analyses dynamiques
+--- car même avec des tests exhaustifs, il est impossible d'étudier l'ensemble
+complet de tous les comportements possibles. Par exemple, si un bug se présente
+lors d'une interaction de deux composants qui n'a pas été testée, il passera
+inaperçu. Pour cette raison, la plupart des analyses présentées ici sont
+statiques.
 
-\paragraph{Cohérence et complétude :} le but d'une analyse statique est de
-catégoriser les programmes selon leurs caractéristiques à l'exécution. Or,
+\paragraph{Cohérence et complétude}
+
+Le but d'une analyse statique est de catégoriser les programmes selon leurs
+caractéristiques à l'exécution. Or,
 
 \begin{theorem}[de Rice]
   Toute propriété non triviale sur le comportement dynamique des programmes est
