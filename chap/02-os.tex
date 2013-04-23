@@ -257,28 +257,59 @@ donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
 \begin{tikzpicture}
-  [every node/.style={node distance=2cm}]
+  [memlayout/.style={draw
+                    ,shape=rectangle
+                    ,minimum height=5cm
+                    ,minimum width=1cm
+                    }
+  ,node distance=2.5cm
+  ]
 
-  \node (u1) {};
+  \node[memlayout]            (A) {};
+  \node[memlayout,right of=A] (B) {};
+  \node[memlayout,right of=B] (C) {};
 
-  \node[right of=u1] (phy) {};
+  \def\putlabel#1#2{
+    \path (#1.north) -- ++(0,3mm) node {#2};
+  }
 
-  \node[right of=phy] (u2) {};
+  \putlabel{A}{Processus 1}
+  \putlabel{B}{Mémoire}
+  \putlabel{C}{Processus 2}
 
-  \draw (u1) rectangle ++(1,-6);
-  \draw (phy) rectangle ++(1,-6);
-  \draw (u2) rectangle ++(1,-6);
+  \def\mmap#1#2#3#4#5{
+    \begin{scope}
+      [mzone/.style={draw
+                    ,shape=rectangle
+                    ,fill=black!20
+                    ,minimum height=#5 mm
+                    ,minimum width=1cm
+                    }
+      ,corr/.style={dashed}
+      ]
+      \node[mzone] (L) at ($ (#1.north) - (0, #2) $) {};
+      \node[mzone] (R) at ($ (#3.north) - (0, #4) $) {};
+
+      \draw[corr] (L.north east) -- (R.north west);
+      \draw[corr] (L.south east) -- (R.south west);
+    \end{scope}
+  }
+
+  \mmap{A}{1.5}{B}{2.5}{4}
+  \mmap{A}{4.5}{B}{4}{3}
+  \mmap{B}{1}{C}{1}{2}
+  \mmap{B}{3.2}{C}{2.7}{4}
 \end{tikzpicture}
 \caption{Mécanisme de mémoire virtuelle.}
 \label{fig:memoire-virtuelle}
 \end{figure} % }}}
 
-%TODO Faire cette figure
-
 En ce qui concerne la mémoire, les différentes tâches ont une vision différente
 de la mémoire physique : c'est-à-dire que deux tâches lisant à une même adresse
 peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
 (fig~\ref{fig:memoire-virtuelle}).
+
+% TODO expliquer la fig
 
 %TODO Redite qui n'apporte pas plus d'explication
 
