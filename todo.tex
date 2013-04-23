@@ -307,8 +307,8 @@ so-called \emph{dangling} pointers.
 
 Note that this is a dynamic step and requires a full memory scan, which is very
 inefficient. This is done only for soundness reasons ; as discussed in
-Section~\ref{sec:limit}, if a preliminary analysis proves that this is
-unnecessary we can skip this step.
+Section~X, if a preliminary analysis proves that this is unnecessary we can skip
+this step.
 
 \paragraph{Instructions} inside functions includes the empty instruction,
 sequence, evaluation of an expression (including assignment), or variable
@@ -410,13 +410,13 @@ On the other hand, a plain expression is only evaluated for its side-effects
   \end{minipage}
 }}
   \caption{Memory and values}
-  \label{fig:interp}
+  \label{fig:interp:plas}
 \end{figure*}%
 
 \subsection*{Evaluation}
 
 Operational semantics described thereafter are a binary relation between states
-$Ξ$ of an interpreter described in Figure~\ref{fig:interp}.
+$Ξ$ of an interpreter described in Figure~\ref{fig:interp:plas}.
 
 Every syntactic constant $c$ has a corresponding value $\widehat{c}$. The same
 holds for functions, because as they do not capture their lexical
@@ -691,9 +691,8 @@ It is also depicted in Figure~\ref{fig:eval-steps}.
 
 \end{figure}
 
-Evaluation rules are given in annex in Figures~\ref{fig:eval-exp}
-and~\ref{fig:rules}. Most are simple, but a few deserve to be explained in
-detail.
+Evaluation rules are given in annex in Figures~X and~Y. Most are simple, but a
+few deserve to be explained in detail.
 
 \paragraph{Error propagation} is done in two cases. First, if an expression
 produces an error (seen as a value), then the same error (seen as a state $Ξ$)
@@ -944,12 +943,11 @@ déréférencement s'applique aux pointeurs noyau seulement : si le code contien
 l'expression \texttt{*x}, alors il existe un type \texttt{t} tel que
 \texttt{x:t*} et \texttt{*x:t}.
 
-Appliquons ces règles à l'exemple de la figure \ref{fig:radeon-bug} : on suppose
-que l'interface avec l'espace utilisateur a été correctement annotée. Cela
-permet de déduire que \texttt{data:void user*}. En appliquant la première règle
-à la ligne 6, on en déduit que \texttt{info:struct drm\_radeon\_info user*}
-(comme en C, on peut toujours convertir de et vers un pointeur sur
-\texttt{void}).
+Appliquons ces règles à l'exemple de la figure~X : on suppose que l'interface
+avec l'espace utilisateur a été correctement annotée. Cela permet de déduire que
+\texttt{data:void user*}. En appliquant la première règle à la ligne 6, on en
+déduit que \texttt{info:struct drm\_radeon\_info user*} (comme en C, on peut
+toujours convertir de et vers un pointeur sur \texttt{void}).
 
 Pour déduire le type de \texttt{value\_ptr} dans la ligne 7, c'est la
 deuxième règle qu'il faut appliquer : le champ \texttt{value} de
