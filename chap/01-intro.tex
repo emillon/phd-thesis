@@ -24,8 +24,8 @@ En tant qu'intermédiaire de confiance, le noyau a un certain nombre de
 responsabilités et est le seul à avoir accès à certaines informations sensibles.
 Il est capital de s'assurer qu'il est bien le seul à pouvoir y accéder. En
 particulier, il faut pouvoir vérifier que les requêtes faites par l'utilisateur
-au noyau ne peuvent pas détourner ce dernier et lui faire fuiter des
-informations confidentielles.
+au noyau ne peuvent pas volontairement ou involontairement détourner ce dernier
+et lui faire fuiter des informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
@@ -36,22 +36,27 @@ Les activités de relecture et de
 débogage ont beau prendre la majeure partie du temps de développement, il est
 facile de laisser passer des défauts de programmation.
 
-Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le code
-du programme sous un environnement contrôlé. On peut alors détecter des
+Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le
+programme sous un environnement contrôlé. On peut alors détecter des
 comportements non désirés. Mais même avec des tests les plus exhaustifs il n'est
 pas possible de couvrir tous les cas d'utilisation.
 
-Parmi les techniques communes pour éliminer les ``bugs'', on peut ajouter à un
-langage de programmation un \emph{système de types statiques}.
+Une autre approche est d'analyser le code source du programme avant de
+l'exécuter et de refuser de lancer les programmes qui contiennent des erreurs,
+quitte à limiter la possibilité d'en écrire certains. C'est l'analyse statique
+de programmes.
 
-Celui-ci permet d'associer à chaque fragment d'un programme, une étiquette
-décrivant quel genre de valeur sera produite par son évaluation. Cette analyse,
-faite à la compilation, permet de rejeter les programmes incorrects du point de
-vue de cette catégorisation.
+Une des techniques d'analyse statique les plus répandues est le typage statique,
+qui consiste à associer à chaque morceau de programme, une étiquette
+décrivant quel genre de valeur sera produite par son évaluation. Par exemple, si
+$n$ est le nom d'une variable entière, alors $n + 2$ produira toujours une
+valeur entière.
 
-Le but de cet thèse est de montrer que le typage statique peut être utilisé pour
-détecter et interdire certains bugs présents dans les noyaux de systèmes
-d'exploitation.
+Pour garantir l'isolation d'un noyau de système d'exploitation, un des points
+cruciaux est de restreindre la manière dont sont traitées les informations
+provenant des programmes utilisateur. Le but de cet thèse est de montrer que le
+typage statique peut être utilisé pour détecter et interdire ces manipulations
+dangereuses.
 
 \section{Rôle d'un système d'exploitation}
 
@@ -116,42 +121,16 @@ et selon le type de lecteur, le système d'exploitation effectuera les actions
 appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
-le matériel, et en particulier assure les rôles suivants :
-
-% TODO À affiner ou supprimer
-
-\paragraph{Gestion des processus}
-
-Un système d'exploitation peut permettre d'exécuter plusieurs programmes à la
-fois. Il faut alors orchestrer ces différents processus et les séparer en terme
-de temps et de ressources partagées.
-
-\paragraph{Gestion de la mémoire}
-
-Chaque processus, en plus du noyau, doit disposer d'un espace mémoire différent.
-C'est-à-dire qu'un processus ne doit pas pouvoir interférer avec un autre.
-
-\paragraph{Gestion des fichiers}
-
-Les processus peuvent accéder à une hiérarchie de fichiers, indépendamment de la
-manière d'y accéder.
-
-\paragraph{Gestion des périphériques}
-
-Le noyau étant le seul code ayant des privilèges, c'est lui qui doit communiquer
-avec les périphériques matériels.
-
-\paragraph{Abstractions}
-
-Le noyau fournit aux programmes une interface unifiée, permettant de stocker des
-informations de la même manière sur un disque dur ou une clef USB (alors que
-l'accès se déroulera de manière très différente en pratique).
+le matériel, et particulier est responsable de la gestion de la mémoire, des
+périphériques et des processus. Les détails d'implantation ne sont pas présentés
+à l'utilisateur ; à la place il manipule des abstractions, comme la notion de
+fichier.
 
 \section{Séparation entre noyau et espace utilisateur}
 
-Le noyau n'est pas le seul programme exécuté par le processeur : des programmes
-peuvent être aussi être exécutés. Ce sont ceux-ci qui sont d'ailleurs visibles
-pour l'utilisateur.
+Le noyau n'est pas le seul programme exécuté par le processeur : d'autres
+programmes peuvent être aussi être lancés. Ce sont ceux-ci qui sont d'ailleurs
+visibles pour l'utilisateur.
 
 Puisque le noyau est garant du bon fonctionnement du système, il ne doit pas
 pouvoir être manipulé directement par l'utilisateur ou les programmes exécutés.
@@ -229,8 +208,8 @@ lire et $a$ l'adresse en mémoire où commencer à stocker les résultats.
 
 Dans le cas d'utilisation prévu, le noyau va copier la mémoire lue dans $a$. On
 est en mode noyau, en train d'exécuter une instruction du noyau manipulant des
-données utilisateur. D'après le tableau précédent, % TODO figure pê ?
-aucune erreur ne se produit.
+données utilisateur. D'après la figure~\ref{fig:erreursec} aucune erreur ne se
+produit.
 
 Mais même si ce cas ne produit pas d'erreur à l'exécution, il est tout de même
 erroné. En effet, si on passe à l'appel système une adresse $a$ faisant partie
@@ -256,6 +235,12 @@ déréférencement direct des pointeurs dont la valeur peut être controllée pa
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celle-ci a bien les mêmes privilèges que l'appelant.
 
+Il est facile d'oublier d'ajouter cette vérification, puisque le cas ``normal''
+fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
+fréquemment et pourquoi il est aussi capital de les détecter avant l'exécution.
+
+% TODO définir "bugs" non?
+
 \section{Systèmes de types}
 
 La plupart des langages de programmation incorporent la notion de type, qui
@@ -266,8 +251,8 @@ Nous avons vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
 seules données qu'un ordinateur manipule sont des nombres. Selon les opérations
 effectuées, ils seront interprétés comme des entiers, des adresses mémoires, ou
 des caractères. Pourtant il est clair que certaines opérations n'ont pas de
-sens: par exemple, ajouter deux adresses, ou déréférencer le résultat d'une
-division sont des comportements qu'on voudrait pouvoir empêcher.
+sens: par exemple, multiplier un nombre par une adresse, ou déréférencer le
+résultat d'une division sont des comportements qu'on voudrait pouvoir empêcher.
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
 opérations possibles selon la classe d'un objet : ``ne pas ajouter des pommes et
@@ -302,8 +287,6 @@ valeur\footnote{
 }, alors cette valeur sera un entier''. Cet ensemble de contrats peut être vérifié statiquement
 par le compilateur, à l'aide d'un système de types statique.
 
-% TODO [E]: division par zéro
-
 Ainsi la fonction "$+$" est typée \texttt{(int, int)} $→$ \texttt{int}. Les
 règles permettant de vérifier le typage sont par exemple les suivantes :
 
@@ -328,44 +311,49 @@ spectre, les systèmes de types forts permettent d'éliminer totalement la
 nécessité de réaliser des tests de typage. Mais souvent ce n'est pas le cas, car
 il peut y avoir des constructions au sein du langage qui permettent de
 contourner le système de types, comme un opérateur de
-transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée :
+transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée.
 
 \begin{figure}
   \insertcode{cast.java}
-  \caption{Transtypage en Java}
-  \label{fig:javacast}
-\end{figure}
 
-\begin{Verbatim}
+  \begin{Verbatim}
 Exception in thread "main" java.lang.ClassCastException:
     java.lang.Integer cannot be cast to java.lang.Float
         at Cast.main(Cast.java:5)
-\end{Verbatim}
+  \end{Verbatim}
+
+  \caption{Transtypage en Java}
+
+  \label{fig:javacast}
+\end{figure}
 
 \paragraph{Polymorphisme}
 
 Parfois, il est trop restrictif de donner un unique contrat à une fonction. Quel
-doit être le type d'une fonction ajoutant un élément à une liste ?
+doit être le type d'une fonction ajoutant un élément à une liste, ou celui d'une
+fonction triant un tableau en place ?
 
 En première approximation, on peut imaginer fournir une version du code par type
 de données à manipuler. C'est la solution retenue par les premières versions du
 langage Pascal, ce qui rendait très difficile l'écriture de
-bibliothèques\cite{PascalNoEscape}.
+bibliothèques\cite{PascalNoEscape}. On parle alors de monomorphisme.
 
-Une amélioration peut être de générer à la compilation une fonction qui aurait
-le même code mais des annotations de typage différentes : on obtient alors
-plusieurs copies de la fonction qui sont chacunes spécialisées pour un type en
-particulier. C'est la solution retenue par le langage C++ et son système de
-\emph{templates}.
+Une autre manière de procéder est d'autoriser plusieurs fonctions à avoir le
+même nom, mais avec des types d'arguments différents. Par exemple, on peut
+définir séparément l'addition entre deux entiers, entre deux flottants, ou entre
+un entier et un flottant. Selon les informations connues à la compilation, la
+bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
+On parle de polymorphisme \emph{ad hoc}.
 
-En fait, si à l'exécution toutes les données sont représentées de manière
-uniforme, il n'est pas nécessaire de créer plusieurs copies de la fonction.
+La dernière possibilité est le polymorphisme universel, qui consiste à utiliser
+le même code quelque soit le type des arguments. Dans ce cas, on utilise une
+seule fonction pour retourner une liste d'entiers ou une liste de flottants, par
+exemple. Au lieu d'associer à chaque fonction un type, dans certains cas on lui
+associe un schéma de types, instanciable en un type concret. En quelque sorte,
+on déplace la vérification du site d'appel au site de définition. Cette
+technique a été décrite en premier dans~\cite{Milner78}.
 
-Au lieu d'associer à chaque expression un type, dans certains cas on lui associe
-un schéma de types, instanciable en un type concret. En quelque sorte, on
-déplace la vérification du site d'appel au site de définition. Cette technique a
-été décrite en premier dans~\cite{Milner78}.
-Un tour d'horizon de différents types statiques, avec en particulier du
+Un tour d'horizon de différents systèmes types statiques, avec en particulier du
 polymorphisme, on pourra se référer à~\cite{TAPL}.
 
 \section{Langages d'implantation}
@@ -376,10 +364,13 @@ ils sont écrits.
 
 \paragraph{Assembleur}
 
-Historiquement, les systèmes d'exploitation étaient écrits dans des langages de
-bas niveau, c'est-à-dire proches de la machine. Puisqu'ils doivent communiquer
-avec le matériel, il est en effet nécessaire d'en écrire au moins une partie en
-assembleur.
+Le noyau d'un système d'exploitation nécessite d'accéder au matériel, donc il
+est naturellement bas niveau. Pour accéder aux fonctionnalités spécifiques de
+chaque processeur, il est donc nécessaire d'en implanter une partie dans le
+langage d'assemblage natif de chaque architecture. Historiquement, les premiers
+système d'exploitations étaient entièrement écrits en assembleur. Cela est de
+plus en plus rare, sauf dans les cas où les ressources sont trop limitées pour
+exécuter du code compilé, comme dans les systèmes embarqués ou temps-réel.
 
 \paragraph{C}
 
@@ -393,9 +384,13 @@ programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
 machine : ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
 taille concrète. Ceci dit, le système de types est assez rudimentaire : toutes
-les formes de transtypage est acceptée, certaines conversions sont insérées
+les formes de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables.
+
+% TODO [E]
+% http://anil.recoil.org/papers/2013-asplos-mirage.pdf
+% http://web.cecs.pdx.edu/~apt/icfp05.pdf
 
 % TODO Ada
 % TODO en Ada les access type sont liés à un pool en particulier
@@ -463,6 +458,10 @@ EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
 interprétation abstraite. Il sera décrit plus en détails dans la
 section~\ref{sec:npk}.
 
+% TODO [E] il manque un lien entre la fin des langages d'analyse et la suite!!!
+
+% TODO [E] dire un mot de Newspeak dès l'intro ou l'état de l'art
+
 \section{Plan de la thèse}
 
 Cette thèse comporte trois parties.
@@ -471,9 +470,8 @@ Cette thèse comporte trois parties.
 fonctionnement général d'un système d'exploitation y est détaillé, et les
 problèmes de manipulation de pointeurs contrôlés par l'utilisateur y sont
 introduits. On fait ensuite un tour d'horizon des techniques existantes
-permettant de traiter ce problème.
-
-% TODO [E] + proposition
+permettant de traiter ce problème. Cette partie se conclut par la proposition au
+cœur de cette thèse.
 
 \paragraph{La partie~\ref{part:lang}} décrit notre solution : \langname, un
 langage impératif. On y décrit sa syntaxe, sa sémantique ainsi qu'un système de
@@ -483,8 +481,6 @@ contrôlés par l'utilisateur. Le système de types est également étendu. Pour
 chacune de ces variantes, on établit la propriété de sûreté de typage reliant la
 sémantique dynamique aux types statiques.
 
-% TODO [E] dire un mot de Newspeak dès l'intro ou l'état de l'art
-
 \paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
 à ces travaux. L'implantation du système de types est décrite, afin que la
 manière de transformer automatiquement du code C en \langname. Un cas d'étude
@@ -493,17 +489,10 @@ que le système de type capture précisément ce genre d'erreur de programmation
 Enfin, les possibilités d'extension tant théoriques qu'expérimentales sont
 présentées.
 
-%  - omniprésence
-%  - complexité
-%  - vérification
-%  - taux de bugs après relecture
-%  - vérification automatique obligatoire
 %  - historique des techniques
 %  - analyse non intrusive
 %  - méthodes de développement du noyau
 %  - syntaxe, sémantique, typage
-
-% TODO [E] dire au début que c'est tendance Unix si c'est bien le cas
 
 % TODO [E] + besoins EADS
 

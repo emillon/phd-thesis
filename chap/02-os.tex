@@ -226,20 +226,10 @@ d'affecter des niveaux de privilège à ces tâches, en restreignant le type
 d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
 tâches de niveaux moins élevés.
 
-\begin{figure}
-\input{fig/rings.tex}
-\caption[Les différents \emph{rings}]{
-  Les différents \emph{rings}. Seul le \ring{0} a accès au hardware
-  via des instructions privilégiées. Pour accéder aux fonctionnalités du noyau,
-  les programmes utilisateur doivent passer par des appels système.}
-\label{fig:rings}
-\end{figure}
-
-Il y a 4 niveaux de privilèges (nommés aussi \emph{rings} -
-figure~\ref{fig:rings}) : le \ring{0} est le plus privilégié, le \ring{3} le
-moins privilégié. Dans l'exemple précédent, on pourrait isoler l'ordonnanceur de
-processus en le faisant s'exécuter en \ring{0} alors que les autres tâches
-seraient en \ring{3}.
+Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}) : le \ring{0} est le
+plus privilégié, le \ring{3} le moins privilégié. Dans l'exemple précédent, on
+pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
+alors que les autres tâches seraient en \ring{3}.
 
 \subsection{Mémoire virtuelle}
 

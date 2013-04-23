@@ -1,13 +1,18 @@
-\epigraph{
-Many C programmers
-believe that "strong typing" just means pounding extra hard on the keyboard.
-}{Peter van den Linden}
+
+% TODO [E] pour la conclusion il y a deux plans possibles :
+% 1/ limitation et travaux futurs
+% 2/ parler de chaque point que l'on rencontre actuellement : transtypage...
+
+% TODO[E] il faut dans la conclusion indiquer ce que tu voulais traiter et ce
+% que tu as traité dans ta thèse
 
 \section{Limitations}
 
 Un seul type d'entier est supporté.
 
 % TODO
+
+% TODO [E] tu parles de safespeak et de la traduction c-safespeak?
 
 \paragraph{Transtypage}
 
@@ -16,10 +21,12 @@ de capturer de nombreuses constructions qui sont possibles, où même idiomatiqu
 en C : les unions, les conversions de types (explicites ou implicites) et le
 \emph{type punning}. Les deux premières sont équivalentes. Bien qu'on puisse
 remplacer chaque conversion explicite d'un type $t_1$ vers un type $t_2$ par
-l'appel à une $\mathrm{cast}_{t_1,t_2}$, on ajoute alors un ``trou'' dans le
-système de types. Cette fonction devrait en effet être typée $(t_1) → t_2$,
-autrement dit le type ``maudit'' $α → β$ de \texttt{Obj.magic} en OCaml ou
+l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alors un ``trou''
+dans le système de types. Cette fonction devrait en effet être typée $(t_1) →
+t_2$, autrement dit le type ``maudit'' $α → β$ de \texttt{Obj.magic} en OCaml ou
 \texttt{unsafeCoerce} en Haskell.
+
+% TODO [E] à définir
 
 Le \emph{type punning} consiste à modifier directement la suite de bits de
 certaines données pour la manipuler d'une manière efficace. Par exemple, il est
@@ -38,7 +45,7 @@ La sémantique opérationnelle utilise un environnement d'exécution pour certai
 cas. Contrairement à C, les débordements de tampon et les déréférencements de
 pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une caractéristique
 cruciale de cette approche : en effet, si on suppose que les programmes que l'on
-analayse sont corrects de ce point de vue, on peut désactiver ces vérifications
+analyse sont corrects de ce point de vue, on peut désactiver ces vérifications
 et le reste des propriétés est toujours valable.
 
 Un autre endroit, plus problématique, où des tests dynamiques sont faits est
@@ -62,8 +69,8 @@ l'espace utilisateur, les programmes peuvent utiliser les fonctions
 \texttt{malloc()}, \texttt{calloc()}, et \texttt{realloc()} pour allouer des
 zones de mémoire et \texttt{free()} pour les libérer. Dans le noyau Linux, ces
 fonctions existent sous la forme de \texttt{kmalloc()}, \texttt{kfree()}, etc.
-
-% TODO citer the linux memory manager ?
+Une explication détaillée de ces mécanismes peut être trouvée
+dans~\cite{LinuxVMM}.
 
 Ces fonctions manipulent les données en tant que zones mémoires opaques, à
 en renvoyant un pointeur vers une zone mémoire d'un nombre d'octets donnés.
@@ -71,6 +78,8 @@ Cela présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
 sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
 mémoire contenant cette valeur. Le typage est alors direct :
+
+% TODO [E] sous entendu il y a un sizeof(t)
 
 \begin{mathpar}
   \irule{Malloc}
@@ -91,13 +100,16 @@ une fois, on peut utiliser une analyse préalable comme~ \cite{ifm10}. Il est s�
 (mais pas possible en pratique) d'ignorer les commandes de libérations de
 mémoire. 
 
+% TODO [E] pointeurs fantômes
+
 \paragraph{Structures récursives}
 
-Une autre limitation est que seules structures simples sont supportées. Les
+Une autre limitation est que seules les structures simples sont supportées. Les
 structures récursives, contenant un pointeur vers un objet du même type
-structure, ne sont pas typables. La raison est syntaxique : l'accès à un
-champ est noté $lv.l_S$ afin d'avoir à disposition le type complet de la
-structure.
+structure, ne sont pas typables. La raison est syntaxique : l'accès à un champ
+est noté $lv.l_S$ afin d'avoir à disposition le type complet de la structure.
+
+% TODO [E] bigre!!!
 
 Par exemple, une liste chaînée d'entiers peut être décrite de la manière
 suivante en C :
@@ -161,17 +173,28 @@ Ces structures sont respectivement traduites en :
 Ce schéma suffit à compiler toutes les types de structures possibles en C. En
 effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
 structure en cours de définition ; et il n'est alors possible que d'y accéder
-que par pointeur.
+par pointeur.
 
 % TODO est-ce vrai ? Y'a-t-il des cas où les forward decl sont nécessaires?
+
+\subsection{Assembleur}
+
+Comme la plupart des outils d'analyse de code C, il est impossible de traiter
+l'assembleur en ligne qui peut se trouver entre deux instructions. Dans le cas
+de Linux, le code est fait pour être portable, et les parties dépendantes d'une
+certaine architecture (et donc le code assembleur) sont isolées explicitement.
+On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
+l'implantation est faite en assembleur, mais au sein de cette implantation on ne
+peut bien sûr rien dire.
 
 \section{Travaux futurs}
 
 \subsection{Transtypage}
 
-Les casts entre types entiers ne posent pas de problèmes. Ceux entre types
-pointeurs ne posent pas de problème non plus puisqu'au moment de la traduction
-en \langname on efface les étiquettes de types sur les pointeurs.
+Les casts entre types entiers ne posent pas de problèmes. % TODO [E] pourquoi?
+Ceux entre types pointeurs ne posent pas de problème non plus puisqu'au moment
+de la traduction en \langname on efface les étiquettes de types sur les
+pointeurs.
 
 Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
 casts, la seule manière sensible de les typer est la suivante.
@@ -208,6 +231,8 @@ l'environnement d'exécution est paramétré par une fonction de placement en
 mémoire $\addrInt : Φ → \tInt$ qui à un chemin associe un entier.
 On étend alors la sémantique par la règle suivante.
 
+% TODO [E] ??
+
 \[
   \irule{CastInt}
     { }
@@ -230,6 +255,7 @@ suivante.
 \]
 
 % TODO les widehat...
+% TODO [E] ??
 
 L'exécution de l'analogue de $\addrInt$ demanderait de créer un pointeur
 depuis un entier.
@@ -266,8 +292,8 @@ Le langage C n'ayant pas de types abstraits
 , on ne peut pas séparer la réprésentation d'un type (par exemple : entier signé
 de 32 bits) des opérations qui y sont attachées.
 
-Dans de nombreuses interface, on emploie des types entiers qui servent
-d'étiquette. Par exemple, les descripteurs de fichiers renvoyés par la fonction
+Dans de nombreuses interfaces, on emploie des types entiers qui servent
+d'étiquettes. Par exemple, les descripteurs de fichiers renvoyés par la fonction
 \texttt{open()} et passés au fonctions \texttt{read()} et \texttt{write()} ont
 le type \texttt{int}. Le langage autorise donc par exemple de multiplier entre
 eux deux descripteurs de fichiers, ce qui ne correspond pas à une opération
@@ -278,4 +304,6 @@ encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de cod
 tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
 une fonction prenant en paramètre un numéro de \emph{frame}.
 
-% TODO check : les footnotes commençent par une majuscule
+\section{Conclusion}
+
+% TODO

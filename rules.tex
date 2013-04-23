@@ -67,6 +67,10 @@
                   {\textsc{Eq}(t)}
                   {\textsc{Eq}(t[~])}
     }
+    {Eq-Struct}{ \irule{Eq-Struct}
+                  {∀ i ∈ [1;n]. \textsc{Eq}(t_i)}
+                  {\textsc{Eq}(\tStruct{l_1 : t_1 ; … l_n : t_n})}
+    }
     {Op-Eq}{ \irule{Op-Eq}
              { \opbin ∈ \{=,≠\} \\
                Γ ⊢ e_1 : t \\

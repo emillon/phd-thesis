@@ -6,29 +6,23 @@ décrit dans le chapitre~\ref{cha:lang}. Enfin, nous donnons les détails d'un
 algorithme d'inférence de types à la Hindley-Milner, reposant sur l'unification
 et le partage de références.
 
-%\input{fig/il-features.tex}
-
 \section{Newspeak}
 \label{sec:npk}
 
 Newspeak~\cite{newspeak} est un langage conçu pour être à la fois :
 
 \begin{itemize}
-  \item \textbf{Précis} : sa sémantique est définie formellement
-  \cite{newspeak}
-  \item \textbf{Expressif} : la plupart des primitives présentes dans les
-    langages de bas niveau sont compilables en Newspeak \footnote{Penjili étant
-    spécialisé dans l'aéronautique, les constructions complexes comme
-    \texttt{longjmp} / \texttt{setjmp} ou les exceptions ne sont pas nécessaires.}
-    % TODO adapter la footnote
-  \item \textbf{Simple} : peu de primitives sont présentes.
-  \item \textbf{Minimal} : aucun élément syntaxique ne peut être exprimé
+  \item Précis : sa sémantique est définie formellement dans~\cite{newspeak}
+  \item Expressif : la plupart des primitives présentes dans les
+    langages de bas niveau sont compilables en Newspeak.
+  \item Simple : peu de primitives sont présentes.
+  \item Minimal : aucun élément syntaxique ne peut être exprimé
     comme combinaison d'autres.
-  \item \textbf{Explicite} : les constructions sont toutes indépendantes du
+  \item Explicite : les constructions sont toutes indépendantes du
     contexte.
-  \item \textbf{Orienté analyse} : les primitives sont décorées d'informations
+  \item Orienté analyse : les primitives sont décorées d'informations
     reflétant leur validité (tests de bornes, etc)
-  \item \textbf{Indépendant de l'architecture} : toutes les caractéristiques comme
+  \item Indépendant de l'architecture : toutes les caractéristiques comme
     la taille des types ou l'alignement des structures sont rendues explicites.
 \end{itemize}
 

@@ -346,31 +346,7 @@ Donc $T$ est une lentille indexée, et on a par exemple :
 Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
 que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
-\section{But et comparaison à C}
-
-Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
-``assembleur portable''. Ses types de données et les opérations associées sont
-donc naturellement très bas niveau.
-
-Les types de données de C sont établis pour représenter les mots mémoire
-manipulables par les processeurs : essentiellement des entiers et flottants de
-plusieurs tailles. Les types composés correespondent à des zones de mémoire
-contigües, homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
-structures).
-
-Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
-c'est à dire des variables qui représentent directement une adresse en mémoire.
-Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
-stocké à cette adresse) ou non typés.
-
-Le système de types rudimentaire de C ne permet pas d'avoir beaucoup de
-garanties sur la sûreté du programme. En effet, aucune vérification n'est
-effectuée en dehors de celles faites par le programmeur.
-
-Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
-sur une certaine classe de programmes C.
-
-% TODO mettre ailleurs ?
+\section{Fonctionnalités}
 
 \paragraph{Fonctions et procédures :} Un des problèmes classiques dans les
 langages impératifs est de distinguer les fonctions (qui retournent une valeur)
@@ -455,7 +431,7 @@ l'alternative ("if") et la boucle "while". Les autres formes de boucle
 ("do/while" et "for") peuvent être émulées par une boucle "while".
 
 Les fonctionnalités manquantes, et comment les émuler, seront discutés dans le
-chapitre~\ref{cha:conclusion}. % TODO vraiment ?
+chapitre~\ref{cha:conclusion}.
 
 Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 \iIf{e}{i}{\iPass}$.
@@ -474,6 +450,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { \eUnit }{ Valeur unité }
                  {END}
   \\
+  \\
   \gramdef{Expressions}{e}
                  { c               }{ Constante }
                  { lv              }{ Accès mémoire }
@@ -490,12 +467,18 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { e (e_1, …, e_n) }{ Appel de fonction }
                  {END}
   \\
+  \\
   \gramdef{Left-values}{lv}
                   { x      }{ Variable }
                   { *lv    }{ Déréférencement }
                   { lv.l_S }{ Accès à un champ }
                   { lv[e]  }{ Accès à un élément }
                   {END}
+  \\
+  \\
+  \gramdef{Fonctions}{f}
+                 { \eFun{x_1, …, x_n}{i} }{Arguments, corps}
+                 {END}
   \end{align*}
 
   \caption{Syntaxe -- expressions}
@@ -515,14 +498,12 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
                  { \iReturn{e}     }{Retour de fonction}
                  {END}
   \\
-  \gramdef{Fonctions}{f}
-                 { \eFun{x_1, …, x_n}{i} }{Arguments, corps}
-                 {END}
   \\
   \gramdef{Phrases}{p}
                  { x = e }{Variable globale}
                  { e     }{Évaluation d'expression}
                  {END}
+  \\
   \\
   \gramdef{Programme}{P}
                  { (p_1, …, p_n)}{Phrases}
@@ -532,8 +513,6 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
   \caption{Syntaxe -- instructions}
   \label{fig:stx}
 \end{figure}
-
-% TODO mettre fonction dans expression?
 
 \begin{figure}
 
@@ -547,6 +526,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
       { \&\&,||         }{Opérateurs logiques}
       { \ll, \gg        }{Décalages}
       {END}
+  \\
   \\
   \gramdef{Opérateurs unaires}{\opun}
       { +,-   }{Arithmétique entière}
@@ -595,8 +575,8 @@ associées aux variables du programme.
 
 La mémoire est constituée de variables, qui contiennent des valeurs. Ces
 variables sont organisées, d'une part en un ensemble de variables globales, et
-d'autre part en une pile de contextes d'appel\footnote{qu'on appellera donc
-aussi cadres de pile pour \emph{stack frames} en anglais}. Cette structure
+d'autre part en une pile de contextes d'appel (qu'on appellera donc
+aussi cadres de pile, ou \emph{stack frames} en anglais). Cette structure
 empilée permet de représenter les différents contextes à chaque appel de
 fonction : par exemple, si une fonction s'appelle récursivement, plusieurs
 instances de ses variables locales sont présentes dans le programme.
@@ -685,6 +665,7 @@ pas capturé (il n'y a pas de clôture lexicale).
       { Ω               }{Erreur}
       {END}
   \\
+  \\
   \gramdef{Chemins}{φ}
      { a    }{Adresse}
      { *φ   }{Déréférencement}
@@ -692,10 +673,12 @@ pas capturé (il n'y a pas de clôture lexicale).
      { φ[n] }{Accès à un élément}
      {END}
   \\
+  \\
   \gramdef{Adresses}{a}
      { (n, x) }{Variable locale}
      { (x)    }{Variable globale}
      {END}
+  \\
   \\
   \gramdef{Erreur}{Ω}
     { \serr{array} }{Débordement de tableau}
@@ -742,9 +725,11 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
     { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
     {END}
   \\
+  \\
   \gramdef{État mémoire}{m}
     { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
     {END}
+  \\
   \\
   \gramdef{État d'interpréteur}{Ξ}
     { \msi{m}{e} }{Expression, mémoire}
@@ -1454,13 +1439,11 @@ associe le nombre (entier) $\widehat{3}$.
   \semrule{Exp-Cst}
 \end{mathpar}
 
-De même, une fonction n'est pas évaluée plus :
+De même, une fonction est déjà évaluée :
 
 \begin{mathpar}
   \semrule{Exp-Fun}
 \end{mathpar}
-
-% TODO vraiment?
 
 Pour lire le contenu d'un emplacement mémoire (left-value), il faut tout d'abord
 l'évaluer en un chemin.

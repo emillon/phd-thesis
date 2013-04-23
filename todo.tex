@@ -49,6 +49,8 @@ Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'applique
 cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
 % TODO [E]: à préciser
 
+% TODO [E] en quoi le fait d'être compilé change des choses ?
+
 % ----
 
 Les systèmes de types les plus simples expriment des
@@ -101,6 +103,8 @@ dans~\cite{floatpitfalls}.
 
 \end{itemize}
 
+% TODO [E] setjmp/longjmp, unions
+
 \paragraph{Qualificateurs de types}
 
 Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
@@ -114,23 +118,49 @@ programmeur d'ajouter beaucoup d'annotations dans le programme. % TODO
 quantifier
 
 Ce système d'annotations sur les types a été formalisé sous le nom de
-\emph{qualificateurs de types} : chaque type peut être décoré d'un ensemble de
-qualificateurs (à la manière de \texttt{const}), et des règles de typage
-permettent d'établir des propriétés sur le programme. Ces analyses ont été
-implantée dans l'outil CQual~\cite{toplas-quals}. Ce système peut servir à
-inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
-pour les chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ?
-et des propriétés dépendantes du flot de contrôle, comme des invariants sur les
+\emph{qualificateurs de types}~\cite{toplas-quals} : chaque type peut être
+décoré d'un ensemble de qualificateurs (à la manière de \texttt{const}), et des
+règles de typage permettent d'établir des propriétés sur le programme. Ces
+analyses ont été implantée dans l'outil CQual. Ce système peut servir à inférer
+les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure pour les
+chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ? et des
+propriétés dépendantes du flot de contrôle, comme des invariants sur les
 verrous~\cite{pldi02}, à rapprocher du concept de \emph{typestates}
 ~\cite{tse12-typestate}. Il a également été appliqué à la classe de
 vulnérabilités sur les pointeurs utilisateurs dont il est ici
 l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur à
 chaque étage de type, cette approche est plus générique mais plus complexe que
-la nôtre. % TODO bof
+la nôtre. % TODO bof % TODO [E] ??
 
 % TODO [E] préciser pourquoi
 
 \section{Évaluateur}
+
+% --- Comparaison à C
+
+Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
+``assembleur portable''. Ses types de données et les opérations associées sont
+donc naturellement très bas niveau.
+
+Les types de données de C sont établis pour représenter les mots mémoire
+manipulables par les processeurs : essentiellement des entiers et flottants de
+plusieurs tailles. Les types composés correespondent à des zones de mémoire
+contigües, homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
+structures).
+
+Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
+c'est à dire des variables qui représentent directement une adresse en mémoire.
+Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
+stocké à cette adresse) ou non typés.
+
+Le système de types rudimentaire de C ne permet pas d'avoir beaucoup de
+garanties sur la sûreté du programme. En effet, aucune vérification n'est
+effectuée en dehors de celles faites par le programmeur.
+
+Le but ici est d'établir un langage plus simple mais qui permettra de raisonner
+sur une certaine classe de programmes C.
+
+% TODO mettre ailleurs ?
 
 \begin{itemize}
 \item substitutions dans les ctx : éditer $C_l$ et $C_i$
@@ -765,6 +795,36 @@ a global variable.
   j'ai arrêté de lire à partir de 6.2 parce que le texte n'est pas
   vraiment clair
 \end{itemize}
+
+Sarah 13/02
+
+\begin{itemize}
+\item
+  expliquer pourquoi on a besoin d'étendre l'expressivité de C\_ML
+  (rappeler le contexte des pointeurs usr et kernel et dire que ce sont
+  les ptrs maitrises par le usr qui sont souillés)
+\item
+  typo intro systme
+\item
+  6.1 phrase ``tout d'abord\ldots{}'' pas très français non ?
+\item
+  5.1 étape ``ensuite'' à quoi correspond le phi ?
+\item
+  figure 6.1 ça serait plus propre de tout remettre et surligner/colorer
+  les nouveautés (à expliquer dans le texte)
+\item
+  6.2 pourquoi ne pas nommer cette extension de C\_ML
+\item
+  3ème parag 6.3 choisir entre ``qui représente'' et ``qui contrôle''
+\item
+  idem figure 6.2 ça serait plus clair de remettre tout
+\item
+  je me demande si ça ne serait pas plus clair de présenter d'abord
+  l'extension des types ptr à KERNEL et USR et ensuite d'expliquer que
+  ce qu'on cherche c'est de voir quelles expressions/valeurs sont
+  TAINTED (donc à mettre après)
+\end{itemize}
+
 
 % TODO le cimetière des règles
 
