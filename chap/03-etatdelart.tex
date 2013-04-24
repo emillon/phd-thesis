@@ -86,9 +86,6 @@ interprocédurale il faut partir d'un point en particulier du programme (comme l
 fonction \texttt{main}). Cette hypothèse n'est pas facilement satisfaite dans un
 noyau de système d'exploitation, qui possède de nombreux points d'entrée.
 
-% TODO virer non?
-
-% TODO [E] bien
 \begin{figure}%{{{
 \centering
 \subbottom[
@@ -524,10 +521,8 @@ Les pré-conditions peuvent être renforcées et les post-conditions relâchées
 \end{mathpar}
 
 Il est alors possible d'annoter le programme avec ses invariants formalisés de
-manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation.
-% TODO à la compil?
-
-% TODO [E] si c'est possible
+manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation
+lorsque c'est possible, sinon à l'exécution.
 
 La règle de conséquence permet de découpler les propriétés du programme lui-même
 : plusieurs niveaux d'annotations sont possibles, du moins précis au plus
