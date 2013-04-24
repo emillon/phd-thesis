@@ -39,19 +39,14 @@ statiques.
 \paragraph{Cohérence et complétude}
 
 Le but d'une analyse statique est de catégoriser les programmes selon leurs
-caractéristiques à l'exécution. Or,
+caractéristiques à l'exécution. Malheureusement, ceci n'est pas possible :
+l'ensemble des valeurs possibles lors de l'exécution d'un programme n'est pas un
+ensemble calculable (théorème de Rice). Autrement dit, il ne peut exister une
+procédure de décision prenant un programme et le déclarant correct ou incorrect.
 
-\begin{theorem}[de Rice]
-  Toute propriété non triviale sur le comportement dynamique des programmes est
-  indécidable.\cite{rice}
-\end{theorem}
-% TODO formaliser un peu plus?
-
-% TODO [E]: est-ce un théorème ? tout dépend de la définition de "non triviale"
-
-Autrement dit, il n'est pas possible d'écrire un analyseur statique parfait,
-c'est à dire ne se trompant jamais. Toute technique statique va donc de se
-retrouver dans au moins un des cas suivants :
+Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
+trompant jamais. Toute technique statique va donc de se retrouver dans au moins
+un des cas suivants :
 
 \begin{itemize}
 \item
