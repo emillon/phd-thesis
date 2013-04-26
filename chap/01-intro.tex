@@ -232,7 +232,7 @@ noyau au lieu de tester les privilèges de celui qui a fait la requête
 problem}\cite{hardy88confused}.
 
 La bonne manière d'implanter un appel système est donc d'interdire le
-déréférencement direct des pointeurs dont la valeur peut être controllée par
+déréférencement direct des pointeurs dont la valeur peut être contrôlée par
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celle-ci a bien les mêmes privilèges que l'appelant.
 
