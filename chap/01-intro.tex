@@ -386,11 +386,21 @@ machine : ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
 taille concrète. Ceci dit, le système de types est assez rudimentaire : toutes
 les formes de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
-le langage sont perméables.
+le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
+C.
 
 \paragraph{C++}
 
-% TODO C++
+Le manque de modularité de C a conduit à la création d'un nouveau langage plus
+riche autour de celui-ci. Dans les années 1980, C++ est apparu comme un C
+amélioré, avec de nombreuses fonctionnalités supplémentaires comme un modèle
+objet avec des classes, du polymorphisme \emph{ad hoc} et un système de
+\emph{templates} puissant permettant d'implanter une forme de polymorphisme
+universel. Microsoft Windows, initialement écrit en C, s'est enrichi de plus en
+plus de code C++, en faisant un des principaux systèmes d'exploitation écrits
+dans ce langage.
+
+% TODO Obj C ?
 
 \paragraph{Ada}
 
