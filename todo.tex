@@ -1,4 +1,4 @@
-\section{État de l'art}
+\section{État de l'art}%{{{
 
 Rq Sarah 01/03
 
@@ -210,7 +210,12 @@ la nôtre. % TODO bof % TODO [E] ??
 
 % TODO [E] préciser pourquoi
 
-\section{Évaluateur}
+% TODO en Ada les access type sont liés à un pool en particulier
+% TODO cf. Rust
+
+%}}}
+
+\section{Évaluateur} % {{{
 
 % --- Comparaison à C
 
@@ -420,7 +425,7 @@ On the other hand, a plain expression is only evaluated for its side-effects
                  { e     }{Expression evaluation}
                  {END}
   \\
-  P \gramisa & (s_1, …, s_n) & {\textrm{\larger \textbf{Program}}}
+  P \gramisa & (s_1, …, s_n) & {\textrm{\larger \textbf{Program} } }
 \end{align*}}%
 \begin{figure*}
 
@@ -641,7 +646,7 @@ expression with a context.
      \gramor & \iIf{C}{i_1}{i_2} \\
      \gramor & \iReturn{C} \\
      \gramor & \iDecl{x}{C}{i}
-\end{align*}}}%
+\end{align*} } }%
 
 \caption{Reduction contexts}
 \label{fig:ctxs}
@@ -728,7 +733,7 @@ It is also depicted in Figure~\ref{fig:eval-steps}.
 \begin{mathpar}
 
   \inferrule*[left=({\normalfont b})]{
-    \inferrule*[left=({\normalfont a})]{ }{\mms{3}{\widehat{3}}}
+    \inferrule*[left=({\normalfont a})]{ }{\mms{3}{\widehat{3}} }
   }{
     \mms{3+x}{\widehat{3}+x}
   }
@@ -789,8 +794,9 @@ a global variable.
 
     \semrule{T-Var}
 \end{mathpar}
+% }}}
 
-\section{Typage}
+\section{Typage}%{{{
 
 \begin{itemize}
 \item ordre des sections
@@ -844,9 +850,9 @@ a global variable.
 \item
   théormèe 5.2 rappeler où a été défini l'évaluation d'une expression et
   dans quel cas elle produit des valeurs
-\end{itemize}
+\end{itemize}%}}}
 
-\section{Qualificateurs}
+\section{Qualificateurs}%{{{
 
 \begin{itemize}
 \item appliquer taint sur des sous-valeurs?
@@ -976,9 +982,9 @@ The return value of a function is emulated with a virtual left-value $\vRet$.%
   \disprule{Return}
 
   \disprule{Fun}
-\end{mathpar}}%
+\end{mathpar}}%%}}}
 
-\section{Implem}
+\section{Implem}%{{{
 
 The language described above, as well as a type inference algorithm, have been
 implemented in OCaml as part of the Newspeak framework of program
@@ -989,9 +995,9 @@ following steps.
 
 but to analyze larger parts of the kernel, it may be
 necessary to define a ``maximal'' configuration file (which is impossible
-because of incompatibilities between some options).
+because of incompatibilities between some options).%}}}
 
-\section{Étude de cas}
+\section{Étude de cas}%{{{
 
 Le paramètre \texttt{data} provient de l'espace utilisateur via un appel
 système. Un appelant malveillant peut se servir de cette fonction pour lire la
@@ -1043,9 +1049,9 @@ aurait pas d'erreur de typage car cette fonction peut accepter les arguments
 Le principe de cette technique (associer des types aux valeurs puis restreindre
 les opérations sur certains types) peut être repris. Par exemple, si on définit
 un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peut
-considérer que multiplier deux telles valeurs est une erreur.
+considérer que multiplier deux telles valeurs est une erreur.%}}}
 
-\section{Conclusion}
+\section{Conclusion}%{{{
 
 \subsection{Future work}
 
@@ -1073,4 +1079,4 @@ scalability by running it on larger fragments of the kernel.
 There are also several places where we can improve significantly the
 expressivity of our type system. For example, our current type system is only
 monomorphic; but it would make sense to generalize free qualifier variables in
-the type of global functions.
+the type of global functions.%}}}

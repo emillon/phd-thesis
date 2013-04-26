@@ -388,12 +388,38 @@ les formes de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables.
 
-% TODO [E]
-% http://anil.recoil.org/papers/2013-asplos-mirage.pdf
-% http://web.cecs.pdx.edu/~apt/icfp05.pdf
+\paragraph{C++}
 
-% TODO Ada
-% TODO en Ada les access type sont liés à un pool en particulier
+% TODO C++
+
+\paragraph{Ada}
+
+Le langage C est bas niveau, mais son système de types n'est pas suffisamment
+évolué pour le rendre plus sûr que le langage d'assemblage vers lequel il est
+compilé. Dans les années 1970, le département de la défense américain
+(\emph{DoD}) a créé un comité dans le but de créer un nouveau langage pour ses
+systèmes temps-réels embarqués. Le résultat est Ada, un langage impératif avec
+un système de types statique plus contraignant mais plus sûr que celui de C. Par
+exemple, deux types entiers différents (comme les entiers de 16 bits et ceux de
+32 bits) ne sont pas compatibles. Il faut ajouter une conversion explicite dans
+le code, qui se traduira par un test à l'exécution et éventuellement par une
+erreur \texttt{Constraint\_Error}. Bien qu'il ne se soit pas beaucoup développé
+dans les applications grand public, Ada garde toujours une place de choix dans
+l'implantation de systèmes embarqués, notamment dans les applications spatiales
+et de défense.
+
+\paragraph{Divers}
+
+Il est bien sûr possible d'implanter un système d'exploitation dans n'importe
+quel langage, si celui-ci peut être compilé vers du langage machine et qu'il
+permet facilement d'inclure des fragments d'assembleur pour les parties de bas
+niveau. Néanmoins il s'agit en général de travaux de recherche et non des
+systèmes d'exploitation de production dont il est nécessaire de vérifier la
+sûreté d'exécution. On peut ainsi trouver des systèmes d'exploitation écrits en
+C\#~\cite{SingularityOverview},
+Haskell~\cite{HaskellOS}
+ou
+Ocaml~\cite{unikernels}.
 
 \section{Langages d'analyse}
 
