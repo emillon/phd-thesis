@@ -1,3 +1,6 @@
+On fait ici un bilan des travaux présentés. On commence par décrire les
+limitation de \langname, au niveau de sa sémantique, de son système de types ou
+des étapes de traduction automatique depuis C.
 
 % TODO [E] pour la conclusion il y a deux plans possibles :
 % 1/ limitation et travaux futurs
@@ -8,25 +11,39 @@
 
 \section{Limitations}
 
-Un seul type d'entier est supporté.
+\paragraph{Arithmétique}
 
-% TODO
+En C, on dispose de plusieurs types entiers, pouvant avoir plusieurs tailles et
+être signés ou non signés, ainsi que des types flottants qui diffèrent par leur
+taille. Au contraire, en \langname on ne conserve qu'un seul type d'entier. La
+raison pour cela est que nous ne nous intéressons pas du tout aux problématiques
+de sémantique entière : les débordements, dénormalisations, etc, sont supposés
+ne pas arriver.
 
-% TODO [E] tu parles de safespeak et de la traduction c-safespeak?
+Comme en C il n'est pas possible de définir de nouveaux types de base (des
+entiers de 24 bits par exemple), il est facile d'étendre le système de types de
+\langname pour ajouter tous ces nouveaux types. La traduction depuis Newspeak
+insère déjà des opérateurs de transtypage pour lesquels il est facile de donner
+une sémantique (pouvant lever une erreur en cas de débordement, comme en Ada) et
+un typage. Les littéraux numériques peuvent poser problème, puisqu'ils
+deviennent alors polymorphes. Une solution peut être de leur donner le plus
+grand type entier et d'insérer un opérateur de transtypage à chaque littéral.
+Haskell utilise une solution similaire : les littéraux entier ont le type de
+précision arbitraire \texttt{Integer} et est converti dans le bon type en
+appelant la fonction \texttt{fromInteger} du type synthétisé à partir de
+l'environnement.
 
 \paragraph{Transtypage}
 
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
 de capturer de nombreuses constructions qui sont possibles, où même idiomatiques
 en C : les unions, les conversions de types (explicites ou implicites) et le
-\emph{type punning}. Les deux premières sont équivalentes. Bien qu'on puisse
-remplacer chaque conversion explicite d'un type $t_1$ vers un type $t_2$ par
-l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alors un ``trou''
-dans le système de types. Cette fonction devrait en effet être typée $(t_1) →
-t_2$, autrement dit le type ``maudit'' $α → β$ de \texttt{Obj.magic} en OCaml ou
-\texttt{unsafeCoerce} en Haskell.
-
-% TODO [E] à définir
+\emph{type punning} (défini ci-desosus). Les deux premières sont équivalentes.
+Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
+type $t_2$ par l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alors
+un ``trou'' dans le système de types. Cette fonction devrait en effet être typée
+$(t_1) → t_2$, autrement dit le type ``maudit'' $α → β$ de \texttt{Obj.magic} en
+OCaml ou \texttt{unsafeCoerce} en Haskell.
 
 Le \emph{type punning} consiste à modifier directement la suite de bits de
 certaines données pour la manipuler d'une manière efficace. Par exemple, il est
@@ -175,8 +192,6 @@ effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
 structure en cours de définition ; et il n'est alors possible que d'y accéder
 par pointeur.
 
-% TODO est-ce vrai ? Y'a-t-il des cas où les forward decl sont nécessaires?
-
 \subsection{Assembleur}
 
 Comme la plupart des outils d'analyse de code C, il est impossible de traiter
@@ -191,10 +206,10 @@ peut bien sûr rien dire.
 
 \subsection{Transtypage}
 
-Les casts entre types entiers ne posent pas de problèmes. % TODO [E] pourquoi?
-Ceux entre types pointeurs ne posent pas de problème non plus puisqu'au moment
-de la traduction en \langname on efface les étiquettes de types sur les
-pointeurs.
+Comme expliqué plus haut, les casts entre types entiers ne posent pas de
+problèmes. Ceux entre types pointeurs ne posent pas de problème non plus
+puisqu'au moment de la traduction en \langname on efface les étiquettes de types
+sur les pointeurs.
 
 Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
 casts, la seule manière sensible de les typer est la suivante.

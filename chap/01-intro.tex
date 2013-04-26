@@ -17,8 +17,7 @@ aux micro-ordinateurs.
 Le noyau d'un système d'exploitation est chargé de faire l'intermédiaire entre
 le matériel (processeur, mémoire, périphériques, …) et les applications
 exécutées sur celui-ci (par exemple un navigateur web, une calculatrice ou un
-carnet d'adresses). Il doit aussi garantir la sécurité et l'isolation de
-celles-ci.
+carnet d'adresses). Il doit aussi garantir la sécurité de celles-ci.
 
 En tant qu'intermédiaire de confiance, le noyau a un certain nombre de
 responsabilités et est le seul à avoir accès à certaines informations sensibles.
@@ -59,9 +58,6 @@ typage statique peut être utilisé pour détecter et interdire ces manipulation
 dangereuses.
 
 \section{Rôle d'un système d'exploitation}
-
-On décrit ici la fonction générale d'un système d'exploitation. Ce sujet est
-détaillé en profondeur, y compris avec des cas d'étude, dans~\cite{tanenbaum}.
 
 Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
 mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, des
@@ -120,11 +116,12 @@ niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un fichier'')
 et selon le type de lecteur, le système d'exploitation effectuera les actions
 appropriées.
 
-En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et
-le matériel, et particulier est responsable de la gestion de la mémoire, des
+En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et le
+matériel, et particulier est responsable de la gestion de la mémoire, des
 périphériques et des processus. Les détails d'implantation ne sont pas présentés
 à l'utilisateur ; à la place il manipule des abstractions, comme la notion de
-fichier.
+fichier. Pour plus détails sur ce sujet, y compris avec des cas d'étude,
+dans~\cite{tanenbaum}.
 
 \section{Séparation entre noyau et espace utilisateur}
 
@@ -152,8 +149,9 @@ celui de l'instruction et des opérandes mémoires qui y sont présentes
 }.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès sont
-possibles sont décrits dans la figure~\ref{fig:erreursec}. En cas d'erreur
-(signalée par un \Square), une erreur à l'exécution se produit.
+possibles sont décrits dans la figure~\ref{fig:erreursec}. En cas
+d'impossibilité (signalée par un \Square), une erreur se produit et l'exécution
+s'arrête.
 
 \begin{figure}
 \begin{center}
@@ -231,15 +229,13 @@ noyau au lieu de tester les privilèges de celui qui a fait la requête
 problem}\cite{hardy88confused}.
 
 La bonne manière d'implanter un appel système est donc d'interdire le
-déréférencement direct des pointeurs dont la valeur peut être controllée par
+déréférencement direct des pointeurs dont la valeur peut être contrôlée par
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celle-ci a bien les mêmes privilèges que l'appelant.
 
 Il est facile d'oublier d'ajouter cette vérification, puisque le cas ``normal''
 fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
 fréquemment et pourquoi il est aussi capital de les détecter avant l'exécution.
-
-% TODO définir "bugs" non?
 
 \section{Systèmes de types}
 
@@ -494,9 +490,10 @@ EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
 interprétation abstraite. Il sera décrit plus en détails dans la
 section~\ref{sec:npk}.
 
-% TODO [E] il manque un lien entre la fin des langages d'analyse et la suite!!!
-
-% TODO [E] dire un mot de Newspeak dès l'intro ou l'état de l'art
+Nous présentons \langname, un langage intermédiaire minimal afin de pouvoir
+expirmer les règles de typage de la manière la plus simple possible. Néanmoins
+l'implantation est faite sur une version adaptée de Newspeak, ce qui nous pettra
+d'avoir une traduction automatique depuis du code déjà écrit en C.
 
 \section{Plan de la thèse}
 
