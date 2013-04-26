@@ -692,10 +692,10 @@ pas capturé (il n'y a pas de clôture lexicale).
   \label{fig:interp-val}
 \end{figure}%}}}
 
-La figure~\ref{fig:interp} résume comment ces valeurs sont organisées. Une pile
-est une liste de cadre de piles, et un cadre de pile est une liste de couples
-(nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une pile
-et $g$ un cadre de pile (qui représente les variables globales).
+La figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
+pile est une liste de cadre de piles, et un cadre de pile est une liste de
+couples (nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une
+pile et $g$ un cadre de pile (qui représente les variables globales).
 
 Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 états $Ξ$ ; ces états sont d'une des formes suivantes :
@@ -739,7 +739,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   \end{align*}
 
   \caption{Composantes d'un état mémoire}
-  \label{fig:interp}
+  \label{fig:interp-stack}
 \end{figure}%}}}
 
 \section{Opérations sur les valeurs}
@@ -1562,7 +1562,7 @@ $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
 
 La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
 de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la
-section~\label{sec:memops}).
+section~\ref{sec:memops}).
 
 \begin{mathpar}
   \semrule{Exp-Call}

@@ -16,36 +16,38 @@ l'apparition de la science informatique.
 
 \section{Taxonomie}
 
-\paragraph{Techniques statiques et dynamiques :} l'analyse peut être faite au
-moment de la compilation, ou au moment de l'exécution. En général on peut
-obtenir des informations plus précises de manière dynamique, mais cela ne prend
-en compte que les parties du programme qui seront vraiment exécutées. Un autre
-problème des techniques dynamiques est qu'il est souvent nécessaire
-d'instrumenter l'environnement d'exécution (ce qui --- dans le cas où cela est
-possible --- peut se traduire par un impact en performances). L'approche
-statique, en revanche, nécessite de construire à l'arrêt une carte mentale du
-programme, ce qui n'est pas toujours possible dans certains langages.
+\paragraph{Techniques statiques et dynamiques}
 
-% TODO [E]: ne faut-il pas préciser un peu plus ou du moins le justifier :
-% pourquoi statique plutôt que dynamique ?
+L'analyse peut être faite au moment de la compilation, ou au moment de
+l'exécution. En général on peut obtenir des informations plus précises de
+manière dynamique, mais cela ne prend en compte que les parties du programme qui
+seront vraiment exécutées. Un autre problème des techniques dynamiques est qu'il
+est souvent nécessaire d'instrumenter l'environnement d'exécution (ce qui ---
+dans le cas où cela est possible --- peut se traduire par un impact en
+performances). L'approche statique, en revanche, nécessite de construire à
+l'arrêt une carte mentale du programme, ce qui n'est pas toujours possible dans
+certains langages.
 
-Dans la suite, nous considérerons essentiellement des techniques statiques,
-précisant le contraire lorsque c'est nécessaire.
+Pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
+uniquement sur des tests --- ou de manière générale sur des analyses dynamiques
+--- car même avec des tests exhaustifs, il est impossible d'étudier l'ensemble
+complet de tous les comportements possibles. Par exemple, si un bug se présente
+lors d'une interaction de deux composants qui n'a pas été testée, il passera
+inaperçu. Pour cette raison, la plupart des analyses présentées ici sont
+statiques.
 
-\paragraph{Cohérence et complétude :} le but d'une analyse statique est de
-catégoriser les programmes selon leurs caractéristiques à l'exécution. Or,
+\paragraph{Cohérence et complétude}
 
-\begin{theorem}[de Rice]
-  Toute propriété non triviale sur le comportement dynamique des programmes est
-  indécidable.\cite{rice}
-\end{theorem}
-% TODO formaliser un peu plus?
+Le but d'une analyse statique est de catégoriser les programmes selon leurs
+caractéristiques à l'exécution. Malheureusement, ceci n'est pas possible :
+l'ensemble des valeurs possibles lors de l'exécution d'un programme n'est pas un
+ensemble calculable (théorème de Rice~\cite{rice}). Autrement dit, il ne peut
+exister une procédure de décision prenant un programme et le déclarant correct
+ou incorrect.
 
-% TODO [E]: est-ce un théorème ? tout dépend de la définition de "non triviale"
-
-Autrement dit, il n'est pas possible d'écrire un analyseur statique parfait,
-c'est à dire ne se trompant jamais. Toute technique statique va donc de se
-retrouver dans au moins un des cas suivants :
+Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
+trompant jamais. Toute technique statique va donc de se retrouver dans au moins
+un des cas suivants :
 
 \begin{itemize}
 \item
@@ -85,9 +87,6 @@ interprocédurale il faut partir d'un point en particulier du programme (comme l
 fonction \texttt{main}). Cette hypothèse n'est pas facilement satisfaite dans un
 noyau de système d'exploitation, qui possède de nombreux points d'entrée.
 
-% TODO virer non?
-
-% TODO [E] bien
 \begin{figure}%{{{
 \centering
 \subbottom[
@@ -523,10 +522,8 @@ Les pré-conditions peuvent être renforcées et les post-conditions relâchées
 \end{mathpar}
 
 Il est alors possible d'annoter le programme avec ses invariants formalisés de
-manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation.
-% TODO à la compil?
-
-% TODO [E] si c'est possible
+manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation
+lorsque c'est possible, sinon à l'exécution.
 
 La règle de conséquence permet de découpler les propriétés du programme lui-même
 : plusieurs niveaux d'annotations sont possibles, du moins précis au plus

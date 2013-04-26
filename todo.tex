@@ -1,4 +1,80 @@
-\section{État de l'art}
+\section{État de l'art}%{{{
+
+Rq Sarah 01/03
+
+\begin{itemize}
+\item
+  intro :
+
+  \begin{itemize}
+  \item
+    pourquoi focaliser sur la sûreté plutôt que la sécurité ?
+  \item
+    annoncer le plan du chapitre
+  \end{itemize}
+\item
+  3.1
+
+  \begin{itemize}
+  \item
+    je dirais qu'on catégorise les programmes selon qu'ils satisfont ou
+    non un ensemble de propriétés que l'on s'est fixé (ça rend la suite
+    plus claire je trouve)
+  \item
+    c'est-à-dire
+  \item
+    un ``programme valide'' : ajouter pour une propriété donnée
+  \end{itemize}
+\item
+  3.2 on ne peut être que partiellement sensible au flot dans ce type
+  d'analyse non ?
+\item
+  3.3
+
+  \begin{itemize}
+  \item
+    il n'y a pas de ``d'autre part''
+  \item
+    Ce que tu dis concernant l'analyse interprocédurale n'est vrai que
+    pour les sémantiques opérationnelles et pas dénotationnelles. Selon
+    moi, tu devrais plutôt dire que l'analyse de valeurs peut être
+    imprécise (trouver un ex qui matche avec ton analyse de pointeurs)
+  \item
+    l'explication du calcul de point fixe est un peu raide alors que tu
+    détailles beaucoup (trop ?) les domaines abstraits numériques
+  \item
+    p24 tu parles de treillis alors que tu n'as jamais dit qu'un domaine
+    abstrait devait avoir cette structure
+  \item
+    p26 pour malloc, le pb c'est aussi que la zone mémoire n'est pas
+    typée alors que les techniques existantes d'IA mettent à profit le
+    typage des variables pour être précis
+  \item
+    p26 cas transtypage : les analyseurs font l'hypothèse que les
+    déclarations de variables génèrent des espaces mémoires disjoints.
+    C'est pour ça que dès que tu as un pointer overflow, tu ne sais plus
+    rien sur la mémoire. Je ne sais pas si tu devrais insister là-dessus
+    alors que l'approche que tu as choisie souffre de ce problème
+    également
+  \end{itemize}
+\item
+  dans les techniques classiques, tu as aussi le software model checking
+  et le SMT solving
+\item
+  p28 typo alors f(e\_1,\ldots{},e\_n) a pour type \emph{t}
+\item
+  p28 typo si en considérant que e\_1 a pour type \emph{t\_1}
+\item
+  remarque générale sur ce chapitre : pourquoi ne pas parler seulement
+  du C puisque tu ne traites ensuite que de cela ?
+\item
+  le dernier paragraphe p29 est un peu raide pour les gens qui ne s'y
+  connaissent pas en typage
+\item
+  p30 expressivité : ajouter ce que tu veux faire toi ou bien fusionner
+  les deux paragraphes ``expressivité'' et ``qualificateurs de types''
+\end{itemize}
+
 
 \begin{itemize}
 \item IA :
@@ -134,7 +210,12 @@ la nôtre. % TODO bof % TODO [E] ??
 
 % TODO [E] préciser pourquoi
 
-\section{Évaluateur}
+% TODO en Ada les access type sont liés à un pool en particulier
+% TODO cf. Rust
+
+%}}}
+
+\section{Évaluateur} % {{{
 
 % --- Comparaison à C
 
@@ -307,8 +388,8 @@ so-called \emph{dangling} pointers.
 
 Note that this is a dynamic step and requires a full memory scan, which is very
 inefficient. This is done only for soundness reasons ; as discussed in
-Section~\ref{sec:limit}, if a preliminary analysis proves that this is
-unnecessary we can skip this step.
+Section~X, if a preliminary analysis proves that this is unnecessary we can skip
+this step.
 
 \paragraph{Instructions} inside functions includes the empty instruction,
 sequence, evaluation of an expression (including assignment), or variable
@@ -344,7 +425,7 @@ On the other hand, a plain expression is only evaluated for its side-effects
                  { e     }{Expression evaluation}
                  {END}
   \\
-  P \gramisa & (s_1, …, s_n) & {\textrm{\larger \textbf{Program}}}
+  P \gramisa & (s_1, …, s_n) & {\textrm{\larger \textbf{Program} } }
 \end{align*}}%
 \begin{figure*}
 
@@ -410,13 +491,13 @@ On the other hand, a plain expression is only evaluated for its side-effects
   \end{minipage}
 }}
   \caption{Memory and values}
-  \label{fig:interp}
+  \label{fig:interp:plas}
 \end{figure*}%
 
 \subsection*{Evaluation}
 
 Operational semantics described thereafter are a binary relation between states
-$Ξ$ of an interpreter described in Figure~\ref{fig:interp}.
+$Ξ$ of an interpreter described in Figure~\ref{fig:interp:plas}.
 
 Every syntactic constant $c$ has a corresponding value $\widehat{c}$. The same
 holds for functions, because as they do not capture their lexical
@@ -565,7 +646,7 @@ expression with a context.
      \gramor & \iIf{C}{i_1}{i_2} \\
      \gramor & \iReturn{C} \\
      \gramor & \iDecl{x}{C}{i}
-\end{align*}}}%
+\end{align*} } }%
 
 \caption{Reduction contexts}
 \label{fig:ctxs}
@@ -652,7 +733,7 @@ It is also depicted in Figure~\ref{fig:eval-steps}.
 \begin{mathpar}
 
   \inferrule*[left=({\normalfont b})]{
-    \inferrule*[left=({\normalfont a})]{ }{\mms{3}{\widehat{3}}}
+    \inferrule*[left=({\normalfont a})]{ }{\mms{3}{\widehat{3}} }
   }{
     \mms{3+x}{\widehat{3}+x}
   }
@@ -691,9 +772,8 @@ It is also depicted in Figure~\ref{fig:eval-steps}.
 
 \end{figure}
 
-Evaluation rules are given in annex in Figures~\ref{fig:eval-exp}
-and~\ref{fig:rules}. Most are simple, but a few deserve to be explained in
-detail.
+Evaluation rules are given in annex in Figures~X and~Y. Most are simple, but a
+few deserve to be explained in detail.
 
 \paragraph{Error propagation} is done in two cases. First, if an expression
 produces an error (seen as a value), then the same error (seen as a state $Ξ$)
@@ -714,8 +794,9 @@ a global variable.
 
     \semrule{T-Var}
 \end{mathpar}
+% }}}
 
-\section{Typage}
+\section{Typage}%{{{
 
 \begin{itemize}
 \item ordre des sections
@@ -769,9 +850,9 @@ a global variable.
 \item
   théormèe 5.2 rappeler où a été défini l'évaluation d'une expression et
   dans quel cas elle produit des valeurs
-\end{itemize}
+\end{itemize}%}}}
 
-\section{Qualificateurs}
+\section{Qualificateurs}%{{{
 
 \begin{itemize}
 \item appliquer taint sur des sous-valeurs?
@@ -901,9 +982,9 @@ The return value of a function is emulated with a virtual left-value $\vRet$.%
   \disprule{Return}
 
   \disprule{Fun}
-\end{mathpar}}%
+\end{mathpar}}%%}}}
 
-\section{Implem}
+\section{Implem}%{{{
 
 The language described above, as well as a type inference algorithm, have been
 implemented in OCaml as part of the Newspeak framework of program
@@ -914,9 +995,9 @@ following steps.
 
 but to analyze larger parts of the kernel, it may be
 necessary to define a ``maximal'' configuration file (which is impossible
-because of incompatibilities between some options).
+because of incompatibilities between some options).%}}}
 
-\section{Étude de cas}
+\section{Étude de cas}%{{{
 
 Le paramètre \texttt{data} provient de l'espace utilisateur via un appel
 système. Un appelant malveillant peut se servir de cette fonction pour lire la
@@ -944,12 +1025,11 @@ déréférencement s'applique aux pointeurs noyau seulement : si le code contien
 l'expression \texttt{*x}, alors il existe un type \texttt{t} tel que
 \texttt{x:t*} et \texttt{*x:t}.
 
-Appliquons ces règles à l'exemple de la figure \ref{fig:radeon-bug} : on suppose
-que l'interface avec l'espace utilisateur a été correctement annotée. Cela
-permet de déduire que \texttt{data:void user*}. En appliquant la première règle
-à la ligne 6, on en déduit que \texttt{info:struct drm\_radeon\_info user*}
-(comme en C, on peut toujours convertir de et vers un pointeur sur
-\texttt{void}).
+Appliquons ces règles à l'exemple de la figure~X : on suppose que l'interface
+avec l'espace utilisateur a été correctement annotée. Cela permet de déduire que
+\texttt{data:void user*}. En appliquant la première règle à la ligne 6, on en
+déduit que \texttt{info:struct drm\_radeon\_info user*} (comme en C, on peut
+toujours convertir de et vers un pointeur sur \texttt{void}).
 
 Pour déduire le type de \texttt{value\_ptr} dans la ligne 7, c'est la
 deuxième règle qu'il faut appliquer : le champ \texttt{value} de
@@ -969,9 +1049,9 @@ aurait pas d'erreur de typage car cette fonction peut accepter les arguments
 Le principe de cette technique (associer des types aux valeurs puis restreindre
 les opérations sur certains types) peut être repris. Par exemple, si on définit
 un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peut
-considérer que multiplier deux telles valeurs est une erreur.
+considérer que multiplier deux telles valeurs est une erreur.%}}}
 
-\section{Conclusion}
+\section{Conclusion}%{{{
 
 \subsection{Future work}
 
@@ -999,4 +1079,4 @@ scalability by running it on larger fragments of the kernel.
 There are also several places where we can improve significantly the
 expressivity of our type system. For example, our current type system is only
 monomorphic; but it would make sense to generalize free qualifier variables in
-the type of global functions.
+the type of global functions.%}}}
