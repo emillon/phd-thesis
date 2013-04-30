@@ -192,7 +192,7 @@ effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
 structure en cours de définition ; et il n'est alors possible que d'y accéder
 par pointeur.
 
-\subsection{Assembleur}
+\paragraph{Assembleur}
 
 Comme la plupart des outils d'analyse de code C, il est impossible de traiter
 l'assembleur en ligne qui peut se trouver entre deux instructions. Dans le cas
@@ -204,7 +204,7 @@ peut bien sûr rien dire.
 
 \section{Travaux futurs}
 
-\subsection{Transtypage}
+\paragraph{Transtypage}
 
 Comme expliqué plus haut, les casts entre types entiers ne posent pas de
 problèmes. Ceux entre types pointeurs ne posent pas de problème non plus
@@ -282,7 +282,7 @@ depuis un entier.
 
 La solution la plus sûre est donc d'interdire totalement ces conversions.
 
-\subsection{Analyse du noyau Linux}
+\paragraph{Analyse du noyau Linux}
 
 Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
 d'une interface programmation particulière. Mais le principe de l'analyse est
@@ -290,7 +290,7 @@ applicable à toutes les fonctions de traitement d'\texttt{ioctl}s des pilotes
 KMS, et même à toutes les fonctions faisant partie des différentes interfaces
 recevant un pointeur de l'espace utilisateur.
 
-\subsection{Autres types abstraits}
+\paragraph{Autres types abstraits}
 
 Notre approche est basée sur le fait de rendre abstrait un type de C et
 d'y interdire certaines opérations : ici, on marque un certain type de pointeur
@@ -322,3 +322,5 @@ une fonction prenant en paramètre un numéro de \emph{frame}.
 \section{Conclusion}
 
 % TODO
+
+\wip

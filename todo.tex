@@ -127,19 +127,6 @@ cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
 
 % TODO [E] en quoi le fait d'être compilé change des choses ?
 
-% ----
-
-Les systèmes de types les plus simples expriment des
-contrats esssentiellement liés à la sûreté d'exécution, pour ne pas utiliser des
-valeurs de types incompatibles entre eux. Mais il est possible d'étendre le
-langage avec des annotations plus riches : par exemple en vérifiant statiquement
-que des listes ne sont pas vides\cite{lightweight-static-capabilities}, ou dans
-le domaine de la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
-
-% ---
-
-% TODO à mettre où?
-
 \begin{itemize}
 \item
 Les pointeurs sur fonction rendent floue la limite qui est habituellement
@@ -180,35 +167,6 @@ dans~\cite{floatpitfalls}.
 \end{itemize}
 
 % TODO [E] setjmp/longjmp, unions
-
-\paragraph{Qualificateurs de types}
-
-Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
-la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
-au code source. Un pointeur peut être décoré d'une annotation
-\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
-sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
-Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul peut être
-utilisé pour détecter les cas les plus simples d'erreurs. Il demande aussi au
-programmeur d'ajouter beaucoup d'annotations dans le programme. % TODO
-quantifier
-
-Ce système d'annotations sur les types a été formalisé sous le nom de
-\emph{qualificateurs de types}~\cite{toplas-quals} : chaque type peut être
-décoré d'un ensemble de qualificateurs (à la manière de \texttt{const}), et des
-règles de typage permettent d'établir des propriétés sur le programme. Ces
-analyses ont été implantée dans l'outil CQual. Ce système peut servir à inférer
-les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure pour les
-chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ? et des
-propriétés dépendantes du flot de contrôle, comme des invariants sur les
-verrous~\cite{pldi02}, à rapprocher du concept de \emph{typestates}
-~\cite{tse12-typestate}. Il a également été appliqué à la classe de
-vulnérabilités sur les pointeurs utilisateurs dont il est ici
-l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste à ajouter un qualificateur à
-chaque étage de type, cette approche est plus générique mais plus complexe que
-la nôtre. % TODO bof % TODO [E] ??
-
-% TODO [E] préciser pourquoi
 
 % TODO en Ada les access type sont liés à un pool en particulier
 % TODO cf. Rust
@@ -985,6 +943,364 @@ The return value of a function is emulated with a virtual left-value $\vRet$.%
 \end{mathpar}}%%}}}
 
 \section{Implem}%{{{
+
+\subsection{Prétraitement}
+
+\ctonewspeak{} travaillant uniquement sur du code prétraité (dans directives de
+préprocesseur), la première étape consiste donc à faire passer le code par \cpp:
+les macros sont développées, les constantes remplacées par leurs valeurs, les
+commentaires supprimés, les fichiers d'en-tête inclus, etc.
+
+\subsection{Compilation (levée des ambigüités)}
+
+Cette passe est réalisée par l'utilitaire \ctonewspeak{}. L'essentiel de la
+compilation consiste à mettre à plat les définition de types, et \subsection{Annotations}
+
+\newspeak{} a de nombreux avantages, mais pour une analyse par typage il est
+trop bas niveau. Par exemple, dans le code suivant
+
+\input{gen/struct-array.c.pyg.tex}
+
+\wip{}
+
+\subsection{Implantation de l'algorithme de typage}
+
+On prend l'exemple d'un lambda-calcul simplement typé avec entiers, flottants et
+couples (figure~\ref{fig:stlc}).
+
+\begin{figure}
+
+\input{fig/lambda-simple.tex}
+
+\caption{Lambda calcul simplement typé avec entiers, flottants et couples}
+\label{fig:stlc}
+
+\end{figure}
+
+Prenons l'exemple de la fonction suivante\footnote{ On suppose que \texttt{plus}
+est une fonction de l'environnement global qui a pour type $\tInt \rightarrow
+\tInt \rightarrow \tInt$.} :
+
+\[
+f = λx.λy. \textrm{plus} (\textrm{plus} (\textrm{fst} x) (\textrm{snd} x)) y
+\]
+
+Soit en syntaxe ML :
+
+\begin{Verbatim}
+let f x y =
+  plus
+    (plus
+      (fst x)
+      (snd x)
+    )
+    y
+\end{Verbatim}
+
+Puisque \texttt{fst} et \texttt{snd} sont appliqués à \texttt{x}, ce doit être
+un tuple. En outre on additionne ces deux composantes ensemble, donc elles
+doivent être de type \tInt (et le résultat aussi). Par le même argument,
+\texttt{y} doit aussi être de type \tInt. En conclusion, \texttt{x} est de type
+$\tInt × \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt × \tInt
+→ \tInt → \tInt$.
+
+Pour implanter cette analyse, on peut remarquer qu'étant donné la forme d'un
+terme, on peut savoir quelle règle de typage a été utilisée en dernier. Il est
+ainsi possible de ``remonter'' l'arbre d'inférence afin de savoir quelles règles
+ont été employées (figure~\ref{fig:inftree-rules})\footnote{Par souci de clarté,
+les prémisses des applications de \textsc{(Var)} ne sont pas notées.}. Pour le
+moment, on ne connait pas les types.
+
+% TODO quel prop cela utilise t-il?
+
+\begin{figure} % {{{ Fig règles
+\def\disptypeR#1#2{:#1}
+
+\input{fig/inftree.tex}
+
+\caption{Arbre d'inférence : règles à utiliser}
+\label{fig:inftree-rules}
+\end{figure} % }}}
+
+Une fois à cette étape, on peut donner un nom à chaque type inconnu : $t_1, t_2,
+\ldots$. L'utilisation qui en est faite permet de générer un ensemble de
+contraintes d'unification (figure~\ref{fig:stlc-const}).
+
+Le symbole $?$ qui apparait dans les règles correspond à ``n'importe quel
+type'', dans le sens où l'unification avec ce symbole est toujours possible.
+
+\begin{figure} % {{{
+  \def\stlcConst#1#2{
+  \fbox{
+    \begin{tabular}{m{3.5cm}||c}
+      \raggedleft \fbox{\raggedleft \ensuremath{#1}} & \fbox{\ensuremath{#2}}
+    \end{tabular}
+  }
+  }
+  \centering
+  \begin{tabular}{m{4cm}||lm{4cm}||l}
+    \raggedleft
+    $
+    \irule{Var}
+      { (x, t_x) ∈ Γ }
+      { Γ ⊢ x : t_1 }
+    $
+    &
+    $
+      t_1 = t_x
+    $
+    &
+    \raggedleft
+    $
+    \irule{Abs}
+      { Γ, (x:t_x) ⊢     e : t_2 }
+      { Γ          ⊢ λx. e : t_1 }
+    $
+    &
+    $
+      t_1 = t_x → t_2
+    $
+    \\
+    \multicolumn{4}{c}{} \\
+    \raggedleft
+    $
+    \irule{App}
+      { Γ ⊢ e_1 : t_1
+     \\ Γ ⊢ e_2 : t_2
+      }
+      { Γ ⊢ e_1~e_2 : t_3 }
+    $
+    &
+    $
+      t_1 = t_2 → t_3
+    $
+    &
+    \raggedleft
+    $
+    \irule{Proj-G}
+      { Γ ⊢ e : t_2 }
+      { Γ ⊢ \termFst{e} : t_1 }
+    $
+    &
+    $
+      t_2 = t_1 × ?
+    $
+    \\
+    \multicolumn{4}{c}{} \\
+    \raggedleft
+    $
+    \irule{Proj-D}
+      { Γ ⊢ e : t_2 }
+      { Γ ⊢ \termSnd{e} : t_1 }
+    $
+    &
+    $
+      t_2 = ? × t_1
+    $
+    &
+    \raggedleft
+    $
+    \irule{Tup}
+       { Γ⊢e_1:t_1
+      \\ Γ⊢e_2:t_2
+      }{
+        Γ⊢(e_1,e_2):t_3
+      }
+    $
+    &
+    $
+    t_3 = t_1 \times t_2
+    $
+  \end{tabular}
+\caption{Contraintes crées par les applications de règles}
+\label{fig:stlc-const}
+\end{figure} %}}}
+
+\begin{figure}
+\centering
+
+\subbottom[Contraintes]{
+  \label{fig:inf-constr-ex}
+  \begin{minipage}{0.5\linewidth}
+  \begin{align}
+  t_1    &= t_x → t_2             \tag{Abs1} \\
+  t_2    &= t_y → t_3             \tag{Abs2} \\
+  t_5    &= t_4 → t_3             \tag{App1} \\
+  t_4    &= t_y                   \tag{Var1} \\
+  t_6    &= t_7 → t_5             \tag{App2} \\
+  t_6    &= \tInt → \tInt → \tInt \tag{Var2} \\
+  t_{10} &= t_8 → t_7             \tag{App3} \\
+  t_9    &= ? × t_8               \tag{Proj-D1} \\
+  t_9    &= t_x                   \tag{Var3} \\
+  t_{11} &= t_{12} → t_{10}       \tag{App4} \\
+  t_{11} &= \tInt → \tInt → \tInt \tag{Var4} \\
+  t_{13} &= t_{12} × ?            \tag{Proj-G1} \\
+  t_{13} &= t_x                   \tag{Var5}
+  \end{align}
+  \end{minipage}
+}
+\subbottom[Solution]{
+  \label{fig:inf-sol-ex}
+  \begin{minipage}{0.3\linewidth}
+  \begin{align*}
+  t_{1}  &= \tInt × \tInt → \tInt \\
+  t_{2}  &= \tInt → \tInt         \\
+  t_{3}  &= \tInt                 \\
+  t_{4}  &= \tInt                 \\
+  t_{5}  &= \tInt → \tInt         \\
+  t_{6}  &= \tInt → \tInt → \tInt \\
+  t_{7}  &= \tInt                 \\
+  t_{8}  &= \tInt                 \\
+  t_{9}  &= \tInt × \tInt         \\
+  t_{10} &= \tInt → \tInt         \\
+  t_{11} &= \tInt → \tInt → \tInt \\
+  t_{12} &= \tInt                 \\
+  t_{13} &= \tInt × \tInt         \\
+  t_{x}  &= \tInt × \tInt         \\
+  t_{y}  &= \tInt
+  \end{align*}
+  \end{minipage}
+}
+
+\caption{Contraintes d'égalité et solution obtenues à partir de la
+figure~\ref{fig:inftree-rules}}
+
+\end{figure}
+
+% TODO mal numéroté
+
+On en déduit donc un ensemble de contraintes d'égalité
+(figure~\ref{fig:inf-constr-ex}). La prochaine étape est de résoudre ce système.
+D'après (App1) et (App2), $t_6 = t_7 → t_4 → t_3$ d'où par (Var2), $t_7 → t_4 →
+t_3 = \tInt → \tInt → \tInt$. Le constructeur $→$ étant injectif, on a donc $t_3
+= t_4 = t_7 = \tInt$. En procédant de même avec (App3) et (App4), on obtient
+$t_8 = t_{12} = \tInt$. D'après (Proj-G1), (Var5), (Var3), et (Proj-D1) on a
+$t_{12} × ? = t_{13} = t_{x} = t_9 = ? × t_{8}$, donc $t_x = t_{12} × t_8 =
+\tInt × \tInt$. En remplaçant, on obtient tous les autres types
+(figures~\ref{fig:inf-sol-ex}) et donc un arbre de typage complet
+(figure~\ref{fig:inftree-full}).
+
+\begin{figure} % {{{ Fig full tree
+\def\disptypeR#1#2{:#2}
+
+\input{fig/inftree.tex}
+
+\caption{Arbre d'inférence complet}
+\label{fig:inftree-full}
+\end{figure} % }}}
+
+
+Pour effectuer une résolution de manière automatique, il faut une technique
+d'unification. La manière la plus classique de procéder est due à
+Robinson~\cite{robinson} et se déroule par substitution.
+
+
+\clearpage
+
+Pour résoudre ces contraintes, on commence par les simplifier : si $t_a
+\rightarrow t_b = t_c \rightarrow t_d$, alors $t_a = t_c$ et $t_b = t_d$. De
+même si $t_a \times t_b = t_c \times t_d$. Au contraire, si $t_a \rightarrow t_b
+= t_c \times t_d$, il est impossible d'unifier les types et il faut abandonner
+l'inférence de types. D'autre cas sont impossibles, par exemple $\tInt = t_1
+\rightarrow t_2$ ou $\tInt = \tFloat$.
+
+Une fois ces simplifications réalisées, les contraintes restantes sont d'une des
+formes suivantes :
+
+\begin{itemize}
+\item
+  $t_i = t_i$. Il n'y a rien à faire, cette contrainte peut être supprimée.
+\item
+  $t_i = t_j$ avec $i \ne j$ : toutes les occurrences de $t_j$ dans les autres
+  contraintes peuvent être remplacées par $t_i$.
+\item
+  $t_i = x$ (ou $x = t_i$) où $x$ est un type concret : idem.
+\end{itemize}
+
+%TODO C'est faux
+
+\clearpage
+
+\begin{figure} % fig:unifpartage {{{
+
+  \subbottom{
+  \label{fig:unifpartage:a}
+  \begin{tikzpicture}
+  \node               (var) {Var};
+  \node[right of=var] (ref) {ref};
+  \node[right of=ref, node distance=1.7cm] (u0) {Unknown 0};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (var);
+  \draw[->] (var) -- (ref);
+  \draw[->] (ref) -- (u0);
+  \end{tikzpicture}
+  }
+  \subbottom{
+  \label{fig:unifpartage:b}
+  \begin{tikzpicture}
+  \node               (var) {Var};
+  \node[right of=var] (ref) {ref};
+  \node[right of=ref, node distance=1.7cm] (u0) {Instanciated};
+  \node[right of=u0, node distance=1.7cm] (ii) {Int};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (var);
+  \draw[->] (var) -- (ref);
+  \draw[->] (ref) -- (u0);
+  \draw[->] (u0) -- (ii);
+  \end{tikzpicture}
+  }
+  \subbottom{
+  \label{fig:unifpartage:c}
+  \begin{tikzpicture}
+  \node               (var) {Int};
+  \node[below of=var] (ptr) {Ptr};
+  \node[left of=var]  (x) {x :};
+  \node[left of=ptr] (p) {p :};
+  \node[right of=ptr] (pi) {Int};
+  \draw[->] (x) -- (var);
+  \draw[->] (p) -- (ptr);
+  \draw[->] (ptr) -- (pi);
+  \end{tikzpicture}
+  }
+
+  \caption{Unification par partage}
+  \label{fig:unifpartage}
+
+\end{figure} % }}}
+
+Plutôt que de modifier toutes les occurrences d'un type $t_i$, on va affecter à
+$t_i$ la valeur du nouveau type.
+
+L'implémentation de cet algorithme utilise le partage et les références
+(figure~\ref{fig:unifpartage}).
+
+D'abord \ref{fig:unifpartage:a}, ensuite \ref{fig:unifpartage:b}, et enfin
+\ref{fig:unifpartage:c}.
+
+
+
+
+\begin{figure} % fig:exunif:tpk {{{
+
+  \insertcode{ex-unif-tpk.ml}
+
+  \caption{Compilation d'un programme C -- après}
+  \label{fig:exunif:tpk}
+\end{figure} % }}}
+
+Le programme C (figure~\ref{fig:exunif:c}) est compilé ainsi en Tyspeak
+(figure~\ref{fig:exunif:tpk}).
+
+\clearpage
+
 
 The language described above, as well as a type inference algorithm, have been
 implemented in OCaml as part of the Newspeak framework of program

@@ -4,7 +4,7 @@ multiples. Dans ce chapitre, nous allons voir quel est son rôle, et comment il
 peut être implanté. Pour ce faire, nous étudierons l'exemple d'une architecture
 Intel 32 bits, et d'un noyau Linux 2.6.
 
-\section{Architecture Intel}
+\section{Architecture et assembleur Intel}
 
 L'implantation d'un système d'exploitation est très proche du matériel sur
 lequel il s'exécute. Pour étudier une implantation en particulier, voyons ce que
@@ -17,8 +17,6 @@ AT\&T, celle que comprend l'assembleur GNU.
 La référence pour la description de l'assembleur Intel est la documentation du
 constructeur \cite{intelsys} ; une bonne explication de l'agencement dans la
 pile peut aussi être trouvée dans \cite{SmashingTheStack}.
-
-\subsection{Assembleur}
 
 Pour faire des calculs, le processeur est composé de registres, qui sont des
 petites zones de mémoire interne, et peut accéder à la mémoire principale.
@@ -145,7 +143,7 @@ exemples suivants :
 
 \end{itemize}
 
-\subsection{Fonctions et conventions d'appel}
+\section{Fonctions et conventions d'appel}
 \label{sec:convappel}
 
 \begin{figure} % {{{ fig:stackframe
@@ -205,7 +203,7 @@ locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
 de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
 la dépile et y saute.
 
-\subsection{Tâches, niveaux de privilèges}
+\section{Tâches, niveaux de privilèges}
 \label{sec:taches}
 
 Sans mécanisme particulier, le processeur exécuterait uniquement une suite
@@ -231,7 +229,7 @@ plus privilégié, le \ring{3} le moins privilégié. Dans l'exemple précédent
 pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
 alors que les autres tâches seraient en \ring{3}.
 
-\subsection{Mémoire virtuelle}
+\section{Mémoire virtuelle}
 
 À partir du moment où plusieurs processus s'exécutent de manière concurrente, un
 problème d'isolation se pose : si un processus peut lire dans la mémoire d'un

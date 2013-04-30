@@ -60,10 +60,10 @@ dangereuses.
 \section{Rôle d'un système d'exploitation}
 
 Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
-mémoire, et divers périphériques. Pourtant, au niveau de l'utilisateur, des
-dizaines de logiciels permettent d'effectuer toutes sortes de calculs et de
-communications. Le système d'exploitation permet de faire l'interface entre ces
-niveaux d'abstraction.
+mémoire, et divers périphériques. Et au niveau de l'utilisateur, des dizaines de
+logiciels permettent d'effectuer toutes sortes de calculs et de communications.
+Le système d'exploitation permet de faire l'interface entre ces niveaux
+d'abstraction.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
@@ -82,39 +82,38 @@ les programmes. Par exemple, plusieurs programmes vont utiliser le processeur
 les uns à la suite des autres ; et chaque programme aura à sa disposition une
 partie de la mémoire principale, ou du disque dur.
 
-Si deux programmes (ou plus) s'exécutent de manière concurrente sur le même
-matériel, il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de
-l'autre, ou que les deux n'utilisent pas la carte réseau en même temps. Ce sont
-des rôles du système d'exploitation.
+Si plusieurs programmes s'exécutent de manière concurrente sur le même matériel,
+il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de l'autre, ou
+que les deux n'utilisent pas la carte réseau en même temps. Ce sont des rôles du
+système d'exploitation.
 
 Ainsi, au lieu d'accéder directement au matériel via des instructions de bas
 niveau, les programmes communiquent avec le noyau, qui centralise donc les
 appels au matériel, et abstrait certaines opérations.
 
 Par exemple, comparons ce qui se passe concrètement lors de la copie de données
-depuis un cédérom ou une mémorette USB.
+depuis un cédérom ou une clef USB.
 
 \begin{itemize}
 
   \item Dans le cas du cédérom, il faut interroger le bus SATA, interroger le
     lecteur sur la présence d'un disque dans le lecteur, activer le moteur,
     calculer le numéro de trame des données sur le disque, demander la lecture,
-    puis déclencher une
-    copie de la mémoire.
+    puis déclencher une copie de la mémoire.
 
-  \item Avec une mémorette USB, il faut interroger le bus USB, rechercher le bon
-    numéro de périphérique, le bon numéro de canal dans celui-ci, lui appliquer
-    une commande de lecture au bon numéro de bloc, puis copier la mémoire.
+  \item Avec une clef, il faut interroger le bus USB, rechercher le bon numéro
+    de périphérique, le bon numéro de canal dans celui-ci, lui appliquer une
+    commande de lecture au bon numéro de bloc, puis copier la mémoire.
 
 \end{itemize}
 
-Ces deux opérations, bien qu'elles aient le même but (copier de la mémoire
-depuis un périphérique amovible), ne sont pas effectuées de la même manière.
-C'est pourquoi le système d'exploitation fournit les notions de fichier,
-lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de haut
-niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un fichier'')
-et selon le type de lecteur, le système d'exploitation effectuera les actions
-appropriées.
+Ces deux opérations, bien qu'elles aient la même intention (copier de la mémoire
+depuis un périphérique amovible), ne sont pas effectuées en extension de la même
+manière. C'est pourquoi le système d'exploitation fournit les notions de
+fichier, lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de
+haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
+fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
+actions appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et le
 matériel, et particulier est responsable de la gestion de la mémoire, des
@@ -124,10 +123,6 @@ fichier. Pour plus détails sur ce sujet, y compris avec des cas d'étude,
 dans~\cite{tanenbaum}.
 
 \section{Séparation entre noyau et espace utilisateur}
-
-Le noyau n'est pas le seul programme exécuté par le processeur : d'autres
-programmes peuvent être aussi être lancés. Ce sont ceux-ci qui sont d'ailleurs
-visibles pour l'utilisateur.
 
 Puisque le noyau est garant du bon fonctionnement du système, il ne doit pas
 pouvoir être manipulé directement par l'utilisateur ou les programmes exécutés.
@@ -147,6 +142,12 @@ celui de l'instruction et des opérandes mémoires qui y sont présentes
   d'Intel présentée dans le chapitre~\ref{cha:os}, les niveaux sont numérotés de
   0 à 3 où le niveau 0 est le plus privilégié.
 }.
+
+Par exemple, supposons qu'un programme utilisateur contienne l'instruction
+\texttt{mov \%eax, 0x54c3b2f7}. Celle-ci consiste à déplacer le contenu du
+registre \eax vers l'adresse mémoire \texttt{0x54c3b2f7}. Puisque cette adresse est
+dans l'espace utilisateur (la raison est décrite dans le
+chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès sont
 possibles sont décrits dans la figure~\ref{fig:erreursec}. En cas
@@ -200,14 +201,15 @@ des paramètres provenant de l'utilisateur. Il faut donc être particulièrement
 précautionneux dans le traitement de ces données.
 
 Par exemple, considérons un appel système de lecture depuis un disque : on passe
-au noyau les arguments $(d, o, n, a)$ où $d$ est le nom du disque, $o$ l'adresse
-sur le disque où commencer la lecture (\emph{offset}), $n$ le nombre d'octets à
-lire et $a$ l'adresse en mémoire où commencer à stocker les résultats.
+au noyau les arguments $(d, o, n, a)$ où $d$ est le nom du disque, $o$ (pour
+\emph{offset}) l'adresse sur le disque où commencer la lecture, $n$ le nombre
+d'octets à lire et $a$ l'adresse en mémoire où commencer à stocker les
+résultats.
 
-Dans le cas d'utilisation prévu, le noyau va copier la mémoire lue dans $a$. On
-est en mode noyau, en train d'exécuter une instruction du noyau manipulant des
-données utilisateur. D'après la figure~\ref{fig:erreursec} aucune erreur ne se
-produit.
+Dans le cas d'utilisation prévu, le noyau va copier la mémoire lue dans $a$. Le
+processeur est en mode noyau, en train d'exécuter une instruction du noyau
+manipulant des données utilisateur. D'après la figure~\ref{fig:erreursec} aucune
+erreur ne se produit.
 
 Mais même si ce cas ne produit pas d'erreur à l'exécution, il est tout de même
 erroné. En effet, si on passe à l'appel système une adresse $a$ faisant partie
@@ -221,17 +223,17 @@ On peut donc écrire n'importe où en mémoire. De même, une fonction d'écritu
 sur un disque (et lisant en mémoire) permettrait de lire de la mémoire du noyau.
 À partir de ces primitives, on peut accéder aux autres processus exécutés, ou
 détourner l'exécution vers du code arbitraire. L'isolation est totalement
-brisée à cause des appels système.
+brisée à cause de ces appels système.
 
 La cause de ceci est qu'on a accédé à la mémoire en testant les privilèges du
 noyau au lieu de tester les privilèges de celui qui a fait la requête
 (l'utilisateur). Ce problème est connu sous le nom de \emph{confused deputy
-problem}\cite{hardy88confused}.
+problem}~\cite{hardy88confused}.
 
 La bonne manière d'implanter un appel système est donc d'interdire le
 déréférencement direct des pointeurs dont la valeur peut être contrôlée par
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
-vérifier à l'exécution que celle-ci a bien les mêmes privilèges que l'appelant.
+vérifier à l'exécution que celui-ci a bien les mêmes privilèges que l'appelant.
 
 Il est facile d'oublier d'ajouter cette vérification, puisque le cas ``normal''
 fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
@@ -240,55 +242,52 @@ fréquemment et pourquoi il est aussi capital de les détecter avant l'exécutio
 \section{Systèmes de types}
 
 La plupart des langages de programmation incorporent la notion de type, qui
-permet de détecter ou d'empêcher de manipuler des données incompatibles entre
-elles.
+permet d'empêcher de manipuler des données incompatibles entre elles.
 
-Nous avons vu dans le chapitre~\ref{cha:os} qu'au niveau du langage machine, les
-seules données qu'un ordinateur manipule sont des nombres. Selon les opérations
-effectuées, ils seront interprétés comme des entiers, des adresses mémoires, ou
-des caractères. Pourtant il est clair que certaines opérations n'ont pas de
-sens: par exemple, multiplier un nombre par une adresse, ou déréférencer le
-résultat d'une division sont des comportements qu'on voudrait pouvoir empêcher.
+Au niveau du langage machine, les seules données qu'un ordinateur manipule sont
+des nombres. Selon les opérations effectuées, ils seront interprétés comme des
+entiers, des adresses mémoires, ou des caractères. Pourtant il est clair que
+certaines opérations n'ont pas de sens: par exemple, multiplier un nombre par
+une adresse, ou déréférencer le résultat d'une division sont des comportements
+qu'on voudrait pouvoir empêcher.
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
-opérations possibles selon la classe d'un objet : ``ne pas ajouter des pommes et
-des oranges''. Le modèle qui permet cette classification est appelé
+opérations possibles selon la classe d'un objet : en somme, ``ne pas ajouter des
+pommes et des oranges''. Le modèle qui permet cette classification est appelé
 \emph{système de types} et est en général constitué d'un ensemble de
 \emph{règles de typage}, comme ``un entier plus un entier égale un entier''.
 
-Il y a deux grandes familles de systèmes de types, selon quand se fait la
-vérification de types. On peut en effet l'effectuer au moment de l'exécution, ou
-au contraire prévenir les erreurs à l'exécution en la faisant au moment de la
-compilation (ou avant l'interprétation).
+\paragraph{Typage dynamique}
 
-\paragraph{Typage dynamique :} dans ce cas, chaque valeur manipulée par le
-programme est décorée d'une étiquette définissant comment interpréter la valeur
-en question. Les règles de typage sont alors réalisées à l'exécution. Par
-exemple, l'opérateur "$+$" vérifie que ces deux opérandes ont une étiquette
-"entier", et construit alors une valeur obtenue en faisant l'addition des deux
-valeurs, avec une étiquette ``entier''. Par exemple, le langage
-Python~\link{python} utilise cette stratégie.
+Dans ce cas, chaque valeur manipulée par le programme est décorée d'une
+étiquette définissant comment interpréter la valeur en question. Les règles de
+typage sont alors réalisées à l'exécution. Par exemple, l'opérateur ``$+$''
+vérifie que ces deux opérandes ont une étiquette ``entier'', et construit alors
+une valeur obtenue en faisant l'addition des deux valeurs, avec une étiquette
+``entier''. Par exemple, le langage Python~\link{python} utilise cette
+stratégie.
 
-\paragraph{Typage statique :} dans ce cas on fait les vérifications à la
-compilation. En quelque sorte, l'approche dynamique est pessimiste, puisqu'elle
-demande de traiter très souvent le cas où les types ne sont pas corrects.
-Intuitivement, dans le cas où toutes les fonctions se comportent bien, faire la
-vérification est inutile. Pour vérifier ceci, on donne à chaque fonction un
-contrat comme ``si deux entiers sont passés, et que la fonction renvoie une
-valeur\footnote{
-  La plupart des systèmes de types ne concernent que les termes qui convergent.
-  Il est également possible que la fonction contienne une boucle infinie, ou
-  provoque une erreur à cause d'une division par zéro. Dans ces cas, la fonction
-  ne renvoie pas de valeur.
-}, alors cette valeur sera un entier''. Cet ensemble de contrats peut être vérifié statiquement
-par le compilateur, à l'aide d'un système de types statique.
+\paragraph{Typage statique}
 
-Ainsi la fonction "$+$" est typée \texttt{(int, int)} $→$ \texttt{int}. Les
-règles permettant de vérifier le typage sont par exemple les suivantes :
+Dans ce cas on fait les vérifications à la compilation. En quelque sorte,
+l'approche dynamique est pessimiste, puisqu'elle demande de traiter à chaque
+étape le cas où les types ne sont pas corrects. Intuitivement, dans le cas où
+toutes les fonctions se comportent bien, faire la vérification est inutile. Pour
+vérifier ceci, on donne à chaque fonction un contrat comme ``si deux entiers
+sont passés, et que la fonction renvoie une valeur\footnote{ La plupart des
+  systèmes de types ne concernent que les termes qui convergent. Il est
+  également possible que la fonction contienne une boucle infinie, ou provoque
+  une erreur à cause d'une division par zéro. Dans ces cas, la fonction ne
+  renvoie pas de valeur. },
+alors cette valeur sera un entier''. Cet ensemble de contrats peut être vérifié
+statiquement par le compilateur, à l'aide d'un système de types statique.
+
+Ainsi l'opérateur ``$+$'' est typée $(\tInt, \tInt) → \tInt$. Les règles
+permettant de vérifier le typage sont par exemple les suivantes :
 
 \begin{itemize}
 \item
-  une constante entière est toujours de type \texttt{int}.
+  une constante entière est toujours de type \tInt.
 \item
   si $f$ a pour type $(t_1, …, t_n) → t$, et que chaque $e_i$ a pour type $t_i$
   ($i ∈ [1;n]$), alors $f(e_1, …, e_n)$ a pour type $t$.
@@ -307,32 +306,18 @@ spectre, les systèmes de types forts permettent d'éliminer totalement la
 nécessité de réaliser des tests de typage. Mais souvent ce n'est pas le cas, car
 il peut y avoir des constructions au sein du langage qui permettent de
 contourner le système de types, comme un opérateur de
-transtypage\ref{fig:javacast}. À l'exécution, une erreur de types est levée.
-
-\begin{figure}
-  \insertcode{cast.java}
-
-  \begin{Verbatim}
-Exception in thread "main" java.lang.ClassCastException:
-    java.lang.Integer cannot be cast to java.lang.Float
-        at Cast.main(Cast.java:5)
-  \end{Verbatim}
-
-  \caption{Transtypage en Java}
-
-  \label{fig:javacast}
-\end{figure}
+transtypage.
 
 \paragraph{Polymorphisme}
 
-Parfois, il est trop restrictif de donner un unique contrat à une fonction. Quel
+Parfois, il est trop restrictif de donner un unique type à une fonction. Quel
 doit être le type d'une fonction ajoutant un élément à une liste, ou celui d'une
 fonction triant un tableau en place ?
 
 En première approximation, on peut imaginer fournir une version du code par type
 de données à manipuler. C'est la solution retenue par les premières versions du
 langage Pascal, ce qui rendait très difficile l'écriture de
-bibliothèques\cite{PascalNoEscape}. On parle alors de monomorphisme.
+bibliothèques~\cite{PascalNoEscape}. On parle alors de monomorphisme.
 
 Une autre manière de procéder est d'autoriser plusieurs fonctions à avoir le
 même nom, mais avec des types d'arguments différents. Par exemple, on peut
@@ -349,8 +334,8 @@ associe un schéma de types, instanciable en un type concret. En quelque sorte,
 on déplace la vérification du site d'appel au site de définition. Cette
 technique a été décrite en premier dans~\cite{Milner78}.
 
-Un tour d'horizon de différents systèmes types statiques, avec en particulier du
-polymorphisme, on pourra se référer à~\cite{TAPL}.
+Pour un tour d'horizon de différents systèmes types de statiques, avec en
+particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
 
 \section{Langages d'implantation}
 
@@ -436,6 +421,8 @@ d'avoir une représentation intermédiaire plus simple afin d'avoir moins de
 traitements dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été
 définis pour aller dans ce sens.
 
+\subsection*{Middle-ends}
+
 Les premiers candidats sont bien entendu les représentations intermédiaires
 utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
 standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
@@ -468,6 +455,8 @@ compilateurs. L'idée est que si un front-end peut émettre du C-~- (sous forme 
 texte), il est possible d'obtenir du code machine efficace. Le compilateur
 Haskell GHC utilise une représentation intermédiaire très similaire à C-~-.
 
+\subsection*{Langages intermédiaires ad hoc}
+
 Comme le problème de construire une représentation intermédiaire adaptée à une
 analyse statique n'est pas nouveau, plusieurs projets ont déjà essayé d'y
 apporter une solution. Puisque qu'ils sont développés en parallèle des
@@ -490,10 +479,13 @@ EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
 interprétation abstraite. Il sera décrit plus en détails dans la
 section~\ref{sec:npk}.
 
-Nous présentons \langname, un langage intermédiaire minimal afin de pouvoir
-expirmer les règles de typage de la manière la plus simple possible. Néanmoins
-l'implantation est faite sur une version adaptée de Newspeak, ce qui nous pettra
-d'avoir une traduction automatique depuis du code déjà écrit en C.
+\subsection*{La solution retenue : \langname}
+
+Dans la suite de cette thèse nous nous appuierons \langname, un langage
+intermédiaire minimal, pour exprimer les règles de typage de la manière la plus
+simple possible. Néanmoins l'implantation est faite sur une version adaptée de
+Newspeak, ce qui nous pettra d'avoir une traduction automatique depuis du code
+déjà écrit en C.
 
 \section{Plan de la thèse}
 
