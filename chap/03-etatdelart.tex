@@ -459,6 +459,75 @@ programmes qui n'ont qu'un point d'entrée.
 
 \section{Typage}
 
+\paragraph{Qualificateurs de types}
+
+Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
+la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
+au code source. Un pointeur peut être décoré d'une annotation
+\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
+sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
+Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul peut être
+utilisé pour détecter les cas les plus simples d'erreurs. Il demande aussi au
+programmeur d'ajouter beaucoup d'annotations dans le programme. % TODO
+quantifier
+
+Ce système d'annotations sur les types a été formalisé sous le nom de
+\emph{qualificateurs de types}~\cite{toplas-quals} : chaque type peut être
+décoré d'un ensemble de qualificateurs (à la manière de \texttt{const}), et des
+règles de typage permettent d'établir des propriétés sur le programme.
+
+Plus précisément, les jugements de typage de la forme $Γ ⊢ e : t$ sont remplacés
+par des jugements de typage qualifiés $Γ ⊢ e : q~t$. Les qualificateurs $q$
+permettent d'exprimer plusieurs jugements.
+Par exemple, pointeurs on peut étudier le fait qu'une variable soit constante ou
+pas, que sa valeur soit connue à la compilation, ou encore qu'elle puisse être
+nulle ou pas.
+La
+spécificité de ce système est que les qualificateurs sont ordonnés, du plus
+spécifique au moins spécifique, et que l'on forme alors un treillis à partir de
+ces informations. Partant des deux caractéristiques précédentes, on forme le
+treillis de la figure~\ref{fig:cqual-treillis}.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+
+\node             (A) {\texttt{const dynamic}};
+\node[below of=A] (C) {\texttt{const dynamic nonzero}};
+\node[left of=C, node distance=4cm]  (B) {\texttt{const}};
+\node[right of=C, node distance=4cm] (D) {\texttt{dynamic}};
+\node[below of=B] (E) {\texttt{const nonzero}};
+\node[below of=C] (F) {ø};
+\node[below of=D] (G) {\texttt{dynamic nonzero}};
+\node[below of=F] (H) {\texttt{nonzero}};
+
+\foreach \s/\d in {H/E,H/F,H/G,E/B,E/C,F/B,F/C,F/D,G/C,G/D,B/A,C/A,D/A}
+  \draw[->] (\s) -- (\d);
+
+\end{tikzpicture}
+
+\caption{Treillis de qualificateurs}
+\label{fig:cqual-treillis}
+\end{figure}
+
+Cette relation d'ordre $\preceq$ entre qualificateurs, induit une relation de
+sous-typage $\sqsubseteq$ entre les types qualifiés : si $q \preceq q'$, alors
+$q~t \sqsubseteq q'~t$.
+
+Ces analyses ont été implantée dans l'outil CQual. Ce système peut servir à
+inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
+pour les chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ?
+et des propriétés dépendantes du flot de contrôle, comme des invariants sur les
+verrous~\cite{pldi02}, à rapprocher du concept de
+\emph{typestates}~\cite{tse12-typestate}.
+
+Il a également été appliqué à la classe de vulnérabilités sur les pointeurs
+utilisateurs dont il est ici l'objet~\cite{cquk-usenix04}. Puisqu'elle consiste
+à ajouter un qualificateur à chaque étage de type, cette approche est plus
+générique mais plus complexe que la nôtre. % TODO bof % TODO [E] ??
+
+% TODO [E] préciser pourquoi
+
 \section{Analyse de code système}
 
 Les logiciels système demandant des garanties de sécurité et de fiabilité, de
