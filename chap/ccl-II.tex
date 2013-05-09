@@ -1,1 +1,28 @@
-Ccl partie II.
+L'idée derrière CQual se rapprochant de la nôtre, et cet outil ayant été
+appliqué aux types de vulnérabilités qui nous intéressent~\cite{cquk-usenix04},
+il est utile de détailler pourquoi notre approche est différente de ces travaux.
+
+Tout d'abord, CQual modifie fondamentalement l'ensemble du système de types (via
+le jugement de typage) et insère des qualificateurs à tous les niveaux de types.
+Au contraire, nous ne modifions le système de types que là où cela est
+nécessaire, c'est-à-dire sur les types pointeurs.
+
+D'autre part, le système de types de CQual fait intervenir de manière
+fondamentale une relation de sous-typage. Le problème de déréférencement des
+pointeurs utilisateurs peut être traité dans ce cadre en posant $\qKernel
+\preceq \qUser$ pour restreindre certaines opérations aux pointeurs $\qKernel$.
+
+Notre approche, au contraire, n'utilise pas de sous-typage, mais consiste à
+définir un type abstrait $t~\qKernel~*$ partageant certaines propriétés avec
+$t~\qUser~*$ (comme la taille et la représentation) mais incompatible avec
+certaines opérations. C'est à rapprocher du système de masquage par interface
+des langages ML, ou encore de la définition de types abstraits par le mot-clef
+\texttt{newtype} en Haskell.
+
+De plus, même si le noyau Linux (et la plupart des systèmes d'exploitation) ne
+comportent que deux espaces d'adressage, il est commun dans les systèmes
+embarqués de manipuler des pointeurs provenant d'espaces mémoire indépendants :
+ainsi, un pointeur pourra faire référence à de la mémoire flash, de la RAM, ou
+une EEPROM de configuration.
+
+\wip
