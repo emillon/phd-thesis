@@ -7,9 +7,9 @@
   \PY{k}{let} \PY{n}{new\PYZus{}b} \PY{o}{=} \PY{n}{ref} \PY{n+nb+bp}{[]} \PY{k}{in}
 
   \PY{k}{let} \PY{n}{unify\PYZus{}fields} \PY{o}{=} \PY{k}{function}
-    \PY{o}{|} \PY{o}{\PYZus{}}\PY{o}{,} \PY{n+nc}{InBoth} \PY{o}{(}\PY{n}{ta}\PY{o}{,} \PY{n}{tb}\PY{o}{)} \PY{o}{-\PYZgt{}} \PY{n}{unify\PYZus{}now} \PY{n}{ta} \PY{n}{tb}
-    \PY{o}{|} \PY{n}{k}\PY{o}{,} \PY{n+nc}{OnlyL} \PY{n}{f} \PY{o}{-\PYZgt{}} \PY{n}{new\PYZus{}b} \PY{o}{:=} \PY{o}{(}\PY{n}{k}\PY{o}{,}\PY{n}{f}\PY{o}{)} \PY{o}{::} \PY{o}{!}\PY{n}{new\PYZus{}b}
-    \PY{o}{|} \PY{n}{k}\PY{o}{,} \PY{n+nc}{OnlyR} \PY{n}{f} \PY{o}{-\PYZgt{}} \PY{n}{new\PYZus{}a} \PY{o}{:=} \PY{o}{(}\PY{n}{k}\PY{o}{,}\PY{n}{f}\PY{o}{)} \PY{o}{::} \PY{o}{!}\PY{n}{new\PYZus{}a}
+    \PY{o}{|} \PY{o}{\PYZus{}}\PY{o}{,} \PY{n+nc}{InBoth} \PY{o}{(}\PY{n}{ta}\PY{o}{,} \PY{n}{tb}\PY{o}{)} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{unify\PYZus{}now} \PY{n}{ta} \PY{n}{tb}
+    \PY{o}{|} \PY{n}{k}\PY{o}{,} \PY{n+nc}{OnlyL} \PY{n}{f} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{new\PYZus{}b} \PY{o}{:=} \PY{o}{(}\PY{n}{k}\PY{o}{,}\PY{n}{f}\PY{o}{)} \PY{o}{::} \PY{o}{!}\PY{n}{new\PYZus{}b}
+    \PY{o}{|} \PY{n}{k}\PY{o}{,} \PY{n+nc}{OnlyR} \PY{n}{f} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{new\PYZus{}a} \PY{o}{:=} \PY{o}{(}\PY{n}{k}\PY{o}{,}\PY{n}{f}\PY{o}{)} \PY{o}{::} \PY{o}{!}\PY{n}{new\PYZus{}a}
   \PY{k}{in}
 
   \PY{n+nn}{List}\PY{p}{.}\PY{n}{iter} \PY{n}{unify\PYZus{}fields} \PY{o}{(}\PY{n}{compare\PYZus{}lists} \PY{n}{fa} \PY{n}{fb}\PY{o}{)}\PY{o}{;}

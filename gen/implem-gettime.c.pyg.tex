@@ -6,11 +6,11 @@
 		\PY{k}{struct} \PY{n}{timeval} \PY{n}{ktv}\PY{p}{;}
 		\PY{n}{do\PYZus{}gettimeofday}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{ktv}\PY{p}{)}\PY{p}{;}
 		\PY{k}{if} \PY{p}{(}\PY{n}{copy\PYZus{}to\PYZus{}user}\PY{p}{(}\PY{n}{tv}\PY{p}{,} \PY{o}{\PYZam{}}\PY{n}{ktv}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{ktv}\PY{p}{)}\PY{p}{)}\PY{p}{)}
-			\PY{k}{return} \PY{o}{-}\PY{n}{EFAULT}\PY{p}{;}
+			\PY{k}{return} \PY{o}{\PYZhy{}}\PY{n}{EFAULT}\PY{p}{;}
 	\PY{p}{\PYZcb{}}
 	\PY{k}{if} \PY{p}{(}\PY{n}{unlikely}\PY{p}{(}\PY{n}{tz} \PY{o}{!}\PY{o}{=} \PY{n+nb}{NULL}\PY{p}{)}\PY{p}{)} \PY{p}{\PYZob{}}
 		\PY{k}{if} \PY{p}{(}\PY{n}{copy\PYZus{}to\PYZus{}user}\PY{p}{(}\PY{n}{tz}\PY{p}{,} \PY{o}{\PYZam{}}\PY{n}{sys\PYZus{}tz}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{sys\PYZus{}tz}\PY{p}{)}\PY{p}{)}\PY{p}{)}
-			\PY{k}{return} \PY{o}{-}\PY{n}{EFAULT}\PY{p}{;}
+			\PY{k}{return} \PY{o}{\PYZhy{}}\PY{n}{EFAULT}\PY{p}{;}
 	\PY{p}{\PYZcb{}}
 	\PY{k}{return} \PY{l+m+mi}{0}\PY{p}{;}
 \PY{p}{\PYZcb{}}

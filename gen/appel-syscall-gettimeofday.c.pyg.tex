@@ -3,8 +3,8 @@
 \PY{k}{struct} \PY{n}{timezone} \PY{n}{tz}\PY{p}{;}
 \PY{k+kt}{int} \PY{n}{z} \PY{o}{=} \PY{n}{gettimeofday}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{tv}\PY{p}{,} \PY{o}{\PYZam{}}\PY{n}{tz}\PY{p}{)}\PY{p}{;}
 \PY{k}{if} \PY{p}{(}\PY{n}{z} \PY{o}{=}\PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)} \PY{p}{\PYZob{}}
-    \PY{n}{printf}\PY{p}{(} \PY{l+s}{"}\PY{l+s}{tv.tv\PYZus{}sec = \PYZpc{}ld}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{tv.tv\PYZus{}usec = \PYZpc{}ld}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{"}
-            \PY{l+s}{"}\PY{l+s}{tz.tz\PYZus{}minuteswest = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{tz.tz\PYZus{}dsttime = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{"}\PY{p}{,}
+    \PY{n}{printf}\PY{p}{(} \PY{l+s}{\PYZdq{}}\PY{l+s}{tv.tv\PYZus{}sec = \PYZpc{}ld}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{tv.tv\PYZus{}usec = \PYZpc{}ld}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}
+            \PY{l+s}{\PYZdq{}}\PY{l+s}{tz.tz\PYZus{}minuteswest = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{tz.tz\PYZus{}dsttime = \PYZpc{}d}\PY{l+s+se}{\PYZbs{}n}\PY{l+s}{\PYZdq{}}\PY{p}{,}
              \PY{n}{tv}\PY{p}{.}\PY{n}{tv\PYZus{}sec}\PY{p}{,} \PY{n}{tv}\PY{p}{.}\PY{n}{tv\PYZus{}usec}\PY{p}{,}
              \PY{n}{tz}\PY{p}{.}\PY{n}{tz\PYZus{}minuteswest}\PY{p}{,} \PY{n}{tz}\PY{p}{.}\PY{n}{tz\PYZus{}dsttime}
           \PY{p}{)}\PY{p}{;}

@@ -1,39 +1,39 @@
 \begin{Verbatim}[commandchars=\\\{\}]
-\PYZdl{} git format-patch -1 --stdout d8ab3557
+\PYZdl{} git format\PYZhy{}patch \PYZhy{}1 \PYZhy{}\PYZhy{}stdout d8ab3557
 From d8ab35575098b2d6dc10b2535aeb40545933ae56 Mon Sep 17 00:00:00 2001
-From: "Dr. David Alan Gilbert" \PYZlt{}linux@treblig.org\PYZgt{}
+From: \PYZdq{}Dr. David Alan Gilbert\PYZdq{} \PYZlt{}linux@treblig.org\PYZgt{}
 Date: Mon, 2 Aug 2010 09:43:52 +1000
 Subject: [PATCH] drm/radeon/kms: add missing copy from user
 
-This hasn't mattered up until the ioctl started using the value, and it fell
+This hasn\PYZsq{}t mattered up until the ioctl started using the value, and it fell
 apart.
 
 fixes fd.o 29340, Ubuntu LP 606081
 
-[airlied: cleaned up whitespace and don't need an error before pushing]
+[airlied: cleaned up whitespace and don\PYZsq{}t need an error before pushing]
 
-Signed-off-by: Dr. David Alan Gilbert \PYZlt{}linux@treblig.org\PYZgt{}
+Signed\PYZhy{}off\PYZhy{}by: Dr. David Alan Gilbert \PYZlt{}linux@treblig.org\PYZgt{}
 Cc: stable@kernel.org
-Signed-off-by: Dave Airlie \PYZlt{}airlied@redhat.com\PYZgt{}
-\PY{g+gd}{---}
- drivers/gpu/drm/radeon/radeon\PYZus{}kms.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+Signed\PYZhy{}off\PYZhy{}by: Dave Airlie \PYZlt{}airlied@redhat.com\PYZgt{}
+\PY{g+gd}{\PYZhy{}\PYZhy{}\PYZhy{}}
+ drivers/gpu/drm/radeon/radeon\PYZus{}kms.c |    4 +++\PYZhy{}
+ 1 files changed, 3 insertions(+), 1 deletions(\PYZhy{})
 
-\PY{g+gh}{diff --git a/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c b/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c}
+\PY{g+gh}{diff \PYZhy{}\PYZhy{}git a/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c b/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c}
 \PY{g+gh}{index ddcd3b1..948a2f4 100644}
-\PY{g+gd}{--- a/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c}
+\PY{g+gd}{\PYZhy{}\PYZhy{}\PYZhy{} a/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c}
 \PY{g+gi}{+++ b/drivers/gpu/drm/radeon/radeon\PYZus{}kms.c}
-\PY{g+gu}{@@ -112,7 +112,9 @@ int radeon\PYZus{}info\PYZus{}ioctl(struct drm\PYZus{}device *dev, void *data, struct drm\PYZus{}file *filp)}
+\PY{g+gu}{@@ \PYZhy{}112,7 +112,9 @@ int radeon\PYZus{}info\PYZus{}ioctl(struct drm\PYZus{}device *dev, void *data, struct drm\PYZus{}file *filp)}
 
         info = data;
-        value\PYZus{}ptr = (uint32\PYZus{}t *)((unsigned long)info-\PYZgt{}value);
-\PY{g+gd}{-       value = *value\PYZus{}ptr;}
+        value\PYZus{}ptr = (uint32\PYZus{}t *)((unsigned long)info\PYZhy{}\PYZgt{}value);
+\PY{g+gd}{\PYZhy{}       value = *value\PYZus{}ptr;}
 \PY{g+gi}{+       if (DRM\PYZus{}COPY\PYZus{}FROM\PYZus{}USER(\PYZam{}value, value\PYZus{}ptr, sizeof(value)))}
-\PY{g+gi}{+               return -EFAULT;}
+\PY{g+gi}{+               return \PYZhy{}EFAULT;}
 \PY{g+gi}{+}
-        switch (info-\PYZgt{}request) \PYZob{}
+        switch (info\PYZhy{}\PYZgt{}request) \PYZob{}
         case RADEON\PYZus{}INFO\PYZus{}DEVICE\PYZus{}ID:
-                value = dev-\PYZgt{}pci\PYZus{}device;
-\PY{g+gd}{-- }
+                value = dev\PYZhy{}\PYZgt{}pci\PYZus{}device;
+\PY{g+gd}{\PYZhy{}\PYZhy{} }
 1.7.5.4
 \end{Verbatim}

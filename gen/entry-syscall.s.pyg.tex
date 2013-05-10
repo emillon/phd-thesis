@@ -1,7 +1,7 @@
 \begin{Verbatim}[commandchars=\\\{\}]
 	\PY{c}{\PYZsh{} system call handler stub}
 \PY{n+nf}{ENTRY}\PY{p}{(}\PY{n+no}{system\PYZus{}call}\PY{p}{)}
-	\PY{n+nf}{RING0\PYZus{}INT\PYZus{}FRAME}			\PY{c}{\PYZsh{} can't unwind into user space anyway}
+	\PY{n+nf}{RING0\PYZus{}INT\PYZus{}FRAME}			\PY{c}{\PYZsh{} can\PYZsq{}t unwind into user space anyway}
 	\PY{n+nf}{pushl} \PY{n+nv}{\PYZpc{}eax}			\PY{c}{\PYZsh{} save orig\PYZus{}eax}
 	\PY{n+nf}{CFI\PYZus{}ADJUST\PYZus{}CFA\PYZus{}OFFSET} \PY{l+m+mi}{4}
 	\PY{n+nf}{SAVE\PYZus{}ALL}
