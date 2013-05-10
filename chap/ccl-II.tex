@@ -1,0 +1,45 @@
+L'idée derrière CQual se rapprochant de la nôtre, et cet outil ayant été
+appliqué aux types de vulnérabilités qui nous intéressent~\cite{cquk-usenix04},
+il est utile de détailler pourquoi notre approche est différente de ces travaux.
+
+Tout d'abord, CQual modifie fondamentalement l'ensemble du système de types (via
+le jugement de typage) et insère des qualificateurs à tous les niveaux de types.
+Au contraire, nous ne modifions le système de types que là où cela est
+nécessaire, c'est-à-dire sur les types pointeurs.
+
+D'autre part, le système de types de CQual fait intervenir de manière
+fondamentale une relation de sous-typage. Le problème de déréférencement des
+pointeurs utilisateurs peut être traité dans ce cadre en posant $\qKernel
+\preceq \qUser$ pour restreindre certaines opérations aux pointeurs $\qKernel$.
+
+Notre approche, au contraire, n'utilise pas de sous-typage, mais consiste à
+définir un type abstrait $t~\qKernel~*$ partageant certaines propriétés avec
+$t~\qUser~*$ (comme la taille et la représentation) mais incompatible avec
+certaines opérations. C'est à rapprocher du système de masquage par interface
+des langages ML, ou encore de la définition de types abstraits par le mot-clef
+\texttt{newtype} en Haskell.
+
+En C, il est notamment commun d'utiliser des \texttt{int} pour tout et n'importe
+quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
+identificateurs pour lesquels les opérations usuelles comme l'addition n'ont pas
+de sens. Par exemple, sous Linux, l'opération d'ouverture de fichier renvoie un
+entier, dit \emph{descripteur de fichier}, qui identifie ce fichier pour ce
+processus. Il est passé à toutes les fonctions de lecture et d'écriture. Un
+autre idiome est d'utiliser des entiers comme des ensembles de bits (on parle de
+\emph{bitmask}). Par exemple, en ouvrant un fichier on précise le mode du
+fichier (lecture, écriture ou les deux) par les bits 1 et 2, s'il faut créer le
+fichier ou non s'il n'existe pas par le bit 7, s'il dans ce cas il doit être
+effacé par le bit 8), etc. On obtient un mode en réalisant un ``ou'' bit à bit
+entre des constantes. Ces deux utilisations du type \texttt{int} n'ont rien à
+voir ; il faudrait donc empêcher d'utiliser un descripteur de fichier comme un
+mode, et vice-versa. De même, aucun opérateur n'a de sens sur les descripteurs
+de fichier, mais l'opérateur \texttt{\textbar{}} du ``ou'' bit à bit doit rester
+possible pour les modes.
+
+Dans le cas des pointeurs, même si le noyau Linux (et la plupart des systèmes
+d'exploitation) ne comportent que deux espaces d'adressage, il est commun dans
+les systèmes embarqués de manipuler des pointeurs provenant d'espaces mémoire
+indépendants : par exemple, de la de la mémoire flash, de la RAM, ou une EEPROM
+de configuration. Ces différentes mémoires possèdent des adresses, et un
+pointeur est interprété comme faisant référence à une ou l'autre selon le code
+dont il est tiré. Dans ces cas, la notion de sous-typage n'est pas adaptée.

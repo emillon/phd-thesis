@@ -1,0 +1,22 @@
+% TODO
+
+Cette thèse part de deux constats.
+
+D'une part, le problème de manipulation sûre de pointeurs utilisateur est
+éliminé si on interdit certaines opérations sur ces pointeurs, en en faisant un
+type à part. En effet, la seule opération dangereuse est le déréférencement. Si
+on interdit les déréférencements syntaxiques (opérateur \texttt{*}) et qu'on
+restreint les cas nécessaires à des fonctions sûres comme
+\texttt{copy\_to\_user}, on élimine les comportements dangereux.
+
+D'autre part, le système de types de C est trop primitif pour pouvoir
+garantir une véritable isolation entre deux types de même représentation. Le
+fait d'introduir un nouveau nom pour un type avec \texttt{typedef} n'est qu'un
+raccourci syntaxique, puisque le compilateur ne peut pas considérer un programme
+sans avoir la définition complète des types (le seul cas où cela est possible
+est pour manipuler des structures inconnues à travers des pointeurs).
+
+Le but de cette thèse est donc de définir un langage intermédiaire proche de C,
+mais bien typable, et de l'adjoindre d'un système de types tel que les
+programmes bien typés manipulent les pointeurs utilisateur sans causer de
+problèmes de sécurité.
