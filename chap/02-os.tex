@@ -98,7 +98,7 @@ Ces opérandes peuvent être de plusieurs types :
 \item
   le nom d'un registre, noté \texttt{\%eax}
 \item
-  une opérande mémoire, c'est à dire le contenu de la mémoire à une
+  une opérande mémoire, c'est-à-dire le contenu de la mémoire à une
   adresse effective. Cette adresse effective peut être exprimée de
   plusieurs manières :
   \begin{itemize}
@@ -124,7 +124,7 @@ exemples suivants :
 \item \texttt{add src, dst} calcule la somme des contenus de \texttt{src} et
   \texttt{dst} et place ce résultat dans \texttt{dst}.
 
-\item \texttt{push src} place \texttt{src} sur la pile, c'est à dire que cette
+\item \texttt{push src} place \texttt{src} sur la pile, c'est-à-dire que cette
   instruction enlève au pointeur de pile \esp la taille de \texttt{src}, puis
   place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp.
 
@@ -174,7 +174,7 @@ GNU/Linux est appelée \emph{cdecl} et possède les caractéristiques suivantes 
 Pour accéder à ses paramètres, une fonction peut donc utiliser un adressage
 relatif à \esp. Cela peut fonctionner, mais cela complique les choses si elle
 contient aussi des variables locales. En effet, les variables locales sont
-placées sur la pile, au dessus des (c'est à dire, empilées après) paramètres,
+placées sur la pile, au dessus des (c'est-à-dire, empilées après) paramètres,
 augmentant le décalage.
 
 Pour simplifier, la pile est organisée en cadres logiques : chaque cadre
@@ -237,7 +237,7 @@ autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut en
 détourner l'exécution.
 
 Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
-différente de la mémoire : c'est à dire que vue de tâches différentes, une
+différente de la mémoire : c'est-à-dire que vue de tâches différentes, une
 adresse contiendra une valeur différente.
 
 \begin{figure}

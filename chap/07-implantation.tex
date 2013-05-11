@@ -255,7 +255,7 @@ Celle-ci prend en entrée deux types $t_1$ et $t_2$. À l'issue de l'exécution 
 \texttt{unify}, ces deux types doivent pouvoir être considérés comme égaux. Si
 ce n'est pas possible, une erreur sera levée.
 
-La première étape est de réduire ces deux types, c'est à dire à transformer les
+La première étape est de réduire ces deux types, c'est-à-dire à transformer les
 constructions \texttt{Var (ref (Instanciated t))} en \texttt{t}.
 
 Ensuite, cela dépend des formes qu'ont les types réduits :
@@ -489,8 +489,7 @@ Ces références contiennent une valeur du type
 \texttt{simple var\_type}\footnote{
   Ce type est polymorphe pour pouvoir être repris dans l'unification des
   qualificateurs (figure~\ref{fig:implem-qualifs}).
-}, c'est à
-dire :
+}, c'est-à-dire :
 
 \begin{itemize}
 \item soit un numéro d'inconnue (constructeur \texttt{Unknown})\footnote{On
@@ -643,7 +642,7 @@ void f(int *p) {
 \end{verbatim}
 
 Le commentaire \texttt{/*!npk userptr p */} est interpréter par l'analyseur et
-le fait unifier le type de \texttt{p} avec $t~\qUser~*$, c'est à dire qu'il
+le fait unifier le type de \texttt{p} avec $t~\qUser~*$, c'est-à-dire qu'il
 force son qualificateur à être \qUser.
 
 \begin{verbatim}

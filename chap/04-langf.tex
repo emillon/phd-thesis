@@ -373,7 +373,7 @@ seulement un pointeur vers une valeur de type \tUnit.
 nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
 valeurs par un indice entier, qui dans le cas général n'est pas connu à la
 compilation. C'est une erreur ($\serr{array}$) d'accéder à un tableau en dehors de
-ses bornes, c'est à dire en dehors de $[0;n-1]$ pour un tableau à $n$
+ses bornes, c'est-à-dire en dehors de $[0;n-1]$ pour un tableau à $n$
 éléments\footnote{Comme le fait remarquer Dijkstra, seule la numérotation à
 partir de 0 a du sens\cite{EWD831}.}.
 % TODO dans les valeurs les tableaux sont numérotés à partir de 1...
@@ -611,7 +611,7 @@ $\widehat{c}$ : une constante. La notation circonflexe permet de distinguer
 les constructions syntaxique des constructions sémantiques. Par exemple, à la
 syntaxe $3$ correspond la valeur $\widehat{3}$.
 
-Les valeurs entières sont les entiers signés sur 32 bits, c'est à dire entre
+Les valeurs entières sont les entiers signés sur 32 bits, c'est-à-dire entre
 $-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire : de la même manière, on
 aurait pu choisir des nombres à 64 bits ou même de précision arbitraire.
 Les flottants sont les flottants IEEE 754 de 32 bits \cite{ieee754}.
@@ -806,7 +806,7 @@ Un certain nombre d'opérations est possibles sur les valeurs
 
 \item
   $\sim$ inverse tous les bits de son opérande. $!$ est une version logique,
-  c'est à dire que $!0 = 1$ et si $n ≠ 0$, $!n = 0$.
+  c'est-à-dire que $!0 = 1$ et si $n ≠ 0$, $!n = 0$.
 \end{itemize}
 
 % TODO que se passe-t-il dans les autres cas ? introduire un \serr{typ} ?
@@ -1341,7 +1341,7 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$ :
 
   L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
   et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
-  Le résultat est toujours une valeur $v$, c'est à dire que nous présentons pour
+  Le résultat est toujours une valeur $v$, c'est-à-dire que nous présentons pour
   les expressions une sémantique à grands pas. Cette évaluation est notée :
 
   \[
@@ -1470,7 +1470,7 @@ $\%$ ou $/.$ provoque l'erreur $\serr{div}$.
 
 Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$
 et $\widehat{-_p}$ définissant l'arithmétique des pointeurs. Celles-ci sont
-uniquement définies pour les références mémoire à un tableau, c'est à dire
+uniquement définies pour les références mémoire à un tableau, c'est-à-dire
 celles qui ont la forme $φ[n]$. On a alors :
 
 \begin{align*}
@@ -1731,7 +1731,7 @@ Enfin, si un "return" apparaît dans une séquence, on peut supprimer la suite :
 
 % TODO
 
-Les erreurs se propagent des données vers l'interprète ; c'est à dire que si
+Les erreurs se propagent des données vers l'interprète ; c'est-à-dire que si
 une expression ou instruction est réduite en une valeur d'erreur $Ω$, alors une
 transition est faite vers cet état d'erreur.
 
