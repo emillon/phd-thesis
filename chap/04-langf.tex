@@ -1737,13 +1737,21 @@ transition est faite vers cet état d'erreur.
 
 Cela est aussi vrai d'une sous-expression ou sous-instruction : si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
-de sous-structure est présente grâce aux contexte $C$ dans la règle suivante :
+de sous-expression ou sous instruction est définie en fonction des contextes $C$
+(figure~\ref{fig:eval-err}).
 
+\begin{figure}
 \begin{mathpar}
+  \ruleheader{$Ξ → Ω$}
+
   \semrule{Exp-Err}
 
   \semrule{Eval-Err}
 \end{mathpar}
+
+\caption{Évaluation -- cas d'erreur}
+\label{fig:eval-err}
+\end{figure}
 
 % TODO blabla sur les 2 et prouver que \ctxSub{C}{Ω} → Ω
 
@@ -1752,27 +1760,28 @@ de sous-structure est présente grâce aux contexte $C$ dans la règle suivante 
 Un programme est constitué d'une suite de phrases : déclarations de fonctions,
 de variables et de types, et évaluation d'expressions.
 
-Il est donc logique que l'évaluation d'une phrase fasse passer d'un état mémoire
-à un autre :
-
-\[
-  \ph{m}{p}{m'}
-\]
+Donc l'évaluation d'une phrase $p$ fait passer d'un état mémoire $m$
+à un autre $m'$, ce que l'on note $\ph{m}{p}{m'}$.
 
 L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
-$\textrm{main}()$.
+$\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
+quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
+avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}).
 
+\begin{figure}
 \begin{mathpar}
+  \ruleheader{$\ph{m}{p}{m'}$}
+
   \semrule{T-Exp}
-\end{mathpar}
 
-La déclaration d'une variable globale (avec un initialiseur) consiste à évaluer
-cet initialiseur et à étendre l'état mémoire avec ce couple (variable, valeur).
-
-\begin{mathpar}
   \semrule{T-Var}
+
 \end{mathpar}
+
+\caption{Évaluation des phrases d'un programme}
+\label{fig:eval-toplevel}
+\end{figure}
 
 \section{Exécution}
 
