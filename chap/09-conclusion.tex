@@ -1,5 +1,5 @@
 On fait ici un bilan des travaux présentés. On commence par décrire les
-limitation de \langname, au niveau de sa sémantique, de son système de types ou
+limitations de \langname, au niveau de sa sémantique, de son système de types ou
 des étapes de traduction automatique depuis C.
 
 % TODO [E] pour la conclusion il y a deux plans possibles :
@@ -36,7 +36,7 @@ l'environnement.
 \paragraph{Transtypage}
 
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
-de capturer de nombreuses constructions qui sont possibles, où même idiomatiques
+de capturer de nombreuses constructions qui sont possibles, ou même idiomatiques
 en C : les unions, les conversions de types (explicites ou implicites) et le
 \emph{type punning} (défini ci-desosus). Les deux premières sont équivalentes.
 Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
@@ -165,7 +165,7 @@ On écrit alors :
   l.next_{ \mathrm{fix}(p → \{ value : \tInt ; next : p \}) }
 \]
 
-Les structures mutuellement récursives peuvent être également exprimée de cette
+Les structures mutuellement récursives peuvent être également exprimées de cette
 manière.
 
 \begin{verbatim}
