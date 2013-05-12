@@ -7,16 +7,24 @@ D'une part, le problème de manipulation sûre de pointeurs utilisateur est
 type à part. En effet, la seule opération dangereuse est le déréférencement. Si
 on interdit les déréférencements syntaxiques (opérateur \texttt{*}) et qu'on
 restreint les cas nécessaires à des fonctions sûres comme
-\texttt{copy\_to\_user}, on élimine les comportements dangereux.
+\texttt{copy\_to\_user}, on élimine les comportements dangereux. Bien sûr, un
+examen manuel exhaustif de tous les déréférencements est possible, mais trop
+long et source d'erreurs.
 
-D'autre part, le système de types de C est trop primitif pour pouvoir
-garantir une véritable isolation entre deux types de même représentation. Le
-fait d'introduir un nouveau nom pour un type avec \texttt{typedef} n'est qu'un
-raccourci syntaxique, puisque le compilateur ne peut pas considérer un programme
-sans avoir la définition complète des types (le seul cas où cela est possible
-est pour manipuler des structures inconnues à travers des pointeurs).
+D'autre part, le système de types de C est trop primitif pour pouvoir garantir
+une véritable isolation entre deux types de même représentation : il n'y a pas
+de types abstraits. Certes, \texttt{typedef} permet d'introduire un nouveau nom
+pour un type, mais ce n'est qu'un raccourci syntaxique. Le compilateur ne peut
+en effet pas considérer un programme sans avoir la définition quasi-complète des
+types qui y apparaissent. La seule exception concerne les manipulations de
+structures par pointeurs : si on ne fait que passer des pointeurs, il n'est pas
+nécessaire de connaître la taille ni la disposition de la structure, donc il est
+possible de ne pas connaître ces informations. Cette technique, connue sous le
+nom de \emph{pointeurs opaques}, n'est pas applicable aux autres types.
 
 Le but de cette thèse est donc de définir un langage intermédiaire proche de C,
 mais bien typable, et de l'adjoindre d'un système de types tel que les
 programmes bien typés manipulent les pointeurs utilisateur sans causer de
 problèmes de sécurité.
+
+% vim: spelllang=fr
