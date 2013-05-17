@@ -4,32 +4,39 @@
   }
   {--- \textup{Pete Fenelon}}
 
-% TODO[E] le chapeau est à reformuler complètement, c'est trop rapide à suivre,
-% par contre c'est clair à partir de 6.1 mais ensuite il faudrait détailler
+Jusqu'ici \langname est un langage impératif généraliste, ne prenant pas en
+compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
 
-Dans le chapitre~\ref{cha:typbase}, nous avons vu comment ajouter un système de
-types forts statiques à un langage impératif (défini dans le
-chapitre~\ref{cha:lang}).
+Dans ce chapitre, on commence par l'étendre en ajoutant des constructions
+modélisant les variables présentes dans l'espace utilisateur. Celles-ci restent
+accessibles, mais nécessitent d'utiliser un opérateur de déréférencement sûr qui
+vérifie à l'exécution que l'invariant suivant est respecté :
 
-% TODO[E] 1è phrase à revoir
+\begin{quote}
+Les pointeurs dont la valeur est contrôlée par l'utilisateur, pointent vers
+l'espace utilisateur.
+\end{quote}
 
-Ici, nous étendons l'expressivité de \langname avec un système d'annotations de
-``souillure'' (\emph{tainting} en anglais). Un cas d'erreur est ajouté,
-%TODO[E] trop tôt
-lorsqu'on tente d'accéder à une valeur souillée. Avec cet ajout, la propriété de
-progrès (théorème~\ref{thm:progres}) n'est donc plus valable.
+Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
-% TODO[E] un peu péjoratif ?
+Tout d'abord, on définit un nouveau type d'erreur $Ω_{taint}$, déclenché
+lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau (le cas
+que l'on cherche à éviter) est déréférencer\footnote{Il est important de noter
+  que ce cas d'erreur est ``virtuel'', la distinction entre pointeur contrôlé
+  par l'utilisateur et par le noyau n'étant normalement pas visible à
+l'exécution}.
 
+Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
+en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
+le théorème de progrès (\ref{thm:progres}) n'est plus valable.
 
-Afin de retrouver cette adéquation entre la sémantique et le systme de typage,
-ce dernier est étendu d'un système de \emph{qualificateurs de type} qui
-décrivent l'origine des données. Ils permettent de restreindre certaines
-opérations sensibles à des expressions dont la valeur est sûre.
+L'étape suivante est d'étendre, à son tour, le système de types de \langname en
+distinguant les types des pointeurs contrôlés par l'utilisateur des pointeurs
+contrôlés par le noyau. Puisqu'on veut interdire le déréférencement des premiers
+par l'opérateur \texttt{*}, on modifie également le typage de celui-ci.
 
-% TODO[E] peu clair
-
-La propriété de progrès est alors retrouvée (théorème~\ref{thm:progres-qual}).
+Enfin, une fois ces modifications faites, on prouve enfin que les propriétés de
+progrès et de préservation sont rétablies.
 
 \section{Extensions noyau pour \langname}
 
