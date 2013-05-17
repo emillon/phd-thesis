@@ -8,9 +8,10 @@ Jusqu'ici \langname est un langage impératif généraliste, ne prenant pas en
 compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
 
 Dans ce chapitre, on commence par l'étendre en ajoutant des constructions
-modélisant les variables présentes dans l'espace utilisateur. Celles-ci restent
-accessibles, mais nécessitent d'utiliser un opérateur de déréférencement sûr qui
-vérifie à l'exécution que l'invariant suivant est respecté :
+modélisant les variables présentes dans l'espace utilisateur (cf.
+chapitre~\ref{cha:os}). Celles-ci restent accessibles, mais nécessitent
+d'utiliser un opérateur de déréférencement sûr qui vérifie à l'exécution que
+l'invariant suivant est respecté :
 
 \begin{quote}
 Les pointeurs dont la valeur est contrôlée par l'utilisateur, pointent vers
@@ -19,7 +20,7 @@ l'espace utilisateur.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
-Tout d'abord, on définit un nouveau type d'erreur $Ω_{taint}$, déclenché
+Tout d'abord, on définit un nouveau type d'erreur $\serr{taint}$, déclenché
 lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau (le cas
 que l'on cherche à éviter) est déréférencer\footnote{Il est important de noter
   que ce cas d'erreur est ``virtuel'', la distinction entre pointeur contrôlé
@@ -40,8 +41,45 @@ progrès et de préservation sont rétablies.
 
 \section{Extensions noyau pour \langname}
 
-On ajoute à \langname la notion de valeur provenant de l'espace utilisateur (cf.
-chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
+On ajoute à \langname la notion de valeur provenant de l'espace utilisateur.
+Pour marquer la séparation entre les deux espaces d'adressage, on ajoute une
+construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ correspond à une
+variable classique (un pointeur noyau) qui, vu sous la forme $\vTainted{φ'}$,
+est un pointeur utilisateur.
+
+En plus du déréférencement par \texttt{*} qui devra donc renvoyer
+$\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
+ajouter des constructions de lecture et d'écriture à travers les pointeurs
+utilisateurs. On note $\uGet{lv}{e}$ la lecture sûre de $e$ (pointeur
+utilisateur) dans $lv$ et $\uPut{e}{e'}$ l'écriture de $e$ dans l'espace pointé
+par le pointeur utilisateur $e'$.
+
+% TODO pourquoi pas des expressions ?
+
+Illustrons ceci par un exemple. Imaginons un anière, pour écrire un appel
+système fictif qui renvoie la version du noyau, en remplissant par pointeur une
+structure contenant les champs entiers \texttt{major}, \texttt{minor} et
+\texttt{patch}.
+
+\[
+  \eFun{p}{ \uPut{ 3}{p.\texttt{major}_S}
+          ; \uPut{14}{p.\texttt{minor}_S}
+          ; \uPut{15}{p.\texttt{patch}_S}
+          }
+\]
+
+où $S = \tStruct{\texttt{major} : \tInt
+                ;\texttt{minor} : \tInt
+                ;\texttt{patch} : \tInt
+                }$
+
+% TODO
+
+% TODO le champ utilisateur ça passe bien ?
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+On procède en trois étapes (figure~\ref{fig:qualif-changes}) :
 
 \begin{figure}%{{{
 
@@ -50,7 +88,7 @@ chapitre~\ref{cha:os}) en trois étapes (figure~\ref{fig:qualif-changes}) :
   { … }{}
   { \eTaint{e} }{Expression souillée}
   { \uGet{lv}{e}}{ Lecture depuis l'espace utilisateur}
-  { \uPut{e}{e}}{ Écriture dans l'espace utilisateur}
+  { \uPut{e}{e'}}{ Écriture dans l'espace utilisateur}
   {END}
 \\
 \gramdef{Contextes}{C}
