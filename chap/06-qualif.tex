@@ -61,17 +61,26 @@ système fictif qui renvoie la version du noyau, en remplissant par pointeur une
 structure contenant les champs entiers \texttt{major}, \texttt{minor} et
 \texttt{patch}.
 
-\[
-  \eFun{p}{ \uPut{ 3}{p.\texttt{major}_S}
-          ; \uPut{14}{p.\texttt{minor}_S}
-          ; \uPut{15}{p.\texttt{patch}_S}
-          }
-\]
+% TODO depend de eFun
 
-où $S = \tStruct{\texttt{major} : \tInt
-                ;\texttt{minor} : \tInt
-                ;\texttt{patch} : \tInt
-                }$
+\begin{align*}
+  & \mathrm{fun}(p) \{                      \\
+  & \indent \uPut{ 3}{p.\texttt{major}_S} ; \\
+  & \indent \uPut{14}{p.\texttt{minor}_S} ; \\
+  & \indent \uPut{15}{p.\texttt{patch}_S}   \\
+  & \}
+\end{align*}
+
+où
+
+% TODO dépend de tStruct
+
+\begin{align*}
+  S = \{ & \texttt{major} : \tInt ; \\
+         & \texttt{minor} : \tInt ; \\
+         & \texttt{patch} : \tInt   \\
+      \}
+\end{align*}
 
 % TODO
 
