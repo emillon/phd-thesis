@@ -65,18 +65,18 @@ structure contenant les champs entiers \texttt{major}, \texttt{minor} et
 % TODO dépend de tStruct
 
 \begin{align*}
-  & \mathrm{fun}(p) \{                      &             & & \\
+  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{                      &             & & \\
   & \indent \uPut{ 3}{p.\texttt{major}_S} ; & \mathrm{où} & & S = \{ & \texttt{major} : \tInt ; \\
   & \indent \uPut{14}{p.\texttt{minor}_S} ; &             & &        & \texttt{minor} : \tInt ; \\
   & \indent \uPut{15}{p.\texttt{patch}_S}   &             & &        & \texttt{patch} : \tInt   \\
   & \}                                      &             & &     \}
 \end{align*}
 
-
-% TODO
-
 % TODO le champ utilisateur ça passe bien ?
 
+Le but est en
+
+% TODO
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
 On procède en trois étapes (figure~\ref{fig:qualif-changes}) :
