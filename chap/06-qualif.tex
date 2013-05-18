@@ -62,25 +62,16 @@ structure contenant les champs entiers \texttt{major}, \texttt{minor} et
 \texttt{patch}.
 
 % TODO depend de eFun
-
-\begin{align*}
-  & \mathrm{fun}(p) \{                      \\
-  & \indent \uPut{ 3}{p.\texttt{major}_S} ; \\
-  & \indent \uPut{14}{p.\texttt{minor}_S} ; \\
-  & \indent \uPut{15}{p.\texttt{patch}_S}   \\
-  & \}
-\end{align*}
-
-où
-
 % TODO dépend de tStruct
 
 \begin{align*}
-  S = \{ & \texttt{major} : \tInt ; \\
-         & \texttt{minor} : \tInt ; \\
-         & \texttt{patch} : \tInt   \\
-      \}
+  & \mathrm{fun}(p) \{                      &             & & \\
+  & \indent \uPut{ 3}{p.\texttt{major}_S} ; & \mathrm{où} & & S = \{ & \texttt{major} : \tInt ; \\
+  & \indent \uPut{14}{p.\texttt{minor}_S} ; &             & &        & \texttt{minor} : \tInt ; \\
+  & \indent \uPut{15}{p.\texttt{patch}_S}   &             & &        & \texttt{patch} : \tInt   \\
+  & \}                                      &             & &     \}
 \end{align*}
+
 
 % TODO
 
