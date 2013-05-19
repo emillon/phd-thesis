@@ -54,12 +54,11 @@ utilisateurs. On note $\uGet{lv}{e}$ la lecture sûre de $e$ (pointeur
 utilisateur) dans $lv$ et $\uPut{e}{e'}$ l'écriture de $e$ dans l'espace pointé
 par le pointeur utilisateur $e'$.
 
-% TODO pourquoi pas des expressions ?
+% TODO pourquoi pas des expressions/instructions ?
 
-Illustrons ceci par un exemple. Imaginons un anière, pour écrire un appel
-système fictif qui renvoie la version du noyau, en remplissant par pointeur une
-structure contenant les champs entiers \texttt{major}, \texttt{minor} et
-\texttt{patch}.
+Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
+version du noyau, en remplissant par pointeur une structure contenant les champs
+entiers \texttt{major}, \texttt{minor} et \texttt{patch}.
 
 % TODO depend de eFun
 % TODO dépend de tStruct
@@ -74,12 +73,18 @@ structure contenant les champs entiers \texttt{major}, \texttt{minor} et
 
 % TODO le champ utilisateur ça passe bien ?
 
-Le but est en
+On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
+et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
+étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
+$\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
+une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $φ$,
+$\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts : d'une
+part, un nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle
+d'évaluation. Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher
+lorsqu'on déréférence directement un pointeur utilisateur. Ces étapes sont
+résumées dans la figure~\ref{fig:qualif-changes}.
 
-% TODO
-\begin{center}\rule{3in}{0.4pt}\end{center}
-
-On procède en trois étapes (figure~\ref{fig:qualif-changes}) :
+% TODO notation widehat taint voire widehat userspace
 
 \begin{figure}%{{{
 
@@ -113,28 +118,10 @@ On procède en trois étapes (figure~\ref{fig:qualif-changes}) :
 
 \end{figure}%}}}
 
-\begin{itemize}
-\item
-  tout d'abord, on ajoute une expression d'annotation sur les variables
-  indiquant que celles-ci sont contrôlés par un utilisateur non privilégié,
-  ainsi que des opérateurs de copie sûre.
-\item
-  ensuite, on étend l'ensemble des valeurs possibles pour les pointeurs
-  à une valeur $\vTainted{φ}$ signifiant que l'objet pointé se situe en
-  % TODO [E] ?
-  espace utilisateur
-\item
-  enfin, on définit une nouvelle erreur $\serr{taint}$ produite par le
-  déréférencement d'un pointeur ayant une telle valeur.
-\end{itemize}
+\section{Extensions sémantiques}
 
-Pour adapter l'évaluation, plusieurs cas sont à rajouter. D'une part, la
-présence de $\phx{\eTaint}$ dans une instruction consiste à ajouter un
-$\phx{\vTainted}$ dans la valeur construite. Ceci ne peut être fait que dans le
-cas où la valeur est un chemin $φ$, c'est-à-dire que la construction
-$\phx{\eTaint}$ ne peut se faire que sur une expression de type pointeur.
-
-% TODO passe globale c'est-a-dire & co (pas de ')
+En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
+règle suivante :
 
 \begin{mathpar}
   \irule{Expr-Tainted}
@@ -142,32 +129,31 @@ $\phx{\eTaint}$ ne peut se faire que sur une expression de type pointeur.
     { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
 \end{mathpar}
 
-D'autre part, une règle accède à la mémoire : \textsc{Exp-Lv}; pour
-rappel :
+Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
+déclencher une erreur $\serr{taint}$ en cas de déréférencement d'un pointeur
+utilisateur. Les accès mémoire en lecture proviennent de la règle
+\textsc{Exp-Lv} et ceux en lecture, de la règle \textsc{Exp-Set}, rappellées
+ici :
 
 \begin{mathpar}
   \semrule{Exp-Lv}
+
+  \semrule{Exp-Set}
 \end{mathpar}
 
-Puisque la définition des chemins $φ$ a été changée, il est aussi nécessaire de
-redéfinir la lentille $Φ$ utilisée ci-dessus (définition~\ref{def:acces-phi}).
-
-% TODO [E] à détailler
-
-On rajoute donc le cas :
+Il suffit donc d'adapter la définition~\ref{def:acces-phi} de la lentille $Φ$ en
+rajoutant le cas :
 
 \begin{align*}
 Φ(\vTainted{φ}) =& \serr{taint}
 \end{align*}
 
-Pour accéder à ces valeurs, il faut utiliser les opérateurs $\phxx\uGet$ et
+Enfin, il est nécessaire de donner une sémantique aux opérateurs $\phxx\uGet$ et
 $\phxx\uPut$.
 
 % TODO leur sémantique
 
 \section{Insuffisance des types simples}
-
-% TODO[E] c'est ok
 
 Étant donné \langname augmenté de cette extension sémantique, on peut étendre
 trivialement le système de types avec la règle suivante :
