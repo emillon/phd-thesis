@@ -92,7 +92,7 @@ résumées dans la figure~\ref{fig:qualif-changes}.
 \begin{align*}
 \gramdef{Expressions}{e}
   { … }{}
-  { \eTaint{e} }{Expression souillée}
+  { \eTaint{e} }{Expression souillée} % TODO ce serait pas un ajout à lv?
   { \uGet{lv}{e}}{ Lecture depuis l'espace utilisateur}
   { \uPut{e}{e'}}{ Écriture dans l'espace utilisateur}
   {END}
@@ -100,6 +100,10 @@ résumées dans la figure~\ref{fig:qualif-changes}.
 \gramdef{Contextes}{C}
   { … }{}
   { \eTaint{C}}{}
+  { \uGet{C}{e}}{}
+  { \uGet{φ}{C}}{}
+  { \uPut{C}{e}}{}
+  { \uPut{v}{C}}{}
   {END}
 \\
 \gramdef{Chemins}{φ}
@@ -156,22 +160,27 @@ $\phxx\uPut$.
 % TODO leur sémantique
 
 \begin{mathpar}
-  \irule{User-Put}
-    { }
-    { \mms{ \uPut{v}{\vTainted{φ}} }
-          {φ ← v}
-    }
-
   \irule{User-Get}
     { }
     { \mms{ \uGet{φ}{\vTainted{φ'}} }
           { φ ← φ'}
     }
+
+  \irule{User-Put}
+    { }
+    { \mms{ \uPut{v}{\vTainted{φ}} }
+          {φ ← v}
+    }
 \end{mathpar}
 
 % TODO vérifier
 
-% TODO étendre les contextes
+% TODO et dans le cas d'un chose kernel?
+
+Puisque ces règles ne s'appliquent qu'aux cas où les expressions à gauche et à
+droite des opérateurs sont déjà évaluées, il faut également étendre les
+contextes d'évaluation (figure~\ref{fig:qualif-changes}). Encore une fois on
+évalue d'abord l'argument de gauche, puis l'argument de droite.
 
 \section{Insuffisance des types simples}
 
