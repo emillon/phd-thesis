@@ -40,6 +40,7 @@ Enfin, une fois ces modifications faites, on prouve enfin que les propriétés d
 progrès et de préservation sont rétablies.
 
 \section{Extensions noyau pour \langname}
+\label{sec:extensions-noyau}
 
 On ajoute à \langname la notion de valeur provenant de l'espace utilisateur.
 Pour marquer la séparation entre les deux espaces d'adressage, on ajoute une
@@ -141,8 +142,9 @@ ici :
   \semrule{Exp-Set}
 \end{mathpar}
 
-Il suffit donc d'adapter la définition~\ref{def:acces-phi} de la lentille $Φ$ en
-rajoutant le cas :
+Les accès à la mémoire sont en effet faits par le biais de la lentille $Φ$. Il
+suffit donc d'adapter la définition~\ref{def:acces-phi} de celle-ci en rajoutant
+le cas :
 
 \begin{align*}
 Φ(\vTainted{φ}) =& \serr{taint}
@@ -152,6 +154,24 @@ Enfin, il est nécessaire de donner une sémantique aux opérateurs $\phxx\uGet$
 $\phxx\uPut$.
 
 % TODO leur sémantique
+
+\begin{mathpar}
+  \irule{User-Put}
+    { }
+    { \mms{ \uPut{v}{\vTainted{φ}} }
+          {φ ← v}
+    }
+
+  \irule{User-Get}
+    { }
+    { \mms{ \uGet{φ}{\vTainted{φ'}} }
+          { φ ← φ'}
+    }
+\end{mathpar}
+
+% TODO vérifier
+
+% TODO étendre les contextes
 
 \section{Insuffisance des types simples}
 
@@ -169,51 +189,78 @@ qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
 théorème~\ref{thm:progres}.
 
-Par exemple, supposons que $x$ soit une variable globale entière, et posons $e =
-* \eTaint {\& x}$.
+Par exemple, supposons que $x$ soit une variable globale entière, et posons :
 
-$e$ est alors bien typée sous $Γ = x : \tInt$ :
+\[
+\begin{cases}
+  e = * \eTaint {\& x} \\
+  Γ = x : \tInt \\
+  m = ([[x↦0]], [~]) \\
+\end{cases}
+\]
 
-\begin{mathpar}
-  \irule{Lv-Deref}
-    {
-      \irule{Taint-Ignore}
+% TODO notation des littéraux stack frame / mémoire?
+
+Les hypothèses du théorème de progrès sont bien vérifiées, mais cependant la
+conclusion n'est pas vraie :
+
+\begin{itemize}
+  \item
+    On a bien $\mcomp{Γ}{m}$.
+
+    % TODO dérivation?
+
+  \item
+    $e$ est bien typée sous $Γ$ :
+
+      \begin{mathpar}
+        \irule{Lv-Deref}
+          {
+            \irule{Taint-Ignore}
+              {
+                \irule{Lv-Deref}
+                  {
+                    \irule{Lv-Var}
+                      { x:\tInt ∈ Γ }
+                      { Γ ⊢ x : \tInt }
+                  }
+                  { Γ ⊢ \& x : \tInt*}
+              }
+              { Γ ⊢ \eTaint {\& x} : \tInt*}
+          }
+          { Γ ⊢ * \eTaint {\& x} : \tInt}
+      \end{mathpar}
+
+  \item 
+    L'évaluation de $e$ sous $m$ provoque une erreur différente de
+    $\serr{div}$, $\serr{array}$, ou $\serr{ptr}$ :
+
+      \begin{mathpar}
+      \inferrule*
         {
-          \irule{Lv-Deref}
+          \irule{Exp-Lv}
             {
-              \irule{Lv-Var}
-                { x:\tInt ∈ Γ }
-                { Γ ⊢ x : \tInt }
+              \inferrule*
+                { }
+                {m[*\vTainted{x}] = \serr{taint}}
             }
-            { Γ ⊢ \& x : \tInt*}
+            { \mm{m}{* \eTaint {\& x}}{m}{\serr{taint}} }
+          \\
+          \irule{Eval-Err}
+            { }
+            {
+              \msi{m}{\serr{taint}} → \serr{taint}
+            }
         }
-        { Γ ⊢ \eTaint {\& x} : \tInt*}
-    }
-    { Γ ⊢ * \eTaint {\& x} : \tInt}
-\end{mathpar}
+        {\msi{m}{e} → \serr{taint}}
+      \end{mathpar}
 
-Posons alors $m = ([[x↦0]], [])$ (on a bien $\mcomp{Γ}{m}$). L'évaluation de $e$
-sous $m$ provoque une erreur, comme le montre la dérivation suivante.
+\end{itemize}
 
-\begin{mathpar}
-\inferrule*
-  {
-    \irule{Exp-Lv}
-      {
-        \inferrule*
-          { }
-          {m[*\vTainted{x}] = \serr{taint}}
-      }
-      { \mm{m}{* \eTaint {\& x}}{m}{\serr{taint}} }
-    \\
-    \irule{Eval-Err}
-      { }
-      {
-        \msi{m}{\serr{taint}} → \serr{taint}
-      }
-  }
-  {\msi{m}{* \eTaint {\& x}} → \serr{taint}}
-\end{mathpar}
+Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution :
+le système de types naïvement étendu par une règle comme
+\textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
+dans la section~\ref{sec:extensions-noyau}.
 
 \section{Extensions du système de types}
 
