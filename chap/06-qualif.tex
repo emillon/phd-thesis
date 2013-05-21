@@ -279,18 +279,18 @@ extensions de sémantique. \emph{In fine}, cela permettra de prouver le
 théorème~\ref{thm:progres-qual} qui est l'équivalent du
 théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
 
-% TODO [E] ??
+Définir un nouveau système de types revient à étendre le jugement de typage
+$\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en modifiant
+d'autres. Naturellement, la plupart des différences porteront sur le traitement
+des pointeurs.
 
-Définir un nouveau système de types revient à définir un nouveau jugement de
-typage $\cdot ⊢_q \cdot : \cdot$, à partir d'un ensemble de règles. Pour la
-plupart, les règles seront identiques, donc sauf mention contraire, les règles
-portant sur $\cdot ⊢ \cdot : \cdot$ s'appliqueront aussi sur $\cdot ⊢_q \cdot :
-\cdot$. Naturellement, la plupart des différences porteront sur le traitement des
-pointeurs.
+\subsection*{Qualificateurs de types}
 
-La différence principale est qu'à chaque pointeur, on ajoute un
-\emph{qualificateur} qui représente \emph{qui} contrôle sa valeur
-(section~\ref{sec:secu-syscalls}). Les deux qualificateurs sont :
+Le changement clef est l'ajout de \emph{qualificateurs de types}. À chaque
+pointeur, on ajoute une information qui représente \emph{qui} contrôle sa valeur
+(section~\ref{sec:secu-syscalls}).
+
+Les deux qualificateurs sont :
 
 \begin{itemize}
 \item
@@ -324,24 +324,48 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 \label{fig:qualif-changes-typ}
 \end{figure}%}}}
 
-Au niveau du système de types, la principale restriction est que seuls les
-pointeurs \qKernel peuvent être déréférencés de manière sûre :
+Puisqu'on s'intéresse à la provenance des pointeurs, détaillons les règles qui
+créent, manipulent et utilisent des pointeurs.
+
+\subsection*{Sources de pointeurs}
+
+La source principale de pointeurs est l'opérateur $\&$ qui prend l'adresse d'une
+variable. Celle-ci est bien entendue contrôlée par le noyau (dans le sens où son
+déréférencement est toujours sûr). Le qualificateur associé est donc
+$\qKernel$ :
+
+\begin{mathpar}
+  \irule{AddrOf-Kernel}
+    { Γ ⊢ lv : t }
+    { Γ ⊢ \& lv : t~\qKernel~* }
+\end{mathpar}
+
+\subsection*{Manipulations de pointeurs}
+
+%TODO
+
+\subsection*{Utilisations de pointeurs}
+
+La principale restriction, au cœur de ce chapitre et de cette thèse, est que
+seuls les pointeurs \qKernel peuvent être déréférencés de manière sûre. La règle
+suivante remplace donc \textsc{Lv-Deref} :
 
 \begin{mathpar}
 \irule{Lv-Deref-Kernel}{
-  Γ ⊢_q e : τ~\textsc{Kernel}*
+  Γ ⊢_q e : t~\textsc{Kernel}*
 }{
-  Γ ⊢_q *e : τ
+  Γ ⊢_q *e : t
 }
 \end{mathpar}
 
-% TODO [E] et que se passe-t'il quand on a une expression e de type τ K* que
-% l'on cherche à déréférencer ?
+Ainsi, on interdit implicitement le déréférencement des expressions de type
+$t~\qUser~*$ à la compilation.
 
-L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle de souillure
-suivante :
+% TODO mettre ça dans rules.tex
 
 % TODO définir les stubs
+
+L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
 
 \begin{mathpar}
 \irule{Taint}
@@ -361,6 +385,10 @@ Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante
 
 % TODO parler de sous typage
 
+\section{Sûreté du typage}
+
+\subsection*{Typage sémantique}
+
 La définition du typage sémantique doit aussi être étendue au cas $φ =
 \vTainted{φ'}$. Les références mémoires sont ``nettoyées'' pour accéder à la
 left-value encapsulée.
@@ -371,9 +399,7 @@ left-value encapsulée.
     { m ⊧ \vTainted{φ'} : t~\qUser~* }
 \end{mathpar}
 
-\wip
-
-\section{Sûreté du typage}
+\subsection*{Progrès et préservation}
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
