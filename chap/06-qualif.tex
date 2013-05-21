@@ -352,9 +352,9 @@ suivante remplace donc \textsc{Lv-Deref} :
 
 \begin{mathpar}
 \irule{Lv-Deref-Kernel}{
-  Γ ⊢_q e : t~\textsc{Kernel}*
+  Γ ⊢ e : t~\textsc{Kernel}*
 }{
-  Γ ⊢_q *e : t
+  Γ ⊢ *e : t
 }
 \end{mathpar}
 
@@ -369,8 +369,8 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢_q e : t~q~* }
-  { Γ ⊢_q \eTaint{x} : t~\qUser~* }
+  { Γ ⊢ e : t~q~* }
+  { Γ ⊢ \eTaint{x} : t~\qUser~* }
 \end{mathpar}
 
 Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante :
@@ -407,7 +407,7 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \begin{theorem}[Progrès pour les types qualifiés]
   \label{thm:progres-qual}
 
-  Supposons que $Γ ⊢_q e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
   Alors l'un des cas suivant est vrai :
 
 \begin{itemize}
@@ -430,9 +430,9 @@ Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
   Si une expression est typable et que son évaluation produit une valeur, alors
   cette valeur est du même type que l'expression.
 
-  Si $Γ ⊢_q e : t$ et $e → v$ % TODO
+  Si $Γ ⊢ e : t$ et $e → v$ % TODO
 
-  alors $Γ ⊢_q v : t$.
+  alors $Γ ⊢ v : t$.
 
 \end{theorem}
 
