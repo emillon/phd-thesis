@@ -116,11 +116,11 @@ fichier'') et selon le type de lecteur, le système d'exploitation effectuera le
 actions appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et le
-matériel, et particulier est responsable de la gestion de la mémoire, des
+matériel, et en particulier est responsable de la gestion de la mémoire, des
 périphériques et des processus. Les détails d'implantation ne sont pas présentés
 à l'utilisateur ; à la place il manipule des abstractions, comme la notion de
-fichier. Pour plus détails sur ce sujet, y compris avec des cas d'étude,
-dans~\cite{tanenbaum}.
+fichier. Pour une explication détaillée du concept de système d'exploitation
+ainsi que des cas d'étude, on pourra se référer à~\cite{tanenbaum}.
 
 \section{Séparation entre noyau et espace utilisateur}
 
@@ -149,7 +149,7 @@ registre \eax vers l'adresse mémoire \texttt{0x54c3b2f7}. Puisque cette adresse
 dans l'espace utilisateur (la raison est décrite dans le
 chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
 
-Ainsi, pour une instruction manipulant des données en mémoire, les accès sont
+Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans la figure~\ref{fig:erreursec}. En cas
 d'impossibilité (signalée par un \Square), une erreur se produit et l'exécution
 s'arrête.
@@ -469,7 +469,7 @@ greffons, elle permet de prototyper rapidement des analyses statiques de
 programmes.
 
 \paragraph{Compcert} est un projet qui vise à produire un compilateur certifié
-pour C. C'est à dire que le fait que les transformations conservent la
+pour C. C'est-à-dire que le fait que les transformations conservent la
 sémantique est prouvé. Il utilise de nombreux langages intermédiaires, dont CIL.
 Pour le front-end, le langage se nomme Clight\cite{cfront}. Les passes de
 middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
@@ -481,11 +481,11 @@ section~\ref{sec:npk}.
 
 \subsection*{La solution retenue : \langname}
 
-Dans la suite de cette thèse nous nous appuierons \langname, un langage
+Dans la suite de cette thèse nous nous appuierons sur \langname, un langage
 intermédiaire minimal, pour exprimer les règles de typage de la manière la plus
 simple possible. Néanmoins l'implantation est faite sur une version adaptée de
-Newspeak, ce qui nous pettra d'avoir une traduction automatique depuis du code
-déjà écrit en C.
+Newspeak, ce qui nous permettra d'avoir une traduction automatique depuis du
+code déjà écrit en C.
 
 \section{Plan de la thèse}
 
@@ -504,7 +504,7 @@ types statiques. On l'étend ensuite pour capturer les problèmes d'adressage
 mémoire présents dans les systèmes d'exploitation en ajoutant des pointeurs
 contrôlés par l'utilisateur. Le système de types est également étendu. Pour
 chacune de ces variantes, on établit la propriété de sûreté de typage reliant la
-sémantique dynamique aux types statiques.
+sémantique d'exécution aux types statiques.
 
 \paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
 à ces travaux. L'implantation du système de types est décrite, afin que la

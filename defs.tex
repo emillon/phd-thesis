@@ -88,7 +88,7 @@
 \def\mmlv#1#2#3#4{ \mm{#1}{#2}{#3}{#4} }
 
 % Compatibilité Γ / m
-\def\mcomp#1#2{#1 ⊢_{mem} #2}
+\def\mcomp#1#2{#1 ⊧ #2}
 
 % Reduction contexts
 \def\ctxOp#1#2{#1~\opbin~#2}
@@ -372,6 +372,7 @@
 \tikzset{>=latex}
 
 \def\partccl#1{
+  \clearpage~\thispagestyle{cleared}\cleartorecto
   \chapter*{Conclusion de la partie~\ref{#1}}
   \addcontentsline{toc}{chapter}{Conclusion de la partie~\ref{#1}}
 }
