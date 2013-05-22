@@ -356,9 +356,6 @@ val infer : Newspeak.fid list
          -> Types.simple Tyspeak.t
 \end{Verbatim}
 
-\item Ces types sont vérifiés. Cette étape est normalement redondante et est
-  donc optionnelle (l'option \texttt{-{}-no-check} permet de la désactiver).
-
 \item Le programme obtenu, de type \texttt{Types.simple Tyspeak.t}, est affiché
   sur le terminal.
 
@@ -444,20 +441,6 @@ let infer_binop op (_, a) (_, b) =
 \end{verbatim}
 
 \end{itemize}
-
-\section{Vérification de types}
-
-\wip
-
-La passe de vérification de types, optionnelle et en théorie redondante, est
-présente pour s'assurer que les types inférés ne sont pas aberrants.
-
-Là encore, on travaille par effet de bord : si tout ne se passe pas bien, on
-lève une erreur. La fonction principale a le type suivant :
-
-\begin{verbatim}
-val check : Types.simple Env.t -> Types.simple Tyspeak.t -> unit
-\end{verbatim}
 
 \section{Unification}
 
