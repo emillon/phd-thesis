@@ -342,7 +342,24 @@ $\qKernel$ :
 
 \subsection*{Manipulations de pointeurs}
 
-%TODO
+L'avantage du typage est que celui ci suit le flot de données : si à un endroit
+une valeur de type $t$ est affectée à une variable, que le contenu de cette
+variable est placé puis retiré d'une structure de données, il conserve ce type
+$t$. En particulier un pointeur utilisateur reste un pointeur utilisateur.
+
+Une seule règle concernant les pointeurs les manipule en consommant un pointeur
+et en en retournant un, et concerne l'arithmétique des pointeurs. On l'étend aux
+pointeurs qualifiés, puisqu'elle est possible quelque soit le qualificateur (et
+le préserve) :
+
+\begin{mathpar}
+  \irule{Ptr-Arith-Qual}
+     { \opbin ∈ \{ +_p, -_p \} \\
+       Γ ⊢ e_1 : t~q~* \\
+       Γ ⊢ e_2 : \tInt \\
+     }
+     { Γ ⊢ e_1~\opbin~e_2 : t~q~* }
+\end{mathpar}
 
 \subsection*{Utilisations de pointeurs}
 
@@ -381,7 +398,11 @@ Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante
     \disprule{PutU}
 \end{mathpar}
 
-% TODO parler de sous typage
+Il est à noter qu'il n'y a pas de sous-typage : les pointeurs noyau ne peuvent
+être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
+qu'en tant que pointeurs utilisateurs.
+
+% TODO check
 
 \section{Sûreté du typage}
 
