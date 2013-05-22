@@ -871,10 +871,21 @@ se trouve en annexe~\ref{proof:progres}.
 \begin{theorem}[Préservation]
   \label{thm:preservation}
 
-  Si une expression est typable, alors un pas d'évaluation ne modifie pas son
-  type :
+  Soient $Γ$ un environnement de typage, $e$ une expression et $m$ un état
+  mémoire.
 
-  Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$, alors $Γ ⊢ e' : t$.
+  On suppose que les hypothèse suivantes sont vérifiées :
+
+\begin{itemize}
+\item $Γ ⊢ e : t$
+\item $\mcomp{Γ}{m}$
+\item $\mm{m}{e}{m'}{e'}$
+\end{itemize}
+
+  Alors $Γ ⊢ e' : t$ et $\mcomp{Γ}{m'}$.
+
+  Autrement dit, si une expression est typable, alors un pas d'évaluation ne
+  modifie pas son type et préserve le typage de la mémoire.
 
 \end{theorem}
 
