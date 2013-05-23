@@ -839,41 +839,53 @@ théorèmes~\ref{thm:progres}
 et~\ref{thm:progres-lv}
 se trouve en annexe~\ref{proof:progres}.
 
-\begin{lemma}[Permutation]
-  L'ordre dans lequel les variables apparaissent dans un environnement
-  n'influe pas sur la relation de typage.
+% TODO comm?
+%\begin{lemma}[Permutation]
+  %L'ordre dans lequel les variables apparaissent dans un environnement
+  %n'influe pas sur la relation de typage.
 
-  Pour toute permutation $σ$ de $[1;n]$, on note $σ(x_1 : t_1, …, x_n : t_n) =
-  x_{σ(1)} : t_{σ(1)}, … x_{σ(n)} : t_{σ(n)}$.
+  %Pour toute permutation $σ$ de $[1;n]$, on note $σ(x_1 : t_1, …, x_n : t_n) =
+  %x_{σ(1)} : t_{σ(1)}, … x_{σ(n)} : t_{σ(n)}$.
 
-  Alors : si $Γ ⊢ e : t$ et $Γ' = σ(Γ)$, alors $Γ' ⊢ e : t$.
-\end{lemma}
+  %Alors : si $Γ ⊢ e : t$ et $Γ' = σ(Γ)$, alors $Γ' ⊢ e : t$.
+%\end{lemma}
 
-\begin{lemma}[Affaiblissement]
-  De même que l'ordre n'influe pas le typage, on peut aussi ajouter des
-  associations supplémentaires dans l'environnement sans modifier les typages
-  dans cet environnement.
+%\begin{lemma}[Affaiblissement]
+  %De même que l'ordre n'influe pas le typage, on peut aussi ajouter des
+  %associations supplémentaires dans l'environnement sans modifier les typages
+  %dans cet environnement.
 
-  Si $Γ ⊢ e : t$ et $x ∉ \mathrm{dom}(Γ)$, alors $Γ, x : t' ⊢ e : t$.
-\end{lemma}
+  %Si $Γ ⊢ e : t$ et $x ∉ \mathrm{dom}(Γ)$, alors $Γ, x : t' ⊢ e : t$.
+%\end{lemma}
 
-\begin{lemma}[Substitution]
-  Si dans une expression $e$ il apparait une variable $x$ de type $t'$, le
-  typage est préservé lorsqu'on remplace ses occurrences par une expression $e'$
-  de même type.
+%\begin{lemma}[Substitution]
+  %Si dans une expression $e$ il apparait une variable $x$ de type $t'$, le
+  %typage est préservé lorsqu'on remplace ses occurrences par une expression $e'$
+  %de même type.
 
-  Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [x/e'] : t$.
-\end{lemma}
+  %Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [x/e'] : t$.
+%\end{lemma}
 
-Ces lemmes permettent de prouver le théorème suivant :
+%Ces lemmes permettent de prouver le théorème suivant :
 
 \begin{theorem}[Préservation]
   \label{thm:preservation}
 
-  Si une expression est typable, alors un pas d'évaluation ne modifie pas son
-  type :
+  Soient $Γ$ un environnement de typage, $e$ une expression et $m$ un état
+  mémoire.
 
-  Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$, alors $Γ ⊢ e' : t$.
+  On suppose que les hypothèse suivantes sont vérifiées :
+
+\begin{itemize}
+\item $Γ ⊢ e : t$
+\item $\mcomp{Γ}{m}$
+\item $\mm{m}{e}{m'}{e'}$
+\end{itemize}
+
+  Alors $Γ ⊢ e' : t$ et $\mcomp{Γ}{m'}$.
+
+  Autrement dit, si une expression est typable, alors un pas d'évaluation ne
+  modifie pas son type et préserve le typage de la mémoire.
 
 \end{theorem}
 

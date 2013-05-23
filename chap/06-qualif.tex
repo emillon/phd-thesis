@@ -273,6 +273,7 @@ le système de types naïvement étendu par une règle comme
 dans la section~\ref{sec:extensions-noyau}.
 
 \section{Extensions du système de types}
+\label{sec:extension-types}
 
 On présente ici un système de types plus expressif permettant de capturer les
 extensions de sémantique. \emph{In fine}, cela permettra de prouver le
@@ -342,7 +343,24 @@ $\qKernel$ :
 
 \subsection*{Manipulations de pointeurs}
 
-%TODO
+L'avantage du typage est que celui ci suit le flot de données : si à un endroit
+une valeur de type $t$ est affectée à une variable, que le contenu de cette
+variable est placé puis retiré d'une structure de données, il conserve ce type
+$t$. En particulier un pointeur utilisateur reste un pointeur utilisateur.
+
+Une seule règle concernant les pointeurs les manipule en consommant un pointeur
+et en en retournant un, et concerne l'arithmétique des pointeurs. On l'étend aux
+pointeurs qualifiés, puisqu'elle est possible quelque soit le qualificateur (et
+le préserve) :
+
+\begin{mathpar}
+  \irule{Ptr-Arith-Qual}
+     { \opbin ∈ \{ +_p, -_p \} \\
+       Γ ⊢ e_1 : t~q~* \\
+       Γ ⊢ e_2 : \tInt \\
+     }
+     { Γ ⊢ e_1~\opbin~e_2 : t~q~* }
+\end{mathpar}
 
 \subsection*{Utilisations de pointeurs}
 
@@ -352,9 +370,9 @@ suivante remplace donc \textsc{Lv-Deref} :
 
 \begin{mathpar}
 \irule{Lv-Deref-Kernel}{
-  Γ ⊢_q e : t~\textsc{Kernel}*
+  Γ ⊢ e : t~\textsc{Kernel}*
 }{
-  Γ ⊢_q *e : t
+  Γ ⊢ *e : t
 }
 \end{mathpar}
 
@@ -369,8 +387,8 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢_q e : t~q~* }
-  { Γ ⊢_q \eTaint{x} : t~\qUser~* }
+  { Γ ⊢ e : t~q~* }
+  { Γ ⊢ \eTaint{x} : t~\qUser~* }
 \end{mathpar}
 
 Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante :
@@ -381,9 +399,11 @@ Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante
     \disprule{PutU}
 \end{mathpar}
 
-% TODO adresse = kernel
+Il est à noter qu'il n'y a pas de sous-typage : les pointeurs noyau ne peuvent
+être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
+qu'en tant que pointeurs utilisateurs.
 
-% TODO parler de sous typage
+% TODO check
 
 \section{Sûreté du typage}
 
@@ -407,7 +427,7 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \begin{theorem}[Progrès pour les types qualifiés]
   \label{thm:progres-qual}
 
-  Supposons que $Γ ⊢_q e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
   Alors l'un des cas suivant est vrai :
 
 \begin{itemize}
@@ -417,11 +437,7 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \end{itemize}
 \end{theorem}
 
-%\begin{proof}
-
-  %% TODO
-
-%\end{proof}
+La preuve de ce théorème est en annexe~\ref{proof:progres-qualif}.
 
 Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
 
@@ -430,10 +446,17 @@ Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
   Si une expression est typable et que son évaluation produit une valeur, alors
   cette valeur est du même type que l'expression.
 
-  Si $Γ ⊢_q e : t$ et $e → v$ % TODO
+  Si $Γ ⊢ e : t$ et $e → v$ % TODO
 
-  alors $Γ ⊢_q v : t$.
+  alors $Γ ⊢ v : t$.
 
 \end{theorem}
+
+La preuve de ce théorème est en annexe~\ref{proof:preservation-qualif}.
+
+La sûreté du typage étant à nouveau établie, on a montré que les qualificateurs
+de types sur les pointeurs suffisent pour avoir une adéquation entre les
+extensions de sémantique de la section~\label{sec:extensions-noyau} et les
+extensions du système de type de la section~\label{sec:extension-types}.
 
 % vim: spelllang=fr

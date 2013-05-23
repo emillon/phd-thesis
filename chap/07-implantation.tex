@@ -310,14 +310,6 @@ constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 
 \end{itemize}
 
-%TODO :
-
-%\begin{itemize}
-%\item implem du polymorphisme
-%\item implem du sous-typage
-%\item généralisation depuis le toy language
-%\end{itemize}
-
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
@@ -333,7 +325,7 @@ intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}
 
 \begin{figure}
 \insertcode{implem-process.ml}
-\caption{Implantation -- fonction principale de \ptrtype}
+\caption{Fonction principale de \ptrtype}
 \label{fig:implem-process}
 \end{figure}
 
@@ -363,9 +355,6 @@ val infer : Newspeak.fid list
          -> 'a Tyspeak.t
          -> Types.simple Tyspeak.t
 \end{Verbatim}
-
-\item Ces types sont vérifiés. Cette étape est normalement redondante et est
-  donc optionnelle (l'option \texttt{-{}-no-check} permet de la désactiver).
 
 \item Le programme obtenu, de type \texttt{Types.simple Tyspeak.t}, est affiché
   sur le terminal.
@@ -399,14 +388,11 @@ déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 
 \insertcode{infer-unif-stmt.ml}
 
-\caption{Implantation -- inférence des déclarations de variable et appels de
+\caption{Inférence des déclarations de variable et appels de
          fonction}
 
-% TODO ces "Implantation -- " sont ils vraiment indispensables ?
 \label{fig:implem-unif-stmt}
 \end{figure}
-
-% TODO s/lval_type/infer_lval/ ?
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
 \texttt{unify}. Par exemple, pour typer une déclaration
@@ -456,27 +442,11 @@ let infer_binop op (_, a) (_, b) =
 
 \end{itemize}
 
-\section{Vérification de types}
-
-\wip
-
-La passe de vérification de types, optionnelle et en théorie redondante, est
-présente pour s'assurer que les types inférés ne sont pas aberrants.
-
-Là encore, on travaille par effet de bord : si tout ne se passe pas bien, on
-lève une erreur. La fonction principale a le type suivant :
-
-\begin{verbatim}
-val check : Types.simple Env.t -> Types.simple Tyspeak.t -> unit
-\end{verbatim}
-
-% TODO
-
 \section{Unification}
 
 \begin{figure}
 \insertcode{implem-types.ml}
-\caption{Implantation -- types}
+\caption{Représentation des types}
 \label{fig:implem-typ}
 \end{figure}
 
@@ -516,7 +486,7 @@ chaînes (figure~\ref{fig:implem-shorten}).
 
   \insertcode{implem-shorten.ml}
 
-\caption{Implantation -- fonction de racourcissement des représentations de types}
+\caption{Fonction de racourcissement des représentations de types}
 \label{fig:implem-shorten}
 \end{figure}
 
@@ -550,8 +520,8 @@ sont :
     Le cas $n = 0$ ou $m = 0$ correspond aux types concrets comme $\tInt$ ou
     $\tFloat$.
   }. Si $C = D$ et
-  $n = m$, alors on unifie récursivementchaque $t_i$ avec $u_i$. Sinon on lève une erreur
-  (fonction \texttt{type\_clash}).
+  $n = m$, alors on unifie récursivement chaque $t_i$ avec $u_i$. Sinon on lève
+  une erreur (fonction \texttt{type\_clash}).
 
   % TODO structures
 
@@ -562,7 +532,7 @@ Cette analyse de cas est implantée dans la fonction \texttt{unify_now}
 
 \begin{figure}
   \insertcode{implem-unify.ml}
-\caption{Implantation -- fonction d'unification}
+\caption{Fonction d'unification}
 \label{fig:implem-unify-now}
 \end{figure}
 
@@ -570,7 +540,7 @@ cas structure (figure~\ref{fig:implem-unify-structs}).
 
 \begin{figure}
   \insertcode{implem-structs.ml}
-\caption{Implantation -- structures}
+\caption{Structures}
 \label{fig:implem-unify-structs}
 \end{figure}
 
@@ -581,7 +551,7 @@ les qualificateurs (figure~\ref{fig:implem-qualifs}).
 
   \insertcode{implem-qualifs.ml}
 
-  \caption{Implantation -- qualificateurs}
+  \caption{Qualificateurs}
 \label{fig:implem-qualifs}
 
 \end{figure}
@@ -590,7 +560,7 @@ les qualificateurs (figure~\ref{fig:implem-qualifs}).
 
 \insertcode{unify-main.ml}
 
-\caption{Implantation -- unification directe ou retardée}
+\caption{Unification directe ou retardée}
 \label{fig:implem-lazy}
 \end{figure}
 

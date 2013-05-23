@@ -374,11 +374,9 @@ nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
 valeurs par un indice entier, qui dans le cas général n'est pas connu à la
 compilation. C'est une erreur ($\serr{array}$) d'accéder à un tableau en dehors de
 ses bornes, c'est-à-dire en dehors de $[0;n-1]$ pour un tableau à $n$
-éléments\footnote{Comme le fait remarquer Dijkstra, seule la numérotation à
-partir de 0 a du sens\cite{EWD831}.}.
-% TODO dans les valeurs les tableaux sont numérotés à partir de 1...
+éléments.
 
-Les tableaux sont notés $[e_1; …; e_n]$, et le cas dégénéré ($n = 0$) est
+Les tableaux sont notés $\eArray{e_1; …; e_n}$, et le cas dégénéré ($n = 0$) est
 interdit.
 
 \paragraph{Structures :} comme les tableaux, ce sont des valeurs composées mais
