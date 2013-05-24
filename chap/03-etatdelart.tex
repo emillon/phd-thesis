@@ -561,24 +561,24 @@ zone mémoire pointée). L'arithmétique des pointeurs n'est autorisée que sur 
 derniers, rendant impossibles les débordements de tableaux (ceux-ci étant
 détectés au pire à l'exécution).
 
-Le langage Rust développé par Mozilla prend un approche similaire en distinguant
-plusieurs types de pointeurs pour gérer la mémoire de manière plus fine. Les
-\emph{managed pointers} (notés \texttt{@int}) utilisent un ramasse-miette pour
-libérer la mémoire allouée lorsqu'ils ne sont plus accessibles. Les \emph{owning
-pointers} (notés \texttt{\textasciitilde{}int}) décrivent une relation 1 à 1
-entre deux objets, comme les \texttt{std::unique\_ptr} de C++ : la mémoire est
-libérée lorsque le pointeur l'est. Les \emph{borrowed pointers} (notés
-\texttt{\&int}) correspondent aux pointeurs obtenus en prenant l'adresse d'un
-objet, ou d'un champ d'un objet. Une analyse statique faite lors de la
-compilation s'assure que la durée de vie de ces pointeurs est plus longue que
-l'objet pointé, afin d'éviter les \emph{dangling pointers} (pointeurs fous). Une
-fonction qui retourne l'adresse d'une variable locale sera donc rejetée par le
-compilateur. Enfin, le dernier type est celui des \emph{raw pointers} (notés
-\texttt{*int}), pour lesquels le langage n'apporte aucune garantie (il faut
-d'ailleurs encapsuler chaque utilisation dans un bloc marqué explicitement
-\texttt{unsafe}. Ils sont équivalents aux pointeurs de C.
+Le langage Rust~\link{rust} développé par Mozilla prend un approche similaire en
+distinguant plusieurs types de pointeurs pour gérer la mémoire de manière plus
+fine. Les \emph{managed pointers} (notés \texttt{@int}) utilisent un
+ramasse-miette pour libérer la mémoire allouée lorsqu'ils ne sont plus
+accessibles. Les \emph{owning pointers} (notés \texttt{\textasciitilde{}int})
+décrivent une relation 1 à 1 entre deux objets, comme les
+\texttt{std::unique\_ptr} de C++ : la mémoire est libérée lorsque le pointeur
+l'est. Les \emph{borrowed pointers} (notés \texttt{\&int}) correspondent aux
+pointeurs obtenus en prenant l'adresse d'un objet, ou d'un champ d'un objet. Une
+analyse statique faite lors de la compilation s'assure que la durée de vie de
+ces pointeurs est plus longue que l'objet pointé, afin d'éviter les
+\emph{dangling pointers} (pointeurs fous). Une fonction qui retourne l'adresse
+d'une variable locale sera donc rejetée par le compilateur. Enfin, le dernier
+type est celui des \emph{raw pointers} (notés \texttt{*int}), pour lesquels le
+langage n'apporte aucune garantie (il faut d'ailleurs encapsuler chaque
+utilisation dans un bloc marqué explicitement \texttt{unsafe}. Ils sont
+équivalents aux pointeurs de C.
 
-% TODO citer sur Rust
 % TODO mentionner l'analyse a la algol cf.
 % http://dl.rust-lang.org/doc/tutorial-borrowed-ptr.html#returning-borrowed-pointers
 % + lien D
