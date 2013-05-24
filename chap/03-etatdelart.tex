@@ -1,7 +1,6 @@
 % TODO [E]: Cela part sur les chapeaux de roues, ensuite on a l'impression qu'il
 % n'y a que l'IA comme analyse statique et un peu le typage ; sur le typage il y
 % a qq remarques dans le texte.
-% Il y a beaucoup de choses dans le TODO... ty penses toute les mettre ?
 
 % TODO [E]!: je ne me souviens plus de ce qu'il y a dans le chapitre 1 / intro
 % et le chapitre 2 : problème de sûreté d'exécution
@@ -551,6 +550,42 @@ certains cas.
 
 % TODO [E] est-ce joauble dans le cas de vrais programmes ?
 
+Le langage Cyclone~\cite{cyclone-safety} est conçu comme un C ``sûr''. Afin
+d'apporter plus de sûreté au modèle mémoire de C, des tests dynamiques sont
+ajoutés, par exemple aux endroits ou des conversions implicites peuvent poser
+problème. Le langage se distingue par le fait qu'il possède plusieurs types
+pointeurs : des pointeurs classiques (\texttt{int *}), des pointeurs ``jamais
+nuls'' (\texttt{int @} ; un test à l'exécution est alors inséré), et des
+``pointeurs lourds'' (\texttt{int ?} ; qui contiennent des informations sur la
+zone mémoire pointée). L'arithmétique des pointeurs n'est autorisée que sur ces
+derniers, rendant impossibles les débordements de tableaux (ceux-ci étant
+détectés au pire à l'exécution).
+
+Le langage Rust~\link{rust} développé par Mozilla prend un approche similaire en
+distinguant plusieurs types de pointeurs pour gérer la mémoire de manière plus
+fine. Les \emph{managed pointers} (notés \texttt{@int}) utilisent un
+ramasse-miette pour libérer la mémoire allouée lorsqu'ils ne sont plus
+accessibles. Les \emph{owning pointers} (notés \texttt{\textasciitilde{}int})
+décrivent une relation 1 à 1 entre deux objets, comme les
+\texttt{std::unique\_ptr} de C++ : la mémoire est libérée lorsque le pointeur
+l'est. Les \emph{borrowed pointers} (notés \texttt{\&int}) correspondent aux
+pointeurs obtenus en prenant l'adresse d'un objet, ou d'un champ d'un objet. Une
+analyse statique faite lors de la compilation s'assure que la durée de vie de
+ces pointeurs est plus longue que l'objet pointé, afin d'éviter les
+\emph{dangling pointers} (pointeurs fous). Une fonction qui retourne l'adresse
+d'une variable locale sera donc rejetée par le compilateur. Enfin, le dernier
+type est celui des \emph{raw pointers} (notés \texttt{*int}), pour lesquels le
+langage n'apporte aucune garantie (il faut d'ailleurs encapsuler chaque
+utilisation dans un bloc marqué explicitement \texttt{unsafe}. Ils sont
+équivalents aux pointeurs de C.
+
+% TODO mentionner l'analyse a la algol cf.
+% http://dl.rust-lang.org/doc/tutorial-borrowed-ptr.html#returning-borrowed-pointers
+% + lien D
+
+% TODO faire une section "langages surs"
+% TODO définir quoi mettre en c1 et quoi en c2
+
 \section{Logique de Hoare}
 
 Une technique pour vérifier statiquement des propriétés sur la sémantique d'un
@@ -615,7 +650,5 @@ Ce type d'annotations a été implanté par exemple pour le langage Java dans le
 système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
 
 % TODO [E] ce sont juste des langages d'annotations : qu'en fait-on après ?
-
-% TODO Cyclone
 
 % vim: spelllang=fr
