@@ -524,11 +524,11 @@ $t~q \sqsubseteq t~q'$.
 
 Ces analyses ont été implantée dans l'outil CQual. Ce système peut servir à
 inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
-pour les chaîne de format~\cite{usenix01} % TODO citer Newsham sur le format ?
-et des propriétés dépendantes du flot de contrôle, comme des invariants sur les
-verrous~\cite{pldi02}, à rapprocher du concept de
-\emph{typestates}~\cite{tse12-typestate}. Il a également été appliqué à la
-classe de vulnérabilités sur les pointeurs utilisateurs dont il est ici
+pour les chaînes de format~\cite{usenix01} (pouvant poser des problèmes de
+sécurité~\cite{format-string-attacks}) et des propriétés dépendantes du flot de
+contrôle, comme des invariants sur les verrous~\cite{pldi02}, à rapprocher du
+concept de \emph{typestates}~\cite{tse12-typestate}. Il a également été appliqué
+à la classe de vulnérabilités sur les pointeurs utilisateurs dont il est ici
 l'objet~\cite{cquk-usenix04}.
 
 \section{Analyse de code système}
