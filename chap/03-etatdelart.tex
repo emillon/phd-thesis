@@ -559,7 +559,11 @@ nuls'' (\texttt{int @} ; un test à l'exécution est alors inséré), et des
 ``pointeurs lourds'' (\texttt{int ?} ; qui contiennent des informations sur la
 zone mémoire pointée). L'arithmétique des pointeurs n'est autorisée que sur ces
 derniers, rendant impossibles les débordements de tableaux (ceux-ci étant
-détectés au pire à l'exécution).
+détectés au pire à l'exécution). Le problème des \emph{dangling pointers} est
+résolu en utilisant un système de régions~\cite{cyclone-regions}, inspiré des
+travaux de Jouvelot, Talpin et Tofte~\cite{jfp92,popl94}. Cela permet
+d'interdire statiquement les constructions où l'on déréférence un pointeur
+faisant référence à une région de mémoire qui n'est plus allouée.
 
 Le langage Rust~\link{rust} développé par Mozilla prend un approche similaire en
 distinguant plusieurs types de pointeurs pour gérer la mémoire de manière plus
