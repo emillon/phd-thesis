@@ -1,6 +1,5 @@
 % TODO [E]: Cela part sur les chapeaux de roues, ensuite on a l'impression qu'il
-% n'y a que l'IA comme analyse statique et un peu le typage ; sur le typage il y
-% a qq remarques dans le texte.
+% n'y a que l'IA comme analyse statique et un peu le typage
 
 % TODO [E]!: je ne me souviens plus de ce qu'il y a dans le chapitre 1 / intro
 % et le chapitre 2 : problème de sûreté d'exécution
@@ -80,160 +79,15 @@ L'interprétation abstraite est une technique d'analyse générique qui permet d
 simuler statiquement tous les comportements d'un programme Cousot
 \cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer les bornes
 de variations des variables pour s'assurer qu'aucun débordement de tableau n'est
-possible~\cite{AllamigeonHymansSSTIC07}. Cette technique est très puissante mais
-possède plusieurs inconvénients. D'une part, pour réaliser une analyse
-interprocédurale il faut partir d'un point en particulier du programme (comme la
-fonction \texttt{main}). Cette hypothèse n'est pas facilement satisfaite dans un
-noyau de système d'exploitation, qui possède de nombreux points d'entrée.
+possible~\cite{AllamigeonHymansSSTIC07}.
 
-\begin{figure}%{{{
-\centering
-\subbottom[
-  L'ensemble des états d'erreur est calculable (zone hachurée)…
-]{
-\label{fig:ia-f1}
-% 1
-\begin{tikzpicture}[scale=0.7]%{{{
-\clip  (-1,-1) rectangle (6,5);
-%
-% Hachures
-\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-%
-% Ensemble sûr
-\path [fill=white]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-% Ensemble sûr (redraw)
-\draw            (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-\end{tikzpicture}%}}}
-}
-\hspace{5mm}
-\subbottom[
-  …mais pas celui des états atteints.
-]{
-\label{fig:ia-f2}
-% 2
-\begin{tikzpicture}[scale=0.7]%{{{
-\clip  (-1,-1) rectangle (6,5);
-%
-% Hachures
-\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-%
-% Ensemble sûr
-\path [fill=white]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-% Ensemble sûr (redraw)
-\draw            (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-% Comportement réel (sans erreurs)
-\draw [fill=green!50,scale=0.8] plot[smooth cycle]
-      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-%
-\end{tikzpicture}%}}}
-}
+L'idée est d'associer à chaque ensemble concret des valeurs, une représentation
+abstraite. Sur celle-ci, on peut définir des opérations indépendantes de la
+valeur exacte des données, mais préservant l'abstraction. Par exemple, les
+règles comme $"-" × "-" = "+"$ définissent le domaine abstrait des signes
+(figure~\ref{fig:dom-sig}). En calculant les valeurs extremales d'une variable,
+on obtient le domaine des intervalles.
 
-\subbottom[
-  On construit donc une surapproximation calculable de la sémantique. Si
-  celle-ci n'a pas d'erreur, on est assuré que le programme n'en aura pas non
-  plus.
-]{
-\label{fig:ia-f3}
-% 4
-\begin{tikzpicture}[scale=0.7]%{{{
-\clip  (-1,-1) rectangle (6,5);
-%
-% Hachures
-\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-%
-% Ensemble sûr
-\path [fill=white]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-% Ensemble sûr (redraw)
-\draw            (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-% Approximation (précise)
-\draw [fill=blue!50,scale around={1.3:(3,3)}]
-           (1,1) -- (1,2)
-        -- (2,3) -- (3,3)
-        -- (3,1) -- cycle;
-%
-% Comportement réel (sans erreurs)
-\draw [fill=green!50,scale=0.8] plot[smooth cycle]
-      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-%
-\end{tikzpicture}%}}}
-}
-\hspace{5mm}
-\subbottom[
-  Si on détecte une intersection, il n'est pas possible de savoir si elle est
-  due à une erreur atteignable ou à une approximation trop laxe.
-]{
-\label{fig:ia-f4}
-% 6
-\begin{tikzpicture}[scale=0.7]%{{{
-\clip  (-1,-1) rectangle (6,5);
-%
-% Hachures
-\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-%
-% Ensemble sûr
-\path [fill=white]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-% Ensemble sûr (redraw)
-\draw            (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-%
-% Approximation (imprécise)
-\draw [fill=blue!50,scale around={1.3:(3,3)}]
-            (1,1) -- (1,2)
-         -- (3,4)
-         -- (3,1) -- cycle;
-%
-% Comportement réel (sans erreurs)
-\draw [fill=green!50,scale=0.8] plot[smooth cycle]
-      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-%
-\end{tikzpicture}%}}}
-}
-
-\caption
-  [Surapproximation en interprétation abstraite]
-{ Surapproximation en interprétation abstraite.
-  Il n'est pas possible de déterminer si l'ensemble des états atteignables
-  est inclus dans l'ensemble des états sûrs (figure~\ref{fig:ia-f2}). En
-  revanche, en construisant une surapproximation on peut parfois conclure
-  (figures~\ref{fig:ia-f3} et~\ref{fig:ia-f4}).
-}
-\label{fig:ia}
-
-\end{figure}%}}}
-
-Les domaines les plus simples ne capturent aucune relation entre variables. Ce
-sont des domaines non relationnels. Par exemple le domaine des signes capture
-uniquement le signe des variables (figure~\ref{fig:dom-sig}), et le domaine des
-intervalles retient les bornes de variations extrémales des variables
-(figure~\ref{fig:dom-intvl}).
-
-% TODO [E] ??
 \begin{figure}%{{{
 \centering
 
@@ -261,88 +115,20 @@ intervalles retient les bornes de variations extrémales des variables
 \label{fig:dom-sig}
 \end{figure}%}}}
 
-\begin{figure} % {{{
-\centering
-\begin{tikzpicture}
-\node at (0,0)   (b)  {$\bot$};
+Ces domaines ne capturent aucune relation entre variables. ils sont dits non
+relationnels. Lorsque plusieurs variables sont analysées en même temps, utiliser
+de tels domaines consiste à considérer un produit cartésien d'ensembles
+abstraits (figure~\ref{fig:dom-cartesien}).
 
-\node at (-4,2) (cm2)   {$\{-2\}$};
-\node at (-2,2) (cm1)   {$\{-1\}$};
-\node at  (0,2)  (c0)   {$\{0\}$};
-\node at  (2,2)  (c1)   {$\{1\}$};
-\node at  (4,2)  (c2)   {$\{2\}$};
-
-\node at (-3,3) (rm2m1) {[-2;-1]};
-\node at (-1,3) (rm10)  {[-1;0]};
-\node at  (1,3) (r01)   {[0;1]};
-\node at  (3,3) (r12)   {[1;2]};
-
-\node at (-2,4) (rm20)  {[-2;0]};
-\node at  (0,4) (rm11)  {[-1;1]};
-\node at  (2,4) (r02)   {[0;2]};
-
-\node at (-1,5) (rm21)  {[-2;1]};
-\node at  (1,5) (rm12)  {[-1;2]};
-
-\node at  (0,6) (rm22)  {[-2;2]};
-
-\node at  (0,9) (t)  {$\top$};
-
-\draw (b) -- (cm2) -- (rm2m1) -- (rm20) -- (rm21) -- (rm22);
-\draw (b) -- (cm1) -- (rm10) -- (rm11) -- (rm12);
-\draw (b) -- (c0) -- (r01) -- (r02);
-\draw (b) -- (c1) -- (r12);
-\draw (b) -- (c2);
-
-\draw (c2) -- (r12) -- (r02) -- (rm12) -- (rm22);
-\draw (c1) -- (r01) -- (rm11) -- (rm21);
-\draw (c0) -- (rm10) -- (rm20);
-\draw (cm1) -- (rm2m1);
-
-\draw[loosely dashed] (cm2)   to [bend left=30] (t);
-\draw[loosely dashed] (rm2m1) to [bend left=30] (t);
-\draw[loosely dashed] (rm20)  to [bend left=30] (t);
-\draw[loosely dashed] (rm21)  to [bend left=30] (t);
-
-\draw[loosely dashed] (rm22)  to (t);
-
-\draw[loosely dashed] (rm12)   to [bend right=30] (t);
-\draw[loosely dashed] (r02)   to [bend right=30] (t);
-\draw[loosely dashed] (r12)   to [bend right=30] (t);
-\draw[loosely dashed] (c2)    to [bend right=30] (t);
-
-\draw[loosely dashed] (cm2) -- +(-1,0);
-\draw[loosely dashed] (c2)  -- +(1,0);
-
-\end{tikzpicture}
-
-\caption{Domaine des intervalles}
-\label{fig:dom-intvl}
-\end{figure} % }}}
-
-Lorsque plusieurs variables sont analysées en même temps, utiliser de tels
-domaines consiste à considérer un produit cartésien d'ensembles abstraits
-(figure~\ref{fig:dom-cartesien})
-
-Cela revient à oublier les relations entre les variables. Des domaines abstraits
-plus précis permettent de retenir celles-ci. Pour ce faire, il faut modéliser
-l'ensemble des valeurs des variables comme un tout. Parmi les domaines
-relationnels courants on peut citer :
-
-\begin{itemize}
-
-\item Le domaine des polyèdres, historiquement l'un des premiers
-domaines relationnels. Il permet de retenir tous les invariants affines entre
-fonctions (figure~\ref{fig:dom-poly}).
-
-\item Le domaine des zones permet de représenter des relations affines de
-forme $v_i - v_j \le c$ (figure~\ref{fig:dom-zones}).
-
-\item Le domaine des octogones est un compromis entre les polyèdres et les
-zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
+Des domaines abstraits plus précis permettent de retenir celles-ci. Pour ce
+faire, il faut modéliser l'ensemble des valeurs des variables comme un tout.
+Parmi les domaines relationnels courants on peut citer : le domaine des
+polyèdres, permet de retenir tous les invariants affines entre fonctions
+(figure~\ref{fig:dom-poly}) ; le domaine des zones, permettant de représenter
+des relations affines de la forme $v_i - v_j \le c$ (figure~\ref{fig:dom-zones})
+; ou encore le domaine des octogones qui est un compromis entre les polyèdres et
+les zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 (figure~\ref{fig:dom-octo}).
-
-\end{itemize}
 
 \begin{figure}%{{{
 
@@ -429,32 +215,22 @@ l'itération de point fixe, il est possible d'obtenir les résultats de manière
 plus efficace en choisissant un ordre particulier dans les calculs des
 sous-itérations\cite{policy}.
 
-% TODO pas clair
-
 En termes d'ingéniérie logicielle, implanter un analyseur statique est un défi
 en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le code
 source à analyser dans un langage, et traduire les résultats de l'analyse en un
 ensemble d'"alarmes" à présenter à l'utilisateur.
 
-Pour des retours d'expérience, on peut se référer aux descriptions d'
+Pour des retours d'expérience plus détaillés, on peut se référer aux descriptions d'
 Astrée~\cite{Astree04,Astree05,AstreeScale},
 CGS~\cite{cgs},
-ou Coverity~\cite{coverityBillion},
+ou Coverity~\cite{coverityBillion}.
 
-% TODO pas top
-
-Une interprétation abstraite est par construction sûre et incomplète, donc ce
-qui sépare une bon analyseur d'un mauvais est sa précision. Dans le cas du
-langage C, de nombreuses constructions rendent imprécises les analyses :
-
-% TODO c'est déplacé en c1
-
-L'interprétation abstraite a été utilisée pour analyser le flot de données entre
-objets~\cite{liang2012taint}.
-
-Elle a l'inconvénient de remonter de nombreuses fausses alarmes, puisqu'elle
-nécessite d'avoir une vue précise du programme. Elle est aussi plus adaptée aux
-programmes qui n'ont qu'un point d'entrée.
+Cette technique est très puissante mais possède plusieurs inconvénients. D'une
+part, pour réaliser une analyse interprocédurale il faut partir d'un point en
+particulier du programme (comme la fonction \texttt{main}). Cette hypothèse
+n'est pas facilement satisfaite dans un noyau de système d'exploitation, qui
+possède de nombreux points d'entrée. D'autre part, elle remonte de nombreuses
+fausses alarmes, puisqu'elle nécessite d'avoir une vue précise du programme.
 
 \section{Typage}
 
