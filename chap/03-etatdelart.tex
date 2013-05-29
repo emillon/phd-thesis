@@ -1,16 +1,13 @@
 % TODO [E]: Cela part sur les chapeaux de roues, ensuite on a l'impression qu'il
 % n'y a que l'IA comme analyse statique et un peu le typage
 
-% TODO [E]!: je ne me souviens plus de ce qu'il y a dans le chapitre 1 / intro
-% et le chapitre 2 : problème de sûreté d'exécution
-
 Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
 permettant d'analyser des programmes. Un accent est mis sur la propriété de
-sûreté décrite dans le chapitre~\ref{cha:os}, mais on ne se limite pas à
+sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se limite pas à
 celle-ci.
 
 L'analyse statique de programmes est un sujet de recherche actif depuis
-l'apparition de la science informatique.
+l'apparition de la science informatique. On commence par en présenter
 
 \section{Taxonomie}
 
@@ -36,12 +33,12 @@ statiques.
 
 \paragraph{Cohérence et complétude}
 
-Le but d'une analyse statique est de catégoriser les programmes selon leurs
-caractéristiques à l'exécution. Malheureusement, ceci n'est pas possible :
-l'ensemble des valeurs possibles lors de l'exécution d'un programme n'est pas un
-ensemble calculable (théorème de Rice~\cite{rice}). Autrement dit, il ne peut
-exister une procédure de décision prenant un programme et le déclarant correct
-ou incorrect.
+Le but d'une analyse statique est de catégoriser les programmes selon s'ils
+satisfont ou non un ensemble de propriétés fixées à l'avance. Malheureusement,
+ceci n'est pas possible : l'ensemble des valeurs possibles lors de l'exécution
+d'un programme n'est pas un ensemble calculable (théorème de Rice~\cite{rice}).
+Autrement dit, il ne peut exister une procédure de décision prenant un programme
+et le déclarant correct ou incorrect.
 
 Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
 trompant jamais. Toute technique statique va donc de se retrouver dans au moins
@@ -49,7 +46,8 @@ un des cas suivants :
 
 \begin{itemize}
 \item
-  un programme valide est rejeté : on parle de \emph{faux positif}.
+  un programme valide (pour une propriété donnée) est rejeté : on parle de
+  \emph{faux positif}.
 \item
   un programme invalide n'est pas détecté : on parle de
   \emph{faux négatif}.
@@ -84,9 +82,11 @@ possible~\cite{AllamigeonHymansSSTIC07}.
 L'idée est d'associer à chaque ensemble concret des valeurs, une représentation
 abstraite. Sur celle-ci, on peut définir des opérations indépendantes de la
 valeur exacte des données, mais préservant l'abstraction. Par exemple, les
-règles comme $"-" × "-" = "+"$ définissent le domaine abstrait des signes
-(figure~\ref{fig:dom-sig}). En calculant les valeurs extremales d'une variable,
-on obtient le domaine des intervalles.
+règles comme $"-" × "-" = "+"$ définissent le domaine abstrait des signes. Les
+domaines ont une structure de treillis, c'est-à-dire qu'ils possèdent les
+notions d'ordre partiel et d'union de valeurs (figure~\ref{fig:dom-sig}). En
+calculant les valeurs extremales d'une variable, on obtient le domaine des
+intervalles.
 
 \begin{figure}%{{{
 \centering
@@ -419,11 +419,9 @@ l'ensemble d'annotations vide : \hoare{T}{i}{T} est toujours vrai.
 
 Augmenter graduellement les pré- et post-conditions est néanmoins assez
 difficile, puisqu'il peut être nécessaire de modifier l'ensemble des conditions
-à la fois.
-
-Cette difficulté est mentionnée dans \cite{cssv}, où un système de programmation
-par contrats est utilisé pour vérifier la correction de routines de manipulation
-de chaînes en C.
+à la fois. Cette difficulté est mentionnée dans \cite{cssv}, où un système de
+programmation par contrats est utilisé pour vérifier la correction de routines
+de manipulation de chaînes en C.
 
 Ce type d'annotations a été implanté par exemple pour le langage Java dans le
 système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
