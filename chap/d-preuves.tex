@@ -10,22 +10,31 @@ propriétés caractéristiques.
 
 \paragraph{GetPut}%{{{
 
-\begin{align*}
-& \lensPut{ℒ}{
+{
+
+\def\xa{
+  \lensPut{ℒ}{
     \lensGet{ℒ}{r}
     }{
       r
-    } \\
-= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
-& \lensPut{ℒ}
+    }
+  }
+
+
+\def\xb{
+  \lensPut{ℒ}
     {
       \lensGet{ℒ_2}{
         \lensGet{ℒ_1}{r}
       }
     }
-    { r } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensPut
+    { r }
+}
+
+\def\xab{ définition de \lensGetX{ℒ} }
+
+\def\xc{
+  \lensPut
     {ℒ_1}
     {
       \lensPut
@@ -41,29 +50,48 @@ propriétés caractéristiques.
             {r}
         }
     }
-    {r} \\
-= & \{ \textrm{\textsc{GetPut} sur $ℒ_2$} \} \\
-& \lensPut
+    {r}
+}
+
+\def\xbc{ définition de \lensPutX{ℒ} }
+
+\def\xd{
+  \lensPut
     {ℒ_1}
     {
       \lensGet{ℒ_1}{r}
     }
-    {r} \\
-= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
-& r \\
-\end{align*}%}}}
+    {r}
+}
+
+\def\xcd{ \textsc{GetPut} sur $ℒ_2$ }
+
+\def\xe{r}
+
+\def\xde{\textsc{GetPut} sur $ℒ_1$}
+
+\begin{conteq}
+    \xa{} \\
+  = \xb{} & \xab{} \\
+  = \xc{} & \xbc{} \\
+  = \xd{} & \xcd{} \\
+  = \xe{} & \xde{}
+\end{conteq}
+
+}
+
+%}}}
 
 \paragraph{PutGet}%{{{
 
-\begin{align*}
-& \lensGet{ℒ}
+\begin{conteq}
+  \lensGet{ℒ}
     {
       \lensPut{ℒ}
         {a}
         {r}
     } \\
-= & \{ \textrm{définition de } \lensGetX{ℒ} \} \\
-& \lensGet{ℒ_2}
+= \lensGet{ℒ_2}
     {
       \lensGet{ℒ_1}
         {
@@ -71,9 +99,9 @@ propriétés caractéristiques.
             {a}
             {r}
         }
-    } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensGet{ℒ_2}
+    }
+& définition de \lensGetX{ℒ} \\
+= \lensGet{ℒ_2}
     {
       \lensGet{ℒ_1}
         {
@@ -85,26 +113,27 @@ propriétés caractéristiques.
             }
             { r }
         }
-    } \\
-= & \{ \textrm{\textsc{PutGet} sur $ℒ_1$} \} \\
-& \lensGet{ℒ_2}
+    }
+& définition de \lensPutX{ℒ} \\
+= \lensGet{ℒ_2}
     {
       \lensPut{ℒ_2}
         {a}
         { \lensGet{ℒ_1}{r} }
-    } \\
-= & \{ \textrm{\textsc{PutGet} sur $ℒ_2$} \} \\
-& a \\
-\end{align*}%}}}
+    }
+& \textsc{PutGet} sur $ℒ_1$ \\
+= a
+& \textsc{PutGet} sur $ℒ_2$ \\
+\end{conteq}
+%}}}
 
 \paragraph{PutPut}%{{{
 
-\begin{align*}
-& \lensPut{ℒ}{a'}{
+\begin{conteq}[onecolumn]
+  \lensPut{ℒ}{a'}{
     \lensPut{ℒ}{a}{r}
   } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensPut{ℒ}{a'}{
+= \lensPut{ℒ}{a'}{
     \lensPut{ℒ_1}
       {
         \lensPut{ℒ_2}
@@ -112,9 +141,9 @@ propriétés caractéristiques.
           { \lensGet{ℒ_1}{r} }
       }
       { r }
-  } \\
-= & \{ \textrm{définition de } \lensPutX{ℒ} \} \\
-& \lensPut{ℒ_1}
+  }
+& définition de \lensPutX{ℒ} \\
+= \lensPut{ℒ_1}
     {
       \lensPut{ℒ_2}
         {a'}
@@ -137,9 +166,9 @@ propriétés caractéristiques.
               { \lensGet{ℒ_1}{r} }
           }
           { r }
-    } \\
-= & \{ \textrm{\textsc{GetPut} sur $ℒ_1$} \} \\
-& \lensPut{ℒ_1}
+    }
+& définition de \lensPutX{ℒ} \\
+= \lensPut{ℒ_1}
     {
       \lensPut{ℒ_2}
         {a'}
@@ -157,9 +186,9 @@ propriétés caractéristiques.
               { \lensGet{ℒ_1}{r} }
           }
           { r }
-    } \\
-= & \{ \textrm{\textsc{PutPut} sur $ℒ_2$} \} \\
-& \lensPut{ℒ_1}
+    }
+& \textsc{GetPut} sur $ℒ_1$ \\
+= \lensPut{ℒ_1}
     {
       \lensPut{ℒ_2}
         {a'}
@@ -173,19 +202,21 @@ propriétés caractéristiques.
               { \lensGet{ℒ_1}{r} }
           }
           { r }
-    } \\
-= & \{ \textrm{\textsc{PutPut} sur $ℒ_1$} \} \\
-& \lensPut{ℒ_1}
+    }
+& \textsc{PutPut} sur $ℒ_2$ \\
+= \lensPut{ℒ_1}
     {
       \lensPut{ℒ_2}
         {a'}
         { \lensGet{ℒ_1}{r} }
     }
     { r
-    } \\
-= & \{ \textrm{définition de } \ggg \} \\
-& \lensPut{ℒ}{a'}{r} \\
-\end{align*}%}}}
+    }
+& \textsc{PutPut} sur $ℒ_1$ \\
+= \lensPut{ℒ}{a'}{r}
+& définition de $\ggg$ \\
+\end{conteq}
+%}}}
 
 \end{proof}
 
