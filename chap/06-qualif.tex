@@ -285,23 +285,26 @@ $\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en modifiant
 d'autres. Naturellement, la plupart des différences porteront sur le traitement
 des pointeurs.
 
-\subsection*{Qualificateurs de types}
+\subsection*{Pointeurs utilisateurs}
 
-Le changement clef est l'ajout de \emph{qualificateurs de types}. À chaque
-pointeur, on ajoute une information qui représente \emph{qui} contrôle sa valeur
+Le changement clef est l'ajout de \emph{pointeurs utilisateurs}. En plus des
+types pointeurs $\ptrK{t}$, on ajoute des types pointeurs $\ptrU{t}$. La
+différence entre les deux représente \emph{qui} contrôle leur valeur
 (section~\ref{sec:secu-syscalls}).
 
-Les deux qualificateurs sont :
+Les différences sont les suivantes :
 
 \begin{itemize}
-\item
-  \qKernel : il s'applique aux pointeurs contrôlés par le noyau. Par exemple,
-  prendre l'adresse d'un objet de la pile noyau donne un pointeur noyau.
-\item
-  \qUser : il s'applique aux pointeurs qui proviennent de l'espace utilisateur.
-  Ces pointeurs proviennent toujours d'interfaces particulières, comme les
-  appels système ou les paramètres de la fonction \texttt{ioctl}.
-% TODO [E] tu comptes malloc ? &x ?
+
+\item Les types ``$\ptrK{t}$'' s'appliquent aux pointeurs contrôlés par le
+noyau. Par exemple, prendre l'adresse d'un objet de la pile noyau donne un
+pointeur noyau.
+
+\item Les types ``$\ptrU{t}$'', quant à eux, s'appliquent aux pointeurs qui
+proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
+d'interfaces particulières, comme les appels système ou les paramètres de la
+fonction \texttt{ioctl}.
+
 \end{itemize}
 
 Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
@@ -309,15 +312,9 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 \begin{figure}%{{{
 
 \begin{align*}
-\gramdef{Qualificateurs}{q}
-  { \qKernel }{Donnée noyau (sûre)}
-  { \qUser   }{Donnée utilisateur (non sûre)}
-  {END}
-\\
 \gramdef{Types}{t}
   { … }{}
-  { \msout{t~*} }{\textrm{Pointeur}}
-  { t~q~* }{Pointeur qualifié}
+  { \ptrU{t} }{Pointeur utilisateur}
   {END}
 \end{align*}
 
@@ -354,12 +351,12 @@ pointeurs qualifiés, puisqu'elle est possible quelque soit le qualificateur (et
 le préserve) :
 
 \begin{mathpar}
-  \irule{Ptr-Arith-Qual}
+  \irule{Ptr-Arith-User}
      { \opbin ∈ \{ +_p, -_p \} \\
-       Γ ⊢ e_1 : t~q~* \\
+       Γ ⊢ e_1 : \ptrU{t} \\
        Γ ⊢ e_2 : \tInt \\
      }
-     { Γ ⊢ e_1~\opbin~e_2 : t~q~* }
+     { Γ ⊢ e_1~\opbin~e_2 : \ptrU{t} }
 \end{mathpar}
 
 \subsection*{Utilisations de pointeurs}

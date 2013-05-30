@@ -84,21 +84,27 @@ casts, on peut néanmoins trouver le solution suivante.
 
 \begin{mathpar}
 \irule{PtrInt-Bad}
-  { Γ ⊢ e : t~q~*}
+  { Γ ⊢ e : \ptrK{t}}
   { Γ ⊢ (\tInt)~e : \tInt }
 
 \irule{IntPtr-Bad}
   { Γ ⊢ e : \tInt }
-  { Γ ⊢ (\textsc{Ptr})~e : t~q~*}
+  { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
 \end{mathpar}
+
+% TODO revoir, avec la nouvelle notation
 
 Cela pose problème car il est alors possible de créer une fonction qui convertit
 n'importe quel type pointeur en n'importe quel autre type pointeur :
 
 \[
   ⊢ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} }
-  : (t_a~q_a~*) → t_b~q_b~*
+  : (\ptrK{t_a}) → \ptrK{t_b}
 \]
+
+% TODO préciser que pb = si ta = tc@ et tb = tc* => problème
+
+% TODO idem, notation?
 
 % TODO et à l'exec?
 % TODO on peut faire un dynamic check ou un type UInt ou un qualif sur tous les
@@ -127,14 +133,16 @@ On étend alors la sémantique par la règle suivante.
 
 Quant au transtypage dans le sens inverse, il est plus compliqué à traiter.
 À l'exécution il est en effet nécessaire d'avoir à disposition une fonction
-$\interpPtr{t~q~*} : \tInt → t~q~*$ qui permette d'interpréter un entier comme
+$\interpPtr{\ptrK{t}} : \tInt → \ptrK{t}$ qui permette d'interpréter un entier comme
 pointeur qualifié $q$ vers un objet de type $t$ de manière qu'on ajoute la règle
 suivante.
+
+% TODO et itou pour ptrU
 
 \[
   \irule{CastPtr}
     { }
-    { \mms{(\textsc{Ptr})~\widehat{n}}{\interpPtr{t~q~*}(\widehat{n})} }
+    { \mms{(\textsc{Ptr})~\widehat{n}}{\interpPtr{\ptrK{t}}(\widehat{n})} }
 \]
 
 % TODO les widehat...
