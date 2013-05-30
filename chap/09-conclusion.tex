@@ -9,7 +9,24 @@ l'expressivité de ce système.
 
 \section{Contributions}
 
-% TODO
+\paragraph{Un langage impératif bien typable}
+
+Le système de types de C est trop rudimentaire pour permettre de d'obtenir des
+garanties sur l'exécution des programmes bien typés. En interdisant certaines
+constructions dangereuses et en en annotant certaines, nous avons isolé un
+langage impératif bien typable, pour lequel on peut définir un système de types
+sûr.
+
+\paragraph{Un système de types abstraits}
+
+En partant de ce système de types, on a décrit une extension permettant de créer
+des pointeurs pour lesquels l'opération de déréférencement est restreinte à
+certaines fonctions. Dans le contexte d'un noyau de système d'exploitation,
+cette restriction permet de vérifier statiquement qu'à aucun moment le noyau ne
+déréférence un pointeur dont la valeur est contrôlée par l'espace utilisateur,
+évitant ainsi un problème de sécurité.
+
+% TODO ça peut etre étendu à d'autres choses
 
 \section{Limitations et travaux futurs}
 
