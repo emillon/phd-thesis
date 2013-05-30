@@ -338,7 +338,7 @@ $\qKernel$ :
 \begin{mathpar}
   \irule{AddrOf-Kernel}
     { Γ ⊢ lv : t }
-    { Γ ⊢ \& lv : t~\qKernel~* }
+    { Γ ⊢ \& lv : \ptrK{t} }
 \end{mathpar}
 
 \subsection*{Manipulations de pointeurs}
@@ -370,14 +370,14 @@ suivante remplace donc \textsc{Lv-Deref} :
 
 \begin{mathpar}
 \irule{Lv-Deref-Kernel}{
-  Γ ⊢ e : t~\qKernel~*
+  Γ ⊢ e : \ptrK{t}
 }{
   Γ ⊢ *e : t
 }
 \end{mathpar}
 
-Ainsi, on interdit implicitement le déréférencement des expressions de type
-$t~\qUser~*$ à la compilation.
+Ainsi, on interdit le déréférencement des expressions de type $\ptrU{t}$ à la
+compilation.
 
 % TODO mettre ça dans rules.tex
 
@@ -387,8 +387,8 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢ e : t~q~* }
-  { Γ ⊢ \eTaint{x} : t~\qUser~* }
+  { Γ ⊢ e : \ptrK{t} }
+  { Γ ⊢ \eTaint{e} : \ptrU{t} } % TODO e ou lv?
 \end{mathpar}
 
 Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante :
@@ -415,8 +415,8 @@ left-value encapsulée.
 
 \begin{mathpar}
   \irule{S-Tainted}
-    { m ⊧           φ'  : t~\qKernel~* }
-    { m ⊧ \vTainted{φ'} : t~\qUser~* }
+    { m ⊧           φ'  : \ptrK{t} }
+    { m ⊧ \vTainted{φ'} : \ptrU{t} }
 \end{mathpar}
 
 \subsection*{Progrès et préservation}

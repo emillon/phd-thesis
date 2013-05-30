@@ -506,8 +506,8 @@ sont :
 \item Un type est concret, l'autre une inconnue. Dans ce cas on modifie le
   second comme étant un \texttt{Instanciated} du premier. Il faut vérifier que
   le type inconnu remplacé n'apparaît pas dans le type concret, sinon on créé un
-  cycle. Ce cas a lieu par exemple quand on cherche à unifier $a$ avec
-  $a~\qKernel~*$. Il faut alors signaler une erreur, ce que fait la fonction
+  cycle. Ce cas a lieu par exemple quand on cherche à unifier $t$ avec
+  $\ptrK{t}$. Il faut alors signaler une erreur, ce que fait la fonction
   \texttt{occurs\_check\_failed}.
 
 \item Les deux types sont des types concrets. Alors ils sont de la forme
@@ -612,8 +612,8 @@ void f(int *p) {
 \end{verbatim}
 
 Le commentaire \texttt{/*!npk userptr p */} est interpréter par l'analyseur et
-le fait unifier le type de \texttt{p} avec $t~\qUser~*$, c'est-à-dire qu'il
-force son qualificateur à être \qUser.
+le fait unifier le type de \texttt{p} avec $\ptrU{t}$, c'est-à-dire qu'il force
+son qualificateur à être \qUser.
 
 \begin{verbatim}
 04-addrof.c:4#4 - Cannot unify qualifiers:

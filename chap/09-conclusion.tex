@@ -195,10 +195,10 @@ mémoire contenant cette valeur. Le typage est alors direct :
 \begin{mathpar}
   \irule{Malloc}
     { Γ ⊢ e : t }
-    { Γ ⊢ \textsc{Alloc}(e) : t~\qKernel~* }
+    { Γ ⊢ \textsc{Alloc}(e) : \ptrK{t} }
 
   \irule{Free}
-    { Γ ⊢ e : t~\qKernel~* }
+    { Γ ⊢ e : \ptrK{t} }
     { Γ ⊢ \textsc{Free}(e) }
 \end{mathpar}
 

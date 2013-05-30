@@ -13,8 +13,8 @@ pointeurs utilisateurs peut être traité dans ce cadre en posant $\qKernel
 \preceq \qUser$ pour restreindre certaines opérations aux pointeurs $\qKernel$.
 
 Notre approche, au contraire, n'utilise pas de sous-typage, mais consiste à
-définir un type abstrait $t~\qKernel~*$ partageant certaines propriétés avec
-$t~\qUser~*$ (comme la taille et la représentation) mais incompatible avec
+définir un type abstrait $\ptrU{t}$ partageant certaines propriétés avec
+$\ptrK{t}$ (comme la taille et la représentation) mais incompatible avec
 certaines opérations. C'est à rapprocher du système de masquage par interface
 des langages ML, ou encore de la définition de types abstraits par le mot-clef
 \texttt{newtype} en Haskell.
