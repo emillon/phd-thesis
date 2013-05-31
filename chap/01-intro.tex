@@ -285,18 +285,18 @@ Par exemple, on peut dire que l Ainsi l'opérateur ``$+$'' a pour type $(\tInt,
 \paragraph{Typage fort ou faible}
 
 Contrairement à la distinction claire entre typage statique ou dynamique, la
-séparation entre typage fort et faible est moins nette. À l'extrémité du
-spectre, les systèmes de types forts permettent d'éliminer totalement la
-nécessité de réaliser des tests de typage. Mais souvent ce n'est pas le cas, car
-il peut y avoir des constructions au sein du langage qui permettent de
-contourner le système de types, comme un opérateur de
-transtypage.
+séparation entre typage fort et faible est moins nette. En poussant à l'extrême,
+les systèmes de types forts permettent d'éliminer totalement la nécessité de
+réaliser des tests de typage. Mais souvent ce n'est pas le cas, car il peut y
+avoir des constructions au sein du langage qui permettent de contourner le
+système de types, comme un opérateur de transtypage.
 
 \paragraph{Polymorphisme}
 
-Parfois, il est trop restrictif de donner un unique type à une fonction. Quel
-doit être le type d'une fonction ajoutant un élément à une liste, ou celui d'une
-fonction triant un tableau en place ?
+Parfois, il est trop restrictif de donner un unique type à une fonction. Si on
+considère une fonction ajoutant un élément à une liste, ou une autre
+triant un tableau en place, leur type doit-il faire intervenir le type des
+éléments manipulés ?
 
 En première approximation, on peut imaginer fournir une version du code par type
 de données à manipuler. C'est la solution retenue par les premières versions du
@@ -308,15 +308,16 @@ même nom, mais avec des types d'arguments différents. Par exemple, on peut
 définir séparément l'addition entre deux entiers, entre deux flottants, ou entre
 un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
-On parle de polymorphisme \emph{ad hoc}.
+On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
 
-La dernière possibilité est le polymorphisme universel, qui consiste à utiliser
-le même code quelque soit le type des arguments. Dans ce cas, on utilise une
-seule fonction pour retourner une liste d'entiers ou une liste de flottants, par
-exemple. Au lieu d'associer à chaque fonction un type, dans certains cas on lui
-associe un schéma de types, instanciable en un type concret. En quelque sorte,
-on déplace la vérification du site d'appel au site de définition. Cette
-technique a été décrite en premier dans~\cite{Milner78}.
+La dernière possibilité est le polymorphisme paramétrique, qui consiste à
+utiliser le même code quelque soit le type des arguments. Dans ce cas, on
+utilise une seule fonction pour traiter une liste d'entiers ou une liste de
+flottants, par exemple. Au lieu d'associer à chaque fonction un type, dans
+certains cas on lui associe un type paramétré, instanciable en un type concret.
+Dans le cas des fonctions de traitement de liste, l'idée est que lorsqu'on ne
+touche pas aux éléments, alors le traitement est valable quelque soit leur type.
+Cette technique a été décrite en premier dans~\cite{Milner78}.
 
 Pour un tour d'horizon de différents systèmes types de statiques, avec en
 particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
