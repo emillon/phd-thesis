@@ -1,15 +1,34 @@
-On fait ici un bilan des travaux présentés. On commence par décrire les
-limitations de \langname, au niveau de sa sémantique, de son système de types ou
-des étapes de traduction automatique depuis C.
+On fait ici un bilan des travaux présentés, en commençant par un bilan des
+contributions réalisées. On fait ensuite un tour des aspects posant problème, ou
+traités de manière incomplète, en évoquant les travaux possibles pour enrichir
+l'expressivité de ce système.
 
-% TODO [E] pour la conclusion il y a deux plans possibles :
-% 1/ limitation et travaux futurs
-% 2/ parler de chaque point que l'on rencontre actuellement : transtypage...
+%On commence par décrire les
+%limitations de \langname, au niveau de sa sémantique, de son système de types ou
+%des étapes de traduction automatique depuis C.
 
-% TODO[E] il faut dans la conclusion indiquer ce que tu voulais traiter et ce
-% que tu as traité dans ta thèse
+\section{Contributions}
 
-\section{Limitations}
+\paragraph{Un langage impératif bien typable}
+
+Le système de types de C est trop rudimentaire pour permettre de d'obtenir des
+garanties sur l'exécution des programmes bien typés. En interdisant certaines
+constructions dangereuses et en en annotant certaines, nous avons isolé un
+langage impératif bien typable, pour lequel on peut définir un système de types
+sûr.
+
+\paragraph{Un système de types abstraits}
+
+En partant de ce système de types, on a décrit une extension permettant de créer
+des pointeurs pour lesquels l'opération de déréférencement est restreinte à
+certaines fonctions. Dans le contexte d'un noyau de système d'exploitation,
+cette restriction permet de vérifier statiquement qu'à aucun moment le noyau ne
+déréférence un pointeur dont la valeur est contrôlée par l'espace utilisateur,
+évitant ainsi un problème de sécurité.
+
+% TODO ça peut etre étendu à d'autres choses
+
+\section{Limitations et travaux futurs}
 
 \paragraph{Arithmétique}
 
@@ -56,6 +75,89 @@ cas, il faudrait encapsuler la manipulation dans une fonction et y ajouter une
 information de type explicite, comme $\texttt{float\_exponent} : (\tFloat) →
 \tInt$.
 
+En fait, les casts entre types entiers ne posent pas de problèmes. Ceux entre
+types pointeurs ne posent pas de problème non plus puisqu'au moment de la
+traduction en \langname on efface les étiquettes de types sur les pointeurs.
+
+Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
+casts, on peut néanmoins trouver le solution suivante.
+
+\begin{mathpar}
+\irule{PtrInt-Bad}
+  { Γ ⊢ e : \ptrK{t}}
+  { Γ ⊢ (\tInt)~e : \tInt }
+
+\irule{IntPtr-Bad}
+  { Γ ⊢ e : \tInt }
+  { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
+\end{mathpar}
+
+% TODO revoir, avec la nouvelle notation
+
+Cela pose problème car il est alors possible de créer une fonction qui convertit
+n'importe quel type pointeur en n'importe quel autre type pointeur :
+
+\[
+  ⊢ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} }
+  : (\ptrK{t_a}) → \ptrK{t_b}
+\]
+
+% TODO préciser que pb = si ta = tc@ et tb = tc* => problème
+
+% TODO idem, notation?
+
+% TODO et à l'exec?
+% TODO on peut faire un dynamic check ou un type UInt ou un qualif sur tous les
+% types
+
+% TODO le modèle mémoire de Newspeak est bcp plus bas niveau que celui de
+% Safespeak, ex types de deref, tailles dans Lv etc
+
+L'opération problématique est en fait l'opérateur $(\tInt)$ de conversion d'un
+pointeur vers un entier, car l'entier résultant ne pose pas de problème de
+sûreté ni de sécurité. Pour lui donner une sémantique, on peut supposer que
+l'environnement d'exécution est paramétré par une fonction de placement en
+mémoire $\addrInt : Φ → \tInt$ qui à un chemin associe un entier.
+On étend alors la sémantique par la règle suivante.
+
+% TODO [E] ??
+
+\[
+  \irule{CastInt}
+    { }
+    { \mms{(\tInt)~\widehat{\&}φ}{\addrInt(φ)} }
+\]
+
+% TODO nommer les ensembles
+% TODO mettre la syntaxe en annexe
+
+Quant au transtypage dans le sens inverse, il est plus compliqué à traiter.
+À l'exécution il est en effet nécessaire d'avoir à disposition une fonction
+$\interpPtr{\ptrK{t}} : \tInt → \ptrK{t}$ qui permette d'interpréter un entier comme
+pointeur qualifié $q$ vers un objet de type $t$ de manière qu'on ajoute la règle
+suivante.
+
+% TODO et itou pour ptrU
+
+\[
+  \irule{CastPtr}
+    { }
+    { \mms{(\textsc{Ptr})~\widehat{n}}{\interpPtr{\ptrK{t}}(\widehat{n})} }
+\]
+
+% TODO les widehat...
+% TODO [E] ??
+
+L'exécution de l'analogue de $\addrInt$ demanderait de créer un pointeur
+depuis un entier.
+
+% TODO il n'y a pas de t q en mémoire, doncil faut juste un interp : Int -> Φ
+% TODO problème car ça peut correspondre à plusieurs pointeurs
+% TODO problème de layout mémoire : ça marche qd tout est boxé mais pas si c'est
+% unboxé
+
+La solution la plus sûre est donc d'interdire totalement ces conversions.
+
 \paragraph{Environnement d'exécution}
 
 La sémantique opérationnelle utilise un environnement d'exécution pour certains
@@ -101,10 +203,10 @@ mémoire contenant cette valeur. Le typage est alors direct :
 \begin{mathpar}
   \irule{Malloc}
     { Γ ⊢ e : t }
-    { Γ ⊢ \textsc{Alloc}(e) : t~\qKernel~* }
+    { Γ ⊢ \textsc{Alloc}(e) : \ptrK{t} }
 
   \irule{Free}
-    { Γ ⊢ e : t~\qKernel~* }
+    { Γ ⊢ e : \ptrK{t} }
     { Γ ⊢ \textsc{Free}(e) }
 \end{mathpar}
 
@@ -202,86 +304,6 @@ On peut alors si nécessaire ajouter une annotation de type sur une fonction don
 l'implantation est faite en assembleur, mais au sein de cette implantation on ne
 peut bien sûr rien dire.
 
-\section{Travaux futurs}
-
-\paragraph{Transtypage}
-
-Comme expliqué plus haut, les casts entre types entiers ne posent pas de
-problèmes. Ceux entre types pointeurs ne posent pas de problème non plus
-puisqu'au moment de la traduction en \langname on efface les étiquettes de types
-sur les pointeurs.
-
-Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
-casts, la seule manière sensible de les typer est la suivante.
-
-\begin{mathpar}
-\irule{PtrInt-Bad}
-  { Γ ⊢ e : t~q~*}
-  { Γ ⊢ (\tInt)~e : \tInt }
-
-\irule{IntPtr-Bad}
-  { Γ ⊢ e : \tInt }
-  { Γ ⊢ (\textsc{Ptr})~e : t~q~*}
-\end{mathpar}
-
-Cela pose problème car il est alors possible de créer une fonction qui convertit
-n'importe quel type pointeur en n'importe quel autre type pointeur :
-
-\[
-  ⊢ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} }
-  : (t_a~q_a~*) → t_b~q_b~*
-\]
-
-% TODO et à l'exec?
-% TODO on peut faire un dynamic check ou un type UInt ou un qualif sur tous les
-% types
-
-% TODO le modèle mémoire de Newspeak est bcp plus bas niveau que celui de
-% Safespeak, ex types de deref, tailles dans Lv etc
-
-L'opération problématique est en fait l'opérateur $(\tInt)$ de conversion d'un
-pointeur vers un entier, car l'entier résultant ne pose pas de problème de
-sûreté ni de sécurité. Pour lui donner une sémantique, on peut supposer que
-l'environnement d'exécution est paramétré par une fonction de placement en
-mémoire $\addrInt : Φ → \tInt$ qui à un chemin associe un entier.
-On étend alors la sémantique par la règle suivante.
-
-% TODO [E] ??
-
-\[
-  \irule{CastInt}
-    { }
-    { \mms{(\tInt)~\widehat{\&}φ}{\addrInt(φ)} }
-\]
-
-% TODO nommer les ensembles
-% TODO mettre la syntaxe en annexe
-
-Quant au transtypage dans le sens inverse, il est plus compliqué à traiter.
-À l'exécution il est en effet nécessaire d'avoir à disposition une fonction
-$\interpPtr{t~q~*} : \tInt → t~q~*$ qui permette d'interpréter un entier comme
-pointeur qualifié $q$ vers un objet de type $t$ de manière qu'on ajoute la règle
-suivante.
-
-\[
-  \irule{CastPtr}
-    { }
-    { \mms{(\textsc{Ptr})~\widehat{n}}{\interpPtr{t~q~*}(\widehat{n})} }
-\]
-
-% TODO les widehat...
-% TODO [E] ??
-
-L'exécution de l'analogue de $\addrInt$ demanderait de créer un pointeur
-depuis un entier.
-
-% TODO il n'y a pas de t q en mémoire, doncil faut juste un interp : Int -> Φ
-% TODO problème car ça peut correspondre à plusieurs pointeurs
-% TODO problème de layout mémoire : ça marche qd tout est boxé mais pas si c'est
-% unboxé
-
-La solution la plus sûre est donc d'interdire totalement ces conversions.
-
 \paragraph{Analyse du noyau Linux}
 
 Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
@@ -318,9 +340,3 @@ On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si un
 encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de codec
 tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
 une fonction prenant en paramètre un numéro de \emph{frame}.
-
-\section{Conclusion}
-
-% TODO
-
-\wip

@@ -532,19 +532,19 @@ simple où seul l'arité est conservée.
 
     \irule{S-Unit}{ }{m ⊧ \eUnit : \tUnit}
 
-    \irule{S-Null}{ }{m ⊧ \eNull : t~*}
+    \irule{S-Null}{ }{m ⊧ \eNull : τ~*}
 
-    \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~\qKernel~*}
+    \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~*}
 
     \irule{S-Array}
-      { ∀i ∈ [1;n]. m ⊧ v_i : t }
-      { m ⊧ \widehat{ \eArray{ v_1;…;v_n } } : t[~] }
+      { ∀i ∈ [1;n]. m ⊧ v_i : τ }
+      { m ⊧ \widehat{ \eArray{ v_1;…;v_n } } : τ[~] }
 
     \irule{S-Struct}
-      { ∀i ∈ [1;n]. m ⊧ v_i : t_i
+      { ∀i ∈ [1;n]. m ⊧ v_i : τ_i
       }
       { m ⊧ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } }
-          :           \tStruct{ l_1:t_1;…;l_n:t_n }
+          :           \tStruct{ l_1:τ_1;…;l_n:τ_n }
       }
 
     \irule{S-Fun}{ } {m ⊧ \eFun{x_1, …, x_n}{i} : \stFun{n}}
@@ -648,7 +648,8 @@ expression.
   \begin{itemize}
     \item si $Γ ⊢ n : t$, alors $t = \tInt$
     \item si $Γ ⊢ d : t$, alors $t = \tFloat$
-    \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$
+    \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$ % TODO typographie le
+textsc passe pas
     \item si $Γ ⊢ \eUnit : t$, alors $t = \tUnit$
   \end{itemize}
 

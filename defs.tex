@@ -107,10 +107,11 @@
 % Qualifs
 \def\qKernel{\textsc{Kernel}\xspace}
 \def\qUser{\textsc{User}\xspace}
-\def\vTainted#1{\textsc{Tainted}(#1)}
-\def\eTaint#1{\textsc{Taint}(#1)}
+\def\vTainted#1{\widehat{\diamondsuit}~#1}
+\def\eTaint#1{\diamondsuit~#1}
 
-\def\qualProj#1{\mathrm{proj}(#1)}
+\def\ptrK#1{#1~*}
+\def\ptrU#1{#1~@}
 
 % Eval de phrase
 \def\ph#1#2#3{#1 ⊩ #2 → #3}
@@ -124,13 +125,6 @@
 \def\tyi#1#2{#1 ⊢ #2}
 \def\typh#1#2#3{#1 ⊢ #2 → #3}
 \def\typhstar#1#2#3{#1 ⊢ #2 →^* #3}
-
-% Continuations
-\def\kPass{\textsc{Kpass}\xspace}
-\def\kSeq#1#2{\textsc{Kseq}(#1, #2)}
-\def\kBlock#1#2{\textsc{Kblock}(#1, #2)}
-\def\kCall#1#2#3#4{\textsc{Kcall}(#1, #2, #3, #4)}
-\def\kRet#1{\textsc{Kret}(#1)}
 
 \def\sVal{\textsc{Val}}
 \def\sByte{\textsc{Byte}}
@@ -262,9 +256,6 @@
 \newcommand\subtitle[1]{%
   \newcommand\thesubtitle{#1}}
 % }}}
-
-% Strike-through in math mode
-\def\msout#1{\text{\sout{\ensuremath{#1}}}}
 
 % Language name
 \def\langname{\textsc{Safespeak}\xspace}
