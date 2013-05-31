@@ -329,8 +329,8 @@ créent, manipulent et utilisent des pointeurs.
 
 La source principale de pointeurs est l'opérateur $\&$ qui prend l'adresse d'une
 variable. Celle-ci est bien entendue contrôlée par le noyau (dans le sens où son
-déréférencement est toujours sûr). Le qualificateur associé est donc
-$\qKernel$ :
+déréférencement est toujours sûr). Cette construction crée donc des pointeurs
+noyau :
 
 \begin{mathpar}
   \irule{AddrOf-Kernel}
@@ -362,7 +362,7 @@ le préserve) :
 \subsection*{Utilisations de pointeurs}
 
 La principale restriction, au cœur de ce chapitre et de cette thèse, est que
-seuls les pointeurs \qKernel peuvent être déréférencés de manière sûre. La règle
+seuls les pointeurs noyau peuvent être déréférencés de manière sûre. La règle
 suivante remplace donc \textsc{Lv-Deref} :
 
 \begin{mathpar}
