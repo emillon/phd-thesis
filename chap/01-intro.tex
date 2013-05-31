@@ -241,8 +241,8 @@ fréquemment et pourquoi il est aussi capital de les détecter avant l'exécutio
 
 \section{Systèmes de types}
 
-La plupart des langages de programmation incorporent la notion de type, qui
-permet d'empêcher de manipuler des données incompatibles entre elles.
+La plupart des langages de programmation incorporent la notion de type, dont un
+des buts est d'empêcher de manipuler des données incompatibles entre elles.
 
 Au niveau du langage machine, les seules données qu'un ordinateur manipule sont
 des nombres. Selon les opérations effectuées, ils seront interprétés comme des
@@ -274,29 +274,13 @@ l'approche dynamique est pessimiste, puisqu'elle demande de traiter à chaque
 étape le cas où les types ne sont pas corrects. Intuitivement, dans le cas où
 toutes les fonctions se comportent bien, faire la vérification est inutile. Pour
 vérifier ceci, on donne à chaque fonction un contrat comme ``si deux entiers
-sont passés, et que la fonction renvoie une valeur\footnote{ La plupart des
-  systèmes de types ne concernent que les termes qui convergent. Il est
-  également possible que la fonction contienne une boucle infinie, ou provoque
-  une erreur à cause d'une division par zéro. Dans ces cas, la fonction ne
-  renvoie pas de valeur. },
-alors cette valeur sera un entier''. Cet ensemble de contrats peut être vérifié
-statiquement par le compilateur, à l'aide d'un système de types statique.
+sont passés, et que la fonction renvoie une valeur, alors cette valeur sera un
+entier''. Cet ensemble de contrats peut être vérifié statiquement par le
+compilateur, à l'aide d'un système de types statique.
 
-Ainsi l'opérateur ``$+$'' est typée $(\tInt, \tInt) → \tInt$. Les règles
-permettant de vérifier le typage sont par exemple les suivantes :
-
-\begin{itemize}
-\item
-  une constante entière est toujours de type \tInt.
-\item
-  si $f$ a pour type $(t_1, …, t_n) → t$, et que chaque $e_i$ a pour type $t_i$
-  ($i ∈ [1;n]$), alors $f(e_1, …, e_n)$ a pour type $t$.
-\item
-  si en considérant que chaque $e_i$ a pour type $t_i$ ($i ∈ [1;n]$),
-  on arrive à typer le corps de $f$ et que sa valeur de retour a alors
-  pour type $t$,
-  alors $f$ a pour type $(t_1, …, t_n) → t$.
-\end{itemize}
+Par exemple, on peut dire que l Ainsi l'opérateur ``$+$'' a pour type $(\tInt,
+\tInt) → \tInt$. Cela veut dire que si on lui passe deux entiers ($\tInt$
+\tInt), alors la valeur obtenue est également un entier.
 
 \paragraph{Typage fort ou faible}
 
