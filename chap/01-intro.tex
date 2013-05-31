@@ -349,8 +349,8 @@ contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
 programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
 machine : ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
-taille concrète. Ceci dit, le système de types est assez rudimentaire : toutes
-les formes de transtypage sont acceptées, certaines conversions sont insérées
+taille concrète. Son système de types est assez rudimentaire : toutes les formes
+de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
 C.
@@ -384,27 +384,25 @@ dans les applications grand public, Ada garde toujours une place de choix dans
 l'implantation de systèmes embarqués, notamment dans les applications spatiales
 et de défense.
 
-\paragraph{Divers}
+\paragraph{Divers} % TODO titre
 
 Il est bien sûr possible d'implanter un système d'exploitation dans n'importe
 quel langage, si celui-ci peut être compilé vers du langage machine et qu'il
 permet facilement d'inclure des fragments d'assembleur pour les parties de bas
-niveau. Néanmoins il s'agit en général de travaux de recherche et non des
-systèmes d'exploitation de production dont il est nécessaire de vérifier la
-sûreté d'exécution. On peut ainsi trouver des systèmes d'exploitation écrits en
-C\#~\cite{SingularityOverview},
-Haskell~\cite{HaskellOS}
-ou
-Ocaml~\cite{unikernels}.
+niveau. Néanmoins il s'agit en général de travaux de recherche. On peut ainsi
+trouver des systèmes d'exploitation écrits en C\#~\cite{SingularityOverview},
+Haskell~\cite{HaskellOS} ou Ocaml~\cite{unikernels}.
+
+% TODO[B] TROLL
 
 \section{Langages d'analyse}
 
 Les langages décrits précédemments sont faits pour être facilement écrits par
-des programmeurs humains. En général ils sont ambigüs, peu précis ou ont des
-comportements implicites. Pour analyser du code source, il est plus pratique
-d'avoir une représentation intermédiaire plus simple afin d'avoir moins de
-traitements dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été
-définis pour aller dans ce sens.
+des programmeurs humains. En général ils sont ambigüs ou ont des comportements
+implicites. Pour analyser du code source, il est plus pratique d'avoir une
+représentation intermédiaire plus simple afin d'avoir moins de traitements
+dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été définis
+pour aller dans ce sens.
 
 \subsection*{Middle-ends}
 
@@ -416,8 +414,8 @@ extensions GNU.
 
 \paragraph{GCC} utilise une représentation interne nommée
 GIMPLE\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C, reposant
-sur de nombreuses macros afin de cacher les détails d'implémentation pouvant
-varier entre deux versions de GCC. Cette représentation étant réputée difficile
+sur de nombreuses macros afin de cacher les détails d'implantation interne
+pouvant varier entre deux versions. Cette représentation étant réputée difficile
 à manipuler, le projet MELT\cite{gcc-melt} permet de générer un greffon de
 compilateur à partir d'un dialecte de Lisp.
 
@@ -427,18 +425,19 @@ C++. Il utilise une représentation intermédiaire qui peut être manipulée soi
 sous forme d'une structure de données C++, soit d'un fichier de code-octet
 compact, soit sous forme textuelle.
 
-\paragraph{Objective Caml}\link{ocamlManual} utilise pour sa génération de code
-une représentation interne nommée Cmm, disponible dans les sources du
-compilateur sous le chemin \texttt{asmcomp/cmm.mli} (il s'agit donc d'une
-structure de données OCaml). Ce langage a l'avantage d'être très restreint, mais
-malheureusement il n'existe pas directement de traducteur permettant de compiler
-C vers Cmm.
+\paragraph{Cmm} est une représentation interne utilisée pour la génération de
+code lors de la compilation d'Objective Caml \link{ocamlManual} , et disponible
+dans les sources du compilateur sous le chemin \texttt{asmcomp/cmm.mli} (il
+s'agit donc d'une structure de données OCaml). Ce langage a l'avantage d'être
+très restreint, mais malheureusement il n'existe pas directement de traducteur
+permettant de compiler C vers Cmm.
 
 \paragraph{C-~-}\cite{spjcmm} \link{cmm}, dont le nom est inspiré du précédent,
 est un projet qui visait à unifier les langages intermédiaires utilisés par les
 compilateurs. L'idée est que si un front-end peut émettre du C-~- (sous forme de
 texte), il est possible d'obtenir du code machine efficace. Le compilateur
-Haskell GHC utilise une représentation intermédiaire très similaire à C-~-.
+Haskell GHC, par exemple, utilise une représentation intermédiaire très
+similaire à C-~-.
 
 \subsection*{Langages intermédiaires ad hoc}
 
@@ -468,9 +467,7 @@ section~\ref{sec:npk}.
 
 Dans la suite de cette thèse nous nous appuierons sur \langname, un langage
 intermédiaire minimal, pour exprimer les règles de typage de la manière la plus
-simple possible. Néanmoins l'implantation est faite sur une version adaptée de
-Newspeak, ce qui nous permettra d'avoir une traduction automatique depuis du
-code déjà écrit en C.
+simple possible.
 
 \section{Plan de la thèse}
 
