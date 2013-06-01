@@ -56,14 +56,12 @@ utilisateur) dans $lv$ et $\uPut{e}{e'}$ l'écriture de $e$ dans l'espace point�
 par le pointeur utilisateur $e'$.
 
 % TODO pourquoi pas des expressions/instructions ?
+% -> pour vérifier les erreurs
 
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
 entiers \texttt{major}, \texttt{minor} et \texttt{patch}. Celui-ci peut être
 alors écrit de la manière suivante :
-
-% TODO depend de eFun
-% TODO dépend de tStruct
 
 \begin{align*}
   & \mathrm{sys\_getver} = \mathrm{fun}(p) \{                      &             & & \\
@@ -72,8 +70,6 @@ alors écrit de la manière suivante :
   & \indent \uPut{15}{p.\texttt{patch}_S}   &             & &        & \texttt{patch} : \tInt   \\
   & \}                                      &             & &     \}
 \end{align*}
-
-% TODO le champ utilisateur ça passe bien ?
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
@@ -85,8 +81,6 @@ part, un nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle
 d'évaluation. Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher
 lorsqu'on déréférence directement un pointeur utilisateur. Ces étapes sont
 résumées dans la figure~\ref{fig:qualif-changes}.
-
-% TODO notation widehat taint voire widehat userspace
 
 \begin{figure}%{{{
 
