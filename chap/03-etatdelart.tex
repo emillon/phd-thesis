@@ -37,10 +37,10 @@ statiques.
 
 Le but d'une analyse statique est de catégoriser les programmes selon s'ils
 satisfont ou non un ensemble de propriétés fixées à l'avance. Malheureusement,
-ceci n'est pas possible : l'ensemble des valeurs possibles lors de l'exécution
-d'un programme n'est pas un ensemble calculable (théorème de Rice~\cite{rice}).
-Autrement dit, il ne peut exister une procédure de décision prenant un programme
-et le déclarant correct ou incorrect.
+cela n'est que rarement possible car l'ensemble des valeurs possibles lors de
+l'exécution d'un programme n'est pas un ensemble calculable (théorème de
+Rice~\cite{rice}). Autrement dit, il ne peut exister une procédure de décision
+prenant un programme et le déclarant correct ou incorrect.
 
 Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
 trompant jamais. Toute technique statique va donc de se retrouver dans au moins
@@ -55,8 +55,9 @@ un des cas suivants :
   \emph{faux négatif}.
 \end{itemize}
 
-En général on préfère s'assurer que les programmes acceptés possèdent la
-propriété recherchée, quitte à en rejeter certains.
+En général, et dans notre cas, on préfère s'assurer que les programmes acceptés
+possèdent la propriété recherchée, quitte à en rejeter certains. C'est
+l'approche que nous retiendrons.
 
 Par ailleurs la plupart des techniques ne concernent que les programmes qui
 terminent. On étudie donc la correction, ou les propriétés des termes
@@ -81,19 +82,19 @@ particulières.
 \section{Interprétation abstraite}
 
 L'interprétation abstraite est une technique d'analyse générique qui permet de
-simuler statiquement tous les comportements d'un programme Cousot
+simuler statiquement tous les comportements d'un programme
 \cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer les bornes
-de variations des variables pour s'assurer qu'aucun débordement de tableau n'est
+de variation des variables pour s'assurer qu'aucun débordement de tableau n'est
 possible~\cite{AllamigeonHymansSSTIC07}.
 
-L'idée est d'associer à chaque ensemble concret des valeurs, une représentation
+L'idée est d'associer à chaque ensemble concret de valeurs, une représentation
 abstraite. Sur celle-ci, on peut définir des opérations indépendantes de la
-valeur exacte des données, mais préservant l'abstraction. Par exemple, les
-règles comme $"-" × "-" = "+"$ définissent le domaine abstrait des signes. Les
-domaines ont une structure de treillis, c'est-à-dire qu'ils possèdent les
-notions d'ordre partiel et d'union de valeurs (figure~\ref{fig:dom-sig}). En
-calculant les valeurs extremales d'une variable, on obtient le domaine des
-intervalles.
+valeur exacte des données, mais préservant l'abstraction
+(figure~\ref{fig:dom-sig}). Par exemple, les règles comme $"-" × "-" = "+"$
+définissent le domaine abstrait des signes. Les domaines ont une structure de
+treillis, c'est-à-dire qu'ils possèdent les notions d'ordre partiel et d'union
+de valeurs. En calculant les valeurs extremales d'une variable, on obtient le
+domaine des intervalles.
 
 \begin{figure}%{{{
 \centering
@@ -122,7 +123,7 @@ intervalles.
 \label{fig:dom-sig}
 \end{figure}%}}}
 
-Ces domaines ne capturent aucune relation entre variables. ils sont dits non
+De tels domaines ne capturent aucune relation entre variables. ils sont dits non
 relationnels. Lorsque plusieurs variables sont analysées en même temps, utiliser
 de tels domaines consiste à considérer un produit cartésien d'ensembles
 abstraits (figure~\ref{fig:dom-cartesien}).
@@ -130,7 +131,7 @@ abstraits (figure~\ref{fig:dom-cartesien}).
 Des domaines abstraits plus précis permettent de retenir celles-ci. Pour ce
 faire, il faut modéliser l'ensemble des valeurs des variables comme un tout.
 Parmi les domaines relationnels courants on peut citer : le domaine des
-polyèdres, permet de retenir tous les invariants affines entre fonctions
+polyèdres, permettant de retenir tous les invariants affines entre fonctions
 (figure~\ref{fig:dom-poly}) ; le domaine des zones, permettant de représenter
 des relations affines de la forme $v_i - v_j \le c$ (figure~\ref{fig:dom-zones})
 ; ou encore le domaine des octogones qui est un compromis entre les polyèdres et
@@ -199,10 +200,11 @@ les zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 
 En plus des domaines numériques, il est nécessaire d'employer des domaines
 spécialisés dans la modélisation de la mémoire. Cela est nécessaire pour pouvoir
-"suivre" les pointeurs. Par exemple, on peut représenter un pointeur par un
-ensemble de variables possiblement pointées et une valeur abstraite représentant
-le décalage (\emph{offset}) du pointeur par rapport au début de la zone mémoire.
-Cette valeur peut elle-même être abstraite par un domaine numérique.
+prendre en compte les pointeurs. Par exemple, on peut représenter un pointeur
+par un ensemble de variables possiblement pointées et une valeur abstraite
+représentant le décalage (\emph{offset}) du pointeur par rapport au début de la
+zone mémoire. Cette valeur peut elle-même être abstraite par un domaine
+numérique.
 
 Au delà des domaines eux-mêmes, l'analyse se fait sous forme d'un calcul de
 point fixe. La manière la plus simple est d'utiliser un algorithme de
@@ -225,7 +227,7 @@ sous-itérations\cite{policy}.
 En termes d'ingéniérie logicielle, implanter un analyseur statique est un défi
 en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le code
 source à analyser dans un langage, et traduire les résultats de l'analyse en un
-ensemble d'"alarmes" à présenter à l'utilisateur.
+ensemble d'alarmes à présenter à l'utilisateur.
 
 Pour des retours d'expérience plus détaillés, on peut se référer aux descriptions d'
 Astrée~\cite{Astree04,Astree05,AstreeScale},
@@ -237,7 +239,8 @@ part, pour réaliser une analyse interprocédurale il faut partir d'un point en
 particulier du programme (comme la fonction \texttt{main}). Cette hypothèse
 n'est pas facilement satisfaite dans un noyau de système d'exploitation, qui
 possède de nombreux points d'entrée. D'autre part, elle remonte de nombreuses
-fausses alarmes, puisqu'elle nécessite d'avoir une vue précise du programme.
+fausses alarmes, puisqu'elle est très conservative. Sans domaines abstraits très
+précis, les vraies alarmes sont noyées parmi les fausses.
 
 \section{Typage}
 
@@ -279,6 +282,8 @@ spécifique au moins spécifique, et que l'on forme alors un treillis à partir 
 ces informations. Partant des deux caractéristiques précédentes, on forme le
 treillis de la figure~\ref{fig:cqual-treillis}.
 
+% TODO[B] décrire
+
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -316,14 +321,16 @@ l'objet~\cite{cquk-usenix04}.
 
 \section{Analyse de code système}
 
-Les logiciels système demandant des garanties de sécurité et de fiabilité, de
-nombreuses analyses \emph{ad-hoc} ciblent les noyaux de systèmes d'exploitation.
+Les logiciels système demandent des garanties de sécurité et de fiabilité. Pour
+les assurer, de nombreuses analyses \emph{ad-hoc} ciblent les noyaux de systèmes
+d'exploitation.
+
+% TODO[B] ...
 
 Ajouter un système de types forts à C est l'idée centrale de
 CCured~\cite{ccured-toplas}. Dans les cas où il n'est pas possible de conclure,
 des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite une
-instrumentation dynamique qui est faite pour rester active, ce qui se paye en
-performances.
+instrumentation dynamique qui se paye en performances.
 
 Saturn~\cite{paste07} est un système pour analyser du code système écrit en C.
 Il traite le problème des pointeurs utilisateur en utilisant une analyse de
@@ -342,7 +349,7 @@ les constructions dangereuses.
 Le langage Cyclone~\cite{cyclone-safety} est conçu comme un C ``sûr''. Afin
 d'apporter plus de sûreté au modèle mémoire de C, des tests dynamiques sont
 ajoutés, par exemple aux endroits ou des conversions implicites peuvent poser
-problème. Le langage se distingue par le fait qu'il possède plusieurs types
+problème. Le langage se distingue par le fait qu'il possède plusieurs types de
 pointeurs : des pointeurs classiques (\texttt{int *}), des pointeurs ``jamais
 nuls'' (\texttt{int @} ; un test à l'exécution est alors inséré), et des
 ``pointeurs lourds'' (\texttt{int ?} ; qui contiennent des informations sur la
@@ -419,6 +426,8 @@ Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation
 lorsque c'est possible, sinon à l'exécution.
 
+%TODO[B] Le rapport avec la prog sys? un cite ? (ça a forcément été fait)
+
 La règle de conséquence permet de découpler les propriétés du programme lui-même
 : plusieurs niveaux d'annotations sont possibles, du moins précis au plus
 précis. En fait, il est même possible d'annoter chaque point de contrôle par
@@ -434,5 +443,8 @@ Ce type d'annotations a été implanté par exemple pour le langage Java dans le
 système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
 
 % TODO [E] ce sont juste des langages d'annotations : qu'en fait-on après ?
+
+% TODO[B] conclure + mini contributions (ce qu'on va ajouter, comment on se
+% positionne)
 
 % vim: spelllang=fr
