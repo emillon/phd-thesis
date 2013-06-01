@@ -51,7 +51,7 @@ est un pointeur utilisateur.
 En plus du déréférencement par \texttt{*} qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
-utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et $\cpuF$.
+utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et $\ctuF$.
 Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen indiquant
 si la copie pu être faite (si le paramètre contrôlé par l'utilisateur pointe en
 espace noyau, les fonctions ne font pas la copie et signalent l'erreur).
