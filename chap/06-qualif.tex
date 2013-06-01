@@ -51,12 +51,10 @@ est un pointeur utilisateur.
 En plus du déréférencement par \texttt{*} qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
-utilisateurs. On note $\uGet{lv}{e}$ la lecture sûre de $e$ (pointeur
-utilisateur) dans $lv$ et $\uPut{e}{e'}$ l'écriture de $e$ dans l'espace pointé
-par le pointeur utilisateur $e'$.
-
-% TODO pourquoi pas des expressions/instructions ?
-% -> pour vérifier les erreurs
+utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et $\cpuF$.
+Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen indiquant
+si la copie pu être faite (si le paramètre contrôlé par l'utilisateur pointe en
+espace noyau, les fonctions ne font pas la copie et signalent l'erreur).
 
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
@@ -70,6 +68,8 @@ alors écrit de la manière suivante :
   & \indent \uPut{15}{p.\texttt{patch}_S}   &             & &        & \texttt{patch} : \tInt   \\
   & \}                                      &             & &     \}
 \end{align*}
+
+% TODO faire par pointeur
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
@@ -88,17 +88,11 @@ résumées dans la figure~\ref{fig:qualif-changes}.
 \gramdef{Expressions}{e}
   { … }{}
   { \eTaint{e} }{Expression souillée} % TODO ce serait pas un ajout à lv?
-  { \uGet{lv}{e}}{ Lecture depuis l'espace utilisateur}
-  { \uPut{e}{e'}}{ Écriture dans l'espace utilisateur}
   {END}
 \\
 \gramdef{Contextes}{C}
   { … }{}
   { \eTaint{C}}{}
-  { \uGet{C}{e}}{}
-  { \uGet{φ}{C}}{}
-  { \uPut{C}{e}}{}
-  { \uPut{v}{C}}{}
   {END}
 \\
 \gramdef{Chemins}{φ}
@@ -149,8 +143,8 @@ le cas :
 Φ(\vTainted{φ}) =& \serr{taint}
 \end{align*}
 
-Enfin, il est nécessaire de donner une sémantique aux opérateurs $\phxx\uGet$ et
-$\phxx\uPut$.
+Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
+$\ctuF$.
 
 % TODO leur sémantique
 
