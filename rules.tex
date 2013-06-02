@@ -368,6 +368,38 @@
               {\phstar{([~], [~])}{P}{m}}
               {\phprog{P}{m}}
     }
+    {User-Get-OK}{ \irule{User-Get-OK}
+                     { \mm{m}{φ_d ← φ_s}
+                         {m'}{\iPass}
+                     }
+                     { \mm{m}{\uGet{φ_d}{\vTainted{φ_s}}}
+                       {m'}{0} % TODO faire une rq sur les widehats
+                     }
+    }
+    {User-Get-Err}{ \irule{User-Get-Err}
+                      {
+                        ∄ φ_s, φ = \vTainted{φ_s}
+                      }
+                      { \mm{m}{\uGet{φ_d}{φ}}
+                           {m}{-1}
+                      }
+    }
+    {User-Put-OK}{ \irule{User-Put-OK}
+                     { \mm{m}{φ_d ← φ_s}
+                         {m'}{\iPass}
+                     }
+                     { \mm{m}{ \uPut{\vTainted{φ_d}}{φ_s} }
+                         {m'}{0}
+                     }
+    }
+    {User-Put-Err}{ \irule{User-Put-Err}
+                      {
+                        ∄ φ_d, φ = \vTainted{φ_d}
+                      }
+                      { \mm{m}{\uPut{φ}{φ_s}}
+                           {m}{-1}
+                      }
+    }
     {END}
 }
 
