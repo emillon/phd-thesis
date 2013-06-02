@@ -144,39 +144,57 @@ le cas :
 \end{align*}
 
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
-$\ctuF$. L'idée est que celles-ci testent dynamiquement la
-*valeur* du paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci
-pointe vers l'espace utilisateur (c'est-à-dire, qu'il est da la forme
-$\vTainted{φ}$.
+$\ctuF$. L'idée est que celles-ci testent dynamiquement la \emph{valeur} du
+paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci pointe vers
+l'espace utilisateur (c'est-à-dire, qu'il est da la forme $\vTainted{φ}$.
 
 Deux cas peuvent se produire. Si ce test est positif, alors la copie est faite
-et l'opération de copie retourne la valeur entière $1$. Dans le cas contraire,
-aucune copie n'est faite et la valeur $0$ est retournée.
-
-% TODO leur sémantique
+et l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
+aucune copie n'est faite et la valeur $-1$ est retournée. Ce comportement est
+calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux : en
+cas de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT}.
 
 \begin{mathpar}
-  \irule{User-Get}
-    { }
-    { \mms{ \uGet{φ}{\vTainted{φ'}} }
-          { φ ← φ'}
+  \irule{User-Get-OK}
+    { \mm{m}{φ_d ← φ_s}
+        {m'}{\iPass}
+    }
+    { \mm{m}{\uGet{φ_d}{\vTainted{φ_s}}}
+      {m'}{0} % TODO faire une rq sur les widehats
     }
 
-  \irule{User-Put}
-    { }
-    { \mms{ \uPut{v}{\vTainted{φ}} }
-          {φ ← v}
+  \irule{User-Get-Err}
+    {
+      ∄ φ_s, φ = \vTainted{φ_s}
+    }
+    { \mm{m}{\uGet{φ_d}{φ}}
+         {m}{-1}
+    }
+
+  \irule{User-Put-OK}
+    { \mm{m}{φ_d ← φ_s}
+        {m'}{\iPass}
+    }
+    { \mm{m}{ \uPut{\vTainted{φ_d}}{φ_s} }
+        {m'}{0}
+    }
+
+  \irule{User-Put-Err}
+    {
+      ∄ φ_d, φ = \vTainted{φ_d}
+    }
+    { \mm{m}{\uPut{φ}{φ_s}}
+         {m}{-1}
     }
 \end{mathpar}
 
-% TODO vérifier
-
-% TODO et dans le cas d'un chose kernel?
-
-Puisque ces règles ne s'appliquent qu'aux cas où les expressions à gauche et à
-droite des opérateurs sont déjà évaluées, il faut également étendre les
-contextes d'évaluation (figure~\ref{fig:qualif-changes}). Encore une fois on
-évalue d'abord l'argument de gauche, puis l'argument de droite.
+Ces règles sont à appliquer en priorité de la règle d'appel de fonction
+classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
+celles ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
+par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
+$\vTainted{φ}$. L'opération en ``boîte noire'' de ces deux fonctions permet
+d'assurer que l'accès à l'espace utilisateur est toujours couplé à un test
+dynamique.
 
 \section{Insuffisance des types simples}
 
@@ -236,7 +254,7 @@ conclusion n'est pas vraie :
           { Γ ⊢ * \eTaint {\& x} : \tInt}
       \end{mathpar}
 
-  \item 
+  \item
     L'évaluation de $e$ sous $m$ provoque une erreur différente de
     $\serr{div}$, $\serr{array}$, ou $\serr{ptr}$ :
 
@@ -383,7 +401,7 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
   { Γ ⊢ \eTaint{e} : \ptrU{t} } % TODO e ou lv?
 \end{mathpar}
 
-Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante :
+Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante :
 
 \begin{mathpar}
     \disprule{GetU}
@@ -394,8 +412,6 @@ Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante
 Il est à noter qu'il n'y a pas de sous-typage : les pointeurs noyau ne peuvent
 être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
 qu'en tant que pointeurs utilisateurs.
-
-% TODO check
 
 \section{Sûreté du typage}
 

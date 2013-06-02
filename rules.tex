@@ -204,16 +204,12 @@
                 { \typh{Γ}{x=e}{Γ'} }
             }
     {GetU}{ \irule{GetU}
-              { Γ ⊢ lv : t
-             \\ Γ ⊢ e : \ptrU{t}
-              }
-              { Γ ⊢ \uGet{lv}{e} : \tInt }
+              { }
+              { Γ ⊢ \cfuF : (\ptrK{t}, \ptrU{t}) → \tInt }
     }
     {PutU}{ \irule{PutU}
-              { Γ ⊢ e_1 : t
-             \\ Γ ⊢ e_2 : \ptrU{t}
-              }
-              { Γ ⊢ \uPut{e_1}{e_2} : \tInt }
+              { }
+              { Γ ⊢ \ctuF : (\ptrU{t}, \ptrK{t}) → \tInt }
     }
     {END}
 }
