@@ -257,6 +257,14 @@ vérification formelle en tant que telle.
 
 \section{Typage}
 
+Le typage, introduit dans la section~\ref{sec:types-intro}, peut aussi être
+utilisé pour la vérification de programmes. On peut le voir comme une manière de
+catégoriser les types de données manipulés par la machine, mais également à plus
+au niveau comme une manière d'articuler les différents composants d'un
+programme. Mais on peut aussi programmer avec les types, c'est-à-dire utiliser
+le compilateur (dans le cas statique) ou l'environnement d'exécution (dans le
+cas dynamique) pour vérifier des propriétés écrites par le programmeur.
+
 \paragraph{Systèmes ad hoc}
 
 Les systèmes de types les plus simples expriment des contrats esssentiellement
@@ -332,6 +340,16 @@ concept de \emph{typestates}~\cite{tse12-typestate}. Il a également été appli
 à la classe de vulnérabilités sur les pointeurs utilisateurs dont il est ici
 l'objet~\cite{cquk-usenix04}.
 
+Ces techniques de typage sont séduisantes parce qu'elles sont en général simples
+à mettre en place : à l'aide d'un ensemble de règles, on attribue un type à
+chaque expression. Si le typage se termine sans erreur, alors on est assuré de
+la correction du programme (par rapport aux propriétés capturées par le système
+de types).
+
+Le typage statique peut également être implanté de manière efficace. La plupart
+des systèmes de types peuvent être vérifiés en pratique dans un temps linéaire
+en la taille du programme considéré.
+
 \section{Analyse de code système}
 
 Les logiciels système demandent des garanties de sécurité et de fiabilité. Pour
@@ -352,6 +370,8 @@ est d'être très précis, au détriment d'un temps de calcul important dans
 certains cas.
 
 % TODO [E] est-ce joauble dans le cas de vrais programmes ?
+
+% TODO ccl
 
 \section{Langages sûrs}
 
@@ -391,6 +411,8 @@ rejetée par le compilateur. Enfin, le dernier type est celui des \emph{raw
 pointers} (notés \texttt{*int}), pour lesquels le langage n'apporte aucune
 garantie (il faut d'ailleurs encapsuler chaque utilisation dans un bloc marqué
 explicitement \texttt{unsafe}. Ils sont équivalents aux pointeurs de C.
+
+% TODO ccl
 
 \section{Logique de Hoare}
 
