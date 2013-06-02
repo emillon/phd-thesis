@@ -144,7 +144,14 @@ le cas :
 \end{align*}
 
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
-$\ctuF$.
+$\ctuF$. L'idée est que celles-ci testent dynamiquement la
+*valeur* du paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci
+pointe vers l'espace utilisateur (c'est-à-dire, qu'il est da la forme
+$\vTainted{φ}$.
+
+Deux cas peuvent se produire. Si ce test est positif, alors la copie est faite
+et l'opération de copie retourne la valeur entière $1$. Dans le cas contraire,
+aucune copie n'est faite et la valeur $0$ est retournée.
 
 % TODO leur sémantique
 
