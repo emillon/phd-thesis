@@ -62,14 +62,15 @@ entiers \texttt{major}, \texttt{minor} et \texttt{patch}. Celui-ci peut être
 alors écrit de la manière suivante :
 
 \begin{align*}
-  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{                      &             & & \\
-  & \indent \uPut{ 3}{p.\texttt{major}_S} ; & \mathrm{où} & & S = \{~& \texttt{major} : \tInt ; \\
-  & \indent \uPut{14}{p.\texttt{minor}_S} ; &             & &        & \texttt{minor} : \tInt ; \\
-  & \indent \uPut{15}{p.\texttt{patch}_S}   &             & &        & \texttt{patch} : \tInt   \\
-  & \}                                      &             & &     \}
+  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{      &             & & \\
+  & \indent \textsc{Decl}~x=3~\textsc{in}          &             & & \\
+  & \indent \textsc{Decl}~y=14~\textsc{in}         &             & & \\
+  & \indent \textsc{Decl}~z=15~\textsc{in}         &             & & \\
+  & \indent \uPut{\& (p.\texttt{major}_S)}{\& x} ; & \mathrm{où} & & S = \{~& \texttt{major} : \tInt ; \\
+  & \indent \uPut{\& (p.\texttt{minor}_S)}{\& y} ; &             & &        & \texttt{minor} : \tInt ; \\
+  & \indent \uPut{\& (p.\texttt{patch}_S)}{\& z}   &             & &        & \texttt{patch} : \tInt   \\
+  & \}                                             &             & &     \}
 \end{align*}
-
-% TODO faire par pointeur
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
