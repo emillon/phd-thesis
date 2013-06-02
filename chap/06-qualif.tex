@@ -322,9 +322,7 @@ déréférencement est toujours sûr). Cette construction crée donc des pointeu
 noyau :
 
 \begin{mathpar}
-  \irule{AddrOf-Kernel}
-    { Γ ⊢ lv : t }
-    { Γ ⊢ \& lv : \ptrK{t} }
+  \disprule{AddrOf-Kernel}
 \end{mathpar}
 
 \subsection*{Manipulations de pointeurs}
@@ -340,12 +338,7 @@ pointeurs qualifiés, puisqu'elle est possible quelque soit le qualificateur (et
 le préserve) :
 
 \begin{mathpar}
-  \irule{Ptr-Arith-User}
-     { \opbin ∈ \{ +_p, -_p \} \\
-       Γ ⊢ e_1 : \ptrU{t} \\
-       Γ ⊢ e_2 : \tInt \\
-     }
-     { Γ ⊢ e_1~\opbin~e_2 : \ptrU{t} }
+  \disprule{Ptr-Arith-User}
 \end{mathpar}
 
 \subsection*{Utilisations de pointeurs}
@@ -355,17 +348,11 @@ seuls les pointeurs noyau peuvent être déréférencés de manière sûre. La r
 suivante remplace donc \textsc{Lv-Deref} :
 
 \begin{mathpar}
-\irule{Lv-Deref-Kernel}{
-  Γ ⊢ e : \ptrK{t}
-}{
-  Γ ⊢ *e : t
-}
+  \disprule{Lv-Deref-Kernel}
 \end{mathpar}
 
 Ainsi, on interdit le déréférencement des expressions de type $\ptrU{t}$ à la
 compilation.
-
-% TODO mettre ça dans rules.tex
 
 % TODO définir les stubs
 
@@ -397,6 +384,7 @@ La définition du typage sémantique doit aussi être étendue au cas $φ =
 \vTainted{φ'}$. Les références mémoires sont ``nettoyées'' pour accéder à la
 left-value encapsulée.
 
+% TODO en annexe?
 \begin{mathpar}
   \irule{S-Tainted}
     { m ⊧           φ'  : \ptrK{t} }

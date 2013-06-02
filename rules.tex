@@ -211,6 +211,23 @@
               { }
               { Γ ⊢ \ctuF : (\ptrU{t}, \ptrK{t}) → \tInt }
     }
+    {AddrOf-Kernel}{ \irule{AddrOf-Kernel}
+                       { Γ ⊢ lv : t }
+                       { Γ ⊢ \& lv : \ptrK{t} }
+    }
+    {Ptr-Arith-User}{ \irule{Ptr-Arith-User}
+                         { \opbin ∈ \{ +_p, -_p \} \\
+                           Γ ⊢ e_1 : \ptrU{t} \\
+                           Γ ⊢ e_2 : \tInt \\
+                         }
+                         { Γ ⊢ e_1~\opbin~e_2 : \ptrU{t} }
+    }
+    {Lv-Deref-Kernel}{ \irule{Lv-Deref-Kernel}{
+                         Γ ⊢ e : \ptrK{t}
+                       }{
+                         Γ ⊢ *e : t
+                       }
+    }
     {END}
 }
 
