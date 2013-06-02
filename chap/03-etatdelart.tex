@@ -233,18 +233,27 @@ en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le cod
 source à analyser dans un langage, et traduire les résultats de l'analyse en un
 ensemble d'alarmes à présenter à l'utilisateur.
 
-Pour des retours d'expérience plus détaillés, on peut se référer aux descriptions d'
-Astrée~\cite{Astree04,Astree05,AstreeScale},
-CGS~\cite{cgs},
-ou Coverity~\cite{coverityBillion}.
+Cette technique est très puissante : si un interpréteur abstrait \emph{sound}
+(c'est-à-dire réalisant une surapproximation) analyse un programme et ne renvoie
+pas d'erreur, alors on a prouvé que le programme est correct (par rapport aux
+propriétés que vérifient les domaines abstraits). Cela a été appliqué avec
+succès avec les analyseurs Astrée~\cite{Astree04,Astree05,AstreeScale} chez
+Airbus ou CGS~\cite{cgs} à la NASA par exemple.
 
-Cette technique est très puissante mais possède plusieurs inconvénients. D'une
-part, pour réaliser une analyse interprocédurale il faut partir d'un point en
-particulier du programme (comme la fonction \texttt{main}). Cette hypothèse
-n'est pas facilement satisfaite dans un noyau de système d'exploitation, qui
-possède de nombreux points d'entrée. D'autre part, elle remonte de nombreuses
-fausses alarmes, puisqu'elle est très conservative. Sans domaines abstraits très
-précis, les vraies alarmes sont noyées parmi les fausses.
+Cependant, ces analyses sont difficiles à mettre en œuvre. Avec des domaines
+abstraits classiques comme ceux présentés ci-dessus, les premières analyses
+peuvent remonter un nombre prohibitif de fausses alarmes. Pour ``aider''
+l'analyse, il faut soit annoter le code soit développer des domaines abstraits
+\emph{ad hoc} au programme à analyser.
+
+Il existe également des analyseurs statiques par interprétation abstraite qui ne
+sont pas \emph{sound}, c'est-à-dire qui peuvent manquer des comportements
+erronés. Leur approche est plus d'aider le programmeur à détecter certains types
+de bugs pendant le développement. On citer l'exemple de
+Coverity~\cite{coverityBillion}, qui publie régulièrement des rapports de
+qualité sur certains logiciels open source. Néanmoins, de part leur aspect non
+\emph{sound}, les analyses réalisées ne peuvent pas être assimilées à de la
+vérification formelle en tant que telle.
 
 \section{Typage}
 
