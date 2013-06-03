@@ -9,14 +9,36 @@ compte les spécificités de l'adressage utilisé dans les systèmes d'exploitat
 
 Dans ce chapitre, on commence par l'étendre en ajoutant des constructions
 modélisant les variables présentes dans l'espace utilisateur (cf.
-chapitre~\ref{cha:os}). Celles-ci restent accessibles, mais nécessitent
-d'utiliser un opérateur de déréférencement sûr qui vérifie à l'exécution que
-l'invariant suivant est respecté :
+chapitre~\ref{cha:os}). Pour accéder à celles-ci, on ajoute un opérateur de
+déréférencement sûr qui vérifie à l'exécution que l'invariant suivant est
+respecté :
 
 \begin{quote}
 Les pointeurs dont la valeur est contrôlée par l'utilisateur, pointent vers
 l'espace utilisateur.
 \end{quote}
+
+La terminologie mérite d'être détaillée :
+
+Un pointeur contrôlé par l'utilisateur, ou \emph{pointeur utilisateur}, est
+référence mémoire dont la valeur est modifiable par le code utilisateur (opposé
+au code noyau, que nous analysons ici). Ceci correspond à des données provenant
+de l'extérieur du système vérifié. Pour faire un parallèle avec la programmation
+réseau, cela correspond à des variables dont la valeur proviendrait d'un client
+distant. C'est une propriété statique, qui peut être déterminée à la compilation
+à partir de considérations syntaxiques.
+
+Un pointeur pointant vers l'espace utilisateur fait référence à une variable
+allouée en espace utilisateur. Cela veut dire qu'y accéder ne risque pas de
+mettre en péril l'isolation du noyau en faisant fuiter des informations
+confidentielles ou en déjouant son intégrité. Cette propriété est dynamique : un
+pointeur utilisateur peut \emph{a priori} pointer vers l'espace utilisateur, ou
+non.
+
+Pour reprendre le parallèle avec la programmation web, une chaîne provenant du
+réseau peut être correctement échappée ou non. Pour s'assurer de la sécurité du
+traitement d'une telle chaîne, il faut s'assurer que celles-ci sont correctement
+échappées.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
@@ -107,7 +129,9 @@ résumées dans la figure~\ref{fig:qualif-changes}.
   {END}
 \end{align*}
 
-\caption{Ajouts liés aux pointeurs utilisateurs}
+\caption{Ajouts liés aux pointeurs utilisateurs (par rapport à l'évaluateur du
+chapitre~\ref{cha:lang})}
+
 \label{fig:qualif-changes}
 % TODO définir les états et ms
 
@@ -302,13 +326,15 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 \begin{figure}%{{{
 
 \begin{align*}
-\gramdef{Types}{t}
+\gramdef{Type}{t}
   { … }{}
   { \ptrU{t} }{Pointeur utilisateur}
   {END}
 \end{align*}
 
-\caption{Changements liés aux qualificateurs de types}
+\caption{Ajouts liés aux qualificateurs de types (par rapport à la
+figure~\ref{fig:les-types}}
+
 \label{fig:qualif-changes-typ}
 \end{figure}%}}}
 
