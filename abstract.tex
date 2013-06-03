@@ -6,11 +6,11 @@
 
 \begin{center}\Large \textbf{Résumé}\end{center}
 
-Les noyaux de système d'exploitation manipulent des données fournies par
-les programmes utilisateur via certaines interfaces, comme les appels système.
-Si celles-ci sont manipulées sans prendre une attention particulière, des
-failles de sécurité peuvent apparaître, comme des fuites de données
-confidentielles ou l'elévation de privilège d'un attaquant.
+Les noyaux de système d'exploitation manipulent des données fournies par les
+programmes utilisateur via certaines interfaces, comme les appels système. Si
+celles-ci sont manipulées sans prendre une attention particulière, une faille de
+sécurité connue sous le nom de \emph{Confused Deputy Problem} peut amener à des
+fuites de données confidentielles ou l'elévation de privilège d'un attaquant.
 
 Le but de cette thèse est d'utiliser des techniques de typage statique afin de
 détecter les manipulations dangereuses de pointeurs contrôlés par l'espace
@@ -18,7 +18,7 @@ utilisateur.
 
 De nombreux systèmes d'exploitation, dont le noyau Linux sur lequel nous nous
 basons, sont écrits dans le langage C. Afin de pouvoir appliquer les techniques
-de typage statique à ce langage, on commence par isoler un sous-ensemble sûr
+de typage statique à ce langage, on commence par isoler un sous-langage sûr
 nommé \langname, pour lequel on définit une sémantique opérationnelle et un
 système de types. Les propriétés classiques de sûreté du typage sont établies.
 
@@ -27,16 +27,16 @@ provenant de l'espace utilisateur. On montre que l'extension triviale du systèm
 de types brise la sûreté du typage, et que l'on peut réétablir celle-ci en
 donnant un type particulier aux pointeurs dont la valeur est contrôlée par
 l'espace utilisateur, forçant leur déférencement à se faire au sein d'un
-ensemble limités de fonction sûres. Un cas d'étude est déroulé pour montrer que
+ensemble limité de fonction sûres. Un cas d'étude est déroulé pour montrer que
 cette technique permet de détecter un bug qui a frappé un pilote de carte
 graphique AMD dans le noyau Linux.
 
-Ces travaux ouvrent des perspectives sur deux points. D'une part, il serait
-possible d'appliquer à de plus grandes parties du noyau Linux. Les diverses
-interfaces qui exposent des données contrôlées par l'espace utilisateur peuvent
-bénéficier de cette vérification statique. Ceci est d'autant plus vrai que les
-pilotes de périphériques dont elles sont issues sont en général moins testées
-que le reste du code du noyau. D'autre part, cette technique revient à
+Ces travaux ouvrent des perspectives sur deux points. D'une part, il est
+possible d'appliquer cette analyse à de plus grandes parties du noyau Linux. Les
+diverses interfaces qui exposent des données contrôlées par l'espace utilisateur
+peuvent bénéficier de cette vérification statique. Ceci est d'autant plus vrai
+que les pilotes de périphériques dont elles sont issues sont en général moins
+testées que le reste du code du noyau. D'autre part, cette technique revient à
 introduire des types abstraits opaques, séparant leur représentation de leur
 interface. Ce concept étant absent de C, de nombreuses erreurs de programmation
 notamment liées aux manipulations d'entiers peuvent également être vérifiées à
