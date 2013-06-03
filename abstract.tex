@@ -22,11 +22,22 @@ système de types. Les propriétés classiques de sûreté du typage sont établ
 Dans un second temps on étend \langname pour intégrer la notion de valeur
 provenant de l'espace utilisateur. On montre que l'extension triviale du système
 de types brise la sûreté du typage, et que l'on peut réétablir celle-ci en
-donnant un type particulier aux pointeurs dont la valeur est contrôlé par
+donnant un type particulier aux pointeurs dont la valeur est contrôlée par
 l'espace utilisateur, forçant leur déférencement à se faire au sein d'un
 ensemble limités de fonction sûres. Un cas d'étude est déroulé pour montrer que
 cette technique permet de détecter un bug qui a frappé un pilote de carte
 graphique AMD dans le noyau Linux.
+
+Ces travaux ouvrent des perspectives sur deux points. D'une part, il serait
+possible d'appliquer à de plus grandes parties du noyau Linux. Les diverses
+interfaces qui exposent des données contrôlées par l'espace utilisateur peuvent
+bénéficier de cette vérification statique. Ceci est d'autant plus vrai que les
+pilotes de périphériques dont elles sont issues sont en général moins testées
+que le reste du code du noyau. D'autre part, cette technique revient à
+introduire des types abstraits opaques, séparant leur représentation de leur
+interface. Ce concept étant absent de C, de nombreuses erreurs de programmation
+notamment liées aux manipulations d'entiers peuvent également être vérifiées à
+l'aide de cette méthode.
 
 \begin{center}\Large \textbf{Abstract}\end{center}
 
