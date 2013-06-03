@@ -240,9 +240,10 @@ fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
 fréquemment et pourquoi il est aussi capital de les détecter avant l'exécution.
 
 \section{Systèmes de types}
+\label{sec:types-intro}
 
-La plupart des langages de programmation incorporent la notion de type, qui
-permet d'empêcher de manipuler des données incompatibles entre elles.
+La plupart des langages de programmation incorporent la notion de type, dont un
+des buts est d'empêcher de manipuler des données incompatibles entre elles.
 
 Au niveau du langage machine, les seules données qu'un ordinateur manipule sont
 des nombres. Selon les opérations effectuées, ils seront interprétés comme des
@@ -274,45 +275,29 @@ l'approche dynamique est pessimiste, puisqu'elle demande de traiter à chaque
 étape le cas où les types ne sont pas corrects. Intuitivement, dans le cas où
 toutes les fonctions se comportent bien, faire la vérification est inutile. Pour
 vérifier ceci, on donne à chaque fonction un contrat comme ``si deux entiers
-sont passés, et que la fonction renvoie une valeur\footnote{ La plupart des
-  systèmes de types ne concernent que les termes qui convergent. Il est
-  également possible que la fonction contienne une boucle infinie, ou provoque
-  une erreur à cause d'une division par zéro. Dans ces cas, la fonction ne
-  renvoie pas de valeur. },
-alors cette valeur sera un entier''. Cet ensemble de contrats peut être vérifié
-statiquement par le compilateur, à l'aide d'un système de types statique.
+sont passés, et que la fonction renvoie une valeur, alors cette valeur sera un
+entier''. Cet ensemble de contrats peut être vérifié statiquement par le
+compilateur, à l'aide d'un système de types statique.
 
-Ainsi l'opérateur ``$+$'' est typée $(\tInt, \tInt) → \tInt$. Les règles
-permettant de vérifier le typage sont par exemple les suivantes :
-
-\begin{itemize}
-\item
-  une constante entière est toujours de type \tInt.
-\item
-  si $f$ a pour type $(t_1, …, t_n) → t$, et que chaque $e_i$ a pour type $t_i$
-  ($i ∈ [1;n]$), alors $f(e_1, …, e_n)$ a pour type $t$.
-\item
-  si en considérant que chaque $e_i$ a pour type $t_i$ ($i ∈ [1;n]$),
-  on arrive à typer le corps de $f$ et que sa valeur de retour a alors
-  pour type $t$,
-  alors $f$ a pour type $(t_1, …, t_n) → t$.
-\end{itemize}
+Par exemple, on peut dire que l Ainsi l'opérateur ``$+$'' a pour type $(\tInt,
+\tInt) → \tInt$. Cela veut dire que si on lui passe deux entiers ($\tInt$
+\tInt), alors la valeur obtenue est également un entier.
 
 \paragraph{Typage fort ou faible}
 
 Contrairement à la distinction claire entre typage statique ou dynamique, la
-séparation entre typage fort et faible est moins nette. À l'extrémité du
-spectre, les systèmes de types forts permettent d'éliminer totalement la
-nécessité de réaliser des tests de typage. Mais souvent ce n'est pas le cas, car
-il peut y avoir des constructions au sein du langage qui permettent de
-contourner le système de types, comme un opérateur de
-transtypage.
+séparation entre typage fort et faible est moins nette. En poussant à l'extrême,
+les systèmes de types forts permettent d'éliminer totalement la nécessité de
+réaliser des tests de typage. Mais souvent ce n'est pas le cas, car il peut y
+avoir des constructions au sein du langage qui permettent de contourner le
+système de types, comme un opérateur de transtypage.
 
 \paragraph{Polymorphisme}
 
-Parfois, il est trop restrictif de donner un unique type à une fonction. Quel
-doit être le type d'une fonction ajoutant un élément à une liste, ou celui d'une
-fonction triant un tableau en place ?
+Parfois, il est trop restrictif de donner un unique type à une fonction. Si on
+considère une fonction ajoutant un élément à une liste, ou une autre
+triant un tableau en place, leur type doit-il faire intervenir le type des
+éléments manipulés ?
 
 En première approximation, on peut imaginer fournir une version du code par type
 de données à manipuler. C'est la solution retenue par les premières versions du
@@ -324,15 +309,16 @@ même nom, mais avec des types d'arguments différents. Par exemple, on peut
 définir séparément l'addition entre deux entiers, entre deux flottants, ou entre
 un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
-On parle de polymorphisme \emph{ad hoc}.
+On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
 
-La dernière possibilité est le polymorphisme universel, qui consiste à utiliser
-le même code quelque soit le type des arguments. Dans ce cas, on utilise une
-seule fonction pour retourner une liste d'entiers ou une liste de flottants, par
-exemple. Au lieu d'associer à chaque fonction un type, dans certains cas on lui
-associe un schéma de types, instanciable en un type concret. En quelque sorte,
-on déplace la vérification du site d'appel au site de définition. Cette
-technique a été décrite en premier dans~\cite{Milner78}.
+La dernière possibilité est le polymorphisme paramétrique, qui consiste à
+utiliser le même code quelque soit le type des arguments. Dans ce cas, on
+utilise une seule fonction pour traiter une liste d'entiers ou une liste de
+flottants, par exemple. Au lieu d'associer à chaque fonction un type, dans
+certains cas on lui associe un type paramétré, instanciable en un type concret.
+Dans le cas des fonctions de traitement de liste, l'idée est que lorsqu'on ne
+touche pas aux éléments, alors le traitement est valable quelque soit leur type.
+Cette technique a été décrite en premier dans~\cite{Milner78}.
 
 Pour un tour d'horizon de différents systèmes types de statiques, avec en
 particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
@@ -364,8 +350,8 @@ contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
 programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
 machine : ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
-taille concrète. Ceci dit, le système de types est assez rudimentaire : toutes
-les formes de transtypage sont acceptées, certaines conversions sont insérées
+taille concrète. Son système de types est assez rudimentaire : toutes les formes
+de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
 C.
@@ -399,27 +385,25 @@ dans les applications grand public, Ada garde toujours une place de choix dans
 l'implantation de systèmes embarqués, notamment dans les applications spatiales
 et de défense.
 
-\paragraph{Divers}
+\paragraph{Divers} % TODO titre
 
 Il est bien sûr possible d'implanter un système d'exploitation dans n'importe
 quel langage, si celui-ci peut être compilé vers du langage machine et qu'il
 permet facilement d'inclure des fragments d'assembleur pour les parties de bas
-niveau. Néanmoins il s'agit en général de travaux de recherche et non des
-systèmes d'exploitation de production dont il est nécessaire de vérifier la
-sûreté d'exécution. On peut ainsi trouver des systèmes d'exploitation écrits en
-C\#~\cite{SingularityOverview},
-Haskell~\cite{HaskellOS}
-ou
-Ocaml~\cite{unikernels}.
+niveau. Néanmoins il s'agit en général de travaux de recherche. On peut ainsi
+trouver des systèmes d'exploitation écrits en C\#~\cite{SingularityOverview},
+Haskell~\cite{HaskellOS} ou Ocaml~\cite{unikernels}.
+
+% TODO[B] TROLL
 
 \section{Langages d'analyse}
 
 Les langages décrits précédemments sont faits pour être facilement écrits par
-des programmeurs humains. En général ils sont ambigüs, peu précis ou ont des
-comportements implicites. Pour analyser du code source, il est plus pratique
-d'avoir une représentation intermédiaire plus simple afin d'avoir moins de
-traitements dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été
-définis pour aller dans ce sens.
+des programmeurs humains. En général ils sont ambigüs ou ont des comportements
+implicites. Pour analyser du code source, il est plus pratique d'avoir une
+représentation intermédiaire plus simple afin d'avoir moins de traitements
+dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été définis
+pour aller dans ce sens.
 
 \subsection*{Middle-ends}
 
@@ -431,8 +415,8 @@ extensions GNU.
 
 \paragraph{GCC} utilise une représentation interne nommée
 GIMPLE\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C, reposant
-sur de nombreuses macros afin de cacher les détails d'implémentation pouvant
-varier entre deux versions de GCC. Cette représentation étant réputée difficile
+sur de nombreuses macros afin de cacher les détails d'implantation interne
+pouvant varier entre deux versions. Cette représentation étant réputée difficile
 à manipuler, le projet MELT\cite{gcc-melt} permet de générer un greffon de
 compilateur à partir d'un dialecte de Lisp.
 
@@ -442,18 +426,19 @@ C++. Il utilise une représentation intermédiaire qui peut être manipulée soi
 sous forme d'une structure de données C++, soit d'un fichier de code-octet
 compact, soit sous forme textuelle.
 
-\paragraph{Objective Caml}\link{ocamlManual} utilise pour sa génération de code
-une représentation interne nommée Cmm, disponible dans les sources du
-compilateur sous le chemin \texttt{asmcomp/cmm.mli} (il s'agit donc d'une
-structure de données OCaml). Ce langage a l'avantage d'être très restreint, mais
-malheureusement il n'existe pas directement de traducteur permettant de compiler
-C vers Cmm.
+\paragraph{Cmm} est une représentation interne utilisée pour la génération de
+code lors de la compilation d'Objective Caml \link{ocamlManual} , et disponible
+dans les sources du compilateur sous le chemin \texttt{asmcomp/cmm.mli} (il
+s'agit donc d'une structure de données OCaml). Ce langage a l'avantage d'être
+très restreint, mais malheureusement il n'existe pas directement de traducteur
+permettant de compiler C vers Cmm.
 
 \paragraph{C-~-}\cite{spjcmm} \link{cmm}, dont le nom est inspiré du précédent,
 est un projet qui visait à unifier les langages intermédiaires utilisés par les
 compilateurs. L'idée est que si un front-end peut émettre du C-~- (sous forme de
 texte), il est possible d'obtenir du code machine efficace. Le compilateur
-Haskell GHC utilise une représentation intermédiaire très similaire à C-~-.
+Haskell GHC, par exemple, utilise une représentation intermédiaire très
+similaire à C-~-.
 
 \subsection*{Langages intermédiaires ad hoc}
 
@@ -483,9 +468,7 @@ section~\ref{sec:npk}.
 
 Dans la suite de cette thèse nous nous appuierons sur \langname, un langage
 intermédiaire minimal, pour exprimer les règles de typage de la manière la plus
-simple possible. Néanmoins l'implantation est faite sur une version adaptée de
-Newspeak, ce qui nous permettra d'avoir une traduction automatique depuis du
-code déjà écrit en C.
+simple possible.
 
 \section{Plan de la thèse}
 

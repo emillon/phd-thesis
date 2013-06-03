@@ -204,16 +204,29 @@
                 { \typh{Γ}{x=e}{Γ'} }
             }
     {GetU}{ \irule{GetU}
-              { Γ ⊢ lv : t
-             \\ Γ ⊢ e : \ptrU{t}
-              }
-              { Γ ⊢ \uGet{lv}{e} : \tInt }
+              { }
+              { Γ ⊢ \cfuF : (\ptrK{t}, \ptrU{t}) → \tInt }
     }
     {PutU}{ \irule{PutU}
-              { Γ ⊢ e_1 : t
-             \\ Γ ⊢ e_2 : \ptrU{t}
-              }
-              { Γ ⊢ \uPut{e_1}{e_2} : \tInt }
+              { }
+              { Γ ⊢ \ctuF : (\ptrU{t}, \ptrK{t}) → \tInt }
+    }
+    {AddrOf-Kernel}{ \irule{AddrOf-Kernel}
+                       { Γ ⊢ lv : t }
+                       { Γ ⊢ \& lv : \ptrK{t} }
+    }
+    {Ptr-Arith-User}{ \irule{Ptr-Arith-User}
+                         { \opbin ∈ \{ +_p, -_p \} \\
+                           Γ ⊢ e_1 : \ptrU{t} \\
+                           Γ ⊢ e_2 : \tInt \\
+                         }
+                         { Γ ⊢ e_1~\opbin~e_2 : \ptrU{t} }
+    }
+    {Lv-Deref-Kernel}{ \irule{Lv-Deref-Kernel}{
+                         Γ ⊢ e : \ptrK{t}
+                       }{
+                         Γ ⊢ *e : t
+                       }
     }
     {END}
 }
@@ -371,6 +384,38 @@
     {Prog}{ \irule{Prog}
               {\phstar{([~], [~])}{P}{m}}
               {\phprog{P}{m}}
+    }
+    {User-Get-OK}{ \irule{User-Get-OK}
+                     { \mm{m}{φ_d ← φ_s}
+                         {m'}{\iPass}
+                     }
+                     { \mm{m}{\uGet{φ_d}{\vTainted{φ_s}}}
+                       {m'}{0} % TODO faire une rq sur les widehats
+                     }
+    }
+    {User-Get-Err}{ \irule{User-Get-Err}
+                      {
+                        ∄ φ_s, φ = \vTainted{φ_s}
+                      }
+                      { \mm{m}{\uGet{φ_d}{φ}}
+                           {m}{-1}
+                      }
+    }
+    {User-Put-OK}{ \irule{User-Put-OK}
+                     { \mm{m}{φ_d ← φ_s}
+                         {m'}{\iPass}
+                     }
+                     { \mm{m}{ \uPut{\vTainted{φ_d}}{φ_s} }
+                         {m'}{0}
+                     }
+    }
+    {User-Put-Err}{ \irule{User-Put-Err}
+                      {
+                        ∄ φ_d, φ = \vTainted{φ_d}
+                      }
+                      { \mm{m}{\uPut{φ}{φ_s}}
+                           {m}{-1}
+                      }
     }
     {END}
 }

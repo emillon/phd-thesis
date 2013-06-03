@@ -9,14 +9,36 @@ compte les spécificités de l'adressage utilisé dans les systèmes d'exploitat
 
 Dans ce chapitre, on commence par l'étendre en ajoutant des constructions
 modélisant les variables présentes dans l'espace utilisateur (cf.
-chapitre~\ref{cha:os}). Celles-ci restent accessibles, mais nécessitent
-d'utiliser un opérateur de déréférencement sûr qui vérifie à l'exécution que
-l'invariant suivant est respecté :
+chapitre~\ref{cha:os}). Pour accéder à celles-ci, on ajoute un opérateur de
+déréférencement sûr qui vérifie à l'exécution que l'invariant suivant est
+respecté :
 
 \begin{quote}
 Les pointeurs dont la valeur est contrôlée par l'utilisateur, pointent vers
 l'espace utilisateur.
 \end{quote}
+
+La terminologie mérite d'être détaillée :
+
+Un pointeur contrôlé par l'utilisateur, ou \emph{pointeur utilisateur}, est
+référence mémoire dont la valeur est modifiable par le code utilisateur (opposé
+au code noyau, que nous analysons ici). Ceci correspond à des données provenant
+de l'extérieur du système vérifié. Pour faire un parallèle avec la programmation
+réseau, cela correspond à des variables dont la valeur proviendrait d'un client
+distant. C'est une propriété statique, qui peut être déterminée à la compilation
+à partir de considérations syntaxiques.
+
+Un pointeur pointant vers l'espace utilisateur fait référence à une variable
+allouée en espace utilisateur. Cela veut dire qu'y accéder ne risque pas de
+mettre en péril l'isolation du noyau en faisant fuiter des informations
+confidentielles ou en déjouant son intégrité. Cette propriété est dynamique : un
+pointeur utilisateur peut \emph{a priori} pointer vers l'espace utilisateur, ou
+non.
+
+Pour reprendre le parallèle avec la programmation web, une chaîne provenant du
+réseau peut être correctement échappée ou non. Pour s'assurer de la sécurité du
+traitement d'une telle chaîne, il faut s'assurer que celles-ci sont correctement
+échappées.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
@@ -25,7 +47,7 @@ lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau (le ca
 que l'on cherche à éviter) est déréférencer\footnote{Il est important de noter
   que ce cas d'erreur est ``virtuel'', la distinction entre pointeur contrôlé
   par l'utilisateur et par le noyau n'étant normalement pas visible à
-l'exécution}.
+l'exécution.}.
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
@@ -51,29 +73,26 @@ est un pointeur utilisateur.
 En plus du déréférencement par \texttt{*} qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
-utilisateurs. On note $\uGet{lv}{e}$ la lecture sûre de $e$ (pointeur
-utilisateur) dans $lv$ et $\uPut{e}{e'}$ l'écriture de $e$ dans l'espace pointé
-par le pointeur utilisateur $e'$.
-
-% TODO pourquoi pas des expressions/instructions ?
+utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et $\ctuF$.
+Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen indiquant
+si la copie pu être faite (si le paramètre contrôlé par l'utilisateur pointe en
+espace noyau, les fonctions ne font pas la copie et signalent l'erreur).
 
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
 entiers \texttt{major}, \texttt{minor} et \texttt{patch}. Celui-ci peut être
 alors écrit de la manière suivante :
 
-% TODO depend de eFun
-% TODO dépend de tStruct
-
 \begin{align*}
-  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{                      &             & & \\
-  & \indent \uPut{ 3}{p.\texttt{major}_S} ; & \mathrm{où} & & S = \{~& \texttt{major} : \tInt ; \\
-  & \indent \uPut{14}{p.\texttt{minor}_S} ; &             & &        & \texttt{minor} : \tInt ; \\
-  & \indent \uPut{15}{p.\texttt{patch}_S}   &             & &        & \texttt{patch} : \tInt   \\
-  & \}                                      &             & &     \}
+  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{      &             & & \\
+  & \indent \textsc{Decl}~x=3~\textsc{in}          &             & & \\
+  & \indent \textsc{Decl}~y=14~\textsc{in}         &             & & \\
+  & \indent \textsc{Decl}~z=15~\textsc{in}         &             & & \\
+  & \indent \uPut{\& (p.\texttt{major}_S)}{\& x} ; & \mathrm{où} & & S = \{~& \texttt{major} : \tInt ; \\
+  & \indent \uPut{\& (p.\texttt{minor}_S)}{\& y} ; &             & &        & \texttt{minor} : \tInt ; \\
+  & \indent \uPut{\& (p.\texttt{patch}_S)}{\& z}   &             & &        & \texttt{patch} : \tInt   \\
+  & \}                                             &             & &     \}
 \end{align*}
-
-% TODO le champ utilisateur ça passe bien ?
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
@@ -86,25 +105,17 @@ d'évaluation. Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclenche
 lorsqu'on déréférence directement un pointeur utilisateur. Ces étapes sont
 résumées dans la figure~\ref{fig:qualif-changes}.
 
-% TODO notation widehat taint voire widehat userspace
-
 \begin{figure}%{{{
 
 \begin{align*}
 \gramdef{Expressions}{e}
   { … }{}
   { \eTaint{e} }{Expression souillée} % TODO ce serait pas un ajout à lv?
-  { \uGet{lv}{e}}{ Lecture depuis l'espace utilisateur}
-  { \uPut{e}{e'}}{ Écriture dans l'espace utilisateur}
   {END}
 \\
 \gramdef{Contextes}{C}
   { … }{}
   { \eTaint{C}}{}
-  { \uGet{C}{e}}{}
-  { \uGet{φ}{C}}{}
-  { \uPut{C}{e}}{}
-  { \uPut{v}{C}}{}
   {END}
 \\
 \gramdef{Chemins}{φ}
@@ -118,7 +129,9 @@ résumées dans la figure~\ref{fig:qualif-changes}.
   {END}
 \end{align*}
 
-\caption{Ajouts liés aux pointeurs utilisateurs}
+\caption{Ajouts liés aux pointeurs utilisateurs (par rapport à l'évaluateur du
+chapitre~\ref{cha:lang})}
+
 \label{fig:qualif-changes}
 % TODO définir les états et ms
 
@@ -152,36 +165,37 @@ suffit donc d'adapter la définition~\ref{def:acces-phi} de celle-ci en rajoutan
 le cas :
 
 \begin{align*}
-Φ(\vTainted{φ}) =& \serr{taint}
+Φ(\vTainted{φ}) &= \serr{taint}
 \end{align*}
 
-Enfin, il est nécessaire de donner une sémantique aux opérateurs $\phxx\uGet$ et
-$\phxx\uPut$.
+Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
+$\ctuF$. L'idée est que celles-ci testent dynamiquement la \emph{valeur} du
+paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci pointe vers
+l'espace utilisateur (c'est-à-dire, qu'il est da la forme $\vTainted{φ}$.
 
-% TODO leur sémantique
+Deux cas peuvent se produire. Si ce test est positif, alors la copie est faite
+et l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
+aucune copie n'est faite et la valeur $-1$ est retournée. Ce comportement est
+calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux : en
+cas de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT}.
 
 \begin{mathpar}
-  \irule{User-Get}
-    { }
-    { \mms{ \uGet{φ}{\vTainted{φ'}} }
-          { φ ← φ'}
-    }
+  \semrule{User-Get-OK}
 
-  \irule{User-Put}
-    { }
-    { \mms{ \uPut{v}{\vTainted{φ}} }
-          {φ ← v}
-    }
+  \semrule{User-Get-Err}
+
+  \semrule{User-Put-OK}
+
+  \semrule{User-Put-Err}
 \end{mathpar}
 
-% TODO vérifier
-
-% TODO et dans le cas d'un chose kernel?
-
-Puisque ces règles ne s'appliquent qu'aux cas où les expressions à gauche et à
-droite des opérateurs sont déjà évaluées, il faut également étendre les
-contextes d'évaluation (figure~\ref{fig:qualif-changes}). Encore une fois on
-évalue d'abord l'argument de gauche, puis l'argument de droite.
+Ces règles sont à appliquer en priorité de la règle d'appel de fonction
+classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
+celles ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
+par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
+$\vTainted{φ}$. L'opération en ``boîte noire'' de ces deux fonctions permet
+d'assurer que l'accès à l'espace utilisateur est toujours couplé à un test
+dynamique.
 
 \section{Insuffisance des types simples}
 
@@ -241,7 +255,7 @@ conclusion n'est pas vraie :
           { Γ ⊢ * \eTaint {\& x} : \tInt}
       \end{mathpar}
 
-  \item 
+  \item
     L'évaluation de $e$ sous $m$ provoque une erreur différente de
     $\serr{div}$, $\serr{array}$, ou $\serr{ptr}$ :
 
@@ -312,13 +326,15 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 \begin{figure}%{{{
 
 \begin{align*}
-\gramdef{Types}{t}
+\gramdef{Type}{t}
   { … }{}
   { \ptrU{t} }{Pointeur utilisateur}
   {END}
 \end{align*}
 
-\caption{Changements liés aux qualificateurs de types}
+\caption{Ajouts liés aux qualificateurs de types (par rapport à la
+figure~\ref{fig:les-types}}
+
 \label{fig:qualif-changes-typ}
 \end{figure}%}}}
 
@@ -329,13 +345,11 @@ créent, manipulent et utilisent des pointeurs.
 
 La source principale de pointeurs est l'opérateur $\&$ qui prend l'adresse d'une
 variable. Celle-ci est bien entendue contrôlée par le noyau (dans le sens où son
-déréférencement est toujours sûr). Le qualificateur associé est donc
-$\qKernel$ :
+déréférencement est toujours sûr). Cette construction crée donc des pointeurs
+noyau :
 
 \begin{mathpar}
-  \irule{AddrOf-Kernel}
-    { Γ ⊢ lv : t }
-    { Γ ⊢ \& lv : \ptrK{t} }
+  \disprule{AddrOf-Kernel}
 \end{mathpar}
 
 \subsection*{Manipulations de pointeurs}
@@ -351,32 +365,21 @@ pointeurs qualifiés, puisqu'elle est possible quelque soit le qualificateur (et
 le préserve) :
 
 \begin{mathpar}
-  \irule{Ptr-Arith-User}
-     { \opbin ∈ \{ +_p, -_p \} \\
-       Γ ⊢ e_1 : \ptrU{t} \\
-       Γ ⊢ e_2 : \tInt \\
-     }
-     { Γ ⊢ e_1~\opbin~e_2 : \ptrU{t} }
+  \disprule{Ptr-Arith-User}
 \end{mathpar}
 
 \subsection*{Utilisations de pointeurs}
 
 La principale restriction, au cœur de ce chapitre et de cette thèse, est que
-seuls les pointeurs \qKernel peuvent être déréférencés de manière sûre. La règle
+seuls les pointeurs noyau peuvent être déréférencés de manière sûre. La règle
 suivante remplace donc \textsc{Lv-Deref} :
 
 \begin{mathpar}
-\irule{Lv-Deref-Kernel}{
-  Γ ⊢ e : \ptrK{t}
-}{
-  Γ ⊢ *e : t
-}
+  \disprule{Lv-Deref-Kernel}
 \end{mathpar}
 
 Ainsi, on interdit le déréférencement des expressions de type $\ptrU{t}$ à la
 compilation.
-
-% TODO mettre ça dans rules.tex
 
 % TODO définir les stubs
 
@@ -388,7 +391,7 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
   { Γ ⊢ \eTaint{e} : \ptrU{t} } % TODO e ou lv?
 \end{mathpar}
 
-Les opérateurs $\phxx\uGet$ et $\phxx\uPut$ sont typés de la manière suivante :
+Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante :
 
 \begin{mathpar}
     \disprule{GetU}
@@ -400,8 +403,6 @@ Il est à noter qu'il n'y a pas de sous-typage : les pointeurs noyau ne peuvent
 être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
 qu'en tant que pointeurs utilisateurs.
 
-% TODO check
-
 \section{Sûreté du typage}
 
 \subsection*{Typage sémantique}
@@ -410,6 +411,7 @@ La définition du typage sémantique doit aussi être étendue au cas $φ =
 \vTainted{φ'}$. Les références mémoires sont ``nettoyées'' pour accéder à la
 left-value encapsulée.
 
+% TODO en annexe?
 \begin{mathpar}
   \irule{S-Tainted}
     { m ⊧           φ'  : \ptrK{t} }
