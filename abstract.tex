@@ -3,6 +3,33 @@
 
 \begin{center}\Large \textbf{Résumé}\end{center}
 
+Les noyaux de système d'exploitation manipulent des données fournies par
+les programmes utilisateur via certaines interfaces, comme les appels système.
+Si celles-ci sont manipulées sans prendre une attention particulière, des
+failles de sécurité peuvent apparaître, comme des fuites de données
+confidentielles ou l'elévation de privilège d'un attaquant.
+
+Le but de cette thèse est d'utiliser des techniques de typage statique afin de
+détecter les manipulations dangereuses de pointeurs contrôlés par l'espace
+utilisateur.
+
+De nombreux systèmes d'exploitation, dont le noyau Linux sur lequel nous nous
+basons, sont écrits dans le langage C. Afin de pouvoir appliquer les techniques
+de typage statique à ce langage, on commence par isoler un sous-ensemble sûr
+nommé \langname, pour lequel on définit une sémantique opérationnelle et un
+système de types. Les propriétés classiques de sûreté du typage sont établies.
+
+Dans un second temps on étend \langname pour intégrer la notion de valeur
+provenant de l'espace utilisateur. On montre que l'extension triviale du système
+de types brise la sûreté du typage, et que l'on peut réétablir celle-ci en
+donnant un type particulier aux pointeurs dont la valeur est contrôlé par
+l'espace utilisateur, forçant leur déférencement à se faire au sein d'un
+ensemble limités de fonction sûres. Un cas d'étude est déroulé pour montrer que
+cette technique permet de détecter un bug qui a frappé un pilote de carte
+graphique AMD dans le noyau Linux.
+
+\begin{center}\Large \textbf{Abstract}\end{center}
+
 Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
 euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
 minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
