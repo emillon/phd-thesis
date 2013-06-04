@@ -185,9 +185,9 @@ le cas :
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
 $\ctuF$. L'idée est que celles-ci testent dynamiquement la \emph{valeur} du
 paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci pointe vers
-l'espace utilisateur (c'est-à-dire, qu'il est da la forme $\vTainted{φ}$.
+l'espace utilisateur (c'est-à-dire, qu'il est de la forme $\vTainted{φ}$).
 
-Deux cas peuvent se produire. Si ce test est positif, alors la copie est faite
+Deux cas peuvent se produire. Si ce test est vrai, alors la copie est faite
 et l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
 aucune copie n'est faite et la valeur $-1$ est retournée. Ce comportement est
 calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux : en
