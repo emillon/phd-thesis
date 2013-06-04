@@ -332,8 +332,15 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
   {END}
 \end{align*}
 
-\caption{Ajouts liés aux qualificateurs de types (par rapport à la
-figure~\ref{fig:les-types})}
+\begin{align*}
+\gramdef[2.5cm]{Type\\sémantique}{τ}
+  { … }{}
+  { \ptrU{t} }{Pointeur utilisateur}
+  {END}
+\end{align*}
+
+\caption{Ajouts liés aux qualificateurs de types (par rapport aux
+figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
 
 \label{fig:qualif-changes-typ}
 \end{figure}%}}}
@@ -414,8 +421,12 @@ left-value encapsulée.
 % TODO en annexe?
 \begin{mathpar}
   \irule{S-Tainted}
-    { m ⊧           φ'  : \ptrK{t} }
-    { m ⊧ \vTainted{φ'} : \ptrU{t} }
+    { m ⊧           φ'  : \ptrK{τ} }
+    { m ⊧ \vTainted{φ'} : \ptrU{τ} }
+
+  \irule{Comp-Ptr}
+    { \tComp{τ}{t} }
+    { \tComp{\ptrU{τ}}{\ptrU{t}} }
 \end{mathpar}
 
 \subsection*{Progrès et préservation}
