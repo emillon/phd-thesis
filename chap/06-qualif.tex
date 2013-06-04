@@ -43,10 +43,10 @@ traitement d'une telle chaîne, il faut s'assurer que celles-ci sont correctemen
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
 Tout d'abord, on définit un nouveau type d'erreur $\serr{taint}$, déclenché
-lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau (le cas
-que l'on cherche à éviter) est déréférencer\footnote{Il est important de noter
-  que ce cas d'erreur est ``virtuel'', la distinction entre pointeur contrôlé
-  par l'utilisateur et par le noyau n'étant normalement pas visible à
+lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau est
+déréférencé (le cas que l'on cherche à éviter) \footnote{Il est important de
+noter que ce cas d'erreur est ``virtuel'', la distinction entre pointeur
+contrôlé par l'utilisateur et par le noyau n'étant normalement pas visible à
 l'exécution.}.
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
@@ -66,9 +66,12 @@ progrès et de préservation sont rétablies.
 
 On ajoute à \langname la notion de valeur provenant de l'espace utilisateur.
 Pour marquer la séparation entre les deux espaces d'adressage, on ajoute une
-construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ correspond à une
-variable classique (un pointeur noyau) qui, vu sous la forme $\vTainted{φ'}$,
-est un pointeur utilisateur.
+construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ désigne une
+variable classique (un pointeur noyau) et l'opérateur $\phx\vTainted$ permet de
+l'interpréter comme un pointeur vers l'espace utilisateur, contrairement à
+$\widehat{\&}\cdot$ qui crée des pointeurs vers l'espace noyau. En quelque
+sorte, on ne classifie pas les valeur selon la variable pointée mais selon la
+construction du pointeur.
 
 En plus du déréférencement par \texttt{*} qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
@@ -81,18 +84,38 @@ espace noyau, les fonctions ne font pas la copie et signalent l'erreur).
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
 entiers \texttt{major}, \texttt{minor} et \texttt{patch}. Celui-ci peut être
-alors écrit de la manière suivante :
+alors écrit comme dans la figure~\ref{fig:ex-sys-getver}.
 
+\begin{figure}
+\begin{minipage}{7cm}
+\setlength{\parindent}{1cm}
 \begin{align*}
-  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{      &             & & \\
-  & \indent \textsc{Decl}~x=3~\textsc{in}          &             & & \\
-  & \indent \textsc{Decl}~y=14~\textsc{in}         &             & & \\
-  & \indent \textsc{Decl}~z=15~\textsc{in}         &             & & \\
-  & \indent \uPut{\& (p.\texttt{major}_S)}{\& x} ; & \mathrm{où} & & S = \{~& \texttt{major} : \tInt ; \\
-  & \indent \uPut{\& (p.\texttt{minor}_S)}{\& y} ; &             & &        & \texttt{minor} : \tInt ; \\
-  & \indent \uPut{\& (p.\texttt{patch}_S)}{\& z}   &             & &        & \texttt{patch} : \tInt   \\
-  & \}                                             &             & &     \}
+  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{      \\
+  & \indent \textsc{Decl}~x=3~\textsc{in}          \\
+  & \indent \textsc{Decl}~y=14~\textsc{in}         \\
+  & \indent \textsc{Decl}~z=15~\textsc{in}         \\
+  & \indent \uPut{\& (p.\texttt{major}_S)}{\& x} ; \\
+  & \indent \uPut{\& (p.\texttt{minor}_S)}{\& y} ; \\
+  & \indent \uPut{\& (p.\texttt{patch}_S)}{\& z}   \\
+  & \}
 \end{align*}
+\end{minipage}
+\begin{minipage}{2cm}
+\hfill où
+\end{minipage}
+\begin{minipage}{5cm}
+\begin{align*}
+S = \{~& \texttt{major} : \tInt ; \\
+       & \texttt{minor} : \tInt ; \\
+       & \texttt{patch} : \tInt   \\
+    \}
+\end{align*}
+\end{minipage}
+
+\caption{Exemple d'implantation d'un appel système qui remplit une structure par
+pointeur}
+\label{fig:ex-sys-getver}
+\end{figure}
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
