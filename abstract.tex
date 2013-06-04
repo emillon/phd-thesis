@@ -1,22 +1,105 @@
-\section*{Français}
+\cleartoverso
+\newgeometry{margin=2cm}
 
+\begin{headingpage}
+\thispagestyle{empty}
 
-\section*{English}
+\begin{center}\Large \textbf{Résumé}\end{center}
+
+Les noyaux de système d'exploitation manipulent des données fournies par les
+programmes utilisateur via certaines interfaces, comme les appels système. Si
+celles-ci sont manipulées sans prendre une attention particulière, une faille de
+sécurité connue sous le nom de \emph{Confused Deputy Problem} peut amener à des
+fuites de données confidentielles ou l'elévation de privilège d'un attaquant.
+
+Le but de cette thèse est d'utiliser des techniques de typage statique afin de
+détecter les manipulations dangereuses de pointeurs contrôlés par l'espace
+utilisateur.
+
+De nombreux systèmes d'exploitation, dont le noyau Linux sur lequel nous nous
+basons, sont écrits dans le langage C. Afin de pouvoir appliquer les techniques
+de typage statique à ce langage, on commence par isoler un sous-langage sûr
+nommé \langname, pour lequel on définit une sémantique opérationnelle et un
+système de types. Les propriétés classiques de sûreté du typage sont établies.
+
+Dans un second temps on étend \langname pour intégrer la notion de valeur
+provenant de l'espace utilisateur. On montre que l'extension triviale du système
+de types brise la sûreté du typage, et que l'on peut réétablir celle-ci en
+donnant un type particulier aux pointeurs dont la valeur est contrôlée par
+l'espace utilisateur, forçant leur déférencement à se faire au sein d'un
+ensemble limité de fonctions sûres. Un cas d'étude est déroulé pour montrer que
+cette technique permet de détecter un bug qui a frappé un pilote de carte
+graphique AMD dans le noyau Linux.
+
+Ces travaux ouvrent des perspectives sur deux points. D'une part, il est
+possible d'appliquer cette analyse à de plus grandes parties du noyau Linux. Les
+diverses interfaces qui exposent des données contrôlées par l'espace utilisateur
+peuvent bénéficier de cette vérification statique. Ceci est d'autant plus vrai
+que les pilotes de périphériques dont elles sont issues sont en général moins
+testées que le reste du code du noyau. D'autre part, cette technique revient à
+introduire des types abstraits opaques, séparant leur représentation de leur
+interface. Ce concept étant absent de C, de nombreuses erreurs de programmation
+notamment liées aux manipulations d'entiers peuvent également être vérifiées à
+l'aide de cette méthode.
+
+\begin{center}\Large \textbf{Abstract}\end{center}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec gravida, diam
+ullamcorper volutpat varius, est dui blandit nibh, et posuere nisi tortor ut
+lectus. Aliquam in ipsum at nisl luctus pulvinar. Nulla pulvinar accumsan
+interdum. Aliquam varius est et ligula commodo varius quis gravida justo. Ut
+sit amet eros orci, at iaculis metus. Cras placerat condimentum magna ut
+dictum. Mauris id sollicitudin quam. Ut pretium aliquet lacus, et elementum
+odio blandit quis.
+
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+inceptos himenaeos. Morbi tincidunt, justo sed venenatis imperdiet, diam dui
+blandit nisl, et sodales urna mauris sit amet felis. Sed congue sodales
+sollicitudin. Integer imperdiet tellus et ligula consequat quis commodo metus
+posuere. Donec id vehicula mi. Nullam id tincidunt orci. Nunc luctus ligula ut
+urna laoreet consequat. In hac habitasse platea dictumst. Sed imperdiet
+ultricies diam id cursus. Quisque metus orci, tempor et dapibus eget,
+ullamcorper in augue. Nullam non urna metus, id accumsan lacus. Duis erat
+arcu, porttitor non laoreet vitae, ultrices vitae tortor. Pellentesque
+interdum faucibus tellus eu semper. Nulla ac aliquet mauris.
+
+In in metus purus. Nunc ullamcorper posuere turpis, vel laoreet tortor posuere
+at. Ut euismod arcu sit amet dui varius vel varius neque pellentesque. Lorem
+ipsum dolor sit amet, consectetur adipiscing elit. Aliquam nec mi interdum
+ipsum eleifend tincidunt. Duis bibendum sem vitae risus facilisis mattis. Sed
+varius eleifend nulla vel commodo. Morbi risus metus, egestas non commodo id,
+ullamcorper a enim. Integer et augue et orci feugiat rhoncus a in augue.
+
+Nulla elementum felis eu eros pretium quis porttitor felis faucibus. Vivamus a
+vulputate tellus. Suspendisse potenti. Morbi dapibus, quam ac consectetur
+hendrerit, lorem urna faucibus dui, in vestibulum tellus nisl sit amet ligula.
+Morbi ultricies venenatis nisi sit amet scelerisque. Nam pharetra bibendum
+lacinia. Suspendisse potenti. Suspendisse elementum tellus et mi hendrerit
+sagittis.
+
+Ut dignissim fermentum cursus. Praesent feugiat venenatis rutrum. Cras eget
+nibh id quam ultrices pellentesque eget non elit. Maecenas justo lorem,
+fermentum vitae dictum eu, egestas eu urna. In hac habitasse platea dictumst.
+Cras nec arcu at purus aliquet accumsan. Nam interdum malesuada orci et
+sagittis
 
 % TODO (PLAS suit)
 
-Manipulating user-provided pointers in the kernel of an operating system can
-lead to security flaws if done in an incautious manner. We present an efficient
-system to detect and prevent this class of erroneous memory manipulation.
+%Manipulating user-provided pointers in the kernel of an operating system can
+%lead to security flaws if done in an incautious manner. We present an efficient
+%system to detect and prevent this class of erroneous memory manipulation.
 
-At the core of our approach is \langname, an imperative language that we equip
-with a qualified type system, where two kinds of pointers are distinguished:
-\emph{safe} pointers, whose value is statically proved to be controlled by the
-kernel, and \emph{unsafe} ones, whose value comes from userspace through
-run-time system calls. Dereferencing unsafe pointers is forbidden in a static
-manner by the means of a strong type system.
+%At the core of our approach is \langname, an imperative language that we equip
+%with a qualified type system, where two kinds of pointers are distinguished:
+%\emph{safe} pointers, whose value is statically proved to be controlled by the
+%kernel, and \emph{unsafe} ones, whose value comes from userspace through
+%run-time system calls. Dereferencing unsafe pointers is forbidden in a static
+%manner by the means of a strong type system.
 
-A concrete case study is described based on a bug that affected a video driver
-in the Linux kernel. We also explain a technique to automatically translate GNU
-C code to our core language, which will enable us to analyze larger fractions of
-the kernel in order to find similar vulnerabilities.
+%A concrete case study is described based on a bug that affected a video driver
+%in the Linux kernel. We also explain a technique to automatically translate GNU
+%C code to our core language, which will enable us to analyze larger fractions of
+%the kernel in order to find similar vulnerabilities.
+
+\end{headingpage}
+\restoregeometry

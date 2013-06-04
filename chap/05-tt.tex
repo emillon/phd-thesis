@@ -508,8 +508,9 @@ Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes,
 mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
 impossible de déterminer statiquement. On le remplace donc par un cas plus
-simple où seul l'arité est conservée.
+simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
 
+\begin{figure}
 \begin{align*}
 \gramdef[2.5cm]{Type\\sémantique}{τ}
     { \tInt                       }{Entier}
@@ -521,6 +522,10 @@ simple où seul l'arité est conservée.
     { \stFun{n}                   }{Fonction}
     {END}
 \end{align*}
+
+\caption{Types sémantiques}
+\label{fig:types-semantiques}
+\end{figure}
 
 % TODO en annexe?
 \begin{figure}

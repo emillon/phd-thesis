@@ -43,10 +43,10 @@ traitement d'une telle chaîne, il faut s'assurer que celles-ci sont correctemen
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
 Tout d'abord, on définit un nouveau type d'erreur $\serr{taint}$, déclenché
-lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau (le cas
-que l'on cherche à éviter) est déréférencer\footnote{Il est important de noter
-  que ce cas d'erreur est ``virtuel'', la distinction entre pointeur contrôlé
-  par l'utilisateur et par le noyau n'étant normalement pas visible à
+lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau est
+déréférencé (le cas que l'on cherche à éviter) \footnote{Il est important de
+noter que ce cas d'erreur est ``virtuel'', la distinction entre pointeur
+contrôlé par l'utilisateur et par le noyau n'étant normalement pas visible à
 l'exécution.}.
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
@@ -66,9 +66,12 @@ progrès et de préservation sont rétablies.
 
 On ajoute à \langname la notion de valeur provenant de l'espace utilisateur.
 Pour marquer la séparation entre les deux espaces d'adressage, on ajoute une
-construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ correspond à une
-variable classique (un pointeur noyau) qui, vu sous la forme $\vTainted{φ'}$,
-est un pointeur utilisateur.
+construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ désigne une
+variable classique (un pointeur noyau) et l'opérateur $\phx\vTainted$ permet de
+l'interpréter comme un pointeur vers l'espace utilisateur, contrairement à
+$\widehat{\&}\cdot$ qui crée des pointeurs vers l'espace noyau. En quelque
+sorte, on ne classifie pas les valeur selon la variable pointée mais selon la
+construction du pointeur.
 
 En plus du déréférencement par \texttt{*} qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
@@ -80,19 +83,30 @@ espace noyau, les fonctions ne font pas la copie et signalent l'erreur).
 
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
-entiers \texttt{major}, \texttt{minor} et \texttt{patch}. Celui-ci peut être
-alors écrit de la manière suivante :
+entiers \texttt{major}, \texttt{minor} et \texttt{patch} (un équivalent dans
+Linux est l'appel système \texttt{uname()}). Celui-ci peut être alors écrit
+comme dans la figure~\ref{fig:ex-sys-getver}. Une fois la structure noyau $v$
+remplie, il faut la copier vers l'espace utilisateur. La fonction $\ctuF$ va
+réaliser cette copie (de la même manière qu'avec un \texttt{memcpy()}, mais
+après avoir testé dynamiquement que $p$ pointe en espace utilisateur (dans le
+cas contraire, la copie n'est pas faite).
 
+\begin{figure}
+\setlength{\parindent}{1cm}
 \begin{align*}
-  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{      &             & & \\
-  & \indent \textsc{Decl}~x=3~\textsc{in}          &             & & \\
-  & \indent \textsc{Decl}~y=14~\textsc{in}         &             & & \\
-  & \indent \textsc{Decl}~z=15~\textsc{in}         &             & & \\
-  & \indent \uPut{\& (p.\texttt{major}_S)}{\& x} ; & \mathrm{où} & & S = \{~& \texttt{major} : \tInt ; \\
-  & \indent \uPut{\& (p.\texttt{minor}_S)}{\& y} ; &             & &        & \texttt{minor} : \tInt ; \\
-  & \indent \uPut{\& (p.\texttt{patch}_S)}{\& z}   &             & &        & \texttt{patch} : \tInt   \\
-  & \}                                             &             & &     \}
+  & \mathrm{sys\_getver} = \mathrm{fun}(p) \{ \\
+  & \indent \textsc{Decl}~v= \{~\texttt{major} : 3
+                              ; \texttt{minor} : 14
+                              ; \texttt{patch} : 15~\}~\textsc{in} \\
+  & \indent \uPut{p}{\& v} \\
+  & \}
 \end{align*}
+
+\caption{Implantation d'un appel système qui remplit une structure par pointeur}
+\label{fig:ex-sys-getver}
+\end{figure}
+
+% TODO les pointeurs ont assez d'info pour avoir la taille de la zone
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
@@ -113,15 +127,18 @@ résumées dans la figure~\ref{fig:qualif-changes}.
   { \eTaint{e} }{Expression souillée} % TODO ce serait pas un ajout à lv?
   {END}
 \\
+\\
 \gramdef{Contextes}{C}
   { … }{}
   { \eTaint{C}}{}
   {END}
 \\
+\\
 \gramdef{Chemins}{φ}
   { … }{}
   { \vTainted{φ} }{Valeur souillée}
   {END}
+\\
 \\
 \gramdef{Erreurs}{Ω}
   { … }{}
@@ -171,9 +188,9 @@ le cas :
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
 $\ctuF$. L'idée est que celles-ci testent dynamiquement la \emph{valeur} du
 paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci pointe vers
-l'espace utilisateur (c'est-à-dire, qu'il est da la forme $\vTainted{φ}$.
+l'espace utilisateur (c'est-à-dire, qu'il est de la forme $\vTainted{φ}$).
 
-Deux cas peuvent se produire. Si ce test est positif, alors la copie est faite
+Deux cas peuvent se produire. Si ce test est vrai, alors la copie est faite
 et l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
 aucune copie n'est faite et la valeur $-1$ est retournée. Ce comportement est
 calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux : en
@@ -316,8 +333,8 @@ pointeur noyau.
 
 \item Les types ``$\ptrU{t}$'', quant à eux, s'appliquent aux pointeurs qui
 proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
-d'interfaces particulières, comme les appels système ou les paramètres de la
-fonction \texttt{ioctl}.
+d'interfaces particulières, comme les appels système ou les paramètres passés
+aux implantations de la fonction \texttt{ioctl}.
 
 \end{itemize}
 
@@ -330,10 +347,16 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
   { … }{}
   { \ptrU{t} }{Pointeur utilisateur}
   {END}
+\\
+\\
+\gramdef[2.5cm]{Type\\sémantique}{τ}
+  { … }{}
+  { \ptrU{t} }{Pointeur utilisateur}
+  {END}
 \end{align*}
 
-\caption{Ajouts liés aux qualificateurs de types (par rapport à la
-figure~\ref{fig:les-types}}
+\caption{Ajouts liés aux qualificateurs de types (par rapport aux
+figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
 
 \label{fig:qualif-changes-typ}
 \end{figure}%}}}
@@ -408,14 +431,17 @@ qu'en tant que pointeurs utilisateurs.
 \subsection*{Typage sémantique}
 
 La définition du typage sémantique doit aussi être étendue au cas $φ =
-\vTainted{φ'}$. Les références mémoires sont ``nettoyées'' pour accéder à la
-left-value encapsulée.
+\vTainted{φ'}$.
 
 % TODO en annexe?
 \begin{mathpar}
   \irule{S-Tainted}
-    { m ⊧           φ'  : \ptrK{t} }
-    { m ⊧ \vTainted{φ'} : \ptrU{t} }
+    { m ⊧           φ'  : \ptrK{τ} }
+    { m ⊧ \vTainted{φ'} : \ptrU{τ} }
+
+  \irule{Comp-Ptr}
+    { \tComp{τ}{t} }
+    { \tComp{\ptrU{τ}}{\ptrU{t}} }
 \end{mathpar}
 
 \subsection*{Progrès et préservation}
