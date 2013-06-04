@@ -127,15 +127,18 @@ résumées dans la figure~\ref{fig:qualif-changes}.
   { \eTaint{e} }{Expression souillée} % TODO ce serait pas un ajout à lv?
   {END}
 \\
+\\
 \gramdef{Contextes}{C}
   { … }{}
   { \eTaint{C}}{}
   {END}
 \\
+\\
 \gramdef{Chemins}{φ}
   { … }{}
   { \vTainted{φ} }{Valeur souillée}
   {END}
+\\
 \\
 \gramdef{Erreurs}{Ω}
   { … }{}
@@ -344,9 +347,8 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
   { … }{}
   { \ptrU{t} }{Pointeur utilisateur}
   {END}
-\end{align*}
-
-\begin{align*}
+\\
+\\
 \gramdef[2.5cm]{Type\\sémantique}{τ}
   { … }{}
   { \ptrU{t} }{Pointeur utilisateur}
