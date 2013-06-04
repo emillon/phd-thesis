@@ -333,8 +333,8 @@ pointeur noyau.
 
 \item Les types ``$\ptrU{t}$'', quant à eux, s'appliquent aux pointeurs qui
 proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
-d'interfaces particulières, comme les appels système ou les paramètres de la
-fonction \texttt{ioctl}.
+d'interfaces particulières, comme les appels système ou les paramètres passés
+aux implantations de la fonction \texttt{ioctl}.
 
 \end{itemize}
 
@@ -431,8 +431,7 @@ qu'en tant que pointeurs utilisateurs.
 \subsection*{Typage sémantique}
 
 La définition du typage sémantique doit aussi être étendue au cas $φ =
-\vTainted{φ'}$. Les références mémoires sont ``nettoyées'' pour accéder à la
-left-value encapsulée.
+\vTainted{φ'}$.
 
 % TODO en annexe?
 \begin{mathpar}
