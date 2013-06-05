@@ -509,6 +509,13 @@ on peut donc voir les systèmes de types dépendants comme des assistants de
 preuves généralistes où l'on peut faire vérifier par un compilateur des
 théorèmes mathématiques comme le théorème des 4 couleurs~\cite{4colproof}.
 
+Cette technique fait se rejoindre les mondes du typage et des annotations par
+triplets de Hoare : on enrichit le langage des types suffisamment pour encoder
+une logique, et on vérifie suffisamment les triplets statiquement pour éliminer
+tous les tests dynamiques. Cependant cette technique est très complexe à mettre
+en œuvre, puisqu'il faut encoder toutes les propriétés voulues dans un
+formalisme de très bas niveau (similaire à la théorie des ensembles).
+
 \section{Conclusion}
 
 % TODO[B] conclure + mini contributions (ce qu'on va ajouter, comment on se
