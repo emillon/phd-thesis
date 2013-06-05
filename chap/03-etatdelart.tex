@@ -1,6 +1,3 @@
-% TODO [E]: Cela part sur les chapeaux de roues, ensuite on a l'impression qu'il
-% n'y a que l'IA comme analyse statique et un peu le typage
-
 Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
 permettant d'analyser des programmes. Un accent est mis sur la propriété de
 sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se limite pas à
@@ -283,8 +280,7 @@ au code source. Un pointeur peut être décoré d'une annotation
 sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
 Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul peut être
 utilisé pour détecter les cas les plus simples d'erreurs. Il demande aussi au
-programmeur d'ajouter beaucoup d'annotations dans le programme. % TODO
-quantifier
+programmeur d'ajouter de nombreuses annotations dans le programme.
 
 Ce système d'annotations sur les types a été formalisé sous le nom de
 \emph{qualificateurs de types}~\cite{toplas-quals} : chaque type peut être
@@ -293,32 +289,32 @@ règles de typage permettent d'établir des propriétés sur le programme.
 
 Plus précisément, les jugements de typage de la forme $Γ ⊢ e : t$ sont remplacés
 par des jugements de typage qualifiés $Γ ⊢ e : t~q$. Les qualificateurs $q$
-permettent d'exprimer plusieurs jugements.
-Par exemple, pointeurs on peut étudier le fait qu'une variable soit constante ou
-pas, que sa valeur soit connue à la compilation, ou encore qu'elle puisse être
-nulle ou pas.
-La
-spécificité de ce système est que les qualificateurs sont ordonnés, du plus
-spécifique au moins spécifique, et que l'on forme alors un treillis à partir de
-ces informations. Partant des deux caractéristiques précédentes, on forme le
-treillis de la figure~\ref{fig:cqual-treillis}.
-
-% TODO[B] décrire
+permettent d'exprimer plusieurs jugements. Par exemple, pointeurs on peut
+étudier le fait qu'une variable soit constante ou pas, que sa valeur soit connue
+à la compilation, ou encore qu'elle puisse être nulle ou pas. La spécificité de
+ce système est que les qualificateurs sont ordonnés, du plus spécifique au moins
+spécifique, et que l'on forme alors un treillis à partir de ces informations.
+Partant des deux caractéristiques précédentes, on forme le treillis de la
+figure~\ref{fig:cqual-treillis}. Le qualificateur \texttt{const} désigne les
+données dont la valeur change au cours de l'exécution ; \texttt{dynamic} celles
+qui peuvent être connues à la compilation ; et \texttt{nonzero} celles qui ne
+peuvent jamais être nulles. Le cube sur lequel se trouvent correspond à une
+relation d'ordre, du plus spécifique (en bas) au plus général (en haut).
 
 \begin{figure}
 \centering
 \begin{tikzpicture}
 
-\node             (A) {\texttt{const dynamic}};
-\node[below of=A] (C) {\texttt{const dynamic nonzero}};
-\node[left of=C, node distance=4cm]  (B) {\texttt{const}};
-\node[right of=C, node distance=4cm] (D) {\texttt{dynamic}};
-\node[below of=B] (E) {\texttt{const nonzero}};
-\node[below of=C] (F) {ø};
-\node[below of=D] (G) {\texttt{dynamic nonzero}};
-\node[below of=F] (H) {\texttt{nonzero}};
+\node                                (A) {\texttt{dynamic}};
+\node[below of=A]                    (C) {\texttt{const dynamic}};
+\node[left of=C, node distance=4cm]  (B) {ø};
+\node[right of=C, node distance=4cm] (D) {\texttt{dynamic nonzero}};
+\node[below of=B]                    (E) {\texttt{const}};
+\node[below of=C]                    (F) {\texttt{nonzero}};
+\node[below of=D]                    (G) {\texttt{const dynamic nonzero}};
+\node[below of=F]                    (H) {\texttt{const nonzero}};
 
-\foreach \s/\d in {H/E,H/F,H/G,E/B,E/C,F/B,F/C,F/D,G/C,G/D,B/A,C/A,D/A}
+\foreach \s/\d in {H/E,H/F,H/G,E/B,E/C,F/B,F/D,G/C,G/D,B/A,C/A,D/A}
   \draw[->] (\s) -- (\d);
 
 \end{tikzpicture}
@@ -518,7 +514,27 @@ formalisme de très bas niveau (similaire à la théorie des ensembles).
 
 \section{Conclusion}
 
-% TODO[B] conclure + mini contributions (ce qu'on va ajouter, comment on se
-% positionne)
+Il existe de nombreuses techniques pour vérifier du code système ou embarqué. Il
+y a divers choix à faire entre l'expressivité, l'intégration de tests
+dynamiques, ou la facilité de mise en œuvre.
+
+Le typage statique est une solution assez pragmatique, puisqu'elle peut
+s'appliquer à des programmes existants, et est efficace à utiliser. Son
+expressivité limitée nous empêche de reposer entièrement sur elle pour garantir
+l'absence d'erreur dans les programmes système. C'est pourquoi nous approchons
+la sûreté de la manière suivante dans notre solution, \langname.
+
+Tout d'abord, on utilise le typage pour manipuler les données de manière
+compatible : les types des opérations et fonctions sont vérifiés à la
+compilation.
+
+Ensuite, les accès aux tableaux et aux pointeurs sont vérifiés dynamiquement.
+Dans le cas où une erreur est déclenchée, l'exécution s'arrête plutôt que de
+corrompre la mémoire. La pile est également nettoyée à chaque retour de fonction
+afin d'éviter les pointeurs fous (\emph{dangling pointers}).
+
+Enfin, les pointeurs provenant de l'espace utilisateur sont repérés statiquement
+afin que leur déréférencement se fasse au sein de fonctions sûres. Cela permet
+de préserver l'isolation entre le noyau et l'espace utilisateur.
 
 % vim: spelllang=fr
