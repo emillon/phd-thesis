@@ -500,11 +500,14 @@ d'habitants. Ainsi, pouvoir construire un terme d'un type donné est une
 information en soi.
 
 On peut voir ce phénomène sous un autre angle : les termes sont à leur type ce
-que les preuves sont à leur théorème. C'est l'isomorphisme de Curry-Howard.
+que les preuves sont à leur théorème. C'est la correspondance de Curry-Howard.
 Prenons un exemple : si on dispose d'un terme de type $a$, et d'une fonction de
 type $a → b$, alors on peut en déduire (par simple application) un terme de type
 $b$. Vu sous forme logique : si on a une preuve de $A$, et une preuve de $A ⇒
-B$, alors on peut en tirer une preuve de $B$.
+B$, alors on peut en tirer une preuve de $B$. À l'aide de cette correspondance,
+on peut donc voir les systèmes de types dépendants comme des assistants de
+preuves généralistes où l'on peut faire vérifier par un compilateur des
+théorèmes mathématiques comme le théorème des 4 couleurs~\cite{4colproof}.
 
 \section{Conclusion}
 
