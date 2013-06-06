@@ -1,6 +1,3 @@
-% TODO [E]: Cela part sur les chapeaux de roues, ensuite on a l'impression qu'il
-% n'y a que l'IA comme analyse statique et un peu le typage
-
 Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
 permettant d'analyser des programmes. Un accent est mis sur la propriété de
 sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se limite pas à
@@ -283,8 +280,7 @@ au code source. Un pointeur peut être décoré d'une annotation
 sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
 Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul peut être
 utilisé pour détecter les cas les plus simples d'erreurs. Il demande aussi au
-programmeur d'ajouter beaucoup d'annotations dans le programme. % TODO
-quantifier
+programmeur d'ajouter de nombreuses annotations dans le programme.
 
 Ce système d'annotations sur les types a été formalisé sous le nom de
 \emph{qualificateurs de types}~\cite{toplas-quals} : chaque type peut être
@@ -293,32 +289,32 @@ règles de typage permettent d'établir des propriétés sur le programme.
 
 Plus précisément, les jugements de typage de la forme $Γ ⊢ e : t$ sont remplacés
 par des jugements de typage qualifiés $Γ ⊢ e : t~q$. Les qualificateurs $q$
-permettent d'exprimer plusieurs jugements.
-Par exemple, pointeurs on peut étudier le fait qu'une variable soit constante ou
-pas, que sa valeur soit connue à la compilation, ou encore qu'elle puisse être
-nulle ou pas.
-La
-spécificité de ce système est que les qualificateurs sont ordonnés, du plus
-spécifique au moins spécifique, et que l'on forme alors un treillis à partir de
-ces informations. Partant des deux caractéristiques précédentes, on forme le
-treillis de la figure~\ref{fig:cqual-treillis}.
-
-% TODO[B] décrire
+permettent d'exprimer plusieurs jugements. Par exemple, pointeurs on peut
+étudier le fait qu'une variable soit constante ou pas, que sa valeur soit connue
+à la compilation, ou encore qu'elle puisse être nulle ou pas. La spécificité de
+ce système est que les qualificateurs sont ordonnés, du plus spécifique au moins
+spécifique, et que l'on forme alors un treillis à partir de ces informations.
+Partant des deux caractéristiques précédentes, on forme le treillis de la
+figure~\ref{fig:cqual-treillis}. Le qualificateur \texttt{const} désigne les
+données dont la valeur change au cours de l'exécution ; \texttt{dynamic} celles
+qui peuvent être connues à la compilation ; et \texttt{nonzero} celles qui ne
+peuvent jamais être nulles. Le cube sur lequel se trouvent correspond à une
+relation d'ordre, du plus spécifique (en bas) au plus général (en haut).
 
 \begin{figure}
 \centering
 \begin{tikzpicture}
 
-\node             (A) {\texttt{const dynamic}};
-\node[below of=A] (C) {\texttt{const dynamic nonzero}};
-\node[left of=C, node distance=4cm]  (B) {\texttt{const}};
-\node[right of=C, node distance=4cm] (D) {\texttt{dynamic}};
-\node[below of=B] (E) {\texttt{const nonzero}};
-\node[below of=C] (F) {ø};
-\node[below of=D] (G) {\texttt{dynamic nonzero}};
-\node[below of=F] (H) {\texttt{nonzero}};
+\node                                (A) {\texttt{dynamic}};
+\node[below of=A]                    (C) {\texttt{const dynamic}};
+\node[left of=C, node distance=4cm]  (B) {ø};
+\node[right of=C, node distance=4cm] (D) {\texttt{dynamic nonzero}};
+\node[below of=B]                    (E) {\texttt{const}};
+\node[below of=C]                    (F) {\texttt{nonzero}};
+\node[below of=D]                    (G) {\texttt{const dynamic nonzero}};
+\node[below of=F]                    (H) {\texttt{const nonzero}};
 
-\foreach \s/\d in {H/E,H/F,H/G,E/B,E/C,F/B,F/C,F/D,G/C,G/D,B/A,C/A,D/A}
+\foreach \s/\d in {H/E,H/F,H/G,E/B,E/C,F/B,F/D,G/C,G/D,B/A,C/A,D/A}
   \draw[->] (\s) -- (\d);
 
 \end{tikzpicture}
@@ -356,8 +352,6 @@ Les logiciels système demandent des garanties de sécurité et de fiabilité. P
 les assurer, de nombreuses analyses \emph{ad-hoc} ciblent les noyaux de systèmes
 d'exploitation.
 
-% TODO[B] ...
-
 Ajouter un système de types forts à C est l'idée centrale de
 CCured~\cite{ccured-toplas}. Dans les cas où il n'est pas possible de conclure,
 des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite une
@@ -368,8 +362,6 @@ Il traite le problème des pointeurs utilisateur en utilisant une analyse de
 forme ``pointe-sur''~\cite{oakland08}. Comme l'interprétation abstraite, son but
 est d'être très précis, au détriment d'un temps de calcul important dans
 certains cas.
-
-% TODO [E] est-ce joauble dans le cas de vrais programmes ?
 
 % TODO ccl
 
@@ -412,7 +404,14 @@ pointers} (notés \texttt{*int}), pour lesquels le langage n'apporte aucune
 garantie (il faut d'ailleurs encapsuler chaque utilisation dans un bloc marqué
 explicitement \texttt{unsafe}. Ils sont équivalents aux pointeurs de C.
 
-% TODO ccl
+Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
+peut pas les appliquer pour étudier la correction de logiciels existants. Leurs
+systèmes de types apportent dans le langage différents types de pointeurs,
+permettant de manipuler finement la mémoire, à la manière des \emph{smart
+pointers} de C++. De cette approche on retient surtout l'analyse de régions de
+Rust qui permet de manipuler de manière sûre les adresses des variables locales,
+et les pointeurs lourds de Cyclone qui apportent une sûreté à l'arithmétique de
+pointeurs, au prix d'un test dynamique.
 
 \section{Logique de Hoare}
 
@@ -421,18 +420,10 @@ programme a été formalisée par Robert Floyd~\cite{FloydMeaning} et Tony
 Hoare~\cite{hoare}.
 
 Elle consiste à écrire les invariants qui sont maintenus à un point donné du
-programme. Ces propositions sont écrites dans une logique $\mathcal{L}$.
-Chaque instruction $i$ est annotée d'une pré-condition $P$
-et d'une post-condition $Q$, ce que l'on note $\hoare{P}{i}{Q}$. Cela signifie
-que si $P$ est vérifiée et que l'exécution de $i$ se termine
-\footnote{
-  Comme dans la plupart des cas, la vérification de la terminaison d'un
-  algorithme est réalisée de manière séparée.
-  % TODO faire un chapeau général façon Devie?
-  % 1/ Terminaison
-  % 2/ Correction
-  % 3/ Complexité
-}, alors $Q$ sera vérifiée.
+programme. Ces propositions sont écrites dans une logique $\mathcal{L}$. Chaque
+instruction $i$ est annotée d'une pré-condition $P$ et d'une post-condition $Q$,
+ce que l'on note $\hoare{P}{i}{Q}$. Cela signifie que si $P$ est vérifiée et que
+l'exécution de $i$ se termine, alors $Q$ sera vérifiée.
 
 En plus des règles de $\mathcal{L}$, des règles d'inférence traduisent la
 sémantique du programme ; par exemple la règle de composition est :
@@ -479,7 +470,71 @@ système JML\cite{jmlkluwer} ou pour le langage C\# dans Spec\#\cite{krml136}.
 
 % TODO [E] ce sont juste des langages d'annotations : qu'en fait-on après ?
 
-% TODO[B] conclure + mini contributions (ce qu'on va ajouter, comment on se
-% positionne)
+\section{Assistants de preuve}
+
+Avec un système de types classique, le fait qu'un terme soit bien typé amène
+quelques propriétés sur son exécution. Par exemple, le fait que seulement un
+ensemble réduit d'erreurs puisse arriver (comme la division par zéro).
+
+En enrichissant le langage des types, on peut augmenter l'expressivité du typage
+Par exemple, on peut former des types ``entier pair'', ``vecteur de $n$
+entiers'', ou encore ``liste triée d'entiers''.
+
+Habituellement, les termes peuvent dépendre d'autres termes (par composition) ou
+de types (par des annotations). Les types peuvent également dépendre d'autres
+types (par composition de types : par exemple, un couple de $a$ et de $b$ a pour
+type $a * b$). Enrichir l'expressivité du typage revient essentiellement à
+introduire des termes dans les types, comme $n$ dans l'exemple précédent du
+vecteurs de $n$ entiers. C'est pourquoi on parle de types dépendants. Parmi les
+langages proposant ces types on peut citer Coq~\cite{coqmanual},
+Agda~\cite{agdatutorial} ou Isabelle~\cite{isabelletutorial}.
+
+Dans un langage classique, la plupart des types sont habitables, c'est à dire
+qu'il existe des termes ayant ces types. En revanche, avec les types dépendants
+ce n'est pas toujours vrai : par exemple ``vecteur de $-1$ entiers'' n'a pas
+d'habitants. Ainsi, pouvoir construire un terme d'un type donné est une
+information en soi.
+
+On peut voir ce phénomène sous un autre angle : les termes sont à leur type ce
+que les preuves sont à leur théorème. C'est la correspondance de Curry-Howard.
+Prenons un exemple : si on dispose d'un terme de type $a$, et d'une fonction de
+type $a → b$, alors on peut en déduire (par simple application) un terme de type
+$b$. Vu sous forme logique : si on a une preuve de $A$, et une preuve de $A ⇒
+B$, alors on peut en tirer une preuve de $B$. À l'aide de cette correspondance,
+on peut donc voir les systèmes de types dépendants comme des assistants de
+preuves généralistes où l'on peut faire vérifier par un compilateur des
+théorèmes mathématiques comme le théorème des 4 couleurs~\cite{4colproof}.
+
+Cette technique fait se rejoindre les mondes du typage et des annotations par
+triplets de Hoare : on enrichit le langage des types suffisamment pour encoder
+une logique, et on vérifie suffisamment les triplets statiquement pour éliminer
+tous les tests dynamiques. Cependant cette technique est très complexe à mettre
+en œuvre, puisqu'il faut encoder toutes les propriétés voulues dans un
+formalisme de très bas niveau (similaire à la théorie des ensembles).
+
+\section{Conclusion}
+
+Il existe de nombreuses techniques pour vérifier du code système ou embarqué. Il
+y a divers choix à faire entre l'expressivité, l'intégration de tests
+dynamiques, ou la facilité de mise en œuvre.
+
+Le typage statique est une solution assez pragmatique, puisqu'elle peut
+s'appliquer à des programmes existants, et est efficace à utiliser. Son
+expressivité limitée nous empêche de reposer entièrement sur elle pour garantir
+l'absence d'erreur dans les programmes système. C'est pourquoi nous approchons
+la sûreté de la manière suivante dans notre solution, \langname.
+
+Tout d'abord, on utilise le typage pour manipuler les données de manière
+compatible : les types des opérations et fonctions sont vérifiés à la
+compilation.
+
+Ensuite, les accès aux tableaux et aux pointeurs sont vérifiés dynamiquement.
+Dans le cas où une erreur est déclenchée, l'exécution s'arrête plutôt que de
+corrompre la mémoire. La pile est également nettoyée à chaque retour de fonction
+afin d'éviter les pointeurs fous (\emph{dangling pointers}).
+
+Enfin, les pointeurs provenant de l'espace utilisateur sont repérés statiquement
+afin que leur déréférencement se fasse au sein de fonctions sûres. Cela permet
+de préserver l'isolation entre le noyau et l'espace utilisateur.
 
 % vim: spelllang=fr

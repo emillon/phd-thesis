@@ -58,7 +58,7 @@ distinguant les types des pointeurs contrôlés par l'utilisateur des pointeurs
 contrôlés par le noyau. Puisqu'on veut interdire le déréférencement des premiers
 par l'opérateur \texttt{*}, on modifie également le typage de celui-ci.
 
-Enfin, une fois ces modifications faites, on prouve enfin que les propriétés de
+Enfin, une fois ces modifications faites, on prouve que les propriétés de
 progrès et de préservation sont rétablies.
 
 \section{Extensions noyau pour \langname}
@@ -73,7 +73,7 @@ $\widehat{\&}\cdot$ qui crée des pointeurs vers l'espace noyau. En quelque
 sorte, on ne classifie pas les valeur selon la variable pointée mais selon la
 construction du pointeur.
 
-En plus du déréférencement par \texttt{*} qui devra donc renvoyer
+En plus du déréférencement par \texttt{*} (qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
 utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et $\ctuF$.
@@ -113,11 +113,11 @@ et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
 $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
 une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $φ$,
-$\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts : d'une
-part, un nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle
-d'évaluation. Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher
-lorsqu'on déréférence directement un pointeur utilisateur. Ces étapes sont
-résumées dans la figure~\ref{fig:qualif-changes}.
+$\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts : une un
+nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
+Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher lorsqu'on
+déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
+la figure~\ref{fig:qualif-changes}.
 
 \begin{figure}%{{{
 
@@ -312,7 +312,7 @@ théorème~\ref{thm:progres-qual} qui est l'équivalent du
 théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
 
 Définir un nouveau système de types revient à étendre le jugement de typage
-$\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en modifiant
+$\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en ajoutant
 d'autres. Naturellement, la plupart des différences porteront sur le traitement
 des pointeurs.
 
@@ -377,15 +377,13 @@ noyau :
 
 \subsection*{Manipulations de pointeurs}
 
-L'avantage du typage est que celui ci suit le flot de données : si à un endroit
+L'avantage du typage est que celui-ci suit le flot de données : si à un endroit
 une valeur de type $t$ est affectée à une variable, que le contenu de cette
 variable est placé puis retiré d'une structure de données, il conserve ce type
 $t$. En particulier un pointeur utilisateur reste un pointeur utilisateur.
 
-Une seule règle concernant les pointeurs les manipule en consommant un pointeur
-et en en retournant un, et concerne l'arithmétique des pointeurs. On l'étend aux
-pointeurs qualifiés, puisqu'elle est possible quelque soit le qualificateur (et
-le préserve) :
+Une seule règle consomme un pointeur et en retourne un. Elle concerne
+l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur :
 
 \begin{mathpar}
   \disprule{Ptr-Arith-User}
@@ -453,7 +451,7 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
   \label{thm:progres-qual}
 
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivant est vrai :
+  Alors l'un des cas suivants est vrai :
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
