@@ -1,16 +1,34 @@
-L'idée derrière CQual se rapprochant de la nôtre, et cet outil ayant été
-appliqué aux types de vulnérabilités qui nous intéressent~\cite{cquk-usenix04},
-il est utile de détailler pourquoi notre approche est différente de ces travaux.
+Comme nous l'avons fait remarquer dans le chapitre~\ref{cha:etatdelart},
+utiliser une technique de typage pour étudier des propriétés sur les données a
+déjà été explorée dans l'outil CQual~\cite{pldi99}, en particulier sur les
+problèmes de pointeurs utilisateurs~\cite{cquk-usenix04}.
 
-Tout d'abord, CQual modifie fondamentalement l'ensemble du système de types (via
-le jugement de typage) et insère des qualificateurs à tous les niveaux de types.
+En effet, si on remplace ``$\ptrK{t}$'' par ``$\qKernel~t~*$'' et ``$\ptrU{t}$''
+par ``$\qUser~t~*$'', on obtient un début de système de types qualifiés.
+
+En revanche, il y a une différence fondamentale : CQual modifie fondamentalement
+l'ensemble du système de types, pas \langname. Le jugement de typage de CQual a
+pour forme générale $Γ ⊢ e : q~t$ (où $Γ$ est un environnement de typage, $e$
+une expression, $q$ un qualificateur et $t$ un type), alors que le nôtre a la
+forme plus classique $Γ ⊢ e : t$.
+
+En intégrant $q$ à la relation de typage, on ajoute un qualificateur à chaque
+type, même les expressions pour lesquels il n'est pas directement pertinent de
+déterminer qui les contrôle (comme par exemple, un entier). Dans CQual, ceci
+permet de traiter de manière correcte le transtypage. Par exemple, si $e$ a pour
+type qualifié $\qUser~\tInt$, alors $(\tFloat~*)~e$ aura pour type qualifié
+$\qUser~\tFloat~*$, et déréférencer cette expression produira une erreur de
+typage. \langname, dans son état actuel, ne permet pas de traiter ce cas.
+
 Au contraire, nous ne modifions le système de types que là où cela est
-nécessaire, c'est-à-dire sur les types pointeurs.
+nécessaire, c'est-à-dire sur les types pointeurs. Cela permet de ne pas avoir à
+modifier en profondeur un système de types existant.
 
-D'autre part, le système de types de CQual fait intervenir de manière
-fondamentale une relation de sous-typage. Le problème de déréférencement des
-pointeurs utilisateurs peut être traité dans ce cadre en posant $\qKernel
-\preceq \qUser$ pour restreindre certaines opérations aux pointeurs $\qKernel$.
+Une autre différence fondamentale est que le système de types de CQual fait
+intervenir une relation de sous-typage. Dans le cas particulier du problème
+déréférencement des pointeurs utilisateurs peut être traité dans ce cadre en
+posant $\qKernel \preceq \qUser$ pour restreindre certaines opérations aux
+pointeurs $\qKernel$.
 
 Notre approche, au contraire, n'utilise pas de sous-typage, mais consiste à
 définir un type abstrait $\ptrU{t}$ partageant certaines propriétés avec
@@ -19,14 +37,13 @@ certaines opérations. C'est à rapprocher du système de masquage par interface
 des langages ML, ou encore de la définition de types abstraits par le mot-clef
 \texttt{newtype} en Haskell.
 
-
-
-
-
-Dans le cas des pointeurs, même si le noyau Linux (et la plupart des systèmes
+Les perspectives de travaux futurs sont également très différentes. Dans le cas
+des pointeurs, même si le noyau Linux (et la plupart des systèmes
 d'exploitation) ne comportent que deux espaces d'adressage, il est commun dans
 les systèmes embarqués de manipuler des pointeurs provenant d'espaces mémoire
 indépendants : par exemple, de la de la mémoire flash, de la RAM, ou une EEPROM
 de configuration. Ces différentes mémoires possèdent des adresses, et un
 pointeur est interprété comme faisant référence à une ou l'autre selon le code
 dont il est tiré. Dans ces cas, la notion de sous-typage n'est pas adaptée.
+
+% TODO les int
