@@ -1,26 +1,59 @@
-% TODO
 
-Cette thèse part de deux constats.
+Nous avons montré que l'écriture de noyaux de systèmes d'exploitation nécessite
+de manipuler des données provenant d'une zone non sûre, l'espace utilisateur.
+Parmi ces données, il arrive de récupérer des pointeurs qui servent à passer des
+données par référence à l'appellant, dans certains appels systèmes. Si on
+déréférence ces pointeurs sans vérifier qu'ils pointent bien vers une zone
+mémoire également contrôlée par l'appellant, on risque de lire ou d'écrire dans
+des zones mémoires réservées au noyau seul.
 
-D'une part, le problème de manipulation sûre de pointeurs utilisateur est
-éliminé si on interdit certaines opérations sur ces pointeurs, en en faisant un
-type à part. En effet, la seule opération dangereuse est le déréférencement. Si
-on interdit les déréférencements syntaxiques (opérateur \texttt{*}) et qu'on
-restreint les cas nécessaires à des fonctions sûres comme
-\texttt{copy\_to\_user}, on élimine les comportements dangereux. Bien sûr, un
-examen manuel exhaustif de tous les déréférencements est possible, mais trop
-long et source d'erreurs.
+Nous proposons une technique de typage pour détecter ces cas dangereux. Pour ce
+faire, il faudra tout d'abord définir un langage impératif bien typé que nous
+appellerons \langname. Ensuite, nous distinguons dans le système de types les
+pointeurs dont la valeur est contrôlée par l'utilisateur.
 
-D'autre part, le système de types de C est trop primitif pour pouvoir garantir
-une véritable isolation entre deux types de même représentation : il n'y a pas
-de types abstraits. Certes, \texttt{typedef} permet d'introduire un nouveau nom
-pour un type, mais ce n'est qu'un raccourci syntaxique. Le compilateur ne peut
-en effet pas considérer un programme sans avoir la définition quasi-complète des
-types qui y apparaissent. La seule exception concerne les manipulations de
-structures par pointeurs : si on ne fait que passer des pointeurs, il n'est pas
-nécessaire de connaître la taille ni la disposition de la structure, donc il est
-possible de ne pas connaître ces informations. Cette technique, connue sous le
-nom de \emph{pointeurs opaques}, n'est pas applicable aux autres types.
+Cela revient à introduire une séparation entre le type des données et sa
+représentation : c'est-à-dire définir un type abstrait. Les pointeurs
+utilisateur sont en fait des pointeurs classiques déguisés, pour lesquels ont
+interdit l'opérateur de déréférencement.
+
+Cette technique est en fait générique : on peut également l'appliquer à certains
+types d'entiers. En C, il est commun d'utiliser des \texttt{int} pour tout et
+n'importe quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
+identificateurs pour lesquels les opérations usuelles comme l'addition n'ont pas
+de sens. Par exemple, sous Linux, l'opération d'ouverture de fichier renvoie un
+entier, dit \emph{descripteur de fichier}, qui identifie ce fichier pour ce
+processus. Il est passé à toutes les fonctions de lecture et d'écriture. Un
+autre idiome est d'utiliser des entiers comme des ensembles de bits (on parle de
+\emph{bitmask}). Par exemple, en ouvrant un fichier on précise le mode du
+fichier (lecture, écriture ou les deux) par les bits 1 et 2, s'il faut créer le
+fichier ou non s'il n'existe pas par le bit 7, s'il dans ce cas il doit être
+effacé par le bit 8), etc. On obtient un mode en réalisant un ``ou'' bit à bit
+entre des constantes. Ces deux utilisations du type \texttt{int} n'ont rien à
+voir ; il faudrait donc empêcher d'utiliser un descripteur de fichier comme un
+mode, et vice-versa. De même, aucun opérateur n'a de sens sur les descripteurs
+de fichier, mais l'opérateur \texttt{\textbar{}} du ``ou'' bit à bit doit rester
+possible pour les modes.
+
+En n'offrant pas cette distinction, le langage C permet d'écrire du code qui
+peut s'exécuter mais dont la sémantique n'est en quelque sorte pas bien fondée.
+Par exemple, en additionnant deux descripteurs de fichiers, ou en déréférençant
+un pointeur contrôlé par l'utilisateur. En effet, le système de types de C est
+trop primitif pour pouvoir garantir une véritable isolation entre deux types de
+même représentation : il n'y a pas de types abstraits. Certes, \texttt{typedef}
+permet d'introduire un nouveau nom pour un type, mais ce n'est qu'un raccourci
+syntaxique. Le compilateur ne peut en effet pas considérer un programme sans
+avoir la définition quasi-complète des types qui y apparaissent. La seule
+exception concerne les pointeurs sur structures : si on ne fait que les passer,
+il n'est pas nécessaire de connaître la taille ni la disposition de la
+structure, donc il est possible de ne pas connaître ces informations. Cette
+technique, connue sous le nom de \emph{pointeurs opaques}, n'est pas applicable
+aux autres types.
+
+En ajoutant une couche de typage, on interdit ces opérations à la compilation.
+Cela permet deux choses : pour le code déjà écrit, de détecter et corriger les
+manipulations dangereuses ; et pour le nouveau code, de s'assurer qu'il est
+correct.
 
 Le but de cette thèse est donc de définir un langage intermédiaire proche de C,
 mais bien typable, et de l'adjoindre d'un système de types tel que les
