@@ -434,8 +434,8 @@ La définition du typage sémantique doit aussi être étendue au cas $φ =
 % TODO en annexe?
 \begin{mathpar}
   \irule{S-Tainted}
-    { m ⊧           φ'  : \ptrK{τ} }
-    { m ⊧ \vTainted{φ'} : \ptrU{τ} }
+    { \semtyp{m}{          φ' }{\ptrK{τ}} }
+    { \semtyp{m}{\vTainted{φ'}}{\ptrU{τ}} }
 
   \irule{Comp-Ptr}
     { \tComp{τ}{t} }
