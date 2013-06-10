@@ -500,8 +500,8 @@ programmes, nous allons avoir à traiter des environnements de typage $Γ$ et de
 correspondance entre ces deux mondes.
 
 Étant donné un état mémoire $m$, on associe un type de valeur (ou type
-sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement $m ⊧
-v : τ$.
+sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement
+$\semtyp{m}{v}{τ}$.
 
 Ces types sémantiques ne sont pas exactement les mêmes que les types statiques.
 Pour les calculer, on n'a pas accès au code du programme, seulement à ses
@@ -529,31 +529,32 @@ simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
 
 % TODO en annexe?
 \begin{figure}
-  \ruleheader{$m ⊧ v : τ$}
+  \ruleheader{$\semtyp{m}{v}{τ}$}
 
   \begin{mathpar}
-    \irule{S-Int}{ }{m ⊧ n : \tInt}
+    \irule{S-Int}{ }{\semtyp{m}{n}{\tInt}}
 
-    \irule{S-Float}{ }{m ⊧ d : \tFloat}
+    \irule{S-Float}{ }{\semtyp{m}{d}{\tFloat}}
 
-    \irule{S-Unit}{ }{m ⊧ \eUnit : \tUnit}
+    \irule{S-Unit}{ }{\semtyp{m}{\eUnit}{\tUnit}}
 
-    \irule{S-Null}{ }{m ⊧ \eNull : τ~*}
+    \irule{S-Null}{ }{\semtyp{m}{\eNull}{τ~*}}
 
-    \irule{S-Ref} { m ⊧ m [φ]_Φ : τ} { \widehat{\&}~φ : τ~*}
+    \irule{S-Ref} { \semtyp{m}{m[φ]_Φ}{τ}} {\semtyp{m}{\widehat{\&}~φ}{τ~*}}
 
     \irule{S-Array}
-      { ∀i ∈ [1;n]. m ⊧ v_i : τ }
-      { m ⊧ \widehat{ \eArray{ v_1;…;v_n } } : τ[~] }
+      { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ}}
+      { \semtyp{m}{\widehat{ \eArray{ v_1;…;v_n } }}{τ[~]} }
 
     \irule{S-Struct}
-      { ∀i ∈ [1;n]. m ⊧ v_i : τ_i
+      { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ_i}
       }
-      { m ⊧ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } }
-          :           \tStruct{ l_1:τ_1;…;l_n:τ_n }
+      {
+        \semtyp{m}{ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } } }
+                            { \tStruct{ l_1:τ_1;…;l_n:τ_n } }
       }
 
-    \irule{S-Fun}{ } {m ⊧ \eFun{x_1, …, x_n}{i} : \stFun{n}}
+    \irule{S-Fun}{ } {\semtyp{m}{\eFun{x_1, …, x_n}{i}}{\stFun{n}}}
   \end{mathpar}
 
   \caption{Règles de typage sémantique}
@@ -609,17 +610,17 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
 \begin{definition}[État mémoire bien typé]
   On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
-  l'on note $Γ ⊧ m$, si les types sémantiques des variables visibles coïncident
+  l'on note $\mcomp{Γ}{m}$, si les types sémantiques des variables visibles coïncident
   avec leurs types statiques.
 
   \[
-    Γ ⊧ m \eqdef
+    \mcomp{Γ}{m} \eqdef
       ∀ (x ↦ v) ∈ \mathrm{Visible}(m).
       ∃ τ,t.
       \begin{cases}
           Γ ⊢ x : t
           \\
-          m ⊧ v : τ
+          \semtyp{m}{v}{τ}
           \\
           \tComp{τ}{t}
       \end{cases}
@@ -845,6 +846,18 @@ La preuve des
 théorèmes~\ref{thm:progres}
 et~\ref{thm:progres-lv}
 se trouve en annexe~\ref{proof:progres}.
+
+\begin{lemma}{Inversion pour le typage sémantique}
+
+  \label{lemma:invsem}
+
+  Supposons que $Γ ⊢ x : t$ et $\mcomp{Γ}{m}$.
+
+  On pose $a = \mathrm{Lookup} (x, m)$.
+
+  Alors il existe $τ$ tel que $\semtyp{m}{m[a]_A}{τ}$ avec $\tComp{τ}{t}$.
+
+\end{lemma}
 
 % TODO comm?
 %\begin{lemma}[Permutation]

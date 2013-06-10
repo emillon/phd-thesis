@@ -248,10 +248,13 @@ $e$ est alors égale à \eUnit, qui est une valeur.
 %}}}
 \paragraph{\textsc{Lv-Var} :}%{{{
 
-Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$, il existe $(x ↦ v) ∈ m$. La règle
-d'évaluation \textsc{Phi-Var} s'applique donc.
 
-% TODO prouver le coup du lookup
+Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$,
+on peut appliquer le lemme~\ref{lemma:invsem}. La construction $a =
+\mathrm{Lookup}(x, m)$ correspond bien à une adresse valide et on peut appliquer
+\textsc{Phi-Var}.
+
+% TODO mouais
 %}}}
 \paragraph{\textsc{Lv-Deref} :}%{{{
 
