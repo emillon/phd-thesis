@@ -116,7 +116,23 @@ Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
 Plus précisément, un environnement $Γ$ est une liste de couples (variable,
-type).
+type), c'est à dire une suite finie $(γ_i)_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
+On utilise les notations suivantes :
+
+\begin{align*}
+  x:t ∈ Γ &\eqdef ∃i ∈ [0;n], γ_i = (x, t) \\
+  Γ, x:t  &\eqdef (γ'_i)_{i∈[1;n+1]}~\textrm{tel que}
+                        \begin{cases}
+                          ∀ i ∈ [1;n], γ'_i    = γ_i \\
+                                       γ_{n+1} = (x,t) \\
+                        \end{cases} \\
+  Γ - x   &\eqdef (γ'_i)_{i∈[1;n-1]}~\textrm{tel que}
+                        \begin{cases}
+                          ∀ i ∈ [1;p-1], γ'_i = γ_i \\
+                          ∀ i ∈ [p;n-1], γ'_i = γ_{i+1} \\
+                        \end{cases}
+                        \mbox{ où } γ_p = (x, t_p)
+\end{align*}
 
 Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ en
 $\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
@@ -298,8 +314,6 @@ que les types composés si les types de leurs composantes
   \disprule{Op-Eq}
 \end{mathpar}
 
-% TODO rajouter les ops de comparaison
-
 Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
 "$+.$" et "$-.$" aux \tFloat.
 
@@ -440,8 +454,6 @@ Cette règle utilise les notations suivantes :
 a_1: t_1,…
 a_n: t_n \textrm{ où } n = |a|
 \end{align*}
-
-% TODO suppression & adjonction aux Γ
 
 \section{Phrases}
 
