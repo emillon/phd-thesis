@@ -470,12 +470,21 @@ Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
 \begin{theorem}[Préservation pour les types qualifiés]
   \label{thm:preservation-qualif}
 
-  Si une expression est typable et que son évaluation produit une valeur, alors
-  cette valeur est du même type que l'expression.
+  Soient $Γ$ un environnement de typage, $e$ une expression et $m$ un état
+  mémoire.
 
-  Si $Γ ⊢ e : t$ et $e → v$ % TODO
+  On suppose que les hypothèse suivantes sont vérifiées :
 
-  alors $Γ ⊢ v : t$.
+\begin{itemize}
+\item $Γ ⊢ e : t$
+\item $\mcomp{Γ}{m}$
+\item $\mm{m}{e}{m'}{e'}$
+\end{itemize}
+
+  Alors $Γ ⊢ e' : t$ et $\mcomp{Γ}{m'}$.
+
+  Autrement dit, si une expression est typable, alors un pas d'évaluation ne
+  modifie pas son type et préserve le typage de la mémoire.
 
 \end{theorem}
 
