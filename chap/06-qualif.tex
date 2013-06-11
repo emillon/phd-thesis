@@ -91,6 +91,11 @@ réaliser cette copie (de la même manière qu'avec un \texttt{memcpy()}, mais
 après avoir testé dynamiquement que $p$ pointe en espace utilisateur (dans le
 cas contraire, la copie n'est pas faite).
 
+On peut remarquer que contrairement aux fonctions de Linux, les fonctions
+$\cfuF$ et $\ctuF$ n'ont pas de paramètre ``taille à copier''. Cela est dû au
+fait que le modèle mémoire de \langname est plus haut niveau. L'information de
+taille est déjà présente dans chaque valeur.
+
 \begin{figure}
 \setlength{\parindent}{1cm}
 \begin{align*}
@@ -105,8 +110,6 @@ cas contraire, la copie n'est pas faite).
 \caption{Implantation d'un appel système qui remplit une structure par pointeur}
 \label{fig:ex-sys-getver}
 \end{figure}
-
-% TODO les pointeurs ont assez d'info pour avoir la taille de la zone
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
