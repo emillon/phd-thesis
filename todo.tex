@@ -4,39 +4,14 @@ Rq Sarah 01/03
 
 \begin{itemize}
 \item
-  intro :
-
-  \begin{itemize}
-  \item
-    pourquoi focaliser sur la sûreté plutôt que la sécurité ?
-  \item
-    annoncer le plan du chapitre
-  \end{itemize}
-\item
   3.2 on ne peut être que partiellement sensible au flot dans ce type
   d'analyse non ?
-\item
-  3.3
-
-  \begin{itemize}
-  \item
-    Ce que tu dis concernant l'analyse interprocédurale n'est vrai que
-    pour les sémantiques opérationnelles et pas dénotationnelles. Selon
-    moi, tu devrais plutôt dire que l'analyse de valeurs peut être
-    imprécise (trouver un ex qui matche avec ton analyse de pointeurs)
-  \item
-    l'explication du calcul de point fixe est un peu raide alors que tu
-    détailles beaucoup (trop ?) les domaines abstraits numériques
-  \end{itemize}
 \item
   dans les techniques classiques, tu as aussi le software model checking
   et le SMT solving
 \item
   remarque générale sur ce chapitre : pourquoi ne pas parler seulement
   du C puisque tu ne traites ensuite que de cela ?
-\item
-  le dernier paragraphe p29 est un peu raide pour les gens qui ne s'y
-  connaissent pas en typage
 \end{itemize}
 
 
@@ -44,21 +19,8 @@ Rq Sarah 01/03
 \item difficultés : récursion
 
 \item
-  hoare : quand est-ce que le compile time suffit ? et le runtime nécessaire ?
-\item
   types : citer H98\cite{haskell98}, perl \cite{perlCamelBook}, DAOC\cite{DAOC}
   \& RWH\cite{rwh}?
-\item proof assistants
-  \begin{itemize}
-  \item Dependent types
-  \item proof $:$ theorem $::$ type $:$ term
-  \item Coq
-  \item Agda, termination checker
-  \item proof irrelevance
-  \item Theorems for Free\cite{theoremsforfree}
-  \end{itemize}
-% TODO [E] ça manque effectivement
-
 \item
   Analyse de flot :
 Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un tour
@@ -507,7 +469,7 @@ read = fun (fd, p, n) {
 \end{verbatim}
 
 Its evaluation is:%
-%{\small \[ \semrule{Exp-Tainted} \]} % TODO
+%{\small \[ \semrule{Exp-Tainted} \]}
 
 To allow a safe copy between userspace and the kernel, the Linux kernel provides
 the macros \texttt{get\_user()} or \texttt{put\_user()}, which check and copy
