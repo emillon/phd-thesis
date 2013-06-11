@@ -203,6 +203,40 @@
                 }
                 { \typh{Γ}{x=e}{Γ'} }
             }
+    {S-Int}{ \irule{S-Int}
+               { }
+               {\semtyp{m}{n}{\tInt}}
+           }
+    {S-Float}{ \irule{S-Float}
+                 { }
+                 {\semtyp{m}{d}{\tFloat}}
+    }
+    {S-Unit}{ \irule{S-Unit}
+                { }
+                {\semtyp{m}{\eUnit}{\tUnit}}
+    }
+    {S-Null}{ \irule{S-Null}
+                { }
+                {\semtyp{m}{\eNull}{τ~*}}
+    }
+    {S-Ref}{ \irule{S-Ref}
+               { \semtyp{m}{m[φ]_Φ}{τ}}
+               {\semtyp{m}{\widehat{\&}~φ}{τ~*}}
+    }
+    {S-Array}{ \irule{S-Array}
+                 { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ}}
+                 { \semtyp{m}{\widehat{ \eArray{ v_1;…;v_n } }}{τ[~]} }
+    }
+    {S-Struct}{ \irule{S-Struct}
+                  { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ_i} }
+                  { \semtyp{m}{ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } } }
+                                        { \tStruct{ l_1:τ_1;…;l_n:τ_n } }
+                  }
+    }
+    {S-Fun}{ \irule{S-Fun}
+               { }
+               {\semtyp{m}{\eFun{x_1, …, x_n}{i}}{\stFun{n}}}
+    }
     {GetU}{ \irule{GetU}
               { }
               { Γ ⊢ \cfuF : (\ptrK{t}, \ptrU{t}) → \tInt }

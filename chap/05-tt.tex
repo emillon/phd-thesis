@@ -539,34 +539,25 @@ simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
 \label{fig:types-semantiques}
 \end{figure}
 
-% TODO en annexe?
 \begin{figure}
   \ruleheader{$\semtyp{m}{v}{τ}$}
 
   \begin{mathpar}
-    \irule{S-Int}{ }{\semtyp{m}{n}{\tInt}}
+    \disprule{S-Int}
 
-    \irule{S-Float}{ }{\semtyp{m}{d}{\tFloat}}
+    \disprule{S-Float}
 
-    \irule{S-Unit}{ }{\semtyp{m}{\eUnit}{\tUnit}}
+    \disprule{S-Unit}
 
-    \irule{S-Null}{ }{\semtyp{m}{\eNull}{τ~*}}
+    \disprule{S-Null}
 
-    \irule{S-Ref} { \semtyp{m}{m[φ]_Φ}{τ}} {\semtyp{m}{\widehat{\&}~φ}{τ~*}}
+    \disprule{S-Ref}
 
-    \irule{S-Array}
-      { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ}}
-      { \semtyp{m}{\widehat{ \eArray{ v_1;…;v_n } }}{τ[~]} }
+    \disprule{S-Array}
 
-    \irule{S-Struct}
-      { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ_i}
-      }
-      {
-        \semtyp{m}{ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } } }
-                            { \tStruct{ l_1:τ_1;…;l_n:τ_n } }
-      }
+    \disprule{S-Struct}
 
-    \irule{S-Fun}{ } {\semtyp{m}{\eFun{x_1, …, x_n}{i}}{\stFun{n}}}
+    \disprule{S-Fun}
   \end{mathpar}
 
   \caption{Règles de typage sémantique}
