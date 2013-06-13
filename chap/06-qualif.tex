@@ -324,7 +324,7 @@ types pointeurs $\ptrK{t}$, on ajoute des types pointeurs $\ptrU{t}$. La
 différence entre les deux représente \emph{qui} contrôle leur valeur
 (section~\ref{sec:secu-syscalls}).
 
-Les différences sont les suivantes :
+Les différences sont les suivantes (figure~\ref{fig:qualif-changes-typ}) :
 
 \begin{itemize}
 
@@ -339,7 +339,23 @@ aux implantations de la fonction \texttt{ioctl}.
 
 \end{itemize}
 
-Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
+L'ensemble des notations est résumé dans le tableau de la
+figure~\ref{fig:qualif-not-resume}.
+
+\begin{figure}
+\centering
+\begin{tabular}{ccc}
+        & Noyau      & Utilisateur \\
+\hline
+Syntaxe & $\&~x$     & $\eTaint{x}$ \\
+Valeur  & $\widehat{\&}~x$ & $\vTainted{x}$ \\
+Type    & $\ptrK{t}$ & $\ptrU{t}$ \\
+Accès   & $*~x$      & copy\_*\_user \\
+\end{tabular}
+
+\caption{Notations utilisées pour les pointeurs}
+\label{fig:qualif-not-resume}
+\end{figure}
 
 \begin{figure}%{{{
 
@@ -435,7 +451,7 @@ La définition du typage sémantique doit aussi être étendue au cas $φ =
 % TODO en annexe?
 \begin{mathpar}
   \irule{S-Tainted}
-    { \semtyp{m}{          φ' }{\ptrK{τ}} }
+    { \semtyp{m}{          φ' }{τ} }
     { \semtyp{m}{\vTainted{φ'}}{\ptrU{τ}} }
 
   \irule{Comp-Ptr}
