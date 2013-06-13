@@ -127,7 +127,7 @@ la figure~\ref{fig:qualif-changes}.
 \begin{align*}
 \gramdef{Expressions}{e}
   { … }{}
-  { \eTaint{e} }{Expression souillée} % TODO ce serait pas un ajout à lv?
+  { \eTaint{lv} }{Adresse utilisateur}
   {END}
 \\
 \\
@@ -224,20 +224,18 @@ trivialement le système de types avec la règle suivante :
 
 \begin{mathpar}
   \irule{Taint-Ignore}
-    { Γ ⊢ e : t* }
-    { Γ ⊢ \eTaint{e} : t* }
+    { Γ ⊢ lv : t }
+    { Γ ⊢ \eTaint{lv} : t~* }
 \end{mathpar}
 
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
-théorème~\ref{thm:progres}.
-
-Par exemple, supposons que $x$ soit une variable globale entière, et posons :
+théorème~\ref{thm:progres}. Posons :
 
 \[
 \begin{cases}
-  e = * \eTaint {\& x} \\
+  e = * \eTaint{x} \\
   Γ = x : \tInt \\
   m = ([[x↦0]], [~]) \\
 \end{cases}
@@ -270,9 +268,9 @@ conclusion n'est pas vraie :
                   }
                   { Γ ⊢ \& x : \tInt*}
               }
-              { Γ ⊢ \eTaint {\& x} : \tInt*}
+              { Γ ⊢ \eTaint{x} : \tInt*}
           }
-          { Γ ⊢ * \eTaint {\& x} : \tInt}
+          { Γ ⊢ * \eTaint {x} : \tInt}
       \end{mathpar}
 
   \item
@@ -288,7 +286,7 @@ conclusion n'est pas vraie :
                 { }
                 {m[*\vTainted{x}] = \serr{taint}}
             }
-            { \mm{m}{* \eTaint {\& x}}{m}{\serr{taint}} }
+            { \mm{m}{* \eTaint {x}}{m}{\serr{taint}} }
           \\
           \irule{Eval-Err}
             { }
@@ -354,7 +352,7 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 \\
 \gramdef[2.5cm]{Type\\sémantique}{τ}
   { … }{}
-  { \ptrU{t} }{Pointeur utilisateur}
+  { \ptrU{τ} }{Pointeur utilisateur}
   {END}
 \end{align*}
 
@@ -411,8 +409,8 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢ e : \ptrK{t} }
-  { Γ ⊢ \eTaint{e} : \ptrU{t} } % TODO e ou lv?
+  { Γ ⊢ lv : t }
+  { Γ ⊢ \eTaint{lv} : \ptrU{t} }
 \end{mathpar}
 
 Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante :
