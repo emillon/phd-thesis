@@ -91,6 +91,11 @@ réaliser cette copie (de la même manière qu'avec un \texttt{memcpy()}, mais
 après avoir testé dynamiquement que $p$ pointe en espace utilisateur (dans le
 cas contraire, la copie n'est pas faite).
 
+On peut remarquer que contrairement aux fonctions de Linux, les fonctions
+$\cfuF$ et $\ctuF$ n'ont pas de paramètre ``taille à copier''. Cela est dû au
+fait que le modèle mémoire de \langname est plus haut niveau. L'information de
+taille est déjà présente dans chaque valeur.
+
 \begin{figure}
 \setlength{\parindent}{1cm}
 \begin{align*}
@@ -105,8 +110,6 @@ cas contraire, la copie n'est pas faite).
 \caption{Implantation d'un appel système qui remplit une structure par pointeur}
 \label{fig:ex-sys-getver}
 \end{figure}
-
-% TODO les pointeurs ont assez d'info pour avoir la taille de la zone
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
@@ -124,7 +127,7 @@ la figure~\ref{fig:qualif-changes}.
 \begin{align*}
 \gramdef{Expressions}{e}
   { … }{}
-  { \eTaint{e} }{Expression souillée} % TODO ce serait pas un ajout à lv?
+  { \eTaint{lv} }{Adresse utilisateur}
   {END}
 \\
 \\
@@ -221,20 +224,18 @@ trivialement le système de types avec la règle suivante :
 
 \begin{mathpar}
   \irule{Taint-Ignore}
-    { Γ ⊢ e : t* }
-    { Γ ⊢ \eTaint{e} : t* }
+    { Γ ⊢ lv : t }
+    { Γ ⊢ \eTaint{lv} : t~* }
 \end{mathpar}
 
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
-théorème~\ref{thm:progres}.
-
-Par exemple, supposons que $x$ soit une variable globale entière, et posons :
+théorème~\ref{thm:progres}. Posons :
 
 \[
 \begin{cases}
-  e = * \eTaint {\& x} \\
+  e = * \eTaint{x} \\
   Γ = x : \tInt \\
   m = ([[x↦0]], [~]) \\
 \end{cases}
@@ -267,9 +268,9 @@ conclusion n'est pas vraie :
                   }
                   { Γ ⊢ \& x : \tInt*}
               }
-              { Γ ⊢ \eTaint {\& x} : \tInt*}
+              { Γ ⊢ \eTaint{x} : \tInt*}
           }
-          { Γ ⊢ * \eTaint {\& x} : \tInt}
+          { Γ ⊢ * \eTaint {x} : \tInt}
       \end{mathpar}
 
   \item
@@ -285,7 +286,7 @@ conclusion n'est pas vraie :
                 { }
                 {m[*\vTainted{x}] = \serr{taint}}
             }
-            { \mm{m}{* \eTaint {\& x}}{m}{\serr{taint}} }
+            { \mm{m}{* \eTaint {x}}{m}{\serr{taint}} }
           \\
           \irule{Eval-Err}
             { }
@@ -351,7 +352,7 @@ Cet ajout est précisé dans la figure~\ref{fig:qualif-changes-typ}.
 \\
 \gramdef[2.5cm]{Type\\sémantique}{τ}
   { … }{}
-  { \ptrU{t} }{Pointeur utilisateur}
+  { \ptrU{τ} }{Pointeur utilisateur}
   {END}
 \end{align*}
 
@@ -408,8 +409,8 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
 
 \begin{mathpar}
 \irule{Taint}
-  { Γ ⊢ e : \ptrK{t} }
-  { Γ ⊢ \eTaint{e} : \ptrU{t} } % TODO e ou lv?
+  { Γ ⊢ lv : t }
+  { Γ ⊢ \eTaint{lv} : \ptrU{t} }
 \end{mathpar}
 
 Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante :
@@ -467,12 +468,21 @@ Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
 \begin{theorem}[Préservation pour les types qualifiés]
   \label{thm:preservation-qualif}
 
-  Si une expression est typable et que son évaluation produit une valeur, alors
-  cette valeur est du même type que l'expression.
+  Soient $Γ$ un environnement de typage, $e$ une expression et $m$ un état
+  mémoire.
 
-  Si $Γ ⊢ e : t$ et $e → v$ % TODO
+  On suppose que les hypothèse suivantes sont vérifiées :
 
-  alors $Γ ⊢ v : t$.
+\begin{itemize}
+\item $Γ ⊢ e : t$
+\item $\mcomp{Γ}{m}$
+\item $\mm{m}{e}{m'}{e'}$
+\end{itemize}
+
+  Alors $Γ ⊢ e' : t$ et $\mcomp{Γ}{m'}$.
+
+  Autrement dit, si une expression est typable, alors un pas d'évaluation ne
+  modifie pas son type et préserve le typage de la mémoire.
 
 \end{theorem}
 

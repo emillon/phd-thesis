@@ -196,9 +196,8 @@ en renvoyant un pointeur vers une zone mémoire d'un nombre d'octets donnés.
 Cela présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
 sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
-mémoire contenant cette valeur. Le typage est alors direct :
-
-% TODO [E] sous entendu il y a un sizeof(t)
+mémoire contenant cette valeur (la taille de chaque valeur fait partie de
+celle-ci). Le typage est alors direct :
 
 \begin{mathpar}
   \irule{Malloc}
@@ -220,6 +219,7 @@ une fois, on peut utiliser une analyse préalable comme~ \cite{ifm10}. Il est s�
 mémoire. 
 
 % TODO [E] pointeurs fantômes
+% TODO régions
 
 \paragraph{Structures récursives}
 
@@ -318,16 +318,14 @@ Notre approche est basée sur le fait de rendre abstrait un type de C et
 d'y interdire certaines opérations : ici, on marque un certain type de pointeur
 comme ``utilisateur'' et on interdit l'opérateur \texttt{*} dessus.
 
-Le langage C n'ayant pas de types abstraits
-\footnote{
-  La seule abstraction possible est lorsqu'on manipule une structure par
-  pointeur. Il n'est alors pas nécessaire de connaître sa définition totale.
-  L'idiome est alors de placer uniquement une déclaration en avance
-  (\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner
-  la définition complète dans l'implantation (\texttt{.c}).
-}
-, on ne peut pas séparer la réprésentation d'un type (par exemple : entier signé
-de 32 bits) des opérations qui y sont attachées.
+Le langage C n'ayant pas de types abstraits , on ne peut pas séparer la
+représentation d'un type (par exemple : entier signé de 32 bits) des opérations
+qui y sont attachées. La seule abstraction possible est lorsqu'on manipule une
+structure par pointeur. Il n'est alors pas nécessaire de connaître sa définition
+totale. L'idiome est alors de placer uniquement une déclaration en avance
+(\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner la définition
+complète dans l'implantation (\texttt{.c}). Cette technique de \emph{pointeurs
+opaques} n'est pas applicable aux autres types.
 
 Dans de nombreuses interfaces, on emploie des types entiers qui servent
 d'étiquettes. Par exemple, les descripteurs de fichiers renvoyés par la fonction
@@ -340,3 +338,5 @@ On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si un
 encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de codec
 tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
 une fonction prenant en paramètre un numéro de \emph{frame}.
+
+% vim: spelllang=fr

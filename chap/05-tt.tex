@@ -116,7 +116,23 @@ Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
 Plus précisément, un environnement $Γ$ est une liste de couples (variable,
-type).
+type), c'est à dire une suite finie $(γ_i)_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
+On utilise les notations suivantes :
+
+\begin{align*}
+  x:t ∈ Γ &\eqdef ∃i ∈ [0;n], γ_i = (x, t) \\
+  Γ, x:t  &\eqdef (γ'_i)_{i∈[1;n+1]}~\textrm{tel que}
+                        \begin{cases}
+                          ∀ i ∈ [1;n], γ'_i    = γ_i \\
+                                       γ_{n+1} = (x,t) \\
+                        \end{cases} \\
+  Γ - x   &\eqdef (γ'_i)_{i∈[1;n-1]}~\textrm{tel que}
+                        \begin{cases}
+                          ∀ i ∈ [1;p-1], γ'_i = γ_i \\
+                          ∀ i ∈ [p;n-1], γ'_i = γ_{i+1} \\
+                        \end{cases}
+                        \mbox{ où } γ_p = (x, t_p)
+\end{align*}
 
 Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ en
 $\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
@@ -298,8 +314,6 @@ que les types composés si les types de leurs composantes
   \disprule{Op-Eq}
 \end{mathpar}
 
-% TODO rajouter les ops de comparaison
-
 Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
 "$+.$" et "$-.$" aux \tFloat.
 
@@ -441,8 +455,6 @@ a_1: t_1,…
 a_n: t_n \textrm{ où } n = |a|
 \end{align*}
 
-% TODO suppression & adjonction aux Γ
-
 \section{Phrases}
 
 \begin{figure}
@@ -527,34 +539,25 @@ simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
 \label{fig:types-semantiques}
 \end{figure}
 
-% TODO en annexe?
 \begin{figure}
   \ruleheader{$\semtyp{m}{v}{τ}$}
 
   \begin{mathpar}
-    \irule{S-Int}{ }{\semtyp{m}{n}{\tInt}}
+    \disprule{S-Int}
 
-    \irule{S-Float}{ }{\semtyp{m}{d}{\tFloat}}
+    \disprule{S-Float}
 
-    \irule{S-Unit}{ }{\semtyp{m}{\eUnit}{\tUnit}}
+    \disprule{S-Unit}
 
-    \irule{S-Null}{ }{\semtyp{m}{\eNull}{τ~*}}
+    \disprule{S-Null}
 
-    \irule{S-Ref} { \semtyp{m}{m[φ]_Φ}{τ}} {\semtyp{m}{\widehat{\&}~φ}{τ~*}}
+    \disprule{S-Ref}
 
-    \irule{S-Array}
-      { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ}}
-      { \semtyp{m}{\widehat{ \eArray{ v_1;…;v_n } }}{τ[~]} }
+    \disprule{S-Array}
 
-    \irule{S-Struct}
-      { ∀i ∈ [1;n]. \semtyp{m}{v_i}{τ_i}
-      }
-      {
-        \semtyp{m}{ \widehat{ \eStruct{ l_1:v_1;…;l_n:v_n } } }
-                            { \tStruct{ l_1:τ_1;…;l_n:τ_n } }
-      }
+    \disprule{S-Struct}
 
-    \irule{S-Fun}{ } {\semtyp{m}{\eFun{x_1, …, x_n}{i}}{\stFun{n}}}
+    \disprule{S-Fun}
   \end{mathpar}
 
   \caption{Règles de typage sémantique}
@@ -655,10 +658,10 @@ expression.
   \begin{itemize}
     \item si $Γ ⊢ n : t$, alors $t = \tInt$
     \item si $Γ ⊢ d : t$, alors $t = \tFloat$
-    \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$ % TODO typographie le
-textsc passe pas
+    \item si $Γ ⊢ \eNull : t$, alors $∃ t', t = t'*$
     \item si $Γ ⊢ \eUnit : t$, alors $t = \tUnit$
   \end{itemize}
+    % TODO typographie le textsc passe pas
 
 \item Références mémoire :
   \begin{itemize}
@@ -807,8 +810,6 @@ $Γ = x:t$).
 \end{lemma}
 
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
-
-% TODO definir mcomp
 
 \begin{theorem}[Progrès]
   \label{thm:progres}
