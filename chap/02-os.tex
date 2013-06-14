@@ -69,8 +69,20 @@ la pile des appels de fonction en cours grâce à la manière dont \texttt{jmp} 
 fonctions.
 
 À l'aide de ces quelques instructions on peut implanter des algorithmes
-impératifs. Mais pour faire quelque chose de visible cela ne suffit pas : il
-faut parler au reste du matériel.
+impératifs. Mais pour faire quelque chose de visible, comme afficher à l'écran
+ou envoyer un paquet sur le réseau, cela ne suffit pas : il faut parler au reste
+du matériel.
+
+Pour ceci, il y a deux techniques principales. D'une part, certains
+périphériques sont dits \emph{memory-mapped} : ils sont associés à un espace
+mémoire particulier, qui ne permet pas de stocker des informations mais de lire
+ou d'écrire des données dans le périphérique. Par exemple, écrire à l'adresse
+$0xB8000$ permet d'écrire des caractères à l'écran. L'autre système principal
+est l'utilisation des ports d'entrée/sortie. Cela correspond à des instructions
+spéciales \texttt{in \%ax, port} et \texttt{out port, \%ax} où \texttt{port}
+est un numéro qui correspond à un périphérique particulier. Par exemple, en
+écrivant dans le port $0x60$ on peut contrôler l'état des indicateurs lumineux
+du clavier PS/2.
 
 \section{Architecture logicielle}
 
