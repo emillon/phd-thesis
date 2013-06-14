@@ -1,5 +1,77 @@
 \section{Architecture physique}
 
+Un système informatique est principalement constitué d'un processeur (ou CPU
+pour \emph{Central Processing Unit}), de mémoire principale (ou RAM pour
+\emph{Random Access Memory}), et de divers périphériques.
+
+Le processeur est constitué de divers registres internes qui permettent
+d'encoder l'état dans lequel il se trouve : quelle est l'instruction courante
+(registre \eip), quelle est la hauteur de la pile système (registre \esp), etc.
+Son fonctionnement peut être vu de la manière la plus simple qui soit comme le
+cycle :
+
+\begin{itemize}
+\item
+  charger depuis la mémoire la prochaine instruction
+\item
+  \emph{(optionnel)} charger depuis la mémoire les données référencées
+  par l'instruction
+\item
+  effectuer l'instruction
+\item
+  \emph{(optionnel)} stocker en la mémoire les données modifiées
+\end{itemize}
+
+Les instructions sont constitués d'un mnémonique (indicant quelle opération
+faire) et d'un ensemble d'opérandes. La signification des opérandes dépend du
+mnémonique, mais en général elles permettent de désigner les sources et la
+destination. Les opérandes peuvent avoir plusieurs formes : une valeur
+immédiate (\$4), un nom de registre (\texttt{\%eax}) ou une référence à la
+mémoire (directement : \texttt{addr} ou indirectement : \texttt{(\%ecx)}
+\footnote{
+  Cela consiste à interpréter le contenu du regitre \ecx comme une adresse
+  mémoire.
+}
+).
+
+Parmi les mnémoniques courants on peut citer les suivants.
+
+\begin{itemize}
+
+\item \texttt{mov src, dst} copie le contenu de \texttt{src} dans \texttt{dst}.
+
+\item \texttt{add src, dst} calcule la somme des contenus de \texttt{src} et
+  \texttt{dst} et place ce résultat dans \texttt{dst}.
+
+\item \texttt{push src} place \texttt{src} sur la pile, c'est-à-dire que cette
+  instruction enlève au pointeur de pile \esp la taille de \texttt{src}, puis
+  place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp.
+
+\item \texttt{pop src} réalise l'opération inverse : elle charge le contenu de
+  la mémoire à l'adresse \esp dans \texttt{src} puis incrémente \esp de la
+  taille correspondante.
+
+\item \texttt{jmp addr} saute à l'adresse \texttt{addr} : c'est l'équivalent de
+  \texttt{mov addr, \%eip}.
+
+\item \texttt{call addr} sert aux appels de fonction : cela revient à
+  \texttt{push \%eip} puis \texttt{jmp addr}.
+
+\item \texttt{ret} sert à revenir d'une fonction : c'est l'équivalent de
+  \texttt{pop \%eip}.
+
+\end{itemize}
+
+Certaines de ces instructions font référence à la pile par le biais du registre
+\esp. Cette zone mémoire n'est pas gérée de manière particulière. Elle permet de
+la pile des appels de fonction en cours grâce à la manière dont \texttt{jmp} et
+\texttt{ret} fonctionnent. Elle sert aussi à stocker les variables locales des
+fonctions.
+
+À l'aide de ces quelques instructions on peut implanter des algorithmes
+impératifs. Mais pour faire quelque chose de visible cela ne suffit pas : il
+faut parler au reste du matériel.
+
 \section{Architecture logicielle}
 
 \section{Appels système}
@@ -104,16 +176,12 @@ Ces opérandes peuvent être de plusieurs types :
 
 \begin{itemize}
 \item
-  un nombre, noté \$4
-\item
-  le nom d'un registre, noté \texttt{\%eax}
 \item
   une opérande mémoire, c'est-à-dire le contenu de la mémoire à une
   adresse effective. Cette adresse effective peut être exprimée de
   plusieurs manières :
   \begin{itemize}
   \item
-    directement : \texttt{addr}
   \item
     indirectement : \texttt{(\%ecx)}. L'adresse effective est le contenu
     du registre.
@@ -127,31 +195,7 @@ En pratique il y a des modes d'adressage plus complexes, et toutes les
 combinaisons ne sont pas possibles, mais ceux-ci suffiront à décrire les
 exemples suivants :
 
-\begin{itemize}
 
-\item \texttt{mov src, dst} copie le contenu de \texttt{src} dans \texttt{dst}.
-
-\item \texttt{add src, dst} calcule la somme des contenus de \texttt{src} et
-  \texttt{dst} et place ce résultat dans \texttt{dst}.
-
-\item \texttt{push src} place \texttt{src} sur la pile, c'est-à-dire que cette
-  instruction enlève au pointeur de pile \esp la taille de \texttt{src}, puis
-  place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp.
-
-\item \texttt{pop src} réalise l'opération inverse : elle charge le contenu de
-  la mémoire à l'adresse \esp dans \texttt{src} puis incrémente \esp de la
-  taille correspondante.
-
-\item \texttt{jmp addr} saute à l'adresse \texttt{addr} : c'est l'équivalent de
-  \texttt{mov addr, \%eip}.
-
-\item \texttt{call addr} sert aux appels de fonction : cela revient à
-  \texttt{push \%eip} puis \texttt{jmp addr}.
-
-\item \texttt{ret} sert à revenir d'une fonction : c'est l'équivalent de
-  \texttt{pop \%eip}.
-
-\end{itemize}
 
 \section{Fonctions et conventions d'appel}
 \label{sec:convappel}
