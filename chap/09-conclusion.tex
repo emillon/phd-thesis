@@ -34,20 +34,20 @@ déréférence un pointeur dont la valeur est contrôlée par l'espace utilisate
 
 En C, on dispose de plusieurs types entiers, pouvant avoir plusieurs tailles et
 être signés ou non signés, ainsi que des types flottants qui diffèrent par leur
-taille. Au contraire, en \langname on ne conserve qu'un seul type d'entier. La
+taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier. La
 raison pour cela est que nous ne nous intéressons pas du tout aux problématiques
-de sémantique entière : les débordements, dénormalisations, etc, sont supposés
-ne pas arriver.
+de sémantique entière: les débordements, dénormalisations, etc, sont supposés ne
+pas arriver.
 
 Comme en C il n'est pas possible de définir de nouveaux types de base (des
 entiers de 24 bits par exemple), il est facile d'étendre le système de types de
-\langname pour ajouter tous ces nouveaux types. La traduction depuis Newspeak
+\langname{} pour ajouter tous ces nouveaux types. La traduction depuis Newspeak
 insère déjà des opérateurs de transtypage pour lesquels il est facile de donner
 une sémantique (pouvant lever une erreur en cas de débordement, comme en Ada) et
 un typage. Les littéraux numériques peuvent poser problème, puisqu'ils
 deviennent alors polymorphes. Une solution peut être de leur donner le plus
 grand type entier et d'insérer un opérateur de transtypage à chaque littéral.
-Haskell utilise une solution similaire : les littéraux entier ont le type de
+Haskell utilise une solution similaire: les littéraux entier ont le type de
 précision arbitraire \texttt{Integer} et est converti dans le bon type en
 appelant la fonction \texttt{fromInteger} du type synthétisé à partir de
 l'environnement.
@@ -56,7 +56,7 @@ l'environnement.
 
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
 de capturer de nombreuses constructions qui sont possibles, ou même idiomatiques
-en C : les unions, les conversions de types (explicites ou implicites) et le
+en C:\@ les unions, les conversions de types (explicites ou implicites) et le
 \emph{type punning} (défini ci-desosus). Les deux premières sont équivalentes.
 Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
 type $t_2$ par l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alors
@@ -77,7 +77,7 @@ information de type explicite, comme $\texttt{float\_exponent} : (\tFloat) →
 
 En fait, les casts entre types entiers ne posent pas de problèmes. Ceux entre
 types pointeurs ne posent pas de problème non plus puisqu'au moment de la
-traduction en \langname on efface les étiquettes de types sur les pointeurs.
+traduction en \langname{} on efface les étiquettes de types sur les pointeurs.
 
 Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
 casts, on peut néanmoins trouver le solution suivante.
@@ -95,7 +95,7 @@ casts, on peut néanmoins trouver le solution suivante.
 % TODO revoir, avec la nouvelle notation
 
 Cela pose problème car il est alors possible de créer une fonction qui convertit
-n'importe quel type pointeur en n'importe quel autre type pointeur :
+n'importe quel type pointeur en n'importe quel autre type pointeur:
 
 \[
   ⊢ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} }
@@ -151,7 +151,7 @@ suivante.
 L'exécution de l'analogue de $\addrInt$ demanderait de créer un pointeur
 depuis un entier.
 
-% TODO il n'y a pas de t q en mémoire, doncil faut juste un interp : Int -> Φ
+% TODO il n'y a pas de t q en mémoire, doncil faut juste un interp: Int -> Φ
 % TODO problème car ça peut correspondre à plusieurs pointeurs
 % TODO problème de layout mémoire : ça marche qd tout est boxé mais pas si c'est
 % unboxé
@@ -163,7 +163,7 @@ La solution la plus sûre est donc d'interdire totalement ces conversions.
 La sémantique opérationnelle utilise un environnement d'exécution pour certains
 cas. Contrairement à C, les débordements de tampon et les déréférencements de
 pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une caractéristique
-cruciale de cette approche : en effet, si on suppose que les programmes que l'on
+cruciale de cette approche: en effet, si on suppose que les programmes que l'on
 analyse sont corrects de ce point de vue, on peut désactiver ces vérifications
 et le reste des propriétés est toujours valable.
 
@@ -185,11 +185,10 @@ d'allocation dynamique de mémoire. C'est une manière de créer dynamiquement u
 zone de mémoire qui restera accessible après l'exécution de la fonction
 courante. Cette mémoire pourra être libérée à l'aide d'une fonction dédiée. Dans
 l'espace utilisateur, les programmes peuvent utiliser les fonctions
-\texttt{malloc()}, \texttt{calloc()}, et \texttt{realloc()} pour allouer des
-zones de mémoire et \texttt{free()} pour les libérer. Dans le noyau Linux, ces
-fonctions existent sous la forme de \texttt{kmalloc()}, \texttt{kfree()}, etc.
-Une explication détaillée de ces mécanismes peut être trouvée
-dans~\cite{LinuxVMM}.
+\verb!malloc()!, \verb!calloc()!, et \verb!realloc()! pour allouer des zones de
+mémoire et \verb!free()! pour les libérer. Dans le noyau Linux, ces fonctions
+existent sous la forme de \verb!kmalloc()!, \verb!kfree()!, etc. Une explication
+détaillée de ces mécanismes peut être trouvée dans~\cite{LinuxVMM}.
 
 Ces fonctions manipulent les données en tant que zones mémoires opaques, à
 en renvoyant un pointeur vers une zone mémoire d'un nombre d'octets donnés.
@@ -197,7 +196,7 @@ Cela présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
 sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
 mémoire contenant cette valeur (la taille de chaque valeur fait partie de
-celle-ci). Le typage est alors direct :
+celle-ci). Le typage est alors direct:
 
 \begin{mathpar}
   \irule{Malloc}
@@ -210,11 +209,11 @@ celle-ci). Le typage est alors direct :
 \end{mathpar}
 
 En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
-états mémoire : $m = (s, g, h)$ où $h$ associe à une étiquette numérique une
+états mémoire: $m = (s, g, h)$ où $h$ associe à une étiquette numérique une
 valeur (comme les globales mais indexées par des entiers plutôt que par leur
 nom). La libération de mémoire est problématique parce qu'il faut faire
 confiance au programmeur pour ne pas accéder aux zones mémoires libérées. Encore
-une fois, on peut utiliser une analyse préalable comme~ \cite{ifm10}. Il est sûr
+une fois, on peut utiliser une analyse préalable comme~\cite{ifm10}. Il est sûr
 (mais pas possible en pratique) d'ignorer les commandes de libérations de
 mémoire. 
 
@@ -225,13 +224,13 @@ mémoire.
 
 Une autre limitation est que seules les structures simples sont supportées. Les
 structures récursives, contenant un pointeur vers un objet du même type
-structure, ne sont pas typables. La raison est syntaxique : l'accès à un champ
+structure, ne sont pas typables. La raison est syntaxique: l'accès à un champ
 est noté $lv.l_S$ afin d'avoir à disposition le type complet de la structure.
 
 % TODO [E] bigre!!!
 
 Par exemple, une liste chaînée d'entiers peut être décrite de la manière
-suivante en C :
+suivante en C:\@
 
 \begin{verbatim}
 struct int_list {
@@ -247,7 +246,7 @@ int\_list} n'est pas nécessaire pour connaître la taille d'un pointeur vers un
 objet de ce type.
 
 Pour compiler \texttt{l.next} en \langname, il faudrait écrire le type en
-extension :
+extension:
 
 \[
   l.next_{ value:\tInt ; next : \{ value : \tInt ; next : … \}~*}
@@ -261,7 +260,7 @@ train d'être défini.
     S \gramisa & … \gramorx \mathrm{fix}(p → S)
 \end{align*}
 
-On écrit alors :
+On écrit alors:
 
 \[
   l.next_{ \mathrm{fix}(p → \{ value : \tInt ; next : p \}) }
@@ -282,7 +281,7 @@ struct b {
 };
 \end{verbatim}
 
-Ces structures sont respectivement traduites en :
+Ces structures sont respectivement traduites en:
 
 \begin{align*}
   A &= \mathrm{fix} (p → \{ value : \tInt   ; next : \{ value : \tFloat ; next : p \}~* \}) \\
@@ -291,7 +290,7 @@ Ces structures sont respectivement traduites en :
 
 Ce schéma suffit à compiler toutes les types de structures possibles en C. En
 effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
-structure en cours de définition ; et il n'est alors possible que d'y accéder
+structure en cours de définition; et il n'est alors possible que d'y accéder
 par pointeur.
 
 \paragraph{Assembleur}
@@ -315,11 +314,11 @@ recevant un pointeur de l'espace utilisateur.
 \paragraph{Autres types abstraits}
 
 Notre approche est basée sur le fait de rendre abstrait un type de C et
-d'y interdire certaines opérations : ici, on marque un certain type de pointeur
+d'y interdire certaines opérations: ici, on marque un certain type de pointeur
 comme ``utilisateur'' et on interdit l'opérateur \texttt{*} dessus.
 
-Le langage C n'ayant pas de types abstraits , on ne peut pas séparer la
-représentation d'un type (par exemple : entier signé de 32 bits) des opérations
+Le langage C n'ayant pas de types abstraits, on ne peut pas séparer la
+représentation d'un type (par exemple: entier signé de 32 bits) des opérations
 qui y sont attachées. La seule abstraction possible est lorsqu'on manipule une
 structure par pointeur. Il n'est alors pas nécessaire de connaître sa définition
 totale. L'idiome est alors de placer uniquement une déclaration en avance
@@ -329,7 +328,7 @@ opaques} n'est pas applicable aux autres types.
 
 Dans de nombreuses interfaces, on emploie des types entiers qui servent
 d'étiquettes. Par exemple, les descripteurs de fichiers renvoyés par la fonction
-\texttt{open()} et passés au fonctions \texttt{read()} et \texttt{write()} ont
+\verb!open()! et passés au fonctions \verb!read()! et \verb!write()! ont
 le type \texttt{int}. Le langage autorise donc par exemple de multiplier entre
 eux deux descripteurs de fichiers, ce qui ne correspond pas à une opération
 concrète.
