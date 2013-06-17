@@ -34,34 +34,30 @@ propriétés caractéristiques.
 \def\xab{ définition de \lensGetX{ℒ} }
 
 \def\xc{
-  \lensPut
-    {ℒ_1}
-    {
-      \lensPut
-        {ℒ_2}
-        {
-          \lensGet{ℒ_2}
-            {
-              \lensGet{ℒ_1}{r}
-            }
-        }
-        { \lensGet
-            {ℒ_1}
-            {r}
-        }
-    }
-    {r}
+  \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+                    {
+                      \lensGet{ℒ_2}
+                        {
+                          \lensGet{ℒ_1}{r}
+                        }
+                    }
+                    { \lensGet{ℒ_1}
+                              {r}
+                    }
+          }
+          {r}
 }
 
 \def\xbc{ définition de \lensPutX{ℒ} }
 
 \def\xd{
-  \lensPut
-    {ℒ_1}
-    {
-      \lensGet{ℒ_1}{r}
-    }
-    {r}
+  \lensPut{ℒ_1}
+          {
+            \lensGet{ℒ_1}{r}
+          }
+          {r}
 }
 
 \def\xcd{ \textsc{GetPut} sur $ℒ_2$ }
@@ -224,7 +220,7 @@ propriétés caractéristiques.
 \label{proof:progres}
 
 On prouve de manière récursive mutuelle les
-théorèmes~\ref{thm:progres}
+Théorèmes~\ref{thm:progres}
 et~\ref{thm:progres-lv}.
 
 % TODO mouais, à préciser mieux.
@@ -326,7 +322,7 @@ $\msi{m}{lv[e]} → Ω$.
 %}}}
 \paragraph{\textsc{Lv-Field}:}%{{{
 
-On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $lv$.
+On applique l'hypothèse de récurrence du Théorème~\ref{thm:progres-lv} à $lv$.
 
 \begin{itemize}
 
@@ -364,11 +360,8 @@ $\msi{m}{lv} → Ω$.
 
         \item $e_2 = v_2$: alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
           peut alors appliquer \textsc{Exp-BinOp}, sauf dans le cas d'une
-          division par zéro (
-          $ \opbin ∈ \{ / ; \% ; /. \} $
-          et
-          $ v_2 = 0 $
-          ) où alors $v_1~\widehat{\opbin}~v_2 = \serr{div}$. Dans ce cas, on a
+          division par zéro ($ \opbin ∈ \{ / ; \% ; /. \} $ et
+          $ v_2 = 0 $) où alors $v_1~\widehat{\opbin}~v_2 = \serr{div}$. Dans ce cas, on a
           alors par \textsc{Exp-Err} $\msi{m}{e} → \serr{div}$.
 
         \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
@@ -466,7 +459,7 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 
 \[ \left( \disprule{Addr} \right) \]
 
-On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $lv$.
+On applique l'hypothèse de récurrence du Théorème~\ref{thm:progres-lv} à $lv$.
 
 Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
 \textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. On détaille le cas où
@@ -505,7 +498,7 @@ l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants:
 Le schéma de preuve est similaire au cas \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise le contexte
 $C = \eStruct{l_1: v_1, …, l_{p-1}: v_{p-1}, \ctxEmpty, l_{p+1}: e_{p+1}, …, l_n:
-e_n}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
+e_n}$; et dans le cas où toutes les expressions sont évaluées, on applique
 \textsc{Exp-Struct}.
 
 %}}}
@@ -514,7 +507,7 @@ e_n}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
 On commence par appliquer l'hypothèse de récurrence à $e$. Dans le cas d'un pas
 d'évaluation ou d'erreur, on applique respectivement \textsc{Ctx} ou
 \textsc{Eval-Err} avec $C = \ctxEmpty (e_1, …, e_n)$.
-Reste le cas où $e$ est une valeur: d'après le lemme~\ref{lemma:canon}, $e$ est
+Reste le cas où $e$ est une valeur: d'après le Lemme~\ref{lemma:canon}, $e$ est
 de la forme $f = \eFun{\vec{a}}{i}$.
 
 Ensuite, appliquons le même schéma que pour \textsc{Array}.
@@ -544,7 +537,7 @@ Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 \section{Préservation}
 \label{proof:preservation}
 
-(théorème~\ref{thm:preservation})
+(Théorème~\ref{thm:preservation})
 
 
 \begin{proof}
@@ -554,7 +547,7 @@ On procède par induction sur la forme de l'expression $e$.
 \paragraph{ Constante }             $c$ % {{{ TODO
 On détaille par exemple le cas d'une constante entière.
 
-D'une part, $Γ ⊢ e : t$ donc d'après le lemme~\ref{lemma:canon}, $t = \tInt$.
+D'une part, $Γ ⊢ e : t$ donc d'après le Lemme~\ref{lemma:canon}, $t = \tInt$.
 
 D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 évalue en une constante entière.
@@ -604,11 +597,11 @@ D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 \section{Progrès pour les types qualifiés}
 \label{proof:progres-qualif}
 
-(théorème~\ref{thm:progres-qual})
+(Théorème~\ref{thm:progres-qual})
 
 \section{Préservation pour les types qualifiés}
 \label{proof:preservation-qualif}
 
-(théorème~\ref{thm:preservation-qualif})
+(Théorème~\ref{thm:preservation-qualif})
 
   %% TODO
