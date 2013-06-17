@@ -234,19 +234,19 @@ et~\ref{thm:progres-lv}
   On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
   sur la dernière règle utilisée.
 
-  \paragraph{\textsc{Cst-Int} :} % {{{
+  \paragraph{\textsc{Cst-Int}:} % {{{
 $e$ est alors de la forme $n$, qui est une valeur.
 %}}}
-  \paragraph{\textsc{Cst-Float} :} % {{{
+  \paragraph{\textsc{Cst-Float}:} % {{{
 $e$ est alors de la forme $d$, qui est une valeur.
 %}}}
-  \paragraph{\textsc{Cst-Null} :} % {{{
+  \paragraph{\textsc{Cst-Null}:} % {{{
 $e$ est alors égale à $\eNull$, qui est une valeur.
 %}}}
-  \paragraph{\textsc{Cst-Unit} :}%{{{
+  \paragraph{\textsc{Cst-Unit}:}%{{{
 $e$ est alors égale à \eUnit, qui est une valeur.
 %}}}
-\paragraph{\textsc{Lv-Var} :}%{{{
+\paragraph{\textsc{Lv-Var}:}%{{{
 
 
 Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$,
@@ -256,7 +256,7 @@ on peut appliquer le lemme~\ref{lemma:invsem}. La construction $a =
 
 % TODO mouais
 %}}}
-\paragraph{\textsc{Lv-Deref} :}%{{{
+\paragraph{\textsc{Lv-Deref}:}%{{{
 
   Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
 
@@ -265,7 +265,7 @@ on peut appliquer le lemme~\ref{lemma:invsem}. La construction $a =
   $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
   lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
 
-  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique :
+  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique:
   $\mms{e}{\widehat{*}φ}$.
   Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
   $\msi{m}{e} → \serr{ptr}$.
@@ -283,7 +283,7 @@ on peut appliquer le lemme~\ref{lemma:invsem}. La construction $a =
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{Lv-Index} :} % %{{{
+\paragraph{\textsc{Lv-Index}:} % %{{{
 
 De même, on applique l'hypothèse de récurrence à $lv$.
 
@@ -298,7 +298,7 @@ Appliquons l'hypothèse de récurrence à $e$.
 \item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
 lemme~\ref{lemma:canon} et $v' = n$.
 D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\eArray{v_1; …; v_p}\widehat{[n]}} $.
-Deux cas sont à distinguer :
+Deux cas sont à distinguer:
 si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
 Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
@@ -324,7 +324,7 @@ $\msi{m}{lv[e]} → Ω$.
 
 \end{itemize}
 %}}}
-\paragraph{\textsc{Lv-Field} :}%{{{
+\paragraph{\textsc{Lv-Field}:}%{{{
 
 On applique l'hypothèse de récurrence du théorème~\ref{thm:progres-lv} à $lv$.
 
@@ -347,7 +347,7 @@ $\msi{m}{lv} → Ω$.
 \end{itemize}
 
 %}}}
-  \paragraph{\textsc{Op-Int} :} % {{{
+  \paragraph{\textsc{Op-Int}:} % {{{
 
   Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
   en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
@@ -362,7 +362,7 @@ $\msi{m}{lv} → Ω$.
 
       \begin{itemize}
 
-        \item $e_2 = v_2$ : alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
+        \item $e_2 = v_2$: alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
           peut alors appliquer \textsc{Exp-BinOp}, sauf dans le cas d'une
           division par zéro (
           $ \opbin ∈ \{ / ; \% ; /. \} $
@@ -395,24 +395,24 @@ $\msi{m}{lv} → Ω$.
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{Op-Float} :} % {{{
+\paragraph{\textsc{Op-Float}:} % {{{
 Ce cas est similaire à \textsc{Op-Int}.
 % TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
-\paragraph{\textsc{Op-Eq} :} %{{{
+\paragraph{\textsc{Op-Eq}:} %{{{
 Ce cas est similaire à \textsc{Op-Int}.
 % TODO expand un peu
 % TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
-\paragraph{\textsc{Op-Comparable} :} %{{{
+\paragraph{\textsc{Op-Comparable}:} %{{{
 Ce cas est similaire à \textsc{Op-Int}.
 % TODO expand un peu
 % TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 % TODO n'existe plus?
 %}}}
-\paragraph{\textsc{Unop-Plus-Int} :} % {{{
+\paragraph{\textsc{Unop-Plus-Int}:} % {{{
 
-Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$ :
+Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$:
 
 \begin{itemize}
 \item
@@ -429,22 +429,22 @@ avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{Unop-Plus-Float} :} % {{{
+\paragraph{\textsc{Unop-Plus-Float}:} % {{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 % }}}
-\paragraph{\textsc{Unop-Minus-Int} :} % {{{
+\paragraph{\textsc{Unop-Minus-Int}:} % {{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 % }}}
-\paragraph{\textsc{Unop-Minus-Float} :} % {{{
+\paragraph{\textsc{Unop-Minus-Float}:} % {{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 % }}}
-\paragraph{\textsc{Unop-Not} :}%{{{
+\paragraph{\textsc{Unop-Not}:}%{{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
-\paragraph{\textsc{Ptr-Arith} :} % %{{{
+\paragraph{\textsc{Ptr-Arith}:} % %{{{
 
 Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
-lorsque $e_1$ et $e_2$ sont des valeurs. D'après le lemme~\ref{lemma:canon} :
+lorsque $e_1$ et $e_2$ sont des valeurs. D'après le lemme~\ref{lemma:canon}:
 
 \begin{itemize}
 \item $e_1 = \eNull$ ou $e_1 = φ$
@@ -454,7 +454,7 @@ lorsque $e_1$ et $e_2$ sont des valeurs. D'après le lemme~\ref{lemma:canon} :
 D'après \textsc{Exp-Binop}, $\mms{e}{e_1~\widehat{\opbin}~n}$.
 
 On se réfère ensuite à la définition de $\widehat{\opbin}$
-(page~\pageref{page:def-arith-ptr-error}) : si $e_1$ est de la forme $φ[m]$,
+(page~\pageref{page:def-arith-ptr-error}): si $e_1$ est de la forme $φ[m]$,
 alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
 
 Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
@@ -462,7 +462,7 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 \textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
 
 %}}}
-\paragraph{\textsc{Addr} :} % {{{ TODO
+\paragraph{\textsc{Addr}:} % {{{ TODO
 
 \[ \left( \disprule{Addr} \right) \]
 
@@ -479,31 +479,28 @@ $lv =  φ$.
 % TODO expliquer un peu mieux
 
 %}}}
-\paragraph{\textsc{Set} :} % {{{ TODO
+\paragraph{\textsc{Set}:} % {{{ TODO
 
 \[ \left( \disprule{Set} \right) \]
 
 %}}}
-\paragraph{\textsc{Array} :} % {{{
+\paragraph{\textsc{Array}:} % {{{
 
 On va appliquer l'hypothèse de récurrence à $e_1$, puis si $e_1 = v_1$, on
-l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants :
+l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants:
 
 \begin{itemize}
-\item $∃ p ∈ [1;n],e'_p,m: e_1 = v_1, …, e_{p-1} = v_{p-1}, \mm{m}{e_p}{m'}{e'_p}$
-  .
+\item $∃ p ∈ [1;n],e'_p,m: e_1 = v_1, …, e_{p-1} = v_{p-1}, \mm{m}{e_p}{m'}{e'_p}$.
   Alors on peut appliquer \textsc{Ctx} avec
   $C = [v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n]$.
-\item $∃ p ∈ [1;n],Ω :     e_1 = v_1, …, e_{p-1} = v_{p-1}, \msi{m}{e_p} → Ω$
-  .
+\item $∃ p ∈ [1;n],Ω :     e_1 = v_1, …, e_{p-1} = v_{p-1}, \msi{m}{e_p} → Ω$.
   Dans ce cas \textsc{Eval-Err} est applicable avec ce même $C$.
-\item $e_1 = v_1, …, e_n = v_n$
-  .
+\item $e_1 = v_1, …, e_n = v_n$.
   Alors on peut appliquer \textsc{Exp-Array} en construisant un tableau.
 \end{itemize}
 
 %}}}
-\paragraph{\textsc{Struct} :} % {{{
+\paragraph{\textsc{Struct}:} % {{{
 
 Le schéma de preuve est similaire au cas \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise le contexte
@@ -512,7 +509,7 @@ e_n}$ ; et dans le cas où toutes les expressions sont évaluées, on applique
 \textsc{Exp-Struct}.
 
 %}}}
-\paragraph{\textsc{Call} :} % {{{
+\paragraph{\textsc{Call}:} % {{{
 
 On commence par appliquer l'hypothèse de récurrence à $e$. Dans le cas d'un pas
 d'évaluation ou d'erreur, on applique respectivement \textsc{Ctx} ou
@@ -534,13 +531,13 @@ $f = \eFun{\vec{a}}{i}$
 % TODO cohérence mémoire
 
 %}}}
-\paragraph{\textsc{Fun} :} % {{{
+\paragraph{\textsc{Fun}:} % {{{
 
-Ce cas est direct : la règle \textsc{Exp-Fun} s'applique.
+Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 
 %}}}
 % TODO vérifier qu'il n'y a pas d'autre règle
-% TODO général : que désigne e. Ex avec lv[e]
+% TODO général: que désigne e. Ex avec lv[e]
 % TODO prouver aussi mcomp
 \end{proof}
 
