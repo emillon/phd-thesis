@@ -243,9 +243,9 @@ placées sur la pile, au dessus des (c'est-à-dire, empilées après) paramètre
 augmentant le décalage.
 
 Pour simplifier, la pile est organisée en cadres logiques: chaque cadre
-correspond à un niveau dans la pile d'appels de fonctions. Si f appelle g, qui
-appelle h, il y aura dans l'ordre sur la pile le cadre de f, celui de g puis
-celui de h.
+correspond à un niveau dans la pile d'appels de fonctions. Si $f$ appelle $g$,
+qui appelle $h$, il y aura dans l'ordre sur la pile le cadre de $f$, celui de
+$g$ puis celui de $h$.
 
 Ces cadres sont chainés à l'aide du registre \ebp{}: à tout moment, \ebp{}
 contient l'adresse du cadre de l'appelant.
