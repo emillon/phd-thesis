@@ -1,7 +1,7 @@
 Communication,
 audiovisuel,
 transports,
-médecine :
+médecine:
 tout ces domaines se sont transformés dans les dernières décennies,
 en particulier grâce à la révolution numérique.
 En effet le plus petit appareil électrique contient maintenant des composants
@@ -59,7 +59,7 @@ dangereuses.
 
 \section{Rôle d'un système d'exploitation}
 
-Un ordinateur est constitué de nombreux composants matériels : microprocesseur,
+Un ordinateur est constitué de nombreux composants matériels: microprocesseur,
 mémoire, et divers périphériques. Et au niveau de l'utilisateur, des dizaines de
 logiciels permettent d'effectuer toutes sortes de calculs et de communications.
 Le système d'exploitation permet de faire l'interface entre ces niveaux
@@ -67,7 +67,7 @@ d'abstraction.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
-son intégralité : toute la mémoire pouvait être accédée, toutes les instructions
+son intégralité: toute la mémoire pouvait être accédée, toutes les instructions
 pouvaient être utilisées.
 
 Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à une personne
@@ -76,10 +76,10 @@ les premiers systèmes ``à temps partagé'', permettant à plusieurs utilisateu
 de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
-révolutionnaire, mais elle n'est pas sans difficultés techniques : en effet les
+révolutionnaire, mais elle n'est pas sans difficultés techniques: en effet les
 ressources de la machine doivent être aussi partagées entre les utilisateurs et
 les programmes. Par exemple, plusieurs programmes vont utiliser le processeur
-les uns à la suite des autres ; et chaque programme aura à sa disposition une
+les uns à la suite des autres; et chaque programme aura à sa disposition une
 partie de la mémoire principale, ou du disque dur.
 
 Si plusieurs programmes s'exécutent de manière concurrente sur le même matériel,
@@ -92,7 +92,7 @@ niveau, les programmes communiquent avec le noyau, qui centralise donc les
 appels au matériel, et abstrait certaines opérations.
 
 Par exemple, comparons ce qui se passe concrètement lors de la copie de données
-depuis un cédérom ou une clef USB.
+depuis un cédérom ou une clef USB.\@
 
 \begin{itemize}
 
@@ -110,7 +110,7 @@ depuis un cédérom ou une clef USB.
 Ces deux opérations, bien qu'elles aient la même intention (copier de la mémoire
 depuis un périphérique amovible), ne sont pas effectuées en extension de la même
 manière. C'est pourquoi le système d'exploitation fournit les notions de
-fichier, lecteur, etc : le programmeur n'a plus qu'à utiliser des commandes de
+fichier, lecteur, etc: le programmeur n'a plus qu'à utiliser des commandes de
 haut niveau (``monter un lecteur'', ``ouvrir un fichier'', ``lire dans un
 fichier'') et selon le type de lecteur, le système d'exploitation effectuera les
 actions appropriées.
@@ -118,7 +118,7 @@ actions appropriées.
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et le
 matériel, et en particulier est responsable de la gestion de la mémoire, des
 périphériques et des processus. Les détails d'implantation ne sont pas présentés
-à l'utilisateur ; à la place il manipule des abstractions, comme la notion de
+à l'utilisateur; à la place il manipule des abstractions, comme la notion de
 fichier. Pour une explication détaillée du concept de système d'exploitation
 ainsi que des cas d'étude, on pourra se référer à~\cite{tanenbaum}.
 
@@ -144,9 +144,9 @@ celui de l'instruction et des opérandes mémoires qui y sont présentes
 }.
 
 Par exemple, supposons qu'un programme utilisateur contienne l'instruction
-\texttt{mov \%eax, 0x54c3b2f7}. Celle-ci consiste à déplacer le contenu du
-registre \eax vers l'adresse mémoire \texttt{0x54c3b2f7}. Puisque cette adresse est
-dans l'espace utilisateur (la raison est décrite dans le
+\texttt{mov \%eax, \hexa{54c3b2f7}}. Celle-ci consiste à déplacer le contenu du
+registre \eax{} vers l'adresse mémoire \texttt{\hexa{54c3b2f7}}. Puisque cette
+adresse est dans l'espace utilisateur (la raison est décrite dans le
 chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
@@ -163,15 +163,15 @@ s'arrête.
 & Privilège (code)
 & Privilège (données)
 & Accès possible \\
-\hline
-  \modeK & \modeK & \modeK & \CheckedBox \\
-  \modeK & \modeK & \modeU & \CheckedBox \\
-  \modeK & \modeU & \modeK & \CheckedBox \\
-  \modeK & \modeU & \modeU & \CheckedBox \\
-  \modeU & \modeK & \modeK & \Square \\
-  \modeU & \modeK & \modeU & \Square \\
-  \modeU & \modeU & \modeK & \Square \\
-  \modeU & \modeU & \modeU & \CheckedBox \\
+\midrule
+  \modeK{} & \modeK{} & \modeK{} & \CheckedBox{} \\
+  \modeK{} & \modeK{} & \modeU{} & \CheckedBox{} \\
+  \modeK{} & \modeU{} & \modeK{} & \CheckedBox{} \\
+  \modeK{} & \modeU{} & \modeU{} & \CheckedBox{} \\
+  \modeU{} & \modeK{} & \modeK{} & \Square{} \\
+  \modeU{} & \modeK{} & \modeU{} & \Square{} \\
+  \modeU{} & \modeU{} & \modeK{} & \Square{} \\
+  \modeU{} & \modeU{} & \modeU{} & \CheckedBox{} \\
 \end{tabular}
 \end{center}
 
@@ -181,7 +181,7 @@ s'arrête.
 \end{figure}
 
 En plus de cette vérification, certains types d'instructions sont explicitement
-réservés au mode le plus privilégié : par exemple les lectures ou écritures sur
+réservés au mode le plus privilégié: par exemple les lectures ou écritures sur
 des ports matériels, ou celles qui permettent de définir les niveaux de
 privilèges des différentes zones mémoire.
 
@@ -200,7 +200,7 @@ Lors d'un appel système, une fonction du noyau est invoquée (en mode noyau) av
 des paramètres provenant de l'utilisateur. Il faut donc être particulièrement
 précautionneux dans le traitement de ces données.
 
-Par exemple, considérons un appel système de lecture depuis un disque : on passe
+Par exemple, considérons un appel système de lecture depuis un disque: on passe
 au noyau les arguments $(d, o, n, a)$ où $d$ est le nom du disque, $o$ (pour
 \emph{offset}) l'adresse sur le disque où commencer la lecture, $n$ le nombre
 d'octets à lire et $a$ l'adresse en mémoire où commencer à stocker les
@@ -213,9 +213,9 @@ erreur ne se produit.
 
 Mais même si ce cas ne produit pas d'erreur à l'exécution, il est tout de même
 erroné. En effet, si on passe à l'appel système une adresse $a$ faisant partie
-de l'espace noyau, que se passe-t-il ?
+de l'espace noyau, que se passe-t-il?
 
-L'exécution est presque identique : au moment de la copie on est en mode noyau,
+L'exécution est presque identique: au moment de la copie on est en mode noyau,
 en train d'exécuter une instruction du noyau manipulant des données noyau.
 Encore une fois il n'y a pas d'erreur à l'exécution.
 
@@ -253,7 +253,7 @@ une adresse, ou déréférencer le résultat d'une division sont des comportemen
 qu'on voudrait pouvoir empêcher.
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
-opérations possibles selon la classe d'un objet : en somme, ``ne pas ajouter des
+opérations possibles selon la classe d'un objet: en somme, ``ne pas ajouter des
 pommes et des oranges''. Le modèle qui permet cette classification est appelé
 \emph{système de types} et est en général constitué d'un ensemble de
 \emph{règles de typage}, comme ``un entier plus un entier égale un entier''.
@@ -297,7 +297,7 @@ système de types, comme un opérateur de transtypage.
 Parfois, il est trop restrictif de donner un unique type à une fonction. Si on
 considère une fonction ajoutant un élément à une liste, ou une autre
 triant un tableau en place, leur type doit-il faire intervenir le type des
-éléments manipulés ?
+éléments manipulés?
 
 En première approximation, on peut imaginer fournir une version du code par type
 de données à manipuler. C'est la solution retenue par les premières versions du
@@ -349,8 +349,8 @@ fournir des abstractions au dessus du langage d'assemblage. Les structures de
 contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
 programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
-machine : ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
-taille concrète. Son système de types est assez rudimentaire : toutes les formes
+machine: ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
+taille concrète. Son système de types est assez rudimentaire: toutes les formes
 de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
@@ -410,7 +410,7 @@ Les premiers candidats sont bien entendu les représentations intermédiaires
 utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
 standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
 plupart des logiciels. En particulier, le noyau Linux repose fortement sur les
-extensions GNU.
+extensions GNU.\@
 
 \paragraph{GCC} utilise une représentation interne nommée
 GIMPLE\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C, reposant
@@ -426,7 +426,7 @@ sous forme d'une structure de données C++, soit d'un fichier de code-octet
 compact, soit sous forme textuelle.
 
 \paragraph{Cmm} est une représentation interne utilisée pour la génération de
-code lors de la compilation d'Objective Caml \link{ocamlManual} , et disponible
+code lors de la compilation d'Objective Caml~\link{ocamlManual}, et disponible
 dans les sources du compilateur sous le chemin \texttt{asmcomp/cmm.mli} (il
 s'agit donc d'une structure de données OCaml). Ce langage a l'avantage d'être
 très restreint, mais malheureusement il n'existe pas directement de traducteur
@@ -454,18 +454,18 @@ programmes.
 
 \paragraph{Compcert} est un projet qui vise à produire un compilateur certifié
 pour C. C'est-à-dire que le fait que les transformations conservent la
-sémantique est prouvé. Il utilise de nombreux langages intermédiaires, dont CIL.
-Pour le front-end, le langage se nomme Clight\cite{cfront}. Les passes de
+sémantique est prouvé. Il utilise de nombreux langages intermédiaires, dont
+CIL.\@ Pour le front-end, le langage se nomme Clight\cite{cfront}. Les passes de
 middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
 
 \paragraph{Newspeak}\cite{newspeak} est un langage intermédiaire développé par
 EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
 interprétation abstraite. Il sera décrit plus en détails dans la
-section~\ref{sec:npk}.
+Section~\ref{sec:npk}.
 
-\subsection*{La solution retenue : \langname}
+\subsection*{La solution retenue: \langname{}}
 
-Dans la suite de cette thèse nous nous appuierons sur \langname, un langage
+Dans la suite de cette thèse nous nous appuierons sur \langname{}, un langage
 intermédiaire minimal, pour exprimer les règles de typage de la manière la plus
 simple possible.
 
@@ -480,7 +480,7 @@ introduits. On fait ensuite un tour d'horizon des techniques existantes
 permettant de traiter ce problème. Cette partie se conclut par la proposition au
 cœur de cette thèse.
 
-\paragraph{La partie~\ref{part:lang}} décrit notre solution : \langname, un
+\paragraph{La partie~\ref{part:lang}} décrit notre solution: \langname{}, un
 langage impératif. On y décrit sa syntaxe, sa sémantique ainsi qu'un système de
 types statiques. On l'étend ensuite pour capturer les problèmes d'adressage
 mémoire présents dans les systèmes d'exploitation en ajoutant des pointeurs
@@ -490,7 +490,7 @@ sémantique d'exécution aux types statiques.
 
 \paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
 à ces travaux. L'implantation du système de types est décrite, afin que la
-manière de transformer automatiquement du code C en \langname. Un cas d'étude
+manière de transformer automatiquement du code C en \langname{}. Un cas d'étude
 est déroulé, consistant d'un bug ayant touché le noyau Linux. Il est démontré
 que le système de type capture précisément ce genre d'erreur de programmation.
 Enfin, les possibilités d'extension tant théoriques qu'expérimentales sont
