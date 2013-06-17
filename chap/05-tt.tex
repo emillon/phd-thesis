@@ -1,13 +1,12 @@
-\epigraph
-{ Many C programmers believe that ``strong typing''
-  just means pounding extra hard on the keyboard.
+\epigraph{Many C programmers believe that ``strong typing''
+          just means pounding extra hard on the keyboard.
 }
-{Peter van den Linden}
+{--- \textup{Peter van den Linden}}
 
 Dans ce chapitre, nous enrichissons le langage défini dans le
-chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
-programmes bien formés, comme celui de la figure~\ref{fig:progwf:good} des
-programmes mal formés comme celui de la figure~\ref{fig:progwf:bad}.
+Chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
+programmes bien formés, comme celui de la Figure~\ref{fig:progwf:good} des
+programmes mal formés comme celui de la Figure~\ref{fig:progwf:bad}.
 
 \begin{SaveVerbatim}[]{VerbProgGood}
 f()
@@ -32,17 +31,17 @@ f()
   \centering
 
   \subbottom[Programme bien formé]{
-    \label{fig:progwf:good}
+\label{fig:progwf:good}
     \BUseVerbatim{VerbProgGood}
   }
   \hspace{2cm}
   \subbottom[Programme mal formé]{
-    \label{fig:progwf:bad}
+\label{fig:progwf:bad}
     \BUseVerbatim{VerbProgBad}
   }
 
   \caption{Programmes bien et mal formés}
-  \label{fig:progwf}
+\label{fig:progwf}
 
 \end{figure}
 
@@ -56,7 +55,7 @@ sémantique.
 
 Le principe est d'associer à chaque construction syntaxique une étiquette
 représentant le genre de valeurs qu'elle produira. Dans le programme de la
-figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la valeur
+Figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la valeur
 $0$, c'est donc un entier. Cela signifie que dans tout le programme, toutes les
 instances de cette variable
 \footnote{Deux variables peuvent avoir le même nom dans deux fonctions
@@ -73,8 +72,8 @@ Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (l
 début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
 entières). Or cet opérateur prend un argument d'un type pointeur de la forme
 $t*$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout $t$
-(\tInt, \tFloat où même $t'*$ : le déréférencement d'un pointeur sur pointeur
-donne un pointeur), mais le type de $x$, \tInt, n'est pas de cette forme. Ce
+($\tInt$, $\tFloat$ ou même $t'*$: le déréférencement d'un pointeur sur pointeur
+donne un pointeur), mais le type de $x$, $\tInt$, n'est pas de cette forme. Ce
 programme est donc mal typé.
 
 \section{Environnements et notations}
@@ -104,29 +103,29 @@ programme est donc mal typé.
 
   \caption{Types et environnements de typage}
 
-  \label{fig:les-types}
+\label{fig:les-types}
 
 \end{figure}
 
 Les types associés aux expressions sont décrits dans la
-figure~\ref{fig:les-types}. Tous sont des types concrets : il n'y a pas de
+Figure~\ref{fig:les-types}. Tous sont des types concrets: il n'y a pas de
 polymorphisme.
 
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
 Plus précisément, un environnement $Γ$ est une liste de couples (variable,
-type), c'est à dire une suite finie $(γ_i)_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
-On utilise les notations suivantes :
+type), c'est à dire une suite finie ${(γ_i)}_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
+On utilise les notations suivantes:
 
 \begin{align*}
   x:t ∈ Γ &\eqdef ∃i ∈ [0;n], γ_i = (x, t) \\
-  Γ, x:t  &\eqdef (γ'_i)_{i∈[1;n+1]}~\textrm{tel que}
+  Γ, x:t  &\eqdef {(γ'_i)}_{i∈[1;n+1]}~\textrm{tel que}
                         \begin{cases}
                           ∀ i ∈ [1;n], γ'_i    = γ_i \\
                                        γ_{n+1} = (x,t) \\
                         \end{cases} \\
-  Γ - x   &\eqdef (γ'_i)_{i∈[1;n-1]}~\textrm{tel que}
+  Γ - x   &\eqdef {(γ'_i)}_{i∈[1;n-1]}~\textrm{tel que}
                         \begin{cases}
                           ∀ i ∈ [1;p-1], γ'_i = γ_i \\
                           ∀ i ∈ [p;n-1], γ'_i = γ_{i+1} \\
@@ -138,29 +137,29 @@ Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ e
 $\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
 
 Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
-n'est qu'une notation : il n'y a pas de n-uplets de première classe, ils sont
+n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
-\paragraph{Typage d'une expression :} on note de la manière suivante le fait
-qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
+\paragraph{Typage d'une expression:} on note de la manière suivante le fait
+qu'une expression $e$ (telle que définie dans la Figure~\ref{fig:stx-data}) ait
 pour type $t$ dans le contexte $Γ$.
 
   \[
     \ty{Γ}{e}{t}
   \]
 
-\paragraph{Typage d'une instruction :} les instructions n'ont en revanche pas de
+\paragraph{Typage d'une instruction:} les instructions n'ont en revanche pas de
 type. Mais il est tout de même nécessaire de vérifier que troutes les
 sous-expressions apparaissant dans une instruction sont cohérentes ensemble.
 
 On note de la manière suivante le fait que sous l'environnement $Γ$
-l'instruction $i$ est bien typée :
+l'instruction $i$ est bien typée:
 
   \[
     \tyi{Γ}{i}
   \]
 
-\paragraph{Typage d'une phrase :} De par leur nature séquentielle, les phrases
+\paragraph{Typage d'une phrase:} De par leur nature séquentielle, les phrases
 qui composent un programme altèrent l'environnement de typage. Par exemple, la
 déclaration d'une variable globale ajoute une valeur dans l'environnement.
 
@@ -173,7 +172,7 @@ On note
 si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
 On étend cette notation aux suites de phrases, ce qui définit le typage d'un
-programme, ce que l'on note $⊢ P$ (figure~\ref{fig:typ-suite-phrases}).
+programme, ce que l'on note $⊢ P$ (Figure~\ref{fig:typ-suite-phrases}).
 
 \begin{figure}
   \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
@@ -199,14 +198,14 @@ programme, ce que l'on note $⊢ P$ (figure~\ref{fig:typ-suite-phrases}).
   \end{mathpar}
 
   \caption{Typage d'une suite de phrases et d'un programme}
-  \label{fig:typ-suite-phrases}
+\label{fig:typ-suite-phrases}
 \end{figure}
 
 \section{Expressions}
 
 \subsection*{Littéraux}
 
-Le typage des littéraux numériques ne dépend pas de l'environnement de typage :
+Le typage des littéraux numériques ne dépend pas de l'environnement de typage:
 ce sont toujours des entiers ou des flottants.
 
 \begin{mathpar}
@@ -233,7 +232,7 @@ Enfin, le littéral unité a le type $\tUnit$.
 
 Rappelons que l'environnement de typage $Γ$ contient le type des variables
 accessibles du programme. Le cas où la left-value à typer est une variable est
-donc direct : il suffit de retrouver son type dans l'environnement.
+donc direct: il suffit de retrouver son type dans l'environnement.
 
 \begin{mathpar}
   \disprule{Lv-Var}
@@ -248,7 +247,7 @@ pointé.
 \end{mathpar}
 
 Pour une left-value indexée (l'accès à tableau), on s'assure que l'indice soit
-entier, et que la left-value a un type tableau : le type de l'élement est encore
+entier, et que la left-value a un type tableau: le type de l'élement est encore
 une fois le type de base du type tableau ($t$ pour $t[]$).
 
 \begin{mathpar}
@@ -258,7 +257,7 @@ une fois le type de base du type tableau ($t$ pour $t[]$).
 Le typage de l'accès à un champ est facilité par le fait que dans le programme,
 le type complet de la structure est accessible sur le champ.
 
-Dans la définition de cette règle on utilise la notation :
+Dans la définition de cette règle on utilise la notation:
 
 \[
 (l, t) ∈ \eStruct{l_1 : t_1 ; … ; l_n : t_n }
@@ -305,17 +304,17 @@ De même sur \tFloat.
 
 Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
 type qui supporte l'égalité. Ceci est représenté par un jugement
-$\textsc{Eq}(t)$ qui est vrai pour les types \tInt, \tFloat  et pointeurs, ainsi
-que les types composés si les types de leurs composantes
-(figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
-\tInt :
+$\textsc{Eq}(t)$ qui est vrai pour les types $\tInt$, $\tFloat$ et pointeurs,
+ainsi que les types composés si les types de leurs composantes
+(Figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
+\tInt:
 
 \begin{mathpar}
   \disprule{Op-Eq}
 \end{mathpar}
 
-Les opérateurs unaires "$+$" et "$-$" appliquent aux \tInt, et leurs équivalents
-"$+.$" et "$-.$" aux \tFloat.
+Les opérateurs unaires ``$+$'' et ``$-$'' appliquent aux entiers, et leurs
+équivalents ``$\floatop{+}$'' et ``$\floatop{-}$'' aux flottants.
 
 \begin{mathpar}
 \disprule{Unop-Plus-Int}
@@ -380,7 +379,7 @@ résultat est du type de retour de la fonction.
 
 \section{Instructions}
 
-La séquence est simple à traiter : l'instruction vide est toujours bien typée,
+La séquence est simple à traiter: l'instruction vide est toujours bien typée,
 et la suite de deux instructions est bien typée si celles-ci le sont également.
 
 \begin{mathpar}
@@ -422,7 +421,7 @@ revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$.
 \end{mathpar}
 
 Pour typer une définition de fonction, on commence par créer un nouvel
-environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes :
+environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes:
 
 \begin{itemize}
 \item
@@ -442,7 +441,7 @@ typable en $(t_1, …, t_n) → t$ sous $Γ$.
   \disprule{Fun}
 \end{mathpar}
 
-Cette règle utilise les notations suivantes :
+Cette règle utilise les notations suivantes:
 
 \begin{align*}
 \vec{a}
@@ -468,13 +467,13 @@ a_n: t_n \textrm{ où } n = |a|
   \end{mathpar}
 
   \caption{Typage des phrases}
-  \label{fig:typ-ph}
+\label{fig:typ-ph}
 
 \end{figure}
 
-Le typage des phrases est détaillé dans la figure~\ref{fig:typ-ph}. Le typage
+Le typage des phrases est détaillé dans la Figure~\ref{fig:typ-ph}. Le typage
 d'une expression est le cas le plus simple. En effet, il y a juste à vérifier
-que celle-ci est bien typable (avec ce type) dans l'environnement de départ :
+que celle-ci est bien typable (avec ce type) dans l'environnement de départ:
 l'environnement n'est pas modifié. En revanche, la déclaration d'une variable
 globale commence de la même manière, mais on enrichit l'environnement de cette
 nouvelle valeur.
@@ -486,21 +485,21 @@ certains programmes afin de ne garder que ceux qui ne provoquent pas un certain
 type d'erreurs à l'exécution.
 
 Dans cette section, nous donnons des propriétés que respectent tous les
-programmes bien typés. Il est traditionnel de rappeler l'adage de Robin Milner :
+programmes bien typés. Il est traditionnel de rappeler l'adage de Robin Milner:
 
 \begin{quote}
   Well-typed programs don't go wrong.
 \end{quote}
 
-\emph{To go wrong} reste bien sûr à définir ! Cette sûreté du typage repose sur
-les deux théorèmes :
+\emph{To go wrong} reste bien sûr à définir! Cette sûreté du typage repose sur
+les deux théorèmes:
 
 \begin{itemize}
-\item progrès :
+\item progrès:
   si un terme est bien typé, il y a toujours une règle
   d'évaluation qui s'applique.
 \item
-  préservation (ou \emph{subject reduction}) :
+  préservation (ou \emph{subject reduction}):
   l'évaluation transforme un terme bien typé en un terme du même type.
 \end{itemize}
 
@@ -520,7 +519,7 @@ Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes,
 mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
 impossible de déterminer statiquement. On le remplace donc par un cas plus
-simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
+simple où seul l'arité est conservée (Figure~\ref{fig:types-semantiques}).
 
 \begin{figure}
 \begin{align*}
@@ -561,11 +560,11 @@ simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
   \end{mathpar}
 
   \caption{Règles de typage sémantique}
-  \label{fig:regles-typ-sem}
+\label{fig:regles-typ-sem}
 
 \end{figure}
 
-Les règles sont détaillées dans la figure~\ref{fig:regles-typ-sem} : les types
+Les règles sont détaillées dans la Figure~\ref{fig:regles-typ-sem}: les types
 des constantes sont simples à retrouver car il y a assez d'information en
 mémoire. Pour les références, ce qui peut être déréférencé en une valeur de type
 $τ$ est un $τ~*$. Le typage des valeurs composées se fait en profondeur. Enfin,
@@ -574,14 +573,14 @@ la seule information restant à l'exécution sur les fonctions est son arité.
 La prochaine étape est de définir une relation de compatibilité entre les types
 sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
 $\tComp{τ}{t}$. Les règles sont décrites dans la
-figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
+Figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
 
 \begin{figure}
   \ruleheader{$\tComp{τ}{t}$}
 
   \begin{mathpar}
     \irule{Comp-Ground}
-      { t ∈ \{ \tInt, \tFloat, \tUnit \} }
+      { t ∈ \{ \tInt{}, \tFloat{}, \tUnit{} \} }
       { \tComp{t}{t} }
 
     \irule{Comp-Ptr}
@@ -606,7 +605,7 @@ figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
   \end{mathpar}
 
   \caption{Compatibilité entre types sémantiques et statiques}
-  \label{fig:regles-comp-typ}
+\label{fig:regles-comp-typ}
 \end{figure}
 
 Grâce à ce jugement, on peut donner la définition suivante.
@@ -642,12 +641,13 @@ Grâce à ce jugement, on peut donner la définition suivante.
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
 théorèmes.
 
-Les règles précédentes ont la particularité suivante : pour chaque forme
+Les règles précédentes ont la particularité suivante: pour chaque forme
 syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
 déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
 expression.
 
-\begin{lemma}[Inversion] \label{lemma:inversion}
+\begin{lemma}[Inversion]
+\label{lemma:inversion}
 
   À partir d'un jugement de typage, on peut en déduire des informations sur les
   types de ses sous-expressions.
@@ -663,7 +663,7 @@ expression.
   \end{itemize}
     % TODO typographie le textsc passe pas
 
-\item Références mémoire :
+\item Références mémoire:
   \begin{itemize}
     \item
       si $Γ ⊢ x : t$, alors $x : t ∈ Γ$
@@ -676,9 +676,9 @@ expression.
 
   \end{itemize}
 
-\item Opérations :
+\item Opérations:
   \begin{itemize}
-    \item si $ Γ ⊢ \opun~e : t $, alors on est dans un des cas suivants :
+    \item si $ Γ ⊢ \opun~e : t $, alors on est dans un des cas suivants:
       \begin{itemize}
         \item
           $\opun ∈ \{+,-,\sim, ! \}$,
@@ -689,7 +689,7 @@ expression.
           $t = \tFloat$,
           $Γ ⊢ e : \tFloat$
       \end{itemize}
-    \item si $ Γ ⊢ e_1~\opbin~e_2 : t $, un des cas suivants se présente :
+    \item si $ Γ ⊢ e_1~\opbin~e_2 : t $, un des cas suivants se présente:
       \begin{itemize}
         \item
           $\opbin ∈ \opbinintset{}$,
@@ -721,7 +721,7 @@ expression.
       \end{itemize}
   \end{itemize}
 \item
-  Appel de fonction : si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
+  Appel de fonction: si $Γ ⊢ e (e_1, …, e_n) : t$, il existe $(t_1, …, t_n)$
   tels que
 
   \[
@@ -731,7 +731,7 @@ expression.
     \end{cases}
   \]
 
-\item Fonction : si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
+\item Fonction: si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
 $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
 \end{itemize}
@@ -747,7 +747,7 @@ $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
 
 \begin{itemize}
 \item
-  Références mémoire :
+  Références mémoire:
 
   \begin{itemize}
 
@@ -771,23 +771,24 @@ $(t_1, …, t_n)$ et $t'$ tels que $t' = (t_1, …, t_n) → t$.
   \end{itemize}
 
 \item
-  Appel de fonction : pour en arriver à $Γ ⊢ e (e_1, …, e_n) : t$, seule la
+  Appel de fonction: pour en arriver à $Γ ⊢ e (e_1, …, e_n) : t$, seule la
   règle \textsc{Call} s'applique, ce qui permet de conclure.
 
-\item Fonction : la seule règle possible pour conclure une dérivation de
+\item Fonction: la seule règle possible pour conclure une dérivation de
   $ Γ ⊢ \eFun{a_1, …, a_n}{i} : t$
   est \textsc{Fun}.
 
 \end{itemize}
 \end{proof}
 
-Il est aussi possible de réaliser l'opération inverse : à partir du type d'une
+Il est aussi possible de réaliser l'opération inverse: à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
 possible pour les valeurs, pas pour n'importe quelle expression (par exemple
 l'expression $x$ (variable) peut avoir n'importe quel type $t$ dans le contexte
 $Γ = x:t$).
 
-\begin{lemma}[Formes canoniques] \label{lemma:canon}
+\begin{lemma}[Formes canoniques]
+\label{lemma:canon}
 
   Il est possible de déterminer la forme syntaxique d'une valeur étant donné son
   type, comme décrit dans le tableau suivant. Par exemple, d'après la première
@@ -796,7 +797,7 @@ $Γ = x:t$).
   \begin{center}
   \begin{tabular}{cc}
   Type de $v$                     & Forme de $v$ \\
-  \hline
+  \midrule
   $\tInt$                         & $n$ \\
   $\tFloat$                       & $d$ \\
   $\tUnit$                        & $\eUnit$ \\
@@ -812,10 +813,10 @@ $Γ = x:t$).
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 
 \begin{theorem}[Progrès]
-  \label{thm:progres}
+\label{thm:progres}
 
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivant est vrai :
+  Alors l'un des cas suivant est vrai:
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
@@ -823,7 +824,7 @@ Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
 
-  C'est-à-dire, soit :
+  C'est-à-dire, soit:
 
 \begin{itemize}
   \item $e$ est complètement évaluée
@@ -834,7 +835,7 @@ Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 \end{theorem}
 
 \begin{theorem}[Progrès pour les left-values]
-  \label{thm:progres-lv}
+\label{thm:progres-lv}
 
   Si $\mmstar{m}{lv}{m'}{v}$, $v$ est de la forme $φ$ (référence mémoire) ou $Ω$
   (erreur).
@@ -844,19 +845,19 @@ Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 % TODO à prouver et rerédiger
 
 La preuve des
-théorèmes~\ref{thm:progres}
+Théorèmes~\ref{thm:progres}
 et~\ref{thm:progres-lv}
-se trouve en annexe~\ref{proof:progres}.
+se trouve en Annexe~\ref{proof:progres}.
 
 \begin{lemma}{Inversion pour le typage sémantique}
 
-  \label{lemma:invsem}
+\label{lemma:invsem}
 
   Supposons que $Γ ⊢ x : t$ et $\mcomp{Γ}{m}$.
 
   On pose $a = \mathrm{Lookup} (x, m)$.
 
-  Alors il existe $τ$ tel que $\semtyp{m}{m[a]_A}{τ}$ avec $\tComp{τ}{t}$.
+  Alors il existe $τ$ tel que $\semtyp{m}{m{[a]}_A}{τ}$ avec $\tComp{τ}{t}$.
 
 \end{lemma}
 
@@ -890,12 +891,12 @@ se trouve en annexe~\ref{proof:progres}.
 %Ces lemmes permettent de prouver le théorème suivant :
 
 \begin{theorem}[Préservation]
-  \label{thm:preservation}
+\label{thm:preservation}
 
   Soient $Γ$ un environnement de typage, $e$ une expression et $m$ un état
   mémoire.
 
-  On suppose que les hypothèse suivantes sont vérifiées :
+  On suppose que les hypothèse suivantes sont vérifiées:
 
 \begin{itemize}
 \item $Γ ⊢ e : t$
@@ -910,11 +911,11 @@ se trouve en annexe~\ref{proof:progres}.
 
 \end{theorem}
 
-La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
+La preuve de ce théorème se trouve en Annexe~\ref{proof:preservation}.
 
 Cela prouve qu'aucun terme ne reste ``bloqué'' parce qu'aucune règle ne
 s'applique, et que la sémantique respecte le typage. En quelque sorte, les types
-sont un contrat entre les expressions et les fonctions : si leur évaluation
+sont un contrat entre les expressions et les fonctions: si leur évaluation
 converge, alors une valeur du type inféré sera produite.
 
 % vim: spelllang=fr
