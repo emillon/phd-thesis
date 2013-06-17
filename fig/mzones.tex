@@ -1,35 +1,35 @@
-% Fig memory zones (needed ?)
-% Memory zone
-%
-% #1 - start
-% #2 - end
-% #3 - color
-\newcommand{\mzone}[3]{
-  \path[#3] (#1,0) rectangle (#2,1);
-}
-
-% Address label
-%
-% #1 - x position
-% #2 - text
-\newcommand{\alabel}[2]{
-  \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \ttfamily #2};
-
-}
-
-% Pointer
-%
-% #1 - start address
-% #2 - label
-\newcommand{\ptr}[2]{
-  \path [draw,open triangle 60-] (#1, -0.2) -- ++ (0,-0.5) node [below] {#2};
-}
-
-\newcommand{\memoryframe}[1]{%
+\def\memoryframe#1{%
 \begin{tikzpicture}
   [user/.style={fill=green!40}
   ,kernel/.style={fill=red!40}
   ]
+
+  % Fig memory zones (needed ?)
+  % Memory zone
+  %
+  % ##1 - start
+  % ##2 - end
+  % ##3 - color
+  \def\mzone##1##2##3{
+    \path[##3] (##1,0) rectangle (##2,1);
+  }
+
+  % Address label
+  %
+  % ##1 - x position
+  % ##2 - text
+  \def\alabel##1##2{
+    \path (##1,1) -- ++(0,0.3) node [pos=1] {\small \ttfamily ##2};
+
+  }
+
+  % Pointer
+  %
+  % ##1 - start address
+  % ##2 - label
+  \def\ptr##1##2{
+    \path [draw,open triangle 60-] (##1, -0.2) -- ++ (0,-0.5) node [below] {##2};
+  }
 
   % exec
   \mzone{0.5}{1}{user}
