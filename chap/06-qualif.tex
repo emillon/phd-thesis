@@ -4,21 +4,21 @@
   }
   {--- \textup{Pete Fenelon}}
 
-Jusqu'ici \langname est un langage impératif généraliste, ne prenant pas en
+Jusqu'ici \langname{} est un langage impératif généraliste, ne prenant pas en
 compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
 
 Dans ce chapitre, on commence par l'étendre en ajoutant des constructions
 modélisant les variables présentes dans l'espace utilisateur (cf.
-chapitre~\ref{cha:os}). Pour accéder à celles-ci, on ajoute un opérateur de
+Chapitre~\ref{cha:os}). Pour accéder à celles-ci, on ajoute un opérateur de
 déréférencement sûr qui vérifie à l'exécution que l'invariant suivant est
-respecté :
+respecté:
 
 \begin{quote}
 Les pointeurs dont la valeur est contrôlée par l'utilisateur, pointent vers
 l'espace utilisateur.
 \end{quote}
 
-La terminologie mérite d'être détaillée :
+La terminologie mérite d'être détaillée:
 
 Un pointeur contrôlé par l'utilisateur, ou \emph{pointeur utilisateur}, est
 référence mémoire dont la valeur est modifiable par le code utilisateur (opposé
@@ -31,7 +31,7 @@ distant. C'est une propriété statique, qui peut être déterminée à la compi
 Un pointeur pointant vers l'espace utilisateur fait référence à une variable
 allouée en espace utilisateur. Cela veut dire qu'y accéder ne risque pas de
 mettre en péril l'isolation du noyau en faisant fuiter des informations
-confidentielles ou en déjouant son intégrité. Cette propriété est dynamique : un
+confidentielles ou en déjouant son intégrité. Cette propriété est dynamique: un
 pointeur utilisateur peut \emph{a priori} pointer vers l'espace utilisateur, ou
 non.
 
@@ -44,7 +44,7 @@ Pour prouver que cette approche est bien fondée, on procède en plusieurs étap
 
 Tout d'abord, on définit un nouveau type d'erreur $\serr{taint}$, déclenché
 lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau est
-déréférencé (le cas que l'on cherche à éviter) \footnote{Il est important de
+déréférencé (le cas que l'on cherche à éviter)\footnote{Il est important de
 noter que ce cas d'erreur est ``virtuel'', la distinction entre pointeur
 contrôlé par l'utilisateur et par le noyau n'étant normalement pas visible à
 l'exécution.}.
@@ -53,8 +53,8 @@ Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de typ
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
 le théorème de progrès (\ref{thm:progres}) n'est plus valable.
 
-L'étape suivante est d'étendre, à son tour, le système de types de \langname en
-distinguant les types des pointeurs contrôlés par l'utilisateur des pointeurs
+L'étape suivante est d'étendre, à son tour, le système de types de \langname{}
+en distinguant les types des pointeurs contrôlés par l'utilisateur des pointeurs
 contrôlés par le noyau. Puisqu'on veut interdire le déréférencement des premiers
 par l'opérateur \texttt{*}, on modifie également le typage de celui-ci.
 
@@ -64,7 +64,7 @@ progrès et de préservation sont rétablies.
 \section{Extensions noyau pour \langname}
 \label{sec:extensions-noyau}
 
-On ajoute à \langname la notion de valeur provenant de l'espace utilisateur.
+On ajoute à \langname{} la notion de valeur provenant de l'espace utilisateur.
 Pour marquer la séparation entre les deux espaces d'adressage, on ajoute une
 construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ désigne une
 variable classique (un pointeur noyau) et l'opérateur $\phx\vTainted$ permet de
@@ -84,16 +84,16 @@ espace noyau, les fonctions ne font pas la copie et signalent l'erreur).
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
 entiers \texttt{major}, \texttt{minor} et \texttt{patch} (un équivalent dans
-Linux est l'appel système \texttt{uname()}). Celui-ci peut être alors écrit
-comme dans la figure~\ref{fig:ex-sys-getver}. Une fois la structure noyau $v$
+Linux est l'appel système \verb!uname()!). Celui-ci peut être alors écrit
+comme dans la Figure~\ref{fig:ex-sys-getver}. Une fois la structure noyau $v$
 remplie, il faut la copier vers l'espace utilisateur. La fonction $\ctuF$ va
-réaliser cette copie (de la même manière qu'avec un \texttt{memcpy()}, mais
+réaliser cette copie (de la même manière qu'avec un \verb!memcpy()!), mais
 après avoir testé dynamiquement que $p$ pointe en espace utilisateur (dans le
 cas contraire, la copie n'est pas faite).
 
 On peut remarquer que contrairement aux fonctions de Linux, les fonctions
 $\cfuF$ et $\ctuF$ n'ont pas de paramètre ``taille à copier''. Cela est dû au
-fait que le modèle mémoire de \langname est plus haut niveau. L'information de
+fait que le modèle mémoire de \langname{} est plus haut niveau. L'information de
 taille est déjà présente dans chaque valeur.
 
 \begin{figure}
@@ -116,11 +116,11 @@ et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
 $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
 une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $φ$,
-$\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts : une un
+$\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts: une un
 nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
 Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
-la figure~\ref{fig:qualif-changes}.
+la Figure~\ref{fig:qualif-changes}.
 
 \begin{figure}%{{{
 
@@ -150,7 +150,7 @@ la figure~\ref{fig:qualif-changes}.
 \end{align*}
 
 \caption{Ajouts liés aux pointeurs utilisateurs (par rapport à l'évaluateur du
-chapitre~\ref{cha:lang})}
+Chapitre~\ref{cha:lang})}
 
 \label{fig:qualif-changes}
 % TODO définir les états et ms
@@ -160,7 +160,7 @@ chapitre~\ref{cha:lang})}
 \section{Extensions sémantiques}
 
 En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
-règle suivante :
+règle suivante:
 
 \begin{mathpar}
   \irule{Expr-Tainted}
@@ -172,7 +172,7 @@ Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
 déclencher une erreur $\serr{taint}$ en cas de déréférencement d'un pointeur
 utilisateur. Les accès mémoire en lecture proviennent de la règle
 \textsc{Exp-Lv} et ceux en lecture, de la règle \textsc{Exp-Set}, rappellées
-ici :
+ici:
 
 \begin{mathpar}
   \semrule{Exp-Lv}
@@ -182,7 +182,7 @@ ici :
 
 Les accès à la mémoire sont en effet faits par le biais de la lentille $Φ$. Il
 suffit donc d'adapter la définition~\ref{def:acces-phi} de celle-ci en rajoutant
-le cas :
+le cas:
 
 \begin{align*}
 Φ(\vTainted{φ}) &= \serr{taint}
@@ -196,7 +196,7 @@ l'espace utilisateur (c'est-à-dire, qu'il est de la forme $\vTainted{φ}$).
 Deux cas peuvent se produire. Si ce test est vrai, alors la copie est faite
 et l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
 aucune copie n'est faite et la valeur $-1$ est retournée. Ce comportement est
-calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux : en
+calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux: en
 cas de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT}.
 
 \begin{mathpar}
@@ -219,8 +219,8 @@ dynamique.
 
 \section{Insuffisance des types simples}
 
-Étant donné \langname augmenté de cette extension sémantique, on peut étendre
-trivialement le système de types avec la règle suivante :
+Étant donné \langname{} augmenté de cette extension sémantique, on peut étendre
+trivialement le système de types avec la règle suivante:
 
 \begin{mathpar}
   \irule{Taint-Ignore}
@@ -231,7 +231,7 @@ trivialement le système de types avec la règle suivante :
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
-théorème~\ref{thm:progres}. Posons :
+Théorème~\ref{thm:progres}. Posons:
 
 \[
 \begin{cases}
@@ -244,7 +244,7 @@ théorème~\ref{thm:progres}. Posons :
 % TODO notation des littéraux stack frame / mémoire?
 
 Les hypothèses du théorème de progrès sont bien vérifiées, mais cependant la
-conclusion n'est pas vraie :
+conclusion n'est pas vraie:
 
 \begin{itemize}
   \item
@@ -253,7 +253,7 @@ conclusion n'est pas vraie :
     % TODO dérivation?
 
   \item
-    $e$ est bien typée sous $Γ$ :
+    $e$ est bien typée sous $Γ$:
 
       \begin{mathpar}
         \irule{Lv-Deref}
@@ -275,7 +275,7 @@ conclusion n'est pas vraie :
 
   \item
     L'évaluation de $e$ sous $m$ provoque une erreur différente de
-    $\serr{div}$, $\serr{array}$, ou $\serr{ptr}$ :
+    $\serr{div}$, $\serr{array}$, ou $\serr{ptr}$:
 
       \begin{mathpar}
       \inferrule*
@@ -299,18 +299,18 @@ conclusion n'est pas vraie :
 
 \end{itemize}
 
-Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution :
+Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
 \textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
-dans la section~\ref{sec:extensions-noyau}.
+dans la Section~\ref{sec:extensions-noyau}.
 
 \section{Extensions du système de types}
 \label{sec:extension-types}
 
 On présente ici un système de types plus expressif permettant de capturer les
 extensions de sémantique. \emph{In fine}, cela permettra de prouver le
-théorème~\ref{thm:progres-qual} qui est l'équivalent du
-théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
+Théorème~\ref{thm:progres-qual} qui est l'équivalent du
+Théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
 
 Définir un nouveau système de types revient à étendre le jugement de typage
 $\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en ajoutant
@@ -322,9 +322,9 @@ des pointeurs.
 Le changement clef est l'ajout de \emph{pointeurs utilisateurs}. En plus des
 types pointeurs $\ptrK{t}$, on ajoute des types pointeurs $\ptrU{t}$. La
 différence entre les deux représente \emph{qui} contrôle leur valeur
-(section~\ref{sec:secu-syscalls}).
+(Section~\ref{sec:secu-syscalls}).
 
-Les différences sont les suivantes (figure~\ref{fig:qualif-changes-typ}) :
+Les différences sont les suivantes (Figure~\ref{fig:qualif-changes-typ}):
 
 \begin{itemize}
 
@@ -340,13 +340,13 @@ aux implantations de la fonction \texttt{ioctl}.
 \end{itemize}
 
 L'ensemble des notations est résumé dans le tableau de la
-figure~\ref{fig:qualif-not-resume}.
+Figure~\ref{fig:qualif-not-resume}.
 
 \begin{figure}
 \centering
 \begin{tabular}{ccc}
         & Noyau      & Utilisateur \\
-\hline
+\midrule
 Syntaxe & $\&~x$     & $\eTaint{x}$ \\
 Valeur  & $\widehat{\&}~x$ & $\vTainted{x}$ \\
 Type    & $\ptrK{t}$ & $\ptrU{t}$ \\
@@ -373,7 +373,7 @@ Accès   & $*~x$      & copy\_*\_user \\
 \end{align*}
 
 \caption{Ajouts liés aux qualificateurs de types (par rapport aux
-figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
+Figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
 
 \label{fig:qualif-changes-typ}
 \end{figure}%}}}
@@ -386,7 +386,7 @@ créent, manipulent et utilisent des pointeurs.
 La source principale de pointeurs est l'opérateur $\&$ qui prend l'adresse d'une
 variable. Celle-ci est bien entendue contrôlée par le noyau (dans le sens où son
 déréférencement est toujours sûr). Cette construction crée donc des pointeurs
-noyau :
+noyau:
 
 \begin{mathpar}
   \disprule{AddrOf-Kernel}
@@ -394,13 +394,13 @@ noyau :
 
 \subsection*{Manipulations de pointeurs}
 
-L'avantage du typage est que celui-ci suit le flot de données : si à un endroit
+L'avantage du typage est que celui-ci suit le flot de données: si à un endroit
 une valeur de type $t$ est affectée à une variable, que le contenu de cette
 variable est placé puis retiré d'une structure de données, il conserve ce type
 $t$. En particulier un pointeur utilisateur reste un pointeur utilisateur.
 
 Une seule règle consomme un pointeur et en retourne un. Elle concerne
-l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur :
+l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur:
 
 \begin{mathpar}
   \disprule{Ptr-Arith-User}
@@ -410,7 +410,7 @@ l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur :
 
 La principale restriction, au cœur de ce chapitre et de cette thèse, est que
 seuls les pointeurs noyau peuvent être déréférencés de manière sûre. La règle
-suivante remplace donc \textsc{Lv-Deref} :
+suivante remplace donc \textsc{Lv-Deref}:
 
 \begin{mathpar}
   \disprule{Lv-Deref-Kernel}
@@ -421,7 +421,7 @@ compilation.
 
 % TODO définir les stubs
 
-L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
+L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 
 \begin{mathpar}
 \irule{Taint}
@@ -429,7 +429,7 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante :
   { Γ ⊢ \eTaint{lv} : \ptrU{t} }
 \end{mathpar}
 
-Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante :
+Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante:
 
 \begin{mathpar}
     \disprule{GetU}
@@ -437,7 +437,7 @@ Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante :
     \disprule{PutU}
 \end{mathpar}
 
-Il est à noter qu'il n'y a pas de sous-typage : les pointeurs noyau ne peuvent
+Il est à noter qu'il n'y a pas de sous-typage: les pointeurs noyau ne peuvent
 être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
 qu'en tant que pointeurs utilisateurs.
 
@@ -465,10 +465,10 @@ Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisa
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
 
 \begin{theorem}[Progrès pour les types qualifiés]
-  \label{thm:progres-qual}
+\label{thm:progres-qual}
 
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivants est vrai :
+  Alors l'un des cas suivants est vrai:
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
@@ -477,17 +477,17 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \end{itemize}
 \end{theorem}
 
-La preuve de ce théorème est en annexe~\ref{proof:progres-qualif}.
+La preuve de ce théorème est en Annexe~\ref{proof:progres-qualif}.
 
-Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
+Et nous donnons un équivalent du Théorème~\ref{thm:preservation}.
 
 \begin{theorem}[Préservation pour les types qualifiés]
-  \label{thm:preservation-qualif}
+\label{thm:preservation-qualif}
 
   Soient $Γ$ un environnement de typage, $e$ une expression et $m$ un état
   mémoire.
 
-  On suppose que les hypothèse suivantes sont vérifiées :
+  On suppose que les hypothèse suivantes sont vérifiées:
 
 \begin{itemize}
 \item $Γ ⊢ e : t$
@@ -502,11 +502,11 @@ Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
 
 \end{theorem}
 
-La preuve de ce théorème est en annexe~\ref{proof:preservation-qualif}.
+La preuve de ce théorème est en Annexe~\ref{proof:preservation-qualif}.
 
 La sûreté du typage étant à nouveau établie, on a montré que les qualificateurs
 de types sur les pointeurs suffisent pour avoir une adéquation entre les
-extensions de sémantique de la section~\ref{sec:extensions-noyau} et les
-extensions du système de type de la section~\ref{sec:extension-types}.
+extensions de sémantique de la Section~\ref{sec:extensions-noyau} et les
+extensions du système de type de la Section~\ref{sec:extension-types}.
 
 % vim: spelllang=fr
