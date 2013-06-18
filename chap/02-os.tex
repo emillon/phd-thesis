@@ -1,3 +1,9 @@
+Le système d'exploitation est le programme qui permet à un système informatique
+d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
+multiples. Dans ce chapitre, nous allons voir quel est son rôle, et comment il
+peut être implanté. Pour ce faire, nous étudierons l'exemple d'une architecture
+Intel 32 bits.
+
 \section{Architecture physique}
 
 Un système informatique est principalement constitué d'un processeur (ou CPU
@@ -121,7 +127,7 @@ détourner l'exécution.
 
 Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
 différente de la mémoire: c'est-à-dire que vue de tâches différentes, une
-adresse contiendra une valeur différente.
+adresse contiendra une valeur différente (figure~\ref{fig:memoire-virtuelle}).
 
 \begin{figure}
 \input{fig/pagetables.tex}
@@ -185,15 +191,6 @@ donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 \label{fig:memoire-virtuelle}
 \end{figure} % }}}
 
-En ce qui concerne la mémoire, les différentes tâches ont une vision différente
-de la mémoire physique: c'est-à-dire que deux tâches lisant à une même adresse
-peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
-(fig~\ref{fig:memoire-virtuelle}).
-
-% TODO expliquer la fig
-
-%TODO Redite qui n'apporte pas plus d'explication
-
 %TODO ici un morceau déplacé dans le chap etude de cas
 
 \section{Appels système}
@@ -235,7 +232,108 @@ numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
 \texttt{open()}) et leurs arguments.
 
 \section{Le Confused Deputy Problem}
+\label{sec:secu-syscalls}
 
+On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
+au services du noyau. Ils forment donc une interface particulièrement sensible aux
+problèmes de sécurité.
+
+Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un
+côté, une interface pas assez fine serait trop restrictive et ne permettrait pas
+d'implémenter tout type de logiciel. De l'autre, une interface trop laxiste
+(``écrire dans tel registre matériel'') empêche toute isolation. Il faut
+donc trouver la bonne granularité.
+
+Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
+sein de certains types d'appels système.
+
+Il y a deux grands types d'appels systèmes: d'une part, ceux qui renvoient un
+simple nombre, comme \texttt{getpid} qui renvoie le numéro du processus
+appelant.
+
+\insertcode{appel-syscall-getpid.c}
+
+Ici, pas de difficulté particulière: la communication entre le \ring{0} et le
+\ring{3} est faite uniquement à travers les registres, comme décrit dans la
+Section~\ref{sec:impl-syscall}.
+
+\begin{figure}
+\insertcode{appel-syscall-gettimeofday.c}
+\caption{Appel de gettimeofday}
+\label{fig:appel-gettimeofday}
+\end{figure}
+
+Mais la plupart des appels systèmes communiquent de l'information de manière
+indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
+espace d'adressage et passe un pointeur à l'appel système. Ce mécanisme est
+utilisé par exemple par la fonction \texttt{gettimeofday}
+(figure~\ref{fig:appel-gettimeofday}).
+
+% Fig mzones {{{
+\begin{figure}
+\input{fig/mzones.tex}
+\centering
+
+\subbottom{
+\label{fig:mzone1}
+\memoryframe{1}
+}
+
+\subbottom{
+\label{fig:mzone2}
+\memoryframe{2}
+}
+
+\subbottom{
+\label{fig:mzone3}
+\memoryframe{3}
+}
+
+\caption{Zones mémoire}
+\label{fig:mzones}
+\end{figure} % }}}
+
+Considérons une implémentation naïve de cet appel système qui écrirait
+directement à l'adresse pointée. La figure~\ref{fig:mzone1} présente ce qui se
+passe lorsque le pointeur fourni est dans l'espace d'adressage du processus:
+c'est le cas d'utilisation normal et l'écriture est donc possible.
+
+Si l'utilisateur passe un pointeur dont la valeur est supérieure à
+\texttt{0xc0000000} (figure~\ref{fig:mzone2}), que se passe-t-il? Comme le
+déréférencement est fait dans le code du noyau, il est également fait en
+\ring{0}, et va pouvoir être réalisé sans erreur: l'écriture se fait et
+potentiellement une structure importante du noyau est écrasée.
+
+Un utilisateur malicieux peut donc utiliser cet appel système pour écrire à
+n'importe quelle adresse dans l'espace d'adressage du noyau. Ce problème vient
+du fait que l'appel système utilise les privilèges du noyau au lieu de celui qui
+contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused
+Deputy Problem}\cite{hardy88confused}.
+
+La bonne solution est de tester dynamiquement la valeur du pointeur: si la
+valeur du pointeur est supérieure à \texttt{0xc0000000}, il faut indiquer une
+erreur avant d'écrire (Figure~\ref{fig:mzone3}). Sinon, cela ne veut pas dire
+que le déréférencement se fera sans erreur, mais au moins le noyau est protégé.
+
+\begin{figure}
+\insertcode{implem-gettime.c}
+\caption{Implantation de l'appel système \texttt{gettimeofday}}
+\label{fig:implem-gettime}
+\end{figure}
+
+Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
+fonction \texttt{access\_ok} réalise le test décrit précédemment. Les fonctions
+\texttt{copy\_from\_user} et \texttt{copy\_to\_user} réalisent une copie de la
+mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
+système \texttt{gettimeofday} fait appel à celle-ci
+(figure~\ref{fig:implem-gettime}).
+
+Pour préserver la sécurité du noyau, il est donc nécessaire de vérifier la
+valeur de tous les pointeurs dont la valeur est contrôlée par l'utilisateur.
+Cette conclusion est assez contraignante, puisqu'il existe de nombreux endroits
+dans le noyau où des données proviennent de l'utilisateur. Il est donc
+raisonnable de vouloir vérifier automatiquement et statiquement l'absence de
+tels défauts.
 
 
 
@@ -243,12 +341,6 @@ numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
 
 
 \clearpage
-
-Le système d'exploitation est le programme qui permet à un système informatique
-d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
-multiples. Dans ce chapitre, nous allons voir quel est son rôle, et comment il
-peut être implanté. Pour ce faire, nous étudierons l'exemple d'une architecture
-Intel 32 bits, et d'un noyau Linux 2.6.
 
 \section{Architecture et assembleur Intel}
 
@@ -420,108 +512,5 @@ locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
 de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
 la dépile et y saute.
 
-\section{Sécurité des appels système}
-\label{sec:secu-syscalls}
-
-On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
-au services du noyau. Ils forment donc une interface particulièrement sensible aux
-problèmes de sécurité.
-
-Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un
-côté, une interface pas assez fine serait trop restrictive et ne permettrait pas
-d'implémenter tout type de logiciel. De l'autre, une interface trop laxiste
-(``écrire dans tel registre matériel'') empêche toute isolation. Il faut
-donc trouver la bonne granularité.
-
-Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
-sein de certains types d'appels système.
-
-Il y a deux grands types d'appels systèmes: d'une part, ceux qui renvoient un
-simple nombre, comme \texttt{getpid} qui renvoie le numéro du processus
-appelant.
-
-\insertcode{appel-syscall-getpid.c}
-
-Ici, pas de difficulté particulière: la communication entre le \ring{0} et le
-\ring{3} est faite uniquement à travers les registres, comme décrit dans la
-Section~\ref{sec:impl-syscall}.
-
-\begin{figure}
-\insertcode{appel-syscall-gettimeofday.c}
-\caption{Appel de gettimeofday}
-\label{fig:appel-gettimeofday}
-\end{figure}
-
-Mais la plupart des appels systèmes communiquent de l'information de manière
-indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
-espace d'adressage et passe un pointeur à l'appel système. Ce mécanisme est
-utilisé par exemple par la fonction \texttt{gettimeofday}
-(figure~\ref{fig:appel-gettimeofday}).
-
-% Fig mzones {{{
-\begin{figure}
-\input{fig/mzones.tex}
-\centering
-
-\subbottom{
-\label{fig:mzone1}
-\memoryframe{1}
-}
-
-\subbottom{
-\label{fig:mzone2}
-\memoryframe{2}
-}
-
-\subbottom{
-\label{fig:mzone3}
-\memoryframe{3}
-}
-
-\caption{Zones mémoire}
-\label{fig:mzones}
-\end{figure} % }}}
-
-Considérons une implémentation naïve de cet appel système qui écrirait
-directement à l'adresse pointée. La figure~\ref{fig:mzone1} présente ce qui se
-passe lorsque le pointeur fourni est dans l'espace d'adressage du processus:
-c'est le cas d'utilisation normal et l'écriture est donc possible.
-
-Si l'utilisateur passe un pointeur dont la valeur est supérieure à
-\texttt{0xc0000000} (figure~\ref{fig:mzone2}), que se passe-t-il? Comme le
-déréférencement est fait dans le code du noyau, il est également fait en
-\ring{0}, et va pouvoir être réalisé sans erreur: l'écriture se fait et
-potentiellement une structure importante du noyau est écrasée.
-
-Un utilisateur malicieux peut donc utiliser cet appel système pour écrire à
-n'importe quelle adresse dans l'espace d'adressage du noyau. Ce problème vient
-du fait que l'appel système utilise les privilèges du noyau au lieu de celui qui
-contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused
-Deputy Problem}\cite{hardy88confused}.
-
-La bonne solution est de tester dynamiquement la valeur du pointeur: si la
-valeur du pointeur est supérieure à \texttt{0xc0000000}, il faut indiquer une
-erreur avant d'écrire (Figure~\ref{fig:mzone3}). Sinon, cela ne veut pas dire
-que le déréférencement se fera sans erreur, mais au moins le noyau est protégé.
-
-\begin{figure}
-\insertcode{implem-gettime.c}
-\caption{Implantation de l'appel système \texttt{gettimeofday}}
-\label{fig:implem-gettime}
-\end{figure}
-
-Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
-fonction \texttt{access\_ok} réalise le test décrit précédemment. Les fonctions
-\texttt{copy\_from\_user} et \texttt{copy\_to\_user} réalisent une copie de la
-mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
-système \texttt{gettimeofday} fait appel à celle-ci
-(figure~\ref{fig:implem-gettime}).
-
-Pour préserver la sécurité du noyau, il est donc nécessaire de vérifier la
-valeur de tous les pointeurs dont la valeur est contrôlée par l'utilisateur.
-Cette conclusion est assez contraignante, puisqu'il existe de nombreux endroits
-dans le noyau où des données proviennent de l'utilisateur. Il est donc
-raisonnable de vouloir vérifier automatiquement et statiquement l'absence de
-tels défauts.
 
 % vim: spelllang=fr
