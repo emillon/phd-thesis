@@ -84,11 +84,163 @@ est un numéro qui correspond à un périphérique particulier. Par exemple, en
 écrivant dans le port $0x60$ on peut contrôler l'état des indicateurs lumineux
 du clavier PS/2.
 
-\section{Architecture logicielle}
+\section{Tâches et niveaux de privilèges}
+\label{sec:taches}
+
+\subsection*{Alternance des tâches}
+
+Sans mécanisme particulier, le processeur exécuterait uniquement une suite
+d'instruction à la fois. Pour lui permettre d'exécuter plusieurs tâches, un
+système de partage du temps existe.
+
+À des intervalles de temps réguliers, le système est programmé pour recevoir une
+interruption. C'est une condition exceptionnelle (au même titre qu'une division
+par zéro) qui fait sauter automatiquement le processeur dans une routine de
+traitement d'interruption. À cet endroit le code peut sauvegarder les registres
+et restaurer un autre ensemble de registres, ce qui permet d'exécuter plusieurs
+tâches de manière entrelacée. Si l'alternance est assez rapide, cela peut donner
+l'illusion que les programmes s'exécutent en parallèle. Comme l'interruption
+peut survenir à tout moment, on parle de multitâche préemptif.
+
+En plus de cet ordonnancement de processus, l'architecture Intel permet
+d'affecter des niveaux de privilège à ces tâches, en restreignant le type
+d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
+tâches de niveaux moins élevés.
+
+Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}): le \ring{0} est le
+plus privilégié, le \ring{3} le moins privilégié. Dans l'exemple précédent, on
+pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
+alors que les autres tâches seraient en \ring{3}.
+
+\subsection*{Mémoire virtuelle}
+
+À partir du moment où plusieurs processus s'exécutent de manière concurrente, un
+problème d'isolation se pose: si un processus peut lire dans la mémoire d'un
+autre, des informations peuvent fuiter; et s'il peut y écrire, il peut en
+détourner l'exécution.
+
+Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
+différente de la mémoire: c'est-à-dire que vue de tâches différentes, une
+adresse contiendra une valeur différente.
+
+\begin{figure}
+\input{fig/pagetables.tex}
+\caption{Implantation de la mémoire virtuelle}
+\label{fig:pagetables}
+\end{figure}
+
+Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
+d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
+l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
+de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
+donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
+
+\begin{figure} % fig:memoire-virtuelle {{{
+\centering
+\begin{tikzpicture}
+  [memlayout/.style={draw
+                    ,shape=rectangle
+                    ,minimum height=5cm
+                    ,minimum width=1cm
+                    }
+  ,node distance=2.5cm
+  ]
+
+  \node[memlayout]            (A) {};
+  \node[memlayout,right of=A] (B) {};
+  \node[memlayout,right of=B] (C) {};
+
+  \def\putlabel#1#2{
+    \path (#1.north) -- ++(0,3mm) node {#2};
+  }
+
+  \putlabel{A}{Processus 1}
+  \putlabel{B}{Mémoire}
+  \putlabel{C}{Processus 2}
+
+  \def\mmap#1#2#3#4#5{
+    \begin{scope}
+      [mzone/.style={draw
+                    ,shape=rectangle
+                    ,fill=black!20
+                    ,minimum height=#5 mm
+                    ,minimum width=1cm
+                    }
+      ,corr/.style={dashed}
+      ]
+      \node[mzone] (L) at ($ (#1.north) - (0, #2) $) {};
+      \node[mzone] (R) at ($ (#3.north) - (0, #4) $) {};
+
+      \draw[corr] (L.north east) -- (R.north west);
+      \draw[corr] (L.south east) -- (R.south west);
+    \end{scope}
+  }
+
+  \mmap{A}{1.5}{B}{2.5}{4}
+  \mmap{A}{4.5}{B}{4}{3}
+  \mmap{B}{1}{C}{1}{2}
+  \mmap{B}{3.2}{C}{2.7}{4}
+\end{tikzpicture}
+\caption{Mécanisme de mémoire virtuelle.}
+\label{fig:memoire-virtuelle}
+\end{figure} % }}}
+
+En ce qui concerne la mémoire, les différentes tâches ont une vision différente
+de la mémoire physique: c'est-à-dire que deux tâches lisant à une même adresse
+peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
+(fig~\ref{fig:memoire-virtuelle}).
+
+% TODO expliquer la fig
+
+%TODO Redite qui n'apporte pas plus d'explication
+
+%TODO ici un morceau déplacé dans le chap etude de cas
 
 \section{Appels système}
 
+Avec une telle isolation, tout le code qui est exécuté en \ring{3} a une
+expressivité limitée. Il ne peut pas contenir d'instructions privilégiées comme
+\asminstr{in} ou \asminstr{out}, ni faire référence à des périphériques mappés
+en mémoire. C'est en effet au noyau d'accéder au matériel, et pas au code
+utilisateur.
+
+Il est donc nécessaire d'appeller une routine du noyau depuis le code
+utilisateur. C'est le but des appels système. Cela consiste à coupler une
+fonction du \ring{3} à une fonction du \ring{0}: en appellant la fonction non
+privilégiée, le flot d'exécution se retrouve dans le noyau avec les bons
+privilèges.
+
+Bien sûr, il n'est pas possible de faire directement un \asminstr{call} puisque
+cela consisterait à faire un saut vers une zone plus privilégiée. Il y a
+plusieurs manières d'implanter ce mécanisme. Nous décrivons ici la technique
+historique à l'aide d'interruptions.
+
+Le processeur peut répondre à des interruptions, qui sont des évenements
+extérieurs. Cela permet d'écrire du code asynchrone. Par exemple, une fois qu'un
+long transfert mémoire est terminé, une interruption est reçue. D'autres
+interruptions dites logicielles peuvent arriver lorsqu'une erreur se produit.
+Par exemple, diviser par zéro provoque l'interruption 0, et tenter d'exécuter
+une instruction privilégiée provoque l'interruption 14. On peut aussi provoquer
+une interruption par une instruction \asminstr{int} dédiée.
+
+Une table globale définit, pour chaque numéro d'interruption : quelle est la
+routine à appeller pour la traiter, avec quel niveau de privilège, ainsi que le
+niveau de privilège requis pour pouvoir déclencher celle-ci avec l'instruction
+\asminstr{int}.
+
+Il est donc possible de créer une interruption purement logicielle (on utilise
+en général le numéro 128 soit \hexa{80}), déclenchable en \ring{3} et traitée en
+\ring{0}. Les registres sont préservés, donc on peut les utiliser pour passer un
+numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
+\texttt{open()}) et leurs arguments.
+
 \section{Le Confused Deputy Problem}
+
+
+
+
+
+
 
 \clearpage
 
@@ -267,116 +419,6 @@ locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
 \texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
 de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
 la dépile et y saute.
-
-\section{Tâches, niveaux de privilèges}
-\label{sec:taches}
-
-Sans mécanisme particulier, le processeur exécuterait uniquement une suite
-d'instruction à la fois. Pour lui permettre d'exécuter plusieurs tâches, un
-système de partage du temps existe.
-
-À des intervalles de temps réguliers, le système est programmé pour recevoir une
-interruption. C'est une condition exceptionnelle (au même titre qu'une division
-par zéro) qui fait sauter automatiquement le processeur dans une routine de
-traitement d'interruption. À cet endroit le code peut sauvegarder les registres
-et restaurer un autre ensemble de registres, ce qui permet d'exécuter plusieurs
-tâches de manière entrelacée. Si l'alternance est assez rapide, cela peut donner
-l'illusion que les programmes s'exécutent en parallèle. Comme l'interruption
-peut survenir à tout moment, on parle de multitâche préemptif.
-
-En plus de cet ordonnancement de processus, l'architecture Intel permet
-d'affecter des niveaux de privilège à ces tâches, en restreignant le type
-d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
-tâches de niveaux moins élevés.
-
-Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}): le \ring{0} est le
-plus privilégié, le \ring{3} le moins privilégié. Dans l'exemple précédent, on
-pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
-alors que les autres tâches seraient en \ring{3}.
-
-\section{Mémoire virtuelle}
-
-À partir du moment où plusieurs processus s'exécutent de manière concurrente, un
-problème d'isolation se pose: si un processus peut lire dans la mémoire d'un
-autre, des informations peuvent fuiter; et s'il peut y écrire, il peut en
-détourner l'exécution.
-
-Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
-différente de la mémoire: c'est-à-dire que vue de tâches différentes, une
-adresse contiendra une valeur différente.
-
-\begin{figure}
-\input{fig/pagetables.tex}
-\caption{Implantation de la mémoire virtuelle}
-\label{fig:pagetables}
-\end{figure}
-
-Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
-d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
-l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
-de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
-donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
-
-\begin{figure} % fig:memoire-virtuelle {{{
-\centering
-\begin{tikzpicture}
-  [memlayout/.style={draw
-                    ,shape=rectangle
-                    ,minimum height=5cm
-                    ,minimum width=1cm
-                    }
-  ,node distance=2.5cm
-  ]
-
-  \node[memlayout]            (A) {};
-  \node[memlayout,right of=A] (B) {};
-  \node[memlayout,right of=B] (C) {};
-
-  \def\putlabel#1#2{
-    \path (#1.north) -- ++(0,3mm) node {#2};
-  }
-
-  \putlabel{A}{Processus 1}
-  \putlabel{B}{Mémoire}
-  \putlabel{C}{Processus 2}
-
-  \def\mmap#1#2#3#4#5{
-    \begin{scope}
-      [mzone/.style={draw
-                    ,shape=rectangle
-                    ,fill=black!20
-                    ,minimum height=#5 mm
-                    ,minimum width=1cm
-                    }
-      ,corr/.style={dashed}
-      ]
-      \node[mzone] (L) at ($ (#1.north) - (0, #2) $) {};
-      \node[mzone] (R) at ($ (#3.north) - (0, #4) $) {};
-
-      \draw[corr] (L.north east) -- (R.north west);
-      \draw[corr] (L.south east) -- (R.south west);
-    \end{scope}
-  }
-
-  \mmap{A}{1.5}{B}{2.5}{4}
-  \mmap{A}{4.5}{B}{4}{3}
-  \mmap{B}{1}{C}{1}{2}
-  \mmap{B}{3.2}{C}{2.7}{4}
-\end{tikzpicture}
-\caption{Mécanisme de mémoire virtuelle.}
-\label{fig:memoire-virtuelle}
-\end{figure} % }}}
-
-En ce qui concerne la mémoire, les différentes tâches ont une vision différente
-de la mémoire physique: c'est-à-dire que deux tâches lisant à une même adresse
-peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
-(fig~\ref{fig:memoire-virtuelle}).
-
-% TODO expliquer la fig
-
-%TODO Redite qui n'apporte pas plus d'explication
-
-%TODO ici un morceau déplacé dans le chap etude de cas
 
 \section{Sécurité des appels système}
 \label{sec:secu-syscalls}
