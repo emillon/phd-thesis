@@ -3,6 +3,8 @@ permettant d'analyser des programmes. Un accent est mis sur la propriété de
 sécurité décrite dans le Chapitre~\ref{cha:os}, mais on ne se limite pas à
 celle-ci.
 
+%TODO[E]: pourquoi?
+
 L'analyse statique de programmes est un sujet de recherche actif depuis
 l'apparition de la science informatique. On commence par en présenter une
 classification, puis on montrera des exemples pertinents permettant d'analyser
@@ -22,6 +24,9 @@ performances). L'approche statique, en revanche, nécessite de construire à
 l'arrêt une carte mentale du programme, ce qui n'est pas toujours possible dans
 certains langages.
 
+%TODO[E]: et pourtant c'est ce qui se passe dans l'avionique civile (process de
+%dév le + difficile)
+
 Pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
 uniquement sur des tests --- ou de manière générale sur des analyses dynamiques
 --- car même avec des tests exhaustifs, il est impossible d'étudier l'ensemble
@@ -31,6 +36,9 @@ inaperçu. Pour cette raison, la plupart des analyses présentées ici sont
 statiques.
 
 \paragraph{Cohérence et complétude}
+
+%TODO[E]: il peut néanmoins avoir des limitations : complexité trop forte (ex
+%typage en ocaml)
 
 Le but d'une analyse statique est de catégoriser les programmes selon s'ils
 satisfont ou non un ensemble de propriétés fixées à l'avance. Malheureusement,
@@ -50,6 +58,7 @@ un des cas suivants:
 \item
   un programme invalide n'est pas détecté: on parle de
   \emph{faux négatif}.
+%TODO[E]: plus grave?
 \end{itemize}
 
 En général, et dans notre cas, on préfère s'assurer que les programmes acceptés
@@ -255,6 +264,8 @@ vérification formelle en tant que telle.
 
 \section{Typage}
 
+%TODO[E]: n'est-ce pas une passe obligatoire dans tout système de vérification?
+
 Le typage, introduit dans la Section~\ref{sec:types-intro}, peut aussi être
 utilisé pour la vérification de programmes. On peut le voir comme une manière de
 catégoriser les types de données manipulés par la machine, mais également à plus
@@ -277,11 +288,14 @@ la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
 Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
 la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotations
 au code source. Un pointeur peut être décoré d'une annotation
-\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celle-ci
+\texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celles-ci
 sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
-Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul peut être
-utilisé pour détecter les cas les plus simples d'erreurs. Il demande aussi au
-programmeur d'ajouter de nombreuses annotations dans le programme.
+Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul
+peut être utilisé pour détecter les cas les plus simples d'erreurs. Il demande
+aussi au programmeur d'ajouter de nombreuses annotations dans le programme.
+
+%TODO[E]: on a l'impression que c'est simple mais ce sera le coeur du manuscrit:
+%certes avec inférence mais tout de même
 
 Ce système d'annotations sur les types a été formalisé sous le nom de
 \emph{qualificateurs de types}~\cite{toplas-quals}: chaque type peut être
@@ -341,6 +355,8 @@ Cette approche étant assez proche de la nôtre, la conclusion de la
 partie~\ref{part:lang} (page~\pageref{cha:ccl2}) sera dédiée à un comparatif
 entre les deux.
 
+%TODO[E]: dis tout de suite un mot sur pourquoi c'est mieux chez toi
+
 Ces techniques de typage sont séduisantes parce qu'elles sont en général simples
 à mettre en place: à l'aide d'un ensemble de règles, on attribue un type à
 chaque expression. Si le typage se termine sans erreur, alors on est assuré de
@@ -350,6 +366,8 @@ de types).
 Le typage statique peut également être implanté de manière efficace. La plupart
 des systèmes de types peuvent être vérifiés en pratique dans un temps linéaire
 en la taille du programme considéré.
+
+%TODO[E]: en ocaml c'est quadratique!!!
 
 \section{Analyse de code système}
 
@@ -368,6 +386,7 @@ forme ``pointe-sur''~\cite{oakland08}. Comme l'interprétation abstraite, son bu
 est d'être très précis, au détriment d'un temps de calcul important dans
 certains cas.
 
+%TODO[E]: à préciser
 % TODO ccl
 
 \section{Langages sûrs}
@@ -477,12 +496,14 @@ système JML~\cite{jmlkluwer} ou pour le langage C\# dans Spec\#~\cite{krml136}.
 
 \section{Assistants de preuve}
 
+%TODO[E] globalement trop rapide
+
 Avec un système de types classique, le fait qu'un terme soit bien typé amène
 quelques propriétés sur son exécution. Par exemple, le fait que seulement un
 ensemble réduit d'erreurs puisse arriver (comme la division par zéro).
 
-En enrichissant le langage des types, on peut augmenter l'expressivité du typage
-Par exemple, on peut former des types ``entier pair'', ``vecteur de $n$
+En enrichissant le langage des types, on peut augmenter l'expressivité du
+typage. Par exemple, on peut former des types ``entier pair'', ``vecteur de $n$
 entiers'', ou encore ``liste triée d'entiers''.
 
 Habituellement, les termes peuvent dépendre d'autres termes (par composition) ou
@@ -523,11 +544,16 @@ Il existe de nombreuses techniques pour vérifier du code système ou embarqué.
 y a divers choix à faire entre l'expressivité, l'intégration de tests
 dynamiques, ou la facilité de mise en œuvre.
 
+%TODO[E]: il faut conclure par rapport à ce que tu désires rechercher comme
+%garanties
+
 Le typage statique est une solution assez pragmatique, puisqu'elle peut
 s'appliquer à des programmes existants, et est efficace à utiliser. Son
 expressivité limitée nous empêche de reposer entièrement sur elle pour garantir
 l'absence d'erreur dans les programmes système. C'est pourquoi nous approchons
 la sûreté de la manière suivante dans notre solution, \langname.
+
+%TODO[E]: phrase
 
 Tout d'abord, on utilise le typage pour manipuler les données de manière
 compatible: les types des opérations et fonctions sont vérifiés à la
