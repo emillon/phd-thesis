@@ -129,18 +129,6 @@ Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
 différente de la mémoire: c'est-à-dire que vue de tâches différentes, une
 adresse contiendra une valeur différente (figure~\ref{fig:memoire-virtuelle}).
 
-\begin{figure}
-\input{fig/pagetables.tex}
-\caption{Implantation de la mémoire virtuelle}
-\label{fig:pagetables}
-\end{figure}
-
-Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
-d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
-l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
-de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
-donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
-
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
 \begin{tikzpicture}
@@ -190,6 +178,18 @@ donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 \caption{Mécanisme de mémoire virtuelle.}
 \label{fig:memoire-virtuelle}
 \end{figure} % }}}
+
+\begin{figure}
+\input{fig/pagetables.tex}
+\caption{Implantation de la mémoire virtuelle}
+\label{fig:pagetables}
+\end{figure}
+
+Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
+d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
+l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
+de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
+donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 
 %TODO ici un morceau déplacé dans le chap etude de cas
 
