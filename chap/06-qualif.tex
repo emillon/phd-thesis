@@ -28,6 +28,8 @@ réseau, cela correspond à des variables dont la valeur proviendrait d'un clien
 distant. C'est une propriété statique, qui peut être déterminée à la compilation
 à partir de considérations syntaxiques.
 
+%TODO[E]: est-ce vrai ? que se passe-t'il en cas de if?
+
 Un pointeur pointant vers l'espace utilisateur fait référence à une variable
 allouée en espace utilisateur. Cela veut dire qu'y accéder ne risque pas de
 mettre en péril l'isolation du noyau en faisant fuiter des informations
@@ -39,6 +41,7 @@ Pour reprendre le parallèle avec la programmation web, une chaîne provenant du
 réseau peut être correctement échappée ou non. Pour s'assurer de la sécurité du
 traitement d'une telle chaîne, il faut s'assurer que celles-ci sont correctement
 échappées.
+%TODO[E]: ??? à revoir
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
@@ -91,12 +94,7 @@ réaliser cette copie (de la même manière qu'avec un \verb!memcpy()!), mais
 après avoir testé dynamiquement que $p$ pointe en espace utilisateur (dans le
 cas contraire, la copie n'est pas faite).
 
-On peut remarquer que contrairement aux fonctions de Linux, les fonctions
-$\cfuF$ et $\ctuF$ n'ont pas de paramètre ``taille à copier''. Cela est dû au
-fait que le modèle mémoire de \langname{} est plus haut niveau. L'information de
-taille est déjà présente dans chaque valeur.
-
-\begin{figure}
+\begin{figure}[h]
 \setlength{\parindent}{1cm}
 \begin{align*}
   & \mathrm{sys\_getver} = \mathrm{fun}(p) \{ \\
@@ -111,6 +109,11 @@ taille est déjà présente dans chaque valeur.
 \label{fig:ex-sys-getver}
 \end{figure}
 
+On peut remarquer que contrairement aux fonctions de Linux, les fonctions
+$\cfuF$ et $\ctuF$ n'ont pas de paramètre ``taille à copier''. Cela est dû au
+fait que le modèle mémoire de \langname{} est plus haut niveau. L'information de
+taille est déjà présente dans chaque valeur.
+
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
@@ -121,6 +124,8 @@ nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
 Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
 la Figure~\ref{fig:qualif-changes}.
+
+%TODO[E]: détailler diamant
 
 \begin{figure}%{{{
 
@@ -193,11 +198,11 @@ $\ctuF$. L'idée est que celles-ci testent dynamiquement la \emph{valeur} du
 paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci pointe vers
 l'espace utilisateur (c'est-à-dire, qu'il est de la forme $\vTainted{φ}$).
 
-Deux cas peuvent se produire. Si ce test est vrai, alors la copie est faite
-et l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
+Deux cas peuvent se produire. Si ce test est vrai, alors la copie est faite et
+l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
 aucune copie n'est faite et la valeur $-1$ est retournée. Ce comportement est
-calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux: en
-cas de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT}.
+calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux: en cas
+de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT} ($= -14$).
 
 \begin{mathpar}
   \semrule{User-Get-OK}
@@ -208,6 +213,8 @@ cas de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT}.
 
   \semrule{User-Put-Err}
 \end{mathpar}
+
+%TODO[E] à discuter
 
 Ces règles sont à appliquer en priorité de la règle d'appel de fonction
 classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
@@ -299,6 +306,8 @@ conclusion n'est pas vraie:
 
 \end{itemize}
 
+%TODO[E] à détailler avant
+
 Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
 \textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
@@ -325,6 +334,27 @@ différence entre les deux représente \emph{qui} contrôle leur valeur
 (Section~\ref{sec:secu-syscalls}).
 
 Les différences sont les suivantes (Figure~\ref{fig:qualif-changes-typ}):
+
+\begin{figure}[b]%{{{
+
+\begin{align*}
+\gramdef{Type}{t}
+  { … }{}
+  { \ptrU{t} }{Pointeur utilisateur}
+  {END}
+\\
+\\
+\gramdef[2.5cm]{Type\\sémantique}{τ}
+  { … }{}
+  { \ptrU{τ} }{Pointeur utilisateur}
+  {END}
+\end{align*}
+
+\caption{Ajouts liés aux qualificateurs de types (par rapport aux
+Figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
+
+\label{fig:qualif-changes-typ}
+\end{figure}%}}}
 
 \begin{itemize}
 
@@ -356,27 +386,6 @@ Accès   & $*~x$      & copy\_*\_user \\
 \caption{Notations utilisées pour les pointeurs}
 \label{fig:qualif-not-resume}
 \end{figure}
-
-\begin{figure}%{{{
-
-\begin{align*}
-\gramdef{Type}{t}
-  { … }{}
-  { \ptrU{t} }{Pointeur utilisateur}
-  {END}
-\\
-\\
-\gramdef[2.5cm]{Type\\sémantique}{τ}
-  { … }{}
-  { \ptrU{τ} }{Pointeur utilisateur}
-  {END}
-\end{align*}
-
-\caption{Ajouts liés aux qualificateurs de types (par rapport aux
-Figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
-
-\label{fig:qualif-changes-typ}
-\end{figure}%}}}
 
 Puisqu'on s'intéresse à la provenance des pointeurs, détaillons les règles qui
 créent, manipulent et utilisent des pointeurs.
