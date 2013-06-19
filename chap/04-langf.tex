@@ -717,10 +717,9 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 \item
   un couple $\msi{m}{e}$ où $e$ est une expression et $m$ un état
   mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
-  réalisée. Par exemple $\mm{([], [x,3])}{3}{([], [x,3])}{\widehat{3}}$
+  réalisée. Par exemple $\mm{([], [x↦3])}{3}{([], [x↦3])}{\widehat{3}}$
   L'évaluation des expressions est détaillée dans la
   Section~\ref{sec:eval-exp}.
-% TODO widehat sur le 3? est-ce qu'il faut distinguer les valeurs?
 \item
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
   mémoire. La réduction instructions est traitée dans la
