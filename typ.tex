@@ -180,15 +180,15 @@
 
 %\input{todo.tex}
 
-\backmatter
+\backmatter{}
 
 %\chapterstar{Liste des figures}
 
-\clearpage
+\clearpage{}
 
-\listoffigures
+\listoffigures{}
 
-\clearpage
+\clearpage{}
 
 \renewcommand{\listtheoremname}{Liste des définitions}
 \listoftheorems[ignoreall,show={definition}]
@@ -198,11 +198,13 @@
 
 \chapter{Références web}
 
-\insertlinks
+\insertlinks{}
 
 \bibliographystyle{alpha}
 \bibliography{typ}
 
 \input{abstract.tex}
+
+% TODO chktex: mettre Section & co en minjuscules
 
 \end{document}

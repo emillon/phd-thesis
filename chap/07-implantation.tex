@@ -1,8 +1,8 @@
 Dans ce chapitre, nous décrivons la mise en œuvre des analyses statiques
 précédentes. Nous commençons par un tour d'horizon des représentations
-intermédiaires possibles, avant de décrire celle retenue : Newspeak. La chaîne
+intermédiaires possibles, avant de décrire celle retenue: Newspeak. La chaîne
 de compilation est explicitée, partant de C pour aller au langage impératif
-décrit dans le chapitre~\ref{cha:lang}. Enfin, nous donnons les détails d'un
+décrit dans le Chapitre~\ref{cha:lang}. Enfin, nous donnons les détails d'un
 algorithme d'inférence de types à la Hindley-Milner, reposant sur l'unification
 et le partage de références.
 
@@ -14,20 +14,20 @@ et le partage de références.
 \section{Newspeak}
 \label{sec:npk}
 
-Newspeak~\cite{newspeak} est un langage conçu pour être à la fois :
+Newspeak~\cite{newspeak} est un langage conçu pour être à la fois:
 
 \begin{itemize}
-  \item Précis : sa sémantique est définie formellement dans~\cite{newspeak}
-  \item Expressif : la plupart des primitives présentes dans les
+  \item Précis: sa sémantique est définie formellement dans~\cite{newspeak}
+  \item Expressif: la plupart des primitives présentes dans les
     langages de bas niveau sont compilables en Newspeak.
-  \item Simple : peu de primitives sont présentes.
-  \item Minimal : aucun élément syntaxique ne peut être exprimé
+  \item Simple: peu de primitives sont présentes.
+  \item Minimal: aucun élément syntaxique ne peut être exprimé
     comme combinaison d'autres.
-  \item Explicite : les constructions sont toutes indépendantes du
+  \item Explicite: les constructions sont toutes indépendantes du
     contexte.
-  \item Orienté analyse : les primitives sont décorées d'informations
+  \item Orienté analyse: les primitives sont décorées d'informations
     reflétant leur validité (tests de bornes, etc)
-  \item Indépendant de l'architecture : toutes les caractéristiques comme
+  \item Indépendant de l'architecture: toutes les caractéristiques comme
     la taille des types ou l'alignement des structures sont rendues explicites.
 \end{itemize}
 
@@ -41,12 +41,12 @@ Newspeak~\cite{newspeak} est un langage conçu pour être à la fois :
   \centering
   \input{fig/compil-pipeline.tex}
   \caption{Compilation depuis Newspeak}
-  \label{fig:compil-npk}
+\label{fig:compil-npk}
 \end{figure}
 
 %TODO Mettre à jour la figure
 
-La compilation vers C est faite en trois étapes (figure~\ref{fig:compil-npk}) :
+La compilation vers C est faite en trois étapes (Figure~\ref{fig:compil-npk}):
 prétraitement du code source, compilation de C prétraité vers \newspeak{}, puis
 compilation de \newspeak{} vers ce langage.
 
@@ -73,14 +73,15 @@ Lors de cette étape, le flôt de contrôle est également simplifié. C en effe
 propose de nombreuses constructions ambigües ou redondantes.
 
 Au contraire, Newspeak propose un nombre réduit de constructions. Rappelons que
-le but de ce langage est de faciliter l'analyse statique : des constructions
+le but de ce langage est de faciliter l'analyse statique: des constructions
 orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
 code lors de l'implémentation d'un analyseur.
 
 Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle for, Newspeak fournit une unique boucle
-\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui est
-toujours un saut vers l'avant (similaire à un "break" généralisé).
+\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
+est toujours un saut vers l'avant (similaire à un ``\emph{break}'' généralisé).
+% TODO typo du break
 
 La sémantique de Newspeak et la traduction de C vers Newspeak sont décrites dans
 \cite{newspeak}.
@@ -100,7 +101,7 @@ invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu
 aient un nom unique.
 
 Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
-décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
+décrits dans les Chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
 simple. Puisqu'ils sont suffisament proches du lambda calcul simplement typé, on
 peut utiliser une variante de l'algorithme W de Damas et
 Milner~\cite{DamasMilner}. On utilise l'optimisation classique qui consiste à se
@@ -116,23 +117,22 @@ une erreur de type.
 
   \insertcode{ex-unif-c.c}
 
-  \caption{Compilation d'un programme C -- avant}
-  \label{fig:exunif:c}
+  \caption{Exemple de programme C à compiler}
+\label{fig:exunif:c}
 \end{figure} % }}}
 
-Prenons l'exemple de la figure~\ref{fig:exunif:c} et typons-le "à la main". On
+Prenons l'exemple de la Figure~\ref{fig:exunif:c} et typons-le ``à la main''. On
 commence par oublier toutes les étiquettes de type présentes dans le programme.
-Celui-ci devient alors :
+Celui-ci devient alors:
 
 \insertcode{exunif-code.c}
 
 La premiere ligne introduit deux variables. On peut noter leurs types respectifs
 (inconnus pour le moment) $t_1$ et $t_2$. La première affectation \texttt{p =
-\&x} implique que les deux côtés du signe "=" ont le même type. À gauche, le
+\&x} implique que les deux côtés du signe ``$=$'' ont le même type. À gauche, le
 type est $t_2$, et à droite $Ptr(t_1)$. On applique le même raisonnement à la
-seconde affectation : à gauche, le type est $t_1$ et à droite Int. On en déduit
-que le type de x est Int et celui de p est Ptr(Int).
-
+seconde affectation: à gauche, le type est $t_1$ et à droite \texttt{Int}. On en
+déduit que le type de x est \texttt{Int} et celui de p est \verb!Ptr(Int)!.
 
 \insertcode{lambda-types.ml}
 
@@ -148,7 +148,7 @@ fonctions manipulant un compteur global d'inconnues.
 
 De plus, on a un module gérant les environnements de typage. Il pourra être
 implanté avec des listes d'association ou des tables de hachage, par exemple. Sa
-signature est :
+signature est:
 
 \insertcode{exunif-env.ml}
 
@@ -190,8 +190,8 @@ avoir le même type.
     \draw [->] (n4b) -- ++ (0, 0.5) -| (n1a);
 
   \end{tikzpicture}
-  \caption{Unification : partage}
-  \label{fig:unifsharing}
+  \caption{Partage lors de l'unification}
+\label{fig:unifsharing}
 \end{figure}
 
 Ici il se passe plusieurs choses intéréssantes. D'une part nous faisont appel à
@@ -199,19 +199,19 @@ une fonction externe typeof qui retourne le type d'une expression sous un
 environnement (dans une implantation complète il s'agirait d'un appel récursif).
 Dans ce cas, \texttt{typeof lhs1 env} est identique à \texttt{Env.get lhs1 env}
 et \texttt{typeof rhs1 env} à \texttt{Ptr\_type t1}. L'autre aspect intéressant
-est la dernière ligne : la fonction \texttt{unify} va modifier en place les
+est la dernière ligne: la fonction \texttt{unify} va modifier en place les
 représentations des types afin de les rendre égales. L'implantation de
 \texttt{unify} sera décrite plus tard. Dans ce cas précis, elle va faire pointer
-la référence dans t2 vers t1 (figure~\ref{fig:unifsharing}).
+la référence dans t2 vers t1 (Figure~\ref{fig:unifsharing}).
 
 Enfin, la seconde affectation se déroule à peu près de la même manière.
 
 \insertcode{exunif-3.ml}
 
-Ici \texttt{typeof lhs2 env} est identique à \texttt{Ptr\_type (Env.get "p"
-env)} et \texttt{typeof lhs2 env} à \texttt{Const\_type Int\_type}. Et dans cas,
-l'unification doit se faire entre t1 et \texttt{Const\_type Int\_type} : cela
-mute la référence derrière t1 (figure~\ref{fig:typeunifref}).
+Ici \texttt{typeof lhs2 env} est identique à
+\verb!Ptr_type (Env.get "p" env)! et \texttt{typeof lhs2 env} à \texttt{Const\_type Int\_type}. Et dans cas,
+l'unification doit se faire entre t1 et \texttt{Const\_type Int\_type}: cela
+mute la référence derrière t1 (Figure~\ref{fig:typeunifref}).
 
 \begin{figure}
   \begin{tikzpicture}
@@ -244,7 +244,7 @@ mute la référence derrière t1 (figure~\ref{fig:typeunifref}).
 
   \end{tikzpicture}
   \caption{Unification par mutation de références}
-  \label{fig:typeunifref}
+\label{fig:typeunifref}
 \end{figure}
 
 L'essence de l'algorithme d'inférence se situe donc dans 2 fonctions. D'une
@@ -263,7 +263,7 @@ ce n'est pas possible, une erreur sera levée.
 La première étape est de réduire ces deux types, c'est-à-dire à transformer les
 constructions \texttt{Var (ref (Instanciated t))} en \texttt{t}.
 
-Ensuite, cela dépend des formes qu'ont les types réduits :
+Ensuite, cela dépend des formes qu'ont les types réduits:
 
 \begin{figure}
   \centering
@@ -285,7 +285,7 @@ Ensuite, cela dépend des formes qu'ont les types réduits :
 
   \end{tikzpicture}
   \caption{Cycle dans le graphe de types}
-  \label{fig:typecycle}
+\label{fig:typecycle}
 \end{figure}
 
 \begin{itemize}
@@ -297,14 +297,14 @@ type. Notons que cela crée un type de la forme \texttt{Var (ref (Instanciated
 d'unification.
 
 \item si un type est inconnu et pas l'autre, il faut de la même manière affecter la
-référence. Mais en faisant ça inconditionnellement, cela peut poser problème :
-par exemple en tentant d'unifier \texttt{a} avec \texttt{Ptr(a)} on pourrait
-créer un cycle dans le graphe (figure~\ref{fig:typecycle}).
+référence. Mais en faisant ça inconditionnellement, cela peut poser problème:
+par exemple en tentant d'unifier \texttt{a} avec \verb!Ptr(a)! on pourrait
+créer un cycle dans le graphe (Figure~\ref{fig:typecycle}).
 Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
 pas présent dans le type à affecter.
 
-\item si les deux types sont des types de base (comme \tInt ou \tFloat) égaux,
-on ne fait rien.
+\item si les deux types sont des types de base (comme $\tInt$ ou $\tFloat$)
+égaux, on ne fait rien.
 
 \item si les deux types sont des constructeurs de type, il faut que les
 constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
@@ -318,11 +318,11 @@ constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
-L'outil \ptrtype lit un programme Newspeak (ou un fichier C), et réalise
+L'outil \ptrtype{} lit un programme Newspeak (ou un fichier C), et réalise
 l'inférence de qualificateurs. En sortie, il affiche soit le programme
 complètement annoté, soit une erreur. Le cœur de l'outil est dans la
 
-Si l'argument à \ptrtype est un fichier C, il est tout d'abord compilé vers
+Si l'argument à \ptrtype{} est un fichier C, il est tout d'abord compilé vers
 Newspeak grâce à l'utilitaire \texttt{c2newspeak}. Ensuite, les autres passes
 travaillent sur une représentation intermédiaire proche de Newspeak, mais où des
 étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
@@ -330,17 +330,17 @@ intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}
 
 \begin{figure}
 \insertcode{implem-process.ml}
-\caption{Fonction principale de \ptrtype}
+\caption{Fonction principale de \ptrtype{}}
 \label{fig:implem-process}
 \end{figure}
 
 Le reste de l'outil est résumé dans la fonction
-\texttt{process\_npk} (figure~\ref{fig:implem-process}) :
+\texttt{process\_npk} (Figure~\ref{fig:implem-process}):
 
 \begin{itemize}
 
-\item Grâce à la fonction \texttt{convert_unit : Newspeak.t -> unit Tyspeak.t},
-  on ajoute des étiquettes ``vides'' (toutes égales à \texttt{() : unit}).
+\item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!,
+  on ajoute des étiquettes ``vides'' (toutes égales à \verb!() : unit!).
 
 \item L'ensemble des fonctions du programme est trié topologiquement selon la
   relation~$\preceq$ définie par $f \preceq g \eqdef \textrm{``} g
@@ -352,7 +352,7 @@ Le reste de l'outil est résumé dans la fonction
   qui permet de créer un environnement initial.
 
 \item Les types de chaque fonction sont inférés, par le biais de la fonction
-  suivante :
+  suivante:
 
 \begin{Verbatim}
 val infer : Newspeak.fid list
@@ -372,9 +372,9 @@ L'inférence de types consiste à remplacer les étiquettes de type \texttt{unit
 par des étiquettes de type \texttt{simple} (autrement dit de vraies
 représentations de types).
 
-Cette étape se fait de manière impérative : on peut créer de nouveaux types avec
+Cette étape se fait de manière impérative: on peut créer de nouveaux types avec
 \texttt{new\_unknown} et unifier deux types
-avec \texttt{unify}. Leurs types sont :
+avec \texttt{unify}. Leurs types sont:
 
 \begin{verbatim}
 val new_unknown : unit -> Types.simple
@@ -382,7 +382,7 @@ val unify : Types.simple -> Types.simple -> unit
 \end{verbatim}
 
 La fonction \texttt{infer} s'appuie sur un ensemble de fonctions récursivement
-définies portant sur chaque type de fragment : \texttt{infer\_fdec} pour les
+définies portant sur chaque type de fragment: \texttt{infer\_fdec} pour les
 déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 \texttt{infer\_stmtkind} pour les instructions, etc.
 
@@ -401,7 +401,7 @@ déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
 \texttt{unify}. Par exemple, pour typer une déclaration
-(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
+(Figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
 type \texttt{t0}. On étend l'environnement courant avec cette nouvelle
 association et sous ce nouvel environnement, on type le bloc de portée de la
 déclaration.
@@ -411,10 +411,10 @@ left-values de retour. On obtient également le type de la fonction (à partir d
 type de la fonction présent dans l'environnement, ou du type du pointeur de
 fonction qui est déréférencé), et on unifie ces deux informations.
 
-On peut donner quelques exemples, comme :
+On peut donner quelques exemples, comme:
 
 \begin{itemize}
-  \item addition de deux flottants (dans \texttt{infer\_binop}) :
+  \item addition de deux flottants (dans \texttt{infer\_binop}):
 
 \begin{verbatim}
 let infer_binop op (_, a) (_, b) =
@@ -426,7 +426,7 @@ let infer_binop op (_, a) (_, b) =
         Float
 \end{verbatim}
 
-  \item adresse d'une left-value (dans \texttt{lval\_type}) :
+  \item adresse d'une left-value (dans \texttt{lval\_type}):
 
 \begin{verbatim}
 | T.AddrOf lv ->
@@ -435,7 +435,7 @@ let infer_binop op (_, a) (_, b) =
     (T.AddrOf lv', Ptr (Kernel, ty))
 \end{verbatim}
 
-  \item déréférencement d'une left-value (dans \texttt{lval\_type}) :
+  \item déréférencement d'une left-value (dans \texttt{lval\_type}):
 
 \begin{verbatim}
 | T.Deref(e, _sz) ->
@@ -455,16 +455,16 @@ let infer_binop op (_, a) (_, b) =
 \label{fig:implem-typ}
 \end{figure}
 
-Les types de données utilisés sont donnés dans la figure~\ref{fig:implem-typ}.
-Les types \langname sont représentés soit par un constructeur de type ``résolu''
-immutable comme \texttt{Int}, soit par une référence dans le cas d'une variable
-inconnue (placée alors derrière le constructeur \texttt{Var}).
+Les types de données utilisés sont donnés dans la Figure~\ref{fig:implem-typ}.
+Les types \langname{} sont représentés soit par un constructeur de type
+``résolu'' immutable comme \texttt{Int}, soit par une référence dans le cas
+d'une variable inconnue (placée alors derrière le constructeur \texttt{Var}).
 
 Ces références contiennent une valeur du type
 \texttt{simple var\_type}\footnote{
   Ce type est polymorphe pour pouvoir être repris dans l'unification des
-  qualificateurs (figure~\ref{fig:implem-qualifs}).
-}, c'est-à-dire :
+  qualificateurs (Figure~\ref{fig:implem-qualifs}).
+}, c'est-à-dire:
 
 \begin{itemize}
 \item soit un numéro d'inconnue (constructeur \texttt{Unknown})\footnote{On
@@ -476,14 +476,14 @@ Ces références contiennent une valeur du type
 \end{itemize}
 
 Ce système peut créer des représentations de types arbitrairement longues, comme
-par exemple :
+par exemple:
 
 \texttt{Var (ref (Instanciated (Var (ref (Instanciated Int)))))}
 
 Cela est dû au fait que \texttt{fun x -> Var (ref (Instanciated x))} est typée
 \texttt{simple -> simple} et peut donc être appliquée à loisir. Pour éviter cet
 effet d'allongement, on définit une fonction \texttt{shorten} qui supprime ces
-chaînes (figure~\ref{fig:implem-shorten}).
+chaînes (Figure~\ref{fig:implem-shorten}).
 
 % TODO décrire la première branche du pattern matching
 
@@ -499,7 +499,7 @@ La fonction d'unification, quant à elle, commence par raccourcir ses deux
 arguments puis faire une analyse de cas par filtrage.
 
 Les cas principaux pour unifier deux types réduits \texttt{sta} et \texttt{stb}
-sont :
+sont:
 
 \begin{itemize}
 
@@ -520,8 +520,7 @@ sont :
   $C (t_1, …, t_n)$
   et
   $D (u_1, …, u_m)$ où $C$ et $D$ sont des constructeurs de type avec
-  respectivement $n$ et $m$ arguments
-  \footnote{
+  respectivement $n$ et $m$ arguments\footnote{
     Le cas $n = 0$ ou $m = 0$ correspond aux types concrets comme $\tInt$ ou
     $\tFloat$.
   }. Si $C = D$ et
@@ -533,7 +532,7 @@ sont :
 \end{itemize}
 
 Cette analyse de cas est implantée dans la fonction \texttt{unify_now}
-(figure~\ref{fig:implem-unify-now}).
+(Figure~\ref{fig:implem-unify-now}).
 
 \begin{figure}
   \insertcode{implem-unify.ml}
@@ -541,7 +540,7 @@ Cette analyse de cas est implantée dans la fonction \texttt{unify_now}
 \label{fig:implem-unify-now}
 \end{figure}
 
-cas structure (figure~\ref{fig:implem-unify-structs}).
+cas structure (Figure~\ref{fig:implem-unify-structs}).
 
 \begin{figure}
   \insertcode{implem-structs.ml}
@@ -550,7 +549,7 @@ cas structure (figure~\ref{fig:implem-unify-structs}).
 \end{figure}
 
 Pour les pointeurs, il est nécessaire de définir des fonctions similaires sur
-les qualificateurs (figure~\ref{fig:implem-qualifs}).
+les qualificateurs (Figure~\ref{fig:implem-qualifs}).
 
 \begin{figure}
 
@@ -570,20 +569,20 @@ les qualificateurs (figure~\ref{fig:implem-qualifs}).
 \end{figure}
 
 La fonction appellée directement par le reste du code, appellée \texttt{unify},
-peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la
+peut retarder l'unification (Figure~\ref{fig:implem-lazy}). Dans ce cas, la
 paire de types à unifier est mise dans une liste d'attente qui sera unifiée
 après le parcours du programme. Le but est d'instrumenter l'inférence de types
 afin de pouvoir en faire une exécution ``pas à pas''.
 
 \section{Exemple}
 
-Lançons l'analyse sur un petit exemple :
+Lançons l'analyse sur un petit exemple:
 
 \begin{verbatim}
 int f(int *x) { return (*x + 1); }
 \end{verbatim}
 
-L'exécution de notre analyseur affiche un programme complètement annoté :
+L'exécution de notre analyseur affiche un programme complètement annoté:
 
 \begin{verbatim}
  % ptrtype example.c

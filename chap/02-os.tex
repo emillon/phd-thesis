@@ -1,131 +1,46 @@
-\section{Architecture physique}
-
-\section{Architecture logicielle}
-
-\section{Appels système}
-
-\section{Le Confused Deputy Problem}
-
-\clearpage
-
 Le système d'exploitation est le programme qui permet à un système informatique
 d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
 multiples. Dans ce chapitre, nous allons voir quel est son rôle, et comment il
 peut être implanté. Pour ce faire, nous étudierons l'exemple d'une architecture
-Intel 32 bits, et d'un noyau Linux 2.6.
+Intel 32 bits.
 
-\section{Architecture et assembleur Intel}
+\section{Architecture physique}
 
-L'implantation d'un système d'exploitation est très proche du matériel sur
-lequel il s'exécute. Pour étudier une implantation en particulier, voyons ce que
-permet le matériel lui-même.
+Un système informatique est principalement constitué d'un processeur (ou CPU
+pour \emph{Central Processing Unit}), de mémoire principale (ou RAM pour
+\emph{Random Access Memory}), et de divers périphériques.
 
-Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
-une architecture Intel 32 bits. Les exemples de code seront écrits en syntaxe
-AT\&T, celle que comprend l'assembleur GNU.
-
-La référence pour la description de l'assembleur Intel est la documentation du
-constructeur \cite{intelsys} ; une bonne explication de l'agencement dans la
-pile peut aussi être trouvée dans \cite{SmashingTheStack}.
-
-Pour faire des calculs, le processeur est composé de registres, qui sont des
-petites zones de mémoire interne, et peut accéder à la mémoire principale.
-
-La mémoire principale contient divers types des données :
-
-\begin{itemize}
-\item le code des programmes à exécuter
-\item les données à disposition des programmes
-\item la pile d'appels
-\end{itemize}
-
-La pile d'appels est une zone de mémoire qui est notamment utilisée pour tenir
-une trace des calculs en cours. Par exemple, c'est ici que seront stockées les
-données propres à chaque fonction appelée : paramètres, adresse de retour et
-variables locales. La pile est manipulée par un pointeur de pile (\emph{stack
-pointer}), qui est l'adresse du ``haut de la pile''. On peut la manipuler en
-empilant des données (les placer au niveau du pointeur de pile et déplacer celui
-si) ou dépilant des données (déplacer le pointeur de pile dans l'autre sens et
-retourner la valeur présente à cet endroit).
-
-L'état du processeur est défini par la valeur de ses registres, qui sont des
-petites zones de mémoire interne (quelques bits chacun). Par exemple, la valeur
-du pointeur de pile est stockée dans \esp. Le registre \ebp, couplé à \esp sert
-à adresser les variables locales et paramètres d'une fonction, comme ce sera
-expliqué dans la section~\ref{sec:convappel}.
-
-L'adresse de l'instruction courante est accessible dans le registre \eip.
-
-En plus de ces registres spéciaux, le processeur possède de nombreux registres
-génériques, qui peuvent être utilisés pour réaliser des calculs intermédiaires.
-Ils sont nommés \eax, \ebx, \ecx, \edx, \esi et \edi. Ils peuvent être utilisés
-pour n'importe quel type d'opération, mais certains sont spécialisés : par
-exemple il est plus efficace d'utiliser \eax en accumulateur, ou \ecx en
-compteur.
-
-Les calculs sont décrits sous forme d'une suite d'instructions. Chaque
-instruction est composée d'un mnémonique et d'une liste d'opérandes. Les
-mnémoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
-un type d'opération à appliquer sur les opérandes. L'instruction peut aussi être
-précédée d'une étiquette, qui correspondra à son adresse.
-
-\begin{center}
-  \shorthandoff{!}
-  \begin{tikzpicture}
-    [bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
-    ,asmbox/.style={minimum height=1cm}
-    ,dway/.style={dashed}
-    ]
-
-    \node[asmbox]              (lbl) {\asminstr{lbl:}};
-    \node[asmbox,right of=lbl] (mov) {\asminstr{mov}};
-    \node[asmbox,right of=mov] (op1) {\asminstr{\$4,}};
-    \node[asmbox,right of=op1] (op2) {\asminstr{\%ebx}};
-
-    \draw[bbr] (lbl.south west) -- (lbl.south east);
-    \draw[bbr] (mov.south west) -- (mov.south east);
-    \draw[bbr] (op1.south west) -- (op2.south east);
-
-    \coordinate (ops) at ($ (op1.south west)!.5!(op2.south east) $);
-
-    \node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
-    \node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
-    \node[below of=tmov, node distance=7mm] (tops) {Opérandes};
-
-    \draw[dway] (tlbl) -| ($ (lbl.south) + (0, -0.3) $);
-    \draw[dway] (tmov) -| ($ (mov.south) + (0, -0.3) $);
-    \draw[dway] (tops) -| ($ (ops.south) + (0, -0.3) $);
-
-  \end{tikzpicture}
-  \shorthandon{!}
-\end{center}
-
-Ces opérandes peuvent être de plusieurs types :
+Le processeur est constitué de divers registres internes qui permettent
+d'encoder l'état dans lequel il se trouve : quelle est l'instruction courante
+(registre \eip), quelle est la hauteur de la pile système (registre \esp), etc.
+Son fonctionnement peut être vu de la manière la plus simple qui soit comme le
+cycle :
 
 \begin{itemize}
 \item
-  un nombre, noté \$4
+  charger depuis la mémoire la prochaine instruction
 \item
-  le nom d'un registre, noté \texttt{\%eax}
+  \emph{(optionnel)} charger depuis la mémoire les données référencées
+  par l'instruction
 \item
-  une opérande mémoire, c'est-à-dire le contenu de la mémoire à une
-  adresse effective. Cette adresse effective peut être exprimée de
-  plusieurs manières :
-  \begin{itemize}
-  \item
-    directement : \texttt{addr}
-  \item
-    indirectement : \texttt{(\%ecx)}. L'adresse effective est le contenu
-    du registre.
-  \item
-    ``base + déplacement'' : \texttt{4(\%ecx)}. L'adresse effective est
-    le contenu du registre plus le déplacement (4 ici).
-  \end{itemize}
+  effectuer l'instruction
+\item
+  \emph{(optionnel)} stocker en la mémoire les données modifiées
 \end{itemize}
 
-En pratique il y a des modes d'adressage plus complexes, et toutes les
-combinaisons ne sont pas possibles, mais ceux-ci suffiront à décrire les
-exemples suivants :
+Les instructions sont constitués d'un mnémonique (indicant quelle opération
+faire) et d'un ensemble d'opérandes. La signification des opérandes dépend du
+mnémonique, mais en général elles permettent de désigner les sources et la
+destination. Les opérandes peuvent avoir plusieurs formes : une valeur
+immédiate (\$4), un nom de registre (\texttt{\%eax}) ou une référence à la
+mémoire (directement : \texttt{addr} ou indirectement : \texttt{(\%ecx)}
+\footnote{
+  Cela consiste à interpréter le contenu du regitre \ecx comme une adresse
+  mémoire.
+}
+).
+
+Parmi les mnémoniques courants on peut citer les suivants.
 
 \begin{itemize}
 
@@ -153,68 +68,32 @@ exemples suivants :
 
 \end{itemize}
 
-\section{Fonctions et conventions d'appel}
-\label{sec:convappel}
+Certaines de ces instructions font référence à la pile par le biais du registre
+\esp. Cette zone mémoire n'est pas gérée de manière particulière. Elle permet de
+la pile des appels de fonction en cours grâce à la manière dont \texttt{jmp} et
+\texttt{ret} fonctionnent. Elle sert aussi à stocker les variables locales des
+fonctions.
 
-\begin{figure} % {{{ fig:stackframe
-\input{fig/stackframe.tex}
-\caption[Cadres de pile]{ Cadres de pile. }
-\label{fig:stackframe}
-\end{figure} % }}}
+À l'aide de ces quelques instructions on peut implanter des algorithmes
+impératifs. Mais pour faire quelque chose de visible, comme afficher à l'écran
+ou envoyer un paquet sur le réseau, cela ne suffit pas : il faut parler au reste
+du matériel.
 
-%TODO Mettre des vrais nombres plutôt que du symbolique
+Pour ceci, il y a deux techniques principales. D'une part, certains
+périphériques sont dits \emph{memory-mapped} : ils sont associés à un espace
+mémoire particulier, qui ne permet pas de stocker des informations mais de lire
+ou d'écrire des données dans le périphérique. Par exemple, écrire à l'adresse
+$0xB8000$ permet d'écrire des caractères à l'écran. L'autre système principal
+est l'utilisation des ports d'entrée/sortie. Cela correspond à des instructions
+spéciales \texttt{in \%ax, port} et \texttt{out port, \%ax} où \texttt{port}
+est un numéro qui correspond à un périphérique particulier. Par exemple, en
+écrivant dans le port $0x60$ on peut contrôler l'état des indicateurs lumineux
+du clavier PS/2.
 
-Dans le langage d'assemblage, il n'y a pas de notion de fonction ; mais
-\asminstr{call} et \asminstr{ret} permettent de sauvegarder et de restaurer une
-adresse de retour, ce qui permet de faire un saut et revenir à l'adresse initiale.
-Ce système permet déjà de créer des procédures, c'est-à-dire des fonctions sans
-arguments ni valeur de retour.
-
-Pour gérer ceux-ci, il faut que les deux morceaux (appelant et appelé) se
-mettent d'accord sur une convention d'appel commune. La convention utilisée sous
-GNU/Linux est appelée \emph{cdecl} et possède les caractéristiques suivantes :
-
-\begin{itemize}
-\item la valeur de retour d'une fonction est stockée dans \eax
-\item \eax, \ecx et \edx peuvent être écrasés sans avoir à les sauvegarder
-\item les arguments sont placés sur la pile (et enlevés) par l'appelant. Les
-  paramètres sont empilés de droite à gauche.
-\end{itemize}
-
-Pour accéder à ses paramètres, une fonction peut donc utiliser un adressage
-relatif à \esp. Cela peut fonctionner, mais cela complique les choses si elle
-contient aussi des variables locales. En effet, les variables locales sont
-placées sur la pile, au dessus des (c'est-à-dire, empilées après) paramètres,
-augmentant le décalage.
-
-Pour simplifier, la pile est organisée en cadres logiques : chaque cadre
-correspond à un niveau dans la pile d'appels de fonctions. Si f appelle g, qui
-appelle h, il y aura dans l'ordre sur la pile le cadre de f, celui de g puis
-celui de h.
-
-Ces cadres sont chainés à l'aide du registre \ebp : à tout moment, \ebp contient
-l'adresse du cadre de l'appelant.
-
-Prenons exemple sur la figure~\ref{fig:stackframe} : pour appeler
-\texttt{g(4,2)}, \texttt{f} empile les arguments de droite à gauche.
-L'instruction \asminstr{call g} empile l'adresse de l'instruction suivante sur
-la pile puis saute au début de \texttt{g}.
-
-Au début de la fonction, les trois instructions permettent de sauvegarder
-l'ancienne valeur de \ebp, faire pointer \ebp à une endroit fixe dans le cadre
-de pile, puis allouer 8 octets de mémoire pour les variables locales.
-
-Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
-locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
-  \texttt{8(\%ebp)}, \texttt{12(\%ebp)}, etc.
-
-À la fin de la fonction, l'instruction \asminstr{leave} est équivalente à
-\texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
-de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
-la dépile et y saute.
-
-\section{Tâches, niveaux de privilèges}
+\section{Tâches et niveaux de privilèges}
 \label{sec:taches}
+
+\subsection*{Alternance des tâches}
 
 Sans mécanisme particulier, le processeur exécuterait uniquement une suite
 d'instruction à la fois. Pour lui permettre d'exécuter plusieurs tâches, un
@@ -234,33 +113,21 @@ d'affecter des niveaux de privilège à ces tâches, en restreignant le type
 d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
 tâches de niveaux moins élevés.
 
-Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}) : le \ring{0} est le
+Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}): le \ring{0} est le
 plus privilégié, le \ring{3} le moins privilégié. Dans l'exemple précédent, on
 pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
 alors que les autres tâches seraient en \ring{3}.
 
-\section{Mémoire virtuelle}
+\subsection*{Mémoire virtuelle}
 
 À partir du moment où plusieurs processus s'exécutent de manière concurrente, un
-problème d'isolation se pose : si un processus peut lire dans la mémoire d'un
-autre, des informations peuvent fuiter ; et s'il peut y écrire, il peut en
+problème d'isolation se pose: si un processus peut lire dans la mémoire d'un
+autre, des informations peuvent fuiter; et s'il peut y écrire, il peut en
 détourner l'exécution.
 
 Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
-différente de la mémoire : c'est-à-dire que vue de tâches différentes, une
-adresse contiendra une valeur différente.
-
-\begin{figure}
-\input{fig/pagetables.tex}
-\caption{Implantation de la mémoire virtuelle}
-\label{fig:pagetables}
-\end{figure}
-
-Ce mécanisme est contrôlé par valeur du registre \crtrois : les 10 premiers bits
-d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
-l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
-de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
-donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
+différente de la mémoire: c'est-à-dire que vue de tâches différentes, une
+adresse contiendra une valeur différente (figure~\ref{fig:memoire-virtuelle}).
 
 \begin{figure} % fig:memoire-virtuelle {{{
 \centering
@@ -312,18 +179,59 @@ donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 \label{fig:memoire-virtuelle}
 \end{figure} % }}}
 
-En ce qui concerne la mémoire, les différentes tâches ont une vision différente
-de la mémoire physique : c'est-à-dire que deux tâches lisant à une même adresse
-peuvent avoir un résultat différent. C'est le concept de mémoire virtuelle
-(fig~\ref{fig:memoire-virtuelle}).
+\begin{figure}
+\input{fig/pagetables.tex}
+\caption{Implantation de la mémoire virtuelle}
+\label{fig:pagetables}
+\end{figure}
 
-% TODO expliquer la fig
-
-%TODO Redite qui n'apporte pas plus d'explication
+Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
+d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
+l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
+de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
+donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
 
 %TODO ici un morceau déplacé dans le chap etude de cas
 
-\section{Sécurité des appels système}
+\section{Appels système}
+
+Avec une telle isolation, tout le code qui est exécuté en \ring{3} a une
+expressivité limitée. Il ne peut pas contenir d'instructions privilégiées comme
+\asminstr{in} ou \asminstr{out}, ni faire référence à des périphériques mappés
+en mémoire. C'est en effet au noyau d'accéder au matériel, et pas au code
+utilisateur.
+
+Il est donc nécessaire d'appeller une routine du noyau depuis le code
+utilisateur. C'est le but des appels système. Cela consiste à coupler une
+fonction du \ring{3} à une fonction du \ring{0}: en appellant la fonction non
+privilégiée, le flot d'exécution se retrouve dans le noyau avec les bons
+privilèges.
+
+Bien sûr, il n'est pas possible de faire directement un \asminstr{call} puisque
+cela consisterait à faire un saut vers une zone plus privilégiée. Il y a
+plusieurs manières d'implanter ce mécanisme. Nous décrivons ici la technique
+historique à l'aide d'interruptions.
+
+Le processeur peut répondre à des interruptions, qui sont des évenements
+extérieurs. Cela permet d'écrire du code asynchrone. Par exemple, une fois qu'un
+long transfert mémoire est terminé, une interruption est reçue. D'autres
+interruptions dites logicielles peuvent arriver lorsqu'une erreur se produit.
+Par exemple, diviser par zéro provoque l'interruption 0, et tenter d'exécuter
+une instruction privilégiée provoque l'interruption 14. On peut aussi provoquer
+une interruption par une instruction \asminstr{int} dédiée.
+
+Une table globale définit, pour chaque numéro d'interruption : quelle est la
+routine à appeller pour la traiter, avec quel niveau de privilège, ainsi que le
+niveau de privilège requis pour pouvoir déclencher celle-ci avec l'instruction
+\asminstr{int}.
+
+Il est donc possible de créer une interruption purement logicielle (on utilise
+en général le numéro 128 soit \hexa{80}), déclenchable en \ring{3} et traitée en
+\ring{0}. Les registres sont préservés, donc on peut les utiliser pour passer un
+numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
+\texttt{open()}) et leurs arguments.
+
+\section{Le \emph{Confused Deputy Problem}}
 \label{sec:secu-syscalls}
 
 On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
@@ -339,21 +247,15 @@ donc trouver la bonne granularité.
 Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
 sein de certains types d'appels système.
 
-Il y a deux grands types d'appels systèmes : d'une part, ceux qui renvoient un
+Il y a deux grands types d'appels systèmes: d'une part, ceux qui renvoient un
 simple nombre, comme \texttt{getpid} qui renvoie le numéro du processus
 appelant.
 
 \insertcode{appel-syscall-getpid.c}
 
-Ici, pas de difficulté particulière : la communication entre le \ring{0} et le
+Ici, pas de difficulté particulière: la communication entre le \ring{0} et le
 \ring{3} est faite uniquement à travers les registres, comme décrit dans la
-section~\ref{sec:impl-syscall}.
-
-\begin{figure}
-\insertcode{appel-syscall-gettimeofday.c}
-\caption{Appel de gettimeofday}
-\label{fig:appel-gettimeofday}
-\end{figure}
+Section~\ref{sec:impl-syscall}.
 
 Mais la plupart des appels systèmes communiquent de l'information de manière
 indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
@@ -361,39 +263,22 @@ espace d'adressage et passe un pointeur à l'appel système. Ce mécanisme est
 utilisé par exemple par la fonction \texttt{gettimeofday}
 (figure~\ref{fig:appel-gettimeofday}).
 
-% Fig mzones {{{
-\begin{figure}
-    \input{fig/mzones.tex}
-    \centering
-    \subbottom{
-        \label{fig:mzone1}
-        \memoryframe{1}
-    }
-
-    \subbottom{
-        \label{fig:mzone2}
-        \memoryframe{2}
-    }
-
-    \subbottom{
-        \label{fig:mzone3}
-        \memoryframe{3}
-    }
-
-    \caption{Zones mémoire}
-    \label{fig:mzones}
-\end{figure} % }}}
+\begin{figure}[h]
+\insertcode{appel-syscall-gettimeofday.c}
+\caption{Appel de gettimeofday}
+\label{fig:appel-gettimeofday}
+\end{figure}
 
 Considérons une implémentation naïve de cet appel système qui écrirait
-directement à l'adresse pointée. La figure~\ref{fig:mzone1} présente ce qui se
-passe lorsque le pointeur fourni est dans l'espace d'adressage du processus :
-c'est le cas d'utilisation normal et l'écriture est donc possible.
+directement à l'adresse pointée. Si le pointeur fourni est dans l'espace
+d'adressage du processus, on est dans le cas d'utilisation normal et l'écriture
+est donc possible.
 
-Si l'utilisateur passe un pointeur dont la valeur est supérieure à
-\texttt{0xc0000000} (figure~\ref{fig:mzone2}), que se passe-t-il ? Comme le
-déréférencement est fait dans le code du noyau, il est également fait en
-\ring{0}, et va pouvoir être réalisé sans erreur : l'écriture se fait et
-potentiellement une structure importante du noyau est écrasée.
+Si l'utilisateur passe un pointeur dont la valeur correspond à la mémoire
+réservée au noyau, que se passe-t-il? Comme le déréférencement est fait dans le
+code du noyau, il est également fait en \ring{0}, et va pouvoir être réalisé
+sans erreur: l'écriture se fait et potentiellement une structure importante du
+noyau est écrasée.
 
 Un utilisateur malicieux peut donc utiliser cet appel système pour écrire à
 n'importe quelle adresse dans l'espace d'adressage du noyau. Ce problème vient
@@ -401,15 +286,15 @@ du fait que l'appel système utilise les privilèges du noyau au lieu de celui q
 contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused
 Deputy Problem}\cite{hardy88confused}.
 
-La bonne solution est de tester dynamiquement la valeur du pointeur : si la
-valeur du pointeur est supérieure à \texttt{0xc0000000}, il faut indiquer une
-erreur avant d'écrire (figure~\ref{fig:mzone3}. Sinon, cela ne veut pas dire
-que le déréférencement se fera sans erreur, mais au moins le noyau est protégé.
+La bonne solution est de tester dynamiquement la valeur du pointeur: s'il pointe
+en espace noyau, il faut indiquer une erreur plutôt que d'écrire
+(Figure~avant\ref{fig:mzone3}). Sinon, il peut toujours y avoir une erreur, mais
+au moins le noyau est protégé.
 
 \begin{figure}
-  \insertcode{implem-gettime.c}
-  \caption{Implantation de l'appel système \texttt{gettimeofday}}
-  \label{fig:implem-gettime}
+\insertcode{implem-gettime.c}
+\caption{Implantation de l'appel système \texttt{gettimeofday}}
+\label{fig:implem-gettime}
 \end{figure}
 
 Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
@@ -425,5 +310,178 @@ Cette conclusion est assez contraignante, puisqu'il existe de nombreux endroits
 dans le noyau où des données proviennent de l'utilisateur. Il est donc
 raisonnable de vouloir vérifier automatiquement et statiquement l'absence de
 tels défauts.
+
+%\clearpage
+
+%\section{Architecture et assembleur Intel}
+
+%L'implantation d'un système d'exploitation est très proche du matériel sur
+%lequel il s'exécute. Pour étudier une implantation en particulier, voyons ce que
+%permet le matériel lui-même.
+
+%Dans cette section nous décrivons le fonctionnement d'un processeur utilisant
+%une architecture Intel 32 bits. Les exemples de code seront écrits en syntaxe
+%AT\&T, celle que comprend l'assembleur GNU.\@
+
+%La référence pour la description de l'assembleur Intel est la documentation du
+%constructeur~\cite{intelsys}; une bonne explication de l'agencement dans la
+%pile peut aussi être trouvée dans~\cite{SmashingTheStack}.
+
+%Pour faire des calculs, le processeur est composé de registres, qui sont des
+%petites zones de mémoire interne, et peut accéder à la mémoire principale.
+
+%La mémoire principale contient divers types des données:
+
+%\begin{itemize}
+%\item le code des programmes à exécuter
+%\item les données à disposition des programmes
+%\item la pile d'appels
+%\end{itemize}
+
+%La pile d'appels est une zone de mémoire qui est notamment utilisée pour tenir
+%une trace des calculs en cours. Par exemple, c'est ici que seront stockées les
+%données propres à chaque fonction appelée: paramètres, adresse de retour et
+%variables locales. La pile est manipulée par un pointeur de pile (\emph{stack
+%pointer}), qui est l'adresse du ``haut de la pile''. On peut la manipuler en
+%empilant des données (les placer au niveau du pointeur de pile et déplacer celui
+%si) ou dépilant des données (déplacer le pointeur de pile dans l'autre sens et
+%retourner la valeur présente à cet endroit).
+
+%L'état du processeur est défini par la valeur de ses registres, qui sont des
+%petites zones de mémoire interne (quelques bits chacun). Par exemple, la valeur
+%du pointeur de pile est stockée dans \esp{}. Le registre \ebp{}, couplé à \esp{}
+%sert à adresser les variables locales et paramètres d'une fonction, comme ce
+%sera expliqué dans la Section~\ref{sec:convappel}.
+
+%L'adresse de l'instruction courante est accessible dans le registre \eip.
+
+%En plus de ces registres spéciaux, le processeur possède de nombreux registres
+%génériques, qui peuvent être utilisés pour réaliser des calculs intermédiaires.
+%Ils sont nommés \eax{}, \ebx{}, \ecx{}, \edx{}, \esi{} et \edi{}. Ils peuvent
+%être utilisés pour n'importe quel type d'opération, mais certains sont
+%spécialisés: par exemple il est plus efficace d'utiliser \eax{} en accumulateur,
+%ou \ecx{} en compteur.
+
+%Les calculs sont décrits sous forme d'une suite d'instructions. Chaque
+%instruction est composée d'un mnémonique et d'une liste d'opérandes. Les
+%mnémoniques (\asminstr{mov}, \asminstr{call}, \asminstr{sub}, etc) définissent
+%un type d'opération à appliquer sur les opérandes. L'instruction peut aussi être
+%précédée d'une étiquette, qui correspondra à son adresse.
+
+%\begin{center}
+  %\shorthandoff{!}
+  %\begin{tikzpicture}
+    %[bbr/.style={bigbrace, decoration={mirror, amplitude=2mm}}
+    %,asmbox/.style={minimum height=1cm}
+    %,dway/.style={dashed}
+    %]
+
+    %\node[asmbox]              (lbl) {\asminstr{lbl:}};
+    %\node[asmbox,right of=lbl] (mov) {\asminstr{mov}};
+    %\node[asmbox,right of=mov] (op1) {\asminstr{\$4,}};
+    %\node[asmbox,right of=op1] (op2) {\asminstr{\%ebx}};
+
+    %\draw[bbr] (lbl.south west) -- (lbl.south east);
+    %\draw[bbr] (mov.south west) -- (mov.south east);
+    %\draw[bbr] (op1.south west) -- (op2.south east);
+
+    %\coordinate (ops) at ($ (op1.south west)!.5!(op2.south east) $);
+
+    %\node[below left of=lbl, xshift=-1cm, yshift=-5mm]   (tlbl) {Étiquette};
+    %\node[below of=tlbl, node distance=7mm] (tmov) {Mnémonique};
+    %\node[below of=tmov, node distance=7mm] (tops) {Opérandes};
+
+    %\draw[dway] (tlbl) -| ($ (lbl.south) + (0, -0.3) $);
+    %\draw[dway] (tmov) -| ($ (mov.south) + (0, -0.3) $);
+    %\draw[dway] (tops) -| ($ (ops.south) + (0, -0.3) $);
+
+  %\end{tikzpicture}
+  %\shorthandon{!}
+%\end{center}
+
+%Ces opérandes peuvent être de plusieurs types:
+
+%\begin{itemize}
+%\item
+%\item
+  %une opérande mémoire, c'est-à-dire le contenu de la mémoire à une
+  %adresse effective. Cette adresse effective peut être exprimée de
+  %plusieurs manières:
+  %\begin{itemize}
+  %\item
+    %directement: \texttt{addr}
+  %\item
+    %indirectement: \texttt{(\%ecx)}. L'adresse effective est le contenu
+    %du registre.
+  %\item
+    %``base + déplacement'': \texttt{4(\%ecx)}. L'adresse effective est
+    %le contenu du registre plus le déplacement (4 ici).
+  %\end{itemize}
+%\end{itemize}
+
+%En pratique il y a des modes d'adressage plus complexes, et toutes les
+%combinaisons ne sont pas possibles, mais ceux-ci suffiront à décrire les
+%exemples suivants:
+
+%\section{Fonctions et conventions d'appel}
+%\label{sec:convappel}
+
+%\begin{figure} % {{{ fig:stackframe
+%\input{fig/stackframe.tex}
+%\caption[Cadres de pile]{ Cadres de pile. }
+%\label{fig:stackframe}
+%\end{figure} % }}}
+
+%%TODO Mettre des vrais nombres plutôt que du symbolique
+
+%Dans le langage d'assemblage, il n'y a pas de notion de fonction; mais
+%\asminstr{call} et \asminstr{ret} permettent de sauvegarder et de restaurer une
+%adresse de retour, ce qui permet de faire un saut et revenir à l'adresse
+%initiale. Ce système permet déjà de créer des procédures, c'est-à-dire des
+%fonctions sans arguments ni valeur de retour.
+
+%Pour gérer ceux-ci, il faut que les deux morceaux (appelant et appelé) se
+%mettent d'accord sur une convention d'appel commune. La convention utilisée sous
+%GNU/Linux est appelée \emph{cdecl} et possède les caractéristiques suivantes:
+
+%\begin{itemize}
+%\item la valeur de retour d'une fonction est stockée dans \eax{}
+%\item \eax{}, \ecx{} et \edx{} peuvent être écrasés sans avoir à les sauvegarder
+%\item les arguments sont placés sur la pile (et enlevés) par l'appelant. Les
+  %paramètres sont empilés de droite à gauche.
+%\end{itemize}
+
+%Pour accéder à ses paramètres, une fonction peut donc utiliser un adressage
+%relatif à \esp. Cela peut fonctionner, mais cela complique les choses si elle
+%contient aussi des variables locales. En effet, les variables locales sont
+%placées sur la pile, au dessus des (c'est-à-dire, empilées après) paramètres,
+%augmentant le décalage.
+
+%Pour simplifier, la pile est organisée en cadres logiques: chaque cadre
+%correspond à un niveau dans la pile d'appels de fonctions. Si $f$ appelle $g$,
+%qui appelle $h$, il y aura dans l'ordre sur la pile le cadre de $f$, celui de
+%$g$ puis celui de $h$.
+
+%Ces cadres sont chainés à l'aide du registre \ebp{}: à tout moment, \ebp{}
+%contient l'adresse du cadre de l'appelant.
+
+%Prenons exemple sur la figure~\ref{fig:stackframe}: pour appeler
+%\verb!g(4,2)!, \texttt{f} empile les arguments de droite à gauche.
+%L'instruction \asminstr{call g} empile l'adresse de l'instruction suivante sur
+%la pile puis saute au début de \texttt{g}.
+
+%Au début de la fonction, les trois instructions permettent de sauvegarder
+%l'ancienne valeur de \ebp{}, faire pointer \ebp{} à une endroit fixe dans le
+%cadre de pile, puis allouer 8 octets de mémoire pour les variables locales.
+
+%Dans le corps de la fonction \texttt{g}, on peut donc se référer aux variables
+%locales par \texttt{-4(\%ebp)}, \texttt{-8(\%ebp)}, etc, et aux arguments par
+  %\texttt{8(\%ebp)}, \texttt{12(\%ebp)}, etc.
+
+%À la fin de la fonction, l'instruction \asminstr{leave} est équivalente à
+%\texttt{mov \%ebp, \%esp} puis \texttt{pop \%ebp} et permet de défaire le cadre
+%de pile, laissant l'adresse de retour en haut de pile. Le \asminstr{ret} final
+%la dépile et y saute.
+
 
 % vim: spelllang=fr
