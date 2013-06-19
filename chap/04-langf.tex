@@ -638,11 +638,7 @@ la définition de la fonction (liste de paramètres, de variables locales et
 corps). Remarquons que contrairement à certains langages, l'environnement n'est
 pas capturé (il n'y a pas de clôture lexicale).
 
-% TODO citer sur les closures?
-
 \item $Ω$: une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
-
-% TODO regrouper la présentation des différents cas d'erreur
 
 \end{itemize}
 
@@ -689,6 +685,25 @@ pas capturé (il n'y a pas de clôture lexicale).
   \caption{Valeurs}
 \label{fig:interp-val}
 \end{figure}%}}}
+
+Les erreurs peuvent être de plusieurs types:
+
+\begin{itemize}
+
+\item $\serr{div}$ correspond à une division par zéro. Cela arrive si la seconde
+opérande de $/$, $\%$ ou $\floatop{/}$ est nulle.
+
+\item $\serr{array}$ signale un débordement de tableau.
+
+\item $\serr{ptr}$ signale une manipulation ou un déréférencement de pointeur
+invalide. Par exemple, déréférencer le pointeur nul ou appliquer l'arithmétique
+en dehors d'un tableau provoque cette erreur.
+
+\item $\serr{field}$ arrive lorsqu'on accède à un champ inexistant d'une
+structure. Ce cas sera entièrement évité grâce au typage dans le
+chapitre~\ref{cha:typbase}.
+
+\end{itemize}
 
 La Figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
