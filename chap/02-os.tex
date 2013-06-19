@@ -257,52 +257,28 @@ Ici, pas de difficulté particulière: la communication entre le \ring{0} et le
 \ring{3} est faite uniquement à travers les registres, comme décrit dans la
 Section~\ref{sec:impl-syscall}.
 
-\begin{figure}
-\insertcode{appel-syscall-gettimeofday.c}
-\caption{Appel de gettimeofday}
-\label{fig:appel-gettimeofday}
-\end{figure}
-
 Mais la plupart des appels systèmes communiquent de l'information de manière
 indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
 espace d'adressage et passe un pointeur à l'appel système. Ce mécanisme est
 utilisé par exemple par la fonction \texttt{gettimeofday}
 (figure~\ref{fig:appel-gettimeofday}).
 
-% Fig mzones {{{
-\begin{figure}
-\input{fig/mzones.tex}
-\centering
-
-\subbottom{
-\label{fig:mzone1}
-\memoryframe{1}
-}
-
-\subbottom{
-\label{fig:mzone2}
-\memoryframe{2}
-}
-
-\subbottom{
-\label{fig:mzone3}
-\memoryframe{3}
-}
-
-\caption{Zones mémoire}
-\label{fig:mzones}
-\end{figure} % }}}
+\begin{figure}[h]
+\insertcode{appel-syscall-gettimeofday.c}
+\caption{Appel de gettimeofday}
+\label{fig:appel-gettimeofday}
+\end{figure}
 
 Considérons une implémentation naïve de cet appel système qui écrirait
-directement à l'adresse pointée. La figure~\ref{fig:mzone1} présente ce qui se
-passe lorsque le pointeur fourni est dans l'espace d'adressage du processus:
-c'est le cas d'utilisation normal et l'écriture est donc possible.
+directement à l'adresse pointée. Si le pointeur fourni est dans l'espace
+d'adressage du processus, on est dans le cas d'utilisation normal et l'écriture
+est donc possible.
 
-Si l'utilisateur passe un pointeur dont la valeur est supérieure à
-\texttt{0xc0000000} (figure~\ref{fig:mzone2}), que se passe-t-il? Comme le
-déréférencement est fait dans le code du noyau, il est également fait en
-\ring{0}, et va pouvoir être réalisé sans erreur: l'écriture se fait et
-potentiellement une structure importante du noyau est écrasée.
+Si l'utilisateur passe un pointeur dont la valeur correspond à la mémoire
+réservée au noyau, que se passe-t-il? Comme le déréférencement est fait dans le
+code du noyau, il est également fait en \ring{0}, et va pouvoir être réalisé
+sans erreur: l'écriture se fait et potentiellement une structure importante du
+noyau est écrasée.
 
 Un utilisateur malicieux peut donc utiliser cet appel système pour écrire à
 n'importe quelle adresse dans l'espace d'adressage du noyau. Ce problème vient
@@ -310,10 +286,10 @@ du fait que l'appel système utilise les privilèges du noyau au lieu de celui q
 contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused
 Deputy Problem}\cite{hardy88confused}.
 
-La bonne solution est de tester dynamiquement la valeur du pointeur: si la
-valeur du pointeur est supérieure à \texttt{0xc0000000}, il faut indiquer une
-erreur avant d'écrire (Figure~\ref{fig:mzone3}). Sinon, cela ne veut pas dire
-que le déréférencement se fera sans erreur, mais au moins le noyau est protégé.
+La bonne solution est de tester dynamiquement la valeur du pointeur: s'il pointe
+en espace noyau, il faut indiquer une erreur plutôt que d'écrire
+(Figure~avant\ref{fig:mzone3}). Sinon, il peut toujours y avoir une erreur, mais
+au moins le noyau est protégé.
 
 \begin{figure}
 \insertcode{implem-gettime.c}
