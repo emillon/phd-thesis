@@ -679,6 +679,7 @@ pas capturé (il n'y a pas de clôture lexicale).
     { \serr{ptr}   }{Erreur de pointeur}
     { \serr{div}   }{Division par zéro}
     { \serr{field} }{Erreur de champ}
+    { \serr{var}   }{Variable inconnue}
     {END}
   \end{align*}
 
@@ -702,6 +703,10 @@ en dehors d'un tableau provoque cette erreur.
 \item $\serr{field}$ arrive lorsqu'on accède à un champ inexistant d'une
 structure. Ce cas sera entièrement évité grâce au typage dans le
 chapitre~\ref{cha:typbase}.
+
+\item $\serr{var}$ se produit lorsqu'on accède à une variable qui n'est pas
+visible dans un état mémoire. Ce cas est également évité dans les programmes
+bien typés.
 
 \end{itemize}
 
@@ -842,12 +847,15 @@ Un certain nombre d'opérations est possibles sur les valeurs
   Chaque fonction peut accéder aux variables locales de la fonction en cours,
   ainsi qu'aux variables globales.
 
-  \begin{align*}
-    \cLookup{(s, g)}{x} = & (|s|, x)
-                                    \mbox{ si }|s| > 0
-                                    \mbox{ et }∃ (x, v) ∈ s_1 \\
-    \cLookup{(s, g)}{x} = & x \mbox{ si } (x, v) ∈ g
-  \end{align*}
+\[
+  \cLookup{(s, g)}{x} =
+        \begin{cases}
+            (|s|, x) & \mbox{ si } |s| > 0
+                       \mbox{ et } (x ↦ v) ∈ s_1 \\
+            x        & \mbox{ si } (x ↦ v) ∈ g \\
+            \serr{var} & \mbox{ sinon }
+        \end{cases}
+\]
 
 \end{definition}
 
@@ -857,10 +865,8 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  On définit l'empilement d'un cadre de pile $c = ((x_1, v_1), …, (x_n, v_n))$
+  On définit l'empilement d'un cadre de pile $c = ((x_1↦ v_1), …, (x_n↦ v_n))$
   sur un état mémoire $m = (s, g)$ (Figure~\ref{fig:stackops-push}):
-
-  % TODO notation pas cohérente avec la sémantique (flèches talonnées)
 
   \[
     \mathrm{Push}((s, g), c) = (c::s, g)
