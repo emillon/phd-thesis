@@ -620,7 +620,7 @@ Grâce à ce jugement, on peut donner la définition suivante.
       ∀ (x ↦ v) ∈ \mathrm{Visible}(m).
       ∃ τ,t.
       \begin{cases}
-          Γ ⊢ x : t
+          Γ ⊢ x : t % TODO dans Visible x peut aussi être une locale?? quid du numéro?
           \\
           \semtyp{m}{v}{τ}
           \\
@@ -855,7 +855,7 @@ se trouve en Annexe~\ref{proof:progres}.
 
   Supposons que $Γ ⊢ x : t$ et $\mcomp{Γ}{m}$.
 
-  On pose $a = \mathrm{Lookup} (x, m)$.
+  On pose $a = \cLookup{x}{m}$.
 
   Alors il existe $τ$ tel que $\semtyp{m}{m{[a]}_A}{τ}$ avec $\tComp{τ}{t}$.
 

@@ -638,11 +638,7 @@ la définition de la fonction (liste de paramètres, de variables locales et
 corps). Remarquons que contrairement à certains langages, l'environnement n'est
 pas capturé (il n'y a pas de clôture lexicale).
 
-% TODO citer sur les closures?
-
 \item $Ω$: une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
-
-% TODO regrouper la présentation des différents cas d'erreur
 
 \end{itemize}
 
@@ -683,12 +679,36 @@ pas capturé (il n'y a pas de clôture lexicale).
     { \serr{ptr}   }{Erreur de pointeur}
     { \serr{div}   }{Division par zéro}
     { \serr{field} }{Erreur de champ}
+    { \serr{var}   }{Variable inconnue}
     {END}
   \end{align*}
 
   \caption{Valeurs}
 \label{fig:interp-val}
 \end{figure}%}}}
+
+Les erreurs peuvent être de plusieurs types:
+
+\begin{itemize}
+
+\item $\serr{div}$ correspond à une division par zéro. Cela arrive si la seconde
+opérande de $/$, $\%$ ou $\floatop{/}$ est nulle.
+
+\item $\serr{array}$ signale un débordement de tableau.
+
+\item $\serr{ptr}$ signale une manipulation ou un déréférencement de pointeur
+invalide. Par exemple, déréférencer le pointeur nul ou appliquer l'arithmétique
+en dehors d'un tableau provoque cette erreur.
+
+\item $\serr{field}$ arrive lorsqu'on accède à un champ inexistant d'une
+structure. Ce cas sera entièrement évité grâce au typage dans le
+chapitre~\ref{cha:typbase}.
+
+\item $\serr{var}$ se produit lorsqu'on accède à une variable qui n'est pas
+visible dans un état mémoire. Ce cas est également évité dans les programmes
+bien typés.
+
+\end{itemize}
 
 La Figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
@@ -702,10 +722,9 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 \item
   un couple $\msi{m}{e}$ où $e$ est une expression et $m$ un état
   mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
-  réalisée. Par exemple $\mm{([], [x,3])}{3}{([], [x,3])}{\widehat{3}}$
+  réalisée. Par exemple $\mm{([], [x↦3])}{3}{([], [x↦3])}{\widehat{3}}$
   L'évaluation des expressions est détaillée dans la
   Section~\ref{sec:eval-exp}.
-% TODO widehat sur le 3? est-ce qu'il faut distinguer les valeurs?
 \item
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
   mémoire. La réduction instructions est traitée dans la
@@ -772,7 +791,6 @@ Un certain nombre d'opérations est possibles sur les valeurs
     Il est donc possible que deux pointeurs pointent sur la même adresse mais
     soient considérés différents. La raison pour ce choix est que la comparaison
     doit pouvoir se faire sans accéder à la mémoire.
-    % TODO exemple
   }.
 \item
   les opérations de comparaison $≤,≥,<,>$ sont définies avec leur sémantique
@@ -828,12 +846,15 @@ Un certain nombre d'opérations est possibles sur les valeurs
   Chaque fonction peut accéder aux variables locales de la fonction en cours,
   ainsi qu'aux variables globales.
 
-  \begin{align*}
-    \mathrm{Lookup} ((s, g), x) = & (|s|, x)
-                                    \mbox{ si }|s| > 0
-                                    \mbox{ et }∃ (x, v) ∈ s_1 \\
-    \mathrm{Lookup} ((s, g), x) = & x \mbox{ si } (x, v) ∈ g
-  \end{align*}
+\[
+  \cLookup{(s, g)}{x} =
+        \begin{cases}
+            (|s|, x) & \mbox{ si } |s| > 0
+                       \mbox{ et } (x ↦ v) ∈ s_1 \\
+            x        & \mbox{ si } (x ↦ v) ∈ g \\
+            \serr{var} & \mbox{ sinon }
+        \end{cases}
+\]
 
 \end{definition}
 
@@ -843,10 +864,8 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Manipulations de pile]
 
-  On définit l'empilement d'un cadre de pile $c = ((x_1, v_1), …, (x_n, v_n))$
+  On définit l'empilement d'un cadre de pile $c = ((x_1↦ v_1), …, (x_n↦ v_n))$
   sur un état mémoire $m = (s, g)$ (Figure~\ref{fig:stackops-push}):
-
-  % TODO notation pas cohérente avec la sémantique (flèches talonnées)
 
   \[
     \mathrm{Push}((s, g), c) = (c::s, g)
@@ -1052,7 +1071,23 @@ déréférencement de $p$ va modifier $x$.
 
 On définit ici quelques lentilles.
 
-\begin{definition}[Accès à une liste d'associations]
+\subsection*{Accès à une liste par indice : $I$}
+
+% TODO global : cohérence entre ≤ et la notation intervalles
+
+On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
+permettant d'accéder aux éléments d'une liste par leur indice.
+
+\begin{align*}
+    l{[n]}_I     &= l_n \mbox{ si } 1 ≤ n ≤ |l| \\
+    l{[n ← x]}_I &= l' \\
+           \mbox{ où } & l'_n = x \\
+                       & ∀ i ≠ n, l'_i = l_i
+\end{align*}
+
+I n'est définie que pour $1 ≤ n ≤ |l|$.
+
+\subsection*{Accès à une liste d'associations : $L$}
 
   Une liste d'association est une liste de paires (clef, valeur) avec
   l'invariant supplémentaire que les clefs sont uniques. Il est donc possible de
@@ -1060,60 +1095,75 @@ On définit ici quelques lentilles.
   également possible, en remplaçant un couple par un couple avec une valeur
   différente.
 
-  L'accesseur ${[\cdot]}_L$ est défini par:
+\begin{align*}
+l{[x]}_L  &=
+    \begin{cases}
+        v          & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v. l_n = (x ↦ v) \\
+        \serr{var} & \mbox{ sinon }
+    \end{cases} \\
+l{[x ← v]}_L  &=
+    \begin{cases}
+        l{[n ← (x ↦ v)]}_I & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v_0. l_n = (x ↦ v_0) \\
+        \serr{var} & \mbox{ sinon }
+    \end{cases} \\
+\end{align*}
 
-  \begin{align*}
-    l{[x]}_L     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
-    l{[x ← v]}_L = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \}
-  \end{align*}
+\subsection*{Accès par adresse : $A$}
 
-\end{definition}
+Les états mémoire sont constitués des listes d'association (nom, valeur).
 
-\begin{definition}[Accès par adresse]
+L'accesseur par adresse ${[\cdot]}_A$ permet de généraliser l'accès à ces
+valeurs en utilisant comme clef non pas un nom mais une adresse.
 
-  Les états mémoire sont constitués des listes d'association (nom, valeur).
+Selon cette adresse, on accède soit à la liste des globales, soit à une
+des listes de la pile des locales.
 
-  L'accesseur par adresse ${[\cdot]}_A$ permet de généraliser l'accès à ces
-  valeurs en utilisant comme clef non pas un nom mais une adresse.
+On pose $m = (s, g)$.
 
-  Selon cette adresse, on accède soit à la liste des globales, soit à une des
-  listes de la pile des locales.
+Les accès aux globales se font de la manière suivante. Si la variable n'existe
+pas, notons que $L$ retourne $\serr{var}$.
 
-  Pour $m = (s, g)$,
+\begin{align*}
+m {[x]}_A     = & g{[x]}_L \\
+m {[x ← v]}_A = & (s, g{[x←v]}_L) \\
+\end{align*}
 
-  \begin{align*}
-    m {[x]}_A          = & g{[x]}_L           & \textrm{Lecture d'une globale} \\
-    m {[(n, x)]}_A     = & s_{|l|-n+1}{[x]}_L & \textrm{Lecture d'une locale} \\
-    m {[x ← v]}_A      = & (s, g{[x←v]}_L)    & \textrm{Écriture d'une globale} \\
-    m {[(n, x) ← v]}_A = & (s', g)          & \textrm{Écriture d'une locale} \\
-           \mbox{ où } & s'_{|l|-n+1} = s_{|l|-n+1}{[x ← v]}_L \\
-                       & ∀ i ≠ |l|-n+1, s'_i = s_i
-  \end{align*}
+Les accès aux locales reviennent à accéder à la bonne variable du bon cadre de
+pile. Cela revient naturellement à composer les lentilles $L$ et $I$. On définit
+donc une lentille $ℒ_{n,x} = I(|s|-n+1) \ggg L(x)$ qui accède à la variable $x$
+du $n$\ieme cadre de pile.
 
-% TODO normalement grâce à clean ça fail jamais
-
-\end{definition}
+\begin{align*}
+m {[(n, x)]}_A     & = \begin{cases}
+                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                           \serr{var}          & \mbox{ sinon}
+                       \end{cases} \\
+m {[(n, x) ← v]}_A & = \begin{cases}
+                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                            \serr{var}          & \mbox{ sinon}
+                       \end{cases} \\
+\end{align*}
 
 Les numéros de cadre qui permettent d'identifier les locales (le $n$ dans $(n,
 x)$) croissent avec la pile. D'autre part, l'empilement se fait en tête de liste
 (près de l'indice 1). Donc pour accéder aux plus vieilles locales (numérotées
 1), il faut accéder au dernier élément de la liste. Ceci explique pourquoi un
-indice $|l|-n+1$ apparaît dans la définition précédente.
+indice $|s|-n+1$ apparaît dans la définition précédente.
 
-\begin{definition}[Accès par champ]
+\subsection*{Accès par champ : $F$}
 
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
 
-  L'accesseur ${[ \cdot ]}_L$ permet de lire et de modifier un champ de ces
+  L'accesseur ${[ \cdot ]}_F$ permet de lire et de modifier un champ de ces
   valeurs.
 
   L'erreur $\serr{field}$ est levée si on accède à un champ non existant.
 
   \begin{align*}
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_L =
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_F =
           & v_i \mbox{ si } ∃i∈[1;n], l=l_i\\
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_L = &
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_F = &
         \eStruct{ l_1 : v_1 \\
        & ; … \\
        & ; l_{p-1} : v_{p-1} \\
@@ -1121,35 +1171,31 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
        & ; l_{p+1} : v_{p+1} \\
        & ; … \\
        & ; l_n : v_n } \mbox{ si } ∃p ∈ [1;n], l = l_p \\
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_L = & \serr{field} \mbox{ sinon} \\
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_L = & \serr{field} \mbox{ sinon}
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_F = & \serr{field} \mbox{ sinon} \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_F = & \serr{field} \mbox{ sinon}
   \end{align*}
 
-\end{definition}
+\subsection*{Accès par indice de tableau : $T$}
 
-\begin{definition}[Accès par indice]
-
-  On définit de même un accesseur ${[\cdot]}_I$ pour les accès par indice à des
+  On définit de même un accesseur ${[\cdot]}_T$ pour les accès par indice à des
   valeurs tableaux. Néanmoins le paramètre indice est toujours un entier et pas
   une expression arbitraire.
 
   \begin{align*}
-    \eArray{ v_1 ; … ; v_n } {[i]}_I   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
-    \eArray{ v_1 ; … ; v_n } {[i]}_I   = & \serr{array} \textrm{ sinon} \\
-    \eArray{ v_1 ; … ; v_n } {[i←v]}_I = & \eArray{ v'_1 ; … ; v'_n } \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } {[i]}_T   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } {[i]}_T   = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } {[i←v]}_T = & \eArray{ v'_1 ; … ; v'_n } \textrm{ si } i ∈ [0;n-1] \\
                       \mbox{ où } & \begin{cases}
                                       v'_i = v \\
                                       ∀j≠i, v'_j = v_j \\
                                     \end{cases} \\
-    \eArray{ v_1 ; … ; v_n } {[i←v]}_I = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } {[i←v]}_T = & \serr{array} \textrm{ sinon} \\
   \end{align*}
 
   % TODO off by ones...
 
-\end{definition}
-
-\begin{definition}[Accès par chemin]
-\label{def:acces-phi}
+\subsection*{Accès par chemin : $Φ$}
+\label{subsec:acces-phi}
 
   L'accès par chemin $Φ$ permet de lire et de modifier la mémoire en profondeur.
 
@@ -1163,8 +1209,8 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
   (définition~\ref{def:lens-comp}):
 
   \begin{align*}
-    Φ(φ.l)  = & Φ(φ) \ggg L(l) \\
-    Φ(φ[i]) = & Φ(φ) \ggg I(i) \\
+    Φ(φ.l)  = & Φ(φ) \ggg F(l) \\
+    Φ(φ[i]) = & Φ(φ) \ggg T(i) \\
   \end{align*}
 
   Le déréférencement est défini comme suit:
@@ -1181,10 +1227,8 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
     m{[\eNull ← v]}_Φ = & \serr{ptr} \\
   \end{align*}
 
-\end{definition}
-
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
-suffit d'appliquer les bons accesseurs: ${[\cdot]}_L$ pour $φ.l$, etc.
+suffit d'appliquer les bons accesseurs: ${[\cdot]}_F$ pour $φ.l_S$, etc.
 
 En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
 et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
@@ -1194,7 +1238,7 @@ qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 
 \begin{itemize}
 \item obtenir la valeur à modifier (soit $m{[φ]}_Φ$)
-\item construitre une valeur altérée (en appliquant par exemple ${[l←v]}_L$)
+\item construitre une valeur altérée (en appliquant par exemple ${[l←v]}_F$)
 \item affecter cette valeur au même chemin (le $m{[φ ← …]}_Φ$ externe)
 \end{itemize}
 
@@ -1328,14 +1372,12 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \item
   En combinant les résultats de 2.\ et 4.\ on en déduit que
   $\mmstar{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
-% TODO comment combiner?
 \item D'après la règle~\textsc{Exp-Binop},
   $ \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5.\ et 6., on a par combinaison
   $\mmstar{m}{e_1~\opbin~e_2}{m''}{v}$
   en posant
   $v = v_1~\widehat{\opbin}~v_2$.
-% TODO comment combiner?
 \end{enumerate}
 
 \section{Expressions}

@@ -26,9 +26,8 @@ au code noyau, que nous analysons ici). Ceci correspond à des données provenan
 de l'extérieur du système vérifié. Pour faire un parallèle avec la programmation
 réseau, cela correspond à des variables dont la valeur proviendrait d'un client
 distant. C'est une propriété statique, qui peut être déterminée à la compilation
-à partir de considérations syntaxiques.
-
-%TODO[E]: est-ce vrai ? que se passe-t'il en cas de if?
+à partir de considérations syntaxiques. Par exemple, l'adresse d'une variable
+locale est toujours considérée comme étant contrôlée par le noyau.
 
 Un pointeur pointant vers l'espace utilisateur fait référence à une variable
 allouée en espace utilisateur. Cela veut dire qu'y accéder ne risque pas de
@@ -186,8 +185,8 @@ ici:
 \end{mathpar}
 
 Les accès à la mémoire sont en effet faits par le biais de la lentille $Φ$. Il
-suffit donc d'adapter la définition~\ref{def:acces-phi} de celle-ci en rajoutant
-le cas:
+suffit donc d'adapter sa définition (page~\pageref{subsec:acces-phi}) de
+celle-ci en rajoutant le cas:
 
 \begin{align*}
 Φ(\vTainted{φ}) &= \serr{taint}
@@ -198,11 +197,14 @@ $\ctuF$. L'idée est que celles-ci testent dynamiquement la \emph{valeur} du
 paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci pointe vers
 l'espace utilisateur (c'est-à-dire, qu'il est de la forme $\vTainted{φ}$).
 
-Deux cas peuvent se produire. Si ce test est vrai, alors la copie est faite et
-l'opération de copie retourne la valeur entière $0$. Dans le cas contraire,
-aucune copie n'est faite et la valeur $-1$ est retournée. Ce comportement est
-calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du noyau Linux: en cas
-de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT} ($= -14$).
+Deux cas peuvent se produire. Soit la partie à vérifier a la forme
+$\vTainted{φ'}$, soit non (et dans ce cas $∄φ', φ = \vTainted{φ'}$). Dans le
+premier cas (règles \textsc{User-*-OK}), alors la copie est faite et l'opération
+de copie retourne la valeur entière $0$. Dans le second (règles
+\textsc{User-*-Err}), aucune copie n'est faite et la valeur $-1$ est retournée.
+Ce comportement est calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du
+noyau Linux: en cas de succès elles renvoient $0$, et en cas d'erreur
+\texttt{-EFAULT} ($= -14$).
 
 \begin{mathpar}
   \semrule{User-Get-OK}
@@ -213,8 +215,6 @@ de succès elles renvoient $0$, et en cas d'erreur \texttt{-EFAULT} ($= -14$).
 
   \semrule{User-Put-Err}
 \end{mathpar}
-
-%TODO[E] à discuter
 
 Ces règles sont à appliquer en priorité de la règle d'appel de fonction
 classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
@@ -255,9 +255,17 @@ conclusion n'est pas vraie:
 
 \begin{itemize}
   \item
-    On a bien $\mcomp{Γ}{m}$.
+    On a bien $\mcomp{Γ}{m}$. En effet $\mathrm{Visible}(m) = \{(x ↦ 0)\}$ et:
 
-    % TODO dérivation?
+    \[
+    \begin{cases}
+      Γ ⊢ x : \tInt
+      \\
+      \semtyp{m}{0}{\tInt}
+      \\
+      \tComp{\tInt}{\tInt}
+    \end{cases}
+    \]
 
   \item
     $e$ est bien typée sous $Γ$:

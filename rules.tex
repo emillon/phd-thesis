@@ -280,7 +280,7 @@
              { \mmlv{m}{\ctxSubI{C_I}{i}}{m'}{\ctxSubI{C_I}{i'}} }
     }
     {Phi-Var}{ \irule{Phi-Var}
-                 { a = \mathrm{Lookup}(x, m) }
+                 { a = \cLookup{x}{m} }
                  {
                    \mmlv{m}{x}{m}{a}
                  }
@@ -429,7 +429,7 @@
     }
     {User-Get-Err}{ \irule{User-Get-Err}
                       {
-                        ∄~φ_s, φ = \vTainted{φ_s}
+                        ∄~φ_s. φ = \vTainted{φ_s}
                       }
                       { \mm{m}{\uGet{φ_d}{φ}}
                            {m}{-1}
@@ -445,7 +445,7 @@
     }
     {User-Put-Err}{ \irule{User-Put-Err}
                       {
-                        ∄~φ_d, φ = \vTainted{φ_d}
+                        ∄~φ_d. φ = \vTainted{φ_d}
                       }
                       { \mm{m}{\uPut{φ}{φ_s}}
                            {m}{-1}
