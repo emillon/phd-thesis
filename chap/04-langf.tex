@@ -791,7 +791,6 @@ Un certain nombre d'opérations est possibles sur les valeurs
     Il est donc possible que deux pointeurs pointent sur la même adresse mais
     soient considérés différents. La raison pour ce choix est que la comparaison
     doit pouvoir se faire sans accéder à la mémoire.
-    % TODO exemple
   }.
 \item
   les opérations de comparaison $≤,≥,<,>$ sont définies avec leur sémantique
@@ -1072,25 +1071,9 @@ déréférencement de $p$ va modifier $x$.
 
 On définit ici quelques lentilles.
 
-\subsection*{Accès à une liste d'associations : $L$}
-
-  Une liste d'association est une liste de paires (clef, valeur) avec
-  l'invariant supplémentaire que les clefs sont uniques. Il est donc possible de
-  trouver au plus une valeur associée à une clef donnée. L'écriture est
-  également possible, en remplaçant un couple par un couple avec une valeur
-  différente.
-
-  L'accesseur ${[\cdot]}_L$ est défini par:
-
-  \begin{align*}
-    l{[x]}_L     = & v \mbox{ où } \{v\} = \{y / (x, y) ∈ l\} \\
-    l{[x ← v]}_L = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \}
-  \end{align*}
-
-% TODO renvoyer \serr{var}
-% TODO utiliser I?
-
 \subsection*{Accès à une liste par indice : $I$}
+
+% TODO global : cohérence entre ≤ et la notation intervalles
 
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
 permettant d'accéder aux éléments d'une liste par leur indice.
@@ -1103,6 +1086,27 @@ permettant d'accéder aux éléments d'une liste par leur indice.
 \end{align*}
 
 I n'est définie que pour $1 ≤ n ≤ |l|$.
+
+\subsection*{Accès à une liste d'associations : $L$}
+
+  Une liste d'association est une liste de paires (clef, valeur) avec
+  l'invariant supplémentaire que les clefs sont uniques. Il est donc possible de
+  trouver au plus une valeur associée à une clef donnée. L'écriture est
+  également possible, en remplaçant un couple par un couple avec une valeur
+  différente.
+
+\begin{align*}
+l{[x]}_L  &=
+    \begin{cases}
+        v          & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v. l_n = (x ↦ v) \\
+        \serr{var} & \mbox{ sinon }
+    \end{cases} \\
+l{[x ← v]}_L  &=
+    \begin{cases}
+        l{[n ← (x ↦ v)]}_I & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v_0. l_n = (x ↦ v_0) \\
+        \serr{var} & \mbox{ sinon }
+    \end{cases} \\
+\end{align*}
 
 \subsection*{Accès par adresse : $A$}
 
