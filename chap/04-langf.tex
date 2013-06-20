@@ -1072,7 +1072,7 @@ déréférencement de $p$ va modifier $x$.
 
 On définit ici quelques lentilles.
 
-\begin{definition}[Accès à une liste d'associations]
+\subsection*{Accès à une liste d'associations : $L$}
 
   Une liste d'association est une liste de paires (clef, valeur) avec
   l'invariant supplémentaire que les clefs sont uniques. Il est donc possible de
@@ -1090,9 +1090,8 @@ On définit ici quelques lentilles.
 % TODO renvoyer \serr{var}
 % TODO utiliser I?
 
-\end{definition}
+\subsection*{Accès à une liste par indice : $I$}
 
-\begin{definition}[Accès à une liste par indice]
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
 permettant d'accéder aux éléments d'une liste par leur indice.
 
@@ -1105,9 +1104,7 @@ permettant d'accéder aux éléments d'une liste par leur indice.
 
 I n'est définie que pour $1 ≤ n ≤ |l|$.
 
-\end{definition}
-
-\begin{definition}[Accès par adresse]
+\subsection*{Accès par adresse : $A$}
 
 Les états mémoire sont constitués des listes d'association (nom, valeur).
 
@@ -1143,15 +1140,13 @@ m {[(n, x) ← v]}_A & = \begin{cases}
                        \end{cases} \\
 \end{align*}
 
-\end{definition}
-
 Les numéros de cadre qui permettent d'identifier les locales (le $n$ dans $(n,
 x)$) croissent avec la pile. D'autre part, l'empilement se fait en tête de liste
 (près de l'indice 1). Donc pour accéder aux plus vieilles locales (numérotées
 1), il faut accéder au dernier élément de la liste. Ceci explique pourquoi un
 indice $|s|-n+1$ apparaît dans la définition précédente.
 
-\begin{definition}[Accès par champ]
+\subsection*{Accès par champ : $F$}
 
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
@@ -1176,31 +1171,27 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_F = & \serr{field} \mbox{ sinon}
   \end{align*}
 
-\end{definition}
+\subsection*{Accès par indice de tableau : $T$}
 
-\begin{definition}[Accès par indice]
-
-  On définit de même un accesseur ${[\cdot]}_I$ pour les accès par indice à des
+  On définit de même un accesseur ${[\cdot]}_T$ pour les accès par indice à des
   valeurs tableaux. Néanmoins le paramètre indice est toujours un entier et pas
   une expression arbitraire.
 
   \begin{align*}
-    \eArray{ v_1 ; … ; v_n } {[i]}_I   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
-    \eArray{ v_1 ; … ; v_n } {[i]}_I   = & \serr{array} \textrm{ sinon} \\
-    \eArray{ v_1 ; … ; v_n } {[i←v]}_I = & \eArray{ v'_1 ; … ; v'_n } \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } {[i]}_T   = & v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
+    \eArray{ v_1 ; … ; v_n } {[i]}_T   = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } {[i←v]}_T = & \eArray{ v'_1 ; … ; v'_n } \textrm{ si } i ∈ [0;n-1] \\
                       \mbox{ où } & \begin{cases}
                                       v'_i = v \\
                                       ∀j≠i, v'_j = v_j \\
                                     \end{cases} \\
-    \eArray{ v_1 ; … ; v_n } {[i←v]}_I = & \serr{array} \textrm{ sinon} \\
+    \eArray{ v_1 ; … ; v_n } {[i←v]}_T = & \serr{array} \textrm{ sinon} \\
   \end{align*}
 
   % TODO off by ones...
 
-\end{definition}
-
-\begin{definition}[Accès par chemin]
-\label{def:acces-phi}
+\subsection*{Accès par chemin : $Φ$}
+\label{def:acces-phi} % TODO remplacer par une pageref
 
   L'accès par chemin $Φ$ permet de lire et de modifier la mémoire en profondeur.
 
@@ -1214,8 +1205,8 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
   (définition~\ref{def:lens-comp}):
 
   \begin{align*}
-    Φ(φ.l)  = & Φ(φ) \ggg L(l) \\
-    Φ(φ[i]) = & Φ(φ) \ggg I(i) \\
+    Φ(φ.l)  = & Φ(φ) \ggg F(l) \\
+    Φ(φ[i]) = & Φ(φ) \ggg T(i) \\
   \end{align*}
 
   Le déréférencement est défini comme suit:
@@ -1231,8 +1222,6 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     m{[\eNull    ]}_Φ = & \serr{ptr} \\
     m{[\eNull ← v]}_Φ = & \serr{ptr} \\
   \end{align*}
-
-\end{definition}
 
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
 suffit d'appliquer les bons accesseurs: ${[\cdot]}_F$ pour $φ.l_S$, etc.
