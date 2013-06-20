@@ -843,10 +843,10 @@ Un certain nombre d'opérations est possibles sur les valeurs
   ainsi qu'aux variables globales.
 
   \begin{align*}
-    \mathrm{Lookup} ((s, g), x) = & (|s|, x)
+    \cLookup{(s, g)}{x} = & (|s|, x)
                                     \mbox{ si }|s| > 0
                                     \mbox{ et }∃ (x, v) ∈ s_1 \\
-    \mathrm{Lookup} ((s, g), x) = & x \mbox{ si } (x, v) ∈ g
+    \cLookup{(s, g)}{x} = & x \mbox{ si } (x, v) ∈ g
   \end{align*}
 
 \end{definition}
