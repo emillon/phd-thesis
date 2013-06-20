@@ -1087,30 +1087,61 @@ On définit ici quelques lentilles.
     l{[x ← v]}_L = & (x, v) :: \{ (y, v) ∈ g(x) / y ≠ x \}
   \end{align*}
 
+% TODO renvoyer \serr{var}
+% TODO utiliser I?
+
+\end{definition}
+
+\begin{definition}[Accès à une liste par indice]
+On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
+permettant d'accéder aux éléments d'une liste par leur indice.
+
+\begin{align*}
+    l{[n]}_I     &= l_n \mbox{ si } 1 ≤ n ≤ |l| \\
+    l{[n ← x]}_I &= l' \\
+           \mbox{ où } & l'_n = x \\
+                       & ∀ i ≠ n, l'_i = l_i
+\end{align*}
+
+I n'est définie que pour $1 ≤ n ≤ |l|$.
+
 \end{definition}
 
 \begin{definition}[Accès par adresse]
 
-  Les états mémoire sont constitués des listes d'association (nom, valeur).
+Les états mémoire sont constitués des listes d'association (nom, valeur).
 
-  L'accesseur par adresse ${[\cdot]}_A$ permet de généraliser l'accès à ces
-  valeurs en utilisant comme clef non pas un nom mais une adresse.
+L'accesseur par adresse ${[\cdot]}_A$ permet de généraliser l'accès à ces
+valeurs en utilisant comme clef non pas un nom mais une adresse.
 
-  Selon cette adresse, on accède soit à la liste des globales, soit à une des
-  listes de la pile des locales.
+Selon cette adresse, on accède soit à la liste des globales, soit à une
+des listes de la pile des locales.
 
-  Pour $m = (s, g)$,
+On pose $m = (s, g)$.
 
-  \begin{align*}
-    m {[x]}_A          = & g{[x]}_L           & \textrm{Lecture d'une globale} \\
-    m {[(n, x)]}_A     = & s_{|l|-n+1}{[x]}_L & \textrm{Lecture d'une locale} \\
-    m {[x ← v]}_A      = & (s, g{[x←v]}_L)    & \textrm{Écriture d'une globale} \\
-    m {[(n, x) ← v]}_A = & (s', g)          & \textrm{Écriture d'une locale} \\
-           \mbox{ où } & s'_{|l|-n+1} = s_{|l|-n+1}{[x ← v]}_L \\
-                       & ∀ i ≠ |l|-n+1, s'_i = s_i
-  \end{align*}
+Les accès aux globales se font de la manière suivante. Si la variable n'existe
+pas, notons que $L$ retourne $\serr{var}$.
 
-% TODO normalement grâce à clean ça fail jamais
+\begin{align*}
+m {[x]}_A     = & g{[x]}_L \\
+m {[x ← v]}_A = & (s, g{[x←v]}_L) \\
+\end{align*}
+
+Les accès aux locales reviennent à accéder à la bonne variable du bon cadre de
+pile. Cela revient naturellement à composer les lentilles $L$ et $I$. On définit
+donc une lentille $ℒ_{n,x} = I(|s|-n+1) \ggg L(x)$ qui accède à la variable $x$
+du $n$\ieme cadre de pile.
+
+\begin{align*}
+m {[(n, x)]}_A     & = \begin{cases}
+                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                           \serr{var}          & \mbox{ sinon}
+                       \end{cases} \\
+m {[(n, x) ← v]}_A & = \begin{cases}
+                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                            \serr{var}          & \mbox{ sinon}
+                       \end{cases} \\
+\end{align*}
 
 \end{definition}
 
@@ -1118,22 +1149,22 @@ Les numéros de cadre qui permettent d'identifier les locales (le $n$ dans $(n,
 x)$) croissent avec la pile. D'autre part, l'empilement se fait en tête de liste
 (près de l'indice 1). Donc pour accéder aux plus vieilles locales (numérotées
 1), il faut accéder au dernier élément de la liste. Ceci explique pourquoi un
-indice $|l|-n+1$ apparaît dans la définition précédente.
+indice $|s|-n+1$ apparaît dans la définition précédente.
 
 \begin{definition}[Accès par champ]
 
   Les valeurs qui sont des structures possèdent des sous-valeurs, associées à
   des noms de champ.
 
-  L'accesseur ${[ \cdot ]}_L$ permet de lire et de modifier un champ de ces
+  L'accesseur ${[ \cdot ]}_F$ permet de lire et de modifier un champ de ces
   valeurs.
 
   L'erreur $\serr{field}$ est levée si on accède à un champ non existant.
 
   \begin{align*}
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_L =
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_F =
           & v_i \mbox{ si } ∃i∈[1;n], l=l_i\\
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_L = &
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_F = &
         \eStruct{ l_1 : v_1 \\
        & ; … \\
        & ; l_{p-1} : v_{p-1} \\
@@ -1141,8 +1172,8 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
        & ; l_{p+1} : v_{p+1} \\
        & ; … \\
        & ; l_n : v_n } \mbox{ si } ∃p ∈ [1;n], l = l_p \\
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_L = & \serr{field} \mbox{ sinon} \\
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_L = & \serr{field} \mbox{ sinon}
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_F = & \serr{field} \mbox{ sinon} \\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_F = & \serr{field} \mbox{ sinon}
   \end{align*}
 
 \end{definition}
@@ -1204,7 +1235,7 @@ indice $|l|-n+1$ apparaît dans la définition précédente.
 \end{definition}
 
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
-suffit d'appliquer les bons accesseurs: ${[\cdot]}_L$ pour $φ.l$, etc.
+suffit d'appliquer les bons accesseurs: ${[\cdot]}_F$ pour $φ.l_S$, etc.
 
 En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
 et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
@@ -1214,7 +1245,7 @@ qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 
 \begin{itemize}
 \item obtenir la valeur à modifier (soit $m{[φ]}_Φ$)
-\item construitre une valeur altérée (en appliquant par exemple ${[l←v]}_L$)
+\item construitre une valeur altérée (en appliquant par exemple ${[l←v]}_F$)
 \item affecter cette valeur au même chemin (le $m{[φ ← …]}_Φ$ externe)
 \end{itemize}
 
