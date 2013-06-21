@@ -456,9 +456,27 @@ Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
 φ$, on peut appliquer \textsc{Exp-AddrOf}.
 
 %}}}
-\paragraph{\textsc{Set}:} % {{{ TODO
+\paragraph{\textsc{Set}:} % {{{
 
-\[ \left( \disprule{Set} \right) \]
+On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+
+\item $lv = φ$. On applique l'hypothèse de récurrence à $e$.
+
+    \begin{itemize}
+    \item $e = v$. Alors on peut appliquer \textsc{Exp-Set}. Puisque l'état
+        mémoire est modifié en $m' = m{[φ ← v]}_Φ$, il reste à montrer que
+        $\mcomp{Γ}{m'}$. % TODO
+
+    \item $\mm{m}{e}{m'}{e'}$. On conclut avec $C = φ ← \ctxEmpty$.
+    \item $\msi{m}{e} → Ω$. Idem.
+    \end{itemize}
+
+\item $\mm{m}{lv}{m'}{lv'}$. On conclut avec $C = \ctxEmpty ← e$.
+\item $\msi{m}{lv} → Ω$. Idem.
+
+\end{itemize}
 
 %}}}
 \paragraph{\textsc{Array}:} % {{{
