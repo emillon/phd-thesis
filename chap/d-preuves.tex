@@ -232,6 +232,8 @@ et~\ref{thm:progres-lv}.
 
   \paragraph{\textsc{Cst-Int}:} % {{{
 $e$ est alors de la forme $n$, qui est une valeur.
+
+% TODO en fait n → \widehat{n} non? idem pour float null unit
 %}}}
   \paragraph{\textsc{Cst-Float}:} % {{{
 $e$ est alors de la forme $d$, qui est une valeur.
@@ -521,19 +523,25 @@ $f (v_1, …, v_n)$
 avec
 $f = \eFun{\vec{a}}{i}$
 :
-\textsc{Exp-Call} s'applique alors.
+\textsc{Exp-Call} s'applique alors. Cette règle modifie la mémoire :
 
-% TODO cohérence mémoire
+\[ \semrule{Exp-Call} \]
+
+Il reste à prouver que $\mcomp{Γ}{m_4}$.
+
+% TODO
 
 %}}}
 \paragraph{\textsc{Fun}:} % {{{
 
 Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 
+\[ \semrule{Exp-Fun} \]
+
+\[ \disprule{Fun} \]
+
 %}}}
 % TODO vérifier qu'il n'y a pas d'autre règle
-% TODO général: que désigne e. Ex avec lv[e]
-% TODO prouver aussi mcomp
 \end{proof}
 
 \section{Préservation}
