@@ -394,14 +394,7 @@ Ce cas est similaire à \textsc{Op-Int}.
 %}}}
 \paragraph{\textsc{Op-Eq}:} %{{{
 Ce cas est similaire à \textsc{Op-Int}.
-% TODO expand un peu
 % TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
-%}}}
-\paragraph{\textsc{Op-Comparable}:} %{{{
-Ce cas est similaire à \textsc{Op-Int}.
-% TODO expand un peu
-% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
-% TODO n'existe plus?
 %}}}
 \paragraph{\textsc{Unop-Plus-Int}:} % {{{
 
@@ -412,7 +405,6 @@ Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$:
   soit $e_1 = v_1$. Alors en appliquant \textsc{Exp-UnOp},
   $\mm{m}{+~v_1}{m}{\widehat{+}~v_1}$, c'est-à-dire en posant $v =
   \widehat{+}~v_1$, $\mm{m}{e}{m}{v}$.
-% TODO écrire la règle
 \item
   soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
 avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
@@ -455,21 +447,13 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 \textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
 
 %}}}
-\paragraph{\textsc{Addr}:} % {{{ TODO
-
-\[ \left( \disprule{Addr} \right) \]
+\paragraph{\textsc{Addr}:} % {{{
 
 On applique l'hypothèse de récurrence du Théorème~\ref{thm:progres-lv} à $lv$.
 
 Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
-\textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. On détaille le cas où
-$lv =  φ$.
-
-% TODO même remarques sur les règles que Lv-Field
-
-\[ \left( \semrule{Exp-AddrOf} \right) \]
-
-% TODO expliquer un peu mieux
+\textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. Dans le cas où $lv =
+φ$, on peut appliquer \textsc{Exp-AddrOf}.
 
 %}}}
 \paragraph{\textsc{Set}:} % {{{ TODO
