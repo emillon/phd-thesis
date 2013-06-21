@@ -244,6 +244,11 @@ $e$ est alors égale à $\eNull$, qui est une valeur.
   \paragraph{\textsc{Cst-Unit}:}%{{{
 $e$ est alors égale à \eUnit, qui est une valeur.
 %}}}
+\paragraph{\textsc{Fun}:} % {{{
+
+Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
+
+%}}}
 \paragraph{\textsc{Lv-Var}:}%{{{
 
 
@@ -534,15 +539,6 @@ $f = \eFun{\vec{a}}{i}$
 Il reste à prouver que $\mcomp{Γ}{m_4}$.
 
 % TODO
-
-%}}}
-\paragraph{\textsc{Fun}:} % {{{
-
-Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
-
-\[ \semrule{Exp-Fun} \]
-
-\[ \disprule{Fun} \]
 
 %}}}
 % TODO {Pass}
