@@ -875,8 +875,10 @@ l'appelant, il faudra supprimer ce cadre de pile.
   (Figure~\ref{fig:stackops-extend}):
 
   \[
-    \mathrm{Extend}((c::s, g), x) = (((x @ c) :: s), g)
+    \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
+
+% TODO et pour un cadre vide?
 
   De même on définit le dépilement (Figure~\ref{fig:stackops-pop}):
 
@@ -927,7 +929,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
     ;
-    \draw [->] (5.2, -2) -- node[auto] {$\mathrm{Extend}((y, 3))$} ++(1.6, 0);
+    \draw [->] (5.2, -2) -- node[auto] {$\mathrm{Extend}((\cdot, y, 3))$} ++(1.6, 0);
   \end{tikzpicture}
   }
 
