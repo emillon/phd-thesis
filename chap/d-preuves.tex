@@ -317,7 +317,29 @@ implicite).
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{Decl}  :} %{{{ TODO
+\paragraph{\textsc{Decl}  :} %{{{
+Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrence
+à $e$.
+
+\begin{itemize}
+\item $e = v$. On applique alors l'hypothèse de récurrence à $i$.
+
+    \begin{itemize}
+    \item $i = \iPass$. % TODO
+
+\[ \semrule{Decl} \]
+
+    \item $i = \iReturn{e}$. % TODO
+    \item $\mm{m}{i}{m'}{i'}$. % TODO
+    \item $\msi{m}{i} → Ω$. % TODO
+    \end{itemize}
+
+
+\item $\mm{m}{e}{m'}{e'}$. % TODO
+\item $\msi{m}{e} → Ω$. % TODO
+\end{itemize}
+
+
 % }}}
 \paragraph{\textsc{If}    :} %{{{ TODO
 % }}}
