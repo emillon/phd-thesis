@@ -353,7 +353,21 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 
 
 % }}}
-\paragraph{\textsc{If}    :} %{{{ TODO
+\paragraph{\textsc{If}    :} %{{{
+Ici $i = \iIf{e}{i_1}{i_2}$. On applique l'hypothèse de récurrence à $e$.
+
+\begin{itemize}
+\item $e = v$.
+
+    Si $v ≠ 0$, on applique \textsc{If-True}. Dans le cas contraire, on
+    applique \textsc{If-False}.
+
+\item $\mm{m}{e}{m'}{e'}$. On pose $C = \iIf{\ctxEmpty}{i_1}{i_2}$ et on conclut
+    avec \textsc{Ctx}.
+
+\item $\msi{m}{e} → Ω$. Avec ce même $C$ et \textsc{Eval-Err}.
+\end{itemize}
+
 % }}}
 \paragraph{\textsc{While} :} %{{{ TODO
 % }}}
