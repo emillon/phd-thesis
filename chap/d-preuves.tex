@@ -1,5 +1,3 @@
-\wip{}
-
 \section{Composition de lentilles}
 
 \label{proof:compo-lens}
@@ -219,17 +217,164 @@ propriétés caractéristiques.
 \section{Progrès}
 \label{proof:progres}
 
-On prouve de manière récursive mutuelle les
-Théorèmes~\ref{thm:progres}
-et~\ref{thm:progres-lv}.
-
-% TODO mouais, à préciser mieux.
+(Théorème~\ref{thm:progres})
 
 \begin{proof}
 
-  On procède par induction sur la dérivation de $Γ ⊢ e : t$, et plus précisément
-  sur la dernière règle utilisée.
+On procède par induction sur la dérivation du jugement de typage. Puisque les
+jugements $Γ ⊢ i$, $Γ ⊢ e : t$ et $Γ ⊢ lv : t$ sont interdépendants, on traite
+tous les cas par récursion mutuelle.
 
+Le squelette de cette preuve est une analyse de cas selon la dernière règle
+utilisée. La plupart des cas ont la même forme: on utilise l'hypothèse de
+récurrence sur les sous-élements syntaxiques. Dans le cas ``valeur'', on appelle
+une règle qui permet de transformer une opération syntaxique en opération
+sémantique (par exemple, on transforme le $+$ unaire en un $\widehat{+}$
+sémantique). Dans le cas ``évaluation'', on applique la règle \textsc{Ctx} avec
+un contexte particulier qui permet de passer d'un jugement $\mm{m}{a}{m'}{a'}$ à
+un jugement $\mm{m}{b}{m'}{b'}$ (où $a$ apparaît dans $b$). Enfin, dans le cas
+``erreur'', on utilise \textsc{Eval-Err} avec ce même contexte $C$.
+
+Ceci est valable pour la majorités des cas. Il faut faire attention en
+particulier aux opérations sémantiques qui peuvent produire des erreurs (comme
+la division, ou l'opérateur $\phxx\cLookup$) ou aux opérations qui modifient
+l'état mémoire. Dans ce cas, il faut prouver que $\mcomp{Γ}{m}$.
+
+% TODO le plus unaire sémantique sert à rien
+% TODO le moins unaire sémantique sert à rien
+% TODO la règle Seq sert à rien
+% TODO montrer progrès au niveau des phrases?
+
+%\begin{itemize}
+%\item $i = \iPass$.
+%\item $i = \iReturn{v}$.
+%\item $\mm{m}{i}{m'}{i'}$.
+%\item $\msi{m}{i} → Ω$.
+%\end{itemize}
+
+%\begin{itemize}
+%\item $e = v$.
+%\item $\mm{m}{e}{m'}{e'}$.
+%\item $\msi{m}{e} → Ω$.
+%\end{itemize}
+
+\paragraph{\textsc{Pass}  :} %{{{
+Ce cas est trivial.
+% }}}
+\paragraph{\textsc{Return}:} %{{{
+Partant de $i = \iReturn{e}$, on applique l'hypothèse de récurrence à $e$.
+
+\begin{itemize}
+\item $e = v$. Alors $i = \iReturn{v}$, ce qui nous permet de conclure.
+
+\item $\mm{m}{e}{m'}{e'}$.
+Alors en appliquant \textsc{Ctx} avec
+$C = \iReturn{\ctxEmpty}$, on conclut que
+$\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
+
+\item $\msi{m}{e} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
+
+\end{itemize}
+% }}}
+\paragraph{\textsc{Seq}   :} %{{{
+Avec $i = i_1;i_2$, on applique l'hypothèse de récurrence à $i_1$.
+
+\begin{itemize}
+\item $i_1 = \iPass$. On peut donc appliquer la règle \textsc{Pass} et donc
+$\mms{i}{i_2}$.
+
+\item $i_1 = \iReturn{v}$. Alors on peut appliquer la règle \textsc{Return}:
+    $\mms{i}{\iReturn{v}}$.
+
+\item $\mm{m}{i_1}{m'}{i_1'}$. Soit $C = \ctxEmpty;i_2$. Par \textsc{Ctx} il
+    vient $\mm{m}{i}{m'}{i_1';i_2}$.
+    \item $\msi{m}{i_1} → Ω$. Avec ce même $C$ dans \textsc{Eval-Err} on trouve
+    $\msi{m}{i} → Ω$.
+
+\end{itemize}
+% }}}
+\paragraph{\textsc{Exp}   :} %{{{
+Ici $i = e$. On peut appliquer l'hypothèse de récurrence à $e$ qui est en
+quelque sorte plus petit que $i$ ($i \gramisa e$ introduit un constructeur
+implicite).
+
+\begin{itemize}
+\item $e = v$. Alors on peut appliquer \textsc{Exp}: $\mms{e}{\iPass}$.
+\item $\mm{m}{e}{m'}{e'}$. Alors $\mm{m}{i}{m'}{e'}$ (cela revient à appliquer
+    \textsc{Ctx} au constructeur implicite mentionné ci-dessus).
+\item $\msi{m}{e} → Ω$. C'est-à-dire $\msi{m}{i} → Ω$.
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Decl}  :} %{{{
+
+Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrence
+à $e$.
+
+\begin{itemize}
+\item $e = v$. On applique alors l'hypothèse de récurrence à $i$.
+
+    \begin{itemize}
+    \item $i = \iPass$.
+
+        On pose $Γ' = Γ, x:t$ ($t$ apparaît dans les hypothèses en tant que
+        type de $e$) et $m' = \cExtend{m}{x}{v}$.
+
+        Alors $\mcomp{Γ'}{m'}$. % TODO
+
+        On peut donc appliquer l'hypothèse de récurrence à $Γ'$, $m'$, et $i'$.
+
+        \begin{itemize}
+        \item $i' = \iPass$. Dans ce cas la règle \textsc{Decl} s'applique.
+            Il reste à prouver que $\mcomp{Γ'}{m'''}$ où $m''' =
+            \cCleanup{m''-x}$. % TODO
+
+        \item $i' = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
+
+        \item $\mm{m'}{i'}{m''}{i''}$. En posant $C = \iDecl{x}{v}{\ctxEmpty}$, la
+            règle \textsc{Ctx} donne 
+
+            $\mm{m'}{\iDecl{x}{v}{i'}}{m''}{\iDecl{x}{v}{i''}}$
+            % TODO je suis pas convaincu que c'est un bon cas de contexte
+
+        \item $\msi{m'}{i'} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
+        \end{itemize}
+
+    \item $i = \iReturn{v}$. % TODO ptet ramener au cas au dessus avec Decl-Return
+    \item $\mm{m}{i}{m'}{i'}$. % TODO
+    \item $\msi{m}{i} → Ω$. % TODO
+    \end{itemize}
+
+
+\item $\mm{m}{e}{m'}{e'}$. % TODO
+\item $\msi{m}{e} → Ω$. % TODO
+\end{itemize}
+
+
+
+% }}}
+\paragraph{\textsc{If}    :} %{{{
+Ici $i = \iIf{e}{i_1}{i_2}$. On applique l'hypothèse de récurrence à $e$.
+
+\begin{itemize}
+\item $e = v$.
+
+    Si $v ≠ 0$, on applique \textsc{If-True}. Dans le cas contraire, on
+    applique \textsc{If-False}.
+
+\item $\mm{m}{e}{m'}{e'}$. On pose $C = \iIf{\ctxEmpty}{i_1}{i_2}$ et on conclut
+    avec \textsc{Ctx}.
+
+\item $\msi{m}{e} → Ω$. Avec ce même $C$ et \textsc{Eval-Err}.
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{While} :} %{{{
+
+Ce cas est direct: la règle \textsc{While} peut toujours s'appliquer.
+
+% }}}
+\jolibreak
   \paragraph{\textsc{Cst-Int}:} % {{{
 $e$ est alors de la forme $n$, qui est une valeur.
 
@@ -247,107 +392,6 @@ $e$ est alors égale à \eUnit, qui est une valeur.
 \paragraph{\textsc{Fun}:} % {{{
 
 Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
-
-%}}}
-\paragraph{\textsc{Lv-Var}:}%{{{
-
-
-Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$,
-on peut appliquer le Lemme~\ref{lemma:invsem}. La construction $a =
-\cLookup{x}{m}$ correspond bien à une adresse valide et on peut appliquer
-\textsc{Phi-Var}.
-
-% TODO mouais
-%}}}
-\paragraph{\textsc{Lv-Deref}:}%{{{
-
-  Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
-
-\begin{itemize}
-\item
-  $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
-  Lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
-
-  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique:
-  $\mms{e}{\widehat{*}φ}$.
-  Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
-  $\msi{m}{e} → \serr{ptr}$.
-
-\item
-  $\mm{m}{lv}{m'}{e'}$.
-  De \textsc{Ctx} avec $C = *\ctxEmpty$, on obtient
-  $\mm{m}{e}{m'}{*e'}$.
-
-\item
-  $\msi{m}{lv} → Ω$.
-  En appliquant \textsc{Eval-Err} avec $C = *\ctxEmpty$, on obtient
-  $\msi{m}{e} → Ω$.
-
-\end{itemize}
-
-% }}}
-\paragraph{\textsc{Lv-Index}:} % %{{{
-
-De même, on applique l'hypothèse de récurrence à $lv$.
-
-\begin{itemize}
-\item $lv = v$.
-
-Comme $Γ ⊢ v : t[]$, on déduit du Lemme~\ref{lemma:canon} que
-$v = \eArray{v_1; …; v_p}$.
-Appliquons l'hypothèse de récurrence à $e$.
-
-\begin{itemize}
-\item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
-Lemme~\ref{lemma:canon} et $v' = n$.
-D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\eArray{v_1; …; v_p}\widehat{[n]}} $.
-Deux cas sont à distinguer:
-si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
-$\mm{m}{lv[e]}{m}{v_{n+1}}$.
-Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
-
-% TODO attention à l'off by one
-
-\item $\mm{m}{e}{m'}{e'}$.
-En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
-\item $\mm{m}{lv[e]}{m'}{lv[e']}$.
-
-\item $\msi{m}{e} → Ω$.
-Avec \textsc{Eval-Err} sous ce même contexte,
-$\msi{m}{lv[e]} → Ω$
-\end{itemize}
-
-\item $\mm{m}{lv}{m'}{e'}$.
-On applique alors \textsc{Ctx} avec $C = \ctxEmpty[e]$, et
-$\mm{m}{lv[e]}{m'}{e'[e]}$.
-
-\item $\msi{m}{lv} → Ω$.
-Toujours avec $C = \ctxEmpty[e]$, de \textsc{Eval-Err} il vient
-$\msi{m}{lv[e]} → Ω$.
-
-\end{itemize}
-%}}}
-\paragraph{\textsc{Lv-Field}:}%{{{
-
-On applique l'hypothèse de récurrence du Théorème~\ref{thm:progres-lv} à $lv$.
-
-\begin{itemize}
-
-\item $lv = φ$
-Alors \textsc{Phi-Struct} s'applique. Puisque $(l, t) ∈ S$, l'accès au champ $l$
-ne provoque pas d'erreur $\serr{field}$. Donc $\mm{m}{e}{m}{φ[l]}$.
-
-\item $\mm{m}{lv}{m'}{lv'}$
-En appliquant \textsc{Ctx} avec $C = \ctxEmpty.l_S$, il vient
-$\mm{m}{lv}{m'}{lv'}$.
-% TODO Ctx-Lv en fait
-
-\item $\msi{m}{lv} → Ω$
-En appliquant \textsc{Eval-Err} avec $C = \ctxEmpty.l_S$, on a
-$\msi{m}{lv} → Ω$.
-% TODO Pas une sorte de Err-Lv ?
-
-\end{itemize}
 
 %}}}
   \paragraph{\textsc{Op-Int}:} % {{{
@@ -399,10 +443,6 @@ $\msi{m}{lv} → Ω$.
 Ce cas est similaire à \textsc{Op-Int}.
 % TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
-% TODO Eq-Num
-% TODO Eq-Ptr
-% TODO Eq-Array
-% TODO Eq-Struct
 \paragraph{\textsc{Op-Eq}:} %{{{
 Ce cas est similaire à \textsc{Op-Int}.
 % TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
@@ -437,30 +477,9 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Unop-Not}:}%{{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
-\paragraph{\textsc{Ptr-Arith}:} % %{{{
-
-Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
-lorsque $e_1$ et $e_2$ sont des valeurs. D'après le Lemme~\ref{lemma:canon}:
-
-\begin{itemize}
-\item $e_1 = \eNull$ ou $e_1 = φ$
-\item $e_2 = n$
-\end{itemize}
-
-D'après \textsc{Exp-Binop}, $\mms{e}{e_1~\widehat{\opbin}~n}$.
-
-On se réfère ensuite à la définition de $\widehat{\opbin}$
-(page~\pageref{page:def-arith-ptr-error}): si $e_1$ est de la forme $φ[m]$,
-alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
-
-Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
-$φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
-\textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
-
-%}}}
 \paragraph{\textsc{Addr}:} % {{{
 
-On applique l'hypothèse de récurrence du Théorème~\ref{thm:progres-lv} à $lv$.
+On applique l'hypothèse de récurrence à $lv$.
 
 Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
 \textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. Dans le cas où $lv =
@@ -541,15 +560,129 @@ Il reste à prouver que $\mcomp{Γ}{m_4}$.
 % TODO
 
 %}}}
-% TODO {Pass}
-% TODO {Seq}
-% TODO {Exp}
-% TODO {Decl}
-% TODO {If}
-% TODO {While}
-% TODO {Return}
-\end{proof}
+\jolibreak
+\paragraph{\textsc{Lv-Var}:}%{{{
 
+
+Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$,
+on peut appliquer le Lemme~\ref{lemma:invsem}. La construction $a =
+\cLookup{x}{m}$ correspond bien à une adresse valide et on peut appliquer
+\textsc{Phi-Var}.
+
+% TODO mouais
+%}}}
+\paragraph{\textsc{Lv-Deref}:}%{{{
+
+  Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
+
+\begin{itemize}
+\item
+  $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
+  Lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
+
+  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique:
+  $\mms{e}{\widehat{*}φ}$.
+  Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
+  $\msi{m}{e} → \serr{ptr}$.
+
+\item
+  $\mm{m}{lv}{m'}{e'}$.
+  De \textsc{Ctx} avec $C = *\ctxEmpty$, on obtient
+  $\mm{m}{e}{m'}{*e'}$.
+
+\item
+  $\msi{m}{lv} → Ω$.
+  En appliquant \textsc{Eval-Err} avec $C = *\ctxEmpty$, on obtient
+  $\msi{m}{e} → Ω$.
+
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Lv-Index}:} % %{{{
+
+De même, on applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item $lv = v$.
+
+Comme $Γ ⊢ v : t[]$, on déduit du Lemme~\ref{lemma:canon} que
+$v = \eArray{v_1; …; v_p}$.
+Appliquons l'hypothèse de récurrence à $e$.
+
+\begin{itemize}
+\item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
+Lemme~\ref{lemma:canon} et $v' = n$.
+D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\eArray{v_1; …; v_p}\widehat{[n]}} $.
+Deux cas sont à distinguer:
+si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
+$\mm{m}{lv[e]}{m}{v_{n+1}}$.
+Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
+
+% TODO attention à l'off by one
+
+\item $\mm{m}{e}{m'}{e'}$.
+En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
+\item $\mm{m}{lv[e]}{m'}{lv[e']}$.
+
+\item $\msi{m}{e} → Ω$.
+Avec \textsc{Eval-Err} sous ce même contexte,
+$\msi{m}{lv[e]} → Ω$
+\end{itemize}
+
+\item $\mm{m}{lv}{m'}{e'}$.
+On applique alors \textsc{Ctx} avec $C = \ctxEmpty[e]$, et
+$\mm{m}{lv[e]}{m'}{e'[e]}$.
+
+\item $\msi{m}{lv} → Ω$.
+Toujours avec $C = \ctxEmpty[e]$, de \textsc{Eval-Err} il vient
+$\msi{m}{lv[e]} → Ω$.
+
+\end{itemize}
+%}}}
+\paragraph{\textsc{Lv-Field}:}%{{{
+
+On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+
+\item $lv = φ$
+Alors \textsc{Phi-Struct} s'applique. Puisque $(l, t) ∈ S$, l'accès au champ $l$
+ne provoque pas d'erreur $\serr{field}$. Donc $\mm{m}{e}{m}{φ[l]}$.
+
+\item $\mm{m}{lv}{m'}{lv'}$
+En appliquant \textsc{Ctx} avec $C = \ctxEmpty.l_S$, il vient
+$\mm{m}{lv}{m'}{lv'}$.
+
+\item $\msi{m}{lv} → Ω$
+En appliquant \textsc{Eval-Err} avec $C = \ctxEmpty.l_S$, on a
+$\msi{m}{lv} → Ω$.
+
+\end{itemize}
+
+%}}}
+\paragraph{\textsc{Ptr-Arith}:} % %{{{
+
+Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
+lorsque $e_1$ et $e_2$ sont des valeurs. D'après le Lemme~\ref{lemma:canon}:
+
+\begin{itemize}
+\item $e_1 = \eNull$ ou $e_1 = φ$
+\item $e_2 = n$
+\end{itemize}
+
+D'après \textsc{Exp-Binop}, $\mms{e}{e_1~\widehat{\opbin}~n}$.
+
+On se réfère ensuite à la définition de $\widehat{\opbin}$
+(page~\pageref{page:def-arith-ptr-error}): si $e_1$ est de la forme $φ[m]$,
+alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
+
+Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
+$φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
+\textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
+
+%}}}
+\end{proof}
+% TODO vérifier que tous les contextes sont présents dans la figure
 \section{Préservation}
 \label{proof:preservation}
 
@@ -603,21 +736,16 @@ D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 
 \end{proof}
 
-%\section*{TODO}
-
-%\begin{itemize}
-%\item
-  %titres dans les chapeaux buggés
-%\end{itemize}
-
 \section{Progrès pour les types qualifiés}
 \label{proof:progres-qualif}
 
 (Théorème~\ref{thm:progres-qual})
+
+% TODO
 
 \section{Préservation pour les types qualifiés}
 \label{proof:preservation-qualif}
 
 (Théorème~\ref{thm:preservation-qualif})
 
-  %% TODO
+% TODO

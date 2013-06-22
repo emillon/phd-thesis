@@ -343,7 +343,7 @@
                     m_1 = \mathrm{Push}(m_0, ((a_1 ↦ v_1), …, (a_n ↦ v_n))) \\
                     \mm{m_1}{i}{m_2}{\iReturn{v}} \\
                     m_3 = \mathrm{Pop}(m_2) \\
-                    m_4 = \mathrm{Cleanup}(m_3) \\
+                    m_4 = \cCleanup{m_3} \\
                   }
                   {\mm{m_0}{f (v_1, …, v_n)}{m_4}{v}}
     }
@@ -360,16 +360,16 @@
              { \mmi{m}{v}{m}{\iPass} }
     }
     {Decl}{ \irule{Decl}
-            { m' = \mathrm{Extend}(m, x, v)
+            { m' = \cExtend{m}{x}{v}
            \\ \mmi{m'}{i}{m''}{\iPass}
-           \\ m''' = \mathrm{Cleanup}(m'' - x)
+           \\ m''' = \cCleanup{m'' - x}
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
     } % TODO définir le "-"
     {Decl-Return}{ \irule{Decl-Return}
-            { m' = \mathrm{Extend}(m, x, v)
+            { m' = \cExtend{m}{x}{v}
            \\ \mmi{m'}{i}{m''}{\iReturn{v_r}}
-           \\ m''' = \mathrm{Cleanup}(m'' - x)
+           \\ m''' = \cCleanup{m'' - x}
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iReturn{v_r}} }
     } % TODO définir le "-"
@@ -388,7 +388,7 @@
     }
     {Return}{ \irule{Return}
               { }
-              { \mmi{m}{\iReturn{v};i}{m}{\iReturn{e}} }
+              { \mmi{m}{\iReturn{v};i}{m}{\iReturn{v}} }
     }
     {T-Exp}{ \irule{T-Exp}
                 {\mm{m}{e}{m'}{v}}
@@ -414,6 +414,8 @@
     {Eval-Err}{ \irule{Eval-Err}
                   { \msi{m}{e} → Ω }
                   { \msi{m}{\ctxSub{C}{e}} → Ω }
+% TODO préciser que ça s'étend à i dans progres
+% return
     }
     {Prog}{ \irule{Prog}
               {\phstar{([~], [~])}{P}{m}}
