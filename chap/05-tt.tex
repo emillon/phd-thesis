@@ -811,9 +811,43 @@ $Γ = x:t$).
 \end{lemma}
 
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
+Contrairement aux langages où tout est expression, il faut traiter séparément
+les trois constructions principales de \langname : les expressions, les
+left-values et les instructions. Celles-ci sont mutuellement dépendantes de par
+le graphe suivant.
+
+\begin{center}
+\begin{tikzpicture}
+[node distance=5cm]
+
+\node[draw] (I) {Instructions};
+
+\node[draw, right of=I] (E) {Expressions};
+
+\node[draw, right of=E] (L) {Left-values};
+
+\draw[->] (I) edge[bend left] node[auto] {Évaluation} (E);
+\draw[->] (E) edge[bend left] node[auto] {Abstraction} (I);
+\draw[->] (E) edge[bend left] node[auto] {Accès mémoire} (L);
+\draw[->] (L) edge[bend left] node[auto] {Indices} (E);
+
+\end{tikzpicture}
+\end{center}
 
 \begin{theorem}[Progrès]
 \label{thm:progres}
+
+Supposons que $Γ ⊢ i$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+
+Alors l'un des cas suivants est vrai:
+\begin{itemize}
+\item $i = \iPass$
+\item $∃v, i = \iReturn{v}$
+\item $∃ (i', m'), \mcomp{Γ}{m'} ∧ \mm{m}{i}{m'}{i'}$
+\item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{i} → Ω$
+\end{itemize}
+
+\jolibreak
 
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
   Alors l'un des cas suivant est vrai:
@@ -824,30 +858,29 @@ Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
 
-  C'est-à-dire, soit:
+\jolibreak
 
+Supposons que $Γ ⊢ lv : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+
+Alors l'un des cas suivants est vrai:
 \begin{itemize}
-  \item $e$ est complètement évaluée
-  \item un pas d'évaluation préservant la compatibilité mémoire est possible
-  \item une erreur de division, tableau ou pointeur se produit
+\item $∃φ, lv = φ$
+\item $∃ (lv', m'), \mcomp{Γ}{m'} ∧ \mm{m}{lv}{m'}{lv'}$
+\item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{lv} → Ω$
 \end{itemize}
 
 \end{theorem}
 
-\begin{theorem}[Progrès pour les left-values]
-\label{thm:progres-lv}
+C'est-à-dire, soit:
 
-  Si $\mmstar{m}{lv}{m'}{v}$, $v$ est de la forme $φ$ (référence mémoire) ou $Ω$
-  (erreur).
+\begin{itemize}
+  \item l'entité (instruction, expression ou left-value) est complètement
+évaluée.
+  \item un pas d'évaluation préservant la compatibilité mémoire est possible.
+  \item une erreur de division, tableau ou pointeur se produit.
+\end{itemize}
 
-\end{theorem}
-
-% TODO à prouver et rerédiger
-
-La preuve des
-Théorèmes~\ref{thm:progres}
-et~\ref{thm:progres-lv}
-se trouve en Annexe~\ref{proof:progres}.
+La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
 
 \begin{lemma}{Inversion pour le typage sémantique}
 
