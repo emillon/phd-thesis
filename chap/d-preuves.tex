@@ -245,6 +245,19 @@ l'état mémoire. Dans ce cas, il faut prouver que $\mcomp{Γ}{m}$.
 % TODO la règle Seq sert à rien
 % TODO montrer progrès au niveau des phrases?
 
+%\begin{itemize}
+%\item $i = \iPass$.
+%\item $i = \iReturn{e}$.
+%\item $\mm{m}{i}{m'}{i'}$.
+%\item $\msi{m}{i} → Ω$.
+%\end{itemize}
+
+%\begin{itemize}
+%\item $e = v$.
+%\item $\mm{m}{e}{m'}{e'}$.
+%\item $\msi{m}{e} → Ω$.
+%\end{itemize}
+
 \paragraph{\textsc{Pass}  :} %{{{
 Ce cas est trivial.
 % }}}
@@ -265,13 +278,6 @@ $\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
 % }}}
 \paragraph{\textsc{Seq}   :} %{{{
 Avec $i = i_1;i_2$, on applique l'hypothèse de récurrence à $i_1$.
-
-%\begin{itemize}
-%\item $i_1 = \iPass$.
-%\item $i_1 = \iReturn{e}$.
-%\item $\mm{m}{i}{m'}{i'}$.
-%\item $\msi{m}{i} → Ω$.
-%\end{itemize}
 
 \begin{itemize}
 \item $i_1 = \iPass$. On peut donc appliquer la règle \textsc{Pass} et donc
@@ -298,7 +304,18 @@ $\mms{i}{i_2}$.
 
 \end{itemize}
 % }}}
-\paragraph{\textsc{Exp}   :} %{{{ TODO
+\paragraph{\textsc{Exp}   :} %{{{
+Ici $i = e$. On peut appliquer l'hypothèse de récurrence à $e$ qui est en
+quelque sorte plus petit que $i$ ($i \gramisa e$ introduit un constructeur
+implicite).
+
+\begin{itemize}
+\item $e = v$. Alors on peut appliquer \textsc{Exp}: $\mms{e}{\iPass}$.
+\item $\mm{m}{e}{m'}{e'}$. Alors $\mm{m}{i}{m'}{e'}$ (cela revient à appliquer
+    \textsc{Ctx} au constructeur implicite mentionné ci-dessus).
+\item $\msi{m}{e} → Ω$. C'est-à-dire $\msi{m}{i} → Ω$.
+\end{itemize}
+
 % }}}
 \paragraph{\textsc{Decl}  :} %{{{ TODO
 % }}}
