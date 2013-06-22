@@ -291,8 +291,11 @@ $\mms{i}{i_2}$.
         établir que $\msi{m}{i} → Ω$.
     \end{itemize}
 
-\item $\mm{m}{i}{m'}{i'}$. % TODO
-\item $\msi{m}{i} → Ω$. % TODO
+\item $\mm{m}{i_1}{m'}{i_1'}$. Soit $C = \ctxEmpty;i_2$. Par \textsc{Ctx} il
+    vient $\mm{m}{i}{m'}{i_1';i_2}$.
+    \item $\msi{m}{i_1} → Ω$. Avec ce même $C$ dans \textsc{Eval-Err} on trouve
+    $\msi{m}{i} → Ω$.
+
 \end{itemize}
 % }}}
 \paragraph{\textsc{Exp}   :} %{{{ TODO
