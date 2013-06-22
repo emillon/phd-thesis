@@ -318,6 +318,7 @@ implicite).
 
 % }}}
 \paragraph{\textsc{Decl}  :} %{{{
+
 Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrence
 à $e$.
 
@@ -325,7 +326,10 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 \item $e = v$. On applique alors l'hypothèse de récurrence à $i$.
 
     \begin{itemize}
-    \item $i = \iPass$. % TODO
+    \item $i = \iPass$.
+
+        On pose $Γ' = Γ, x:t$. ($t$ apparaît dans les hypothèses comme le type
+        de $e$). % TODO
 
 \[ \semrule{Decl} \]
 
