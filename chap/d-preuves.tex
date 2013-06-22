@@ -475,27 +475,6 @@ Ce cas est similaire à \textsc{Unop-Plus-Int}.
 \paragraph{\textsc{Unop-Not}:}%{{{
 Ce cas est similaire à \textsc{Unop-Plus-Int}.
 %}}}
-\paragraph{\textsc{Ptr-Arith}:} % %{{{
-
-Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
-lorsque $e_1$ et $e_2$ sont des valeurs. D'après le Lemme~\ref{lemma:canon}:
-
-\begin{itemize}
-\item $e_1 = \eNull$ ou $e_1 = φ$
-\item $e_2 = n$
-\end{itemize}
-
-D'après \textsc{Exp-Binop}, $\mms{e}{e_1~\widehat{\opbin}~n}$.
-
-On se réfère ensuite à la définition de $\widehat{\opbin}$
-(page~\pageref{page:def-arith-ptr-error}): si $e_1$ est de la forme $φ[m]$,
-alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
-
-Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
-$φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
-\textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
-
-%}}}
 \paragraph{\textsc{Addr}:} % {{{
 
 On applique l'hypothèse de récurrence du Théorème~\ref{thm:progres-lv} à $lv$.
@@ -679,6 +658,27 @@ $\msi{m}{lv} → Ω$.
 % TODO Pas une sorte de Err-Lv ?
 
 \end{itemize}
+
+%}}}
+\paragraph{\textsc{Ptr-Arith}:} % %{{{
+
+Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
+lorsque $e_1$ et $e_2$ sont des valeurs. D'après le Lemme~\ref{lemma:canon}:
+
+\begin{itemize}
+\item $e_1 = \eNull$ ou $e_1 = φ$
+\item $e_2 = n$
+\end{itemize}
+
+D'après \textsc{Exp-Binop}, $\mms{e}{e_1~\widehat{\opbin}~n}$.
+
+On se réfère ensuite à la définition de $\widehat{\opbin}$
+(page~\pageref{page:def-arith-ptr-error}): si $e_1$ est de la forme $φ[m]$,
+alors $e_1~\widehat{\opbin}~n = φ[m+n]$. Donc $\mms{e}{φ[m+n]}$.
+
+Dans les autres cas ($e_1 = \eNull$ ou $e_1 = φ$ avec $φ$ pas de la forme
+$φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
+\textsc{Exp-Err}, $\msi{m}{e} → \serr{ptr}$.
 
 %}}}
 \end{proof}
