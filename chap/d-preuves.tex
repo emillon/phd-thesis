@@ -277,7 +277,19 @@ Avec $i = i_1;i_2$, on applique l'hypothèse de récurrence à $i_1$.
 \item $i_1 = \iPass$. On peut donc appliquer la règle \textsc{Pass} et donc
 $\mms{i}{i_2}$.
 
-\item $i_1 = \iReturn{e}$.% TODO
+\item $i_1 = \iReturn{e}$. On applique l'hypothèse de récurrence à $e$.
+
+    \begin{itemize}
+    \item $e = v$. Alors on peut appliquer la règle \textsc{Return}:
+        $\mms{i}{\iReturn{v}}$.
+
+    \item $\mm{m}{e}{m'}{e'}$.
+        Posons $C = \iReturn{\ctxEmpty};i_2$. Par \textsc{Ctx} il vient:
+        $\mm{m}{i}{m'}{\iReturn{e'};i_2}$.
+
+    \item $\msi{m}{e} → Ω$. Avec ce même $C$, on utilise \textsc{Eval-Err} pour
+        établir que $\msi{m}{i} → Ω$.
+    \end{itemize}
 
 \item $\mm{m}{i}{m'}{i'}$. % TODO
 \item $\msi{m}{i} → Ω$. % TODO
