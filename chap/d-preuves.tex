@@ -242,6 +242,8 @@ l'état mémoire. Dans ce cas, il faut prouver que $\mcomp{Γ}{m}$.
 
 % TODO le plus unaire sémantique sert à rien
 % TODO le moins unaire sémantique sert à rien
+% TODO la règle Seq sert à rien
+% TODO montrer progrès au niveau des phrases?
 
 \paragraph{\textsc{Pass}  :} %{{{
 Ce cas est trivial.
@@ -261,7 +263,25 @@ $\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
 
 \end{itemize}
 % }}}
-\paragraph{\textsc{Seq}   :} %{{{ TODO
+\paragraph{\textsc{Seq}   :} %{{{
+Avec $i = i_1;i_2$, on applique l'hypothèse de récurrence à $i_1$.
+
+%\begin{itemize}
+%\item $i_1 = \iPass$.
+%\item $i_1 = \iReturn{e}$.
+%\item $\mm{m}{i}{m'}{i'}$.
+%\item $\msi{m}{i} → Ω$.
+%\end{itemize}
+
+\begin{itemize}
+\item $i_1 = \iPass$. On peut donc appliquer la règle \textsc{Pass} et donc
+$\mms{i}{i_2}$.
+
+\item $i_1 = \iReturn{e}$.% TODO
+
+\item $\mm{m}{i}{m'}{i'}$. % TODO
+\item $\msi{m}{i} → Ω$. % TODO
+\end{itemize}
 % }}}
 \paragraph{\textsc{Exp}   :} %{{{ TODO
 % }}}
@@ -582,7 +602,7 @@ $\msi{m}{lv} → Ω$.
 
 %}}}
 \end{proof}
-
+% TODO vérifier que tous les contextes sont présents dans la figure
 \section{Préservation}
 \label{proof:preservation}
 
