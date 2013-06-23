@@ -235,7 +235,7 @@ un contexte particulier qui permet de passer d'un jugement $\mm{m}{a}{m'}{a'}$ �
 un jugement $\mm{m}{b}{m'}{b'}$ (où $a$ apparaît dans $b$). Enfin, dans le cas
 ``erreur'', on utilise \textsc{Eval-Err} avec ce même contexte $C$.
 
-Ceci est valable pour la majorités des cas. Il faut faire attention en
+Ceci est valable pour la majorité des cas. Il faut faire attention en
 particulier aux opérations sémantiques qui peuvent produire des erreurs (comme
 la division, ou l'opérateur $\phxx\cLookup$) ou aux opérations qui modifient
 l'état mémoire. Dans ce cas, il faut prouver que $\mcomp{Γ}{m}$.
@@ -348,6 +348,19 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 \item $\msi{m}{e} → Ω$. % TODO
 \end{itemize}
 
+\[ \irule{Decl-Prime}
+       { m' = \cExtend{m}{x}{v}
+       \\ \mm{m'}{i}{m''}{i'}
+       \\ m''' = \cCleanup{m'' - x}
+       }
+       { \mm{m}{\iDecl{x}{v}{i}}
+            {m'''}{\iPass}
+       }
+\]
+
+\[ \semrule{Decl} \]
+
+\[ \semrule{Ctx} \]
 
 
 % }}}
