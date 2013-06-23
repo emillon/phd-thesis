@@ -1,0 +1,9 @@
+Par exemple, en ouvrant un fichier on précise le mode du fichier (lecture,
+écriture ou les deux) par les bits 1 et 2, s'il faut créer le fichier ou non
+s'il n'existe pas par le bit 7, s'il dans ce cas il doit être effacé par le bit
+8), etc. On obtient un mode en réalisant un ``ou'' bit à bit entre des
+constantes. Ces deux utilisations du type \texttt{int} n'ont rien à voir ; il
+faudrait donc empêcher d'utiliser un descripteur de fichier comme un mode, et
+vice-versa. De même, aucun opérateur n'a de sens sur les descripteurs de
+fichier, mais l'opérateur \texttt{\textbar{}} du ``ou'' bit à bit doit rester
+possible pour les modes.
