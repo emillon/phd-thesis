@@ -255,7 +255,7 @@ appelant.
 
 Ici, pas de difficulté particulière: la communication entre le \ring{0} et le
 \ring{3} est faite uniquement à travers les registres, comme décrit dans la
-Section~\ref{sec:impl-syscall}.
+section~\ref{sec:impl-syscall}.
 
 Mais la plupart des appels systèmes communiquent de l'information de manière
 indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
@@ -288,8 +288,8 @@ Deputy Problem}\cite{hardy88confused}.
 
 La bonne solution est de tester dynamiquement la valeur du pointeur: s'il pointe
 en espace noyau, il faut indiquer une erreur plutôt que d'écrire
-(Figure~avant\ref{fig:mzone3}). Sinon, il peut toujours y avoir une erreur, mais
-au moins le noyau est protégé.
+(figure~\ref{fig:mzone3}). Sinon, il peut toujours y avoir une erreur, mais au
+moins le noyau est protégé.
 
 \begin{figure}
 \insertcode{implem-gettime.c}
@@ -351,7 +351,7 @@ tels défauts.
 %petites zones de mémoire interne (quelques bits chacun). Par exemple, la valeur
 %du pointeur de pile est stockée dans \esp{}. Le registre \ebp{}, couplé à \esp{}
 %sert à adresser les variables locales et paramètres d'une fonction, comme ce
-%sera expliqué dans la Section~\ref{sec:convappel}.
+%sera expliqué dans la section~\ref{sec:convappel}.
 
 %L'adresse de l'instruction courante est accessible dans le registre \eip.
 

@@ -2,11 +2,11 @@
          {--- \textup{Henry Spencer}}
 
 Dans ce chapitre, un exemple de mise en œuvre du système de type décrit dans le
-Chapitre~\ref{cha:qualifs} et implanté dans le Chapitre~\ref{cha:implem}.
+chapitre~\ref{cha:qualifs} et implanté dans le chapitre~\ref{cha:implem}.
 
 \section{Linux}
 
-Le noyau Linux, abordé dans le Chapitre~\ref{cha:os}, est un noyau de système
+Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
 d'exploitation développé depuis le début des années 90 et ``figure de proue'' du
 mouvement open-source. Au départ écrit par Linus Torvalds sur son ordinateur
 personnel, il a au fil des années était porté sur de nombreuses architectures et
@@ -74,7 +74,7 @@ le noyau Linux. Une description plus détaillée pourra être trouvée dans
 Deux rings sont utilisés: en \ring{0}, le code noyau et en \ring{3}, le code
 utilisateur.
 
-Une notion de tâche similaire à celle décrite dans la Section~\ref{sec:taches}
+Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
 existe: elles s'exécutent l'une après l'autre, le changement s'effectuant sur
 interruptions.
 
@@ -97,7 +97,7 @@ réservée au mode privilégié.}
 % }}}
 
 Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
-mémoire dans son espace d'adressage (Figure~\ref{fig:memmap}), et donc chacun un
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun un
 ensemble de tables de pages et une valeur de \crtrois{} associée. Au moment de
 changer le processus en cours, l'ordonnanceur charge donc le \crtrois{} du
 nouveau processus.
@@ -254,7 +254,7 @@ le programme C. Ainsi, un pointeur ne peut pas être distingué d'un entier
 transtypé en un pointeur. Avec cette configuration, nous obtenons une erreur de
 type à la ligne 16.
 
-L'intégralité de ce code peut être trouvée en Annexe~\ref{cha:code-noyau}.
+L'intégralité de ce code peut être trouvée en annexe~\ref{cha:code-noyau}.
 
 \begin{figure}
   \insertcode{radeon-git-mini.diff}
@@ -266,7 +266,7 @@ L'intégralité de ce code peut être trouvée en Annexe~\ref{cha:code-noyau}.
 % TODO décrire syntaxe unified diff
 
 La bonne manière de faire a été publiée avec le numéro de \emph{commit}
-\texttt{d8ab3557} (Figure~\ref{fig:linux-patch}) (\texttt{DRM\_COPY\_FROM\_USER}
+\texttt{d8ab3557} (figure~\ref{fig:linux-patch}) (\texttt{DRM\_COPY\_FROM\_USER}
 étant une simple macro pout \texttt{copy\_from\_user}). Dans ce cas, on
 n'obtient pas d'erreur de typage.
 
@@ -279,7 +279,7 @@ de traduire le noyau linux en \langname{}.
 
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
 environnement initial (via la variable \texttt{exttbl} décrite en
-Section~\ref{sec:ptrtype-archi}).
+section~\ref{sec:ptrtype-archi}).
 
 % TODO dire ce qu'on annote: les sources de pointeurs souillés
 

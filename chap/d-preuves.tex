@@ -217,7 +217,7 @@ propriétés caractéristiques.
 \section{Progrès}
 \label{proof:progres}
 
-(Théorème~\ref{thm:progres})
+(théorème~\ref{thm:progres})
 
 \begin{proof}
 
@@ -407,7 +407,7 @@ Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 %}}}
   \paragraph{\textsc{Op-Int}:} % {{{
 
-  Cela implique que $e = e_1~\opbin~e_2$. Par le Lemme~\ref{lemma:inversion}, on
+  Cela implique que $e = e_1~\opbin~e_2$. Par le lemme~\ref{lemma:inversion}, on
   en déduit que $Γ ⊢ e_1 : \tInt$ et $Γ ⊢ e_2 : \tInt$.
 
   Appliquons l'hypothèse de récurrence sur $e_1$. Trois cas peuvent se produire.
@@ -550,7 +550,7 @@ e_n}$; et dans le cas où toutes les expressions sont évaluées, on applique
 On commence par appliquer l'hypothèse de récurrence à $e$. Dans le cas d'un pas
 d'évaluation ou d'erreur, on applique respectivement \textsc{Ctx} ou
 \textsc{Eval-Err} avec $C = \ctxEmpty (e_1, …, e_n)$.
-Reste le cas où $e$ est une valeur: d'après le Lemme~\ref{lemma:canon}, $e$ est
+Reste le cas où $e$ est une valeur: d'après le lemme~\ref{lemma:canon}, $e$ est
 de la forme $f = \eFun{\vec{a}}{i}$.
 
 Ensuite, appliquons le même schéma que pour \textsc{Array}.
@@ -576,7 +576,7 @@ Il reste à prouver que $\mcomp{Γ}{m_4}$.
 
 
 Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$,
-on peut appliquer le Lemme~\ref{lemma:invsem}. La construction $a =
+on peut appliquer le lemme~\ref{lemma:invsem}. La construction $a =
 \cLookup{x}{m}$ correspond bien à une adresse valide et on peut appliquer
 \textsc{Phi-Var}.
 
@@ -589,7 +589,7 @@ on peut appliquer le Lemme~\ref{lemma:invsem}. La construction $a =
 \begin{itemize}
 \item
   $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
-  Lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
+  lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
 
   Dans le premier cas, la règle \textsc{Phi-Deref} s'applique:
   $\mms{e}{\widehat{*}φ}$.
@@ -616,13 +616,13 @@ De même, on applique l'hypothèse de récurrence à $lv$.
 \begin{itemize}
 \item $lv = v$.
 
-Comme $Γ ⊢ v : t[]$, on déduit du Lemme~\ref{lemma:canon} que
+Comme $Γ ⊢ v : t[]$, on déduit du lemme~\ref{lemma:canon} que
 $v = \eArray{v_1; …; v_p}$.
 Appliquons l'hypothèse de récurrence à $e$.
 
 \begin{itemize}
 \item $e = v'$. Puisque $Γ ⊢ e : \tInt$, on réapplique le
-Lemme~\ref{lemma:canon} et $v' = n$.
+lemme~\ref{lemma:canon} et $v' = n$.
 D'après \textsc{Phi-Array}, $ \mms{lv[e]}{\eArray{v_1; …; v_p}\widehat{[n]}} $.
 Deux cas sont à distinguer:
 si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
@@ -674,7 +674,7 @@ $\msi{m}{lv} → Ω$.
 \paragraph{\textsc{Ptr-Arith}:} % %{{{
 
 Le schéma est similaire au cas \textsc{Op-Int}. Le seul cas intéressant arrive
-lorsque $e_1$ et $e_2$ sont des valeurs. D'après le Lemme~\ref{lemma:canon}:
+lorsque $e_1$ et $e_2$ sont des valeurs. D'après le lemme~\ref{lemma:canon}:
 
 \begin{itemize}
 \item $e_1 = \eNull$ ou $e_1 = φ$
@@ -697,7 +697,7 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 \section{Préservation}
 \label{proof:preservation}
 
-(Théorème~\ref{thm:preservation})
+(théorème~\ref{thm:preservation})
 
 
 \begin{proof}
@@ -707,7 +707,7 @@ On procède par induction sur la forme de l'expression $e$.
 \paragraph{ Constante }             $c$ % {{{ TODO
 On détaille par exemple le cas d'une constante entière.
 
-D'une part, $Γ ⊢ e : t$ donc d'après le Lemme~\ref{lemma:canon}, $t = \tInt$.
+D'une part, $Γ ⊢ e : t$ donc d'après le lemme~\ref{lemma:canon}, $t = \tInt$.
 
 D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 évalue en une constante entière.
@@ -750,13 +750,13 @@ D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 \section{Progrès pour les types qualifiés}
 \label{proof:progres-qualif}
 
-(Théorème~\ref{thm:progres-qual})
+(théorème~\ref{thm:progres-qual})
 
 % TODO
 
 \section{Préservation pour les types qualifiés}
 \label{proof:preservation-qualif}
 
-(Théorème~\ref{thm:preservation-qualif})
+(théorème~\ref{thm:preservation-qualif})
 
 % TODO

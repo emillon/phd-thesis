@@ -9,7 +9,7 @@ compte les spécificités de l'adressage utilisé dans les systèmes d'exploitat
 
 Dans ce chapitre, on commence par l'étendre en ajoutant des constructions
 modélisant les variables présentes dans l'espace utilisateur (cf.
-Chapitre~\ref{cha:os}). Pour accéder à celles-ci, on ajoute un opérateur de
+chapitre~\ref{cha:os}). Pour accéder à celles-ci, on ajoute un opérateur de
 déréférencement sûr qui vérifie à l'exécution que l'invariant suivant est
 respecté:
 
@@ -87,7 +87,7 @@ Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie l
 version du noyau, en remplissant par pointeur une structure contenant les champs
 entiers \texttt{major}, \texttt{minor} et \texttt{patch} (un équivalent dans
 Linux est l'appel système \verb!uname()!). Celui-ci peut être alors écrit
-comme dans la Figure~\ref{fig:ex-sys-getver}. Une fois la structure noyau $v$
+comme dans la figure~\ref{fig:ex-sys-getver}. Une fois la structure noyau $v$
 remplie, il faut la copier vers l'espace utilisateur. La fonction $\ctuF$ va
 réaliser cette copie (de la même manière qu'avec un \verb!memcpy()!), mais
 après avoir testé dynamiquement que $p$ pointe en espace utilisateur (dans le
@@ -122,7 +122,7 @@ $\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts: une un
 nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
 Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
-la Figure~\ref{fig:qualif-changes}.
+la figure~\ref{fig:qualif-changes}.
 
 %TODO[E]: détailler diamant
 
@@ -154,7 +154,7 @@ la Figure~\ref{fig:qualif-changes}.
 \end{align*}
 
 \caption{Ajouts liés aux pointeurs utilisateurs (par rapport à l'évaluateur du
-Chapitre~\ref{cha:lang})}
+chapitre~\ref{cha:lang})}
 
 \label{fig:qualif-changes}
 % TODO définir les états et ms
@@ -238,7 +238,7 @@ trivialement le système de types avec la règle suivante:
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
-Théorème~\ref{thm:progres}. Posons:
+théorème~\ref{thm:progres}. Posons:
 
 \[
 \begin{cases}
@@ -319,15 +319,15 @@ conclusion n'est pas vraie:
 Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
 \textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
-dans la Section~\ref{sec:extensions-noyau}.
+dans la section~\ref{sec:extensions-noyau}.
 
 \section{Extensions du système de types}
 \label{sec:extension-types}
 
 On présente ici un système de types plus expressif permettant de capturer les
 extensions de sémantique. \emph{In fine}, cela permettra de prouver le
-Théorème~\ref{thm:progres-qual} qui est l'équivalent du
-Théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
+théorème~\ref{thm:progres-qual} qui est l'équivalent du
+théorème~\ref{thm:progres} mais pour le nouveau jugement de typage.
 
 Définir un nouveau système de types revient à étendre le jugement de typage
 $\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en ajoutant
@@ -339,9 +339,9 @@ des pointeurs.
 Le changement clef est l'ajout de \emph{pointeurs utilisateurs}. En plus des
 types pointeurs $\ptrK{t}$, on ajoute des types pointeurs $\ptrU{t}$. La
 différence entre les deux représente \emph{qui} contrôle leur valeur
-(Section~\ref{sec:secu-syscalls}).
+(section~\ref{sec:secu-syscalls}).
 
-Les différences sont les suivantes (Figure~\ref{fig:qualif-changes-typ}):
+Les différences sont les suivantes (figure~\ref{fig:qualif-changes-typ}):
 
 \begin{figure}[b]%{{{
 
@@ -359,7 +359,7 @@ Les différences sont les suivantes (Figure~\ref{fig:qualif-changes-typ}):
 \end{align*}
 
 \caption{Ajouts liés aux qualificateurs de types (par rapport aux
-Figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
+figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
 
 \label{fig:qualif-changes-typ}
 \end{figure}%}}}
@@ -378,7 +378,7 @@ aux implantations de la fonction \texttt{ioctl}.
 \end{itemize}
 
 L'ensemble des notations est résumé dans le tableau de la
-Figure~\ref{fig:qualif-not-resume}.
+figure~\ref{fig:qualif-not-resume}.
 
 \begin{figure}
 \centering
@@ -494,9 +494,9 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \end{itemize}
 \end{theorem}
 
-La preuve de ce théorème est en Annexe~\ref{proof:progres-qualif}.
+La preuve de ce théorème est en annexe~\ref{proof:progres-qualif}.
 
-Et nous donnons un équivalent du Théorème~\ref{thm:preservation}.
+Et nous donnons un équivalent du théorème~\ref{thm:preservation}.
 
 \begin{theorem}[Préservation pour les types qualifiés]
 \label{thm:preservation-qualif}
@@ -519,11 +519,11 @@ Et nous donnons un équivalent du Théorème~\ref{thm:preservation}.
 
 \end{theorem}
 
-La preuve de ce théorème est en Annexe~\ref{proof:preservation-qualif}.
+La preuve de ce théorème est en annexe~\ref{proof:preservation-qualif}.
 
 La sûreté du typage étant à nouveau établie, on a montré que les qualificateurs
 de types sur les pointeurs suffisent pour avoir une adéquation entre les
-extensions de sémantique de la Section~\ref{sec:extensions-noyau} et les
-extensions du système de type de la Section~\ref{sec:extension-types}.
+extensions de sémantique de la section~\ref{sec:extensions-noyau} et les
+extensions du système de type de la section~\ref{sec:extension-types}.
 
 % vim: spelllang=fr

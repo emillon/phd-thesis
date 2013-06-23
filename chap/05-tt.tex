@@ -4,9 +4,9 @@
 {--- \textup{Peter van den Linden}}
 
 Dans ce chapitre, nous enrichissons le langage défini dans le
-Chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
-programmes bien formés, comme celui de la Figure~\ref{fig:progwf:good} des
-programmes mal formés comme celui de la Figure~\ref{fig:progwf:bad}.
+chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
+programmes bien formés, comme celui de la figure~\ref{fig:progwf:good} des
+programmes mal formés comme celui de la figure~\ref{fig:progwf:bad}.
 
 \begin{SaveVerbatim}[]{VerbProgGood}
 f()
@@ -55,7 +55,7 @@ sémantique.
 
 Le principe est d'associer à chaque construction syntaxique une étiquette
 représentant le genre de valeurs qu'elle produira. Dans le programme de la
-Figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la valeur
+figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la valeur
 $0$, c'est donc un entier. Cela signifie que dans tout le programme, toutes les
 instances de cette variable
 \footnote{Deux variables peuvent avoir le même nom dans deux fonctions
@@ -108,7 +108,7 @@ programme est donc mal typé.
 \end{figure}
 
 Les types associés aux expressions sont décrits dans la
-Figure~\ref{fig:les-types}. Tous sont des types concrets: il n'y a pas de
+figure~\ref{fig:les-types}. Tous sont des types concrets: il n'y a pas de
 polymorphisme.
 
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
@@ -141,7 +141,7 @@ n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
 \paragraph{Typage d'une expression:} on note de la manière suivante le fait
-qu'une expression $e$ (telle que définie dans la Figure~\ref{fig:stx-data}) ait
+qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
 pour type $t$ dans le contexte $Γ$.
 
   \[
@@ -172,7 +172,7 @@ On note
 si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
 On étend cette notation aux suites de phrases, ce qui définit le typage d'un
-programme, ce que l'on note $⊢ P$ (Figure~\ref{fig:typ-suite-phrases}).
+programme, ce que l'on note $⊢ P$ (figure~\ref{fig:typ-suite-phrases}).
 
 \begin{figure}
   \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
@@ -306,7 +306,7 @@ Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d
 type qui supporte l'égalité. Ceci est représenté par un jugement
 $\textsc{Eq}(t)$ qui est vrai pour les types $\tInt$, $\tFloat$ et pointeurs,
 ainsi que les types composés si les types de leurs composantes
-(Figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
+(figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
 \tInt:
 
 \begin{mathpar}
@@ -471,7 +471,7 @@ a_n: t_n \textrm{ où } n = |a|
 
 \end{figure}
 
-Le typage des phrases est détaillé dans la Figure~\ref{fig:typ-ph}. Le typage
+Le typage des phrases est détaillé dans la figure~\ref{fig:typ-ph}. Le typage
 d'une expression est le cas le plus simple. En effet, il y a juste à vérifier
 que celle-ci est bien typable (avec ce type) dans l'environnement de départ:
 l'environnement n'est pas modifié. En revanche, la déclaration d'une variable
@@ -519,7 +519,7 @@ Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes,
 mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
 impossible de déterminer statiquement. On le remplace donc par un cas plus
-simple où seul l'arité est conservée (Figure~\ref{fig:types-semantiques}).
+simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
 
 \begin{figure}
 \begin{align*}
@@ -564,7 +564,7 @@ simple où seul l'arité est conservée (Figure~\ref{fig:types-semantiques}).
 
 \end{figure}
 
-Les règles sont détaillées dans la Figure~\ref{fig:regles-typ-sem}: les types
+Les règles sont détaillées dans la figure~\ref{fig:regles-typ-sem}: les types
 des constantes sont simples à retrouver car il y a assez d'information en
 mémoire. Pour les références, ce qui peut être déréférencé en une valeur de type
 $τ$ est un $τ~*$. Le typage des valeurs composées se fait en profondeur. Enfin,
@@ -573,7 +573,7 @@ la seule information restant à l'exécution sur les fonctions est son arité.
 La prochaine étape est de définir une relation de compatibilité entre les types
 sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
 $\tComp{τ}{t}$. Les règles sont décrites dans la
-Figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
+figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
 
 \begin{figure}
   \ruleheader{$\tComp{τ}{t}$}
@@ -945,7 +945,7 @@ La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres
 
 \end{theorem}
 
-La preuve de ce théorème se trouve en Annexe~\ref{proof:preservation}.
+La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 
 Cela prouve qu'aucun terme ne reste ``bloqué'' parce qu'aucune règle ne
 s'applique, et que la sémantique respecte le typage. En quelque sorte, les types

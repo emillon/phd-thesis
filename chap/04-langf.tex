@@ -10,9 +10,9 @@ Sa syntaxe est tout d'abord décrite; puis une sémantique opérationnelle est
 explicitée.
 
 Ce langage servira de support au systèmes de types décrit dans le
-Chapitre~\ref{cha:typbase} et enrichi dans le Chapitre~\ref{cha:qualifs}.
+chapitre~\ref{cha:typbase} et enrichi dans le chapitre~\ref{cha:qualifs}.
 
-La traduction depuis C sera explicitée dans le Chapitre~\ref{cha:implem}.
+La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \section{Notations}
 
@@ -84,7 +84,7 @@ mutuellement récursives.
 
 La sémantique opérationnelle consiste en la définition d'une relation de
 transition $\cdot\rightarrow\cdot$ entre états de l'interpréteur\footnote{Dans le
-Chapitre~\ref{cha:typbase}, la relation de typage $\cdot ⊢ \cdot : \cdot$ sera
+chapitre~\ref{cha:typbase}, la relation de typage $\cdot ⊢ \cdot : \cdot$ sera
 définie par la même technique.}.
 
 Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
@@ -166,7 +166,7 @@ seule la seconde compte.
 
 \end{definition}
 
-Une illustration se trouve dans la Figure~\ref{fig:lens-howto}.
+Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 
 \begin{figure}
 
@@ -229,7 +229,7 @@ r {[ i ← a ]}_Δ \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
 
 \end{definition}
 
-Un exemple est illustré dans la Figure~\ref{fig:lens-idx-ex}.
+Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 
 \begin{figure}
 
@@ -343,8 +343,8 @@ Donc $T$ est une lentille indexée, et on a par exemple:
 \label{fig:compo-lens}
 \end{figure}
 
-Cette définition est illustrée dans la Figure~\ref{fig:compo-lens}. Une preuve
-que la composition est une lentille est donnée en Annexe~\ref{proof:compo-lens}.
+Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
+que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
 \section{Fonctionnalités}
 
@@ -389,9 +389,9 @@ cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
 
 Dans le programme, le nom de champ $l$ est complété de la définition complète de
 la structure $S$. Celle-ci n'est pas utilisée dans l'évaluation et sera donc
-décrite au Chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
+décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
 structure dans le code du programme serait fastidieux. Nous décrirons dans le
-Chapitre~\ref{cha:implem} comment obtenir automatiquement ces annotations depuis
+chapitre~\ref{cha:implem} comment obtenir automatiquement ces annotations depuis
 un langage comme C qui utilise des noms de structures.
 
 % TODO le faire
@@ -417,7 +417,7 @@ d'accéder aux variables de la portée entourante depuis la fonction intérieure
 
 \section{Syntaxe}
 
-Les Figures~\ref{fig:stx-data},~\ref{fig:stx} et~\ref{fig:stx-ops} présentent
+Les figures~\ref{fig:stx-data},~\ref{fig:stx} et~\ref{fig:stx-ops} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
 
@@ -429,12 +429,12 @@ l'alternative (``if'') et la boucle ``while''. Les autres formes de boucle
 (``do/while'' et ``for'') peuvent être émulées par une boucle ``while''.
 
 Les fonctionnalités manquantes, et comment les émuler, seront discutés dans le
-Chapitre~\ref{cha:conclusion}.
+chapitre~\ref{cha:conclusion}.
 
 Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 \iIf{e}{i}{\iPass}$.
 
-Les opérateurs sont donnés dans la Figure~\ref{fig:stx-ops}.
+Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 % TODO un mot sur les constantes dont \eUnit
 
@@ -600,7 +600,7 @@ les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, 
 de pile.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
-Figure~\ref{fig:interp-val}):
+figure~\ref{fig:interp-val}):
 
 \begin{itemize}
 \item
@@ -710,7 +710,7 @@ bien typés.
 
 \end{itemize}
 
-La Figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
+La figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
 couples (nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une
 pile et $g$ un cadre de pile (qui représente les variables globales).
@@ -724,14 +724,14 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
   réalisée. Par exemple $\mm{([], [x↦3])}{3}{([], [x↦3])}{\widehat{3}}$
   L'évaluation des expressions est détaillée dans la
-  Section~\ref{sec:eval-exp}.
+  section~\ref{sec:eval-exp}.
 \item
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
   mémoire. La réduction instructions est traitée dans la
-  Section~\ref{sec:eval-instr}.
+  section~\ref{sec:eval-instr}.
 \item
   une erreur $Ω$. La propagation des erreurs est détaillée dans la
-  Section~\ref{sec:eval-errors}.
+  section~\ref{sec:eval-errors}.
 \end{itemize}
 
 \begin{figure}%{{{
@@ -763,7 +763,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 \label{sec:sem-ops}
 
 Un certain nombre d'opérations est possibles sur les valeurs
-(Figure~\ref{fig:stx-ops}):
+(figure~\ref{fig:stx-ops}):
 
 \begin{itemize}
 \item
@@ -865,14 +865,14 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \begin{definition}[Manipulations de pile]
 
   On définit l'empilement d'un cadre de pile $c = ((x_1↦ v_1), …, (x_n↦ v_n))$
-  sur un état mémoire $m = (s, g)$ (Figure~\ref{fig:stackops-push}):
+  sur un état mémoire $m = (s, g)$ (figure~\ref{fig:stackops-push}):
 
   \[
     \mathrm{Push}((s, g), c) = (c::s, g)
   \]
 
   On définit aussi l'extension du dernier cadre de pile
-  (Figure~\ref{fig:stackops-extend}):
+  (figure~\ref{fig:stackops-extend}):
 
   \[
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
@@ -880,7 +880,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 % TODO et pour un cadre vide?
 
-  De même on définit le dépilement (Figure~\ref{fig:stackops-pop}):
+  De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
   \[
     \mathrm{Pop}(c::s, g) = (s, g)
@@ -1274,7 +1274,7 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires:
 \end{figure}
 
 Le premier point consiste à définir les contextes eux-mêmes
-(Figure~\ref{fig:eval-ctx}).
+(figure~\ref{fig:eval-ctx}).
 
 Le deuxième est résolu les règles d'inférence suivantes:
 
@@ -1295,7 +1295,7 @@ Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de bas
 fait apparaître exactement un ``$C$''. Chaque contexte est donc constitué
 d'exactement un ``trou'' $\ctxEmpty$ (une dérivation de $C$ est toujours
 linéaire). L'opération de substitution consiste à remplacer ce trou, comme
-décrit dans la Figure~\ref{fig:ctx-sub}.
+décrit dans la figure~\ref{fig:ctx-sub}.
 
 \begin{figure}
 \begin{align*}
@@ -1476,7 +1476,7 @@ Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite:
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
 
-Un exemple d'évaluation est donné dans la Figure~\ref{fig:eval-lv}.
+Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
 \subsection*{Expressions}
 
@@ -1507,7 +1507,7 @@ puis l'autre (l'ordre d'évaluation, est encore imposé: de gauche à droite). �
 chaque opérateur $\opbin$, correspond un opérateur sémantique $\widehat{\opbin}$
 qui agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
 classique entre entiers.
-Comme précisé dans la Section~\ref{sec:sem-ops}, la division par zéro via $/$,
+Comme précisé dans la section~\ref{sec:sem-ops}, la division par zéro via $/$,
 $\%$ ou $\floatop{/}$ provoque l'erreur $\serr{div}$.
 
 \begin{mathpar}
@@ -1612,13 +1612,13 @@ $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
 
 La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
 de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la
-Section~\ref{sec:memops}).
+section~\ref{sec:memops}).
 
 \begin{mathpar}
   \semrule{Exp-Call}
 \end{mathpar}
 
-Cette évaluation est décrite dans la Figure~\ref{fig:fcall-details}.
+Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
 \label{sec:eval-instr}
@@ -1787,7 +1787,7 @@ transition est faite vers cet état d'erreur.
 Cela est aussi vrai d'une sous-expression ou sous-instruction: si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-expression ou sous instruction est définie en fonction des contextes $C$
-(Figure~\ref{fig:eval-err}).
+(figure~\ref{fig:eval-err}).
 
 \begin{figure}
 \begin{mathpar}
@@ -1816,7 +1816,7 @@ L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
-avec ce couple (variable, valeur) (Figure~\ref{fig:eval-toplevel}).
+avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}).
 
 \begin{figure}
 \begin{mathpar}
