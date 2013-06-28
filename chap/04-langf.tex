@@ -734,6 +734,17 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   section~\ref{sec:eval-errors}.
 \end{itemize}
 
+On considère en fait la cloture transitive de cette relation. Cela revient à
+ajouter une règle :
+
+\begin{mathpar}
+    \irule{Trans}
+        { Ξ_1 → Ξ_2
+       \\ Ξ_2 → Ξ_3
+        }
+        { Ξ_1 → Ξ_3}
+\end{mathpar}
+
 \begin{figure}%{{{
 
   \begin{align*}
@@ -1363,21 +1374,21 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \item
   En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
   une des formes possibles pour un contexte d'évaluation), on déduit de 1.\ que
-  $\mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
+  $\mm{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
 \item
   D'autre part, on évalue $e_2$ depuis $m'$. En supposant encore que
   l'évaluation converge, notons $v_2$ la valeur calculée et $m''$ l'état mémoire
   résultant: $\mm{m'}{e_2}{m''}{v_2}$.
 \item
   Appliquons la règle~\textsc{Ctx} à 3.\ avec $C = \ctxOp{v_1}{\ctxEmpty}$. On
-  obtient $\mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
+  obtient $\mm{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
 \item
   En combinant les résultats de 2.\ et 4.\ on en déduit que
-  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
+  $\mm{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
 \item D'après la règle~\textsc{Exp-Binop},
-  $ \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
+  $ \mm{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5.\ et 6., on a par combinaison
-  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v}$
+  $\mm{m}{e_1~\opbin~e_2}{m''}{v}$
   en posant
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
@@ -1670,7 +1681,6 @@ résultante est la déclaration de $x$ avec la nouvelle valeur $v'$ de $x$ aprè
 le pas d'exécution.
 
 % TODO expliquer pourquoi Ctx n'est pas possible
-% TODO ajouter une règle Ξ_1 → Ξ_2  et Ξ_2 → Ξ_3 impliquent Ξ_1 → Ξ_3
 
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
