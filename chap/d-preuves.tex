@@ -592,13 +592,14 @@ d'inversion garantit que $Γ' ⊢ i$).
 \jolibreak
 \paragraph{\textsc{Lv-Var}:}%{{{
 
+Le but est d'appliquer \textsc{Phi-Var}. La seule condition pour que cela soit
+possible est que $\cLookup{x}{m}$ renvoie une adresse et non $\serr{var}$.
 
-Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$,
-on peut appliquer le lemme~\ref{lemma:invsem}. La construction $a =
-\cLookup{x}{m}$ correspond bien à une adresse valide et on peut appliquer
-\textsc{Phi-Var}.
+Puisque $Γ ⊢ x : t$, on en déduit que $x:t ∈ Γ$ (par le lemme d'inversion), donc
+que $x ∈ \cDom{Γ}$. Comme $\mcomp{Γ}{m}$, $x ∈ \{ \cVarname{a} / a ∈
+\cVisible{m} \}$, donc $∃ a ∈ \cVisible{m}. x = \cVarname{a}$ et
+$\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
 
-% TODO mouais
 %}}}
 \paragraph{\textsc{Lv-Deref}:}%{{{
 

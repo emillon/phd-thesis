@@ -599,25 +599,27 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
 \begin{definition}[État mémoire bien typé]
   On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
-  l'on note $\mcomp{Γ}{m}$, si les types sémantiques des variables visibles coïncident
+  l'on note $\mcomp{Γ}{m}$, si les domaines de $Γ$ et $m$ coïncident sur la
+  partie visible, et que les types sémantiques des variables visibles coïncident
   avec leurs types statiques.
 
   \[
     \mcomp{Γ}{m} \eqdef
-      ∀ (x ↦ v) ∈ \mathrm{Visible}(m).
+      \cDom{Γ} = \{ \cVarname{a} / a ∈ \cVisible{m} \}
+      ∧
+      ∀ a ∈ \cVisible{m}.
       ∃ τ,t.
       \begin{cases}
-          Γ ⊢ x : t % TODO dans Visible x peut aussi être une locale?? quid du numéro?
+          Γ ⊢ \cVarname{a} : t
           \\
-          \semtyp{m}{v}{τ}
+          \semtyp{m}{m[a]_A}{τ}
           \\
           \tComp{τ}{t}
       \end{cases}
   \]
 
-  $\mathrm{Visible}(m)$ désigne l'ensemble des couples d'associations (variable,
-  valeur) du cadre de pile le plus récents ainsi que des variables globales.
-  Cela correspond aussi aux variables présentes dans l'environnement de typage.
+  $\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
+  récents ainsi que des variables globales.
 
   % TODO def plus précise?
 
