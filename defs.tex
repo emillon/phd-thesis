@@ -17,9 +17,6 @@
 \newcommand{\dcup}{\charfusion[\mathbin]{\cup}{+}}
 \newcommand{\bigdcup}{\charfusion[\mathbin]{\bigcup}{+}}
 
-% Fix '::' -> ': :' when using babel
-\newenvironment{grammarf}{\shorthandoff{:}\begin{grammar}}{\end{grammar}\shorthandon{:}}
-
 \def\opbin{\boxplus\xspace}
 \def\opun{\boxminus\xspace}
 
@@ -78,7 +75,6 @@
 
 % Reduction (expressions)
 \def\mm#1#2#3#4{ \msi{#1}{#2} → \msi{#3}{#4} }
-\def\mmstar#1#2#3#4{ \msi{#1}{#2} →^{*} \msi{#3}{#4} }
 \def\mms#1#2{\mm{m}{#1}{m}{#2}}
 
 % Reduction (instructions)
@@ -382,7 +378,7 @@
 \def\floatop#1{#1.}
 
 \def\cLookup#1#2{\mathrm{Lookup} (#1, #2)}
-\def\cExtend#1#2#3{\mathrm{Extend}(#1, #2, #3)} % TODO pk pas x↦v dedans
+\def\cExtend#1#2#3{\mathrm{Extend}(#1, #2 ↦ #3)}
 \def\cCleanup#1{\mathrm{Cleanup}(#1)}
 
 \newcommand{\motif}[1]{\cleaders\hbox{#1}\hfil}
@@ -392,3 +388,9 @@
 \def\jolibreak{
 \fancybreak{\chain{\diamonds}{0.25\textwidth}}
 }
+
+\def\cDom#1{\mathrm{dom}(#1)}
+
+\def\cVarname#1{\mathrm{Varname}(#1)}
+
+\def\cVisible#1{\mathrm{Visible}(#1)}

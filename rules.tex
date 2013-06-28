@@ -5,7 +5,7 @@
   \switch{#1}
     {Cst-Int}{ \irule{Cst-Int}
                  { }
-                 { Γ ⊢ i : \tInt}
+                 { Γ ⊢ n : \tInt}
     }
     {Cst-Float}{ \irule{Cst-Float}
                    { }
@@ -185,12 +185,14 @@
             }
     {Fun}{ \irule{Fun}
              { Γ' = (Γ - \vRet),
-                    \vec{a} : \vec{t},
-                     \vRet : t_r \\
+                     a_1 : t_1,
+                     …,
+                     a_n : t_n,
+                     \vRet : t \\
                Γ' ⊢ i
              }
-             { Γ ⊢ \eFun{\vec{a}}{i}
-                    : \vec{t} → t_r
+             { Γ ⊢ \eFun{a_1, …, a_n}{i}
+                    : (t_1, …, t_n) → t
              }
          }
     {T-Exp}{ \irule{T-Exp}
@@ -348,10 +350,6 @@
                   {\mm{m_0}{f (v_1, …, v_n)}{m_4}{v}}
     }
     {Seq}{ \irule{Seq}
-             { \mmi{m}{i}{m'}{\iPass} }
-             { \mmi{m}{(i;i')}{m'}{i'} }
-    }
-    {Pass}{ \irule{Pass}
               { }
               { \mmi{m}{(\iPass;i)}{m}{i} }
     }
@@ -366,13 +364,32 @@
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
     } % TODO définir le "-"
+    {Decl-Pass}{ \irule{Decl-Pass}
+                     { m' = \cCleanup{m-x} }
+                     { \mm{m}{\iDecl{x}{v}{\iPass}}
+                         {m'}{\iPass}
+                     }
+    }
     {Decl-Return}{ \irule{Decl-Return}
-            { m' = \cExtend{m}{x}{v}
-           \\ \mmi{m'}{i}{m''}{\iReturn{v_r}}
-           \\ m''' = \cCleanup{m'' - x}
-            }
-            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iReturn{v_r}} }
-    } % TODO définir le "-"
+                        { m' = \cCleanup{m-x} }
+                        { \mm{m}{ \iDecl{x}{v}{\iReturn{v'}} }
+                            {m'}{\iReturn{v'}}
+                        }
+    }
+    {Decl-Ctx}{ \irule{Decl-Ctx}
+                   { m' = \cExtend{m}{x}{v}
+                   \\ \mm{m'}{i}{m''}{i'}
+                   \\ v' = m''[(0, x)]_A
+                   \\ m''' = m'' - x % TODO définir le "-"
+                   }
+                   { \mm{m}{\iDecl{x}{v}{i}}
+                       {m'''}{\iDecl{x}{v'}{i'}}
+                   }
+    }
+    {Decl-Err}{ \irule{Decl-Err}
+                    { \msi{m}{i} → Ω }
+                    { \msi{m}{\iDecl{x}{v}{i}} → Ω }
+    }
     {If-False}{ \irule{If-False}
                   { }
                   { \mmi{m}{\iIf{0}{i_t}{i_f}}{m}{i_f} }

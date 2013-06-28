@@ -545,7 +545,7 @@ d'identificateurs $\sId$ (par exemple des chaînes de caractères).
 
 $X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
 X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
-définition). Pour $1 ≤ i ≤ |u|$, on note $u_i = u(i)$ le i-ème élément de la
+définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
 suite.
 
 On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
@@ -733,6 +733,17 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   une erreur $Ω$. La propagation des erreurs est détaillée dans la
   section~\ref{sec:eval-errors}.
 \end{itemize}
+
+On considère en fait la cloture transitive de cette relation. Cela revient à
+ajouter une règle :
+
+\begin{mathpar}
+    \irule{Trans}
+        { Ξ_1 → Ξ_2
+       \\ Ξ_2 → Ξ_3
+        }
+        { Ξ_1 → Ξ_3}
+\end{mathpar}
 
 \begin{figure}%{{{
 
@@ -929,7 +940,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
     ;
-    \draw [->] (5.2, -2) -- node[auto] {$\mathrm{Extend}((\cdot, y, 3))$} ++(1.6, 0);
+    \draw [->] (5.2, -2) -- node[auto] {$\cExtend{\cdot}{y}{3}$} ++(1.6, 0);
   \end{tikzpicture}
   }
 
@@ -1075,19 +1086,17 @@ On définit ici quelques lentilles.
 
 \subsection*{Accès à une liste par indice : $I$}
 
-% TODO global : cohérence entre ≤ et la notation intervalles
-
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
 permettant d'accéder aux éléments d'une liste par leur indice.
 
 \begin{align*}
-    l{[n]}_I     &= l_n \mbox{ si } 1 ≤ n ≤ |l| \\
+    l{[n]}_I     &= l_n \mbox{ si } n ∈ [1; |l|] \\
     l{[n ← x]}_I &= l' \\
            \mbox{ où } & l'_n = x \\
                        & ∀ i ≠ n, l'_i = l_i
 \end{align*}
 
-I n'est définie que pour $1 ≤ n ≤ |l|$.
+I n'est définie que pour $n ∈ [1 ;|l|]$.
 
 \subsection*{Accès à une liste d'associations : $L$}
 
@@ -1137,11 +1146,11 @@ du $n$\ieme cadre de pile.
 
 \begin{align*}
 m {[(n, x)]}_A     & = \begin{cases}
-                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $n ∈ [1 ; |s|]$} \\
                            \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 m {[(n, x) ← v]}_A & = \begin{cases}
-                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $n ∈ [1;|s|]$} \\
                             \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 \end{align*}
@@ -1363,21 +1372,21 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \item
   En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
   une des formes possibles pour un contexte d'évaluation), on déduit de 1.\ que
-  $\mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
+  $\mm{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
 \item
   D'autre part, on évalue $e_2$ depuis $m'$. En supposant encore que
   l'évaluation converge, notons $v_2$ la valeur calculée et $m''$ l'état mémoire
   résultant: $\mm{m'}{e_2}{m''}{v_2}$.
 \item
   Appliquons la règle~\textsc{Ctx} à 3.\ avec $C = \ctxOp{v_1}{\ctxEmpty}$. On
-  obtient $\mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
+  obtient $\mm{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
 \item
   En combinant les résultats de 2.\ et 4.\ on en déduit que
-  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
+  $\mm{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
 \item D'après la règle~\textsc{Exp-Binop},
-  $ \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
+  $ \mm{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5.\ et 6., on a par combinaison
-  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v}$
+  $\mm{m}{e_1~\opbin~e_2}{m''}{v}$
   en posant
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
@@ -1387,24 +1396,24 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \begin{definition}[Évaluation d'une expression]
 
-  L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
-  et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
-  Le résultat est toujours une valeur $v$, c'est-à-dire que nous présentons pour
-  les expressions une sémantique à grands pas. Cette évaluation est notée:
+L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
+et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
+Le résultat est une expression $e'$, c'est-à-dire que nous présentons une
+sémantique à petits pas. \emph{In fine}, cela permet d'évaluer $e$ en une valeur
+$v$. Cette évaluation est notée:
 
   \[
-    \mm{m}{e}{m'}{v}
+    \mm{m}{e}{m'}{e'}
   \]
 
 \end{definition}
 
 \begin{definition}[Évaluation d'une left-value]
 
-  L'évaluation d'une left-value $lv$ produit un ``chemin'' $φ$ dans une variable,
-  qui est en fait équivalent à une left-value dont toutes les sous-expressions
-  (d'indices) ont été évaluées.
-
-  On note:
+De même, les left-values sont réduites à petits pas. Chaque pas transforme $lv$
+en $lv'$, selon un pas qui peut modifier la mémoire (à travers l'évaluation des
+expressions d'indices). Une left-value complètement évaluée est un ``chemin''
+$φ$. On note:
 
   \[
     \mmlv{m}{lv}{m'}{φ}
@@ -1623,7 +1632,9 @@ Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 \section{Instructions}
 \label{sec:eval-instr}
 
-Contrairement à l'évaluation des expressions, on choisit une sémantique de
+\begin{definition}{Évaluation d'une instruction}
+
+Comme pour l'évaluation des expressions, on choisit une sémantique de
 réécriture à petits pas. La sémantique fonctionne de la manière suivante:
 partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
 d'évaluation suivantes permettent de réduire le problème en se ramenant à
@@ -1633,6 +1644,8 @@ $m'$. Un tel pas est noté:
 \[
   \mmi{m}{i}{m'}{i'}
 \]
+
+\end{definition}
 
 Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
 mémoire dans lequel on a déjà réalisé la première affectation. La seconde
@@ -1655,33 +1668,32 @@ ci-dessus.
 \begin{mathpar}
   \semrule{Seq}
 
-  \semrule{Pass}
-
   \semrule{Exp}
 \end{mathpar}
 
-L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait en trois parties:
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ peut se faire de plusieurs manières.
+La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous une
+déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
+mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
+résultante est la déclaration de $x$ avec la nouvelle valeur $v'$ de $x$ après
+le pas d'exécution.
 
-\begin{itemize}
-\item on crée un environnement mémoire $m'$ en ajoutant à $m$ l'association
-$x↦v$.
+% TODO expliquer pourquoi Ctx n'est pas possible
 
-\item sous $m'$, on évalue $i$ jusqu'à atteindre une instruction $\iPass$ ou
-$\iReturn{v_r}$ sous un état $m''$. C'est cette instruction qui sera retournée.
+Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
+en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 
-\item on enlève $x$ de $m''$ et on enlève de cet état mémoire les pointeurs
-invalides.
-
-\end{itemize}
+Enfin, si une erreur se produit elle est propagée.
 
 \begin{mathpar}
-  \semrule{Decl}
+ \semrule{Decl-Pass}
 
-  \semrule{Decl-Return}
+ \semrule{Decl-Return}
+
+ \semrule{Decl-Ctx}
+
+ \semrule{Decl-Err}
 \end{mathpar}
-
-% TODO que faire si la pile de locale est vide? (declaration de ``locale'' dans
-% une expression au toplevel)
 
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
 manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce

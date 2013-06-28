@@ -226,21 +226,21 @@ jugements $Γ ⊢ i$, $Γ ⊢ e : t$ et $Γ ⊢ lv : t$ sont interdépendants, o
 tous les cas par récursion mutuelle.
 
 Le squelette de cette preuve est une analyse de cas selon la dernière règle
-utilisée. La plupart des cas ont la même forme: on utilise l'hypothèse de
-récurrence sur les sous-élements syntaxiques. Dans le cas ``valeur'', on appelle
-une règle qui permet de transformer une opération syntaxique en opération
-sémantique (par exemple, on transforme le $+$ unaire en un $\widehat{+}$
-sémantique). Dans le cas ``évaluation'', on applique la règle \textsc{Ctx} avec
-un contexte particulier qui permet de passer d'un jugement $\mm{m}{a}{m'}{a'}$ à
-un jugement $\mm{m}{b}{m'}{b'}$ (où $a$ apparaît dans $b$). Enfin, dans le cas
-``erreur'', on utilise \textsc{Eval-Err} avec ce même contexte $C$.
+utilisée. La plupart des cas ont la même forme: , et on utilise l'hypothèse de
+récurrence sur les sous-éléments syntaxiques (en appliquant éventuellement le
+lemme~\ref{lemma:inversion} d'inversion pour établir qu'ils sont bien typés).
+Dans le cas ``valeur'', on appelle une règle qui permet de transformer une
+opération syntaxique en opération sémantique (par exemple, on transforme le $+$
+unaire en un $\widehat{+}$ sémantique). Dans le cas ``évaluation'', on applique
+la règle \textsc{Ctx} avec un contexte particulier qui permet de passer d'un
+jugement $\mm{m}{a}{m'}{a'}$ à un jugement $\mm{m}{b}{m'}{b'}$ (où $a$ apparaît
+dans $b$). Enfin, dans le cas ``erreur'', on utilise \textsc{Eval-Err} avec ce
+même contexte $C$.
 
 Ceci est valable pour la majorité des cas. Il faut faire attention en
 particulier aux opérations sémantiques qui peuvent produire des erreurs (comme
-la division, ou l'opérateur $\phxx\cLookup$) ou aux opérations qui modifient
-l'état mémoire. Dans ce cas, il faut prouver que $\mcomp{Γ}{m}$.
+la division, ou l'opérateur $\phxx\cLookup$).
 
-% TODO la règle Seq sert à rien
 % TODO montrer progrès au niveau des phrases?
 
 %\begin{itemize}
@@ -260,7 +260,8 @@ l'état mémoire. Dans ce cas, il faut prouver que $\mcomp{Γ}{m}$.
 Ce cas est trivial.
 % }}}
 \paragraph{\textsc{Return}:} %{{{
-Partant de $i = \iReturn{e}$, on applique l'hypothèse de récurrence à $e$.
+Partant de $i = \iReturn{e}$, on applique le lemme d'inversion. Il vient :
+$∃ t_t, Γ ⊢ e : t_r$. On applique l'hypothèse de récurrence à $e$.
 
 \begin{itemize}
 \item $e = v$. Alors $i = \iReturn{v}$, ce qui nous permet de conclure.
@@ -278,7 +279,7 @@ $\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
 Avec $i = i_1;i_2$, on applique l'hypothèse de récurrence à $i_1$.
 
 \begin{itemize}
-\item $i_1 = \iPass$. On peut donc appliquer la règle \textsc{Pass} et donc
+\item $i_1 = \iPass$. On peut donc appliquer la règle \textsc{Seq} et donc
 $\mms{i}{i_2}$.
 
 \item $i_1 = \iReturn{v}$. Alors on peut appliquer la règle \textsc{Return}:
@@ -292,9 +293,9 @@ $\mms{i}{i_2}$.
 \end{itemize}
 % }}}
 \paragraph{\textsc{Exp}   :} %{{{
-Ici $i = e$. On peut appliquer l'hypothèse de récurrence à $e$ qui est en
-quelque sorte plus petit que $i$ ($i \gramisa e$ introduit un constructeur
-implicite).
+
+Ici $i = e$. On peut appliquer l'hypothèse de récurrence à $e$ qui est ``plus
+petit'' que $i$ ($i \gramisa e$ introduit un constructeur implicite).
 
 \begin{itemize}
 \item $e = v$. Alors on peut appliquer \textsc{Exp}: $\mms{e}{\iPass}$.
@@ -310,57 +311,29 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 à $e$.
 
 \begin{itemize}
-\item $e = v$. On applique alors l'hypothèse de récurrence à $i$.
+\item $e = v$. On applique alors l'hypothèse de récurrence à $i$ sous
+    $Γ' = Γ, x:t$ et avec $m' = \cExtend{m}{x}{v}$.
 
     \begin{itemize}
-    \item $i = \iPass$.
+    \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
 
-        On pose $Γ' = Γ, x:t$ ($t$ apparaît dans les hypothèses en tant que
-        type de $e$) et $m' = \cExtend{m}{x}{v}$.
+    \item $i = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
 
-        Alors $\mcomp{Γ'}{m'}$. % TODO
+    \item $\mm{m'}{i}{m''}{i'}$. Par \textsc{Decl-Ctx} il vient
+        $\mm{m}{\iDecl{x}{v}{i}}{m'''}{\iDecl{x}{v'}{i'}}$ où
+       $v' = m''[(0, x)]_A$
+       et
+       $m''' = m'' - x$.
 
-        On peut donc appliquer l'hypothèse de récurrence à $Γ'$, $m'$, et $i'$.
+    \item $\msi{m'}{i'} → Ω$. On applique \textsc{Decl-Err}.
 
-        \begin{itemize}
-        \item $i' = \iPass$. Dans ce cas la règle \textsc{Decl} s'applique.
-            Il reste à prouver que $\mcomp{Γ'}{m'''}$ où $m''' =
-            \cCleanup{m''-x}$. % TODO
-
-        \item $i' = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
-
-        \item $\mm{m'}{i'}{m''}{i''}$. En posant $C = \iDecl{x}{v}{\ctxEmpty}$, la
-            règle \textsc{Ctx} donne 
-
-            $\mm{m'}{\iDecl{x}{v}{i'}}{m''}{\iDecl{x}{v}{i''}}$
-            % TODO je suis pas convaincu que c'est un bon cas de contexte
-
-        \item $\msi{m'}{i'} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
-        \end{itemize}
-
-    \item $i = \iReturn{v}$. % TODO ptet ramener au cas au dessus avec Decl-Return
-    \item $\mm{m}{i}{m'}{i'}$. % TODO
-    \item $\msi{m}{i} → Ω$. % TODO
     \end{itemize}
 
-
-\item $\mm{m}{e}{m'}{e'}$. % TODO
-\item $\msi{m}{e} → Ω$. % TODO
+\item $\mm{m}{e}{m'}{e'}$. On pose $C = \iDecl{x}{\ctxEmpty}$ et on conclut avec
+    la règle \textsc{Ctx}.
+\item $\msi{m}{e} → Ω$. Idem avec \textsc{Eval-Err}.
 \end{itemize}
 
-\[ \irule{Decl-Prime}
-       { m' = \cExtend{m}{x}{v}
-       \\ \mm{m'}{i}{m''}{i'}
-       \\ m''' = \cCleanup{m'' - x}
-       }
-       { \mm{m}{\iDecl{x}{v}{i}}
-            {m'''}{\iPass}
-       }
-\]
-
-\[ \semrule{Decl} \]
-
-\[ \semrule{Ctx} \]
 
 
 % }}}
@@ -506,9 +479,7 @@ On applique l'hypothèse de récurrence à $lv$.
 \item $lv = φ$. On applique l'hypothèse de récurrence à $e$.
 
     \begin{itemize}
-    \item $e = v$. Alors on peut appliquer \textsc{Exp-Set}. Puisque l'état
-        mémoire est modifié en $m' = m{[φ ← v]}_Φ$, il reste à montrer que
-        $\mcomp{Γ}{m'}$. % TODO
+    \item $e = v$. Alors on peut appliquer \textsc{Exp-Set}.
 
     \item $\mm{m}{e}{m'}{e'}$. On conclut avec $C = φ ← \ctxEmpty$.
     \item $\msi{m}{e} → Ω$. Idem.
@@ -560,27 +531,75 @@ $C = f (v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n)$.
 Le seul cas restant est celui où l'expression considérée a pour forme
 $f (v_1, …, v_n)$
 avec
-$f = \eFun{\vec{a}}{i}$
-:
-\textsc{Exp-Call} s'applique alors. Cette règle modifie la mémoire :
+$f = \eFun{\vec{a}}{i}$.
 
-\[ \semrule{Exp-Call} \]
+Soient $Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n, \vRet : t$
+et
+$m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))$.
 
-Il reste à prouver que $\mcomp{Γ}{m_4}$.
+On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
+d'inversion garantit que $Γ' ⊢ i$).
 
-% TODO
+\begin{itemize}
+\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Return-Unit}.
+
+\[ \irule{Exp-Return-Unit}
+      { m' = \cCleanup{m}}
+      { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
+           {m'}{\eUnit}
+      }
+\]
+
+\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Return}.
+
+\[ \irule{Exp-Return}
+      { m' = \cCleanup{m}}
+      { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
+           {m'}{v}
+      }
+\]
+
+\item $\mm{m_1}{i}{m_2}{i'}$.
+
+    Alors on peut appliquer \textsc{Exp-Call-Ctx}.
+
+\[
+    \irule{Exp-Call-Ctx}
+        { m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))
+       \\ \mm{m_1}{i}{m_2}{i'}
+       \\ ∀ i ∈ [1;n], v'_i = m_2[(0, a_i)]_A
+       \\ m_3 = \mathrm{Pop} (m_2)
+        }
+        { \mm{m_0}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) }
+          { m_3 }{\eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n) }
+        }
+\]
+
+\item $\msi{m}{i} → Ω$. On peut alors appliquer \textsc{Exp-Call-Err}.
+
+\[ \irule{Exp-Call-Err}
+    { m' = \mathrm{Push}(m, (a_1 ↦ v_1, …, a_n ↦ v_n))
+   \\ \msi{m'}{i} → Ω
+    }
+    { \msi{m}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) } → Ω }
+\]
+
+\end{itemize}
+
+% TODO remettre ces règles à leur place
 
 %}}}
 \jolibreak
 \paragraph{\textsc{Lv-Var}:}%{{{
 
+Le but est d'appliquer \textsc{Phi-Var}. La seule condition pour que cela soit
+possible est que $\cLookup{x}{m}$ renvoie une adresse et non $\serr{var}$.
 
-Puisque $(x, t) ∈ Γ$ et $\mcomp{Γ}{m}$,
-on peut appliquer le lemme~\ref{lemma:invsem}. La construction $a =
-\cLookup{x}{m}$ correspond bien à une adresse valide et on peut appliquer
-\textsc{Phi-Var}.
+Puisque $Γ ⊢ x : t$, on en déduit que $x:t ∈ Γ$ (par le lemme d'inversion), donc
+que $x ∈ \cDom{Γ}$. Comme $\mcomp{Γ}{m}$, $x ∈ \{ \cVarname{a} / a ∈
+\cVisible{m} \}$, donc $∃ a ∈ \cVisible{m}. x = \cVarname{a}$ et
+$\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
 
-% TODO mouais
 %}}}
 \paragraph{\textsc{Lv-Deref}:}%{{{
 
@@ -694,6 +713,7 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 %}}}
 \end{proof}
 % TODO vérifier que tous les contextes sont présents dans la figure
+% TODO vérifier que tous les cas sont dans le lemme d'inversion
 \section{Préservation}
 \label{proof:preservation}
 

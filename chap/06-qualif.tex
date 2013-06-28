@@ -255,7 +255,9 @@ conclusion n'est pas vraie:
 
 \begin{itemize}
   \item
-    On a bien $\mcomp{Γ}{m}$. En effet $\mathrm{Visible}(m) = \{(x ↦ 0)\}$ et:
+    On a bien $\mcomp{Γ}{m}$. En effet $\cVisible{m} = \{(0, x)\}$ et:
+
+ % TODO refaire avec la nouvelle def de mcomp
 
     \[
     \begin{cases}
@@ -489,9 +491,11 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
-  \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ (e', m'), \mm{m}{e}{m'}{e'}$
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
+
+%TODO ajouter les cas lv et i
 \end{theorem}
 
 La preuve de ce théorème est en annexe~\ref{proof:progres-qualif}.
