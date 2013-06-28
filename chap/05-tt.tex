@@ -885,19 +885,6 @@ C'est-à-dire, soit:
 
 La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
 
-\begin{lemma}{Inversion pour le typage sémantique}
-
-\label{lemma:invsem}
-
-  Supposons que $Γ ⊢ x : t$ et $\mcomp{Γ}{m}$.
-
-  On pose $a = \cLookup{x}{m}$.
-% TODO c'est pas omega
-
-  Alors il existe $τ$ tel que $\semtyp{m}{m{[a]}_A}{τ}$ avec $\tComp{τ}{t}$.
-
-\end{lemma}
-
 % TODO comm?
 %\begin{lemma}[Permutation]
   %L'ordre dans lequel les variables apparaissent dans un environnement
