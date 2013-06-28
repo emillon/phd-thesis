@@ -124,21 +124,14 @@ sur une certaine classe de programmes C.
 \item C ::= \&C
 \item changer les para de présentation des règles
 \item widehats sur les constantes ?
-\item liste d'assos $→$ fonction
 \item définir les opérations d'ajout/remplacement sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item return implicite en fin de fct
-\item clarifier quand il faut un $\mm{\cdot}{\cdot}{\cdot}{\cdot}$
-             et quand il faut un $\mmstar{\cdot}{\cdot}{\cdot}{\cdot}$
-\item "et" et "ou" lazy
-\item dans les lentilles, L désigne à la fois celle des champs et celle des
-listes d'asso
 \end{itemize}
 
 Limitations :
 
 \begin{itemize}
-\item (ou feature) variables non initialisées
 \item tableaux de taille dynamique ?
 \item structures récursives et corécursives
 \item figures gramdef : singulier ou pluriel?
@@ -261,7 +254,7 @@ so-called \emph{dangling} pointers.
 
 Note that this is a dynamic step and requires a full memory scan, which is very
 inefficient. This is done only for soundness reasons ; as discussed in
-Section~X, if a preliminary analysis proves that this is unnecessary we can skip
+section~X, if a preliminary analysis proves that this is unnecessary we can skip
 this step.
 
 \paragraph{Instructions} inside functions includes the empty instruction,
@@ -370,7 +363,7 @@ On the other hand, a plain expression is only evaluated for its side-effects
 \subsection*{Evaluation}
 
 Operational semantics described thereafter are a binary relation between states
-$Ξ$ of an interpreter described in Figure~\ref{fig:interp:plas}.
+$Ξ$ of an interpreter described in figure~\ref{fig:interp:plas}.
 
 Every syntactic constant $c$ has a corresponding value $\widehat{c}$. The same
 holds for functions, because as they do not capture their lexical
@@ -527,7 +520,7 @@ expression with a context.
 \end{figure}
 
 Splitting across a context corresponds to defining a grammar of contexts. By
-defining these (Figure~\ref{fig:ctxs}), we make an explicit choice of evaluating some constructs in a
+defining these (figure~\ref{fig:ctxs}), we make an explicit choice of evaluating some constructs in a
 left-to-right order. For example, the contexts for binary operations are
 $C~\opbin~e$ and $v~\opbin~C$, so it is impossible to start reducing the right
 part before the left one has been fully evaluated.
@@ -552,7 +545,7 @@ is linear, and $\ctxEmpty{}$ appears exactly once in every evaluation context. }
 For example, let us unroll the evaluation of
 $3+x$ to the value $\widehat{5}$
 starting from a memory state $m = ([~], \{x ↦ \widehat{2}\}) $.
-It is also depicted in Figure~\ref{fig:eval-steps}.
+It is also depicted in figure~\ref{fig:eval-steps}.
 
 \begin{enumerate}[(a)]
 \item % (a)
@@ -645,7 +638,7 @@ It is also depicted in Figure~\ref{fig:eval-steps}.
 
 \end{figure}
 
-Evaluation rules are given in annex in Figures~X and~Y. Most are simple, but a
+Evaluation rules are given in annex in figures~X and~Y. Most are simple, but a
 few deserve to be explained in detail.
 
 \paragraph{Error propagation} is done in two cases. First, if an expression
@@ -718,8 +711,6 @@ a global variable.
   le contexte ou avec toujours le même type (cf rem ci-dessous sur 5.3)
 \item
   il manque les preuves de 5.3 et 5.4
-\item
-  lemme 5.4 $dom(\Gamma)$ a été défini quelque part ?
 \item
   théormèe 5.2 rappeler où a été défini l'évaluation d'une expression et
   dans quel cas elle produit des valeurs
@@ -1346,7 +1337,7 @@ the type of global functions.%}}}
 %Pourquoi ne pas présenter informellement le cas d'étude dans l'intro
 %pour montrer que de vrais bugs existent ?
 
-%Chapitre 9
+%chapitre 9
 %- tu sabotes ton travail en commençant par les limitations. Présente d'abord un résumé de tes travaux puis dans une section "travaux futurs" tu discutes des améliorations à apporter liées aux limitations actuelles de SAFESPEAK
 %- parag Allocation dynamique. Revoir la phrases "Ces fonctions manipulent..."
 %- est-ce que tu as réfléchi à d'autres classes de propriété de sécurité pour lesquelles ton système de type pourrait répondre ?

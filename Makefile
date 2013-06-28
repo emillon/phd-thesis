@@ -54,5 +54,8 @@ snapshot:
 	git checkout master
 	make
 
+upload:
+	scp typ.pdf tibre:public_html/these.pdf
+
 # Debian package: latex-make
 include /usr/include/LaTeX.mk

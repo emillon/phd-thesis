@@ -2,13 +2,6 @@ Ici nous enrichissons le langage défini dans le chapitre~\ref{cha:lang} d'un
 système de types. Celui-ci permet d'obtenir plus de garanties que celui de C tel
 que décrit dans \cite{AnsiC}.
 
-Il permet le polymorphisme sur les types pointeurs, permettant par exemple de
-typer :
-
-\begin{mathpar}
-⊢ \text{memcpy} : ∀ a . (a^*, a^*, \tInt) \rightarrow \tVoid
-\end{mathpar}
-
 \section{Règles de typage}
 
 \subsection{Types}
@@ -74,18 +67,6 @@ $s$ est une substitution, $\overline{s}$ est son extension définie par :
 \end{align*}
 
 Par souci de simplicité, on notera $s$ pour $\overline{s}$.
-\end{definition}
-
-\begin{definition}[Instanciation]
-Un schéma de types $σ = ∀ \vec{a} . τ$ peut être instancié en un type $μ$ s'il
-existe une substition $s$ telle que :
-
-\begin{itemize}
-\item $\textrm{Dom}(s) ⊆ \vec{a}$
-\item $s(τ) = μ$
-\end{itemize}
-
-On note alors $μ ≤ σ$.
 \end{definition}
 
 \begin{definition}[Variables libres]
@@ -339,15 +320,6 @@ La règle concernant les pointeurs sur fonction est similaire, à ceci près qu'
 fonction a un schéma de type, qu'il faut instancier afin d'obtenir un type
 pointeur.
 
-\begin{mathpar}
-\irule{AddrOfFun}{
-  Γ ⊢ f : σ \\
-  τ ≤ σ
-}{
-  Γ ⊢ \&f : τ
-}
-\end{mathpar}
-
 \subsection{Fonctions}
 
 Pour typer une fonction, on commence par ajouter ses paramètres et ses variables
@@ -364,33 +336,3 @@ Le type résultant est généralisé.
 }
 \]
 
-\subsection{Instructions}
-
-Une affectation est bien typée si elle faite entre une left-value et une
-expression de même type.
-
-\begin{mathpar}
-\irule{Assign}{
-  Γ ⊢ lv : τ \\
-  Γ ⊢ e  : τ
-}{
-  Γ ⊢ lv \leftarrow e
-}
-\end{mathpar}
-
-\wip{}
-
-\begin{mathpar}
-\irule{Fcall}{
-  Γ ⊢ lv : τ_{ret} \\
-  Γ ⊢ fe : σ \\
-  Γ ⊢ \vec{e} : \vec{τ} \\
-  (\vec{τ} \rightarrow τ_r) ≤ σ
-}{
-  Γ ⊢ lv \leftarrow fe(\vec{e})
-}
-\end{mathpar}
-
-\section{Limitations}
-\subsection{Programmes non typables}
-\subsection{Incohérences}

@@ -2,7 +2,7 @@ Dans ce chapitre, nous décrivons la mise en œuvre des analyses statiques
 précédentes. Nous commençons par un tour d'horizon des représentations
 intermédiaires possibles, avant de décrire celle retenue: Newspeak. La chaîne
 de compilation est explicitée, partant de C pour aller au langage impératif
-décrit dans le Chapitre~\ref{cha:lang}. Enfin, nous donnons les détails d'un
+décrit dans le chapitre~\ref{cha:lang}. Enfin, nous donnons les détails d'un
 algorithme d'inférence de types à la Hindley-Milner, reposant sur l'unification
 et le partage de références.
 
@@ -46,7 +46,7 @@ Newspeak~\cite{newspeak} est un langage conçu pour être à la fois:
 
 %TODO Mettre à jour la figure
 
-La compilation vers C est faite en trois étapes (Figure~\ref{fig:compil-npk}):
+La compilation vers C est faite en trois étapes (figure~\ref{fig:compil-npk}):
 prétraitement du code source, compilation de C prétraité vers \newspeak{}, puis
 compilation de \newspeak{} vers ce langage.
 
@@ -101,7 +101,7 @@ invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu
 aient un nom unique.
 
 Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
-décrits dans les Chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
+décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
 simple. Puisqu'ils sont suffisament proches du lambda calcul simplement typé, on
 peut utiliser une variante de l'algorithme W de Damas et
 Milner~\cite{DamasMilner}. On utilise l'optimisation classique qui consiste à se
@@ -121,7 +121,7 @@ une erreur de type.
 \label{fig:exunif:c}
 \end{figure} % }}}
 
-Prenons l'exemple de la Figure~\ref{fig:exunif:c} et typons-le ``à la main''. On
+Prenons l'exemple de la figure~\ref{fig:exunif:c} et typons-le ``à la main''. On
 commence par oublier toutes les étiquettes de type présentes dans le programme.
 Celui-ci devient alors:
 
@@ -202,7 +202,7 @@ et \texttt{typeof rhs1 env} à \texttt{Ptr\_type t1}. L'autre aspect intéressan
 est la dernière ligne: la fonction \texttt{unify} va modifier en place les
 représentations des types afin de les rendre égales. L'implantation de
 \texttt{unify} sera décrite plus tard. Dans ce cas précis, elle va faire pointer
-la référence dans t2 vers t1 (Figure~\ref{fig:unifsharing}).
+la référence dans t2 vers t1 (figure~\ref{fig:unifsharing}).
 
 Enfin, la seconde affectation se déroule à peu près de la même manière.
 
@@ -211,7 +211,7 @@ Enfin, la seconde affectation se déroule à peu près de la même manière.
 Ici \texttt{typeof lhs2 env} est identique à
 \verb!Ptr_type (Env.get "p" env)! et \texttt{typeof lhs2 env} à \texttt{Const\_type Int\_type}. Et dans cas,
 l'unification doit se faire entre t1 et \texttt{Const\_type Int\_type}: cela
-mute la référence derrière t1 (Figure~\ref{fig:typeunifref}).
+mute la référence derrière t1 (figure~\ref{fig:typeunifref}).
 
 \begin{figure}
   \begin{tikzpicture}
@@ -299,7 +299,7 @@ d'unification.
 \item si un type est inconnu et pas l'autre, il faut de la même manière affecter la
 référence. Mais en faisant ça inconditionnellement, cela peut poser problème:
 par exemple en tentant d'unifier \texttt{a} avec \verb!Ptr(a)! on pourrait
-créer un cycle dans le graphe (Figure~\ref{fig:typecycle}).
+créer un cycle dans le graphe (figure~\ref{fig:typecycle}).
 Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
 pas présent dans le type à affecter.
 
@@ -335,7 +335,7 @@ intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}
 \end{figure}
 
 Le reste de l'outil est résumé dans la fonction
-\texttt{process\_npk} (Figure~\ref{fig:implem-process}):
+\texttt{process\_npk} (figure~\ref{fig:implem-process}):
 
 \begin{itemize}
 
@@ -401,7 +401,7 @@ déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
 \texttt{unify}. Par exemple, pour typer une déclaration
-(Figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
+(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
 type \texttt{t0}. On étend l'environnement courant avec cette nouvelle
 association et sous ce nouvel environnement, on type le bloc de portée de la
 déclaration.
@@ -455,7 +455,7 @@ let infer_binop op (_, a) (_, b) =
 \label{fig:implem-typ}
 \end{figure}
 
-Les types de données utilisés sont donnés dans la Figure~\ref{fig:implem-typ}.
+Les types de données utilisés sont donnés dans la figure~\ref{fig:implem-typ}.
 Les types \langname{} sont représentés soit par un constructeur de type
 ``résolu'' immutable comme \texttt{Int}, soit par une référence dans le cas
 d'une variable inconnue (placée alors derrière le constructeur \texttt{Var}).
@@ -463,7 +463,7 @@ d'une variable inconnue (placée alors derrière le constructeur \texttt{Var}).
 Ces références contiennent une valeur du type
 \texttt{simple var\_type}\footnote{
   Ce type est polymorphe pour pouvoir être repris dans l'unification des
-  qualificateurs (Figure~\ref{fig:implem-qualifs}).
+  qualificateurs (figure~\ref{fig:implem-qualifs}).
 }, c'est-à-dire:
 
 \begin{itemize}
@@ -483,7 +483,7 @@ par exemple:
 Cela est dû au fait que \texttt{fun x -> Var (ref (Instanciated x))} est typée
 \texttt{simple -> simple} et peut donc être appliquée à loisir. Pour éviter cet
 effet d'allongement, on définit une fonction \texttt{shorten} qui supprime ces
-chaînes (Figure~\ref{fig:implem-shorten}).
+chaînes (figure~\ref{fig:implem-shorten}).
 
 % TODO décrire la première branche du pattern matching
 
@@ -532,7 +532,7 @@ sont:
 \end{itemize}
 
 Cette analyse de cas est implantée dans la fonction \texttt{unify_now}
-(Figure~\ref{fig:implem-unify-now}).
+(figure~\ref{fig:implem-unify-now}).
 
 \begin{figure}
   \insertcode{implem-unify.ml}
@@ -540,7 +540,7 @@ Cette analyse de cas est implantée dans la fonction \texttt{unify_now}
 \label{fig:implem-unify-now}
 \end{figure}
 
-cas structure (Figure~\ref{fig:implem-unify-structs}).
+cas structure (figure~\ref{fig:implem-unify-structs}).
 
 \begin{figure}
   \insertcode{implem-structs.ml}
@@ -549,7 +549,7 @@ cas structure (Figure~\ref{fig:implem-unify-structs}).
 \end{figure}
 
 Pour les pointeurs, il est nécessaire de définir des fonctions similaires sur
-les qualificateurs (Figure~\ref{fig:implem-qualifs}).
+les qualificateurs (figure~\ref{fig:implem-qualifs}).
 
 \begin{figure}
 
@@ -569,7 +569,7 @@ les qualificateurs (Figure~\ref{fig:implem-qualifs}).
 \end{figure}
 
 La fonction appellée directement par le reste du code, appellée \texttt{unify},
-peut retarder l'unification (Figure~\ref{fig:implem-lazy}). Dans ce cas, la
+peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la
 paire de types à unifier est mise dans une liste d'attente qui sera unifiée
 après le parcours du programme. Le but est d'instrumenter l'inférence de types
 afin de pouvoir en faire une exécution ``pas à pas''.

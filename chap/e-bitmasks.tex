@@ -1,0 +1,67 @@
+\def\tBits{\textsc{Bits}\xspace}
+
+Par exemple, en ouvrant un fichier on précise le mode du fichier (lecture,
+écriture ou les deux) par les bits 1 et 2, s'il faut créer le fichier ou non
+s'il n'existe pas par le bit 7, s'il dans ce cas il doit être effacé par le bit
+8), etc. On obtient un mode en réalisant un ``ou'' bit à bit entre des
+constantes. Ces deux utilisations du type \texttt{int} n'ont rien à voir ; il
+faudrait donc empêcher d'utiliser un descripteur de fichier comme un mode, et
+vice-versa. De même, aucun opérateur n'a de sens sur les descripteurs de
+fichier, mais l'opérateur \texttt{\textbar{}} du ``ou'' bit à bit doit rester
+possible pour les modes.
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+Les fonctions suivantes permettent d'ouvrir un fichier sous UNIX.
+
+\begin{verbatim}
+int open(const char *pathname, int flags);
+int open(const char *pathname, int flags, mode_t mode);
+int creat(const char *pathname, mode_t mode);
+\end{verbatim}
+
+Il est intéressant de remarquer que ces fonctions manipulent des entiers:
+
+\begin{itemize}
+
+\item la valeur de retour est un \emph{descripteur de fichier}, qui correspond à
+un indice numérique dans une table interne au processus. Par exemple, $0$
+désigne son entrée standard, $1$ sa sortie standard, et $2$ son flux d'erreur
+standard.
+
+\item \texttt{flags} est un entier qui encode les options liées à l'ouverture du
+fichier.
+
+\item \texttt{mode} (en fait un \emph{unsigned int}) encode de la même manière
+les permissions que doit avoir le fichier créé, le cas échéant.
+
+\end{itemize}
+
+Ces entiers ont une particularité en commun: ils ne sont pas utilisés comme
+entiers au sens arithmétique du terme. C'est-à-dire que \texttt{int} ou
+\texttt{unsigned int} est le bon type car il correspond à la bonne taille de
+données, mais les opérations comme $+$ ou $/$ n'ont pas de sens sur ces valeurs.
+
+On décrit ici une technique de typage pour détecter et interdire ces mauvaises
+utilisations.
+
+\section{Ajouts}
+
+On étend les types avec un type \tBits.
+
+\begin{align*}
+\gramdef{Type}{t}
+  { … }{}
+  { \tBits }{Entier utilisé comme \emph{bitmask}}
+  {END}
+\end{align*}
+
+Au niveau des valeurs, les entiers sont représentés par des valeurs entières
+classiques $\widehat{n}$. C'est pourquoi on ajoute la règle suivante de
+compatibilité entre le type de valeurs \tInt et le type statique \tBits.
+
+\[
+  \irule{Comp-Bits}
+    { }
+    { \tComp{\tInt}{\tBits} }
+\]

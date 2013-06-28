@@ -10,9 +10,9 @@ Sa syntaxe est tout d'abord décrite; puis une sémantique opérationnelle est
 explicitée.
 
 Ce langage servira de support au systèmes de types décrit dans le
-Chapitre~\ref{cha:typbase} et enrichi dans le Chapitre~\ref{cha:qualifs}.
+chapitre~\ref{cha:typbase} et enrichi dans le chapitre~\ref{cha:qualifs}.
 
-La traduction depuis C sera explicitée dans le Chapitre~\ref{cha:implem}.
+La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \section{Notations}
 
@@ -84,7 +84,7 @@ mutuellement récursives.
 
 La sémantique opérationnelle consiste en la définition d'une relation de
 transition $\cdot\rightarrow\cdot$ entre états de l'interpréteur\footnote{Dans le
-Chapitre~\ref{cha:typbase}, la relation de typage $\cdot ⊢ \cdot : \cdot$ sera
+chapitre~\ref{cha:typbase}, la relation de typage $\cdot ⊢ \cdot : \cdot$ sera
 définie par la même technique.}.
 
 Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
@@ -166,7 +166,7 @@ seule la seconde compte.
 
 \end{definition}
 
-Une illustration se trouve dans la Figure~\ref{fig:lens-howto}.
+Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 
 \begin{figure}
 
@@ -229,7 +229,7 @@ r {[ i ← a ]}_Δ \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
 
 \end{definition}
 
-Un exemple est illustré dans la Figure~\ref{fig:lens-idx-ex}.
+Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 
 \begin{figure}
 
@@ -343,8 +343,8 @@ Donc $T$ est une lentille indexée, et on a par exemple:
 \label{fig:compo-lens}
 \end{figure}
 
-Cette définition est illustrée dans la Figure~\ref{fig:compo-lens}. Une preuve
-que la composition est une lentille est donnée en Annexe~\ref{proof:compo-lens}.
+Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
+que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
 \section{Fonctionnalités}
 
@@ -389,9 +389,9 @@ cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
 
 Dans le programme, le nom de champ $l$ est complété de la définition complète de
 la structure $S$. Celle-ci n'est pas utilisée dans l'évaluation et sera donc
-décrite au Chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
+décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
 structure dans le code du programme serait fastidieux. Nous décrirons dans le
-Chapitre~\ref{cha:implem} comment obtenir automatiquement ces annotations depuis
+chapitre~\ref{cha:implem} comment obtenir automatiquement ces annotations depuis
 un langage comme C qui utilise des noms de structures.
 
 % TODO le faire
@@ -417,7 +417,7 @@ d'accéder aux variables de la portée entourante depuis la fonction intérieure
 
 \section{Syntaxe}
 
-Les Figures~\ref{fig:stx-data},~\ref{fig:stx} et~\ref{fig:stx-ops} présentent
+Les figures~\ref{fig:stx-data},~\ref{fig:stx} et~\ref{fig:stx-ops} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
 
@@ -429,12 +429,12 @@ l'alternative (``if'') et la boucle ``while''. Les autres formes de boucle
 (``do/while'' et ``for'') peuvent être émulées par une boucle ``while''.
 
 Les fonctionnalités manquantes, et comment les émuler, seront discutés dans le
-Chapitre~\ref{cha:conclusion}.
+chapitre~\ref{cha:conclusion}.
 
 Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 \iIf{e}{i}{\iPass}$.
 
-Les opérateurs sont donnés dans la Figure~\ref{fig:stx-ops}.
+Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 % TODO un mot sur les constantes dont \eUnit
 
@@ -545,7 +545,7 @@ d'identificateurs $\sId$ (par exemple des chaînes de caractères).
 
 $X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
 X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
-définition). Pour $1 ≤ i ≤ |u|$, on note $u_i = u(i)$ le i-ème élément de la
+définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
 suite.
 
 On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
@@ -600,7 +600,7 @@ les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, 
 de pile.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
-Figure~\ref{fig:interp-val}):
+figure~\ref{fig:interp-val}):
 
 \begin{itemize}
 \item
@@ -710,7 +710,7 @@ bien typés.
 
 \end{itemize}
 
-La Figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
+La figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
 couples (nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une
 pile et $g$ un cadre de pile (qui représente les variables globales).
@@ -724,15 +724,26 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
   réalisée. Par exemple $\mm{([], [x↦3])}{3}{([], [x↦3])}{\widehat{3}}$
   L'évaluation des expressions est détaillée dans la
-  Section~\ref{sec:eval-exp}.
+  section~\ref{sec:eval-exp}.
 \item
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
   mémoire. La réduction instructions est traitée dans la
-  Section~\ref{sec:eval-instr}.
+  section~\ref{sec:eval-instr}.
 \item
   une erreur $Ω$. La propagation des erreurs est détaillée dans la
-  Section~\ref{sec:eval-errors}.
+  section~\ref{sec:eval-errors}.
 \end{itemize}
+
+On considère en fait la cloture transitive de cette relation. Cela revient à
+ajouter une règle :
+
+\begin{mathpar}
+    \irule{Trans}
+        { Ξ_1 → Ξ_2
+       \\ Ξ_2 → Ξ_3
+        }
+        { Ξ_1 → Ξ_3}
+\end{mathpar}
 
 \begin{figure}%{{{
 
@@ -763,7 +774,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 \label{sec:sem-ops}
 
 Un certain nombre d'opérations est possibles sur les valeurs
-(Figure~\ref{fig:stx-ops}):
+(figure~\ref{fig:stx-ops}):
 
 \begin{itemize}
 \item
@@ -865,14 +876,14 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \begin{definition}[Manipulations de pile]
 
   On définit l'empilement d'un cadre de pile $c = ((x_1↦ v_1), …, (x_n↦ v_n))$
-  sur un état mémoire $m = (s, g)$ (Figure~\ref{fig:stackops-push}):
+  sur un état mémoire $m = (s, g)$ (figure~\ref{fig:stackops-push}):
 
   \[
     \mathrm{Push}((s, g), c) = (c::s, g)
   \]
 
   On définit aussi l'extension du dernier cadre de pile
-  (Figure~\ref{fig:stackops-extend}):
+  (figure~\ref{fig:stackops-extend}):
 
   \[
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
@@ -880,7 +891,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 % TODO et pour un cadre vide?
 
-  De même on définit le dépilement (Figure~\ref{fig:stackops-pop}):
+  De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
   \[
     \mathrm{Pop}(c::s, g) = (s, g)
@@ -929,7 +940,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
     ;
-    \draw [->] (5.2, -2) -- node[auto] {$\mathrm{Extend}((\cdot, y, 3))$} ++(1.6, 0);
+    \draw [->] (5.2, -2) -- node[auto] {$\cExtend{\cdot}{y}{3}$} ++(1.6, 0);
   \end{tikzpicture}
   }
 
@@ -1075,19 +1086,17 @@ On définit ici quelques lentilles.
 
 \subsection*{Accès à une liste par indice : $I$}
 
-% TODO global : cohérence entre ≤ et la notation intervalles
-
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
 permettant d'accéder aux éléments d'une liste par leur indice.
 
 \begin{align*}
-    l{[n]}_I     &= l_n \mbox{ si } 1 ≤ n ≤ |l| \\
+    l{[n]}_I     &= l_n \mbox{ si } n ∈ [1; |l|] \\
     l{[n ← x]}_I &= l' \\
            \mbox{ où } & l'_n = x \\
                        & ∀ i ≠ n, l'_i = l_i
 \end{align*}
 
-I n'est définie que pour $1 ≤ n ≤ |l|$.
+I n'est définie que pour $n ∈ [1 ;|l|]$.
 
 \subsection*{Accès à une liste d'associations : $L$}
 
@@ -1137,11 +1146,11 @@ du $n$\ieme cadre de pile.
 
 \begin{align*}
 m {[(n, x)]}_A     & = \begin{cases}
-                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $n ∈ [1 ; |s|]$} \\
                            \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 m {[(n, x) ← v]}_A & = \begin{cases}
-                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $n ∈ [1;|s|]$} \\
                             \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 \end{align*}
@@ -1274,7 +1283,7 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires:
 \end{figure}
 
 Le premier point consiste à définir les contextes eux-mêmes
-(Figure~\ref{fig:eval-ctx}).
+(figure~\ref{fig:eval-ctx}).
 
 Le deuxième est résolu les règles d'inférence suivantes:
 
@@ -1295,7 +1304,7 @@ Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de bas
 fait apparaître exactement un ``$C$''. Chaque contexte est donc constitué
 d'exactement un ``trou'' $\ctxEmpty$ (une dérivation de $C$ est toujours
 linéaire). L'opération de substitution consiste à remplacer ce trou, comme
-décrit dans la Figure~\ref{fig:ctx-sub}.
+décrit dans la figure~\ref{fig:ctx-sub}.
 
 \begin{figure}
 \begin{align*}
@@ -1363,21 +1372,21 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \item
   En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
   une des formes possibles pour un contexte d'évaluation), on déduit de 1.\ que
-  $\mmstar{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
+  $\mm{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
 \item
   D'autre part, on évalue $e_2$ depuis $m'$. En supposant encore que
   l'évaluation converge, notons $v_2$ la valeur calculée et $m''$ l'état mémoire
   résultant: $\mm{m'}{e_2}{m''}{v_2}$.
 \item
   Appliquons la règle~\textsc{Ctx} à 3.\ avec $C = \ctxOp{v_1}{\ctxEmpty}$. On
-  obtient $\mmstar{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
+  obtient $\mm{m}{v_1~\opbin~e_2}{m'}{v_1~\opbin~v_2}$.
 \item
   En combinant les résultats de 2.\ et 4.\ on en déduit que
-  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
+  $\mm{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
 \item D'après la règle~\textsc{Exp-Binop},
-  $ \mmstar{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
+  $ \mm{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5.\ et 6., on a par combinaison
-  $\mmstar{m}{e_1~\opbin~e_2}{m''}{v}$
+  $\mm{m}{e_1~\opbin~e_2}{m''}{v}$
   en posant
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
@@ -1387,24 +1396,24 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \begin{definition}[Évaluation d'une expression]
 
-  L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
-  et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
-  Le résultat est toujours une valeur $v$, c'est-à-dire que nous présentons pour
-  les expressions une sémantique à grands pas. Cette évaluation est notée:
+L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
+et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
+Le résultat est une expression $e'$, c'est-à-dire que nous présentons une
+sémantique à petits pas. \emph{In fine}, cela permet d'évaluer $e$ en une valeur
+$v$. Cette évaluation est notée:
 
   \[
-    \mm{m}{e}{m'}{v}
+    \mm{m}{e}{m'}{e'}
   \]
 
 \end{definition}
 
 \begin{definition}[Évaluation d'une left-value]
 
-  L'évaluation d'une left-value $lv$ produit un ``chemin'' $φ$ dans une variable,
-  qui est en fait équivalent à une left-value dont toutes les sous-expressions
-  (d'indices) ont été évaluées.
-
-  On note:
+De même, les left-values sont réduites à petits pas. Chaque pas transforme $lv$
+en $lv'$, selon un pas qui peut modifier la mémoire (à travers l'évaluation des
+expressions d'indices). Une left-value complètement évaluée est un ``chemin''
+$φ$. On note:
 
   \[
     \mmlv{m}{lv}{m'}{φ}
@@ -1476,7 +1485,7 @@ Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite:
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
 
-Un exemple d'évaluation est donné dans la Figure~\ref{fig:eval-lv}.
+Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
 \subsection*{Expressions}
 
@@ -1507,7 +1516,7 @@ puis l'autre (l'ordre d'évaluation, est encore imposé: de gauche à droite). �
 chaque opérateur $\opbin$, correspond un opérateur sémantique $\widehat{\opbin}$
 qui agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
 classique entre entiers.
-Comme précisé dans la Section~\ref{sec:sem-ops}, la division par zéro via $/$,
+Comme précisé dans la section~\ref{sec:sem-ops}, la division par zéro via $/$,
 $\%$ ou $\floatop{/}$ provoque l'erreur $\serr{div}$.
 
 \begin{mathpar}
@@ -1612,18 +1621,20 @@ $\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
 
 La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
 de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la
-Section~\ref{sec:memops}).
+section~\ref{sec:memops}).
 
 \begin{mathpar}
   \semrule{Exp-Call}
 \end{mathpar}
 
-Cette évaluation est décrite dans la Figure~\ref{fig:fcall-details}.
+Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
 \label{sec:eval-instr}
 
-Contrairement à l'évaluation des expressions, on choisit une sémantique de
+\begin{definition}{Évaluation d'une instruction}
+
+Comme pour l'évaluation des expressions, on choisit une sémantique de
 réécriture à petits pas. La sémantique fonctionne de la manière suivante:
 partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
 d'évaluation suivantes permettent de réduire le problème en se ramenant à
@@ -1633,6 +1644,8 @@ $m'$. Un tel pas est noté:
 \[
   \mmi{m}{i}{m'}{i'}
 \]
+
+\end{definition}
 
 Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
 mémoire dans lequel on a déjà réalisé la première affectation. La seconde
@@ -1655,33 +1668,32 @@ ci-dessus.
 \begin{mathpar}
   \semrule{Seq}
 
-  \semrule{Pass}
-
   \semrule{Exp}
 \end{mathpar}
 
-L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait en trois parties:
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ peut se faire de plusieurs manières.
+La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous une
+déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
+mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
+résultante est la déclaration de $x$ avec la nouvelle valeur $v'$ de $x$ après
+le pas d'exécution.
 
-\begin{itemize}
-\item on crée un environnement mémoire $m'$ en ajoutant à $m$ l'association
-$x↦v$.
+% TODO expliquer pourquoi Ctx n'est pas possible
 
-\item sous $m'$, on évalue $i$ jusqu'à atteindre une instruction $\iPass$ ou
-$\iReturn{v_r}$ sous un état $m''$. C'est cette instruction qui sera retournée.
+Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
+en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 
-\item on enlève $x$ de $m''$ et on enlève de cet état mémoire les pointeurs
-invalides.
-
-\end{itemize}
+Enfin, si une erreur se produit elle est propagée.
 
 \begin{mathpar}
-  \semrule{Decl}
+ \semrule{Decl-Pass}
 
-  \semrule{Decl-Return}
+ \semrule{Decl-Return}
+
+ \semrule{Decl-Ctx}
+
+ \semrule{Decl-Err}
 \end{mathpar}
-
-% TODO que faire si la pile de locale est vide? (declaration de ``locale'' dans
-% une expression au toplevel)
 
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
 manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce
@@ -1787,7 +1799,7 @@ transition est faite vers cet état d'erreur.
 Cela est aussi vrai d'une sous-expression ou sous-instruction: si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-expression ou sous instruction est définie en fonction des contextes $C$
-(Figure~\ref{fig:eval-err}).
+(figure~\ref{fig:eval-err}).
 
 \begin{figure}
 \begin{mathpar}
@@ -1816,7 +1828,7 @@ L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
-avec ce couple (variable, valeur) (Figure~\ref{fig:eval-toplevel}).
+avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}).
 
 \begin{figure}
 \begin{mathpar}
