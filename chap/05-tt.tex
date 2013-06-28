@@ -120,6 +120,7 @@ On utilise les notations suivantes:
 
 \begin{align*}
   x:t ∈ Γ &\eqdef ∃i ∈ [0;n], γ_i = (x, t) \\
+  \cDom{Γ} &\eqdef \{ x_i / i ∈ [1;n] \} \\
   Γ, x:t  &\eqdef {(γ'_i)}_{i∈[1;n+1]}~\textrm{tel que}
                         \begin{cases}
                           ∀ i ∈ [1;n], γ'_i    = γ_i \\
@@ -913,7 +914,7 @@ La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres
   %associations supplémentaires dans l'environnement sans modifier les typages
   %dans cet environnement.
 
-  %Si $Γ ⊢ e : t$ et $x ∉ \mathrm{dom}(Γ)$, alors $Γ, x : t' ⊢ e : t$.
+  %Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
 %\end{lemma}
 
 %\begin{lemma}[Substitution]
