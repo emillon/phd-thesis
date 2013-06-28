@@ -605,23 +605,31 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
   \[
     \mcomp{Γ}{m} \eqdef
-      \cDom{Γ} = \{ \cVarname{a} / a ∈ \cVisible{m} \}
-      ∧
-      ∀ a ∈ \cVisible{m}.
-      ∃ τ,t.
-      \begin{cases}
-          Γ ⊢ \cVarname{a} : t
-          \\
-          \semtyp{m}{m[a]_A}{τ}
-          \\
-          \tComp{τ}{t}
-      \end{cases}
+        \begin{cases}
+            \cDom{Γ} = \{ \cVarname{a} / a ∈ \cVisible{m} \} \\
+            ∀ a ∈ \cVisible{m}.
+            ∃ τ,t.
+            \begin{cases}
+                Γ ⊢ \cVarname{a} : t
+                \\
+                \semtyp{m}{m[a]_A}{τ}
+                \\
+                \tComp{τ}{t}
+            \end{cases}
+        \end{cases}
   \]
 
-  $\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
-  récents ainsi que des variables globales.
+    $\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
+    récents ainsi que des variables globales.
 
-  % TODO def plus précise?
+    % TODO def plus précise?
+
+    $\cVarname{a}$ désigne le nom simple d'une variable :
+
+\begin{align*}
+\cVarname{(x)} &\eqdef x \\
+\cVarname{(n,x)} &\eqdef x
+\end{align*}
 
 \end{definition}
 
