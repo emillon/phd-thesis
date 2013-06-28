@@ -620,9 +620,14 @@ Grâce à ce jugement, on peut donner la définition suivante.
   \]
 
     $\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
-    récents ainsi que des variables globales.
+    récents ainsi que des variables globales:
 
-    % TODO def plus précise?
+\[
+\cVisible{(s, g)} \eqdef \{ (x_i) / (x_i ↦ v_i) ∈ g \}
+                       ∪ \{ (|s|, x_i) / (x_i ↦ v_i) ∈ s_0 \}
+\]
+
+    % TODO le sens de s?
 
     $\cVarname{a}$ désigne le nom simple d'une variable :
 
