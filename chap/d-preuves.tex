@@ -237,8 +237,7 @@ un jugement $\mm{m}{b}{m'}{b'}$ (où $a$ apparaît dans $b$). Enfin, dans le cas
 
 Ceci est valable pour la majorité des cas. Il faut faire attention en
 particulier aux opérations sémantiques qui peuvent produire des erreurs (comme
-la division, ou l'opérateur $\phxx\cLookup$) ou aux opérations qui modifient
-l'état mémoire. Dans ce cas, il faut prouver que $\mcomp{Γ}{m}$.
+la division, ou l'opérateur $\phxx\cLookup$).
 
 % TODO montrer progrès au niveau des phrases?
 
@@ -311,12 +310,9 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 \begin{itemize}
 \item $e = v$. On applique alors l'hypothèse de récurrence à $i$ sous
     $Γ' = Γ, x:t$ et avec $m' = \cExtend{m}{x}{v}$.
-    % TODO prouver la mcomp
 
     \begin{itemize}
     \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
-        Il reste à prouver que $\mcomp{Γ'}{m''}$ où $m'' = \cCleanup{m'-x}$.
-        % TODO ou que Γ plutôt
 
 \[ \irule{Decl-Pass}
         { m' = \cCleanup{m-x} }
@@ -338,7 +334,7 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
         $\mm{m}{\iDecl{x}{v}{i}}{m'''}{\iDecl{x}{v'}{i'}}$ où
        $v' = m''[(0, x)]_A$
        et
-       $m''' = m'' - x$. Il ne reste qu'à prouver que $\mcomp{Γ}{m'''}$. % TODO
+       $m''' = m'' - x$.
 
 \[ \irule{Decl-Ctx}
        { m' = \cExtend{m}{x}{v}
@@ -512,9 +508,7 @@ On applique l'hypothèse de récurrence à $lv$.
 \item $lv = φ$. On applique l'hypothèse de récurrence à $e$.
 
     \begin{itemize}
-    \item $e = v$. Alors on peut appliquer \textsc{Exp-Set}. Puisque l'état
-        mémoire est modifié en $m' = m{[φ ← v]}_Φ$, il reste à montrer que
-        $\mcomp{Γ}{m'}$. % TODO
+    \item $e = v$. Alors on peut appliquer \textsc{Exp-Set}.
 
     \item $\mm{m}{e}{m'}{e'}$. On conclut avec $C = φ ← \ctxEmpty$.
     \item $\msi{m}{e} → Ω$. Idem.
@@ -572,14 +566,11 @@ Soient $Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n, \vRet : t$
 et
 $m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))$.
 
-Alors $\mcomp{Γ'}{m_1}$. % TODO
-
 On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$.
 % TODO pourquoi a-t'on Γ' ⊢ i ?
 
 \begin{itemize}
 \item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Return-Unit}.
-    Il reste à prouver que $\mcomp{Γ}{m'}$ où $m' = \cCleanup{m_1}$
 
 \[ \irule{Exp-Return-Unit}
       { m' = \cCleanup{m}}
@@ -600,7 +591,6 @@ On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$.
 \item $\mm{m_1}{i}{m_2}{i'}$.
 
     Alors on peut appliquer \textsc{Exp-Call-Ctx}.
-    Il reste à montrer que $\mcomp{Γ}{m_3}$. % TODO
 
 \[
     \irule{Exp-Call-Ctx}

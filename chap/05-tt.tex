@@ -830,7 +830,7 @@ Alors l'un des cas suivants est vrai:
 \begin{itemize}
 \item $i = \iPass$
 \item $∃v, i = \iReturn{v}$
-\item $∃ (i', m'), \mcomp{Γ}{m'} ∧ \mm{m}{i}{m'}{i'}$
+\item $∃ (i', m'), \mm{m}{i}{m'}{i'}$
 \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{i} → Ω$
 \end{itemize}
 
@@ -841,7 +841,7 @@ Alors l'un des cas suivants est vrai:
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
-  \item $∃ (e', m'), \mcomp{Γ}{m'} ∧ \mm{m}{e}{m'}{e'}$
+  \item $∃ (e', m'), \mm{m}{e}{m'}{e'}$
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
 
@@ -852,7 +852,7 @@ Supposons que $Γ ⊢ lv : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}
 Alors l'un des cas suivants est vrai:
 \begin{itemize}
 \item $∃φ, lv = φ$
-\item $∃ (lv', m'), \mcomp{Γ}{m'} ∧ \mm{m}{lv}{m'}{lv'}$
+\item $∃ (lv', m'), \mm{m}{lv}{m'}{lv'}$
 \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{lv} → Ω$
 \end{itemize}
 
@@ -863,7 +863,7 @@ C'est-à-dire, soit:
 \begin{itemize}
   \item l'entité (instruction, expression ou left-value) est complètement
 évaluée.
-  \item un pas d'évaluation préservant la compatibilité mémoire est possible.
+  \item un pas d'évaluation est possible.
   \item une erreur de division, tableau ou pointeur se produit.
 \end{itemize}
 
