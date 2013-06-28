@@ -791,12 +791,44 @@ Alors $e = \eTaint{lv}$. On applique l'hypothèse de récurrence à $lv$.
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{GetU} :} % {{{ TODO
+\paragraph{\textsc{GetU} :} % {{{
+
+On applique l'hypothèse de récurrence à $e_d$.
+
 \[  \disprule{GetU} \]
 
-\[ \semrule{User-Get-OK} \]
+\begin{itemize}
+\item $e_d = v_d$. On applique l'hypothèse de récurrence à $e_s$.
 
-\[ \semrule{User-Get-Err} \]
+\begin{itemize}
+\item $e_s = v_s$. % TODO
+
+    D'après le lemme~\ref{lemma:canon}, % TODO ou une version chapitre 6?
+    $v_s$ a pour forme $φ_s$.
+
+    On distingue la forme de $φ_s$:
+
+    \begin{itemize}
+        \item $φ_s = \vTainted{φ}$. Alors on applique
+        \textsc{User-Get-OK}.
+        % TODO encore faut-il que la prémisse soit vraie...
+        % trop grand pas
+
+        \item $∄~φ, φ_s = \vTainted{φ}$. Alors idem avec
+            \textsc{User-Get-Err}.
+    \end{itemize}
+
+\item $\mm{m}{e_s}{m'}{e_s'}$. Posons $C = \uGet{v_d}{\ctxEmpty}$.
+    On conclut avec \textsc{Ctx}.
+\item $\msi{m}{e_s} → Ω$. Idem avec \textsc{Eval-Err}.
+\end{itemize}
+
+\item $\mm{m}{e_d}{m'}{e_d'}$. On applique \textsc{Ctx} avec
+    $C = \uGet{\ctxEmpty}{e_s}$.
+
+\item $\msi{m}{e_d} → Ω$. On utilise \textsc{Eval-Err} avec ce même contexte.
+
+\end{itemize}
 % }}}
 \paragraph{\textsc{PutU} :} % {{{ TODO
 \[  \disprule{PutU} \]
