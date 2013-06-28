@@ -545,7 +545,7 @@ d'identificateurs $\sId$ (par exemple des chaînes de caractères).
 
 $X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
 X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
-définition). Pour $1 ≤ i ≤ |u|$, on note $u_i = u(i)$ le i-ème élément de la
+définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
 suite.
 
 On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
@@ -1086,19 +1086,17 @@ On définit ici quelques lentilles.
 
 \subsection*{Accès à une liste par indice : $I$}
 
-% TODO global : cohérence entre ≤ et la notation intervalles
-
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
 permettant d'accéder aux éléments d'une liste par leur indice.
 
 \begin{align*}
-    l{[n]}_I     &= l_n \mbox{ si } 1 ≤ n ≤ |l| \\
+    l{[n]}_I     &= l_n \mbox{ si } n ∈ [1; |l|] \\
     l{[n ← x]}_I &= l' \\
            \mbox{ où } & l'_n = x \\
                        & ∀ i ≠ n, l'_i = l_i
 \end{align*}
 
-I n'est définie que pour $1 ≤ n ≤ |l|$.
+I n'est définie que pour $n ∈ [1 ;|l|]$.
 
 \subsection*{Accès à une liste d'associations : $L$}
 
@@ -1148,11 +1146,11 @@ du $n$\ieme cadre de pile.
 
 \begin{align*}
 m {[(n, x)]}_A     & = \begin{cases}
-                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $n ∈ [1 ; |s|]$} \\
                            \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 m {[(n, x) ← v]}_A & = \begin{cases}
-                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $1 ≤ n ≤ |s|$} \\
+                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $n ∈ [1;|s|]$} \\
                             \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 \end{align*}
