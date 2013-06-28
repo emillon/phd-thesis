@@ -1387,24 +1387,24 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \begin{definition}[Évaluation d'une expression]
 
-  L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
-  et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
-  Le résultat est toujours une valeur $v$, c'est-à-dire que nous présentons pour
-  les expressions une sémantique à grands pas. Cette évaluation est notée:
+L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
+et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
+Le résultat est une expression $e'$, c'est-à-dire que nous présentons une
+sémantique à petits pas. \emph{In fine}, cela permet d'évaluer $e$ en une valeur
+$v$. Cette évaluation est notée:
 
   \[
-    \mm{m}{e}{m'}{v}
+    \mm{m}{e}{m'}{e'}
   \]
 
 \end{definition}
 
 \begin{definition}[Évaluation d'une left-value]
 
-  L'évaluation d'une left-value $lv$ produit un ``chemin'' $φ$ dans une variable,
-  qui est en fait équivalent à une left-value dont toutes les sous-expressions
-  (d'indices) ont été évaluées.
-
-  On note:
+De même, les left-values sont réduites à petits pas. Chaque pas transforme $lv$
+en $lv'$, selon un pas qui peut modifier la mémoire (à travers l'évaluation des
+expressions d'indices). Une left-value complètement évaluée est un ``chemin''
+$φ$. On note:
 
   \[
     \mmlv{m}{lv}{m'}{φ}
@@ -1623,7 +1623,9 @@ Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 \section{Instructions}
 \label{sec:eval-instr}
 
-Contrairement à l'évaluation des expressions, on choisit une sémantique de
+\begin{definition}{Évaluation d'une instruction}
+
+Comme pour l'évaluation des expressions, on choisit une sémantique de
 réécriture à petits pas. La sémantique fonctionne de la manière suivante:
 partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
 d'évaluation suivantes permettent de réduire le problème en se ramenant à
@@ -1633,6 +1635,8 @@ $m'$. Un tel pas est noté:
 \[
   \mmi{m}{i}{m'}{i'}
 \]
+
+\end{definition}
 
 Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
 mémoire dans lequel on a déjà réalisé la première affectation. La seconde
@@ -1654,8 +1658,6 @@ ci-dessus.
 
 \begin{mathpar}
   \semrule{Seq}
-
-  \semrule{Pass}
 
   \semrule{Exp}
 \end{mathpar}
