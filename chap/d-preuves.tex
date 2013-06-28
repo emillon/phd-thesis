@@ -314,21 +314,7 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
     \begin{itemize}
     \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
 
-\[ \irule{Decl-Pass}
-        { m' = \cCleanup{m-x} }
-        { \mm{m}{\iDecl{x}{v}{\iPass}}
-            {m'}{\iPass}
-        }
-\]
-
     \item $i = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
-
-\[ \irule{Decl-Return}
-        { m' = \cCleanup{m-x} }
-        { \mm{m}{ \iDecl{x}{v}{\iReturn{v'}} }
-            {m'}{\iReturn{v'}}
-        }
-\]
 
     \item $\mm{m'}{i}{m''}{i'}$. Par \textsc{Decl-Ctx} il vient
         $\mm{m}{\iDecl{x}{v}{i}}{m'''}{\iDecl{x}{v'}{i'}}$ où
@@ -336,27 +322,9 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
        et
        $m''' = m'' - x$.
 
-\[ \irule{Decl-Ctx}
-       { m' = \cExtend{m}{x}{v}
-       \\ \mm{m'}{i}{m''}{i'}
-       \\ v' = m''[(0, x)]_A
-       \\ m''' = m'' - x
-       }
-       { \mm{m}{\iDecl{x}{v}{i}}
-           {m'''}{\iDecl{x}{v'}{i'}}
-       }
-\]
-
     \item $\msi{m'}{i'} → Ω$. On applique \textsc{Decl-Err}.
 
-\[ \irule{Decl-Err}
-        { \msi{m}{i} → Ω }
-        { \msi{m}{\iDecl{x}{v}{i}} → Ω }
-\]
-
     \end{itemize}
-
-    % TODO replacer les règles
 
 \item $\mm{m}{e}{m'}{e'}$. On pose $C = \iDecl{x}{\ctxEmpty}$ et on conclut avec
     la règle \textsc{Ctx}.

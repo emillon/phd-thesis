@@ -1662,28 +1662,30 @@ ci-dessus.
   \semrule{Exp}
 \end{mathpar}
 
-L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait en trois parties:
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ peut se faire de plusieurs manières.
+La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous une
+déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
+mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
+résultante est la déclaration de $x$ avec la nouvelle valeur $v'$ de $x$ après
+le pas d'exécution.
 
-\begin{itemize}
-\item on crée un environnement mémoire $m'$ en ajoutant à $m$ l'association
-$x↦v$.
+% TODO expliquer pourquoi Ctx n'est pas possible
+% TODO ajouter une règle Ξ_1 → Ξ_2  et Ξ_2 → Ξ_3 impliquent Ξ_1 → Ξ_3
 
-\item sous $m'$, on évalue $i$ jusqu'à atteindre une instruction $\iPass$ ou
-$\iReturn{v_r}$ sous un état $m''$. C'est cette instruction qui sera retournée.
+Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
+en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 
-\item on enlève $x$ de $m''$ et on enlève de cet état mémoire les pointeurs
-invalides.
-
-\end{itemize}
+Enfin, si une erreur se produit elle est propagée.
 
 \begin{mathpar}
-  \semrule{Decl}
+ \semrule{Decl-Pass}
 
-  \semrule{Decl-Return}
+ \semrule{Decl-Return}
+
+ \semrule{Decl-Ctx}
+
+ \semrule{Decl-Err}
 \end{mathpar}
-
-% TODO que faire si la pile de locale est vide? (declaration de ``locale'' dans
-% une expression au toplevel)
 
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
 manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce

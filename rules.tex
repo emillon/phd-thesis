@@ -364,13 +364,32 @@
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
     } % TODO définir le "-"
+    {Decl-Pass}{ \irule{Decl-Pass}
+                     { m' = \cCleanup{m-x} }
+                     { \mm{m}{\iDecl{x}{v}{\iPass}}
+                         {m'}{\iPass}
+                     }
+    }
     {Decl-Return}{ \irule{Decl-Return}
-            { m' = \cExtend{m}{x}{v}
-           \\ \mmi{m'}{i}{m''}{\iReturn{v_r}}
-           \\ m''' = \cCleanup{m'' - x}
-            }
-            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iReturn{v_r}} }
-    } % TODO définir le "-"
+                        { m' = \cCleanup{m-x} }
+                        { \mm{m}{ \iDecl{x}{v}{\iReturn{v'}} }
+                            {m'}{\iReturn{v'}}
+                        }
+    }
+    {Decl-Ctx}{ \irule{Decl-Ctx}
+                   { m' = \cExtend{m}{x}{v}
+                   \\ \mm{m'}{i}{m''}{i'}
+                   \\ v' = m''[(0, x)]_A
+                   \\ m''' = m'' - x % TODO définir le "-"
+                   }
+                   { \mm{m}{\iDecl{x}{v}{i}}
+                       {m'''}{\iDecl{x}{v'}{i'}}
+                   }
+    }
+    {Decl-Err}{ \irule{Decl-Err}
+                    { \msi{m}{i} → Ω }
+                    { \msi{m}{\iDecl{x}{v}{i}} → Ω }
+    }
     {If-False}{ \irule{If-False}
                   { }
                   { \mmi{m}{\iIf{0}{i_t}{i_f}}{m}{i_f} }
