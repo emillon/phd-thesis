@@ -166,11 +166,9 @@ chapitre~\ref{cha:lang})}
 En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
 règle suivante:
 
-\begin{mathpar}
-  \irule{Expr-Tainted}
-    { }
-    { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
-\end{mathpar}
+\[
+  \semrule{Expr-Tainted}
+\]
 
 Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
 déclencher une erreur $\serr{taint}$ en cas de déréférencement d'un pointeur
@@ -442,11 +440,9 @@ compilation.
 
 L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 
-\begin{mathpar}
-\irule{Taint}
-  { Γ ⊢ lv : t }
-  { Γ ⊢ \eTaint{lv} : \ptrU{t} }
-\end{mathpar}
+\[
+    \disprule{Taint}
+\]
 
 Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante:
 

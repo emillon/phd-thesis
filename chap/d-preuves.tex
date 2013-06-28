@@ -771,7 +771,55 @@ D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 
 (théorème~\ref{thm:progres-qual})
 
-% TODO
+\begin{proof}
+
+On procède de la même manière que pour le théorème~\ref{thm:progres} (prouvé en
+annexe~\ref{proof:progres}). En fait, puisque le schéma de preuve porte sur les
+règles de typage, il suffit de traiter les cas supplémentaires.
+
+% TODO qu'est-ce qui empêche *♢x ?
+
+\paragraph{\textsc{Taint} :} % {{{
+
+Alors $e = \eTaint{lv}$. On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item $lv = φ$. Alors on peut appliquer \textsc{Expr-Tainted}.
+\item $\mm{m}{lv}{m'}{lv'}$. On conclut en utilisant \textsc{Ctx} avec $C =
+\eTaint{\ctxEmpty}$.
+\item $\msi{m}{lv} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{GetU} :} % {{{ TODO
+\[  \disprule{GetU} \]
+
+\[ \semrule{User-Get-OK} \]
+
+\[ \semrule{User-Get-Err} \]
+% }}}
+\paragraph{\textsc{PutU} :} % {{{ TODO
+\[  \disprule{PutU} \]
+
+\[ \semrule{User-Put-OK} \]
+
+\[ \semrule{User-Put-Err} \]
+% }}}
+\paragraph{\textsc{AddrOf-Kernel} :} % {{{ TODO
+\[  \disprule{AddrOf-Kernel} \]
+
+\[  \semrule{Exp-AddrOf} \]
+% }}}
+\paragraph{\textsc{Lv-Deref-Kernel} :} % {{{ TODO
+\[  \disprule{Lv-Deref-Kernel} \]
+% }}}
+\paragraph{\textsc{Ptr-Arith-User} :} % {{{ TODO
+\[  \disprule{Ptr-Arith-User} \]
+% }}}
+
+% TODO vérifier que tous les cas de contexte sont là
+
+\end{proof}
 
 \section{Préservation pour les types qualifiés}
 \label{proof:preservation-qualif}
