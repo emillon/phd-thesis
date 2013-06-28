@@ -256,6 +256,12 @@ la division, ou l'opérateur $\phxx\cLookup$).
 %\item $\msi{m}{e} → Ω$.
 %\end{itemize}
 
+%\begin{itemize}
+%\item $lv = φ$.
+%\item $\mm{m}{lv}{m'}{lv'}$.
+%\item $\msi{m}{lv} → Ω$.
+%\end{itemize}
+
 \paragraph{\textsc{Pass}  :} %{{{
 Ce cas est trivial.
 % }}}
@@ -791,6 +797,26 @@ Alors $e = \eTaint{lv}$. On applique l'hypothèse de récurrence à $lv$.
 \end{itemize}
 
 % }}}
+\paragraph{\textsc{AddrOf-Kernel} :} % {{{
+
+On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item $lv = φ$. Alors \textsc{Exp-AddrOf} s'applique.
+
+\item $\mm{m}{lv}{m'}{lv'}$. On applique \textsc{Ctx} à $C = \&~\ctxEmpty$.
+
+\item $\msi{m}{lv} → Ω$. Idem avec la règle \textsc{Eval-Err}.
+
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Ptr-Arith-User} :} % {{{ TODO
+\[  \disprule{Ptr-Arith-User} \]
+% }}}
+\paragraph{\textsc{Lv-Deref-Kernel} :} % {{{ TODO
+\[  \disprule{Lv-Deref-Kernel} \]
+% }}}
 \paragraph{\textsc{GetU} :} % {{{
 
 On applique l'hypothèse de récurrence à $e_d$.
@@ -832,17 +858,6 @@ On applique l'hypothèse de récurrence à $e_d$.
 Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 \textsc{User-Put-OK} et \textsc{User-Put-Err}.
 
-% }}}
-\paragraph{\textsc{AddrOf-Kernel} :} % {{{ TODO
-\[  \disprule{AddrOf-Kernel} \]
-
-\[  \semrule{Exp-AddrOf} \]
-% }}}
-\paragraph{\textsc{Lv-Deref-Kernel} :} % {{{ TODO
-\[  \disprule{Lv-Deref-Kernel} \]
-% }}}
-\paragraph{\textsc{Ptr-Arith-User} :} % {{{ TODO
-\[  \disprule{Ptr-Arith-User} \]
 % }}}
 
 % TODO vérifier que tous les cas de contexte sont là
