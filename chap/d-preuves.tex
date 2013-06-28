@@ -310,57 +310,63 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 à $e$.
 
 \begin{itemize}
-\item $e = v$. On applique alors l'hypothèse de récurrence à $i$.
+\item $e = v$. On applique alors l'hypothèse de récurrence à $i$ sous
+    $Γ' = Γ, x:t$ et avec $m' = \cExtend{m}{x}{v}$.
 
     \begin{itemize}
-    \item $i = \iPass$.
+    \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
+        Il reste à prouver que $\mcomp{Γ'}{m''}$ où $m'' = \cCleanup{m'-x}$.
+        % TODO
 
-        On pose $Γ' = Γ, x:t$ ($t$ apparaît dans les hypothèses en tant que
-        type de $e$) et $m' = \cExtend{m}{x}{v}$.
+\[ \irule{Decl-Pass}
+        { m' = \cCleanup{m-x} }
+        { \mm{m}{\iDecl{x}{v}{\iPass}}
+            {m'}{\iPass}
+        }
+\]
 
-        Alors $\mcomp{Γ'}{m'}$. % TODO
+    \item $i = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
 
-        On peut donc appliquer l'hypothèse de récurrence à $Γ'$, $m'$, et $i'$.
+\[ \irule{Decl-Return}
+        { m' = \cCleanup{m-x} }
+        { \mm{m}{\iDecl{x}{v}{\iReturn{v'}}}
+            {m'}{\iReturn{v'}}
+        }
+\]
 
-        \begin{itemize}
-        \item $i' = \iPass$. Dans ce cas la règle \textsc{Decl} s'applique.
-            Il reste à prouver que $\mcomp{Γ'}{m'''}$ où $m''' =
-            \cCleanup{m''-x}$. % TODO
+    \item $\mm{m'}{i}{m''}{i'}$. Par \textsc{Decl-Ctx} il vient
+        $\mm{m}{\iDecl{x}{v}{i}}{m'''}{\iDecl{x}{v'}{i'}}$ où
+       $v' = m''[x]$ % TODO cadre du haut
+       et
+       $m''' = m'' - x$. Il ne reste qu'à prouver que $\mcomp{Γ}{m'''}$. % TODO
 
-        \item $i' = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
-
-        \item $\mm{m'}{i'}{m''}{i''}$. En posant $C = \iDecl{x}{v}{\ctxEmpty}$, la
-            règle \textsc{Ctx} donne 
-
-            $\mm{m'}{\iDecl{x}{v}{i'}}{m''}{\iDecl{x}{v}{i''}}$
-            % TODO je suis pas convaincu que c'est un bon cas de contexte
-
-        \item $\msi{m'}{i'} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
-        \end{itemize}
-
-    \item $i = \iReturn{v}$. % TODO ptet ramener au cas au dessus avec Decl-Return
-    \item $\mm{m}{i}{m'}{i'}$. % TODO
-    \item $\msi{m}{i} → Ω$. % TODO
-    \end{itemize}
-
-
-\item $\mm{m}{e}{m'}{e'}$. % TODO
-\item $\msi{m}{e} → Ω$. % TODO
-\end{itemize}
-
-\[ \irule{Decl-Prime}
+\[ \irule{Decl-Ctx}
        { m' = \cExtend{m}{x}{v}
        \\ \mm{m'}{i}{m''}{i'}
-       \\ m''' = \cCleanup{m'' - x}
+       \\ v' = m''[x] % TODO cadre du haut
+       \\ m''' = m'' - x
        }
        { \mm{m}{\iDecl{x}{v}{i}}
-            {m'''}{\iPass}
+           {m'''}{\iDecl{x}{v'}{i'}}
        }
 \]
 
-\[ \semrule{Decl} \]
+    \item $\msi{m'}{i'} → Ω$. On applique \textsc{Decl-Err}.
 
-\[ \semrule{Ctx} \]
+\[ \irule{Decl-Err}
+        { \msi{m}{i} → Ω }
+        { \msi{m}{\iDecl{x}{v}{i}} → Ω }
+\]
+
+    \end{itemize}
+
+    % TODO replacer les règles
+
+\item $\mm{m}{e}{m'}{e'}$. On pose $C = \iDecl{x}{\ctxEmpty}$ et on conclut avec
+    la règle \textsc{Ctx}.
+\item $\msi{m}{e} → Ω$. Idem avec \textsc{Eval-Err}.
+\end{itemize}
+
 
 
 % }}}
