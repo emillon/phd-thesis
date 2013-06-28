@@ -311,6 +311,7 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 \begin{itemize}
 \item $e = v$. On applique alors l'hypothèse de récurrence à $i$ sous
     $Γ' = Γ, x:t$ et avec $m' = \cExtend{m}{x}{v}$.
+    % TODO prouver la mcomp
 
     \begin{itemize}
     \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
@@ -335,14 +336,14 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 
     \item $\mm{m'}{i}{m''}{i'}$. Par \textsc{Decl-Ctx} il vient
         $\mm{m}{\iDecl{x}{v}{i}}{m'''}{\iDecl{x}{v'}{i'}}$ où
-       $v' = m''[x]$ % TODO cadre du haut
+       $v' = m''[(0, x)]_A$
        et
        $m''' = m'' - x$. Il ne reste qu'à prouver que $\mcomp{Γ}{m'''}$. % TODO
 
 \[ \irule{Decl-Ctx}
        { m' = \cExtend{m}{x}{v}
        \\ \mm{m'}{i}{m''}{i'}
-       \\ v' = m''[x] % TODO cadre du haut
+       \\ v' = m''[(0, x)]_A
        \\ m''' = m'' - x
        }
        { \mm{m}{\iDecl{x}{v}{i}}
@@ -565,15 +566,15 @@ $C = f (v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n)$.
 Le seul cas restant est celui où l'expression considérée a pour forme
 $f (v_1, …, v_n)$
 avec
-$f = \eFun{\vec{a}}{i}$
-:
-\textsc{Exp-Call} s'applique alors. Cette règle modifie la mémoire :
+$f = \eFun{\vec{a}}{i}$.
 
-% TODO c'est faux, il faut appliquer HR sur i
+Soit $Γ' = Γ - \vRet, \vec{a} : \vec{t}, \vRet : t_r$.
 
 \[ \semrule{Exp-Call} \]
 
-Il reste à prouver que $\mcomp{Γ}{m_4}$.
+\[ \disprule{Call} \]
+
+\[ \disprule{Fun} \]
 
 % TODO
 
