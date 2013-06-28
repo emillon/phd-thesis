@@ -244,12 +244,16 @@
                  { Γ ⊢ \eTaint{lv} : \ptrU{t} }
     }
     {GetU}{ \irule{GetU}
-              { }
-              { Γ ⊢ \cfuF : (\ptrK{t}, \ptrU{t}) → \tInt }
+              { Γ ⊢ e_d : \ptrK{t}
+             \\ Γ ⊢ e_s : \ptrU{t}
+              }
+              { Γ ⊢ \uGet{e_d}{e_s} : \tInt }
     }
     {PutU}{ \irule{PutU}
-              { }
-              { Γ ⊢ \ctuF : (\ptrU{t}, \ptrK{t}) → \tInt }
+              { Γ ⊢ e_d : \ptrU{t}
+             \\ Γ ⊢ e_s : \ptrK{t}
+              }
+              { Γ ⊢ \uPut{e_d}{e_s} : \tInt }
     }
     {AddrOf-Kernel}{ \irule{AddrOf-Kernel}
                        { Γ ⊢ lv : t }

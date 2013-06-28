@@ -444,7 +444,11 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
     \disprule{Taint}
 \]
 
-Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante:
+Les ``fonctions'' $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
+à remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
+type en $(t_1, t_2) → t$, car il faudrait un type polymorphe pour pouvoir les
+appliquer n'importe quel type de pointeurs. Leur typage est donc plus proche de
+celui d'un opérateur.
 
 \begin{mathpar}
     \disprule{GetU}
@@ -452,9 +456,9 @@ Les fonctions $\cfuF$ et $\ctuF$ sont typées de la manière suivante:
     \disprule{PutU}
 \end{mathpar}
 
-Il est à noter qu'il n'y a pas de sous-typage: les pointeurs noyau ne peuvent
-être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
-qu'en tant que pointeurs utilisateurs.
+Remarquons qu'il n'y a pas de sous-typage: les pointeurs noyau ne peuvent être
+utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs qu'en
+tant que pointeurs utilisateurs.
 
 \section{Sûreté du typage}
 
