@@ -316,7 +316,7 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
     \begin{itemize}
     \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
         Il reste à prouver que $\mcomp{Γ'}{m''}$ où $m'' = \cCleanup{m'-x}$.
-        % TODO
+        % TODO ou que Γ plutôt
 
 \[ \irule{Decl-Pass}
         { m' = \cCleanup{m-x} }
@@ -568,15 +568,64 @@ $f (v_1, …, v_n)$
 avec
 $f = \eFun{\vec{a}}{i}$.
 
-Soit $Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n, \vRet : t$.
+Soient $Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n, \vRet : t$
+et
+$m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))$.
 
-\[ \semrule{Exp-Call} \]
+Alors $\mcomp{Γ'}{m_1}$. % TODO
 
-\[ \disprule{Call} \]
+On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$.
+% TODO pourquoi a-t'on Γ' ⊢ i ?
 
-\[ \disprule{Fun} \]
+\begin{itemize}
+\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Return-Unit}.
+    Il reste à prouver que $\mcomp{Γ}{m'}$ où $m' = \cCleanup{m_1}$
 
-% TODO
+\[ \irule{Exp-Return-Unit}
+      { m' = \cCleanup{m}}
+      { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
+           {m'}{\eUnit}
+      }
+\]
+
+\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Return}.
+
+\[ \irule{Exp-Return}
+      { m' = \cCleanup{m}}
+      { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
+           {m'}{v}
+      }
+\]
+
+\item $\mm{m_1}{i}{m_2}{i'}$.
+
+    Alors on peut appliquer \textsc{Exp-Call-Ctx}.
+    Il reste à montrer que $\mcomp{Γ}{m_3}$. % TODO
+
+\[
+    \irule{Exp-Call-Ctx}
+        { m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))
+       \\ \mm{m_1}{i}{m_2}{i'}
+       \\ ∀ i ∈ [1;n], v'_i = m_2[(0, a_i)]_A
+       \\ m_3 = \mathrm{Pop} (m_2)
+        }
+        { \mm{m_0}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) }
+          { m_3 }{\eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n) }
+        }
+\]
+
+\item $\msi{m}{i} → Ω$. On peut alors appliquer \textsc{Exp-Call-Err}.
+
+\[ \irule{Exp-Call-Err}
+    { m' = \mathrm{Push}(m, (a_1 ↦ v_1, …, a_n ↦ v_n))
+   \\ \msi{m'}{i} → Ω
+    }
+    { \msi{m}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) } → Ω }
+\]
+
+\end{itemize}
+
+% TODO remettre ces règles à leur place
 
 %}}}
 \jolibreak
