@@ -427,10 +427,11 @@ l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur:
 
 La principale restriction, au cœur de ce chapitre et de cette thèse, est que
 seuls les pointeurs noyau peuvent être déréférencés de manière sûre. La règle
-suivante remplace donc \textsc{Lv-Deref}:
+capitale est donc la suivante (déjà introduite dans le
+chapitre~\ref{cha:typbase}):
 
 \begin{mathpar}
-  \disprule{Lv-Deref-Kernel}
+  \disprule{Lv-Deref}
 \end{mathpar}
 
 Ainsi, on interdit le déréférencement des expressions de type $\ptrU{t}$ à la
