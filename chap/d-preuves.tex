@@ -256,6 +256,12 @@ la division, ou l'opérateur $\phxx\cLookup$).
 %\item $\msi{m}{e} → Ω$.
 %\end{itemize}
 
+%\begin{itemize}
+%\item $lv = φ$.
+%\item $\mm{m}{lv}{m'}{lv'}$.
+%\item $\msi{m}{lv} → Ω$.
+%\end{itemize}
+
 \paragraph{\textsc{Pass}  :} %{{{
 Ce cas est trivial.
 % }}}
@@ -771,7 +777,91 @@ D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
 
 (théorème~\ref{thm:progres-qual})
 
-% TODO
+\begin{proof}
+
+On procède de la même manière que pour le théorème~\ref{thm:progres} (prouvé en
+annexe~\ref{proof:progres}). En fait, puisque le schéma de preuve porte sur les
+règles de typage, il suffit de traiter les cas supplémentaires.
+
+% TODO qu'est-ce qui empêche *♢x ?
+
+\paragraph{\textsc{Taint} :} % {{{
+
+Alors $e = \eTaint{lv}$. On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item $lv = φ$. Alors on peut appliquer \textsc{Expr-Tainted}.
+\item $\mm{m}{lv}{m'}{lv'}$. On conclut en utilisant \textsc{Ctx} avec $C =
+\eTaint{\ctxEmpty}$.
+\item $\msi{m}{lv} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{AddrOf-Kernel} :} % {{{
+
+On applique l'hypothèse de récurrence à $lv$.
+
+\begin{itemize}
+\item $lv = φ$. Alors \textsc{Exp-AddrOf} s'applique.
+
+\item $\mm{m}{lv}{m'}{lv'}$. On applique \textsc{Ctx} à $C = \&~\ctxEmpty$.
+
+\item $\msi{m}{lv} → Ω$. Idem avec la règle \textsc{Eval-Err}.
+
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Ptr-Arith-User} :} % {{{
+
+Ce cas est similaire à \textsc{Op-Int}. % TODO détails
+
+% }}}
+\paragraph{\textsc{GetU} :} % {{{
+
+On applique l'hypothèse de récurrence à $e_d$.
+
+\begin{itemize}
+\item $e_d = v_d$. On applique l'hypothèse de récurrence à $e_s$.
+
+\begin{itemize}
+\item $e_s = v_s$. % TODO
+
+    D'après le lemme~\ref{lemma:canon}, % TODO ou une version chapitre 6?
+    $v_s$ a pour forme $φ_s$.
+
+    On distingue la forme de $φ_s$:
+
+    \begin{itemize}
+        \item $φ_s = \vTainted{φ}$. Alors on applique
+        \textsc{User-Get-OK}.
+        % TODO encore faut-il que la prémisse soit vraie...
+        % trop grand pas
+
+        \item $∄~φ, φ_s = \vTainted{φ}$. Alors idem avec
+            \textsc{User-Get-Err}.
+    \end{itemize}
+
+\item $\mm{m}{e_s}{m'}{e_s'}$. Posons $C = \uGet{v_d}{\ctxEmpty}$.
+    On conclut avec \textsc{Ctx}.
+\item $\msi{m}{e_s} → Ω$. Idem avec \textsc{Eval-Err}.
+\end{itemize}
+
+\item $\mm{m}{e_d}{m'}{e_d'}$. On applique \textsc{Ctx} avec
+    $C = \uGet{\ctxEmpty}{e_s}$.
+
+\item $\msi{m}{e_d} → Ω$. On utilise \textsc{Eval-Err} avec ce même contexte.
+
+\end{itemize}
+% }}}
+\paragraph{\textsc{PutU} :} % {{{
+Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
+\textsc{User-Put-OK} et \textsc{User-Put-Err}.
+
+% }}}
+
+% TODO vérifier que tous les cas de contexte sont là
+
+\end{proof}
 
 \section{Préservation pour les types qualifiés}
 \label{proof:preservation-qualif}

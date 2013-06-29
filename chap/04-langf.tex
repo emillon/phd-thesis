@@ -124,6 +124,35 @@ vue sous la forme d'un arbre:
       }{C}
 \]
 
+\subsection*{Listes}
+
+On suppose avoir à notre disposition un ensemble infini dénombrable
+d'identificateurs $\sId$ (par exemple des chaînes de caractères).
+
+$X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
+X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
+définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
+suite.
+
+On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
+telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
+suivante: si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
+que:
+
+\begin{align*}
+  v_1 = & x \\
+  ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
+\end{align*}
+
+La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que:
+
+\begin{align*}
+|w| = & |u| + |v| \\
+∀ i ∈ [1 ; |u|] , w_i = & u_i \\
+∀ j ∈ [1 ; |v|] , w_{|u| + j} = & v_j
+\end{align*}
+
+
 \subsection*{Lentilles}
 
 La notion d'accesseur utilisée ici est directement inspirée des \emph{lentilles}
@@ -223,8 +252,8 @@ $A_i$:
 On note alors:
 
 \begin{align*}
-r {[ i ]}_Δ \eqdef & \mathrm{get}_{Δ(i)}(r) \\
-r {[ i ← a ]}_Δ \eqdef & \mathrm{put}_{Δ(i)}(a, r) \\
+    r {[ i ]}_Δ     & \eqdef \mathrm{get}_{Δ(i)}(r) \\
+    r {[ i ← a ]}_Δ & \eqdef \mathrm{put}_{Δ(i)}(a, r) \\
 \end{align*}
 
 \end{definition}
@@ -393,12 +422,7 @@ décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
 structure dans le code du programme serait fastidieux. Nous décrirons dans le
 chapitre~\ref{cha:implem} comment obtenir automatiquement ces annotations depuis
 un langage comme C qui utilise des noms de structures.
-
 % TODO le faire
-
-\section{Principes}
-
-Nous voulons capturer l'essence de C. Les traits principaux sont les suivants:
 
 \paragraph{Types de données:} très simples. Entiers machine, flottants,
 pointeurs et types composés (structures et tableaux) composés de ceux-ci.
@@ -538,35 +562,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 \label{fig:stx-ops}
 \end{figure}
 
-\section{Définitions préliminaires}
-
-On suppose avoir à notre disposition un ensemble infini dénombrable
-d'identificateurs $\sId$ (par exemple des chaînes de caractères).
-
-$X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
-X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
-définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
-suite.
-
-On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
-telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
-suivante: si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
-que:
-
-\begin{align*}
-  v_1 = & x \\
-  ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
-\end{align*}
-
-La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que:
-
-\begin{align*}
-|w| = & |u| + |v| \\
-∀ i ∈ [1 ; |u|] , w_i = & u_i \\
-∀ j ∈ [1 ; |v|] , w_{|u| + j} = & v_j
-\end{align*}
-
-\section{Mémoire}
+\section{Mémoire et valeurs}
 
 L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
@@ -727,11 +723,25 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   section~\ref{sec:eval-exp}.
 \item
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
-  mémoire. La réduction instructions est traitée dans la
+  mémoire. La réduction des instructions est traitée dans la
   section~\ref{sec:eval-instr}.
+\item
+  un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
+  L'évaluation des left-values est décrite en section~\ref{sec:eval-lv}.
 \item
   une erreur $Ω$. La propagation des erreurs est détaillée dans la
   section~\ref{sec:eval-errors}.
+\end{itemize}
+
+L'évaluation des expressions, left-values et instruction se fait à petits pas.
+C'est-à-dire qu'on simplifie d'étape en étape leur forme, jusqu'à arriver à un
+cas de base:
+
+\begin{itemize}
+\item pour les expressions, une valeur $v$.
+\item pour les instructions, l'instruction $\iPass$ ou $\iReturn{v}$ où $v$ est
+    une valeur.
+\item pour les left-values, un chemin $φ$.
 \end{itemize}
 
 On considère en fait la cloture transitive de cette relation. Cela revient à
@@ -889,8 +899,6 @@ l'appelant, il faudra supprimer ce cadre de pile.
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
 
-% TODO et pour un cadre vide?
-
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
   \[
@@ -899,7 +907,13 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
-\begin{figure}
+Les opérations $\mathrm{Extend}$ et $\mathrm{Pop}$ ne sont définies que pour une
+pile non vides. Néanmoins cela ne pose pas de problème, puisque lors de
+l'éxecution, la pile n'est vide que lors de l'évaluation d'expressions dans les
+phrases de programme. À cet endroit, seules des expressions peuvent apparaître,
+et leur évaluation ne manipule jamais la pile avec ces opérations.
+
+\begin{figure}%{{{
 
   \centering
 
@@ -966,7 +980,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   \caption{Opérations de pile}
 \label{fig:stackops}
-\end{figure}
+\end{figure}%}}}
 
 On définit aussi une opération de nettoyage de pile, qui sera utile pour les
 retours de fonction.
@@ -976,6 +990,8 @@ le retour, elle pourra se résoudre en un objet différent plus tard dans
 l'exécution du programme.
 
 La fonction $\mathrm{Cleanup}$ est donnée par:
+
+% TODO à écrire proprement
 
 \def\cleanuplist#1#2{\mathrm{CleanupList} (#1, #2)}
 \def\cllive#1#2{\mathrm{Live} (#1, #2)}
@@ -1007,7 +1023,7 @@ f ()                g (p)           h ()
 L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
 déréférencement de $p$ va modifier $x$.
 
-\begin{figure}
+\begin{figure}%{{{
   \centering
 
 
@@ -1077,12 +1093,24 @@ déréférencement de $p$ va modifier $x$.
 
   \caption{Nettoyage d'un cadre de pile}
 \label{fig:stackcleanup}
-\end{figure}
+\end{figure}%}}}
 
 \section{Accesseurs}
 \label{sec:mem-access}
 
-On définit ici quelques lentilles.
+On définit ici quelques lentilles. Le but est de définir rigoureusement les
+accès à la mémoire. À partir d'un état mémoire $m$ et d'une left-value $φ$, on
+veut pouvoir obtenir:
+
+\begin{itemize}
+    \item la valeur accessible au chemin $φ$: $m[φ]_Φ$
+    \item l'état mémoire obtenu en remplaçant celle-ci par une nouvelle valeur $v'$ :
+            $m[φ ← v']_Φ$
+\end{itemize}
+
+Pour définir cette lentille indexée $Φ$, on commence par définir des lentilles
+élémentaires, et on les compose pour pouvoir définir des lentilles entre
+valeurs.
 
 \subsection*{Accès à une liste par indice : $I$}
 
@@ -1255,6 +1283,7 @@ qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 
 Dans la suite, on notera uniquement $[\cdot]$ tous ces accesseurs lorsque ce
 n'est pas ambigü.
+% TODO ou pas?
 
 \section{Contextes d'évaluation}
 
@@ -1391,41 +1420,8 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
 
-\section{Expressions}
-\label{sec:eval-exp}
-
-\begin{definition}[Évaluation d'une expression]
-
-L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
-et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
-Le résultat est une expression $e'$, c'est-à-dire que nous présentons une
-sémantique à petits pas. \emph{In fine}, cela permet d'évaluer $e$ en une valeur
-$v$. Cette évaluation est notée:
-
-  \[
-    \mm{m}{e}{m'}{e'}
-  \]
-
-\end{definition}
-
-\begin{definition}[Évaluation d'une left-value]
-
-De même, les left-values sont réduites à petits pas. Chaque pas transforme $lv$
-en $lv'$, selon un pas qui peut modifier la mémoire (à travers l'évaluation des
-expressions d'indices). Une left-value complètement évaluée est un ``chemin''
-$φ$. On note:
-
-  \[
-    \mmlv{m}{lv}{m'}{φ}
-  \]
-
-\end{definition}
-
-Puisque des left-values peuvent apparaitre dans les expressions, et des
-expressions dans les left-values (en indice de tableau), leurs règles
-d'évaluation sont mutuellement récursives.
-
-\subsection*{Left-values}
+\section{Left-values}
+\label{sec:eval-lv}
 
 \begin{figure}
 
@@ -1487,7 +1483,8 @@ $e_2$, puis $e_3$.
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
-\subsection*{Expressions}
+\section{Expressions}
+\label{sec:eval-exp}
 
 Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
 celle-ci est déjà évaluée. À chaque constante syntaxique $c$, on peut associer
