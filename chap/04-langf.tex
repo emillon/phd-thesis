@@ -422,12 +422,7 @@ décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
 structure dans le code du programme serait fastidieux. Nous décrirons dans le
 chapitre~\ref{cha:implem} comment obtenir automatiquement ces annotations depuis
 un langage comme C qui utilise des noms de structures.
-
 % TODO le faire
-
-\section{Principes}
-
-Nous voulons capturer l'essence de C. Les traits principaux sont les suivants:
 
 \paragraph{Types de données:} très simples. Entiers machine, flottants,
 pointeurs et types composés (structures et tableaux) composés de ceux-ci.
@@ -567,7 +562,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 \label{fig:stx-ops}
 \end{figure}
 
-\section{Mémoire}
+\section{Mémoire et valeurs}
 
 L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
@@ -900,7 +895,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
-\begin{figure}
+\begin{figure}%{{{
 
   \centering
 
@@ -967,7 +962,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   \caption{Opérations de pile}
 \label{fig:stackops}
-\end{figure}
+\end{figure}%}}}
 
 On définit aussi une opération de nettoyage de pile, qui sera utile pour les
 retours de fonction.
@@ -977,6 +972,8 @@ le retour, elle pourra se résoudre en un objet différent plus tard dans
 l'exécution du programme.
 
 La fonction $\mathrm{Cleanup}$ est donnée par:
+
+% TODO à écrire proprement
 
 \def\cleanuplist#1#2{\mathrm{CleanupList} (#1, #2)}
 \def\cllive#1#2{\mathrm{Live} (#1, #2)}
@@ -1008,7 +1005,7 @@ f ()                g (p)           h ()
 L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
 déréférencement de $p$ va modifier $x$.
 
-\begin{figure}
+\begin{figure}%{{{
   \centering
 
 
@@ -1078,7 +1075,7 @@ déréférencement de $p$ va modifier $x$.
 
   \caption{Nettoyage d'un cadre de pile}
 \label{fig:stackcleanup}
-\end{figure}
+\end{figure}%}}}
 
 \section{Accesseurs}
 \label{sec:mem-access}
