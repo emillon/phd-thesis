@@ -460,8 +460,6 @@ Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 
 Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
-% TODO un mot sur les constantes dont \eUnit
-
 \begin{figure}
 
   \begin{align*}
@@ -1303,21 +1301,17 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires:
 \begin{figure}
 \figctx{}
 
-\caption{Contextes d'exécution}
+\caption{Contextes d'évaluation}
 \label{fig:eval-ctx}
 \end{figure}
 
 Le premier point consiste à définir les contextes eux-mêmes
 (figure~\ref{fig:eval-ctx}).
 
-Le deuxième est résolu les règles d'inférence suivantes:
+Le deuxième est résolu par la règle d'inférence suivante.
 
 \begin{mathpar}
   \semrule{Ctx}
-
-  \semrule{Ctx-Lv}
-
-  \semrule{Ctx-Instr}
 \end{mathpar}
 
 Enfin, le troisième revient à définit l'opérateur de substitution
@@ -1325,68 +1319,19 @@ $\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer
 substitution au niveau des left-values et des instructions, on définit aussi
 respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
 
+Notons que puisque $i \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer
+aux expressions et aux left-values: l'opération $\phxx\ctxSub$ est purement
+syntaxique.
+
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
 fait apparaître exactement un ``$C$''. Chaque contexte est donc constitué
 d'exactement un ``trou'' $\ctxEmpty$ (une dérivation de $C$ est toujours
-linéaire). L'opération de substitution consiste à remplacer ce trou, comme
-décrit dans la figure~\ref{fig:ctx-sub}.
+linéaire). L'opération de substitution consiste à remplacer ce trou:
+$\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou left-value)
+obtenu en remplaçant l'unique $\ctxEmpty$ dans $C$ par $X$. Par exemple,
+$\ctxSub{\iDecl{x}{2+\ctxEmpty}}{5} = \iDecl{x}{2+5}$
 
-\begin{figure}
-\begin{align*}
-  \ctxSub{\ctxEmpty}{e_0} = & e_0 \\
-  \ctxSub{(\ctxOp{C}{e}     )}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e}      \\
-  \ctxSub{(\ctxOp{v}{C}     )}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}}      \\
-  \ctxSub{(\ctxUnOp{C}      )}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}}       \\
-  \ctxSub{(\ctxLvDeref{C}   )}{e_0} = & \ctxLvDeref{\ctxSub{C}{e_0}}    \\
-  \ctxSub{(\ctxLvField{C}{l_S})}{e_0} = & \ctxLvField{\ctxSub{C}{e_0}}{l_S} \\
-  \ctxSub{(\ctxLvIndex{φ}{C})}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
-  \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
-  \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
-  \ctxSub{(\ctxSet{φ}{C})    }{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}}     \\
-  \ctxSub{\eStruct{ l_1:v_1 ; …
-     ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
-  \ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n }    \\
-  \ctxSub{C (e_1, …, e_n)          }{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n)              \\
-  \ctxSub{f (v_1, …, C, …, e_n)    }{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n)        \\
-  \\
-  \ctxSub{(C;i              )}{e_0} = & \ctxSub{C}{e_0};i               \\
-  \ctxSub{(\iIf{C}{i_1}{i_2})}{e_0} = & \iIf{\ctxSub{C}{e_0}}{i_1}{i_2} \\
-  \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
-\end{align*}
-
-\begin{align*}
-% C
-\ctxSub{C_L}{e_0} = & \ctxSubL{C_L}{e_0} \\
-\ctxSub{\ctxOp{C}{e}}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e} \\
-\ctxSub{\ctxOp{v}{C}}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}} \\
-\ctxSub{\ctxUnOp{C}}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}} \\
-\ctxSub{\ctxSet{C}{e}}{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e} \\
-\ctxSub{\ctxSet{φ}{C}}{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}} \\
-\ctxSub{\eStruct{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
-\ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n } \\
-\ctxSub{C (e_1, …, e_n)}{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n) \\
-\ctxSub{f (v_1, …, C, …, e_n)}{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n) \\
-\\
-% C_L
-\ctxSubL{\ctxEmpty}{l_0} = & \ctxEmpty \\
-\ctxSubL{\ctxLvDeref{C_L}}{l_0} = & \ctxLvDeref{\ctxSubL{C_L}{l_0}} \\
-\ctxSubL{\ctxLvField{C_L}{l_S}}{l_0} = & \ctxLvField{\ctxSubL{C_L}{l_0}}{l_S} \\
-\ctxSubL{\ctxLvIndex{C_L}{e}}{l_0} = & \ctxLvIndex{\ctxSubL{C_L}{l_0}}{e} \\
-\ctxSub{\ctxLvIndex{φ}{C}}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
-\\
-% % C_I
-% \ctxSubI{C_I;i}{i_0} = & \ctxSubI{C_I}{i_0};i \\
-%
-% \iIf{C}{i_1}{i_2}
-% \iReturn{C}
-% C
-\end{align*}
-
-\caption{Substitution dans les contextes d'évaluation}
-\label{fig:ctx-sub}
-\end{figure}
-
-Par exemple, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
+À titre d'illustration, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
 v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \begin{enumerate}

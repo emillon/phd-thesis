@@ -272,16 +272,8 @@
 \def\semrule#1{
   \switch{#1}
     {Ctx}{ \irule{Ctx}
-             { \mm{m}{e}{m'}{e'} }
-             { \mm{m}{\ctxSub{C}{e}}{m'}{\ctxSub{C}{e'}} }
-    }
-    {Ctx-Lv}{ \irule{Ctx-Lv}
-             { \mmlv{m}{lv}{m'}{lv'} }
-             { \mmlv{m}{\ctxSubL{C_L}{lv}}{m'}{\ctxSubL{C_L}{lv'}} }
-    }
-    {Ctx-Instr}{ \irule{Ctx-Instr}
-             { \mmlv{m}{i}{m'}{i'} }
-             { \mmlv{m}{\ctxSubI{C_I}{i}}{m'}{\ctxSubI{C_I}{i'}} }
+             { \mm{m}{i}{m'}{i'} }
+             { \mm{m}{\ctxSub{C}{i}}{m'}{\ctxSub{C}{i'}} }
     }
     {Phi-Var}{ \irule{Phi-Var}
                  { a = \cLookup{x}{m} }
@@ -482,7 +474,7 @@
 \def\figctx{
   \begin{align*}
   \gramdef{Contextes}{C}
-    { C_L }{}
+    { \ctxEmpty }{}
     { \ctxOp{C}{e} }{}
     { \ctxOp{v}{C} }{}
     { \ctxUnOp{C} }{}
@@ -492,22 +484,14 @@
     { \eArray{ v_1 ; … ; C ; … ; e_n } }{}
     { C (e_1, …, e_n) }{}
     { f (v_1, …, C, …, e_n) }{}
-    {END}
-  \\
-  \gramdef{Contextes (left-values)}{C_L}
-    { \ctxEmpty }{}
-    { \ctxLvDeref{C_L} }{}
-    { \ctxLvField{C_L}{l_S} }{}
-    { \ctxLvIndex{C_L}{e} }{}
+    { \ctxLvDeref{C} }{}
+    { \ctxLvField{C}{l_S} }{}
+    { \ctxLvIndex{C}{e} }{}
     { \ctxLvIndex{φ}{C} }{}
-    {END}
-  \\
-  \gramdef{Contextes (instructions)}{C_I}
-    { C_I;i }{}
+    { C;i }{}
     { \iIf{C}{i_1}{i_2} }{}
     { \iReturn{C} }{}
     { \iDecl{x}{C}{i} }{}
-    { C }{}
     {END}
   \end{align*}
 }
