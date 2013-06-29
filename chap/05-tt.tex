@@ -942,4 +942,45 @@ s'applique, et que la sémantique respecte le typage. En quelque sorte, les type
 sont un contrat entre les expressions et les fonctions: si leur évaluation
 converge, alors une valeur du type inféré sera produite.
 
+Enfin, on donne une version de ces propriétés pour les phrases de programme.
+
+\begin{theorem}[Progrès pour les phrases]
+
+Soient $Γ$ un environnement de typage, $m$ un état mémoire et $p$ une phrase de
+programme. Supposons que $\typh{Γ}{p}{Γ'}$ et $\mcomp{Γ}{m}$. Alors un des deux
+cas suivants est possibles:
+
+\begin{itemize}
+\item $∃ m'. \ph{m}{p}{m'}$
+\item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \ph{m}{p}{Ω}$
+\end{itemize}
+
+% TODO il faut définir ph Ω
+
+\end{theorem}
+
+\begin{proof}
+% TODO
+\end{proof}
+
+\begin{theorem}[Préservation pour les phrases]
+
+On suppose que les trois propriétés suivantes sont vérifiées:
+
+\[
+\begin{cases}
+    \mcomp{Γ}{m} \\
+    \typh{Γ}{p}{Γ'} \\
+    \ph{m}{p}{m'}
+\end{cases}
+\]
+
+Alors $\mcomp{Γ'}{m'}$.
+
+\end{theorem}
+
+\begin{proof}
+% TODO
+\end{proof}
+
 % vim: spelllang=fr
