@@ -947,20 +947,32 @@ Enfin, on donne une version de ces propriétés pour les phrases de programme.
 \begin{theorem}[Progrès pour les phrases]
 
 Soient $Γ$ un environnement de typage, $m$ un état mémoire et $p$ une phrase de
-programme. Supposons que $\typh{Γ}{p}{Γ'}$ et $\mcomp{Γ}{m}$. Alors un des deux
-cas suivants est possibles:
+programme. Supposons que $\typh{Γ}{p}{Γ'}$ et $\mcomp{Γ}{m}$.
 
-\begin{itemize}
-\item $∃ m'. \ph{m}{p}{m'}$
-\item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \ph{m}{p}{Ω}$
-\end{itemize}
+On suppose en outre que l'évaluation de $p$ termine.
 
-% TODO il faut définir ph Ω
+Alors $∃ m'. \ph{m}{p}{m'}$.
+
+% TODO passer à un plus petit pas.
 
 \end{theorem}
 
 \begin{proof}
-% TODO
+
+On distingue selon la dernière règle de typage appliquée dans la dérivation de
+$\typh{Γ}{p}{Γ'}$.
+
+\paragraph{\textsc{T-Exp}:} % {{{
+
+On applique le théorème de progrès à $e$. Puisque l'évaluation termine, il
+existe $v$ et $m'$ tels que $\mm{m}{e}{m'}{v}$. Alors on peut appliquer
+\textsc{T-Exp}.
+
+%}}}
+\paragraph{\textsc{T-Var}:} % {{{
+Idem avec \textsc{T-Var}.
+%}}}
+
 \end{proof}
 
 \begin{theorem}[Préservation pour les phrases]
