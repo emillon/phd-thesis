@@ -36,9 +36,10 @@ des pointeurs pour lesquels l'opération de déréférencement est restreinte à
 certaines fonctions. Dans le contexte d'un noyau de système d'exploitation,
 cette restriction permet de vérifier statiquement qu'à aucun moment le noyau ne
 déréférence un pointeur dont la valeur est contrôlée par l'espace utilisateur,
-évitant ainsi un problème de sécurité.
-
-% TODO ça peut etre étendu à d'autres choses
+évitant ainsi un problème de sécurité. Cette approche peut s'étendre à d'autres
+classes de problèmes comme par exemple éviter l'utilisation de certaines
+opérations sur les types entiers lorsqu'ils sont utilisés comme identificateurs
+ou masque de bits.
 
 \section{Limitations et travaux futurs}
 
