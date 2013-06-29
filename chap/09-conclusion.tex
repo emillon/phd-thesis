@@ -17,6 +17,18 @@ constructions dangereuses et en en annotant certaines, nous avons isolé un
 langage impératif bien typable, pour lequel on peut définir un système de types
 sûr.
 
+\paragraph{Une sémantique basée sur les lentilles}
+
+Une des particularités de ce langage impératif est qu'il utilise un état mémoire
+structuré, modélisant les cadres de piles présents dans le langage. Pour décrire
+la sémantique des accès mémoire, nous utilisons le concept de lentilles issues
+de la programmation fonctionnelle et des systèmes de base de données. Cela
+permet de définir de manière déclarative la modification en profondeur de
+valeurs dans la mémoire, sans avoir à distinguer le cas de la lecture et celui
+de l'écriture.
+
+% TODO citer
+
 \paragraph{Un système de types abstraits}
 
 En partant de ce système de types, on a décrit une extension permettant de créer
