@@ -723,11 +723,11 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   section~\ref{sec:eval-exp}.
 \item
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
-  mémoire. La réduction instructions est traitée dans la
+  mémoire. La réduction des instructions est traitée dans la
   section~\ref{sec:eval-instr}.
 \item
   un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
-  % TODO section ref?
+  L'évaluation des left-values est décrite en section~\ref{sec:eval-lv}.
 \item
   une erreur $Ω$. La propagation des erreurs est détaillée dans la
   section~\ref{sec:eval-errors}.
@@ -1416,14 +1416,8 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
 
-\section{Expressions}
-\label{sec:eval-exp}
-
-Puisque des left-values peuvent apparaitre dans les expressions, et des
-expressions dans les left-values (en indice de tableau), leurs règles
-d'évaluation sont mutuellement récursives.
-
-\subsection*{Left-values}
+\section{Left-values}
+\label{sec:eval-lv}
 
 \begin{figure}
 
@@ -1485,7 +1479,8 @@ $e_2$, puis $e_3$.
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
-\subsection*{Expressions}
+\section{Expressions}
+\label{sec:eval-exp}
 
 Évaluer une constante est le cas le plus simple, puisqu'en quelque sorte
 celle-ci est déjà évaluée. À chaque constante syntaxique $c$, on peut associer
