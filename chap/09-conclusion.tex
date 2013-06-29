@@ -93,7 +93,7 @@ types pointeurs ne posent pas de problème non plus puisqu'au moment de la
 traduction en \langname{} on efface les étiquettes de types sur les pointeurs.
 
 Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
-casts, on peut néanmoins trouver le solution suivante.
+casts, on peut néanmoins trouver la solution suivante.
 
 \begin{mathpar}
 \irule{PtrInt-Bad}
@@ -105,71 +105,43 @@ casts, on peut néanmoins trouver le solution suivante.
   { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
 \end{mathpar}
 
-% TODO revoir, avec la nouvelle notation
-
 Cela pose problème car il est alors possible de créer une fonction qui convertit
 n'importe quel type pointeur en n'importe quel autre type pointeur:
 
-\[
-  ⊢ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} }
-  : (\ptrK{t_a}) → \ptrK{t_b}
-\]
+\begin{align*}
+  ⊢ &~ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} } \\
+  : &~ (\ptrK{t_a}) → \ptrK{t_b}
+\end{align*}
 
-% TODO préciser que pb = si ta = tc@ et tb = tc* => problème
+Si on crée une variable du type $t_a$, prend son adresse, la convertit à l'aide
+de cette fonction, puis déréférence le résultat, on obtient une valeur du type
+$t_b$ (remarquons que ce genre d'opération est tout à fait possible en C).
 
-% TODO idem, notation?
+Outre ce problème de typage, il faudrait pouvoir donner une sémantique à ces
+opérations. Convertir un pointeur en entier revient à spécifier l'environnement
+d'exécution, c'est-à-dire qu'il faut une fonction de placement en mémoire
+beaucoup plus précise que notre modèle mémoire actuel. Celle-ci dépend de
+beaucoup de paramètres: dans quel sens croit la pile, quelle est la taille des
+types, etc.
 
-% TODO et à l'exec?
+La conversion dans le sens inverse, d'entier vers pointeur, est
+encore plus complexe. D'une part cela suppose qu'on puisse retrouver la taille
+des valeurs à partir de leur adresse. Dans de nombreux langages, on résout ce
+problème en ajoutant la taille de chaque valeur avec elle.
+
+Mais cela fait s'éloigner du modèle mémoire de C, ou le déréférencement porte
+sur une adresse mais également sur une taille (portée implicitement par le type
+du pointeur). D'ailleurs le langage \newspeak{} conserve cette distinction, que
+nous avons éliminée dans \langname. Il y a une incompatibilité entre ces deux
+approches : pour pouvoir typer la mémoire, il faut associer un type à chaque
+zone mémoire, alors qu'avec une sémantique de bas niveau les valeurs sont créées
+à la volée par le déréférencement.
+
 % TODO on peut faire un dynamic check ou un type UInt ou un qualif sur tous les
 % types
 
-% TODO le modèle mémoire de Newspeak est bcp plus bas niveau que celui de
-% Safespeak, ex types de deref, tailles dans Lv etc
-
-L'opération problématique est en fait l'opérateur $(\tInt)$ de conversion d'un
-pointeur vers un entier, car l'entier résultant ne pose pas de problème de
-sûreté ni de sécurité. Pour lui donner une sémantique, on peut supposer que
-l'environnement d'exécution est paramétré par une fonction de placement en
-mémoire $\addrInt : Φ → \tInt$ qui à un chemin associe un entier.
-On étend alors la sémantique par la règle suivante.
-
-% TODO [E] ??
-
-\[
-  \irule{CastInt}
-    { }
-    { \mms{(\tInt)~\widehat{\&}φ}{\addrInt(φ)} }
-\]
-
 % TODO nommer les ensembles
 % TODO mettre la syntaxe en annexe
-
-Quant au transtypage dans le sens inverse, il est plus compliqué à traiter.
-À l'exécution il est en effet nécessaire d'avoir à disposition une fonction
-$\interpPtr{\ptrK{t}} : \tInt → \ptrK{t}$ qui permette d'interpréter un entier comme
-pointeur qualifié $q$ vers un objet de type $t$ de manière qu'on ajoute la règle
-suivante.
-
-% TODO et itou pour ptrU
-
-\[
-  \irule{CastPtr}
-    { }
-    { \mms{(\textsc{Ptr})~\widehat{n}}{\interpPtr{\ptrK{t}}(\widehat{n})} }
-\]
-
-% TODO les widehat...
-% TODO [E] ??
-
-L'exécution de l'analogue de $\addrInt$ demanderait de créer un pointeur
-depuis un entier.
-
-% TODO il n'y a pas de t q en mémoire, doncil faut juste un interp: Int -> Φ
-% TODO problème car ça peut correspondre à plusieurs pointeurs
-% TODO problème de layout mémoire : ça marche qd tout est boxé mais pas si c'est
-% unboxé
-
-La solution la plus sûre est donc d'interdire totalement ces conversions.
 
 \paragraph{Environnement d'exécution}
 
