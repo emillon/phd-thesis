@@ -1080,7 +1080,19 @@ déréférencement de $p$ va modifier $x$.
 \section{Accesseurs}
 \label{sec:mem-access}
 
-On définit ici quelques lentilles.
+On définit ici quelques lentilles. Le but est de définir rigoureusement les
+accès à la mémoire. À partir d'un état mémoire $m$ et d'une left-value $φ$, on
+veut pouvoir obtenir:
+
+\begin{itemize}
+    \item la valeur accessible au chemin $φ$: $m[φ]_Φ$
+    \item l'état mémoire obtenu en remplaçant celle-ci par une nouvelle valeur $v'$ :
+            $m[φ ← v']_Φ$
+\end{itemize}
+
+Pour définir cette lentille indexée $Φ$, on commence par définir des lentilles
+élémentaires, et on les compose pour pouvoir définir des lentilles entre
+valeurs.
 
 \subsection*{Accès à une liste par indice : $I$}
 
