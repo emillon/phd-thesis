@@ -124,6 +124,35 @@ vue sous la forme d'un arbre:
       }{C}
 \]
 
+\subsection*{Listes}
+
+On suppose avoir à notre disposition un ensemble infini dénombrable
+d'identificateurs $\sId$ (par exemple des chaînes de caractères).
+
+$X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
+X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
+définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
+suite.
+
+On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
+telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
+suivante: si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
+que:
+
+\begin{align*}
+  v_1 = & x \\
+  ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
+\end{align*}
+
+La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que:
+
+\begin{align*}
+|w| = & |u| + |v| \\
+∀ i ∈ [1 ; |u|] , w_i = & u_i \\
+∀ j ∈ [1 ; |v|] , w_{|u| + j} = & v_j
+\end{align*}
+
+
 \subsection*{Lentilles}
 
 La notion d'accesseur utilisée ici est directement inspirée des \emph{lentilles}
@@ -537,34 +566,6 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
   \caption{Syntaxe des opérateurs}
 \label{fig:stx-ops}
 \end{figure}
-
-\section{Définitions préliminaires}
-
-On suppose avoir à notre disposition un ensemble infini dénombrable
-d'identificateurs $\sId$ (par exemple des chaînes de caractères).
-
-$X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
-X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
-définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
-suite.
-
-On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
-telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
-suivante: si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
-que:
-
-\begin{align*}
-  v_1 = & x \\
-  ∀ i ∈ [1; |u|] , v_{i+1} = & u_i
-\end{align*}
-
-La concaténation des listes $u$ et $v$ est la liste $u@v = w$ telle que:
-
-\begin{align*}
-|w| = & |u| + |v| \\
-∀ i ∈ [1 ; |u|] , w_i = & u_i \\
-∀ j ∈ [1 ; |v|] , w_{|u| + j} = & v_j
-\end{align*}
 
 \section{Mémoire}
 
