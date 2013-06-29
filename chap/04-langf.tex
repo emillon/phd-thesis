@@ -726,8 +726,22 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   mémoire. La réduction instructions est traitée dans la
   section~\ref{sec:eval-instr}.
 \item
+  un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
+  % TODO section ref?
+\item
   une erreur $Ω$. La propagation des erreurs est détaillée dans la
   section~\ref{sec:eval-errors}.
+\end{itemize}
+
+L'évaluation des expressions, left-values et instruction se fait à petits pas.
+C'est-à-dire qu'on simplifie d'étape en étape leur forme, jusqu'à arriver à un
+cas de base:
+
+\begin{itemize}
+\item pour les expressions, une valeur $v$.
+\item pour les instructions, l'instruction $\iPass$ ou $\iReturn{v}$ où $v$ est
+    une valeur.
+\item pour les left-values, un chemin $φ$.
 \end{itemize}
 
 On considère en fait la cloture transitive de cette relation. Cela revient à
@@ -1265,6 +1279,7 @@ qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
 
 Dans la suite, on notera uniquement $[\cdot]$ tous ces accesseurs lorsque ce
 n'est pas ambigü.
+% TODO ou pas?
 
 \section{Contextes d'évaluation}
 
@@ -1403,33 +1418,6 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \section{Expressions}
 \label{sec:eval-exp}
-
-\begin{definition}[Évaluation d'une expression]
-
-L'évaluation d'une expression $e$ se fait sous un état mémoire particulier $m$
-et est susceptible de modifier celui-ci en le transformant en un nouveau $m'$.
-Le résultat est une expression $e'$, c'est-à-dire que nous présentons une
-sémantique à petits pas. \emph{In fine}, cela permet d'évaluer $e$ en une valeur
-$v$. Cette évaluation est notée:
-
-  \[
-    \mm{m}{e}{m'}{e'}
-  \]
-
-\end{definition}
-
-\begin{definition}[Évaluation d'une left-value]
-
-De même, les left-values sont réduites à petits pas. Chaque pas transforme $lv$
-en $lv'$, selon un pas qui peut modifier la mémoire (à travers l'évaluation des
-expressions d'indices). Une left-value complètement évaluée est un ``chemin''
-$φ$. On note:
-
-  \[
-    \mmlv{m}{lv}{m'}{φ}
-  \]
-
-\end{definition}
 
 Puisque des left-values peuvent apparaitre dans les expressions, et des
 expressions dans les left-values (en indice de tableau), leurs règles
