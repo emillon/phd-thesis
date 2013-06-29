@@ -1617,9 +1617,11 @@ La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous u
 déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
 mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
 résultante est la déclaration de $x$ avec la nouvelle valeur $v'$ de $x$ après
-le pas d'exécution.
-
-% TODO expliquer pourquoi Ctx n'est pas possible
+le pas d'exécution\footnote{
+    On peut remarquer qu'il est impossible de définir un contexte d'évaluation
+    $C \gramisa \iDecl{x}{v}{C}$. En effet, puisque celui-ci nécessiterait
+    d'ajouter une variable, il ne préserve pas la mémoire.
+}.
 
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
