@@ -1723,8 +1723,7 @@ if(e) {
 \end{Verbatim}
 \end{minipage}
 
-Enfin, si un ``\emph{return}'' apparaît dans une séquence, on peut supprimer la suite:
-% TODO la typographie des if/while/return
+Enfin, si un $\phx\iReturn$ apparaît dans une séquence, on peut supprimer la suite:
 
 \begin{mathpar}
   \semrule{Return}
@@ -1732,8 +1731,6 @@ Enfin, si un ``\emph{return}'' apparaît dans une séquence, on peut supprimer l
 
 \section{Erreurs}
 \label{sec:eval-errors}
-
-% TODO
 
 Les erreurs se propagent des données vers l'interprète; c'est-à-dire que si
 une expression ou instruction est réduite en une valeur d'erreur $Ω$, alors une
@@ -1756,8 +1753,6 @@ de sous-expression ou sous instruction est définie en fonction des contextes $C
 \caption{Cas d'erreur lors d'une évaluation}
 \label{fig:eval-err}
 \end{figure}
-
-% TODO blabla sur les 2 et prouver que \ctxSub{C}{Ω} → Ω
 
 \section{Phrases}
 
@@ -1808,80 +1803,81 @@ L'exécution d'un programme est définie par:
   \semrule{Prog}
 \end{mathpar}
 
-\section{Exemple: l'algorithme d'Euclide}
+% TODO exemple?
+%\section{Exemple: l'algorithme d'Euclide}
 
-\wip{}
+%\wip{}
 
-Version par divisions successives:
+%Version par divisions successives:
 
-\begin{Verbatim}
-function gcd(a, b)
-  var t = 0;
-  while b != 0
-    t = b
-    b = a mod b
-    a = t
-  return a
-\end{Verbatim}
+%\begin{Verbatim}
+%function gcd(a, b)
+  %var t = 0;
+  %while b != 0
+    %t = b
+    %b = a mod b
+    %a = t
+  %return a
+%\end{Verbatim}
 
-Soit:
+%Soit:
 
-\def\exinnerif{t←b;b←a\%b;a←t}
+%\def\exinnerif{t←b;b←a\%b;a←t}
 
-\begin{mathpar} % TODO la syntaxe est ancienne
-  f (a, b) (t = 0) \{
-    \iWhile{b ≠ 0}{
-      \exinnerif{}
-    };
-    \iReturn{a}
-  \}
-\end{mathpar}
+%\begin{mathpar}
+  %f (a, b) (t = 0) \{
+    %\iWhile{b ≠ 0}{
+      %\exinnerif{}
+    %};
+    %\iReturn{a}
+  %\}
+%\end{mathpar}
 
-\[
-  \msi{m}{f(1071, 462)} → ?
-\]
+%\[
+  %\msi{m}{f(1071, 462)} → ?
+%\]
 
-\[
-  \msi{m[a↦1071][b↦462][t↦0]}{\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} → ?
-\]
+%\[
+  %\msi{m[a↦1071][b↦462][t↦0]}{\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} → ?
+%\]
 
-(on notera cet état $s_0 = \msi{m_0}{i_0}$)
+%(on notera cet état $s_0 = \msi{m_0}{i_0}$)
 
-\[
-  \mm{m_0}{a = 0}{m_0}{0}
-\]
+%\[
+  %\mm{m_0}{a = 0}{m_0}{0}
+%\]
 
-donc
+%donc
 
-\[
-  \mm{m_0}{\iThen{a = 0}{\iReturn{b}}}{m[a↦1071][b↦462]}{\iPass}
-\]
+%\[
+  %\mm{m_0}{\iThen{a = 0}{\iReturn{b}}}{m[a↦1071][b↦462]}{\iPass}
+%\]
 
-{ \scriptsize
-\begin{align}
-  s_0 → & \msi{m_0  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_0  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_0  }{ b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_0''}{ a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_1  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_1  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_1  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_2  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_2  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_2  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iPass; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iReturn{a}}
-\end{align}
+%{ \scriptsize
+%\begin{align}
+  %s_0 → & \msi{m_0  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_0  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_0  }{ b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_0''}{ a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_1  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_1  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_1  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_2  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_2  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_2  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iPass; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iReturn{a}}
+%\end{align}
 
-\begin{align*}
-  m_0'  = & m_0  [t↦462] = m[a↦1071][b↦462][t↦462] \\
-  m_0'' = & m_0' [b↦147] = m[a↦1071][b↦147][t↦462] \\
-  m_1   = & m_0''[a↦462] = m[a↦462][b↦147][t↦462] \\
-  m_2   = & m_1[t↦147][b↦21][a↦147] = m[a↦147][b↦21][t↦147] \\
-  m_3   = & m_2[t↦21][b↦0][a↦21] = m[a↦21][b↦0][t↦21]
-\end{align*}
-}
+%\begin{align*}
+  %m_0'  = & m_0  [t↦462] = m[a↦1071][b↦462][t↦462] \\
+  %m_0'' = & m_0' [b↦147] = m[a↦1071][b↦147][t↦462] \\
+  %m_1   = & m_0''[a↦462] = m[a↦462][b↦147][t↦462] \\
+  %m_2   = & m_1[t↦147][b↦21][a↦147] = m[a↦147][b↦21][t↦147] \\
+  %m_3   = & m_2[t↦21][b↦0][a↦21] = m[a↦21][b↦0][t↦21]
+%\end{align*}
+%}
 
 % vim: spelllang=fr
