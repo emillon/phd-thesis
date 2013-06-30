@@ -726,29 +726,20 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 
 \begin{proof}
 
-On procède par induction sur la dérivation de $\mm{m}{e}{m'}{e'}$.
+On procède par induction sur la dérivation de $\mm{m}{\cdot}{m'}{\cdot}$.
+
+N.B. \textsc{Ctx} apparaît 3 fois.
+
+Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$.
 
 \paragraph{\textsc{Ctx}:} % {{{ TODO
 \[ \semrule{Ctx} \]
 % }}}
-\paragraph{\textsc{Exp-Err}:} % {{{ TODO
-\[ \semrule{Exp-Err} \]
-% }}}
-\paragraph{\textsc{Eval-Err}:} % {{{ TODO
-\[ \semrule{Eval-Err} \]
-% }}}
-\paragraph{\textsc{Phi-Var}:} % {{{ TODO
-\[ \semrule{Phi-Var} \]
-% }}}
-\paragraph{\textsc{Phi-Deref}:} % {{{ TODO
-\[ \semrule{Phi-Deref} \]
-% }}}
-\paragraph{\textsc{Phi-Struct}:} % {{{ TODO
-\[ \semrule{Phi-Struct} \]
-% }}}
-\paragraph{\textsc{Phi-Array}:} % {{{ TODO
-\[ \semrule{Phi-Array} \]
-% }}}
+
+\jolibreak
+
+Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$.
+
 \paragraph{\textsc{Exp-Cst}:} % {{{ TODO
 \[ \semrule{Exp-Cst} \]
 % }}}
@@ -779,6 +770,65 @@ On procède par induction sur la dérivation de $\mm{m}{e}{m'}{e'}$.
 \paragraph{\textsc{Exp-Call}:} % {{{ TODO
 \[ \semrule{Exp-Call} \]
 % }}}
+
+\jolibreak
+
+Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$.
+
+\paragraph{\textsc{Ctx}:} % {{{ TODO
+\[ \semrule{Ctx} \]
+% }}}
+\paragraph{\textsc{Phi-Var}:} % {{{ TODO
+\[ \semrule{Phi-Var} \]
+% }}}
+\paragraph{\textsc{Phi-Deref}:} % {{{ TODO
+\[ \semrule{Phi-Deref} \]
+% }}}
+\paragraph{\textsc{Phi-Struct}:} % {{{ TODO
+\[ \semrule{Phi-Struct} \]
+% }}}
+\paragraph{\textsc{Phi-Array}:} % {{{ TODO
+\[ \semrule{Phi-Array} \]
+% }}}
+
+\jolibreak
+
+Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
+
+\paragraph{\textsc{Ctx}:} % {{{ TODO
+\[ \semrule{Ctx} \]
+% }}}
+\paragraph{\textsc{Seq}:}%{{{ TODO
+\[ \semrule{Seq} \]
+%}}}
+\paragraph{\textsc{Exp}:}%{{{ TODO
+\[ \semrule{Exp} \]
+%}}}
+\paragraph{\textsc{Decl-Pass}:}%{{{ TODO
+\[ \semrule{Decl-Pass} \]
+%}}}
+\paragraph{\textsc{Decl-Return}:}%{{{ TODO
+\[ \semrule{Decl-Return} \]
+%}}}
+\paragraph{\textsc{Decl-Ctx}:}%{{{ TODO
+\[ \semrule{Decl-Ctx} \]
+%}}}
+\paragraph{\textsc{Decl-Err}:}%{{{ TODO
+\[ \semrule{Decl-Err} \]
+%}}}
+\paragraph{\textsc{If-False}:}%{{{ TODO
+\[ \semrule{If-False} \]
+%}}}
+\paragraph{\textsc{If-True}:}%{{{ TODO
+\[ \semrule{If-True} \]
+%}}}
+\paragraph{\textsc{While}:}%{{{ TODO
+\[ \semrule{While} \]
+%}}}
+\paragraph{\textsc{Return}:}%{{{ TODO
+\[ \semrule{Return} \]
+%}}}
+
 \end{proof}
 
 \section{Progrès pour les types qualifiés}
