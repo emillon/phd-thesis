@@ -786,7 +786,7 @@ Idem avec la règle \textsc{S-Float}.
 Idem avec la règle \textsc{S-Unit}.
 
 \item $\eNull$:
-Dans les hypothèses on a $Γ ⊢ \textsc : t$. D'après le lemme des formes
+Dans les hypothèses on a $Γ ⊢ \eNull : t$. D'après le lemme des formes
 canoniques, % TODO
 $∃ t', t = t'~*$.
 
@@ -796,6 +796,8 @@ Alors par \textsc{Comp-Ptr}, $\tComp{τ~*}{t~*}$.
 En outre, grâce à \textsc{S-Null}, on obtient $m ⊢ \eNull: τ~*$.
 
 \end{itemize}
+
+% TODO refaire ce cas avec le lemme de représentabilité
 
 % }}}
 \paragraph{\textsc{Exp-Fun}:} % {{{
@@ -846,6 +848,8 @@ Or, d'après ...
 \item $φ = *φ'$
 % TODO
 
+% TODO extraire ça en lemme
+
 \end{itemize}
 
 % }}}
@@ -876,6 +880,8 @@ $m ⊧ \widehat{\&}~φ : τ$.
 D'autre part, il vient de \textsc{Comp-Ptr} que $\tComp{τ'~*}{t'~*}$ ,
 c'est-à-dire que $\tComp{τ}{t}$.
 
+% TODO cf. representabilité
+
 % }}}
 \paragraph{\textsc{Exp-Set}:} % {{{
 \[ \semrule{Exp-Set} \]
@@ -899,9 +905,6 @@ Comme $Γ ⊢ \eStruct{l_1:v_1;…;l_n:v_n} : t$, le lemme d'inversion nous dit 
 existe $t_1, …, t_n$ tels que $t = \tStruct{l_1:v_1;…;l_n:v_n}$ avec
 $∀i, Γ ⊢ v_i : t_i$.
 
-Lemme: Si $Γ ⊢ v : t$ et $\mcomp{Γ}{m}$, alors il existe $τ$ tel que
-$m ⊧ v : τ$ et $\tComp{τ}{t}$.
-% TODO
 
 Par ce % TODO
 lemme, $∀i, ∃τ_i, m ⊧ v_i ∧ \tComp{τ_i}{t_i}$.
