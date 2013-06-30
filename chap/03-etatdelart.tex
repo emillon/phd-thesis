@@ -265,8 +265,6 @@ vérification formelle en tant que telle.
 
 \section{Typage}
 
-%TODO[E]: n'est-ce pas une passe obligatoire dans tout système de vérification?
-
 Le typage, introduit dans la section~\ref{sec:types-intro}, peut aussi être
 utilisé pour la vérification de programmes. On peut le voir comme une manière de
 catégoriser les types de données manipulés par la machine, mais également à plus
@@ -291,9 +289,9 @@ la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotati
 au code source. Un pointeur peut être décoré d'une annotation
 \texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celles-ci
 sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
-Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul
-peut être utilisé pour détecter les cas les plus simples d'erreurs. Il demande
-aussi au programmeur d'ajouter de nombreuses annotations dans le programme.
+Sparse~\link{sparse} peut être utilisé pour détecter les cas les plus simples
+d'erreurs. Il demande aussi au programmeur d'ajouter de nombreuses annotations
+dans le programme.
 
 %TODO[E]: on a l'impression que c'est simple mais ce sera le coeur du manuscrit:
 %certes avec inférence mais tout de même
