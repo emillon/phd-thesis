@@ -849,14 +849,33 @@ Or, d'après ...
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{Exp-UnOp}:} % {{{ TODO
+\paragraph{\textsc{Exp-UnOp}:} % {{{
 \[ \semrule{Exp-UnOp} \]
+
+Il vient des définitions des différents opérateurs$\widehat{\opun}$ que
+$Γ ⊢ \widehat{\opun}~v : τ$ avec $\tComp{τ}{t}$.
+
 % }}}
-\paragraph{\textsc{Exp-BinOp}:} % {{{ TODO
-\[ \semrule{Exp-BinOp} \]
+\paragraph{\textsc{Exp-BinOp}:} % {{{
+
+Idem avec les définitions des opérateurs $\widehat{\opbin}$.
+
 % }}}
-\paragraph{\textsc{Exp-AddrOf}:} % {{{ TODO
+\paragraph{\textsc{Exp-AddrOf}:} % {{{
 \[ \semrule{Exp-AddrOf} \]
+
+On a: $Γ ⊢ \&~φ : t$.
+
+Par le lemme des formes canoniques, il existe $t'$ tel que $t = t'~*$.
+Puisque $\mcomp{Γ}{m}$, on en déduit que
+$m ⊧ m[φ]_Φ : τ'$ où $\tComp{τ'}{t'}$. % TODO
+
+Donc d'après \textsc{S-Ref}, $m ⊧ \widehat{\&}~φ : τ'~*$, soit
+$m ⊧ \widehat{\&}~φ : τ$.
+
+D'autre part, il vient de \textsc{Comp-Ptr} que $\tComp{τ'~*}{t'~*}$ ,
+c'est-à-dire que $\tComp{τ}{t}$.
+
 % }}}
 \paragraph{\textsc{Exp-Set}:} % {{{ TODO
 \[ \semrule{Exp-Set} \]
