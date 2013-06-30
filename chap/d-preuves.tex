@@ -892,8 +892,27 @@ il existe $τ$ tel que
 $m ⊧ m[φ]_Φ : τ$ et $\tComp{τ}{t}$. % TODO il faut une sorte de lemme de subs
 
 % }}}
-\paragraph{\textsc{Exp-Struct}:} % {{{ TODO
+\paragraph{\textsc{Exp-Struct}:} % {{{
 \[ \semrule{Exp-Struct} \]
+
+Comme $Γ ⊢ \eStruct{l_1:v_1;…;l_n:v_n} : t$, le lemme d'inversion nous dit qu'il
+existe $t_1, …, t_n$ tels que $t = \tStruct{l_1:v_1;…;l_n:v_n}$ avec
+$∀i, Γ ⊢ v_i : t_i$.
+
+Lemme: Si $Γ ⊢ v : t$ et $\mcomp{Γ}{m}$, alors il existe $τ$ tel que
+$m ⊧ v : τ$ et $\tComp{τ}{t}$.
+% TODO
+
+Par ce % TODO
+lemme, $∀i, ∃τ_i, m ⊧ v_i ∧ \tComp{τ_i}{t_i}$.
+
+En appliquant \textsc{S-Struct}, on trouve
+$ m ⊧ \widehat{ \eStruct{l_1:v_1;…;l_n:v_n} }
+    :           \tStruct{l_1:τ_1;…;l_n:τ_n} $
+
+D'autre part, de \textsc{Comp-Struct} il vient que
+$\tComp{ \tStruct{l_1:τ_1;…;l_n:τ_n} }{t}$.
+
 % }}}
 \paragraph{\textsc{Exp-Array}:} % {{{ TODO
 \[ \semrule{Exp-Array} \]
