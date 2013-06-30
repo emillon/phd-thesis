@@ -1012,38 +1012,15 @@ On procède par induction sur la forme de $t$.
     On déduit de \textsc{S-Struct} que $m ⊧ v : τ$, et de
     \textsc{Comp-Struct} que $\tComp{τ}{t}$.
 
-\item $t = (t_1, …, t_n) \rightarrow t$: % TODO
-    Soit $τ = \stFun{n}$
+\item $t = (t_1, …, t_n) \rightarrow t'$:
+    Par formes canoniques, on a
+    $v = \widehat{\eFun{a_1,…,a_n}{i}}$.
+
+    Soit $τ = \stFun{n}$: par \textsc{S-Fun} on obtient que
+    $m ⊧ v : τ$. On conclut d'autre par que $\tComp{τ}{t}$
+    grâce à \textsc{Comp-Fun}.
 
 \end{itemize}
-\end{proof}
-
-\begin{proof}
-
-On distingue selon la forme de $v$.
-
-\begin{itemize}
-
-\item $\widehat{\eStruct{ l_1 : v_1 ; … ; l_n : v_n }}$:
-    Par inversion, il existe $t_1, …, t_n$ tels que
-    $t = \tStruct{l_1:t_1;…;l_n:t_n}$ et $∀i, Γ ⊢ v_i : t_i$.
-    On applique l'hypothèse de récurrence à chacun des $v_i$:
-    il existe $τ_i$ tel que $m ⊧ v_i : τ_i$ et
-    $\tComp{τ_i}{t_i}$.
-
-    Soit $τ = \tStruct{l_1:τ_1;…;l_n:τ_n}$. Par \textsc{S-Struct}, on a
-    $m ⊧ \widehat{\eStruct{ l_1 : v_1 ; … ; l_n : v_n }} : τ$
-    et par \textsc{Comp-Struct}, $\tComp{τ}{t}$.
-
-\item $\widehat{f}$:
-    Posons $\widehat{f} = \widehat{\eFun{a_1,…,a_n}{i}}$. Par inversion, il
-    existe $t_1, …, t_n, t'$ tels que $t = (t_1, …, t_n) → t'$.
-
-    Soit alors $τ = \stFun{n}$. Par \textsc{S-Fun},
-    $m ⊧ \widehat{f} : τ$ et
-    et par \textsc{Comp-Fun}, $\tComp{τ}{t}$.
-\end{itemize}
-
 \end{proof}
 
 \begin{theorem}[Préservation]
