@@ -925,6 +925,7 @@ La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres
 %Ces lemmes permettent de prouver le théorème suivant :
 
 \begin{lemma}[Représentabilité]
+\label{lemma:repr}
 
 On définit un opérateur de représentation d'un type statique à l'exécution:
 
@@ -945,7 +946,7 @@ Alors $m ⊧ v : τ$ et $\tComp{τ}{t}$.
 
 \end{lemma}
 
-\begin{proof}
+\begin{proof}%{{{
 
 On procède par induction sur la forme de $t$.
 
@@ -1021,7 +1022,7 @@ On procède par induction sur la forme de $t$.
     grâce à \textsc{Comp-Fun}.
 
 \end{itemize}
-\end{proof}
+\end{proof}%}}}
 
 \begin{theorem}[Préservation]
 \label{thm:preservation}
