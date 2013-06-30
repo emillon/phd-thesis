@@ -492,8 +492,6 @@ système JML~\cite{jmlkluwer} ou pour le langage C\# dans Spec\#~\cite{krml136}.
 
 \section{Assistants de preuve}
 
-%TODO[E] globalement trop rapide
-
 Avec un système de types classique, le fait qu'un terme soit bien typé amène
 quelques propriétés sur son exécution. Par exemple, le fait que seulement un
 ensemble réduit d'erreurs puisse arriver (comme la division par zéro).
@@ -546,10 +544,8 @@ dynamiques, ou la facilité de mise en œuvre.
 Le typage statique est une solution assez pragmatique, puisqu'elle peut
 s'appliquer à des programmes existants, et est efficace à utiliser. Son
 expressivité limitée nous empêche de reposer entièrement sur elle pour garantir
-l'absence d'erreur dans les programmes système. C'est pourquoi nous approchons
-la sûreté de la manière suivante dans notre solution, \langname.
-
-%TODO[E]: phrase
+l'absence d'erreur dans les programmes système. C'est pourquoi dans notre
+solution, \langname, nous approchons la sûreté de la manière suivante:
 
 Tout d'abord, on utilise le typage pour manipuler les données de manière
 compatible: les types des opérations et fonctions sont vérifiés à la
