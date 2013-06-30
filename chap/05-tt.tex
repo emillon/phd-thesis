@@ -999,11 +999,18 @@ On procède par induction sur la forme de $t$.
     $m ⊧ v : τ$, et de la seconde (via \textsc{Comp-Array})
     $\tComp{τ}{t}$.
 
-\item $\tStruct{ l_1 : t_1; … ; l_n : t_n }$: % TODO
-    Soient $τ_i = \cRepr{t_i}$ et
-    $τ = \tStruct{ l_1 : τ_1; … ; l_n : τ_n }$
+\item $\tStruct{ l_1 : t_1; … ; l_n : t_n }$:
+    Par le lemme des formes canoniques,
+    $v = \widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$.
+    Et par inversion, $∀i, Γ ⊢ v_i : t_i$.
 
-    Par le lemme des formes canoniques, $v = \eStruct{l_1:v_1;…;l_n:v_n}$.
+    Soient $τ_i = \cRepr{t_i}$ et
+    $τ = \tStruct{ l_1 : τ_1; … ; l_n : τ_n }$.
+
+    Alors par induction, $∀i, m ⊧ v_i : τ_i$ et $\tComp{τ_i}{t_i}$.
+
+    On déduit de \textsc{S-Struct} que $m ⊧ v : τ$, et de
+    \textsc{Comp-Struct} que $\tComp{τ}{t}$.
 
 \item $t = (t_1, …, t_n) \rightarrow t$: % TODO
     Soit $τ = \stFun{n}$
