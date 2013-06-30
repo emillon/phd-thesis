@@ -767,8 +767,36 @@ On cherche à prouver:
 
 Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$.
 
-\paragraph{\textsc{Exp-Cst}:} % {{{ TODO
+\paragraph{\textsc{Exp-Cst}:} % {{{
 \[ \semrule{Exp-Cst} \]
+
+On distingue selon la forme de $c$.
+
+\begin{itemize}
+\item $n$:
+d'après le lemme des formes canoniques, $t =\tInt$ ; % TODO
+d'autre part, d'après \textsc{S-Int}, $m ⊧ \widehat{n} : \tInt$.
+Par \textsc{Comp-Ground} on a $\tComp{\tInt}{\tInt}$, ce qui nous permet de
+conclure.
+
+\item $d$:
+Idem avec la règle \textsc{S-Float}.
+
+\item $\eUnit$:
+Idem avec la règle \textsc{S-Unit}.
+
+\item $\eNull$:
+Dans les hypothèses on a $Γ ⊢ \textsc : t$. D'après le lemme des formes
+canoniques, % TODO
+$∃ t', t = t'~*$.
+
+Soit $τ$ un type sémantique tel que $\tComp{τ}{t}$
+(un tel type existe toujours). % TODO
+Alors par \textsc{Comp-Ptr}, $\tComp{τ~*}{t~*}$.
+En outre, grâce à \textsc{S-Null}, on obtient $m ⊢ \eNull: τ~*$.
+
+\end{itemize}
+
 % }}}
 \paragraph{\textsc{Exp-Fun}:} % {{{ TODO
 \[ \semrule{Exp-Fun} \]
