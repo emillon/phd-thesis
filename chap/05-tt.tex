@@ -927,23 +927,33 @@ La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres
 \begin{theorem}[Préservation]
 \label{thm:preservation}
 
-  Soient $Γ$ un environnement de typage, $e$ une expression et $m$ un état
-  mémoire.
+Soient $Γ$ un environnement de typage, et $m$ un état mémoire tels que
+$\mcomp{Γ}{m}$.
 
-  On suppose que les hypothèse suivantes sont vérifiées:
+Alors:
 
 \begin{itemize}
-\item $Γ ⊢ e : t$
-\item $\mcomp{Γ}{m}$
-\item $\mm{m}{e}{m'}{e'}$
+\item
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$,
+    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ e' : t$.
+
+\item
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
+    alors $\mcomp{Γ}{m'}$ et $m ⊧ v : τ$ où $\tComp{τ}{t}$.
+
+\item
+    Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
+    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ i'$.
+
+\item
+    Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$,
+    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ lv' : t$.
+
+% TODO un cas avec les lv?
 \end{itemize}
 
-  Alors $Γ ⊢ e' : t$ et $\mcomp{Γ}{m'}$.
-
-  Autrement dit, si une expression est typable, alors un pas d'évaluation ne
+  Autrement dit, si une construction est typable, alors un pas d'évaluation ne
   modifie pas son type et préserve le typage de la mémoire.
-
-% TODO idem pour instructions
 
 \end{theorem}
 
