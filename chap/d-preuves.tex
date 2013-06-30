@@ -914,8 +914,19 @@ D'autre part, de \textsc{Comp-Struct} il vient que
 $\tComp{ \tStruct{l_1:τ_1;…;l_n:τ_n} }{t}$.
 
 % }}}
-\paragraph{\textsc{Exp-Array}:} % {{{ TODO
+\paragraph{\textsc{Exp-Array}:} % {{{
 \[ \semrule{Exp-Array} \]
+
+On applique le lemme d'inversion à $Γ ⊢ \eArray{v_1,…,v_n} : t$ : il existe
+$t'$ tel que $t = t'~[]$ et $∀i, Γ ⊢ v_i : t'$.
+
+Par le lemme, % TODO
+il existe $τ'$ tel que $∀i, m ⊧ v_i : τ'$ et $\tComp{τ'}{t'}$.
+
+Donc par \textsc{S-Array}, $m ⊧ \widehat{\eArray{v_1,…,v_n}}: τ'~[]$.
+
+De plus d'après \textsc{Comp-Array}, $\tComp{τ'~[]}{t'~[]}$ soit $\tComp{τ}{t}$.
+
 % }}}
 \paragraph{\textsc{Exp-Call}:} % {{{ TODO
 \[ \semrule{Exp-Call} \]
