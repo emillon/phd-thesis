@@ -1,9 +1,9 @@
 Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
-permettant d'analyser des programmes. Un accent est mis sur la propriété de
-sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se limite pas à
-celle-ci.
-
-%TODO[E]: pourquoi?
+permettant d'analyser des programmes. En particulier, on s'intéresse à la
+propriété de sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se
+limite pas à celle-ci: il est également intéressant de considérer des analyses
+développées pour d'autres propriétés, celles-ci pouvant potentiellement
+s'adapter.
 
 L'analyse statique de programmes est un sujet de recherche actif depuis
 l'apparition de la science informatique. On commence par en présenter une
@@ -24,21 +24,20 @@ performances). L'approche statique, en revanche, nécessite de construire à
 l'arrêt une carte mentale du programme, ce qui n'est pas toujours possible dans
 certains langages.
 
-%TODO[E]: et pourtant c'est ce qui se passe dans l'avionique civile (process de
-%dév le + difficile)
+Les techniques dynamiques sont néanmoins les plus répandues, puisqu'elles sont
+plus simples à mettre en œuvre et permettent de trouver des erreurs pendant le
+processus de développement. De plus, on peut considérer qu'un programme avec une
+forte couverture par les tests a de grandes chances d'être correct pour toutes
+les entrées. C'est par exemple ce qui se passe dans l'avionique civile.
 
-Pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
-uniquement sur des tests --- ou de manière générale sur des analyses dynamiques
---- car même avec des tests exhaustifs, il est impossible d'étudier l'ensemble
-complet de tous les comportements possibles. Par exemple, si un bug se présente
-lors d'une interaction entre deux composants qui n'a pas été testée, il passera
-inaperçu. Pour cette raison, la plupart des analyses présentées ici sont
-statiques.
+Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
+uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
+--- car il est impossible d'étudier l'ensemble complet de tous les comportements
+possibles. Par exemple, si un bug se présente lors d'une interaction entre deux
+composants qui n'a pas été testée, il passera inaperçu. Pour cette raison, la
+plupart des analyses présentées ici sont statiques.
 
 \paragraph{Cohérence et complétude}
-
-%TODO[E]: il peut néanmoins avoir des limitations : complexité trop forte (ex
-%typage en ocaml)
 
 Le but d'une analyse statique est de catégoriser les programmes selon s'ils
 satisfont ou non un ensemble de propriétés fixées à l'avance. Malheureusement,
@@ -58,12 +57,14 @@ un des cas suivants:
 \item
   un programme invalide n'est pas détecté: on parle de
   \emph{faux négatif}.
-%TODO[E]: plus grave?
 \end{itemize}
 
 En général, et dans notre cas, on préfère s'assurer que les programmes acceptés
 possèdent la propriété recherchée, quitte à en rejeter certains. C'est
-l'approche que nous retiendrons.
+l'approche que nous retiendrons. Tolérer les faux négatifs n'est cependant pas
+toujours une mauvaise idée. Par exemple, si le but est de trouver des
+constructions dangereuses dans les programmes, on peut signaler certains cas qui
+empiriquement valent d'être vérifiés manuellement.
 
 Par ailleurs la plupart des techniques ne concernent que les programmes qui
 terminent. On étudie donc la correction, ou les propriétés des termes
