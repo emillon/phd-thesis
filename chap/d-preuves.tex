@@ -902,11 +902,11 @@ Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
 \paragraph{\textsc{Ctx}:} % {{{ TODO
 \[ \semrule{Ctx} \]
 % }}}
-\paragraph{\textsc{Seq}:}%{{{ TODO
-\[ \semrule{Seq} \]
+\paragraph{\textsc{Seq}:}%{{{
+D'après le lemme d'inversion, $Γ ⊢ i$.
 %}}}
-\paragraph{\textsc{Exp}:}%{{{ TODO
-\[ \semrule{Exp} \]
+\paragraph{\textsc{Exp}:}%{{{
+D'après \textsc{Pass}, $Γ ⊢ \iPass$.
 %}}}
 \paragraph{\textsc{Decl-Pass}:}%{{{ TODO
 \[ \semrule{Decl-Pass} \]
@@ -917,20 +917,22 @@ Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
 \paragraph{\textsc{Decl-Ctx}:}%{{{ TODO
 \[ \semrule{Decl-Ctx} \]
 %}}}
-\paragraph{\textsc{Decl-Err}:}%{{{ TODO
-\[ \semrule{Decl-Err} \]
+\paragraph{\textsc{If-False}:}%{{{
+D'après le lemme d'inversion, $Γ ⊢ i_f$.
 %}}}
-\paragraph{\textsc{If-False}:}%{{{ TODO
-\[ \semrule{If-False} \]
+\paragraph{\textsc{If-True}:}%{{{
+D'après le lemme d'inversion, $Γ ⊢ i_t$.
 %}}}
-\paragraph{\textsc{If-True}:}%{{{ TODO
-\[ \semrule{If-True} \]
+\paragraph{\textsc{While}:}%{{{
+
+D'après le lemme d'inversion, $Γ ⊢ e : t$ et $Γ ⊢ i$.
+Par \textsc{Seq}, on a $Γ ⊢ i ; \iWhile{e}{i}$.
+Enfin par \textsc{If} il vient $Γ ⊢ \iThen{e}{i ; \iWhile{e}{i}}$.
+
 %}}}
-\paragraph{\textsc{While}:}%{{{ TODO
-\[ \semrule{While} \]
-%}}}
-\paragraph{\textsc{Return}:}%{{{ TODO
-\[ \semrule{Return} \]
+\paragraph{\textsc{Return}:}%{{{
+
+Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
 %}}}
 
 % TODO vérifier que les cas du lemme d'inversion sont bien
