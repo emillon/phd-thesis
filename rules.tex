@@ -334,15 +334,34 @@
                    { \widehat{\eArray{ v_1, … , v_n } }}
                  }
     }
-    {Exp-Call}{ \irule{Exp-Call}
-                  { f = \eFun{a_1, …, a_n}{i} \\
-                    m_1 = \mathrm{Push}(m_0, ((a_1 ↦ v_1), …, (a_n ↦ v_n))) \\
-                    \mm{m_1}{i}{m_2}{\iReturn{v}} \\
-                    m_3 = \mathrm{Pop}(m_2) \\
-                    m_4 = \cCleanup{m_3} \\
+    {Exp-Call-Return-Unit}{ \irule{Exp-Call-Return-Unit}
+                               { m' = \cCleanup{m}}
+                               { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
+                                    {m'}{\eUnit}
+                               }
+                          }
+    {Exp-Call-Return}{ \irule{Exp-Call-Return}
+                          { m' = \cCleanup{m}}
+                          { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
+                               {m'}{v}
+                          }
+                     }
+    {Exp-Call-Ctx}{ \irule{Exp-Call-Ctx}
+                        { m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))
+                       \\ \mm{m_1}{i}{m_2}{i'}
+                       \\ ∀ i ∈ [1;n], v'_i = m_2[(0, a_i)]_A
+                       \\ m_3 = \mathrm{Pop} (m_2)
+                        }
+                        { \mm{m_0}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) }
+                          { m_3 }{\eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n) }
+                        }
                   }
-                  {\mm{m_0}{f (v_1, …, v_n)}{m_4}{v}}
-    }
+    {Exp-Call-Err}{ \irule{Exp-Call-Err}
+                     { m' = \mathrm{Push}(m, (a_1 ↦ v_1, …, a_n ↦ v_n))
+                    \\ \msi{m'}{i} → Ω
+                     }
+                     { \msi{m}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) } → Ω }
+                  }
     {Seq}{ \irule{Seq}
               { }
               { \mmi{m}{(\iPass;i)}{m}{i} }

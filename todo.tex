@@ -428,14 +428,6 @@ It relies on the following operator:%
   \mathrm{Extend} : \textsc{Mem}×\textsc{Id}×\textsc{Val} &→ \textsc{Mem}\\
   \mathrm{Extend}(f::fs, g), x) &= (((x↦v)::f) :: fs), g) \\
 \end{align*} }%
-\paragraph{Function call} uses a complex rule, because it handles the calling
-convention (pushing and popping parameters on the stack). We suppose that all
-functions exit through a $\iReturn{\cdot}$ instruction.%
-{\small \[ \semrule{Exp-Call} \] }%
-$\mathrm{Push} : \textsc{Mem} × \textsc{Frame} → \textsc{Mem}$
-adds a new stack frame, and
-$\mathrm{Pop} : \textsc{Mem} → \textsc{Mem}$
-removes it.
 
 $\mathrm{Cleanup} : \textsc{Mem} → \textsc{Mem}$ removes references to dangling
 pointers. It walk all the memory and replaces references to the current stack

@@ -1521,7 +1521,7 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
 \end{mathpar}
 
 \shorthandoff{!}
-\begin{figure}
+\begin{figure}%{{{
 
   \centering
 
@@ -1552,21 +1552,28 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
   }
 \label{fig:fcall-details}
 
-\end{figure}
+\end{figure}%}}}
 \shorthandon{!}
 
-Les contextes utilisés dans l'appel de fonction sont similaires. Tout d'abord,
-les arguments sont évalués et placés dans un nouveau cadre de pile. Ensuite, le
-corps de la fonction est évalué jusqu'à se réduire en une instruction
-$\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
-
-La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
-de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la
-section~\ref{sec:memops}).
+L'appel de fonction est traité de manière similaire à la déclaration de
+fonction: on ne peut pas facilement relier un pas d'évaluation de $i$ à un pas
+d'évaluation de $\eFun{a_1,…,a_n}{i} (v_1,…,v_n)$, donc un contexte
+$C \gramisa \eFun{a_1,…,a_n}{\ctxEmpty} (v_1,…,v_n)$ n'est pas à considérer. Il
+faut donc transmettre le pas à la main. C'est le but des deux règles
+\textsc{Exp-Call-Ctx} et \textsc{Exp-Call-Err}. D'autre part, les cas terminaux
+sont \textsc{Exp-Call-Return-Unit} et \textsc{Exp-Call-Return}:
 
 \begin{mathpar}
-  \semrule{Exp-Call}
+    \semrule{Exp-Call-Ctx}
+
+    \semrule{Exp-Call-Err}
+
+    \semrule{Exp-Call-Return-Unit}
+
+    \semrule{Exp-Call-Return}
 \end{mathpar}
+
+% TODO blabla sur cleanup
 
 Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 

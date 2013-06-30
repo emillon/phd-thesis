@@ -545,52 +545,17 @@ On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
 d'inversion garantit que $Γ' ⊢ i$).
 
 \begin{itemize}
-\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Return-Unit}.
+\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Call-Return-Unit}.
 
-\[ \irule{Exp-Return-Unit}
-      { m' = \cCleanup{m}}
-      { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
-           {m'}{\eUnit}
-      }
-\]
-
-\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Return}.
-
-\[ \irule{Exp-Return}
-      { m' = \cCleanup{m}}
-      { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
-           {m'}{v}
-      }
-\]
+\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Call-Return}.
 
 \item $\mm{m_1}{i}{m_2}{i'}$.
 
     Alors on peut appliquer \textsc{Exp-Call-Ctx}.
 
-\[
-    \irule{Exp-Call-Ctx}
-        { m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))
-       \\ \mm{m_1}{i}{m_2}{i'}
-       \\ ∀ i ∈ [1;n], v'_i = m_2[(0, a_i)]_A
-       \\ m_3 = \mathrm{Pop} (m_2)
-        }
-        { \mm{m_0}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) }
-          { m_3 }{\eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n) }
-        }
-\]
-
 \item $\msi{m}{i} → Ω$. On peut alors appliquer \textsc{Exp-Call-Err}.
 
-\[ \irule{Exp-Call-Err}
-    { m' = \mathrm{Push}(m, (a_1 ↦ v_1, …, a_n ↦ v_n))
-   \\ \msi{m'}{i} → Ω
-    }
-    { \msi{m}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) } → Ω }
-\]
-
 \end{itemize}
-
-% TODO remettre ces règles à leur place
 
 %}}}
 \jolibreak
@@ -865,8 +830,11 @@ Le lemme~\ref{lemma:repr} s'applique à ce cas.
 Idem, on conclut grâce au lemme de représentabilité.
 
 % }}}
-\paragraph{\textsc{Exp-Call}:} % {{{ TODO
-\[ \semrule{Exp-Call} \]
+\paragraph{\textsc{Exp-Call-Return}:} % {{{ TODO
+\[ \semrule{Exp-Call-Return} \]
+% }}}
+\paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{ TODO
+\[ \semrule{Exp-Call-Return-Unit} \]
 % }}}
 
 \jolibreak
@@ -931,6 +899,11 @@ Enfin par \textsc{If} il vient $Γ ⊢ \iThen{e}{i ; \iWhile{e}{i}}$.
 \paragraph{\textsc{Return}:}%{{{
 
 Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
+%}}}
+\paragraph{\textsc{Exp-Call-Ctx}:}%{{{ TODO
+
+\[ \semrule{Exp-Call-Ctx} \]
+
 %}}}
 
 % TODO vérifier que les cas du lemme d'inversion sont bien
