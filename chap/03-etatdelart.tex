@@ -293,13 +293,11 @@ Sparse~\link{sparse} peut être utilisé pour détecter les cas les plus simples
 d'erreurs. Il demande aussi au programmeur d'ajouter de nombreuses annotations
 dans le programme.
 
-%TODO[E]: on a l'impression que c'est simple mais ce sera le coeur du manuscrit:
-%certes avec inférence mais tout de même
-
-Ce système d'annotations sur les types a été formalisé sous le nom de
-\emph{qualificateurs de types}~\cite{toplas-quals}: chaque type peut être
-décoré d'un ensemble de qualificateurs (à la manière de \texttt{const}), et des
-règles de typage permettent d'établir des propriétés sur le programme.
+Cette solution se rapproche de la solution décrite dans ce manuscrit. Ce système
+d'annotations sur les types a été formalisé sous le nom de \emph{qualificateurs
+de types}~\cite{toplas-quals}: chaque type peut être décoré d'un ensemble de
+qualificateurs (à la manière de \texttt{const}), et des règles de typage
+permettent d'établir des propriétés sur le programme.
 
 Plus précisément, les jugements de typage de la forme $Γ ⊢ e : t$ sont remplacés
 par des jugements de typage qualifiés $Γ ⊢ e : t~q$. Les qualificateurs $q$
@@ -364,9 +362,8 @@ de types).
 
 Le typage statique peut également être implanté de manière efficace. La plupart
 des systèmes de types peuvent être vérifiés en pratique dans un temps linéaire
-en la taille du programme considéré.
-
-%TODO[E]: en ocaml c'est quadratique!!!
+en la taille du programme considéré. L'inférence, en revanche, peut parfois
+``exploser'' en temps quadratique. % TODO check le coup du quadratique
 
 \section{Analyse de code système}
 
