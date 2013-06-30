@@ -798,11 +798,56 @@ En outre, grâce à \textsc{S-Null}, on obtient $m ⊢ \eNull: τ~*$.
 \end{itemize}
 
 % }}}
-\paragraph{\textsc{Exp-Fun}:} % {{{ TODO
+\paragraph{\textsc{Exp-Fun}:} % {{{
 \[ \semrule{Exp-Fun} \]
+
+$Γ ⊢ f : t$, donc par le lemme d'inversion on obtient l'existence de $t_1, …,
+t_n, t'$ tels que $t = (t_1, …, t_n) → t'$.
+D'après \textsc{S-Fun}, $m ⊧ \widehat{f} : \stFun{n}$.
+Enfin, \textsc{Comp-Fun} nous permet de conclure car
+$\tComp{\stFun{n}}{(t_1, …, t_n) → t'}$.
+
 % }}}
 \paragraph{\textsc{Exp-Lv}:} % {{{ TODO
 \[ \semrule{Exp-Lv} \]
+
+On a $Γ ⊢ φ : t$, $\mcomp{Γ}{m}$.
+
+On veut $m ⊧ v : τ$ où $v = m[φ]_Φ$ avec $\tComp{τ}{t}$.
+
+On distingue selon la forme de $φ$.
+
+% TODO dans le typage il faut insérer un varname.
+% TODO checker le typage de l'appel, y'a un push/pop à gérer
+
+\begin{itemize}
+\item $φ = a$ avec $a ∈ \cVisible{m}$:
+Puisque $\mcomp{Γ}{m}$, il existe un $τ$ tel que $m ⊧ φ : τ$ et $\mcomp{τ}{t}$.
+
+\item $φ = a$ avec $a ∉ \cVisible{m}$:
+% TODO
+
+\item $φ = φ'.l$
+D'après, % TODO
+$Γ ⊢ φ' : t'$ où $t' = \tStruct{l_1:t_1;…;l_n:t_n}$ où $∃p, l = l_p$.
+
+On applique l'hypothèse de récurrence à $φ'$: $m ⊧ m[φ']_Φ : τ$ avec
+$\tComp{τ}{t'}$. $τ$ étant compatible avec un type structure, $τ$ a pour forme
+% TODO
+$\tStruct{l_1:τ_1;…;l_n:τ_n}$ où $∀i, \tComp{τ_i}{t_i}$
+
+Donc $m ⊧ φ'.l : τ_p$. avec $\tComp{τ_p}{t_p}$.
+
+Or, d'après ...
+
+\item $φ = φ'[n]$
+% TODO
+
+\item $φ = *φ'$
+% TODO
+
+\end{itemize}
+
 % }}}
 \paragraph{\textsc{Exp-UnOp}:} % {{{ TODO
 \[ \semrule{Exp-UnOp} \]
@@ -887,6 +932,8 @@ Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
 \paragraph{\textsc{Return}:}%{{{ TODO
 \[ \semrule{Return} \]
 %}}}
+
+% TODO vérifier que les cas du lemme d'inversion sont bien
 
 \end{proof}
 
