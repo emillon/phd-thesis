@@ -175,9 +175,9 @@ mémoire et \verb!free()! pour les libérer. Dans le noyau Linux, ces fonctions
 existent sous la forme de \verb!kmalloc()!, \verb!kfree()!, etc. Une explication
 détaillée de ces mécanismes peut être trouvée dans~\cite{LinuxVMM}.
 
-Ces fonctions manipulent les données en tant que zones mémoires opaques, à
-en renvoyant un pointeur vers une zone mémoire d'un nombre d'octets donnés.
-Cela présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
+Ces fonctions manipulent les données en tant que zones mémoires opaques, en
+renvoyant un pointeur vers une zone mémoire d'un nombre d'octets donnés. Cela
+présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
 sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
 mémoire contenant cette valeur (la taille de chaque valeur fait partie de
