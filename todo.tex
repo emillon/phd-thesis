@@ -34,16 +34,16 @@ objets~\cite{liang2012taint}.
 
 \end{itemize}
 
-
 L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
 leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
 l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
 montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
-Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
+Perl~\cite{perlCamelBook}. Il est aussi possible, d'appliquer
 cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
-% TODO [E]: à préciser
+En revanche cela est plus délicat car l'environnement d'exécution n'est pas
+autant contrôlé.
 
-% TODO [E] en quoi le fait d'être compilé change des choses ?
+% TODO [E]: à préciser
 
 \begin{itemize}
 \item
@@ -117,16 +117,15 @@ sur une certaine classe de programmes C.
 % TODO mettre ailleurs ?
 
 \begin{itemize}
-\item substitutions dans les ctx : éditer $C_l$ et $C_i$
-  (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?
 \item Exp-AddrOf sur toutes les lv
 \item C ::= \&C
 \item changer les para de présentation des règles
 \item widehats sur les constantes ?
-\item définir les opérations d'ajout/remplacement sur les états mémoire
+\item définir les opérations d'ajout suppression sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item return implicite en fin de fct
+\item figures gramdef : singulier ou pluriel?
 \end{itemize}
 
 Limitations :
@@ -134,7 +133,6 @@ Limitations :
 \begin{itemize}
 \item tableaux de taille dynamique ?
 \item structures récursives et corécursives
-\item figures gramdef : singulier ou pluriel?
 \end{itemize}
 
 \subsection*{Extrait PLAS}

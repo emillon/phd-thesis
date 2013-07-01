@@ -7,8 +7,6 @@ en particulier grâce à la révolution numérique.
 En effet le plus petit appareil électrique contient maintenant des composants
 matériels programmables.
 
-% TODO faire une intro "la vie est numérique" avec du Berry @ CdF
-
 En 2013, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
 complexité les rapprochent des ordinateurs de bureau. Par exemple, le système
 d'exploitation Android de Google est basé sur le noyau Linux, destiné à la base
@@ -27,13 +25,10 @@ au noyau ne peuvent pas volontairement ou involontairement détourner ce dernier
 et lui faire fuiter des informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
-d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Loin de
-là: on estime qu'avant relecture, 1000 lignes de code contiennent entre 5 et 100
-erreurs de programmation en moyenne.
-% TODO sourcer
-Les activités de relecture et de
-débogage ont beau prendre la majeure partie du temps de développement, il est
-facile de laisser passer des défauts de programmation.
+d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Les
+activités de relecture et de débogage ont beau prendre la majeure partie du
+temps de développement, il est facile de laisser passer des défauts de
+programmation.
 
 Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le
 programme sous un environnement contrôlé. On peut alors détecter des
@@ -380,16 +375,14 @@ dans les applications grand public, Ada garde toujours une place de choix dans
 l'implantation de systèmes embarqués, notamment dans les applications spatiales
 et de défense.
 
-\paragraph{Divers} % TODO titre
+\paragraph{Autres langages}
 
 Il est bien sûr possible d'implanter un système d'exploitation dans n'importe
 quel langage, si celui-ci peut être compilé vers du langage machine et qu'il
 permet facilement d'inclure des fragments d'assembleur pour les parties de bas
-niveau. Néanmoins il s'agit en général de travaux de recherche. On peut ainsi
-trouver des systèmes d'exploitation écrits en C\#~\cite{SingularityOverview},
-Haskell~\cite{HaskellOS} ou Ocaml~\cite{unikernels}.
-
-% TODO[B] TROLL
+niveau. On peut par exemple trouver des systèmes d'exploitation écrits en
+C\#~\cite{SingularityOverview}, Haskell~\cite{HaskellOS} ou
+Ocaml~\cite{unikernels}.
 
 \section{Langages d'analyse}
 
@@ -491,11 +484,6 @@ est déroulé portant sur un bug ayant touché le noyau Linux. Il est démontré
 le système de type capture précisément ce genre d'erreur de programmation.
 Enfin, les possibilités d'extension tant théoriques qu'expérimentales sont
 présentées.
-
-%  - historique des techniques
-%  - analyse non intrusive
-%  - méthodes de développement du noyau
-%  - syntaxe, sémantique, typage
 
 % TODO [E] + besoins EADS
 
