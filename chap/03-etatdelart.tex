@@ -538,14 +538,12 @@ Il existe de nombreuses techniques pour vérifier du code système ou embarqué.
 y a divers choix à faire entre l'expressivité, l'intégration de tests
 dynamiques, ou la facilité de mise en œuvre.
 
-%TODO[E]: il faut conclure par rapport à ce que tu désires rechercher comme
-%garanties
-
-Le typage statique est une solution assez pragmatique, puisqu'elle peut
-s'appliquer à des programmes existants, et est efficace à utiliser. Son
-expressivité limitée nous empêche de reposer entièrement sur elle pour garantir
-l'absence d'erreur dans les programmes système. C'est pourquoi dans notre
-solution, \langname, nous approchons la sûreté de la manière suivante:
+Pour résoudre le problèmes des pointeurs utilisateurs dans les noyaux, le typage
+statique est une solution assez pragmatique, puisqu'elle peut s'appliquer à des
+programmes existants, et est efficace à utiliser. Son expressivité limitée nous
+empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
+les programmes système. C'est pourquoi dans notre solution, \langname, nous
+approchons la sûreté de la manière suivante:
 
 Tout d'abord, on utilise le typage pour manipuler les données de manière
 compatible: les types des opérations et fonctions sont vérifiés à la
