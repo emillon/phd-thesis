@@ -887,7 +887,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
   sur un état mémoire $m = (s, g)$ (figure~\ref{fig:stackops-push}):
 
   \[
-    \mathrm{Push}((s, g), c) = (c::s, g)
+      \cPush{(s, g)}{c} = (c::s, g)
   \]
 
   On définit aussi l'extension du dernier cadre de pile
@@ -931,7 +931,7 @@ et leur évaluation ne manipule jamais la pile avec ces opérations.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
-    \draw [->] (9.2, 1) -- node[auto] {$\mathrm{Push}((x, 0))$} ++(1.6, 0);
+    \draw [->] (9.2, 1) -- node[auto] {$\cPush{\cdot}{(x ↦ 0)}$} ++(1.6, 0);
   \end{tikzpicture}
   }
 
