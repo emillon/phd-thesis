@@ -591,9 +591,8 @@ de la mémoire doit être accédée par cette left-value, on introduit la notion
 chemin $φ$. Un chemin est en quelque sorte une left-value symbolique évaluée:
 les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, $φ
 = (5, x).p$ représente le champ ``$p$'' de la variable $x$ dans le 5\ieme cadre
-de pile.
-
-% TODO màj
+de pile. C'est à ce moment qu'on évalue les déréférencements qui peuvent
+apparaître dans une left-value.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
 figure~\ref{fig:interp-val}):
@@ -1396,8 +1395,6 @@ cas des champs de structure, la définition de la structure $S$ n'est pas prise
 en compte.
 
 \begin{mathpar}
-  \semrule{Phi-Deref}
-
   \semrule{Phi-Struct}
 \end{mathpar}
 
@@ -1413,6 +1410,51 @@ permet de construire le chemin résultant.
 Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite:
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
+
+La règle portant sur le déréférencement est particulière. On peut penser que la
+bonne définition de $φ$ consiste à se calquer sur la définition de $lv$, en
+remplaçant les noms de variable par leur adresse résolue et en évaluant les
+indices de tableau, et à ajouter une règle qui transforme $*φ$ en
+$\widehat{*}φ$.
+
+Cela ne fonctionne pas, car alors les déréférencements sont évalués trop tard:
+au moment de l'affectation dans la left-value plutôt qu'à sa définition. La
+figure~\ref{fig:lazy-deref} illustre ce problème. On s'intéresse à l'évaluation
+de l'expression \texttt{*p} aux points \texttt{(a)} et \texttt{(b)}. Avec une
+sémantique paresseuse (en ajoutant un $\widehat{*}φ$), la valeur de
+\texttt{p}
+est $\widehat{\&}~((*(0,x)).f)$, donc
+\texttt{*p} est évalué à $0$ en
+\texttt{(a)}
+et $1$ en
+\texttt{(b)}.
+Au contraire, avec une sémantique stricte (correcte),
+\texttt{p} vaut
+$\widehat{\&}~(((0,s0).f)$ et donc
+\texttt{*p} est évalué à $0$ en
+\texttt{(a)}
+et en
+\texttt{(b)}.
+La règle d'évaluation est donc la suivante.
+
+\begin{figure}
+\begin{Verbatim}
+Decl s0 = { .f = 0 } in
+Decl s1 = { .f = 1 } in
+Decl x  = & s0 in
+Decl p = & ((*x).f) in
+/* (a) */
+x <- & s1
+/* (a) */
+\end{Verbatim}
+
+\caption{Évaluation stricte ou paresseuse des left-values}
+\label{fig:lazy-deref}
+\end{figure}
+
+\begin{mathpar}
+  \semrule{Phi-Deref}
+\end{mathpar}
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
