@@ -571,6 +571,7 @@ $\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
 
 %}}}
 \paragraph{\textsc{Lv-Deref}:}%{{{
+% TODO refaire avec la nouvelle sem
 
   Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
 
@@ -579,8 +580,7 @@ $\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
   $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
   lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
 
-  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique:
-  $\mms{e}{\widehat{*}φ}$.
+  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique.
   Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
   $\msi{m}{e} → \serr{ptr}$.
 
@@ -778,9 +778,6 @@ Donc $m ⊧ φ'.l : τ_p$. avec $\tComp{τ_p}{t_p}$.
 Or, d'après ...
 
 \item $φ = φ'[n]$
-% TODO
-
-\item $φ = *φ'$
 % TODO
 
 % TODO extraire ça en lemme

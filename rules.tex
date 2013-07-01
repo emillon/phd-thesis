@@ -281,9 +281,9 @@
                    \mmlv{m}{x}{m}{a}
                  }
     }
-    {Phi-Deref}{ \irule{Phi-Deref}
-                   { }
-                   { \mms{*φ}{\widehat{*}φ} }
+    {Phi-Deref}{ \irule{Phi-Deref} % TODO + phi-deref-err si pas un φ'
+                   { φ' = m[φ]_Φ}
+                   { \mms{*φ}{φ'} }
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
@@ -503,7 +503,6 @@
     { \eArray{ v_1 ; … ; C ; … ; e_n } }{}
     { C (e_1, …, e_n) }{}
     { f (v_1, …, C, …, e_n) }{}
-    { \ctxLvDeref{C} }{}
     { \ctxLvField{C}{l_S} }{}
     { \ctxLvIndex{C}{e} }{}
     { \ctxLvIndex{φ}{C} }{}

@@ -593,6 +593,8 @@ les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, 
 = (5, x).p$ représente le champ ``$p$'' de la variable $x$ dans le 5\ieme cadre
 de pile.
 
+% TODO màj
+
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
 figure~\ref{fig:interp-val}):
 
@@ -656,7 +658,6 @@ pas capturé (il n'y a pas de clôture lexicale).
   \\
   \gramdef{Chemins}{φ}
      { a    }{Adresse}
-     { *φ   }{Déréférencement}
      { φ.l  }{Accès à un champ}
      { φ[n] }{Accès à un élément}
      {END}
@@ -1003,7 +1004,6 @@ La fonction $\mathrm{Cleanup}$ est donnée par:
                        \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
     \cllive{p}{(n, x)} = & n < p \\
     \cllive{p}{(x)}    = & \mathrm{Vrai} \\
-    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
     \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
     \cllive{p}{φ[n]}   = & \cllive{p}{φ}
 \end{align*}
@@ -1250,13 +1250,6 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     Φ(φ[i]) = & Φ(φ) \ggg T(i) \\
   \end{align*}
 
-  Le déréférencement est défini comme suit:
-
-  \begin{align*}
-    m{[*φ]}_Φ     = & m{[φ']}_Φ     \mbox{ où } φ' = m{[φ]}_Φ \\
-    m{[*φ ← v]}_Φ = & m{[φ' ← v]}_Φ \mbox{ où } φ' = m{[φ]}_Φ \\
-  \end{align*}
-
   Enfin, l'accès à la mémoire par le pointeur nul provoque une erreur:
 
   \begin{align*}
@@ -1267,11 +1260,10 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
 suffit d'appliquer les bons accesseurs: ${[\cdot]}_F$ pour $φ.l_S$, etc.
 
-En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
-et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
-association), mais les deux suivants ($φ = φ'.l$ et $φ = φ'[i]$) ne font
-qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
-étapes:
+En revanche, la modification est plus complexe. Le premier cas ($φ = a$) modifie
+directement une valeur complète (en modifiant une association), mais les deux
+suivants ($φ = φ'.l$ et $φ = φ'[i]$) ne font qu'altérer une sous-valeur
+existante. Il est donc nécessaire de procéder en 3 étapes:
 
 \begin{itemize}
 \item obtenir la valeur à modifier (soit $m{[φ]}_Φ$)
