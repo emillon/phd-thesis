@@ -762,7 +762,7 @@ Sarah 13/02
 \end{itemize}
 
 
-% TODO le cimetière des règles
+% le cimetière des règles
 
 %\begin{mathpar}
 %\irule{Taint-Erase}
@@ -831,7 +831,7 @@ cases:
 The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
 It is an important rule, because it is the only source of \qUser pointers in the
 type system.
-%{\small \[ \disprule{Taint} \] }% TODO
+
 The return value of a function is emulated with a virtual left-value $\vRet$.%
 {\small \begin{mathpar}
   \disprule{Return}
@@ -907,8 +907,6 @@ ainsi possible de ``remonter'' l'arbre d'inférence afin de savoir quelles règl
 ont été employées (figure~\ref{fig:inftree-rules})\footnote{Par souci de clarté,
 les prémisses des applications de \textsc{(Var)} ne sont pas notées.}. Pour le
 moment, on ne connait pas les types.
-
-% TODO quel prop cela utilise t-il?
 
 \begin{figure} % {{{ Fig règles
 \def\disptypeR#1#2{:#1}
@@ -1064,7 +1062,7 @@ figure~\ref{fig:inftree-rules}}
 
 \end{figure}
 
-% TODO mal numéroté
+% mal numéroté
 
 On en déduit donc un ensemble de contraintes d'égalité
 (figure~\ref{fig:inf-constr-ex}). La prochaine étape est de résoudre ce système.
@@ -1114,7 +1112,7 @@ formes suivantes :
   $t_i = x$ (ou $x = t_i$) où $x$ est un type concret : idem.
 \end{itemize}
 
-%TODO C'est faux
+%C'est faux
 
 \clearpage
 
@@ -1249,7 +1247,7 @@ deuxième règle qu'il faut appliquer : le champ \texttt{value} de
 la structure est de type \texttt{uint32\_t~*} mais on y accède à travers
 un pointeur utilisateur, donc \texttt{value\_ptr:uint32\_t user*}.
 
-% TODO faux
+% faux
 
 À la ligne 8, on peut appliquer la troisième règle : à cause du déréférencement,
 on en déduit que \texttt{value\_ptr:t *}, ce qui est une contradiction puisque
@@ -1294,7 +1292,7 @@ expressivity of our type system. For example, our current type system is only
 monomorphic; but it would make sense to generalize free qualifier variables in
 the type of global functions.%}}}
 
-% TODO Sarah 9/5
+% Sarah 9/5
 
 %chapeau de l'intro
 %- manque de structures/liens entre les petits paragraphes.
@@ -1319,7 +1317,7 @@ the type of global functions.%}}}
 %Pourquoi ne pas présenter informellement le cas d'étude dans l'intro
 %pour montrer que de vrais bugs existent ?
 
-% TODO Emmanuel 6/5
+% Emmanuel 6/5
 
   %Sur la première partie, je dirai que le point le plus important est de justifier ta proposition à la fin du ch
 %+apitre 3,
