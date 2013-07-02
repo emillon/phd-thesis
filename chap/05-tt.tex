@@ -639,6 +639,160 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
 \end{definition}
 
+\begin{definition}[Hauteur d'une valeur]
+La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
+$-1$ sinon.
+
+\begin{align*}
+    \cH{\widehat{c}} &= -1 \\
+    \cH{\widehat{f}} &= -1 \\
+    \cH{\widehat{\&}~φ} &= \cHphi{φ} \\
+    \cH{\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}} &= \max_{i∈[1;n]} \cH{v_i} \\
+    \cH{\widehat{\eArray{v_1,…,v_n}}} &= \max_{i∈[1;n]} \cH{v_i}
+\end{align*}
+
+où:
+
+\begin{align*}
+    \cHphi{(x)} &= -1 \\
+    \cHphi{(n,x)} &= n \\
+    \cHphi{φ\widehat{.}l} &= \cHphi{φ} \\
+    \cHphi{φ\widehat{[n]}} &= \cHphi{φ}
+\end{align*}
+
+\end{definition}
+
+\begin{definition}[État mémoire bien typé]
+
+    On définit par induction une relation entre les environnements de typage $Γ$
+    et les états mémoire $m$.
+
+    \begin{mathpar}
+        \irule{M-Empty}
+            { }
+            { \mcomp{[~]}{([~],[~])} }
+
+        \irule{M-Global}
+            { \mcomp{Γ}{(s, g)}
+           \\ m ⊧ v : τ
+           \\ \tComp{τ}{t}
+            }
+            { \mcomp{Γ}{(s, ((x↦v)::g))} }
+
+        \irule{M-Push}
+            { \mcomp{Γ}{m}
+           \\ ?
+            }
+            { \mcomp{Γ}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
+            }
+
+        \irule{M-Pop}
+            { \mcomp{Γ}{m}
+           \\ ?
+            }
+            { \mcomp{Γ}{\cPop{m}}
+            }
+
+        \irule{M-Write}
+            { \mcomp{Γ}{m}
+           \\ Γ ⊢ φ : t
+           \\ m ⊧ v : τ
+           \\ \tComp{τ}{t}
+           \\ m' = m[φ ← v]_Φ
+            }
+            {
+              \mcomp{Γ}{m'}
+            }
+    \end{mathpar}
+
+\end{definition}
+
+\begin{lemma}[Hauteur des chemins typés]
+
+    Si $(s, g) ⊧ v : τ$, alors $\cH{v} ≤ |s|$. % TODO introuire |m|
+
+\end{lemma}
+
+\begin{proof}
+On procède par induction sur la forme de $v$.
+
+\paragraph{$\widehat{c}$:} Alors $\cH{v} = -1$. Comme $|s| ≥ 0$, ce cas est
+établi.
+
+\paragraph{$\widehat{f}$:} Idem.
+
+\paragraph{$\widehat{\&}~(x)$:} Idem.
+
+\paragraph{$\widehat{\&}~(n, x)$:}
+D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
+$m ⊧ v : τ$ est \textsc{S-Ref}, donc $m[(n, x)]_Φ$ est une valeur.
+D'après la définition % TODO
+
+\paragraph{$\widehat{\&}~φ.l$:} %
+On procède par induction sur $v' = \widehat{\&}~φ$.
+Comme $\cH{\widehat{\&}~φ} ≤ |s|$ et
+$\cH{\widehat{\&}~φ.l} = \cH{\widehat{\&}~φ}$,
+on en déduit que
+$\cH{\widehat{\&}~φ.l} ≤ |s|$
+
+\paragraph{$\widehat{\&}~φ[n]$:}
+Idem
+
+\paragraph{$\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$:}
+Par induction, $∀i ∈ [1;n], \cH{v_i} ≤ |s|$. Donc il en est de même pour leur
+maximum, et $\cH{v} ≤ |s|$.
+
+\paragraph{$\widehat{\eArray{v_1,…,v_n}}$:}
+Idem.
+
+\end{proof}
+
+\begin{lemma}[Accès à une mémoire bien typée]
+
+Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors:
+
+\begin{itemize}
+\item
+    Si $m = (s, g)$, alors chaque $(x ↦ v) ∈ m$, vérifie $\cH{v} ≤ |s|$
+
+\item $m[φ]_Φ$ est une valeur $v$ et
+    $m ⊧ v : τ$
+    où
+    $\tComp{τ}{t}$.
+
+\item si $v$ est une valeur telle que
+    $m ⊧ v : τ$
+    où
+    $\tComp{τ}{t}$,
+    alors en posant $m' = m[φ ← v]_Φ$,
+    on a
+    $\mcomp{Γ}{m'}$.
+
+\end{itemize}
+
+\end{lemma}
+
+\begin{proof}
+
+On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
+
+\paragraph{\textsc{M-Empty}:} % {{{
+Il n'existe pas de $φ$ tel que $Γ ⊢ φ : t$. En effet, on montre par induction
+sur la forme de $φ$ que cela implique qu'il existe $a$ tel que
+$\cVarname{a} ∈ \cDom{Γ}$.
+% }}}
+\paragraph{\textsc{M-Global}:} % {{{ TODO
+Soit $φ$ tel que $Γ ⊢ φ : t$. Soit $a = proj(φ)$. Par inversion,
+% }}}
+\paragraph{\textsc{M-Push}:} % {{{ TODO
+% }}}
+\paragraph{\textsc{M-Pop}:} % {{{ TODO
+% }}}
+\paragraph{\textsc{M-Write}:} % {{{ TODO
+% }}}
+
+\end{proof}
+
 \section{Progrès et préservation}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
