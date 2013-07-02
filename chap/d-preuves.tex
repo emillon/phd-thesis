@@ -745,44 +745,10 @@ Idem: le lemme de réprésentabilité nous donne un candidat $τ = \cRepr{t}$
 qui convient.
 
 % }}}
-\paragraph{\textsc{Exp-Lv}:} % {{{ TODO
-\[ \semrule{Exp-Lv} \]
+\paragraph{\textsc{Exp-Lv}:} % {{{
 
-On a $Γ ⊢ φ : t$, $\mcomp{Γ}{m}$.
-
-On veut $m ⊧ v : τ$ où $v = m[φ]_Φ$ avec $\tComp{τ}{t}$.
-
-On distingue selon la forme de $φ$.
-
-% TODO dans le typage il faut insérer un varname.
-% TODO checker le typage de l'appel, y'a un push/pop à gérer
-
-\begin{itemize}
-\item $φ = a$ avec $a ∈ \cVisible{m}$:
-Puisque $\mcomp{Γ}{m}$, il existe un $τ$ tel que $m ⊧ φ : τ$ et $\mcomp{τ}{t}$.
-
-\item $φ = a$ avec $a ∉ \cVisible{m}$:
-% TODO
-
-\item $φ = φ'.l$
-D'après, % TODO
-$Γ ⊢ φ' : t'$ où $t' = \tStruct{l_1:t_1;…;l_n:t_n}$ où $∃p, l = l_p$.
-
-On applique l'hypothèse de récurrence à $φ'$: $m ⊧ m[φ']_Φ : τ$ avec
-$\tComp{τ}{t'}$. $τ$ étant compatible avec un type structure, $τ$ a pour forme
-% TODO
-$\tStruct{l_1:τ_1;…;l_n:τ_n}$ où $∀i, \tComp{τ_i}{t_i}$
-
-Donc $m ⊧ φ'.l : τ_p$. avec $\tComp{τ_p}{t_p}$.
-
-Or, d'après ...
-
-\item $φ = φ'[n]$
-% TODO
-
-% TODO extraire ça en lemme
-
-\end{itemize}
+Puisque $Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$, on a d'après le
+lemme~\ref{lemma:mem-typ}: $m ⊧ v : τ$ où $v = m[φ]_Φ$ avec $\tComp{τ}{t}$.
 
 % }}}
 \paragraph{\textsc{Exp-UnOp}:} % {{{
