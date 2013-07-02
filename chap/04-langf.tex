@@ -708,6 +708,7 @@ La figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. U
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
 couples (nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une
 pile et $g$ un cadre de pile (qui représente les variables globales).
+On note $|m| = |s|$ la hauteur de la pile (en nombre de cadres).
 
 Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 états $Ξ$; ces états sont d'une des formes suivantes:

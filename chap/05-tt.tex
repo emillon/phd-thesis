@@ -709,14 +709,14 @@ où:
 
 \begin{lemma}[Hauteur des chemins typés]
 
-    Si $(s, g) ⊧ v : τ$, alors $\cH{v} ≤ |s|$. % TODO introduire |m|
+    Si $m ⊧ v : τ$, alors $\cH{v} ≤ |m|$.
 
 \end{lemma}
 
 \begin{proof}
 On procède par induction sur la forme de $v$.
 
-\paragraph{$\widehat{c}$:} Alors $\cH{v} = -1$. Comme $|s| ≥ 0$, ce cas est
+\paragraph{$\widehat{c}$:} Alors $\cH{v} = -1$. Comme $|m| ≥ 0$, ce cas est
 établi.
 
 \paragraph{$\widehat{f}$:} Idem.
@@ -726,21 +726,21 @@ On procède par induction sur la forme de $v$.
 \paragraph{$\widehat{\&}~(n, x)$:}
 D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
 $m ⊧ v : τ$ est \textsc{S-Ref}, donc $m[(n, x)]_Φ$ est une valeur.
-D'après la définition de $φ$, $n ≤ |s|$.
+D'après la définition de $φ$, $n ≤ |m|$.
 
 \paragraph{$\widehat{\&}~φ.l$:} %
 On procède par induction sur $v' = \widehat{\&}~φ$.
-Comme $\cH{\widehat{\&}~φ} ≤ |s|$ et
+Comme $\cH{\widehat{\&}~φ} ≤ |m|$ et
 $\cH{\widehat{\&}~φ.l} = \cH{\widehat{\&}~φ}$,
 on en déduit que
-$\cH{\widehat{\&}~φ.l} ≤ |s|$
+$\cH{\widehat{\&}~φ.l} ≤ |m|$
 
 \paragraph{$\widehat{\&}~φ[n]$:}
 Idem
 
 \paragraph{$\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$:}
-Par induction, $∀i ∈ [1;n], \cH{v_i} ≤ |s|$. Donc il en est de même pour leur
-maximum, et $\cH{v} ≤ |s|$.
+Par induction, $∀i ∈ [1;n], \cH{v_i} ≤ |m|$. Donc il en est de même pour leur
+maximum, et $\cH{v} ≤ |m|$.
 
 \paragraph{$\widehat{\eArray{v_1,…,v_n}}$:}
 Idem.
@@ -753,7 +753,7 @@ Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors:
 
 \begin{itemize}
 \item
-    Si $m = (s, g)$, alors chaque $(x ↦ v) ∈ m$, vérifie $\cH{v} ≤ |s|$
+    Si $m$, alors chaque $(x ↦ v) ∈ m$, vérifie $\cH{v} ≤ |m|$
 
 \item $m[φ]_Φ$ est une valeur $v$ et
     $m ⊧ v : τ$
