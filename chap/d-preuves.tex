@@ -241,8 +241,6 @@ Ceci est valable pour la majorité des cas. Il faut faire attention en
 particulier aux opérations sémantiques qui peuvent produire des erreurs (comme
 la division, ou l'opérateur $\phxx\cLookup$).
 
-% TODO montrer progrès au niveau des phrases?
-
 %\begin{itemize}
 %\item $i = \iPass$.
 %\item $i = \iReturn{v}$.
@@ -541,58 +539,23 @@ $f = \eFun{\vec{a}}{i}$.
 
 Soient $Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n, \vRet : t$
 et
-$m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))$.
+$m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}$.
 
 On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
 d'inversion garantit que $Γ' ⊢ i$).
 
 \begin{itemize}
-\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Return-Unit}.
+\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Call-Return-Unit}.
 
-\[ \irule{Exp-Return-Unit}
-      { m' = \cCleanup{m}}
-      { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
-           {m'}{\eUnit}
-      }
-\]
-
-\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Return}.
-
-\[ \irule{Exp-Return}
-      { m' = \cCleanup{m}}
-      { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
-           {m'}{v}
-      }
-\]
+\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Call-Return}.
 
 \item $\mm{m_1}{i}{m_2}{i'}$.
 
     Alors on peut appliquer \textsc{Exp-Call-Ctx}.
 
-\[
-    \irule{Exp-Call-Ctx}
-        { m_1 = \mathrm{Push} (m_0, (a_1 ↦ v_1, … a_n ↦ v_n))
-       \\ \mm{m_1}{i}{m_2}{i'}
-       \\ ∀ i ∈ [1;n], v'_i = m_2[(0, a_i)]_A
-       \\ m_3 = \mathrm{Pop} (m_2)
-        }
-        { \mm{m_0}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) }
-          { m_3 }{\eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n) }
-        }
-\]
-
 \item $\msi{m}{i} → Ω$. On peut alors appliquer \textsc{Exp-Call-Err}.
 
-\[ \irule{Exp-Call-Err}
-    { m' = \mathrm{Push}(m, (a_1 ↦ v_1, …, a_n ↦ v_n))
-   \\ \msi{m'}{i} → Ω
-    }
-    { \msi{m}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) } → Ω }
-\]
-
 \end{itemize}
-
-% TODO remettre ces règles à leur place
 
 %}}}
 \jolibreak
@@ -608,6 +571,7 @@ $\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
 
 %}}}
 \paragraph{\textsc{Lv-Deref}:}%{{{
+% TODO refaire avec la nouvelle sem
 
   Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
 
@@ -616,8 +580,7 @@ $\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
   $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
   lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
 
-  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique:
-  $\mms{e}{\widehat{*}φ}$.
+  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique.
   Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
   $\msi{m}{e} → \serr{ptr}$.
 
@@ -728,47 +691,219 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 
 \begin{proof}
 
-On procède par induction sur la forme de l'expression $e$.
+On procède par induction sur la dérivation de $\mm{m}{\cdot}{m'}{\cdot}$.
 
-\paragraph{ Constante }             $c$ % {{{ TODO
-On détaille par exemple le cas d'une constante entière.
+N.B. \textsc{Ctx} apparaît 3 fois.
 
-D'une part, $Γ ⊢ e : t$ donc d'après le lemme~\ref{lemma:canon}, $t = \tInt$.
+Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$.
 
-D'autre part, la seule règle d'évaluation possible est \textsc{Exp-Cst} qui
-évalue en une constante entière.
+\paragraph{\textsc{Ctx}:} % {{{
+\[
+   \irule{Ctx}
+     { \mm{m}{e}{m'}{e'} }
+     { \mm{m}{\ctxSub{C}{e}}{m'}{\ctxSub{C}{e'}} }
+\]
 
-% TODO check si c'est vrai aussi pour Null
+Par le lemme d'inversion, il existe $t'$ tel que $Γ ⊢ e : t'$. % TODO
 
-% }}}
-\paragraph{ Accès mémoire }         $ lv $ % {{{ TODO
+Comme $\mm{m}{e}{m'}{e'}$, on peut appliquer l'hypothèse de récurrence:
+$\mcomp{Γ}{m'}$ et $Γ ⊢ e' : t'$. Il reste à prouver que
+$Γ ⊢ \ctxSub{C}{e'} : t$.
 
-% }}}
-\paragraph{ Opération unaire }      $ \opun~e $ % {{{ TODO
+On sait que:
 
+\begin{itemize}
+\item $Γ ⊢ e : t'$
+\item $Γ ⊢ e' : t'$
+\item $Γ ⊢ \ctxSub{C}{e} : t$.
+\end{itemize}
 
-% }}}
-\paragraph{ Opération binaire }     $ e~\opbin~e $ % {{{ TODO
+On cherche à prouver:
 
-% }}}
-\paragraph{ Pointeur }              $ \& lv $ % {{{ TODO
+\begin{itemize}
+\item $Γ ⊢ \ctxSub{C}{e'} : t$.
+\end{itemize}
 
-% }}}
-\paragraph{ Affectation }           $ lv ← e $ % {{{ TODO
-
-% }}}
-\paragraph{ Structure }             $ \eStruct{ l_1 : e_1 ; ; l_n : e_n } $ % {{{ TODO
-
-% }}}
-\paragraph{ Tableau }               $ \eArray{e_1 ;…; e_n} $ % {{{ TODO
-
-% }}}
-\paragraph{ Fonction }              $ f $ % {{{ TODO
+% TODO une sorte de lemme de substitution
 
 % }}}
-\paragraph{ Appel de fonction }     $ e (e_1, …, e_n) $ % {{{ TODO
+
+\jolibreak
+
+Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$.
+
+\paragraph{\textsc{Exp-Cst}:} % {{{
+\[ \semrule{Exp-Cst} \]
+
+Toutes les constantes sont des valeurs, donc le lemme~\ref{lemma:repr} peut
+s'appliquer : $τ = \cRepr{t}$ convient.
 
 % }}}
+\paragraph{\textsc{Exp-Fun}:} % {{{
+
+Idem: le lemme de réprésentabilité nous donne un candidat $τ = \cRepr{t}$
+qui convient.
+
+% }}}
+\paragraph{\textsc{Exp-Lv}:} % {{{ TODO
+\[ \semrule{Exp-Lv} \]
+
+On a $Γ ⊢ φ : t$, $\mcomp{Γ}{m}$.
+
+On veut $m ⊧ v : τ$ où $v = m[φ]_Φ$ avec $\tComp{τ}{t}$.
+
+On distingue selon la forme de $φ$.
+
+% TODO dans le typage il faut insérer un varname.
+% TODO checker le typage de l'appel, y'a un push/pop à gérer
+
+\begin{itemize}
+\item $φ = a$ avec $a ∈ \cVisible{m}$:
+Puisque $\mcomp{Γ}{m}$, il existe un $τ$ tel que $m ⊧ φ : τ$ et $\mcomp{τ}{t}$.
+
+\item $φ = a$ avec $a ∉ \cVisible{m}$:
+% TODO
+
+\item $φ = φ'.l$
+D'après, % TODO
+$Γ ⊢ φ' : t'$ où $t' = \tStruct{l_1:t_1;…;l_n:t_n}$ où $∃p, l = l_p$.
+
+On applique l'hypothèse de récurrence à $φ'$: $m ⊧ m[φ']_Φ : τ$ avec
+$\tComp{τ}{t'}$. $τ$ étant compatible avec un type structure, $τ$ a pour forme
+% TODO
+$\tStruct{l_1:τ_1;…;l_n:τ_n}$ où $∀i, \tComp{τ_i}{t_i}$
+
+Donc $m ⊧ φ'.l : τ_p$. avec $\tComp{τ_p}{t_p}$.
+
+Or, d'après ...
+
+\item $φ = φ'[n]$
+% TODO
+
+% TODO extraire ça en lemme
+
+\end{itemize}
+
+% }}}
+\paragraph{\textsc{Exp-UnOp}:} % {{{
+\[ \semrule{Exp-UnOp} \]
+
+Il vient des définitions des différents opérateurs$\widehat{\opun}$ que
+$Γ ⊢ \widehat{\opun}~v : τ$ avec $\tComp{τ}{t}$.
+
+% }}}
+\paragraph{\textsc{Exp-BinOp}:} % {{{
+
+Idem avec les définitions des opérateurs $\widehat{\opbin}$.
+
+% }}}
+\paragraph{\textsc{Exp-AddrOf}:} % {{{
+
+On peut appliquer le lemme~\ref{lemma:repr}, qui nous donne un $τ$ qui convient.
+
+% }}}
+\paragraph{\textsc{Exp-Set}:} % {{{
+\[ \semrule{Exp-Set} \]
+
+Deux propriétés sont à prouver. D'une part, $Γ ⊢ v : t$, et d'autre part,
+$\mcomp{Γ}{m[φ←v]}$.
+
+Tout d'abord, le lemme d'inversion appliqué à $Γ ⊢ φ ← v : t$ nous donne que
+$Γ ⊢ φ : t$ et $Γ ⊢ v : t$.
+
+Ensuite, comme
+$Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$,
+il existe $τ$ tel que
+$m ⊧ m[φ]_Φ : τ$ et $\tComp{τ}{t}$. % TODO il faut une sorte de lemme de subs
+
+% }}}
+\paragraph{\textsc{Exp-Struct}:} % {{{
+
+Le lemme~\ref{lemma:repr} s'applique à ce cas.
+
+% }}}
+\paragraph{\textsc{Exp-Array}:} % {{{
+
+Idem, on conclut grâce au lemme de représentabilité.
+
+% }}}
+\paragraph{\textsc{Exp-Call-Return}:} % {{{ TODO
+\[ \semrule{Exp-Call-Return} \]
+% }}}
+\paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{ TODO
+\[ \semrule{Exp-Call-Return-Unit} \]
+% }}}
+
+\jolibreak
+
+Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$.
+
+\paragraph{\textsc{Ctx}:} % {{{ TODO
+\[
+   \irule{Ctx}
+     { \mm{m}{lv}{m'}{lv'} }
+     { \mm{m}{\ctxSub{C}{lv}}{m'}{\ctxSub{C}{lv'}} }
+\]
+% }}}
+\paragraph{\textsc{Phi-Var}:} % {{{ TODO
+\[ \semrule{Phi-Var} \]
+% }}}
+\paragraph{\textsc{Phi-Deref}:} % {{{ TODO
+\[ \semrule{Phi-Deref} \]
+% }}}
+\paragraph{\textsc{Phi-Struct}:} % {{{ TODO
+\[ \semrule{Phi-Struct} \]
+% }}}
+\paragraph{\textsc{Phi-Array}:} % {{{ TODO
+\[ \semrule{Phi-Array} \]
+% }}}
+
+\jolibreak
+
+Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
+
+\paragraph{\textsc{Ctx}:} % {{{ TODO
+\[ \semrule{Ctx} \]
+% }}}
+\paragraph{\textsc{Seq}:}%{{{
+D'après le lemme d'inversion, $Γ ⊢ i$.
+%}}}
+\paragraph{\textsc{Exp}:}%{{{
+D'après \textsc{Pass}, $Γ ⊢ \iPass$.
+%}}}
+\paragraph{\textsc{Decl-Pass}:}%{{{ TODO
+\[ \semrule{Decl-Pass} \]
+%}}}
+\paragraph{\textsc{Decl-Return}:}%{{{ TODO
+\[ \semrule{Decl-Return} \]
+%}}}
+\paragraph{\textsc{Decl-Ctx}:}%{{{ TODO
+\[ \semrule{Decl-Ctx} \]
+%}}}
+\paragraph{\textsc{If-False}:}%{{{
+D'après le lemme d'inversion, $Γ ⊢ i_f$.
+%}}}
+\paragraph{\textsc{If-True}:}%{{{
+D'après le lemme d'inversion, $Γ ⊢ i_t$.
+%}}}
+\paragraph{\textsc{While}:}%{{{
+
+D'après le lemme d'inversion, $Γ ⊢ e : t$ et $Γ ⊢ i$.
+Par \textsc{Seq}, on a $Γ ⊢ i ; \iWhile{e}{i}$.
+Enfin par \textsc{If} il vient $Γ ⊢ \iThen{e}{i ; \iWhile{e}{i}}$.
+
+%}}}
+\paragraph{\textsc{Return}:}%{{{
+
+Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
+%}}}
+\paragraph{\textsc{Exp-Call-Ctx}:}%{{{ TODO
+
+\[ \semrule{Exp-Call-Ctx} \]
+
+%}}}
+
+% TODO vérifier que les cas du lemme d'inversion sont bien
 
 \end{proof}
 

@@ -34,16 +34,16 @@ objets~\cite{liang2012taint}.
 
 \end{itemize}
 
-
 L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
 leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
 l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
 montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
-Perl~\cite{perlCamelBook}. Il est aussi possible, mais plus délicat, d'appliquer
+Perl~\cite{perlCamelBook}. Il est aussi possible, d'appliquer
 cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
-% TODO [E]: à préciser
+En revanche cela est plus délicat car l'environnement d'exécution n'est pas
+autant contrôlé.
 
-% TODO [E] en quoi le fait d'être compilé change des choses ?
+% TODO [E]: à préciser
 
 \begin{itemize}
 \item
@@ -117,16 +117,15 @@ sur une certaine classe de programmes C.
 % TODO mettre ailleurs ?
 
 \begin{itemize}
-\item substitutions dans les ctx : éditer $C_l$ et $C_i$
-  (en fait, séparer selon le truc substitué (2è arg), pas le premier)
 \item cas d'erreur si on accède à un index d'une struct ou vice versa?
 \item Exp-AddrOf sur toutes les lv
 \item C ::= \&C
 \item changer les para de présentation des règles
 \item widehats sur les constantes ?
-\item définir les opérations d'ajout/remplacement sur les états mémoire
+\item définir les opérations d'ajout suppression sur les états mémoire
 \item interdire d'avoir plusieurs variables qui ont le même nom dans un cadre
 \item return implicite en fin de fct
+\item figures gramdef : singulier ou pluriel?
 \end{itemize}
 
 Limitations :
@@ -134,7 +133,6 @@ Limitations :
 \begin{itemize}
 \item tableaux de taille dynamique ?
 \item structures récursives et corécursives
-\item figures gramdef : singulier ou pluriel?
 \end{itemize}
 
 \subsection*{Extrait PLAS}
@@ -315,7 +313,6 @@ On the other hand, a plain expression is only evaluated for its side-effects
   \\
   \gramdefshort{Paths}{φ}
      { a    }{Address}
-     { *φ   }{Dereference}
      { φ.l  }{Field}
      { φ[n] }{Index}
      { \vTainted{φ} }{Tainted value}
@@ -428,14 +425,6 @@ It relies on the following operator:%
   \mathrm{Extend} : \textsc{Mem}×\textsc{Id}×\textsc{Val} &→ \textsc{Mem}\\
   \mathrm{Extend}(f::fs, g), x) &= (((x↦v)::f) :: fs), g) \\
 \end{align*} }%
-\paragraph{Function call} uses a complex rule, because it handles the calling
-convention (pushing and popping parameters on the stack). We suppose that all
-functions exit through a $\iReturn{\cdot}$ instruction.%
-{\small \[ \semrule{Exp-Call} \] }%
-$\mathrm{Push} : \textsc{Mem} × \textsc{Frame} → \textsc{Mem}$
-adds a new stack frame, and
-$\mathrm{Pop} : \textsc{Mem} → \textsc{Mem}$
-removes it.
 
 $\mathrm{Cleanup} : \textsc{Mem} → \textsc{Mem}$ removes references to dangling
 pointers. It walk all the memory and replaces references to the current stack
@@ -771,7 +760,7 @@ Sarah 13/02
 \end{itemize}
 
 
-% TODO le cimetière des règles
+% le cimetière des règles
 
 %\begin{mathpar}
 %\irule{Taint-Erase}
@@ -840,7 +829,7 @@ cases:
 The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
 It is an important rule, because it is the only source of \qUser pointers in the
 type system.
-%{\small \[ \disprule{Taint} \] }% TODO
+
 The return value of a function is emulated with a virtual left-value $\vRet$.%
 {\small \begin{mathpar}
   \disprule{Return}
@@ -916,8 +905,6 @@ ainsi possible de ``remonter'' l'arbre d'inférence afin de savoir quelles règl
 ont été employées (figure~\ref{fig:inftree-rules})\footnote{Par souci de clarté,
 les prémisses des applications de \textsc{(Var)} ne sont pas notées.}. Pour le
 moment, on ne connait pas les types.
-
-% TODO quel prop cela utilise t-il?
 
 \begin{figure} % {{{ Fig règles
 \def\disptypeR#1#2{:#1}
@@ -1073,7 +1060,7 @@ figure~\ref{fig:inftree-rules}}
 
 \end{figure}
 
-% TODO mal numéroté
+% mal numéroté
 
 On en déduit donc un ensemble de contraintes d'égalité
 (figure~\ref{fig:inf-constr-ex}). La prochaine étape est de résoudre ce système.
@@ -1123,7 +1110,7 @@ formes suivantes :
   $t_i = x$ (ou $x = t_i$) où $x$ est un type concret : idem.
 \end{itemize}
 
-%TODO C'est faux
+%C'est faux
 
 \clearpage
 
@@ -1258,7 +1245,7 @@ deuxième règle qu'il faut appliquer : le champ \texttt{value} de
 la structure est de type \texttt{uint32\_t~*} mais on y accède à travers
 un pointeur utilisateur, donc \texttt{value\_ptr:uint32\_t user*}.
 
-% TODO faux
+% faux
 
 À la ligne 8, on peut appliquer la troisième règle : à cause du déréférencement,
 on en déduit que \texttt{value\_ptr:t *}, ce qui est une contradiction puisque
@@ -1303,7 +1290,7 @@ expressivity of our type system. For example, our current type system is only
 monomorphic; but it would make sense to generalize free qualifier variables in
 the type of global functions.%}}}
 
-% TODO Sarah 9/5
+% Sarah 9/5
 
 %chapeau de l'intro
 %- manque de structures/liens entre les petits paragraphes.
@@ -1311,15 +1298,10 @@ the type of global functions.%}}}
 %- incohérence entre tests exhaustifs et "on ne peut pas couvrir tout". En général, on dit que la taille actuelle des logiciels empêche l'exhaustivité des tests
 %- dernier paragraphe pas clair : ça veut dire quoi restreindre la manière dont sont traitées les infos ? Tu peux peut-être détailler un peu plus puisque tu poses ici la problématique de ta thèse
 
-%1.1
-%- on ne comprend pas "entre ces niveaux d'abstraction" Remplacer par "entre tous ces aspects" ?
-
 %1.2
     %- tu pourrais ajouter un ex d'appel système en C pour expliquer le pb du déréférencement
 
 %1.3
-   %- je ne comprends pas pourquoi tu parles du typage du langage machine alors que tu vas typer du C
-   %- typage statique. Phrases 2 et 3 compliquent l'explication je trouve
    %- typage fort et faible. On ne comprend pas la différence
    %- manquent des mots dans la dernière phrase de cette partie
 
@@ -1330,19 +1312,10 @@ the type of global functions.%}}}
 
 %- il faudrait pour chaque front-end dire pourquoi ça n'est pas la solution retenue
 
-%1.6
- %- reprendre le français de la phrase "afin que la manière"
- %- reprendre le français de la phrase "consistant d'un bug"
-
 %Pourquoi ne pas présenter informellement le cas d'étude dans l'intro
 %pour montrer que de vrais bugs existent ?
 
-%chapitre 9
-%- tu sabotes ton travail en commençant par les limitations. Présente d'abord un résumé de tes travaux puis dans une section "travaux futurs" tu discutes des améliorations à apporter liées aux limitations actuelles de SAFESPEAK
-%- parag Allocation dynamique. Revoir la phrases "Ces fonctions manipulent..."
-%- est-ce que tu as réfléchi à d'autres classes de propriété de sécurité pour lesquelles ton système de type pourrait répondre ?
-
-% TODO Emmanuel 6/5
+% Emmanuel 6/5
 
   %Sur la première partie, je dirai que le point le plus important est de justifier ta proposition à la fin du ch
 %+apitre 3,
@@ -1351,6 +1324,3 @@ the type of global functions.%}}}
   %Comme cela tu peux décrire CQual de manière neutre, puis dans la partie choix dire pourquoi avoir des types qu
 %+alifiés te semble être la bonne démarche
     %avec un système de types plus simple et plus facile à exprimer.
-
-
-% TODO rattrapper les erreurs Ω

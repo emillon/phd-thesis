@@ -460,13 +460,11 @@ Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
 
 Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
-% TODO un mot sur les constantes dont \eUnit
-
 \begin{figure}
 
   \begin{align*}
   \gramdef{Constantes}{c}
-                 { i      }{ Entier }
+                 { n      }{ Entier }
                  { d      }{ Flottant }
                  { \eNull }{ Pointeur nul }
                  { \eUnit }{ Valeur unité }
@@ -593,7 +591,8 @@ de la mémoire doit être accédée par cette left-value, on introduit la notion
 chemin $φ$. Un chemin est en quelque sorte une left-value symbolique évaluée:
 les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, $φ
 = (5, x).p$ représente le champ ``$p$'' de la variable $x$ dans le 5\ieme cadre
-de pile.
+de pile. C'est à ce moment qu'on évalue les déréférencements qui peuvent
+apparaître dans une left-value.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
 figure~\ref{fig:interp-val}):
@@ -652,13 +651,12 @@ pas capturé (il n'y a pas de clôture lexicale).
         \eArray{v_1 ;…; v_n}
         }               }{Tableau}
       { \widehat{f}     }{Fonction}
-      { Ω               }{Erreur}
+      { Ω               }{Erreur} % TODO ??
       {END}
   \\
   \\
   \gramdef{Chemins}{φ}
      { a    }{Adresse}
-     { *φ   }{Déréférencement}
      { φ.l  }{Accès à un champ}
      { φ[n] }{Accès à un élément}
      {END}
@@ -889,7 +887,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
   sur un état mémoire $m = (s, g)$ (figure~\ref{fig:stackops-push}):
 
   \[
-    \mathrm{Push}((s, g), c) = (c::s, g)
+      \cPush{(s, g)}{c} = (c::s, g)
   \]
 
   On définit aussi l'extension du dernier cadre de pile
@@ -902,7 +900,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
   \[
-    \mathrm{Pop}(c::s, g) = (s, g)
+      \cPop{c::s}{g} = (s, g)
   \]
 
 \end{definition}
@@ -933,7 +931,7 @@ et leur évaluation ne manipule jamais la pile avec ces opérations.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
-    \draw [->] (9.2, 1) -- node[auto] {$\mathrm{Push}((x, 0))$} ++(1.6, 0);
+    \draw [->] (9.2, 1) -- node[auto] {$\cPush{\cdot}{(x ↦ 0)}$} ++(1.6, 0);
   \end{tikzpicture}
   }
 
@@ -1005,7 +1003,6 @@ La fonction $\mathrm{Cleanup}$ est donnée par:
                        \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
     \cllive{p}{(n, x)} = & n < p \\
     \cllive{p}{(x)}    = & \mathrm{Vrai} \\
-    \cllive{p}{*φ}     = & \cllive{p}{φ} \\
     \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
     \cllive{p}{φ[n]}   = & \cllive{p}{φ}
 \end{align*}
@@ -1252,13 +1249,6 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     Φ(φ[i]) = & Φ(φ) \ggg T(i) \\
   \end{align*}
 
-  Le déréférencement est défini comme suit:
-
-  \begin{align*}
-    m{[*φ]}_Φ     = & m{[φ']}_Φ     \mbox{ où } φ' = m{[φ]}_Φ \\
-    m{[*φ ← v]}_Φ = & m{[φ' ← v]}_Φ \mbox{ où } φ' = m{[φ]}_Φ \\
-  \end{align*}
-
   Enfin, l'accès à la mémoire par le pointeur nul provoque une erreur:
 
   \begin{align*}
@@ -1269,21 +1259,16 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
 Cette dernière définition mérite une explication. Dans le cas de la lecture, il
 suffit d'appliquer les bons accesseurs: ${[\cdot]}_F$ pour $φ.l_S$, etc.
 
-En revanche, la modification est plus complexe. Les deux premiers cas ($φ = a$
-et $φ = *φ'$) modifient directement une valeur complète (en modifiant une
-association), mais les deux suivants ($φ = φ'.l$ et $φ = φ'[i]$) ne font
-qu'altérer une sous-valeur existante. Il est donc nécessaire de procéder en 3
-étapes:
+En revanche, la modification est plus complexe. Le premier cas ($φ = a$) modifie
+directement une valeur complète (en modifiant une association), mais les deux
+suivants ($φ = φ'.l$ et $φ = φ'[i]$) ne font qu'altérer une sous-valeur
+existante. Il est donc nécessaire de procéder en 3 étapes:
 
 \begin{itemize}
 \item obtenir la valeur à modifier (soit $m{[φ]}_Φ$)
 \item construitre une valeur altérée (en appliquant par exemple ${[l←v]}_F$)
 \item affecter cette valeur au même chemin (le $m{[φ ← …]}_Φ$ externe)
 \end{itemize}
-
-Dans la suite, on notera uniquement $[\cdot]$ tous ces accesseurs lorsque ce
-n'est pas ambigü.
-% TODO ou pas?
 
 \section{Contextes d'évaluation}
 
@@ -1307,21 +1292,17 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires:
 \begin{figure}
 \figctx{}
 
-\caption{Contextes d'exécution}
+\caption{Contextes d'évaluation}
 \label{fig:eval-ctx}
 \end{figure}
 
 Le premier point consiste à définir les contextes eux-mêmes
 (figure~\ref{fig:eval-ctx}).
 
-Le deuxième est résolu les règles d'inférence suivantes:
+Le deuxième est résolu par la règle d'inférence suivante.
 
 \begin{mathpar}
   \semrule{Ctx}
-
-  \semrule{Ctx-Lv}
-
-  \semrule{Ctx-Instr}
 \end{mathpar}
 
 Enfin, le troisième revient à définit l'opérateur de substitution
@@ -1329,68 +1310,19 @@ $\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer
 substitution au niveau des left-values et des instructions, on définit aussi
 respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
 
+Notons que puisque $i \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer
+aux expressions et aux left-values: l'opération $\phxx\ctxSub$ est purement
+syntaxique.
+
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
 fait apparaître exactement un ``$C$''. Chaque contexte est donc constitué
 d'exactement un ``trou'' $\ctxEmpty$ (une dérivation de $C$ est toujours
-linéaire). L'opération de substitution consiste à remplacer ce trou, comme
-décrit dans la figure~\ref{fig:ctx-sub}.
+linéaire). L'opération de substitution consiste à remplacer ce trou:
+$\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou left-value)
+obtenu en remplaçant l'unique $\ctxEmpty$ dans $C$ par $X$. Par exemple,
+$\ctxSub{\iDecl{x}{2+\ctxEmpty}}{5} = \iDecl{x}{2+5}$
 
-\begin{figure}
-\begin{align*}
-  \ctxSub{\ctxEmpty}{e_0} = & e_0 \\
-  \ctxSub{(\ctxOp{C}{e}     )}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e}      \\
-  \ctxSub{(\ctxOp{v}{C}     )}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}}      \\
-  \ctxSub{(\ctxUnOp{C}      )}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}}       \\
-  \ctxSub{(\ctxLvDeref{C}   )}{e_0} = & \ctxLvDeref{\ctxSub{C}{e_0}}    \\
-  \ctxSub{(\ctxLvField{C}{l_S})}{e_0} = & \ctxLvField{\ctxSub{C}{e_0}}{l_S} \\
-  \ctxSub{(\ctxLvIndex{φ}{C})}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
-  \ctxSub{(\ctxLvIndex{C}{e})}{e_0} = & \ctxLvIndex{\ctxSub{C}{e_0}}{e} \\
-  \ctxSub{(\ctxSet{C}{e})    }{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e}     \\
-  \ctxSub{(\ctxSet{φ}{C})    }{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}}     \\
-  \ctxSub{\eStruct{ l_1:v_1 ; …
-     ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
-  \ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n }    \\
-  \ctxSub{C (e_1, …, e_n)          }{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n)              \\
-  \ctxSub{f (v_1, …, C, …, e_n)    }{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n)        \\
-  \\
-  \ctxSub{(C;i              )}{e_0} = & \ctxSub{C}{e_0};i               \\
-  \ctxSub{(\iIf{C}{i_1}{i_2})}{e_0} = & \iIf{\ctxSub{C}{e_0}}{i_1}{i_2} \\
-  \ctxSub{(\iReturn{C}      )}{e_0} = & \iReturn{\ctxSub{C}{e_0}}       \\
-\end{align*}
-
-\begin{align*}
-% C
-\ctxSub{C_L}{e_0} = & \ctxSubL{C_L}{e_0} \\
-\ctxSub{\ctxOp{C}{e}}{e_0} = & \ctxOp{\ctxSub{C}{e_0}}{e} \\
-\ctxSub{\ctxOp{v}{C}}{e_0} = & \ctxOp{v}{\ctxSub{C}{e_0}} \\
-\ctxSub{\ctxUnOp{C}}{e_0} = & \ctxUnOp{\ctxSub{C}{e_0}} \\
-\ctxSub{\ctxSet{C}{e}}{e_0} = & \ctxSet{\ctxSub{C}{e_0}}{e} \\
-\ctxSub{\ctxSet{φ}{C}}{e_0} = & \ctxSet{φ}{\ctxSub{C}{e_0}} \\
-\ctxSub{\eStruct{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n }}{e_0} = & \eStruct{ l_1:v_1 ; … ; l_i:\ctxSub{C}{e_0} ; … ; l_n:e_n } \\
-\ctxSub{\eArray{ v_1 ; … ; C ; … ; e_n }}{e_0} = & \eArray{ v_1 ; … ; \ctxSub{C}{e_0} ; … ; e_n } \\
-\ctxSub{C (e_1, …, e_n)}{e_0} = & \ctxSub{C}{e_0} (e_1, …, e_n) \\
-\ctxSub{f (v_1, …, C, …, e_n)}{e_0} = & f (v_1, …, \ctxSub{C}{e_0}, …, e_n) \\
-\\
-% C_L
-\ctxSubL{\ctxEmpty}{l_0} = & \ctxEmpty \\
-\ctxSubL{\ctxLvDeref{C_L}}{l_0} = & \ctxLvDeref{\ctxSubL{C_L}{l_0}} \\
-\ctxSubL{\ctxLvField{C_L}{l_S}}{l_0} = & \ctxLvField{\ctxSubL{C_L}{l_0}}{l_S} \\
-\ctxSubL{\ctxLvIndex{C_L}{e}}{l_0} = & \ctxLvIndex{\ctxSubL{C_L}{l_0}}{e} \\
-\ctxSub{\ctxLvIndex{φ}{C}}{e_0} = & \ctxLvIndex{φ}{\ctxSub{C}{e_0}} \\
-\\
-% % C_I
-% \ctxSubI{C_I;i}{i_0} = & \ctxSubI{C_I}{i_0};i \\
-%
-% \iIf{C}{i_1}{i_2}
-% \iReturn{C}
-% C
-\end{align*}
-
-\caption{Substitution dans les contextes d'évaluation}
-\label{fig:ctx-sub}
-\end{figure}
-
-Par exemple, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
+À titre d'illustration, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
 v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \begin{enumerate}
@@ -1463,8 +1395,6 @@ cas des champs de structure, la définition de la structure $S$ n'est pas prise
 en compte.
 
 \begin{mathpar}
-  \semrule{Phi-Deref}
-
   \semrule{Phi-Struct}
 \end{mathpar}
 
@@ -1480,6 +1410,51 @@ permet de construire le chemin résultant.
 Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite:
 dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
 $e_2$, puis $e_3$.
+
+La règle portant sur le déréférencement est particulière. On peut penser que la
+bonne définition de $φ$ consiste à se calquer sur la définition de $lv$, en
+remplaçant les noms de variable par leur adresse résolue et en évaluant les
+indices de tableau, et à ajouter une règle qui transforme $*φ$ en
+$\widehat{*}φ$.
+
+Cela ne fonctionne pas, car alors les déréférencements sont évalués trop tard:
+au moment de l'affectation dans la left-value plutôt qu'à sa définition. La
+figure~\ref{fig:lazy-deref} illustre ce problème. On s'intéresse à l'évaluation
+de l'expression \texttt{*p} aux points \texttt{(a)} et \texttt{(b)}. Avec une
+sémantique paresseuse (en ajoutant un $\widehat{*}φ$), la valeur de
+\texttt{p}
+est $\widehat{\&}~((*(0,x)).f)$, donc
+\texttt{*p} est évalué à $0$ en
+\texttt{(a)}
+et $1$ en
+\texttt{(b)}.
+Au contraire, avec une sémantique stricte (correcte),
+\texttt{p} vaut
+$\widehat{\&}~(((0,s0).f)$ et donc
+\texttt{*p} est évalué à $0$ en
+\texttt{(a)}
+et en
+\texttt{(b)}.
+La règle d'évaluation est donc la suivante.
+
+\begin{figure}
+\begin{Verbatim}
+Decl s0 = { .f = 0 } in
+Decl s1 = { .f = 1 } in
+Decl x  = & s0 in
+Decl p = & ((*x).f) in
+/* (a) */
+x <- & s1
+/* (a) */
+\end{Verbatim}
+
+\caption{Évaluation stricte ou paresseuse des left-values}
+\label{fig:lazy-deref}
+\end{figure}
+
+\begin{mathpar}
+  \semrule{Phi-Deref}
+\end{mathpar}
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
@@ -1535,10 +1510,13 @@ celles qui ont la forme $φ[n]$. On a alors:
 % TODO widehats ici et ci-dessous non?
 
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
-d'une même structure. Autrement c'est une erreur de manipulation de pointeurs:
+d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}
-
-% TODO quoter le passage pertinent de la norme
+\footnote{
+Cela est cohérent avec la norme C99:
+    ``If the pointer operand points to an element of an array object, and the
+    array is large enough, […] ; otherwise, the behavior is undefined.
+    ''~\cite[6.5.6~§8]{AnsiC}}:
 
 \begin{align*}
 φ~+_p~m = & \serr{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
@@ -1577,7 +1555,7 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
 \end{mathpar}
 
 \shorthandoff{!}
-\begin{figure}
+\begin{figure}%{{{
 
   \centering
 
@@ -1608,21 +1586,28 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
   }
 \label{fig:fcall-details}
 
-\end{figure}
+\end{figure}%}}}
 \shorthandon{!}
 
-Les contextes utilisés dans l'appel de fonction sont similaires. Tout d'abord,
-les arguments sont évalués et placés dans un nouveau cadre de pile. Ensuite, le
-corps de la fonction est évalué jusqu'à se réduire en une instruction
-$\iReturn{v}$. Enfin, le cadre précédemment utilisé est dépilé.
-
-La dernière étape consiste à nettoyer la mémoire de références à l'ancien cadre
-de pile (on utilise la fonction $\mathrm{Cleanup}$ définie dans la
-section~\ref{sec:memops}).
+L'appel de fonction est traité de manière similaire à la déclaration de
+fonction: on ne peut pas facilement relier un pas d'évaluation de $i$ à un pas
+d'évaluation de $\eFun{a_1,…,a_n}{i} (v_1,…,v_n)$, donc un contexte
+$C \gramisa \eFun{a_1,…,a_n}{\ctxEmpty} (v_1,…,v_n)$ n'est pas à considérer. Il
+faut donc transmettre le pas à la main. C'est le but des deux règles
+\textsc{Exp-Call-Ctx} et \textsc{Exp-Call-Err}. D'autre part, les cas terminaux
+sont \textsc{Exp-Call-Return-Unit} et \textsc{Exp-Call-Return}:
 
 \begin{mathpar}
-  \semrule{Exp-Call}
+    \semrule{Exp-Call-Ctx}
+
+    \semrule{Exp-Call-Err}
+
+    \semrule{Exp-Call-Return-Unit}
+
+    \semrule{Exp-Call-Return}
 \end{mathpar}
+
+% TODO blabla sur cleanup
 
 Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
@@ -1673,9 +1658,11 @@ La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous u
 déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
 mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
 résultante est la déclaration de $x$ avec la nouvelle valeur $v'$ de $x$ après
-le pas d'exécution.
-
-% TODO expliquer pourquoi Ctx n'est pas possible
+le pas d'exécution\footnote{
+    On peut remarquer qu'il est impossible de définir un contexte d'évaluation
+    $C \gramisa \iDecl{x}{v}{C}$. En effet, puisque celui-ci nécessiterait
+    d'ajouter une variable, il ne préserve pas la mémoire.
+}.
 
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
@@ -1777,8 +1764,7 @@ if(e) {
 \end{Verbatim}
 \end{minipage}
 
-Enfin, si un ``\emph{return}'' apparaît dans une séquence, on peut supprimer la suite:
-% TODO la typographie des if/while/return
+Enfin, si un $\phx\iReturn$ apparaît dans une séquence, on peut supprimer la suite:
 
 \begin{mathpar}
   \semrule{Return}
@@ -1786,8 +1772,6 @@ Enfin, si un ``\emph{return}'' apparaît dans une séquence, on peut supprimer l
 
 \section{Erreurs}
 \label{sec:eval-errors}
-
-% TODO
 
 Les erreurs se propagent des données vers l'interprète; c'est-à-dire que si
 une expression ou instruction est réduite en une valeur d'erreur $Ω$, alors une
@@ -1811,8 +1795,6 @@ de sous-expression ou sous instruction est définie en fonction des contextes $C
 \label{fig:eval-err}
 \end{figure}
 
-% TODO blabla sur les 2 et prouver que \ctxSub{C}{Ω} → Ω
-
 \section{Phrases}
 
 Un programme est constitué d'une suite de phrases: déclarations de fonctions,
@@ -1826,6 +1808,8 @@ exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
 avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}).
+
+Notons que ces évaluations se font à grands pas.
 
 \begin{figure}
 \begin{mathpar}
@@ -1860,80 +1844,81 @@ L'exécution d'un programme est définie par:
   \semrule{Prog}
 \end{mathpar}
 
-\section{Exemple: l'algorithme d'Euclide}
+% TODO exemple?
+%\section{Exemple: l'algorithme d'Euclide}
 
-\wip{}
+%\wip{}
 
-Version par divisions successives:
+%Version par divisions successives:
 
-\begin{Verbatim}
-function gcd(a, b)
-  var t = 0;
-  while b != 0
-    t = b
-    b = a mod b
-    a = t
-  return a
-\end{Verbatim}
+%\begin{Verbatim}
+%function gcd(a, b)
+  %var t = 0;
+  %while b != 0
+    %t = b
+    %b = a mod b
+    %a = t
+  %return a
+%\end{Verbatim}
 
-Soit:
+%Soit:
 
-\def\exinnerif{t←b;b←a\%b;a←t}
+%\def\exinnerif{t←b;b←a\%b;a←t}
 
-\begin{mathpar} % TODO la syntaxe est ancienne
-  f (a, b) (t = 0) \{
-    \iWhile{b ≠ 0}{
-      \exinnerif{}
-    };
-    \iReturn{a}
-  \}
-\end{mathpar}
+%\begin{mathpar}
+  %f (a, b) (t = 0) \{
+    %\iWhile{b ≠ 0}{
+      %\exinnerif{}
+    %};
+    %\iReturn{a}
+  %\}
+%\end{mathpar}
 
-\[
-  \msi{m}{f(1071, 462)} → ?
-\]
+%\[
+  %\msi{m}{f(1071, 462)} → ?
+%\]
 
-\[
-  \msi{m[a↦1071][b↦462][t↦0]}{\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} → ?
-\]
+%\[
+  %\msi{m[a↦1071][b↦462][t↦0]}{\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} → ?
+%\]
 
-(on notera cet état $s_0 = \msi{m_0}{i_0}$)
+%(on notera cet état $s_0 = \msi{m_0}{i_0}$)
 
-\[
-  \mm{m_0}{a = 0}{m_0}{0}
-\]
+%\[
+  %\mm{m_0}{a = 0}{m_0}{0}
+%\]
 
-donc
+%donc
 
-\[
-  \mm{m_0}{\iThen{a = 0}{\iReturn{b}}}{m[a↦1071][b↦462]}{\iPass}
-\]
+%\[
+  %\mm{m_0}{\iThen{a = 0}{\iReturn{b}}}{m[a↦1071][b↦462]}{\iPass}
+%\]
 
-{ \scriptsize
-\begin{align}
-  s_0 → & \msi{m_0  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_0  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_0  }{ b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_0''}{ a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_1  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_1  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_1  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_2  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_2  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_2  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iPass; \iReturn{a}} \\
-      → & \msi{m_3  }{ \iReturn{a}}
-\end{align}
+%{ \scriptsize
+%\begin{align}
+  %s_0 → & \msi{m_0  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_0  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_0  }{ b←a\%b;a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_0''}{ a←t;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_1  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_1  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_1  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_2  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_2  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_2  }{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iWhile{b ≠ 0}{ \exinnerif }; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iThen{b ≠ 0}{ \exinnerif;\iWhile{b ≠ 0}{ \exinnerif }}; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iPass; \iReturn{a}} \\
+      %→ & \msi{m_3  }{ \iReturn{a}}
+%\end{align}
 
-\begin{align*}
-  m_0'  = & m_0  [t↦462] = m[a↦1071][b↦462][t↦462] \\
-  m_0'' = & m_0' [b↦147] = m[a↦1071][b↦147][t↦462] \\
-  m_1   = & m_0''[a↦462] = m[a↦462][b↦147][t↦462] \\
-  m_2   = & m_1[t↦147][b↦21][a↦147] = m[a↦147][b↦21][t↦147] \\
-  m_3   = & m_2[t↦21][b↦0][a↦21] = m[a↦21][b↦0][t↦21]
-\end{align*}
-}
+%\begin{align*}
+  %m_0'  = & m_0  [t↦462] = m[a↦1071][b↦462][t↦462] \\
+  %m_0'' = & m_0' [b↦147] = m[a↦1071][b↦147][t↦462] \\
+  %m_1   = & m_0''[a↦462] = m[a↦462][b↦147][t↦462] \\
+  %m_2   = & m_1[t↦147][b↦21][a↦147] = m[a↦147][b↦21][t↦147] \\
+  %m_3   = & m_2[t↦21][b↦0][a↦21] = m[a↦21][b↦0][t↦21]
+%\end{align*}
+%}
 
 % vim: spelllang=fr

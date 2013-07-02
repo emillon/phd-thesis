@@ -2,10 +2,6 @@
 
 \begin{mathpar}
     \semrule{Ctx}
-
-    \semrule{Ctx-Lv}
-
-    \semrule{Ctx-Instr}
 \end{mathpar}
 
     \figctx{}
@@ -29,7 +25,7 @@
 \begin{figure}
 
 \begin{mathpar}
-    \ruleheader{$\mm{m}{lv}{m}{φ}$}
+    \ruleheader{$\mm{m}{lv}{m}{φ}$} % TODO header?
 
     \semrule{Phi-Var}
 
@@ -39,7 +35,7 @@
 
     \semrule{Phi-Array}
 
-    \ruleheader{$\mm{m}{e}{m}{v}$}
+    \ruleheader{$\mm{m}{e}{m}{v}$} % TODO header?
 
     \semrule{Exp-Cst}
 
@@ -59,7 +55,13 @@
 
     \semrule{Exp-Array}
 
-    \semrule{Exp-Call}
+    \semrule{Exp-Call-Ctx}
+
+    \semrule{Exp-Call-Err}
+
+    \semrule{Exp-Call-Return-Unit}
+
+    \semrule{Exp-Call-Return}
 \end{mathpar}
 
 \caption{Règles d'évaluation des left-values et expressions }
@@ -80,7 +82,7 @@
 
     \semrule{Decl-Ctx}
 
-    \semrule{Decl-Err}
+    \semrule{Decl-Err} % TODO pas à sa place
 
     \semrule{If-False}
 

@@ -272,16 +272,8 @@
 \def\semrule#1{
   \switch{#1}
     {Ctx}{ \irule{Ctx}
-             { \mm{m}{e}{m'}{e'} }
-             { \mm{m}{\ctxSub{C}{e}}{m'}{\ctxSub{C}{e'}} }
-    }
-    {Ctx-Lv}{ \irule{Ctx-Lv}
-             { \mmlv{m}{lv}{m'}{lv'} }
-             { \mmlv{m}{\ctxSubL{C_L}{lv}}{m'}{\ctxSubL{C_L}{lv'}} }
-    }
-    {Ctx-Instr}{ \irule{Ctx-Instr}
-             { \mmlv{m}{i}{m'}{i'} }
-             { \mmlv{m}{\ctxSubI{C_I}{i}}{m'}{\ctxSubI{C_I}{i'}} }
+             { \mm{m}{i}{m'}{i'} }
+             { \mm{m}{\ctxSub{C}{i}}{m'}{\ctxSub{C}{i'}} }
     }
     {Phi-Var}{ \irule{Phi-Var}
                  { a = \cLookup{x}{m} }
@@ -289,9 +281,9 @@
                    \mmlv{m}{x}{m}{a}
                  }
     }
-    {Phi-Deref}{ \irule{Phi-Deref}
-                   { }
-                   { \mms{*φ}{\widehat{*}φ} }
+    {Phi-Deref}{ \irule{Phi-Deref} % TODO + phi-deref-err si pas un φ'
+                   { φ' = m[φ]_Φ}
+                   { \mms{*φ}{φ'} }
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
@@ -342,15 +334,34 @@
                    { \widehat{\eArray{ v_1, … , v_n } }}
                  }
     }
-    {Exp-Call}{ \irule{Exp-Call}
-                  { f = \eFun{a_1, …, a_n}{i} \\
-                    m_1 = \mathrm{Push}(m_0, ((a_1 ↦ v_1), …, (a_n ↦ v_n))) \\
-                    \mm{m_1}{i}{m_2}{\iReturn{v}} \\
-                    m_3 = \mathrm{Pop}(m_2) \\
-                    m_4 = \cCleanup{m_3} \\
+    {Exp-Call-Return-Unit}{ \irule{Exp-Call-Return-Unit}
+                               { m' = \cCleanup{m}}
+                               { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
+                                    {m'}{\eUnit}
+                               }
+                          }
+    {Exp-Call-Return}{ \irule{Exp-Call-Return}
+                          { m' = \cCleanup{m}}
+                          { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
+                               {m'}{v}
+                          }
+                     }
+    {Exp-Call-Ctx}{ \irule{Exp-Call-Ctx}
+                        { m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}
+                       \\ \mm{m_1}{i}{m_2}{i'}
+                       \\ ∀ i ∈ [1;n], v'_i = m_2[(0, a_i)]_A
+                       \\ m_3 = \cPop{m_2}
+                        }
+                        { \mm{m_0}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) }
+                          { m_3 }{\eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n) }
+                        }
                   }
-                  {\mm{m_0}{f (v_1, …, v_n)}{m_4}{v}}
-    }
+    {Exp-Call-Err}{ \irule{Exp-Call-Err}
+                     { m' = \cPush{m}{(a_1 ↦ v_1, …, a_n ↦ v_n)}
+                    \\ \msi{m'}{i} → Ω
+                     }
+                     { \msi{m}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) } → Ω }
+                  }
     {Seq}{ \irule{Seq}
               { }
               { \mmi{m}{(\iPass;i)}{m}{i} }
@@ -482,7 +493,7 @@
 \def\figctx{
   \begin{align*}
   \gramdef{Contextes}{C}
-    { C_L }{}
+    { \ctxEmpty }{}
     { \ctxOp{C}{e} }{}
     { \ctxOp{v}{C} }{}
     { \ctxUnOp{C} }{}
@@ -492,22 +503,13 @@
     { \eArray{ v_1 ; … ; C ; … ; e_n } }{}
     { C (e_1, …, e_n) }{}
     { f (v_1, …, C, …, e_n) }{}
-    {END}
-  \\
-  \gramdef{Contextes (left-values)}{C_L}
-    { \ctxEmpty }{}
-    { \ctxLvDeref{C_L} }{}
-    { \ctxLvField{C_L}{l_S} }{}
-    { \ctxLvIndex{C_L}{e} }{}
+    { \ctxLvField{C}{l_S} }{}
+    { \ctxLvIndex{C}{e} }{}
     { \ctxLvIndex{φ}{C} }{}
-    {END}
-  \\
-  \gramdef{Contextes (instructions)}{C_I}
-    { C_I;i }{}
+    { C;i }{}
     { \iIf{C}{i_1}{i_2} }{}
     { \iReturn{C} }{}
     { \iDecl{x}{C}{i} }{}
-    { C }{}
     {END}
   \end{align*}
 }

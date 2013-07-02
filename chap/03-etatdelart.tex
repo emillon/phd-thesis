@@ -1,9 +1,9 @@
 Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
-permettant d'analyser des programmes. Un accent est mis sur la propriété de
-sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se limite pas à
-celle-ci.
-
-%TODO[E]: pourquoi?
+permettant d'analyser des programmes. En particulier, on s'intéresse à la
+propriété de sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se
+limite pas à celle-ci: il est également intéressant de considérer des analyses
+développées pour d'autres propriétés, celles-ci pouvant potentiellement
+s'adapter.
 
 L'analyse statique de programmes est un sujet de recherche actif depuis
 l'apparition de la science informatique. On commence par en présenter une
@@ -24,21 +24,20 @@ performances). L'approche statique, en revanche, nécessite de construire à
 l'arrêt une carte mentale du programme, ce qui n'est pas toujours possible dans
 certains langages.
 
-%TODO[E]: et pourtant c'est ce qui se passe dans l'avionique civile (process de
-%dév le + difficile)
+Les techniques dynamiques sont néanmoins les plus répandues, puisqu'elles sont
+plus simples à mettre en œuvre et permettent de trouver des erreurs pendant le
+processus de développement. De plus, on peut considérer qu'un programme avec une
+forte couverture par les tests a de grandes chances d'être correct pour toutes
+les entrées. C'est par exemple ce qui se passe dans l'avionique civile.
 
-Pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
-uniquement sur des tests --- ou de manière générale sur des analyses dynamiques
---- car même avec des tests exhaustifs, il est impossible d'étudier l'ensemble
-complet de tous les comportements possibles. Par exemple, si un bug se présente
-lors d'une interaction entre deux composants qui n'a pas été testée, il passera
-inaperçu. Pour cette raison, la plupart des analyses présentées ici sont
-statiques.
+Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
+uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
+--- car il est impossible d'étudier l'ensemble complet de tous les comportements
+possibles. Par exemple, si un bug se présente lors d'une interaction entre deux
+composants qui n'a pas été testée, il passera inaperçu. Pour cette raison, la
+plupart des analyses présentées ici sont statiques.
 
 \paragraph{Cohérence et complétude}
-
-%TODO[E]: il peut néanmoins avoir des limitations : complexité trop forte (ex
-%typage en ocaml)
 
 Le but d'une analyse statique est de catégoriser les programmes selon s'ils
 satisfont ou non un ensemble de propriétés fixées à l'avance. Malheureusement,
@@ -58,12 +57,14 @@ un des cas suivants:
 \item
   un programme invalide n'est pas détecté: on parle de
   \emph{faux négatif}.
-%TODO[E]: plus grave?
 \end{itemize}
 
 En général, et dans notre cas, on préfère s'assurer que les programmes acceptés
 possèdent la propriété recherchée, quitte à en rejeter certains. C'est
-l'approche que nous retiendrons.
+l'approche que nous retiendrons. Tolérer les faux négatifs n'est cependant pas
+toujours une mauvaise idée. Par exemple, si le but est de trouver des
+constructions dangereuses dans les programmes, on peut signaler certains cas qui
+empiriquement valent d'être vérifiés manuellement.
 
 Par ailleurs la plupart des techniques ne concernent que les programmes qui
 terminent. On étudie donc la correction, ou les propriétés des termes
@@ -264,8 +265,6 @@ vérification formelle en tant que telle.
 
 \section{Typage}
 
-%TODO[E]: n'est-ce pas une passe obligatoire dans tout système de vérification?
-
 Le typage, introduit dans la section~\ref{sec:types-intro}, peut aussi être
 utilisé pour la vérification de programmes. On peut le voir comme une manière de
 catégoriser les types de données manipulés par la machine, mais également à plus
@@ -290,17 +289,15 @@ la mémoire, les développeurs du noyau Linux ont ajouté un système d'annotati
 au code source. Un pointeur peut être décoré d'une annotation
 \texttt{\_\_kernel} ou \texttt{\_\_user} selon s'il est sûr ou pas. Celles-ci
 sont ignorées par le compilateur, mais un outil d'analyse statique ad-hoc nommé
-Sparse~\link{sparse}~\cite{TorvaldsSparse} % TODO citer un seul
-peut être utilisé pour détecter les cas les plus simples d'erreurs. Il demande
-aussi au programmeur d'ajouter de nombreuses annotations dans le programme.
+Sparse~\link{sparse} peut être utilisé pour détecter les cas les plus simples
+d'erreurs. Il demande aussi au programmeur d'ajouter de nombreuses annotations
+dans le programme.
 
-%TODO[E]: on a l'impression que c'est simple mais ce sera le coeur du manuscrit:
-%certes avec inférence mais tout de même
-
-Ce système d'annotations sur les types a été formalisé sous le nom de
-\emph{qualificateurs de types}~\cite{toplas-quals}: chaque type peut être
-décoré d'un ensemble de qualificateurs (à la manière de \texttt{const}), et des
-règles de typage permettent d'établir des propriétés sur le programme.
+Cette solution se rapproche de la solution décrite dans ce manuscrit. Ce système
+d'annotations sur les types a été formalisé sous le nom de \emph{qualificateurs
+de types}~\cite{toplas-quals}: chaque type peut être décoré d'un ensemble de
+qualificateurs (à la manière de \texttt{const}), et des règles de typage
+permettent d'établir des propriétés sur le programme.
 
 Plus précisément, les jugements de typage de la forme $Γ ⊢ e : t$ sont remplacés
 par des jugements de typage qualifiés $Γ ⊢ e : t~q$. Les qualificateurs $q$
@@ -365,9 +362,8 @@ de types).
 
 Le typage statique peut également être implanté de manière efficace. La plupart
 des systèmes de types peuvent être vérifiés en pratique dans un temps linéaire
-en la taille du programme considéré.
-
-%TODO[E]: en ocaml c'est quadratique!!!
+en la taille du programme considéré. L'inférence, en revanche, peut parfois
+``exploser'' en temps quadratique. % TODO check le coup du quadratique
 
 \section{Analyse de code système}
 
@@ -478,10 +474,10 @@ lorsque c'est possible, sinon à l'exécution.
 
 %TODO[B] Le rapport avec la prog sys? un cite ? (ça a forcément été fait)
 
-La règle de conséquence permet de découpler les propriétés du programme lui-même
-: plusieurs niveaux d'annotations sont possibles, du moins précis au plus
-précis. En fait, il est même possible d'annoter chaque point de contrôle par
-l'ensemble d'annotations vide: \hoare{T}{i}{T} est toujours vrai.
+La règle de conséquence permet de découpler les propriétés du programme
+lui-même: plusieurs niveaux d'annotations sont possibles, du moins précis au
+plus précis. En fait, il est même possible d'annoter chaque point de contrôle
+par l'ensemble d'annotations vide: \hoare{T}{i}{T} est toujours vrai.
 
 Augmenter graduellement les pré- et post-conditions est néanmoins assez
 difficile, puisqu'il peut être nécessaire de modifier l'ensemble des conditions
@@ -495,8 +491,6 @@ système JML~\cite{jmlkluwer} ou pour le langage C\# dans Spec\#~\cite{krml136}.
 % TODO [E] ce sont juste des langages d'annotations: qu'en fait-on après ?
 
 \section{Assistants de preuve}
-
-%TODO[E] globalement trop rapide
 
 Avec un système de types classique, le fait qu'un terme soit bien typé amène
 quelques propriétés sur son exécution. Par exemple, le fait que seulement un
@@ -544,16 +538,12 @@ Il existe de nombreuses techniques pour vérifier du code système ou embarqué.
 y a divers choix à faire entre l'expressivité, l'intégration de tests
 dynamiques, ou la facilité de mise en œuvre.
 
-%TODO[E]: il faut conclure par rapport à ce que tu désires rechercher comme
-%garanties
-
-Le typage statique est une solution assez pragmatique, puisqu'elle peut
-s'appliquer à des programmes existants, et est efficace à utiliser. Son
-expressivité limitée nous empêche de reposer entièrement sur elle pour garantir
-l'absence d'erreur dans les programmes système. C'est pourquoi nous approchons
-la sûreté de la manière suivante dans notre solution, \langname.
-
-%TODO[E]: phrase
+Pour résoudre le problèmes des pointeurs utilisateurs dans les noyaux, le typage
+statique est une solution assez pragmatique, puisqu'elle peut s'appliquer à des
+programmes existants, et est efficace à utiliser. Son expressivité limitée nous
+empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
+les programmes système. C'est pourquoi dans notre solution, \langname, nous
+approchons la sûreté de la manière suivante:
 
 Tout d'abord, on utilise le typage pour manipuler les données de manière
 compatible: les types des opérations et fonctions sont vérifiés à la
