@@ -85,6 +85,7 @@
 
 % Typage sém
 \def\semtyp#1#2#3{#1 ⊧ #2 : #3}
+\def\semtypphi#1#2#3{#1 ⊧_Φ #2 : #3}
 
 % Compatibilité Γ / m
 \def\mcomp#1#2{#1 ⊧ #2}
@@ -399,3 +400,6 @@
 \def\cPush#1#2{\mathrm{Push}(#1, #2)}
 
 \def\cPop#1{\mathrm{Pop}(#1)}
+
+\def\cH#1{\mathcal{H}(#1)}
+\def\cHphi#1{\mathcal{H}_Φ(#1)}

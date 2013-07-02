@@ -222,7 +222,7 @@
                 {\semtyp{m}{\eNull}{τ~*}}
     }
     {S-Ref}{ \irule{S-Ref}
-               { \semtyp{m}{m[φ]_Φ}{τ}}
+               {\semtypphi{m}{φ}{τ}}
                {\semtyp{m}{\widehat{\&}~φ}{τ~*}}
     }
     {S-Array}{ \irule{S-Array}
@@ -282,7 +282,7 @@
                  }
     }
     {Phi-Deref}{ \irule{Phi-Deref} % TODO + phi-deref-err si pas un φ'
-                   { φ' = m[φ]_Φ}
+                   { \widehat{\&}~φ' = m[φ]_Φ}
                    { \mms{*φ}{φ'} }
     }
     {Phi-Struct}{ \irule{Phi-Struct}

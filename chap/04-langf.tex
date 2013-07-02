@@ -657,7 +657,7 @@ pas capturé (il n'y a pas de clôture lexicale).
   \\
   \gramdef{Chemins}{φ}
      { a    }{Adresse}
-     { φ.l  }{Accès à un champ}
+     { φ.l  }{Accès à un champ} % TODO widehat non?
      { φ[n] }{Accès à un élément}
      {END}
   \\
@@ -708,6 +708,7 @@ La figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. U
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
 couples (nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une
 pile et $g$ un cadre de pile (qui représente les variables globales).
+On note $|m| = |s|$ la hauteur de la pile (en nombre de cadres).
 
 Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 états $Ξ$; ces états sont d'une des formes suivantes:
@@ -742,7 +743,7 @@ cas de base:
 \item pour les left-values, un chemin $φ$.
 \end{itemize}
 
-On considère en fait la cloture transitive de cette relation. Cela revient à
+On considère en fait la clôture transitive de cette relation. Cela revient à
 ajouter une règle :
 
 \begin{mathpar}
@@ -1436,6 +1437,8 @@ $\widehat{\&}~(((0,s0).f)$ et donc
 et en
 \texttt{(b)}.
 La règle d'évaluation est donc la suivante.
+
+% TODO vérifier qu'il faut pas un widehat &
 
 \begin{figure}
 \begin{Verbatim}
