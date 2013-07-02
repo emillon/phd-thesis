@@ -733,7 +733,6 @@ On cherche à prouver:
 Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$.
 
 \paragraph{\textsc{Exp-Cst}:} % {{{
-\[ \semrule{Exp-Cst} \]
 
 Toutes les constantes sont des valeurs, donc le lemme~\ref{lemma:repr} peut
 s'appliquer : $τ = \cRepr{t}$ convient.
@@ -752,7 +751,6 @@ lemme~\ref{lemma:mem-typ}: $m ⊧ v : τ$ où $v = m[φ]_Φ$ avec $\tComp{τ}{t}
 
 % }}}
 \paragraph{\textsc{Exp-UnOp}:} % {{{
-\[ \semrule{Exp-UnOp} \]
 
 Il vient des définitions des différents opérateurs$\widehat{\opun}$ que
 $Γ ⊢ \widehat{\opun}~v : τ$ avec $\tComp{τ}{t}$.
@@ -769,18 +767,18 @@ On peut appliquer le lemme~\ref{lemma:repr}, qui nous donne un $τ$ qui convient
 
 % }}}
 \paragraph{\textsc{Exp-Set}:} % {{{
-\[ \semrule{Exp-Set} \]
 
 Deux propriétés sont à prouver. D'une part, $Γ ⊢ v : t$, et d'autre part,
-$\mcomp{Γ}{m[φ←v]}$.
+$\mcomp{Γ}{m'}$ où $m' = m[φ←v]_Φ$.
 
 Tout d'abord, le lemme d'inversion appliqué à $Γ ⊢ φ ← v : t$ nous donne que
 $Γ ⊢ φ : t$ et $Γ ⊢ v : t$.
 
-Ensuite, comme
-$Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$,
-il existe $τ$ tel que
-$m ⊧ m[φ]_Φ : τ$ et $\tComp{τ}{t}$. % TODO il faut une sorte de lemme de subs
+Ensuite, comme $Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$, on peut appliquer le
+lemme~\ref{lemma:repr}: il existe $τ$ tel que $m ⊧ v : τ$ et $\tComp{τ}{t}$.
+
+On peut donc appliquer le lemme~\ref{lemma:mem-typ}, qui nous permet de conclure
+que $\mcomp{Γ}{m'}$.
 
 % }}}
 \paragraph{\textsc{Exp-Struct}:} % {{{
