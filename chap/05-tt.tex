@@ -507,7 +507,19 @@ Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes,
 mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
 impossible de déterminer statiquement. On le remplace donc par un cas plus
-simple où seul l'arité est conservée (figure~\ref{fig:types-semantiques}).
+simple où seul l'arité est conservée.
+
+Le cas des références (règle \textsc{S-Ref}) utilise le typage des left-values,
+codéfini par:
+
+\[
+    \semtypphi{m}{φ}{τ}
+    \eqdef
+    \semtyp{m}{m[φ]_Φ}{τ}
+\]
+
+Les règles de définition du typage sémantique sont données dans la
+figure~\ref{fig:types-semantiques}.
 
 \begin{figure}
 \begin{align*}
@@ -1211,7 +1223,6 @@ Alors:
 \item
     Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
     alors $\mcomp{Γ}{m'}$ et $m ⊧ v : τ$ où $\tComp{τ}{t}$.
-% TODO pê pas nécessaire d'avoir un m'
 
 \item
     Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
@@ -1221,7 +1232,10 @@ Alors:
     Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$,
     alors $\mcomp{Γ}{m'}$ et $Γ ⊢ lv' : t$.
 
-% TODO un cas avec les lv → φ?
+\item
+    Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$,
+    alors $\mcomp{Γ}{m'}$ et $\semtypphi{m}{φ}{τ}$ où $\tComp{τ}{t}$.
+
 \end{itemize}
 
   Autrement dit, si une construction est typable, alors un pas d'évaluation ne
