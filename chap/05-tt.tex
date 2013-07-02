@@ -709,7 +709,7 @@ où:
 
 \begin{lemma}[Hauteur des chemins typés]
 
-    Si $(s, g) ⊧ v : τ$, alors $\cH{v} ≤ |s|$. % TODO introuire |m|
+    Si $(s, g) ⊧ v : τ$, alors $\cH{v} ≤ |s|$. % TODO introduire |m|
 
 \end{lemma}
 
@@ -726,7 +726,7 @@ On procède par induction sur la forme de $v$.
 \paragraph{$\widehat{\&}~(n, x)$:}
 D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
 $m ⊧ v : τ$ est \textsc{S-Ref}, donc $m[(n, x)]_Φ$ est une valeur.
-D'après la définition % TODO
+D'après la définition de $φ$, $n ≤ |s|$.
 
 \paragraph{$\widehat{\&}~φ.l$:} %
 On procède par induction sur $v' = \widehat{\&}~φ$.
