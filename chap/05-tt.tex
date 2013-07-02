@@ -677,7 +677,7 @@ où:
            \\ m ⊧ v : τ
            \\ \tComp{τ}{t}
             }
-            { \mcomp{Γ}{(s, ((x↦v)::g))} }
+            { \mcomp{Γ, x:t}{(s, ((x↦v)::g))} }
 
         \irule{M-Push}
             { \mcomp{Γ}{m}
@@ -713,7 +713,7 @@ où:
 
 \end{lemma}
 
-\begin{proof}
+\begin{proof}%{{{
 On procède par induction sur la forme de $v$.
 
 \paragraph{$\widehat{c}$:} Alors $\cH{v} = -1$. Comme $|m| ≥ 0$, ce cas est
@@ -745,16 +745,13 @@ maximum, et $\cH{v} ≤ |m|$.
 \paragraph{$\widehat{\eArray{v_1,…,v_n}}$:}
 Idem.
 
-\end{proof}
+\end{proof}%}}}
 
 \begin{lemma}[Accès à une mémoire bien typée]
 
 Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors:
 
 \begin{itemize}
-\item
-    Si $m$, alors chaque $(x ↦ v) ∈ m$, vérifie $\cH{v} ≤ |m|$
-
 \item $m[φ]_Φ$ est une valeur $v$ et
     $m ⊧ v : τ$
     où
@@ -782,7 +779,30 @@ sur la forme de $φ$ que cela implique qu'il existe $a$ tel que
 $\cVarname{a} ∈ \cDom{Γ}$.
 % }}}
 \paragraph{\textsc{M-Global}:} % {{{ TODO
-Soit $φ$ tel que $Γ ⊢ φ : t$. Soit $a = proj(φ)$. Par inversion,
+
+Soit $φ$ tel que $Γ, x:t' ⊢ φ : t$.
+Soit $m' = (s, ((x↦v)::g))$.
+
+On veut:
+
+$m'[φ]_Φ$ est une valeur $v$
+tq
+$m' ⊧ v : τ$
+où
+$\tComp{τ}{t}$.
+
+
+et
+
+si $v$ est une valeur telle que
+$m' ⊧ v : τ$
+où
+$\tComp{τ}{t}$,
+alors en posant $m'' = m'[φ ← v]_Φ$,
+on a
+$\mcomp{Γ, x:t'}{m''}$.
+
+
 % }}}
 \paragraph{\textsc{M-Push}:} % {{{ TODO
 % }}}
