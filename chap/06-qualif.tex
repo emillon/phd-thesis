@@ -23,11 +23,10 @@ La terminologie mérite d'être détaillée:
 Un pointeur contrôlé par l'utilisateur, ou \emph{pointeur utilisateur}, est
 référence mémoire dont la valeur est modifiable par le code utilisateur (opposé
 au code noyau, que nous analysons ici). Ceci correspond à des données provenant
-de l'extérieur du système vérifié. Pour faire un parallèle avec la programmation
-réseau, cela correspond à des variables dont la valeur proviendrait d'un client
-distant. C'est une propriété statique, qui peut être déterminée à la compilation
-à partir de considérations syntaxiques. Par exemple, l'adresse d'une variable
-locale est toujours considérée comme étant contrôlée par le noyau.
+de l'extérieur du système vérifié. C'est une propriété statique, qui peut être
+déterminée à la compilation à partir de considérations syntaxiques. Par exemple,
+l'adresse d'une variable locale est toujours considérée comme étant contrôlée
+par le noyau.
 
 Un pointeur pointant vers l'espace utilisateur fait référence à une variable
 allouée en espace utilisateur. Cela veut dire qu'y accéder ne risque pas de
@@ -35,12 +34,6 @@ mettre en péril l'isolation du noyau en faisant fuiter des informations
 confidentielles ou en déjouant son intégrité. Cette propriété est dynamique: un
 pointeur utilisateur peut \emph{a priori} pointer vers l'espace utilisateur, ou
 non.
-
-Pour reprendre le parallèle avec la programmation web, une chaîne provenant du
-réseau peut être correctement échappée ou non. Pour s'assurer de la sécurité du
-traitement d'une telle chaîne, il faut s'assurer que celles-ci sont correctement
-échappées.
-%TODO[E]: ??? à revoir
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
@@ -157,7 +150,6 @@ la figure~\ref{fig:qualif-changes}.
 chapitre~\ref{cha:lang})}
 
 \label{fig:qualif-changes}
-% TODO définir les états et ms
 
 \end{figure}%}}}
 
@@ -487,8 +479,20 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
 \begin{theorem}[Progrès pour les types qualifiés]
 \label{thm:progres-qual}
 
+Supposons que $Γ ⊢ i$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+
+Alors l'un des cas suivants est vrai:
+\begin{itemize}
+\item $i = \iPass$
+\item $∃v, i = \iReturn{v}$
+\item $∃ (i', m'), \mm{m}{i}{m'}{i'}$
+\item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{i} → Ω$
+\end{itemize}
+
+\jolibreak
+
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivants est vrai:
+  Alors l'un des cas suivant est vrai:
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
@@ -496,7 +500,17 @@ ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
 
-%TODO ajouter les cas lv et i
+\jolibreak
+
+Supposons que $Γ ⊢ lv : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+
+Alors l'un des cas suivants est vrai:
+\begin{itemize}
+\item $∃φ, lv = φ$
+\item $∃ (lv', m'), \mm{m}{lv}{m'}{lv'}$
+\item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{lv} → Ω$
+\end{itemize}
+
 \end{theorem}
 
 La preuve de ce théorème est en annexe~\ref{proof:progres-qualif}.
