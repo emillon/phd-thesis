@@ -830,7 +830,7 @@ Puisque $Γ ⊢ *φ : t$, le lemme d'inversion nous assure que $Γ ⊢ φ : t~*$
 On applique le lemme~\ref{lemma:mem-typ} à $φ$:
 il vient que $m ⊧ \widehat{\&}~φ' : τ'$ où $\tComp{τ'}{t~*}$.
 Donc par inversion
-(seule la règle \textsc{S-Ref} permet de dériver un tel jugement), on a
+(seule la règle \textsc{S-Ptr} permet de dériver un tel jugement), on a
 $\semtypphi{m}{φ'}{τ}$ où $τ' = τ~*$.
 On conclut que $\tComp{τ'}{t}$ en inversant par \textsc{Comp-Ptr}.
 
