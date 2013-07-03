@@ -1433,7 +1433,11 @@ $\widehat{\&}~(((0,s0).f)$ et donc
 \texttt{(a)}
 et en
 \texttt{(b)}.
-La règle d'évaluation est donc la suivante.
+Les règles d'évaluation sont donc les suivantes.
+Dans le cas où la valeur référencée n'a pas la forme $m[φ']_Φ$, on renvoie
+$\serr{var}$. Cela est préférable à renvoyer $\serr{ptr}$ car on montrera que la
+première est toujours évitée dans les programmes typés
+(théorème~\ref{thm:progres}).
 
 % TODO vérifier qu'il faut pas un widehat &
 
@@ -1454,6 +1458,8 @@ x <- & s1
 
 \begin{mathpar}
   \semrule{Phi-Deref}
+
+  \semrule{Phi-Deref-Bad}
 \end{mathpar}
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
