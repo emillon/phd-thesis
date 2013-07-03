@@ -185,13 +185,14 @@ adresse contiendra une valeur différente (figure~\ref{fig:memoire-virtuelle}).
 \label{fig:pagetables}
 \end{figure}
 
+\label{page:mem-virt}
 Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
 d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
 l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
 de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
 donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
-
-%TODO ici un morceau déplacé dans le chap etude de cas
+Plus de détails sur l'utilisation de ce mécanisme seront donnés dans la
+section~\ref{sec:linux-sys}.
 
 \section{Appels système}
 

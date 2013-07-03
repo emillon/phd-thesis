@@ -221,7 +221,7 @@
                 { }
                 {\semtyp{m}{\eNull}{τ~*}}
     }
-    {S-Ref}{ \irule{S-Ref}
+    {S-Ptr}{ \irule{S-Ptr}
                {\semtypphi{m}{φ}{τ}}
                {\semtyp{m}{\widehat{\&}~φ}{τ~*}}
     }
@@ -281,9 +281,15 @@
                    \mmlv{m}{x}{m}{a}
                  }
     }
-    {Phi-Deref}{ \irule{Phi-Deref} % TODO + phi-deref-err si pas un φ'
+    {Phi-Deref}{ \irule{Phi-Deref}
                    { \widehat{\&}~φ' = m[φ]_Φ}
                    { \mms{*φ}{φ'} }
+    }
+    {Phi-Deref-Bad}{ \irule{Phi-Deref-Bad}
+                       { v = m[φ]_Φ
+                      \\ ∄~φ', v = \widehat{\&}~φ'
+                       }
+                       { \msi{m}{*φ} → \serr{var} }
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }

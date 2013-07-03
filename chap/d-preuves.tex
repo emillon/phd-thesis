@@ -429,11 +429,9 @@ Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 % }}}
 \paragraph{\textsc{Op-Float}:} % {{{
 Ce cas est similaire à \textsc{Op-Int}.
-% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
 \paragraph{\textsc{Op-Eq}:} %{{{
 Ce cas est similaire à \textsc{Op-Int}.
-% TODO quid du lemme d'inversion (premiere ligne de Op-Int)?
 %}}}
 \paragraph{\textsc{Unop-Plus-Int}:} % {{{
 
@@ -571,18 +569,28 @@ $\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
 
 %}}}
 \paragraph{\textsc{Lv-Deref}:}%{{{
-% TODO refaire avec la nouvelle sem
 
-  Appliquons l'hypothèse de récurrence à $lv$ (vue en tant qu'expression).
+  Appliquons l'hypothèse de récurrence à $lv$ vue en tant qu'expression.
 
 \begin{itemize}
 \item
   $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
-  lemme~\ref{lemma:canon} que $v = φ$ ou $v = \eNull$.
+  lemme~\ref{lemma:canon} que
+  $v = \eNull$
+  ou
+  $v = φ$.
 
-  Dans le premier cas, la règle \textsc{Phi-Deref} s'applique.
-  Dans le second, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
+  Dans le premier cas, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
   $\msi{m}{e} → \serr{ptr}$.
+
+  Dans le second cas, l'expression à réduire à pour forme $*φ$. Puisque
+  $\mcomp{Γ}{m}$, $m[φ]_Φ$ est une valeur $v'$ telle que $m ⊧ v' : τ$ où
+  $\tComp{τ}{t~*}$, donc de la forme $v' = \widehat{\&}~φ'$
+  (lemme~\ref{lemma:mem-typ}).
+
+  Alors \textsc{Phi-Deref} s'applique.
+
+  (notons que \textsc{Phi-Deref-Bad} n'est jamais appliquée)
 
 \item
   $\mm{m}{lv}{m'}{e'}$.
@@ -824,7 +832,7 @@ Puisque $Γ ⊢ *φ : t$, le lemme d'inversion nous assure que $Γ ⊢ φ : t~*$
 On applique le lemme~\ref{lemma:mem-typ} à $φ$:
 il vient que $m ⊧ \widehat{\&}~φ' : τ'$ où $\tComp{τ'}{t~*}$.
 Donc par inversion
-(seule la règle \textsc{S-Ref} permet de dériver un tel jugement), on a
+(seule la règle \textsc{S-Ptr} permet de dériver un tel jugement), on a
 $\semtypphi{m}{φ'}{τ}$ où $τ' = τ~*$.
 On conclut que $\tComp{τ'}{t}$ en inversant par \textsc{Comp-Ptr}.
 

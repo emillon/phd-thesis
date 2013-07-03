@@ -509,7 +509,7 @@ mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
 impossible de déterminer statiquement. On le remplace donc par un cas plus
 simple où seul l'arité est conservée.
 
-Le cas des références (règle \textsc{S-Ref}) utilise le typage des left-values,
+Le cas des références (règle \textsc{S-Ptr}) utilise le typage des left-values,
 codéfini par:
 
 \[
@@ -550,7 +550,7 @@ figure~\ref{fig:types-semantiques}.
 
     \disprule{S-Null}
 
-    \disprule{S-Ref}
+    \disprule{S-Ptr}
 
     \disprule{S-Array}
 
@@ -639,8 +639,6 @@ Grâce à ce jugement, on peut donner la définition suivante.
 \cVisible{(s, g)} \eqdef \{ (x_i) / (x_i ↦ v_i) ∈ g \}
                        ∪ \{ (|s|, x_i) / (x_i ↦ v_i) ∈ s_0 \}
 \]
-
-    % TODO le sens de s?
 
     $\cVarname{a}$ désigne le nom simple d'une variable :
 
@@ -737,7 +735,7 @@ On procède par induction sur la forme de $v$.
 
 \paragraph{$\widehat{\&}~(n, x)$:}
 D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
-$m ⊧ v : τ$ est \textsc{S-Ref}, donc $m[(n, x)]_Φ$ est une valeur.
+$m ⊧ v : τ$ est \textsc{S-Ptr}, donc $m[(n, x)]_Φ$ est une valeur.
 D'après la définition de $φ$, $n ≤ |m|$.
 
 \paragraph{$\widehat{\&}~φ.l$:} %
@@ -1153,13 +1151,13 @@ On procède par induction sur la forme de $t$.
 
             Par inversion, $Γ ⊢ φ : t'$
 
-            Puisque $\mcomp{Γ}{m}$ et $Φ ⊢ φ : t'$,% TODO
-            $m[φ]_Φ$ est une valeur.
+            Puisque $\mcomp{Γ}{m}$ et $Φ ⊢ φ : t'$, on obtient par le
+            lemme~\ref{lemma:mem-typ} que
+            $m[φ]_Φ$ est une valeur telle que
+            $m ⊧ m[φ]_Φ : τ'$ où $\tComp{τ'}{t'}$.
+            D'après \textsc{S-Ptr}, $m ⊧ \widehat{\&}~φ : τ$.
 
-            Par induction, $m ⊧ m[φ]_Φ : τ'$ et $\tComp{τ'}{t'}$.
-            D'après \textsc{S-Ref}, $m ⊧ \widehat{\&}~φ : τ$.
-
-            De plus par \textsc{Comp-Ptr} % TODO nom pas cohérent ref/ptr
+            De plus par \textsc{Comp-Ptr}
             $\tComp{τ}{t}$.
 
         \item $v = \eNull$:

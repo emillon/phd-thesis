@@ -62,6 +62,7 @@ analyser des morceaux plus importants du noyau, il faudrait définir un fichier
 de configuration plus important.
 
 \section{Appels systèmes sous Linux}
+\label{sec:linux-sys}
 
 Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
 le noyau Linux. Une description plus détaillée pourra être trouvée dans
@@ -95,9 +96,9 @@ réservée au mode privilégié.}
 
 Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
 mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun un
-ensemble de tables de pages et une valeur de \crtrois{} associée. Au moment de
-changer le processus en cours, l'ordonnanceur charge donc le \crtrois{} du
-nouveau processus.
+ensemble de tables de pages et une valeur de \crtrois{} associée (ce mécanisme a
+été abordé page~\pageref{page:mem-virt}). Au moment de changer le processus en
+cours, l'ordonnanceur charge donc le \crtrois{} du nouveau processus.
 
 Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
 \texttt{0xc0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
@@ -115,22 +116,19 @@ Cette zone contient le code du noyau, les piles noyau des processus, etc.
 
 \label{sec:impl-syscall}
 
-%TODO clarifier encore tout ça
-
 Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas contenir
 d'instructions privilégiées, et donc ne peuvent pas accéder directement au
-matériel (c'était le but!). Pour qu'ils puissent interagir avec le système
-(afficher une sortie, écrire sur le disque…) le mécanisme des appels système est
-nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 et
-0. Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
-``magiques'' qui font appel au système d'exploitation pour effectuer des
-opérations.
+matériel. Pour qu'ils puissent interagir avec le système (afficher une sortie,
+écrire sur le disque…) le mécanisme des appels système est nécessaire. Il s'agit
+d'une interface de haut niveau entre les \emph{rings} 3 et 0. Du point de vue du
+programmeur, il s'agit d'un ensemble de fonctions C ``magiques'' qui font appel
+au système d'exploitation pour effectuer des opérations.
 
 Voyons ce qui se passe derrière la magie apparente. Une explication plus
 détaillée est disponible dans la documentation fournie par Intel
 \cite{intelsys}.
 
-\subsubsection{Dans la bibliothèque C}
+\paragraph{Dans la bibliothèque C}
 
 Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
 système. C'est la fonction qui est directement appelée par le programme. Cette
@@ -139,7 +137,7 @@ fonction commence par placer le numéro de l'appel système (noté
 dans les registres (\ebx, \ecx, \edx, \esi{} puis \edi). Une interruption
 logicielle est ensuite déclenchée (\verb!int 0x80!).
 
-\subsubsection{Dans la routine de traitement d'interruption}
+\paragraph{Dans la routine de traitement d'interruption}
 
 Étant donné la configuration du processeur\footnote{Il est impropre de dire que
 le processeur est configuré --- tout dépend uniquement de l'état de certains
@@ -156,7 +154,7 @@ du processus. Les valeurs des registres ont été préservées, la macro
 d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
 
 
-\subsubsection{Dans l'implantation de l'appel système}
+\paragraph{Dans l'implantation de l'appel système}
 
 Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
 fonction ``classique'', la convention d'appel \emph{cdecl} est respectée. La
@@ -172,7 +170,7 @@ définit entre autres des points d'entrée pour les fonctionnalités de débogag
 noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
 conformément à la convention \emph{cdecl}.
 
-\subsubsection{Retour vers le ring 3}
+\paragraph{Retour vers le ring 3}
 
 Au retour de la fonction, la valeur de retour est placée à la place de \eax{} là
 où les registres ont été sauvegardés sur la pile noyau
@@ -182,8 +180,7 @@ L'instruction \texttt{iret} (derrière la macro
 mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
 peut alors retourner au programme appelant.
 
-
-\section{Bug}
+\section{Exemple de bug}
 
 On décrit le cas d'un pilote video qui contenait un bug de pointeur utilisateur.
 Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340. 
@@ -256,18 +253,20 @@ L'intégralité de ce code peut être trouvée en annexe~\ref{cha:code-noyau}.
 \begin{figure}
   \insertcode{radeon-git-mini.diff}
 
-  \caption{Patch résolvant le problème de pointeur utilisateur.}
+  \caption[Patch résolvant le problème de pointeur utilisateur.]
+      {Patch résolvant le problème de pointeur utilisateur.
+       La ligne précédée par un signe \texttt{-} est supprimée et remplacée
+       par les lignes précédées par un signe \texttt{+}.
+      }
 \label{fig:linux-patch}
 \end{figure}
-
-% TODO décrire syntaxe unified diff
 
 La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 \texttt{d8ab3557} (figure~\ref{fig:linux-patch}) (\texttt{DRM\_COPY\_FROM\_USER}
 étant une simple macro pout \texttt{copy\_from\_user}). Dans ce cas, on
 n'obtient pas d'erreur de typage.
 
-\section{Détails}
+\section{Procédure expérimentale}
 
 Pour utiliser notre système de types, plusieurs étapes sont nécessaires en plus
 de traduire le noyau linux en \langname{}.
@@ -288,5 +287,3 @@ primitives $\phxx{\uGet}$ et $\phxx{\uPut}$.
 % bon type dans l'environnement initial
 
 Enfin, on peut lancer l'inférence de type.
-
-\wip{}

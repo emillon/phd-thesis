@@ -348,11 +348,16 @@ concept de \emph{typestates}~\cite{tse12-typestate}. Il a également été appli
 à la classe de vulnérabilités sur les pointeurs utilisateurs dont il est ici
 l'objet~\cite{cquk-usenix04}.
 
-Cette approche étant assez proche de la nôtre, la conclusion de la
-partie~\ref{part:lang} (page~\pageref{cha:ccl2}) sera dédiée à un comparatif
-entre les deux.
-
-%TODO[E]: dis tout de suite un mot sur pourquoi c'est mieux chez toi
+Cette approche étant assez proche de la nôtre: on donne un type différent aux
+pointeurs selon leur provenance. Néanmoins cela est très différent de nôtre
+solution. Une première différence est dans le langage considéré. CQual
+s'applique sur un lambda-calcul à références, alors que pour étudier du code C
+nous présentons un modèle mémoire avec pile explicite plus proche de la machine.
+D'autre part, le système de type de CQual est fondamentalement modifié pour
+prendre en compte ces opérations, alors que dans le nôtre il s'agit d'une simple
+extension qui ne nécessite pas de modifier toutes les règles de typage. La
+conclusion de la partie~\ref{part:lang} (page~\pageref{cha:ccl2}) sera dédiée à
+une comparaison entre nos solutions.
 
 Ces techniques de typage sont séduisantes parce qu'elles sont en général simples
 à mettre en place: à l'aide d'un ensemble de règles, on attribue un type à
