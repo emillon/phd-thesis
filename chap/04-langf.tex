@@ -1503,17 +1503,16 @@ $\%$ ou $\floatop{/}$ provoque l'erreur $\serr{div}$.
   \semrule{Exp-BinOp}
 \end{mathpar}
 
-Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$
-et $\widehat{-_p}$ définissant l'arithmétique des pointeurs. Celles-ci sont
+Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$ et
+$\widehat{-_p}$ définissant l'arithmétique des pointeurs. Celles-ci sont
 uniquement définies pour les références mémoire à un tableau, c'est-à-dire
-celles qui ont la forme $φ[n]$. On a alors:
+celles qui ont la forme $\widehat{\&}~φ[n]$ (par souci de clarté on note pas
+tous les $\widehat{\cdot}$ ci-dessous). On a alors:
 
 \begin{align*}
-  φ[n]~+_p~m = & φ[n+m] \\
-  φ[n]~-_p~m = & φ[n-m] \\
+  \widehat{\&}~φ[n]~+_p~i & = \widehat{\&}~φ[n+i] \\
+  \widehat{\&}~φ[n]~-_p~i & = \widehat{\&}~φ[n-i] \\
 \end{align*}
-
-% TODO widehats ici et ci-dessous non?
 
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
@@ -1525,10 +1524,10 @@ Cela est cohérent avec la norme C99:
     ''~\cite[6.5.6~§8]{AnsiC}}:
 
 \begin{align*}
-φ~+_p~m = & \serr{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
-φ~-_p~m = & \serr{ptr} \textrm{ si }∄ (φ', n), φ = φ'[n] \\
-\eNull~+_p~m = & \serr{ptr} \\
-\eNull~-_p~m = & \serr{ptr} \\
+\widehat{\&}~φ~+_p~i & = \serr{ptr} \textrm{ si }∄ (φ', i), φ = φ'[i] \\
+\widehat{\&}~φ~-_p~i & = \serr{ptr} \textrm{ si }∄ (φ', i), φ = φ'[i] \\
+        \eNull~+_p~i & = \serr{ptr} \\
+        \eNull~-_p~i & = \serr{ptr} \\
 \end{align*}
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
