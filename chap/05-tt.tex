@@ -1153,10 +1153,10 @@ On procède par induction sur la forme de $t$.
 
             Par inversion, $Γ ⊢ φ : t'$
 
-            Puisque $\mcomp{Γ}{m}$ et $Φ ⊢ φ : t'$,% TODO
-            $m[φ]_Φ$ est une valeur.
-
-            Par induction, $m ⊧ m[φ]_Φ : τ'$ et $\tComp{τ'}{t'}$.
+            Puisque $\mcomp{Γ}{m}$ et $Φ ⊢ φ : t'$, on obtient par le
+            lemme~\ref{lemma:mem-typ} que
+            $m[φ]_Φ$ est une valeur telle que
+            $m ⊧ m[φ]_Φ : τ'$ où $\tComp{τ'}{t'}$.
             D'après \textsc{S-Ref}, $m ⊧ \widehat{\&}~φ : τ$.
 
             De plus par \textsc{Comp-Ptr} % TODO nom pas cohérent ref/ptr
