@@ -1,19 +1,19 @@
 \begin{Verbatim}[commandchars=\\\{\}]
-	\PY{c}{\PYZsh{} system call handler stub}
+\PY{c}{\PYZsh{} system call handler stub}
 \PY{n+nf}{ENTRY}\PY{p}{(}\PY{n+no}{system\PYZus{}call}\PY{p}{)}
-	\PY{n+nf}{RING0\PYZus{}INT\PYZus{}FRAME}			\PY{c}{\PYZsh{} can\PYZsq{}t unwind into user space anyway}
-	\PY{n+nf}{pushl} \PY{n+nv}{\PYZpc{}eax}			\PY{c}{\PYZsh{} save orig\PYZus{}eax}
-	\PY{n+nf}{CFI\PYZus{}ADJUST\PYZus{}CFA\PYZus{}OFFSET} \PY{l+m+mi}{4}
-	\PY{n+nf}{SAVE\PYZus{}ALL}
-	\PY{n+nf}{GET\PYZus{}THREAD\PYZus{}INFO}\PY{p}{(}\PY{n+nv}{\PYZpc{}ebp}\PY{p}{)}
-					\PY{c}{\PYZsh{} system call tracing in operation / emulation}
-	\PY{n+nf}{testl} \PY{n+no}{\PYZdl{}\PYZus{}TIF\PYZus{}WORK\PYZus{}SYSCALL\PYZus{}ENTRY}\PY{p}{,}\PY{n+no}{TI\PYZus{}flags}\PY{p}{(}\PY{n+nv}{\PYZpc{}ebp}\PY{p}{)}
-	\PY{n+nf}{jnz} \PY{n+no}{syscall\PYZus{}trace\PYZus{}entry}
-	\PY{n+nf}{cmpl} \PY{n+no}{\PYZdl{}}\PY{p}{(}\PY{n+no}{nr\PYZus{}syscalls}\PY{p}{),} \PY{n+nv}{\PYZpc{}eax}
-	\PY{n+nf}{jae} \PY{n+no}{syscall\PYZus{}badsys}
+        \PY{n+nf}{RING0\PYZus{}INT\PYZus{}FRAME}         \PY{c}{\PYZsh{} can\PYZsq{}t unwind into user space anyway}
+        \PY{n+nf}{pushl} \PY{n+nv}{\PYZpc{}eax}              \PY{c}{\PYZsh{} save orig\PYZus{}eax}
+        \PY{n+nf}{CFI\PYZus{}ADJUST\PYZus{}CFA\PYZus{}OFFSET} \PY{l+m+mi}{4}
+        \PY{n+nf}{SAVE\PYZus{}ALL}
+        \PY{n+nf}{GET\PYZus{}THREAD\PYZus{}INFO}\PY{p}{(}\PY{n+nv}{\PYZpc{}ebp}\PY{p}{)}
+                                \PY{c}{\PYZsh{} system call tracing in operation / emulation}
+        \PY{n+nf}{testl} \PY{n+no}{\PYZdl{}\PYZus{}TIF\PYZus{}WORK\PYZus{}SYSCALL\PYZus{}ENTRY}\PY{p}{,}\PY{n+no}{TI\PYZus{}flags}\PY{p}{(}\PY{n+nv}{\PYZpc{}ebp}\PY{p}{)}
+        \PY{n+nf}{jnz} \PY{n+no}{syscall\PYZus{}trace\PYZus{}entry}
+        \PY{n+nf}{cmpl} \PY{n+no}{\PYZdl{}}\PY{p}{(}\PY{n+no}{nr\PYZus{}syscalls}\PY{p}{),} \PY{n+nv}{\PYZpc{}eax}
+        \PY{n+nf}{jae} \PY{n+no}{syscall\PYZus{}badsys}
 \PY{n+nl}{syscall\PYZus{}call:}
-	\PY{n+nf}{call} \PY{p}{*}\PY{n+no}{sys\PYZus{}call\PYZus{}table}\PY{p}{(,}\PY{n+nv}{\PYZpc{}eax}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{)}
-	\PY{n+nf}{movl} \PY{n+nv}{\PYZpc{}eax}\PY{p}{,}\PY{n+no}{PT\PYZus{}EAX}\PY{p}{(}\PY{n+nv}{\PYZpc{}esp}\PY{p}{)}		\PY{c}{\PYZsh{} store the return value}
+        \PY{n+nf}{call} \PY{p}{*}\PY{n+no}{sys\PYZus{}call\PYZus{}table}\PY{p}{(,}\PY{n+nv}{\PYZpc{}eax}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{)}
+        \PY{n+nf}{movl} \PY{n+nv}{\PYZpc{}eax}\PY{p}{,}\PY{n+no}{PT\PYZus{}EAX}\PY{p}{(}\PY{n+nv}{\PYZpc{}esp}\PY{p}{)}  \PY{c}{\PYZsh{} store the return value}
         \PY{c}{\PYZsh{} ...}
-	\PY{n+nf}{INTERRUPT\PYZus{}RETURN}
+        \PY{n+nf}{INTERRUPT\PYZus{}RETURN}
 \end{Verbatim}
