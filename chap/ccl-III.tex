@@ -1,1 +1,32 @@
-Ccl III.
+Après avoir décrit notre solution dans la partie~\ref{part:lang}, nous avons
+présenté ici notre démarche expérimentale.
+
+En s'appuyant sur le langage \newspeak, on gagne beaucoup par rapport à d'autres
+représentations intermédiaires. Le fait d'avoir un langage avec peu de
+constructions permet de ne pas avoir à exprimer plusieurs fois la même règle
+(par exemple, une fois sur la boucle ``\emph{for}'' et une autre sur la boucle
+``\emph{while}'').
+
+Un des inconvénients est que le modèle mémoire utilisé par \newspeak est assez
+différent de celui de \langname (ainsi que décrit dans le
+chapitre~\ref{cha:lang}). \newspeak est en effet prévu pour implanter des
+analyses précises de valeur reposant sur l'interprétation abstraite, et
+nécessite donc un modèle mémoire de plus bas niveau (où on peut créer des
+valeurs à partir d'une suite d'octets, par exemple). Il est aussi à noter que
+bien que l'évaluation de \langname ait été décrite ici, c'est principalement
+dans le but de démontrer des propriétés sémantiques: l'évaluateur n'a pas été
+implanté.
+
+Le prototype d'implantation peut évoluer dans deux directions: d'une part, en
+continuant à s'appuyer sur \newspeak, on peut réaliser des pré-analyses de
+typage qui permettent de guider une analyse plus précise, par exemple en
+choisissant un domaine abstrait différent en fonction des types de données
+rencontrés. D'autre part, il est possible de faire une implantation plus fidèle
+à \langname, qui permette d'ajouter de nouvelles fonctionnalités plus éloignées
+de C. Par exemple, un système de régions permettrait de simplifier
+l'environnement d'exécution en enlevant l'opération de nettoyage mémoire
+$\phx\cCleanup$. Le système de types peut également être enrichi, pour ajouter
+par exemple du polymorphisme. Le chapitre~\ref{cha:conclusion} présente quelques
+unes de ces extensions possibles.
+
+% TODO cas d'étude
