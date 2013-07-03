@@ -29,4 +29,17 @@ $\phx\cCleanup$. Le système de types peut également être enrichi, pour ajoute
 par exemple du polymorphisme. Le chapitre~\ref{cha:conclusion} présente quelques
 unes de ces extensions possibles.
 
-% TODO cas d'étude
+Le chapitre~\ref{cha:etudedecas} permet de démontrer que notre approche
+fonctionne. Le bug \url{http://freedesktop.org} \#29340 est la manifestation
+d'un problème de pointeur utilisateur mal utilisé dans le noyau, ainsi que
+décrit dans le chapitre~\ref{cha:os}. En lançant notre analyse sur le code
+présentant un problème, l'erreur est détectée. Au contraire, en la lançant sur
+le code après application du correctif (\emph{commit} \texttt{ad8ab3557}),
+aucune erreur n'est trouvée.
+
+Cette expérimentation est pour le moment limitée, mais on peut l'étendre à des
+domaines de plus en plus importants dans le noyau Linux: tout d'abord, en
+vérifiant les autres \emph{ioctls} de ce pilote, puis l'ensemble des
+\emph{ioctls} des modules ayant la même interface, puis d'autres types
+d'interfaces qui manipulent des pointeurs utilisateurs: par exemple d'autres
+pilotes de périphériques ou des systèmes de fichiers.
