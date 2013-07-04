@@ -180,6 +180,24 @@ L'instruction \texttt{iret} (derrière la macro
 mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
 peut alors retourner au programme appelant.
 
+\section{Risques}
+
+Ainsi que décrit dans la section~\ref{sec:secu-syscalls}, cela peut poser un
+problème de manipuler des pointeurs contrôlés par l'utilisateur au sein d'une
+routine de traitement d'appel système.
+
+Si le déréférencement est fait sans vérification, un utilisateur mal intentionné
+peut forger un pointeur vers le noyau (en déterminant des adresses valides dans
+l'espace noyau entre \texttt{0xc0000000} et \texttt{0xffffffff}). En provoquant
+une lecture sur ce pointeur, des informations confidentielles peuvent fuiter ;
+et en forçant une écriture, il est possible d'augmenter ses privilèges, par
+exemple en devenant super-utilisateur (\emph{root}). En pratique, il n'est pas
+toujours possible d'accéder à la mémoire. La mémoire utilisateur peut par
+exemple avoir été placée en zone d'échange sur le disque, ou \emph{swap}. À ce
+moment là, l'erreur provoquera tout de même un déni de service. Plus de détails
+sur ce mécanisme, et le fonctionnement de la mémoire virtuelle dans Linux,
+peuvent être trouvés dans~\cite{userspaceaccess}.
+
 \section{Exemple de bug}
 
 On décrit le cas d'un pilote video qui contenait un bug de pointeur utilisateur.
@@ -193,8 +211,14 @@ avec le mécanisme d'\emph{ioctls}\footnote{
   Ce nom vient de la fonction \verb!ioctl()! pour
   \emph{Input/Output Control}.
 }.
-Ils sont similaires à des appels système, mais spécifique à un périphérique
-particulier. Les fonctions implantant un \emph{ioctl} sont donc vulnérables à la
+Ils sont similaires à des appels système, mais spécifiques à un périphérique
+particulier. Le transfert de contrôle est similaire à ce qui a été décrit dans
+la section précédente: les applications utilisateurs appellent la fonction
+\texttt{ioctl()} de la bibliothèque standard, qui provoque une interruption.
+Celle-ci est traitée par la fonction \texttt{sys\_ioctl()} qui appelle la
+routine de traitement dans le bon pilote de périphérique.
+
+Les fonctions implantant un \emph{ioctl} sont donc vulnérables à la
 même classe d'attaques que les appels système, et donc doivent être écrits avec
 une attention particulière.
 
