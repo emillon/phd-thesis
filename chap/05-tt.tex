@@ -649,29 +649,6 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
 \end{definition}
 
-\begin{definition}[Hauteur d'une valeur]
-La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
-$-1$ sinon.
-
-\begin{align*}
-    \cH{\widehat{c}} &= -1 \\
-    \cH{\widehat{f}} &= -1 \\
-    \cH{\widehat{\&}~φ} &= \cHphi{φ} \\
-    \cH{\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}} &= \max_{i∈[1;n]} \cH{v_i} \\
-    \cH{\widehat{\eArray{v_1,…,v_n}}} &= \max_{i∈[1;n]} \cH{v_i}
-\end{align*}
-
-où:
-
-\begin{align*}
-    \cHphi{(x)} &= -1 \\
-    \cHphi{(n,x)} &= n \\
-    \cHphi{φ\widehat{.}l} &= \cHphi{φ} \\
-    \cHphi{φ\widehat{[n]}} &= \cHphi{φ}
-\end{align*}
-
-\end{definition}
-
 \begin{definition}[État mémoire bien typé]
 
     On définit par induction une relation entre les environnements de typage $Γ$

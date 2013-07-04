@@ -903,6 +903,30 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \end{definition}
 
+\begin{definition}[Hauteur d'une valeur]
+La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
+$-1$ sinon.
+
+\begin{align*}
+    \cH{\widehat{c}} &= -1 \\
+    \cH{\widehat{f}} &= -1 \\
+    \cH{\widehat{\&}~φ} &= \cHphi{φ} \\
+    \cH{\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}} &= \max_{i∈[1;n]} \cH{v_i} \\
+    \cH{\widehat{\eArray{v_1,…,v_n}}} &= \max_{i∈[1;n]} \cH{v_i}
+\end{align*}
+
+où:
+
+\begin{align*}
+    \cHphi{(x)} &= -1 \\
+    \cHphi{(n,x)} &= n \\
+    \cHphi{φ\widehat{.}l} &= \cHphi{φ} \\
+    \cHphi{φ\widehat{[n]}} &= \cHphi{φ}
+\end{align*}
+
+\end{definition}
+
+
 Les opérations $\mathrm{Extend}$ et $\mathrm{Pop}$ ne sont définies que pour une
 pile non vides. Néanmoins cela ne pose pas de problème, puisque lors de
 l'éxecution, la pile n'est vide que lors de l'évaluation d'expressions dans les
@@ -987,22 +1011,16 @@ l'exécution du programme.
 
 La fonction $\mathrm{Cleanup}$ est donnée par:
 
-% TODO à écrire proprement
-
-\def\cleanuplist#1#2{\mathrm{CleanupList} (#1, #2)}
-\def\cllive#1#2{\mathrm{Live} (#1, #2)}
-
 \begin{align*}
-  \mathrm{Cleanup}(s, g)  = & (s', g') \\
-                    où g' = & \cleanuplist{|s|}{g} \\
-                       s' = & [\cleanuplist{|s|}{s_1},
-                            …, \cleanuplist{|s|}{s_n}] \\
-       \cleanuplist{p}{u} = & \{(x, v) ∈ u / v\mbox{ n'est pas une adresse} \} \\
-                       \cup & \{(x, φ) ∈ u / \cllive{p}{φ} \} \\
-    \cllive{p}{(n, x)} = & n < p \\
-    \cllive{p}{(x)}    = & \mathrm{Vrai} \\
-    \cllive{p}{φ.l}    = & \cllive{p}{φ} \\
-    \cllive{p}{φ[n]}   = & \cllive{p}{φ}
+      \mathrm{Cleanup}((s, g)) &= (s', g') \\
+                 \mbox{où } s' &= (\cL{|s|}{s_1}, …, \cL{|s|}{s_|s|}) \\
+                            g' &= \cL{|s|}{g} \\
+\cL{p}{(x_1 ↦ v_1, …, x_n ↦ v_n)} &= (x_1 ↦ \cV{v_1}, …, x_n ↦ \cV{v_n}) \\
+\cV{p}{\widehat{\&}~φ} &= \begin{cases}
+                              \eNull         & \mbox{ si } \cH{φ} > p \\
+                              \widehat{\&}~φ & \mbox{ sinon}
+                           \end{cases} \\
+\cV{p}{v} &= v \mbox{ sinon}
 \end{align*}
 
 Sans cette règle, examinons le programme suivant:
