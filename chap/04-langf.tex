@@ -1441,9 +1441,10 @@ $\widehat{\&}~(((0,s0).f)$ et donc
 \texttt{(a)}
 et en
 \texttt{(b)}.
-Les règles d'évaluation sont donc les suivantes.
-Dans le cas où la valeur référencée n'a pas la forme $m[φ']_Φ$, on renvoie
-$\serr{var}$. Cela est préférable à renvoyer $\serr{ptr}$ car on montrera que la
+Les règles d'évaluation sont donc les suivantes. Dans le cas où la valeur
+référencée n'a pas la forme $m[φ']_Φ$, aucune règle ne peut s'appliquer (comme
+lorsqu'on cherche à réduire l'addition d'une fonction et d'un entier, par
+exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on montrera que la
 première est toujours évitée dans les programmes typés
 (théorème~\ref{thm:progres}).
 
@@ -1466,8 +1467,6 @@ x <- & s1
 
 \begin{mathpar}
   \semrule{Phi-Deref}
-
-  \semrule{Phi-Deref-Bad}
 \end{mathpar}
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
