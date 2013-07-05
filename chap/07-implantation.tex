@@ -598,28 +598,6 @@ les débordements d'entiers lors d'une analyse de valeurs par interprétation
 abstraite. Dans le cas de notre analyse, les valeurs ne sont pas pertinentes et
 cet opérateur peut être vu que comme un ``plus'' unaire typé $(\tInt) → \tInt$.
 
-\emph{A contrario}, lorsqu'il n'est pas possible d'inférer des types
-compatibles, l'analyseur s'arrête avec une erreur.
-
-\begin{verbatim}
-void f(int *p) {
-    /*!npk userptr p */
-    *p = 3;
-}
-\end{verbatim}
-
-Le commentaire \texttt{/*!npk userptr p */} est interpréter par l'analyseur et
-le fait unifier le type de \texttt{p} avec $\ptrU{t}$, c'est-à-dire qu'il force
-son qualificateur à être \qUser.
-
-% TODO à revoir complètement
-
-\begin{verbatim}
-04-addrof.c:4#4 - Cannot unify qualifiers:
-  Kernel
-  User
-\end{verbatim}
-
-On signale l'emplacement où la dernière unification a échoué.
+Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
 % vim: spelllang=fr

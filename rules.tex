@@ -285,12 +285,6 @@
                    { \widehat{\&}~φ' = m[φ]_Φ}
                    { \mms{*φ}{φ'} }
     }
-    {Phi-Deref-Bad}{ \irule{Phi-Deref-Bad}
-                       { v = m[φ]_Φ
-                      \\ ∄~φ', v = \widehat{\&}~φ'
-                       }
-                       { \msi{m}{*φ} → \serr{var} }
-    }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
                     { \mms{lv.l_S}{lv\widehat{.}l} }

@@ -1278,4 +1278,18 @@ Alors $\mcomp{Γ'}{m'}$.
 % TODO
 \end{proof}
 
+\section*{Conclusion}
+
+Le langage \langname, ainsi que décrit dans le chapitre~\ref{cha:lang}, ne
+possède pas de garanties de sûreté. C'est-à-dire qu'on ne peut rien prédire sur
+l'exécution d'un programme. Par exemple, $\eFun{x}{\iPass} + 1$ est une
+expression correcte mais pour laquelle il n'y a pas de règle d'évaluation qui
+s'applique. En ajoutant un système de type, on s'assure que les termes peuvent
+être évalués, et que les valeurs produites sont en accord avec les types données
+aux différentes parties du programme. Cela permet surtout de s'assurer que les
+programmes ne peuvent provoquer une erreur d'exécution que dans certains cas
+particuliers, comme les division ou les accès aux tableaux.
+
+% TODO Return implicite
+
 % vim: spelllang=fr

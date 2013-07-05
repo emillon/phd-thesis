@@ -291,23 +291,48 @@ La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 n'obtient pas d'erreur de typage.
 
 \section{Procédure expérimentale}
+\label{sec:demo-unif}
 
 Pour utiliser notre système de types, plusieurs étapes sont nécessaires en plus
 de traduire le noyau linux en \langname{}.
 
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
 environnement initial (via la variable \texttt{exttbl} décrite en
-section~\ref{sec:ptrtype-archi}).
+section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
+pointeurs souillés on ajoute un commentaire spécial \texttt{!npk userptr x},
+qui fait unifier le type de \texttt{x} avec $\ptrU{t}$.
 
-% TODO dire ce qu'on annote: les sources de pointeurs souillés
+\begin{figure}
+\insertcode{ex-drm.c}
 
-Ensuite, il faut réécrire les fonctions de manipulation de pointeurs fournies
-par le noyau: \texttt{get\_user}, \texttt{put\_user},
-\texttt{copy\_from\_user}, \texttt{copy\_to\_user}, etc. Leur implantation
-revient à réaliser un test puis à faire la copie. À leur place on utilise les
-primitives $\phxx{\uGet}$ et $\phxx{\uPut}$.
+\caption{Code du noyau annoté}
+\label{fig:ex-drm}
+\end{figure}
 
-% TODO ... ou on ne met pas ces primitives là en tyspeak et on ajoute juste un
-% bon type dans l'environnement initial
+En ce qui concerne les fonctions de manipulation de pointeurs fournies
+par le noyau (\texttt{get\_user}, \texttt{put\_user},
+\texttt{copy\_from\_user}, \texttt{copy\_to\_user}, etc.), on ajoute à
+l'environnement global leur type correct.
 
-Enfin, on peut lancer l'inférence de type.
+Enfin, on peut lancer l'inférence de type. Ainsi, sur l'exemple de la
+figure~\ref{fig:ex-drm}, on obtient la sortie suivante:
+
+\begin{Verbatim}
+05-drm.c:17#1 - Cannot unify qualifiers:
+  Kernel
+  User
+\end{Verbatim}
+
+Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
+type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
+unification a échoué.
+
+\section*{Conclusion}
+
+Le prototype décrit dans le chapitre~\ref{cha:implem} peut s'adapter à détecter
+des bugs dans le noyau Linux. Pour le moment, il nécessite du code annoté, mais
+la phase de compilation depuis le code GNU C que comporte le noyau peut déjà
+être compilée automatiquement en \newspeak, puis dans une représentation proche
+de \langname.
+
+% vim: spelllang=fr
