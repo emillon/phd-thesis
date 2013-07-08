@@ -30,6 +30,9 @@
 \maxtocdepth{subsection}    % What appears in toc
 \maxsecnumdepth{subsection} % What get numbered
 
+\def\partintro{}
+\renewcommand{\afterpartskip}{\vfil \partintro \vfil \newpage}
+
 %\theoremstyle{definition}
 \newtheorem{definition}{Définition}[chapter]
 \newtheorem{theorem}{Théorème}[chapter]
@@ -75,10 +78,10 @@
 \input{chap/01-intro.tex}
 
 
+\input{chap/I-ctx.tex}
 \part{Méthodes formelles pour la sécurité}
 \label{part:ctx}
 
-\input{chap/I-ctx.tex}
 
 \chapter{Systèmes d'exploitation}
 
@@ -97,10 +100,10 @@
 \partccl{part:ctx}
 \input{chap/ccl-I.tex}
 
+\input{chap/II-langages.tex}
 \part{Un langage pour l'analyse de code système : \langname}
 \label{part:lang}
 
-\input{chap/II-langages.tex}
 
 \chapter{Syntaxe et sémantique}
 
@@ -131,10 +134,10 @@
 \label{cha:ccl2}
 \input{chap/ccl-II.tex}
 
+\input{chap/III-experimentation.tex}
 \part{Expérimentation}
 \label{part:xp}
 
-\input{chap/III-experimentation.tex}
 
 \chapter{Implantation}
 
