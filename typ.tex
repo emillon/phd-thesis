@@ -30,8 +30,20 @@
 \maxtocdepth{subsection}    % What appears in toc
 \maxsecnumdepth{subsection} % What get numbered
 
+% Part header
+\usepackage{adjustbox}
+\definecolor{lightgrey}{gray}{0.7}
 \def\partintro{}
-\renewcommand{\afterpartskip}{\vfil \partintro \vfil \newpage}
+\renewcommand{\afterpartskip}{
+\vfil
+\noindent
+{%
+\setlength{\fboxsep}{20pt}%
+\adjustbox{minipage=\textwidth-2\fboxsep-2\fboxrule,cfbox=lightgrey,center}%
+          {\partintro}%
+}%
+\vfil
+\newpage}
 
 %\theoremstyle{definition}
 \newtheorem{definition}{Définition}[chapter]
