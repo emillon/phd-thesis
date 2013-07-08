@@ -21,10 +21,13 @@
 \restylefloat{figure}
 \newsubfloat{figure}
 
-\epigraphfontsize{\small\itshape}
+% Epigraphs
+\epigraphfontsize{\itshape}
 \setlength\epigraphwidth{8cm}
 \setlength\epigraphrule{0pt}
-\def\epigraph#1#2{}
+
+\input{quote.tex}
+
 
 \setlist[itemize]{label=$\bullet$}
 
@@ -72,6 +75,33 @@
 \end{titlingpage}
 
 \cleartorecto
+
+\begin{headingpage}
+\hfill%
+\begin{minipage}{0.6\textwidth}
+\shorthandoff{;}
+\begin{shadequote}[r]{Peter van den Linden}
+Many C programmers believe that ``strong typing''
+just means pounding extra hard on the keyboard.
+\end{shadequote}
+
+%\begin{shadequote}[r]{Pete Fenelon}
+%A friend of mine in a compiler writing class produced a compiler with one error
+%message ``you lied to me when you told me this was a program''.
+%\end{shadequote}
+
+%\begin{shadequote}[r]{Henry Spencer}
+%Those who don't understand UNIX are condemned to reinvent it, poorly.
+%\end{shadequote}
+
+%\begin{shadequote}[r]{Charles Babbage, Passages from the Life of a Philosopher}
+%On two occasions I have been asked, ``Pray, Mr.\ Babbage, if you put into the
+%machine wrong figures, will the right answers come out?''… I am not able rightly
+%to apprehend the kind of confusion of ideas that could provoke such a question.
+%\end{shadequote}
+\shorthandon{;}
+\end{minipage}
+\end{headingpage}
 
 \asuacknowledgements
 
