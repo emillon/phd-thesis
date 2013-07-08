@@ -71,10 +71,11 @@ construction du pointeur.
 En plus du déréférencement par \texttt{*} (qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
-utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et $\ctuF$.
-Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen indiquant
-si la copie pu être faite (si le paramètre contrôlé par l'utilisateur pointe en
-espace noyau, les fonctions ne font pas la copie et signalent l'erreur).
+utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et \linebreak
+$\ctuF$. Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen
+indiquant si la copie pu être faite (si le paramètre contrôlé par l'utilisateur
+pointe en espace noyau, les fonctions ne font pas la copie et signalent
+l'erreur).
 
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
@@ -101,10 +102,10 @@ cas contraire, la copie n'est pas faite).
 \label{fig:ex-sys-getver}
 \end{figure}
 
-On peut remarquer que contrairement aux fonctions de Linux, les fonctions
-$\cfuF$ et $\ctuF$ n'ont pas de paramètre ``taille à copier''. Cela est dû au
-fait que le modèle mémoire de \langname{} est plus haut niveau. L'information de
-taille est déjà présente dans chaque valeur.
+On peut remarquer que contrairement aux fonctions présentes dans le noyau Linux,
+les fonctions $\cfuF$ et $\ctuF$ n'ont pas de paramètre indiquant la taille à
+copier. Cela est dû au fait que le modèle mémoire de \langname{} est plus haut
+niveau. L'information de taille est déjà présente dans chaque valeur.
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
@@ -183,9 +184,10 @@ celle-ci en rajoutant le cas:
 \end{align*}
 
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
-$\ctuF$. L'idée est que celles-ci testent dynamiquement la \emph{valeur} du
-paramètre contrôlé par l'utilisateur afin de vérifier que celui-ci pointe vers
-l'espace utilisateur (c'est-à-dire, qu'il est de la forme $\vTainted{φ}$).
+\linebreak $\ctuF$. L'idée est que celles-ci testent dynamiquement la
+\emph{valeur} du paramètre contrôlé par l'utilisateur afin de vérifier que
+celui-ci pointe vers l'espace utilisateur (c'est-à-dire, qu'il est de la forme
+$\vTainted{φ}$).
 
 Deux cas peuvent se produire. Soit la partie à vérifier a la forme
 $\vTainted{φ'}$, soit non (et dans ce cas $∄φ', φ = \vTainted{φ'}$). Dans le

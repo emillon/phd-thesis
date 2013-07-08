@@ -562,9 +562,9 @@ fonction: par exemple, si une fonction s'appelle récursivement, plusieurs
 instances de ses variables locales sont présentes dans le programme.
 
 La structure de pile des locales permet de les organiser en niveaux
-indépendants: à chaque appel de fonction, un nouveau cadre de pile est créé,
-comprenant ses paramètres et ses variables locales. Au contraire, pour les
-globales il n'y a pas de système d'empilement, puisque ces variables sont
+indépendants: à \linebreak chaque appel de fonction, un nouveau cadre de pile
+est créé, comprenant ses paramètres et ses variables locales. Au contraire, pour
+les globales il n'y a pas de système d'empilement, puisque ces variables sont
 accessibles depuis tout point du programme.
 
 Pour identifier de manière non ambigüe une variable, on note simplement $x$ la
@@ -794,12 +794,8 @@ Un certain nombre d'opérations est possibles sur les valeurs
   flottants est immédiate. Deux valeurs composées (tableaux ou structures) sont
   égales si elles ont la meme ``forme'' (même taille pour les tableaux, et même
   champs pour les structures) et que toutes leurs sous-valeurs sont égales deux
-  à deux. Les références mémoire $φ$ sont égales lorsque les chemins qu'ils
-  décrivent sont syntaxiquement égaux\footnote{
-    Il est donc possible que deux pointeurs pointent sur la même adresse mais
-    soient considérés différents. La raison pour ce choix est que la comparaison
-    doit pouvoir se faire sans accéder à la mémoire.
-  }.
+  à deux. Deux références mémoire sont égales \linebreak lorsque les chemins
+  qu'elles décrivent sont syntaxiquement égaux.
 \item
   les opérations de comparaison $≤,≥,<,>$ sont définies avec leur sémantique
   habituelle sur les entiers et les flottants. Sur les références mémoires,
@@ -1513,8 +1509,8 @@ $\%$ ou $\floatop{/}$ provoque l'erreur $\serr{div}$.
 Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$ et
 $\widehat{-_p}$ définissant l'arithmétique des pointeurs. Celles-ci sont
 uniquement définies pour les références mémoire à un tableau, c'est-à-dire
-celles qui ont la forme $\widehat{\&}~φ[n]$ (par souci de clarté on note pas
-tous les $\widehat{\cdot}$ ci-dessous). On a alors:
+celles qui ont la forme $\widehat{\&}~φ[n]$ (par souci de clarté on ne note pas
+tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
 
 \begin{align*}
   \widehat{\&}~φ[n]~+_p~i & = \widehat{\&}~φ[n+i] \\
@@ -1603,8 +1599,8 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
 
 L'appel de fonction est traité de manière similaire à la déclaration de
 fonction: on ne peut pas facilement relier un pas d'évaluation de $i$ à un pas
-d'évaluation de $\eFun{a_1,…,a_n}{i} (v_1,…,v_n)$, donc un contexte
-$C \gramisa \eFun{a_1,…,a_n}{\ctxEmpty} (v_1,…,v_n)$ n'est pas à considérer. Il
+d'évaluation de $\eFun{a}{i} (v_1,…,v_n)$, donc un contexte
+$C \gramisa \eFun{a}{\ctxEmpty} (v_1,…,v_n)$ n'est pas à considérer. Il
 faut donc transmettre le pas à la main. C'est le but des deux règles
 \textsc{Exp-Call-Ctx} et \textsc{Exp-Call-Err}. D'autre part, les cas terminaux
 sont \textsc{Exp-Call-Return-Unit} et \textsc{Exp-Call-Return}:

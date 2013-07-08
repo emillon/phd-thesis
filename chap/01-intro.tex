@@ -133,10 +133,11 @@ Au niveau matériel, on utilise la notion de \emph{niveaux de privilèges} pour
 déterminer s'il est possible d'exécuter une instruction.
 
 D'une part, le processeur contient un niveau de privilège intrinsèque. D'autre
-part, chaque zone mémoire contenant du code ou des données possède également un
-niveau de privilège minimum nécessaire. L'exécution d'une instruction est alors
-possible si et seulement si le niveau de privilège du processeur est supérieur à
-celui de l'instruction et des opérandes mémoires qui y sont présentes
+part, \linebreak chaque zone mémoire contenant du code ou des données possède
+également un niveau de privilège minimum nécessaire. L'exécution d'une
+instruction est alors possible si et seulement si le niveau de privilège du
+processeur est supérieur à celui de l'instruction et des opérandes mémoires qui
+y sont présentes
 \footnote{
   Ici ``supérieur'' est synonyme de ``plus privilégié''. Dans l'implantation
   d'Intel présentée dans le chapitre~\ref{cha:os}, les niveaux sont numérotés de
@@ -309,9 +310,9 @@ bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
 
 La dernière possibilité est le polymorphisme paramétrique, qui consiste à
-utiliser le même code quelque soit le type des arguments. Dans ce cas, on
-utilise une seule fonction pour traiter une liste d'entiers ou une liste de
-flottants, par exemple. Au lieu d'associer à chaque fonction un type, dans
+utiliser le \linebreak même code quelque soit le type des arguments. Dans ce
+cas, on utilise une seule fonction pour traiter une liste d'entiers ou une liste
+de flottants, par exemple. Au lieu d'associer à chaque fonction un type, dans
 certains cas on lui associe un type paramétré, instanciable en un type concret.
 Dans le cas des fonctions de traitement de liste, l'idée est que lorsqu'on ne
 touche pas aux éléments, alors le traitement est valable quelque soit leur type.
