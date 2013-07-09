@@ -20,37 +20,22 @@ Trois types d'erreurs à l'exécution sont possibles:
 
 \begin{itemize}
 \item
-  les erreurs de typage (dynamique), lorsqu'on tente d'appliquer à une
-  opération des valeurs incompatibles (additionner un entier et une
-  fonction par exemple).
+les erreurs liées aux valeurs: lorsqu'on tente d'appliquer à une opération des
+valeurs incompatibles (additionner un entier et une fonction par exemple).
+L'accès à des variables qui n'existent pas rentre aussi dans cette catégorie.
 \item
-  les erreurs de sécurité, qui consistent en le déréférencement d'un
-  pointeur dont la valeur est contrôlée par l'espace utilisateur.
-  Celles-ci sont uniquement possibles en contexte noyau.
+les erreurs mémoire, qui résultent d'un débordement de tableau, du
+déréférencement d'un pointeur invalide ou d'arithmétique de pointeur invalide.
 \item
-  les erreurs mémoire, qui résultent d'un débordement de tableau, du
-  déréférencement d'un pointeur invalide ou d'arithmétique de pointeur
-  invalide.
+les erreurs de sécurité, qui consistent en le déréférencement d'un pointeur dont
+la valeur est contrôlée par l'espace utilisateur. Celles-ci sont uniquement
+possibles en contexte noyau.
 \end{itemize}
 
-En résumé, l'introduction des types simples enlève la possibilité de rencontrer
-des erreurs de typage dynamique, et l'ajout des qualificateurs interdit les
-erreurs de sécurité.
-
-\begin{center}
-\begin{tabular}{ll@{\hskip 15mm}ccc}
-\toprule
-\multirow{2}{*}{Langage} & \multirow{2}{*}{Types}  & \multicolumn{3}{c}{Erreurs possibles}   \\
-                         &  & Typage      & Sécurité    & Mémoire     \\
-\midrule
-\langname{}       & sans      & \CheckedBox{} & N/A           & \CheckedBox{} \\
-\langname{}       & simples   & \Square{}     & N/A           & \CheckedBox{} \\
-\langname{} noyau & simples   & \Square{}     & \CheckedBox{} & \CheckedBox{} \\
-\langname{} noyau & qualifiés & \Square{}     & \Square{}     & \CheckedBox{} \\
-\bottomrule
-\end{tabular}
-
-% TODO ligne 3 s/simples/naifs/ ?
-
-\end{center}
+L'introduction des types simples enlève la possibilité de rencontrer le premier
+cas. Il reste en revanche toujours possible de rencontrer des erreurs mémoire
+(ainsi que des divisions par zéro). En présence d'extensions permettant de
+manipuler des pointeurs utilisateurs, une extension naïve du système de types
+introduit des erreurs de sécurité, qui sont empêchées par l'ajout de règles de
+typage supplémentaires.
 }

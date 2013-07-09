@@ -574,33 +574,28 @@ $\cLookup{x}{m}$ ne renvoie donc pas d'erreur.
 %}}}
 \paragraph{\textsc{Lv-Deref}:}%{{{
 
-  Appliquons l'hypothèse de récurrence à $lv$ vue en tant qu'expression.
+  Appliquons l'hypothèse de récurrence à $e$ vue en tant qu'expression.
 
 \begin{itemize}
 \item
-  $lv = v$. Puisque $Γ ⊢ v : t*$, on déduit du
+  $e = v$. Puisque $Γ ⊢ v : t*$, on déduit du
   lemme~\ref{lemma:canon} que
   $v = \eNull$
   ou
-  $v = φ$.
+  $v = \widehat{\&}~φ$.
 
   Dans le premier cas, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
   $\msi{m}{e} → \serr{ptr}$.
 
-  Dans le second cas, l'expression à réduire à pour forme $*φ$. Puisque
-  $\mcomp{Γ}{m}$, $m[φ]_Φ$ est une valeur $v'$ telle que $m ⊧ v' : τ$ où
-  $\tComp{τ}{t~*}$, donc de la forme $v' = \widehat{\&}~φ'$
-  (lemme~\ref{lemma:mem-typ}).
-
-  Alors \textsc{Phi-Deref} s'applique.
+  Dans le second cas, \textsc{Phi-Deref} s'applique.
 
 \item
-  $\mm{m}{lv}{m'}{e'}$.
+  $\mm{m}{e}{m'}{e'}$.
   De \textsc{Ctx} avec $C = *\ctxEmpty$, on obtient
   $\mm{m}{e}{m'}{*e'}$.
 
 \item
-  $\msi{m}{lv} → Ω$.
+  $\msi{m}{e} → Ω$.
   En appliquant \textsc{Eval-Err} avec $C = *\ctxEmpty$, on obtient
   $\msi{m}{e} → Ω$.
 
@@ -705,12 +700,6 @@ N.B. \textsc{Ctx} apparaît 3 fois.
 \subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
-\[
-   \irule{Ctx}
-     { \mm{m}{e}{m'}{e'} }
-     { \mm{m}{\ctxSub{C}{e}}{m'}{\ctxSub{C}{e'}} }
-\]
-
 En appliquant le lemme~\ref{lemma:inv-ctx}, on obtient l'existence de $t'$ tel
 que $Γ ⊢ e : t'$ et $\tyctx{Γ}{C}{t'}{t}$.
 
@@ -816,13 +805,15 @@ Idem que dans le cas des expressions.
 \subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
 \paragraph{\textsc{Phi-Deref}:} % {{{
-Puisque $Γ ⊢ *φ : t$, le lemme d'inversion nous assure que $Γ ⊢ φ : t~*$.
-On applique le lemme~\ref{lemma:mem-typ} à $φ$:
-il vient que $m ⊧ \widehat{\&}~φ' : τ'$ où $\tComp{τ'}{t~*}$.
-Donc par inversion
-(seule la règle \textsc{S-Ptr} permet de dériver un tel jugement), on a
-$\semtypphi{m}{φ'}{τ}$ où $τ' = τ~*$.
-On conclut que $\tComp{τ'}{t}$ en inversant par \textsc{Comp-Ptr}.
+
+On sait que $Γ ⊢ *~v : t$ où $v = \widehat{\&}~φ$.
+Par inversion, $Γ ⊢ v : t~*$.
+Alors d'après le lemme~\ref{lemma:repr}, il existe
+$τ'$ tel que $m ⊧ v : τ'$ et $\tComp{τ'}{t~*}$.
+Par inversion de la relation de typage sémantique,
+$τ' = τ~*$ où $\tComp{τ}{t}$.
+Alors par inversion de \textsc{S-Ptr}, on obtient que
+$\semtypphi{m}{φ}{τ}$.
 
 % }}}
 \paragraph{\textsc{Phi-Var}, \textsc{Phi-Struct} et \textsc{Phi-Array}:} % {{{
@@ -891,7 +882,7 @@ Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
 \section{Progrès pour les types qualifiés}
 \label{proof:progres-qualif}
 
-(théorème~\ref{thm:progres-qual})
+(Théorème~\ref{thm:progres-qual})
 
 \begin{proof}
 
@@ -927,7 +918,7 @@ On applique l'hypothèse de récurrence à $lv$.
 % }}}
 \paragraph{\textsc{Ptr-Arith-User} :} % {{{
 
-Ce cas est similaire à \textsc{Op-Int}. % TODO détails
+Ce cas est similaire à \textsc{Op-Int}.
 
 % }}}
 \paragraph{\textsc{GetU} :} % {{{
@@ -938,21 +929,21 @@ On applique l'hypothèse de récurrence à $e_d$.
 \item $e_d = v_d$. On applique l'hypothèse de récurrence à $e_s$.
 
 \begin{itemize}
-\item $e_s = v_s$. % TODO
+\item $e_s = v_s$.
 
-    D'après le lemme~\ref{lemma:canon}, % TODO ou une version chapitre 6?
-    $v_s$ a pour forme $φ_s$.
+    D'après le lemme~\ref{lemma:canon} adapté aux extensions noyau, $v_s$ a pour
+    forme $φ_s$.
 
     On distingue la forme de $φ_s$:
 
     \begin{itemize}
         \item $φ_s = \vTainted{φ}$. Alors on applique
-        \textsc{User-Get-OK}.
-        % TODO encore faut-il que la prémisse soit vraie...
-        % trop grand pas
+        \textsc{User-Get-OK}. Le lemme~\ref{lemma:mem-typ} adapté aux extensions
+        noyau assure que les prémisses sont correctes et que $Γ ⊧ m'$.
+        % TODO vérifier quand même
 
-        \item $∄~φ, φ_s = \vTainted{φ}$. Alors idem avec
-            \textsc{User-Get-Err}.
+        \item $∄~φ, φ_s = \vTainted{φ}$. Alors on applique
+        \textsc{User-Get-Err}.
     \end{itemize}
 
 \item $\mm{m}{e_s}{m'}{e_s'}$. Posons $C = \uGet{v_d}{\ctxEmpty}$.
@@ -978,22 +969,29 @@ Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 \section{Préservation pour les types qualifiés}
 \label{proof:preservation-qualif}
 
-(théorème~\ref{thm:preservation-qualif})
+(Théorème~\ref{thm:preservation-qualif})
 
 De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 
-\paragraph{\textsc{Expr-Tainted}:} % {{{ TODO
-\[ \semrule{Expr-Tainted} \]
+\paragraph{\textsc{Expr-Tainted}:} % {{{
+
+On applique le lemme de représentation. % TODO
+
 % }}}
-\paragraph{\textsc{User-Get-OK}:} % {{{ TODO
-\[ \semrule{User-Get-OK} \]
+\paragraph{\textsc{User-Get-OK}:} % {{{
+Tout d'abord, d'après le lemme~\ref{lemma:inv-qualif}, $t = \tInt$, donc la
+préservation du type est établie car $m' ⊧ 0 : \tInt$
+
+Le lemme~\ref{lemma:mem-typ} adapté aux extensions noyau % TODO
+permet de conclure quant à la compatibilité mémoire.
 % }}}
-\paragraph{\textsc{User-Get-Err}:} % {{{ TODO
-\[ \semrule{User-Get-Err} \]
+\paragraph{\textsc{User-Get-Err}:} % {{{
+La seule partie à prouver est la préservation, qui se fait de la même manière
+que dans le cas précédent.
 % }}}
-\paragraph{\textsc{User-Put-OK}:} % {{{ TODO
-\[ \semrule{User-Put-OK} \]
+\paragraph{\textsc{User-Put-OK}:} % {{{
+Idem que dans le cas {\textsc{User-Put-OK}.
 % }}}
-\paragraph{\textsc{User-Put-Err}:} % {{{ TODO
-\[ \semrule{User-Put-Err} \]
+\paragraph{\textsc{User-Put-Err}:} % {{{
+Idem que pour \textsc{User-Get-Err}.
 % }}}

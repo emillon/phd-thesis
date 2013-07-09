@@ -1,5 +1,3 @@
-% TODO lv ::= *e non?
-
 Dans ce chapitre nous présentons \langname, un langage impératif inspiré de C.
 Sa syntaxe est tout d'abord décrite; puis une sémantique opérationnelle est
 explicitée.
@@ -472,7 +470,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
   \\
   \gramdef{Left-values}{lv}
                   { x      }{ Variable }
-                  { *lv    }{ Déréférencement }
+                  { *e     }{ Déréférencement }
                   { lv.l_S }{ Accès à un champ }
                   { lv[e]  }{ Accès à un élément }
                   {END}
@@ -1226,8 +1224,6 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     \eArray{ v_1 ; … ; v_n } {[i←v]}_T &= \serr{array} \textrm{ sinon} \\
   \end{align*}
 
-  % TODO off by ones...
-
 \subsection*{Accès par chemin : $Φ$}
 \label{subsec:acces-phi}
 
@@ -1439,8 +1435,6 @@ lorsqu'on cherche à réduire l'addition d'une fonction et d'un entier, par
 exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on montrera que la
 première est toujours évitée dans les programmes typés
 (théorème~\ref{thm:progres}).
-
-% TODO vérifier qu'il faut pas un widehat &
 
 \begin{figure}
 \begin{Verbatim}

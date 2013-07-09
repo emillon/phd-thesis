@@ -24,8 +24,8 @@
                 { Γ ⊢ x : t }
     }
     {Lv-Deref}{ \irule{Lv-Deref}
-                  { Γ ⊢ lv : t* }
-                  { Γ ⊢ *lv : t }
+                  { Γ ⊢ e : t* }
+                  { Γ ⊢ *e : t }
     }
     {Lv-Index}{ \irule{Lv-Index}
                   { Γ ⊢ e : \tInt \\
@@ -282,8 +282,8 @@
                  }
     }
     {Phi-Deref}{ \irule{Phi-Deref}
-                   { \widehat{\&}~φ' = m[φ]_Φ}
-                   { \mms{*φ}{φ'} }
+                   { v = \widehat{\&}~φ }
+                   { \mms{*~v }{φ} }
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
@@ -456,11 +456,12 @@
                       { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
     }
     {User-Get-OK}{ \irule{User-Get-OK}
-                     { \mm{m}{φ_d ← φ_s}
-                         {m'}{\iPass}
+                     { \widehat{\&}~φ = m[φ_d]_Φ
+                    \\ v  = m[φ_s]_Φ
+                    \\ m' = m[φ ← v]_Φ
                      }
                      { \mm{m}{\uGet{φ_d}{\vTainted{φ_s}}}
-                       {m'}{0} % TODO faire une rq sur les widehats
+                       {m'}{0}
                      }
     }
     {User-Get-Err}{ \irule{User-Get-Err}
@@ -472,8 +473,9 @@
                       }
     }
     {User-Put-OK}{ \irule{User-Put-OK}
-                     { \mm{m}{φ_d ← φ_s}
-                         {m'}{\iPass}
+                     { \widehat{\&}~φ = m[φ_d]_Φ
+                    \\ v = m[φ_s]_Φ
+                    \\ m' = m[φ ← v]_Φ
                      }
                      { \mm{m}{ \uPut{\vTainted{φ_d}}{φ_s} }
                          {m'}{0}
