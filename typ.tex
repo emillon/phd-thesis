@@ -39,6 +39,7 @@
 \definecolor{lightgrey}{gray}{0.7}
 \def\partintro{}
 \renewcommand{\afterpartskip}{
+\ifdefempty{\partintro}{}{
 \vfil
 \noindent
 {%
@@ -46,6 +47,7 @@
 \adjustbox{minipage=\textwidth-2\fboxsep-2\fboxrule,cfbox=lightgrey,center}%
           {\partintro}%
 }%
+}
 \vfil
 \newpage}
 
@@ -202,6 +204,7 @@ just means pounding extra hard on the keyboard.
 \label{cha:conclusion}
 \input{chap/09-conclusion.tex}
 
+\def\partintro{}
 \appendix
 \renewcommand{\appendixpagename}{Annexes}
 \renewcommand{\appendixtocname}{\appendixpagename}
