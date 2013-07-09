@@ -901,6 +901,10 @@ $(t_1, …, t_n)$ et $t'$ tels que:
     Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t ⊢ i
   \end{cases} \]
 
+\item Si $Γ ⊢ lv ← e : t$, alors $Γ ⊢ lv : t$ et $Γ ⊢ e : t$.
+\item Si $Γ ⊢ \&~lv : t$, alors il existe $t'$ tel que
+$Γ ⊢ lv : t'$ et $t = t'~*$.
+
 \item Instructions:
 \begin{itemize}
 \item Si $Γ ⊢ i_1;i_2$, alors $Γ ⊢ i_1$ et $Γ ⊢ i_2$.
