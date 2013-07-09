@@ -922,44 +922,9 @@ $Γ ⊢ \vRet : t$.
 
 \end{lemma}
 
-
-\begin{proof}
-
-  Pour chaque jugement, on considère les règles qui peuvent amener à cette
-  conclusion.
-
-\begin{itemize}
-\item
-  Références mémoire:
-
-  \begin{itemize}
-
-    \item $Γ ⊢ x : t$
-
-      La seule règle de cette forme est \textsc{Lv-Var}. Puisque sa prémisse est
-      vraie, on en conclut que $x : t ∈ Γ$.
-
-    \item $Γ ⊢ φ[] : t$
-
-      Idem avec \textsc{Lv-Index}.
-
-    \item $Γ ⊢ φ.l : t$
-
-      Idem avec \textsc{Lv-Field}.
-
-  \end{itemize}
-
-\item
-  Appel de fonction: pour en arriver à $Γ ⊢ e (e_1, …, e_n) : t$, seule la
-  règle \textsc{Call} s'applique, ce qui permet de conclure.
-
-\item Fonction: la seule règle possible pour conclure une dérivation de
-  $ Γ ⊢ \eFun{a_1, …, a_n}{i} : t$
-  est \textsc{Fun}.
-
-\end{itemize}
-
-% TODO finir la preuve
+\begin{proof}[Démonstration (esquisse)]
+Pour chaque forme de jugement de typage, on liste les règles qui peuvent amener
+à cette conclusion.
 \end{proof}
 
 Afin de pouvoir inverser la relation de typage pour les expressions de la forme
@@ -979,11 +944,29 @@ l'autre) du ``trou'' et de l'élement complet.
 & \tyctx{Γ}{C}{}{}
 \end{align*}
 
+Ces cas sont définis par les règles suivantes:
+
+\begin{mathpar}
+\irule{T-Ctx-EE}
+    {Γ, x : t_i ⊢ \ctxSub{C}{x} : t_2}
+    {\tyctx{Γ}{C}{t_i}{t_e}}
+
+\irule{T-Ctx-IE}
+    { ∀i. Γ ⊢ i ⇒ Γ ⊢ \ctxSub{C}{i} : t_e }
+    { \tyctx{Γ}{C}{}{t_e} }
+\\
+\irule{T-Ctx-EI}
+    { Γ, x : t_i ⊢ \ctxSub{C}{x} }
+    { \tyctx{Γ}{C}{t_i}{} }
+
+\irule{T-Ctx-II}
+    { ∀i. Γ ⊢ i ⇒ Γ ⊢ \ctxSub{C}{i} }
+    { \tyctx{Γ}{C}{}{} }
+\end{mathpar}
+
 \end{definition}
 
-% TODO déf totale?
-
-On peut avoir par exemple:
+Par exemple, on peut avoir:
 
 \begin{itemize}
 \item $\tyctx{Γ}{1+\ctxEmpty}{\tInt}{\tInt}$
@@ -1021,7 +1004,22 @@ $Γ ⊢ \ctxSub{C}{i}$ \\
 
 \end{lemma}
 
-% TODO preuve
+\begin{proof}[Démonstration (esquisse)]
+Pour chaque cas, on procède en deux parties. D'une part, le jugement de typage
+du contexte ne peut venir que d'une règle, ce qui permet d'inverser celui-ci.
+La suite est différente selon les cas.
+
+\paragraph{\textsc{T-Ctx-IE} et \textsc{T-Ctx-II}:}
+
+Il suffit alors d'instancier le $i$ correspondant dans la prémisse de la règle
+($∀i, Γ ⊢ i ⇒ …$).
+
+\paragraph{\textsc{T-Ctx-EE} et \textsc{T-Ctx-EI}:}
+
+Ce cas repose sur un lemme de substitution admis ici. Si une construction est
+bien typée sous $Γ, x:t$, alors reste bien typée sous $Γ$ si l'on y remplace $x$
+par une expression typée $t$.
+\end{proof}
 
 \begin{lemma}[Inversion du typage sous un contexte]
 \label{lemma:inv-ctx}
@@ -1053,7 +1051,9 @@ $\tyctx{Γ}{C}{}{}$ \\
 
 \end{lemma}
 
-% TODO preuve
+\begin{proof}[Démonstration (esquisse)]
+Les seuls % TODO
+\end{proof}
 
 Il est aussi possible de réaliser l'opération inverse: à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
