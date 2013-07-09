@@ -987,16 +987,20 @@ De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 On applique le lemme de représentation. % TODO
 
 % }}}
-\paragraph{\textsc{User-Get-OK}:} % {{{ TODO
-\[ \semrule{User-Get-OK} \]
+\paragraph{\textsc{User-Get-OK}:} % {{{
+Tout d'abord, d'après le lemme~\ref{lemma:inv-qualif}, $t = \tInt$, donc la
+préservation du type est établie car $m' ⊧ 0 : \tInt$
+
+Le lemme~\ref{lemma:mem-typ} adapté aux extensions noyau % TODO
+permet de conclure quant à la compatibilité mémoire.
 % }}}
 \paragraph{\textsc{User-Get-Err}:} % {{{
-On a $Γ ⊢ \uGet{φ_d}{φ} : t$. D'après le lemme~\ref{lemma:inv-qualif},
-$t = \tInt$, ce qui nous permet de conclure car $m ⊧ -1 : \tInt$.
+La seule partie à prouver est la préservation, qui se fait de la même manière
+que dans le cas précédent.
 % }}}
-\paragraph{\textsc{User-Put-OK}:} % {{{ TODO
-\[ \semrule{User-Put-OK} \]
+\paragraph{\textsc{User-Put-OK}:} % {{{
+Idem que dans le cas {\textsc{User-Put-OK}.
 % }}}
-\paragraph{\textsc{User-Put-Err}:}
+\paragraph{\textsc{User-Put-Err}:} % {{{
 Idem que pour \textsc{User-Get-Err}.
 % }}}
