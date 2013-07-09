@@ -959,25 +959,65 @@ $\ctxSub{C}{e}$, on commence par donner un type aux contextes $C$.
 
 \begin{definition}[Typage des contextes d'évaluation]
 
-On note:
+On définit une relation de typage pour les contextes d'évaluation $C$. Elle
+permet de relier le type d'un sous-élément au type complet. Plusieurs cas se
+distinguent, selon la nature (instruction d'un côté, expression ou left-value de
+l'autre) du ``trou'' et de l'élement complet.
 
-\[
-    \tyctx{Γ}{C}{t_i}{t_e}
-\]
-
-% TODO
+\begin{align*}
+& \tyctx{Γ}{C}{t_i}{t_e} \\
+& \tyctx{Γ}{C}{}{t_e} \\
+& \tyctx{Γ}{C}{t_i}{} \\
+& \tyctx{Γ}{C}{}{}
+\end{align*}
 
 \end{definition}
+
+% TODO déf totale?
+% TODO pourquoi Γ est il nécessaire?
+
+On peut avoir par exemple:
+
+\begin{itemize}
+\item $\tyctx{Γ}{1+\ctxEmpty}{\tInt}{\tInt}$
+\item $\tyctx{Γ}{\iReturn{\ctxEmpty}}{\tInt}{}$
+\item $\tyctx{Γ}{\eFun{x}{\ctxEmpty}}{}{(\tInt) → \tInt}$
+\item $\tyctx{Γ}{\ctxEmpty;x ← 2}{}{}$
+\end{itemize}
 
 \begin{lemma}[Typage sous un contexte]
 \label{lemma:typ-ctx}
 
+Partant d'un jugement de typage de $C$ et de son ``trou'', on peut en déduire un
+jugement de typage sur la totalité:
+
+\begin{itemize}
+
+\item
 Si $Γ ⊢ e : t_i$ et
 $\tyctx{Γ}{C}{t_i}{t_e}$, alors
 $Γ ⊢ \ctxSub{C}{e} : t_e$.
 
-% TODO Décrire
+\item
+Si $Γ ⊢ i$ et
+$\tyctx{Γ}{C}{}{t_e}$, alors
+$Γ ⊢ \ctxSub{C}{e} : t_e$.
+
+\item
+Si $Γ ⊢ e : t_i$ et
+$\tyctx{Γ}{C}{t_i}{}$, alors
+$Γ ⊢ \ctxSub{C}{e}$.
+
+\item
+Si $Γ ⊢ i$ et
+$\tyctx{Γ}{C}{}{}$, alors
+$Γ ⊢ \ctxSub{C}{i}$.
+
+\end{itemize}
+
 \end{lemma}
+
+% TODO preuve
 
 \begin{lemma}[Inversion du typage sous un contexte]
 \label{lemma:inv-ctx}
@@ -988,7 +1028,7 @@ et
 $\tyctx{Γ}{C}{t'}{t}$.
 \end{lemma}
 
-% TODO preuves
+% TODO preuve
 
 Il est aussi possible de réaliser l'opération inverse: à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement

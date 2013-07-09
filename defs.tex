@@ -406,4 +406,8 @@
 \def\cL#1#2{\mathrm{CleanL_{#1}(#2)}}
 \def\cV#1#2{\mathrm{CleanV_{#1}(#2)}}
 
-\def\tyctx#1#2#3#4{#1 ⊢ #2 : #3 ⇒ #4}
+\def\tyctx#1#2#3#4{%
+    \ifstrempty{#3#4}% both empty?
+        {#1 ⊢ #2}%
+        {#1 ⊢ #2 : #3 ⇒ #4}%
+}
