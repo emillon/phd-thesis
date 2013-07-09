@@ -1,9 +1,4 @@
-\epigraph{
-On two occasions I have been asked, ``Pray, Mr.\ Babbage, if you put into the
-machine wrong figures, will the right answers come out?''… I am not able rightly
-to apprehend the kind of confusion of ideas that could provoke such a question.
-}
-{--- \textup{Charles Babbage}, Passages from the Life of a Philosopher}
+% TODO lv ::= *e non?
 
 Dans ce chapitre nous présentons \langname, un langage impératif inspiré de C.
 Sa syntaxe est tout d'abord décrite; puis une sémantique opérationnelle est
@@ -59,7 +54,7 @@ Plutôt que d'écrire cette définition précise mais chargée, on écrira à la
 une définition en compréhension:
 
 \begin{align*}
-\gramdef{Listes}{l}
+\gramdef[3cm]{Listes}{l}
   {[]}{Liste vide}
   {n::l}{Construction de liste}
   {END}
@@ -71,8 +66,7 @@ métavariables du même ensemble doivent apparaître, elles sont indicées. Par
 exemple, on peut définir des arbres binaires d'entiers de la manière suivante:
 
 \begin{align*}
-\gramdef{Arbres binaires}{a}
-              { \textsc{F}              }{Feuille}
+\gramdef[3cm]{Arbres binaires}{a} { \textsc{F}              }{Feuille}
               { \textsc{N}(a_1, n, a_2) }{Nœud}
           {END}
 \end{align*}
@@ -525,7 +519,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 \begin{figure}
 
   \begin{align*}
-  \gramdef{Opérateurs binaires}{\opbin}
+  \gramdef{Opérateurs \linebreak binaires}{\opbin}
       { +,-,\times,/,\% }{Arithmétique entière}
       { +.,-.,\times.,/.}{Arithmétique flottante}
       { +_p, -_p        }{Arithmétique de pointeurs}
@@ -756,7 +750,7 @@ ajouter une règle :
     {END}
   \\
   \\
-  \gramdef{État d'interpréteur}{Ξ}
+  \gramdef[4cm]{État d'interprète}{Ξ}
     { \msi{m}{e} }{Expression, mémoire}
     { \msi{m}{i} }{Instruction, mémoire}
     { Ω          }{Erreur}
@@ -812,12 +806,14 @@ Un certain nombre d'opérations est possibles sur les valeurs
 
   \begin{center}
     \begin{tabular}{rr@{\hskip 1cm}cc}
+      \toprule
        $n$ &  $m$ & $n~\&\&~m$ & $n~||~m$ \\
       \midrule
        $0$ &  $0$ & $0$        & $0$      \\
        $0$ & $≠0$ & $0$        & $1$      \\
       $≠0$ &  $0$ & $0$        & $1$      \\
       $≠0$ & $≠0$ & $1$        & $1$      \\
+      \bottomrule
     \end{tabular}
   \end{center}
 

@@ -287,7 +287,7 @@
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
-                    { \mms{lv.l_S}{lv\widehat{.}l} }
+                    { \mms{φ.l_S}{φ\widehat{.}l} }
     }
     {Phi-Array}{ \irule{Phi-Array}
                    { }
@@ -497,6 +497,7 @@
     { \ctxOp{C}{e} }{}
     { \ctxOp{v}{C} }{}
     { \ctxUnOp{C} }{}
+    { \&~C }{}
     { \ctxSet{C}{e} }{}
     { \ctxSet{φ}{C} }{}
     { \eStruct{ l_1:v_1 ; … ; l_i:C ; … ; l_n:e_n } }{}
@@ -506,6 +507,7 @@
     { \ctxLvField{C}{l_S} }{}
     { \ctxLvIndex{C}{e} }{}
     { \ctxLvIndex{φ}{C} }{}
+    { *~C }{}
     { C;i }{}
     { \iIf{C}{i_1}{i_2} }{}
     { \iReturn{C} }{}

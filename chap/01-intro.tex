@@ -151,15 +151,14 @@ adresse est dans l'espace utilisateur (la raison est décrite dans le
 chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
-possibles sont décrits dans la figure~\ref{fig:erreursec}. En cas
-d'impossibilité (signalée par un \Square), une erreur se produit et l'exécution
-s'arrête.
+possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
+par un \Square), une erreur se produit et l'exécution s'arrête.
 
-\begin{figure}
 \begin{center}
 \def\modeK{Noyau\xspace}
 \def\modeU{Utilisateur\xspace}
 \begin{tabular}{cccc}
+\toprule
   Mode du processeur
 & Privilège (code)
 & Privilège (données)
@@ -173,13 +172,10 @@ s'arrête.
   \modeU{} & \modeK{} & \modeU{} & \Square{} \\
   \modeU{} & \modeU{} & \modeK{} & \Square{} \\
   \modeU{} & \modeU{} & \modeU{} & \CheckedBox{} \\
+\bottomrule
 \end{tabular}
 \end{center}
-
-\caption{ Règles d'exécution de code et d'accès à la mémoire. }
-\label{fig:erreursec}
-
-\end{figure}
+\label{page:erreursec}
 
 En plus de cette vérification, certains types d'instructions sont explicitement
 réservés au mode le plus privilégié: par exemple les lectures ou écritures sur
@@ -209,8 +205,8 @@ résultats.
 
 Dans le cas d'utilisation prévu, le noyau va copier la mémoire lue dans $a$. Le
 processeur est en mode noyau, en train d'exécuter une instruction du noyau
-manipulant des données utilisateur. D'après la figure~\ref{fig:erreursec} aucune
-erreur ne se produit.
+manipulant des données utilisateur. D'après le tableau de la
+page~\pageref{page:erreursec}, aucune erreur ne se produit.
 
 Mais même si ce cas ne produit pas d'erreur à l'exécution, il est tout de même
 erroné. En effet, si on passe à l'appel système une adresse $a$ faisant partie

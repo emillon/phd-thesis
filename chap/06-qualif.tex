@@ -1,9 +1,3 @@
-\epigraph{
-  A friend of mine in a compiler writing class produced a compiler with
-  one error message ``you lied to me when you told me this was a program''.
-  }
-  {--- \textup{Pete Fenelon}}
-
 Jusqu'ici \langname{} est un langage impératif généraliste, ne prenant pas en
 compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
 
@@ -132,6 +126,10 @@ la figure~\ref{fig:qualif-changes}.
 \gramdef{Contextes}{C}
   { … }{}
   { \eTaint{C}}{}
+  { \uGet{C}{e} }{}
+  { \uGet{v}{C} }{}
+  { \uPut{C}{e} }{}
+  { \uPut{v}{C} }{}
   {END}
 \\
 \\
@@ -371,23 +369,20 @@ aux implantations de la fonction \texttt{ioctl}.
 
 \end{itemize}
 
-L'ensemble des notations est résumé dans le tableau de la
-figure~\ref{fig:qualif-not-resume}.
+L'ensemble des notations est résumé dans le tableau suivant:
 
-\begin{figure}
-\centering
+\begin{center}
 \begin{tabular}{ccc}
+\toprule
         & Noyau      & Utilisateur \\
 \midrule
 Syntaxe & $\&~x$     & $\eTaint{x}$ \\
 Valeur  & $\widehat{\&}~x$ & $\vTainted{x}$ \\
 Type    & $\ptrK{t}$ & $\ptrU{t}$ \\
 Accès   & $*~x$      & copy\_*\_user \\
+\bottomrule
 \end{tabular}
-
-\caption{Notations utilisées pour les pointeurs}
-\label{fig:qualif-not-resume}
-\end{figure}
+\end{center}
 
 Puisqu'on s'intéresse à la provenance des pointeurs, détaillons les règles qui
 créent, manipulent et utilisent des pointeurs.
