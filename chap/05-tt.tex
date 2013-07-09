@@ -970,15 +970,18 @@ On note:
 \end{definition}
 
 \begin{lemma}[Typage sous un contexte]
+\label{lemma:typ-ctx}
 
 Si $Γ ⊢ e : t_i$ et
 $\tyctx{Γ}{C}{t_i}{t_e}$, alors
 $Γ ⊢ \ctxSub{C}{e} : t_e$.
 
-% TODO utile? Décrire
+% TODO Décrire
 \end{lemma}
 
 \begin{lemma}[Inversion du typage sous un contexte]
+\label{lemma:inv-ctx}
+
 Si $Γ ⊢ \ctxSub{C}{e} : t$, alors il existe $t'$ tel que
 $Γ ⊢ e : t'$
 et

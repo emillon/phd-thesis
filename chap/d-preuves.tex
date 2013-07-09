@@ -710,28 +710,14 @@ Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$.
      { \mm{m}{\ctxSub{C}{e}}{m'}{\ctxSub{C}{e'}} }
 \]
 
-Par le lemme d'inversion, il existe $t'$ tel que $Γ ⊢ e : t'$. % TODO
+En appliquant le lemme~\ref{lemma:inv-ctx}, on obtient l'existence de $t'$ tel
+que $Γ ⊢ e : t'$ et $\tyctx{Γ}{C}{t'}{t}$.
 
 Comme $\mm{m}{e}{m'}{e'}$, on peut appliquer l'hypothèse de récurrence:
-$\mcomp{Γ}{m'}$ et $Γ ⊢ e' : t'$. Il reste à prouver que
+$\mcomp{Γ}{m'}$ et $Γ ⊢ e' : t'$.
+
+Enfin, grâce au lemme~\ref{lemma:typ-ctx}, on sait que
 $Γ ⊢ \ctxSub{C}{e'} : t$.
-
-On sait que:
-
-\begin{itemize}
-\item $Γ ⊢ e : t'$
-\item $Γ ⊢ e' : t'$
-\item $Γ ⊢ \ctxSub{C}{e} : t$.
-\end{itemize}
-
-On cherche à prouver:
-
-\begin{itemize}
-\item $Γ ⊢ \ctxSub{C}{e'} : t$.
-\end{itemize}
-
-% TODO une sorte de lemme de substitution
-
 % }}}
 
 \jolibreak
