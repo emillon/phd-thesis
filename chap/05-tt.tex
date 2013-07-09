@@ -914,7 +914,6 @@ $(t_1, …, t_n)$ et $t'$ tels que:
 
 \end{lemma}
 
-% TODO finir la preuve
 
 \begin{proof}
 
@@ -951,7 +950,42 @@ $(t_1, …, t_n)$ et $t'$ tels que:
   est \textsc{Fun}.
 
 \end{itemize}
+
+% TODO finir la preuve
 \end{proof}
+
+Afin de pouvoir inverser la relation de typage pour les expressions de la forme
+$\ctxSub{C}{e}$, on commence par donner un type aux contextes $C$.
+
+\begin{definition}[Typage des contextes d'évaluation]
+
+On note:
+
+\[
+    \tyctx{Γ}{C}{t_i}{t_e}
+\]
+
+% TODO
+
+\end{definition}
+
+\begin{lemma}[Typage sous un contexte]
+
+Si $Γ ⊢ e : t_i$ et
+$\tyctx{Γ}{C}{t_i}{t_e}$, alors
+$Γ ⊢ \ctxSub{C}{e} : t_e$.
+
+% TODO utile? Décrire
+\end{lemma}
+
+\begin{lemma}[Inversion du typage sous un contexte]
+Si $Γ ⊢ \ctxSub{C}{e} : t$, alors il existe $t'$ tel que
+$Γ ⊢ e : t'$
+et
+$\tyctx{Γ}{C}{t'}{t}$.
+\end{lemma}
+
+% TODO preuves
 
 Il est aussi possible de réaliser l'opération inverse: à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
