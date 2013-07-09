@@ -369,8 +369,6 @@ Ce cas est direct: la règle \textsc{While} peut toujours s'appliquer.
 
   \paragraph{\textsc{Cst-Int}:} % {{{
 $e$ est alors de la forme $n$, qui est une valeur.
-
-% TODO en fait n → \widehat{n} non? idem pour float null unit
 %}}}
   \paragraph{\textsc{Cst-Float}:} % {{{
 $e$ est alors de la forme $d$, qui est une valeur.
@@ -628,8 +626,6 @@ Deux cas sont à distinguer:
 si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
 Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
-
-% TODO attention à l'off by one
 
 \item $\mm{m}{e}{m'}{e'}$.
 En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
@@ -966,19 +962,15 @@ De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 \paragraph{\textsc{Expr-Tainted}:} % {{{ TODO
 \[ \semrule{Expr-Tainted} \]
 % }}}
-
 \paragraph{\textsc{User-Get-OK}:} % {{{ TODO
 \[ \semrule{User-Get-OK} \]
 % }}}
-
 \paragraph{\textsc{User-Get-Err}:} % {{{ TODO
 \[ \semrule{User-Get-Err} \]
 % }}}
-
 \paragraph{\textsc{User-Put-OK}:} % {{{ TODO
 \[ \semrule{User-Put-OK} \]
 % }}}
-
 \paragraph{\textsc{User-Put-Err}:} % {{{ TODO
 \[ \semrule{User-Put-Err} \]
 % }}}
