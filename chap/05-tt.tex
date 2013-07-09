@@ -810,6 +810,7 @@ expression.
 
 \begin{lemma}[Inversion]
 \label{lemma:inversion}
+% TODO voir si c'est pas plus simple de typer les contextes?
 
   À partir d'un jugement de typage, on peut en déduire des informations sur les
   types de ses sous-expressions.
@@ -895,9 +896,12 @@ expression.
 \item Fonction: si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
 $(t_1, …, t_n)$ et $t'$ tels que:
 
-  \[
-    t' = (t_1, …, t_n) → t
-  \]
+  \[ \begin{cases}
+    t' = (t_1, …, t_n) → t \\
+    Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t ⊢ i
+  \end{cases} \]
+
+\item Si $Γ ⊢ \iReturn{e}$, alors il existe $t$ tel que $Γ ⊢ e : t$
 
 \end{itemize}
 
