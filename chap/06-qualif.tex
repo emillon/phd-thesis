@@ -468,6 +468,28 @@ La définition du typage sémantique doit aussi être étendue au cas $φ =
     { \tComp{\ptrU{τ}}{\ptrU{t}} }
 \end{mathpar}
 
+\subsection*{Propriétés du typage}
+
+\begin{lemma}[Inversion du typage]
+\label{lemma:inv-qualif}
+% TODO
+
+\begin{itemize}
+\item
+    Si $Γ ⊢ \uGet{e_d}{e_s} : t$, alors
+    $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ φ_d : t~*$ et
+    $Γ ⊢ φ_s : t~@$.
+\item
+    Si $Γ ⊢ \uPut{e_d}{e_s} : t$, alors
+    $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ φ_d : t~@$ et
+    $Γ ⊢ φ_s : t~*$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+% TODO
+\end{proof}
+
 \subsection*{Progrès et préservation}
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur

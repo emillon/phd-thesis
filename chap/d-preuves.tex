@@ -891,7 +891,7 @@ Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
 \section{Progrès pour les types qualifiés}
 \label{proof:progres-qualif}
 
-(théorème~\ref{thm:progres-qual})
+(Théorème~\ref{thm:progres-qual})
 
 \begin{proof}
 
@@ -978,22 +978,25 @@ Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 \section{Préservation pour les types qualifiés}
 \label{proof:preservation-qualif}
 
-(théorème~\ref{thm:preservation-qualif})
+(Théorème~\ref{thm:preservation-qualif})
 
 De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 
-\paragraph{\textsc{Expr-Tainted}:} % {{{ TODO
-\[ \semrule{Expr-Tainted} \]
+\paragraph{\textsc{Expr-Tainted}:} % {{{
+
+On applique le lemme de représentation. % TODO
+
 % }}}
 \paragraph{\textsc{User-Get-OK}:} % {{{ TODO
 \[ \semrule{User-Get-OK} \]
 % }}}
-\paragraph{\textsc{User-Get-Err}:} % {{{ TODO
-\[ \semrule{User-Get-Err} \]
+\paragraph{\textsc{User-Get-Err}:} % {{{
+On a $Γ ⊢ \uGet{φ_d}{φ} : t$. D'après le lemme~\ref{lemma:inv-qualif},
+$t = \tInt$, ce qui nous permet de conclure car $m ⊧ -1 : \tInt$.
 % }}}
 \paragraph{\textsc{User-Put-OK}:} % {{{ TODO
 \[ \semrule{User-Put-OK} \]
 % }}}
-\paragraph{\textsc{User-Put-Err}:} % {{{ TODO
-\[ \semrule{User-Put-Err} \]
+\paragraph{\textsc{User-Put-Err}:}
+Idem que pour \textsc{User-Get-Err}.
 % }}}
