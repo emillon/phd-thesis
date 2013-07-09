@@ -260,6 +260,8 @@ la division, ou l'opérateur $\phxx\cLookup$).
 %\item $\msi{m}{lv} → Ω$.
 %\end{itemize}
 
+\subsection{Instructions}
+
 \paragraph{\textsc{Pass}  :} %{{{
 Ce cas est trivial.
 % }}}
@@ -362,7 +364,9 @@ Ici $i = \iIf{e}{i_1}{i_2}$. On applique l'hypothèse de récurrence à $e$.
 Ce cas est direct: la règle \textsc{While} peut toujours s'appliquer.
 
 % }}}
-\jolibreak
+
+\subsection{Expressions}
+
   \paragraph{\textsc{Cst-Int}:} % {{{
 $e$ est alors de la forme $n$, qui est une valeur.
 
@@ -556,7 +560,9 @@ d'inversion garantit que $Γ' ⊢ i$).
 \end{itemize}
 
 %}}}
-\jolibreak
+
+\subsection{Left-values}
+
 \paragraph{\textsc{Lv-Var}:}%{{{
 
 Le but est d'appliquer \textsc{Phi-Var}. La seule condition pour que cela soit
@@ -701,7 +707,7 @@ On procède par induction sur la dérivation de $\mm{m}{\cdot}{m'}{\cdot}$.
 
 N.B. \textsc{Ctx} apparaît 3 fois.
 
-Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$.
+\subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
 \[
@@ -720,9 +726,7 @@ Enfin, grâce au lemme~\ref{lemma:typ-ctx}, on sait que
 $Γ ⊢ \ctxSub{C}{e'} : t$.
 % }}}
 
-\jolibreak
-
-Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$.
+\subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}
 
 \paragraph{\textsc{Exp-Cst}:} % {{{
 
@@ -790,17 +794,13 @@ Idem, on conclut grâce au lemme de représentabilité.
 \[ \semrule{Exp-Call-Return-Unit} \]
 % }}}
 
-\jolibreak
-
-Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$.
+\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
 Idem que dans le cas des expressions.
 % }}}
 
-\jolibreak
-
-Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$.
+\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
 \paragraph{\textsc{Phi-Var}:} % {{{ TODO
 \[ \semrule{Phi-Var} \]
@@ -824,9 +824,7 @@ On conclut que $\tComp{τ'}{t}$ en inversant par \textsc{Comp-Ptr}.
 \[ \semrule{Phi-Array} \]
 % }}}
 
-\jolibreak
-
-Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
+\subsection{Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
 Idem que dans le cas des expressions.

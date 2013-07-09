@@ -381,13 +381,17 @@
 \def\cExtend#1#2#3{\mathrm{Extend}(#1, #2 ↦ #3)}
 \def\cCleanup#1{\mathrm{Cleanup}(#1)}
 
+% {{{
 \newcommand{\motif}[1]{\cleaders\hbox{#1}\hfil}
 \newcommand{\chain}[2]{\leavevmode\hbox to #2{\motif{#1}}}
 \newcommand{\diamonds}{$\mkern-.6mu \diamond \mkern-.6mu$}
 
 \def\jolibreak{
-\fancybreak{\chain{\diamonds}{0.25\textwidth}}
+%\fancybreak{\chain{\diamonds}{0.25\textwidth}}
+\fancybreak{\decosix \quad \decosix \quad \decosix}
 }
+% }}}
+
 
 \def\cDom#1{\mathrm{dom}(#1)}
 
