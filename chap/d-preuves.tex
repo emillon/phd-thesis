@@ -794,12 +794,8 @@ Idem, on conclut grâce au lemme de représentabilité.
 
 Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$.
 
-\paragraph{\textsc{Ctx}:} % {{{ TODO
-\[
-   \irule{Ctx}
-     { \mm{m}{lv}{m'}{lv'} }
-     { \mm{m}{\ctxSub{C}{lv}}{m'}{\ctxSub{C}{lv'}} }
-\]
+\paragraph{\textsc{Ctx}:} % {{{
+Idem que dans le cas des expressions.
 % }}}
 
 \jolibreak
@@ -832,8 +828,8 @@ On conclut que $\tComp{τ'}{t}$ en inversant par \textsc{Comp-Ptr}.
 
 Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
 
-\paragraph{\textsc{Ctx}:} % {{{ TODO
-\[ \semrule{Ctx} \]
+\paragraph{\textsc{Ctx}:} % {{{
+Idem que dans le cas des expressions.
 % }}}
 \paragraph{\textsc{Seq}:}%{{{
 D'après le lemme d'inversion, $Γ ⊢ i$.
