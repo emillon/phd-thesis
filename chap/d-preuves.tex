@@ -938,21 +938,21 @@ On applique l'hypothèse de récurrence à $e_d$.
 \item $e_d = v_d$. On applique l'hypothèse de récurrence à $e_s$.
 
 \begin{itemize}
-\item $e_s = v_s$. % TODO
+\item $e_s = v_s$.
 
-    D'après le lemme~\ref{lemma:canon}, % TODO ou une version chapitre 6?
-    $v_s$ a pour forme $φ_s$.
+    D'après le lemme~\ref{lemma:canon} adapté aux extensions noyau, $v_s$ a pour
+    forme $φ_s$.
 
     On distingue la forme de $φ_s$:
 
     \begin{itemize}
         \item $φ_s = \vTainted{φ}$. Alors on applique
-        \textsc{User-Get-OK}.
-        % TODO encore faut-il que la prémisse soit vraie...
-        % trop grand pas
+        \textsc{User-Get-OK}. Le lemme~\ref{lemma:mem-typ} adapté aux extensions
+        noyau assure que les prémisses sont correctes et que $Γ ⊧ m'$.
+        % TODO vérifier quand même
 
-        \item $∄~φ, φ_s = \vTainted{φ}$. Alors idem avec
-            \textsc{User-Get-Err}.
+        \item $∄~φ, φ_s = \vTainted{φ}$. Alors on applique
+        \textsc{User-Get-Err}.
     \end{itemize}
 
 \item $\mm{m}{e_s}{m'}{e_s'}$. Posons $C = \uGet{v_d}{\ctxEmpty}$.
