@@ -300,7 +300,7 @@ moins le noyau est protégé.
 
 Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
 fonction \texttt{access\_ok} réalise le test décrit précédemment. Les fonctions
-\texttt{copy\_from\_user} et \texttt{copy\_to\_user} réalisent une copie de la
+\texttt{copy\_from\_user} et \url{copy_to_user} réalisent une copie de la
 mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
 système \texttt{gettimeofday} fait appel à celle-ci
 (figure~\ref{fig:implem-gettime}).
