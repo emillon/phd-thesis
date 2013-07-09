@@ -365,23 +365,20 @@ aux implantations de la fonction \texttt{ioctl}.
 
 \end{itemize}
 
-L'ensemble des notations est résumé dans le tableau de la
-figure~\ref{fig:qualif-not-resume}.
+L'ensemble des notations est résumé dans le tableau suivant:
 
-\begin{figure}
-\centering
+\begin{center}
 \begin{tabular}{ccc}
+\toprule
         & Noyau      & Utilisateur \\
 \midrule
 Syntaxe & $\&~x$     & $\eTaint{x}$ \\
 Valeur  & $\widehat{\&}~x$ & $\vTainted{x}$ \\
 Type    & $\ptrK{t}$ & $\ptrU{t}$ \\
 Accès   & $*~x$      & copy\_*\_user \\
+\bottomrule
 \end{tabular}
-
-\caption{Notations utilisées pour les pointeurs}
-\label{fig:qualif-not-resume}
-\end{figure}
+\end{center}
 
 Puisqu'on s'intéresse à la provenance des pointeurs, détaillons les règles qui
 créent, manipulent et utilisent des pointeurs.
