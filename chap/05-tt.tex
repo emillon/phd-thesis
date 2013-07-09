@@ -901,7 +901,17 @@ $(t_1, …, t_n)$ et $t'$ tels que:
     Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t ⊢ i
   \end{cases} \]
 
-\item Si $Γ ⊢ \iReturn{e}$, alors il existe $t$ tel que $Γ ⊢ e : t$
+\item Instructions:
+\begin{itemize}
+\item Si $Γ ⊢ i_1;i_2$, alors $Γ ⊢ i_1$ et $Γ ⊢ i_2$.
+\item Si $Γ ⊢ e$, alors il existe $t$ tel que $Γ ⊢ e : t$.
+\item Si $Γ ⊢ \iDecl{x}{e}{i}$, alors il existe $t$ tel que
+      $Γ ⊢ e : t$ et $Γ, x:t ⊢ i$.
+\item Si $Γ ⊢ \iIf{e}{i_t}{i_f}$, alors $Γ ⊢ e : \tInt$,
+      $Γ ⊢ i_t$ et $Γ ⊢ i_f$.
+\item Si $Γ ⊢ \iWhile{e}{i}$, alors $Γ ⊢ e : \tInt$ et $Γ ⊢ i$.
+\item Si $Γ ⊢ \iReturn{e}$, alors il existe $t$ tel que $Γ ⊢ e : t$.
+\end{itemize}
 
 \end{itemize}
 
