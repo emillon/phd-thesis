@@ -24,8 +24,8 @@
                 { Γ ⊢ x : t }
     }
     {Lv-Deref}{ \irule{Lv-Deref}
-                  { Γ ⊢ lv : t* }
-                  { Γ ⊢ *lv : t }
+                  { Γ ⊢ e : t* }
+                  { Γ ⊢ *e : t }
     }
     {Lv-Index}{ \irule{Lv-Index}
                   { Γ ⊢ e : \tInt \\
@@ -282,8 +282,8 @@
                  }
     }
     {Phi-Deref}{ \irule{Phi-Deref}
-                   { \widehat{\&}~φ' = m[φ]_Φ}
-                   { \mms{*φ}{φ'} }
+                   { v = \widehat{\&}~φ }
+                   { \mms{*~v }{φ} }
     }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
