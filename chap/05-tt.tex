@@ -798,7 +798,7 @@ $\mcomp{Γ, x:t'}{m''}$.
 
 \end{proof}
 
-\section{Progrès et préservation}
+\section{Quelques lemmes}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
 théorèmes.
@@ -914,7 +914,8 @@ $Γ ⊢ lv : t'$ et $t = t'~*$.
 \item Si $Γ ⊢ \iIf{e}{i_t}{i_f}$, alors $Γ ⊢ e : \tInt$,
       $Γ ⊢ i_t$ et $Γ ⊢ i_f$.
 \item Si $Γ ⊢ \iWhile{e}{i}$, alors $Γ ⊢ e : \tInt$ et $Γ ⊢ i$.
-\item Si $Γ ⊢ \iReturn{e}$, alors il existe $t$ tel que $Γ ⊢ e : t$.
+\item Si $Γ ⊢ \iReturn{e}$, alors il existe $t$ tel que $Γ ⊢ e : t$ et
+$Γ ⊢ \vRet : t$.
 \end{itemize}
 
 \end{itemize}
@@ -1085,6 +1086,21 @@ $Γ = x:t$).
 
 \end{lemma}
 
+\begin{lemma}[Affaiblissement]
+\label{lemma:affaiblissement}
+
+On peut ajouter des associations supplémentaires dans l'environnement sans
+modifier les typages dans cet environnement.
+
+Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
+
+% TODO on peut aussi changer des bindings si ça n'influe pas sur $e$
+\end{lemma}
+
+% TODO proof
+
+\section{Progrès et préservation}
+
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 Contrairement aux langages où tout est expression, il faut traiter séparément
 les trois constructions principales de \langname : les expressions, les
@@ -1111,6 +1127,8 @@ le graphe suivant.
 
 \begin{theorem}[Progrès]
 \label{thm:progres}
+
+% TODO modifier progrès pour ajouter la clause cleanup
 
 Supposons que $Γ ⊢ i$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
 
@@ -1156,35 +1174,6 @@ C'est-à-dire, soit:
 \end{itemize}
 
 La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
-
-% TODO comm?
-%\begin{lemma}[Permutation]
-  %L'ordre dans lequel les variables apparaissent dans un environnement
-  %n'influe pas sur la relation de typage.
-
-  %Pour toute permutation $σ$ de $[1;n]$, on note $σ(x_1 : t_1, …, x_n : t_n) =
-  %x_{σ(1)} : t_{σ(1)}, … x_{σ(n)} : t_{σ(n)}$.
-
-  %Alors : si $Γ ⊢ e : t$ et $Γ' = σ(Γ)$, alors $Γ' ⊢ e : t$.
-%\end{lemma}
-
-%\begin{lemma}[Affaiblissement]
-  %De même que l'ordre n'influe pas le typage, on peut aussi ajouter des
-  %associations supplémentaires dans l'environnement sans modifier les typages
-  %dans cet environnement.
-
-  %Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
-%\end{lemma}
-
-%\begin{lemma}[Substitution]
-  %Si dans une expression $e$ il apparait une variable $x$ de type $t'$, le
-  %typage est préservé lorsqu'on remplace ses occurrences par une expression $e'$
-  %de même type.
-
-  %Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [x/e'] : t$.
-%\end{lemma}
-
-%Ces lemmes permettent de prouver le théorème suivant :
 
 \begin{lemma}[Représentabilité]
 \label{lemma:repr}
