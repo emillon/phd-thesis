@@ -17,6 +17,10 @@
     \semrule{Exp-Err}
 
     \semrule{Eval-Err}
+
+    \semrule{Decl-Err}
+
+    \semrule{Exp-Call-Err}
 \end{mathpar}
 
 \caption{Règles d'évaluation des erreurs}
@@ -25,7 +29,7 @@
 \begin{figure}
 
 \begin{mathpar}
-    \ruleheader{$\mm{m}{lv}{m}{φ}$} % TODO header?
+    \ruleheader{$\mm{m}{lv}{m}{φ}$}
 
     \semrule{Phi-Var}
 
@@ -35,7 +39,7 @@
 
     \semrule{Phi-Array}
 
-    \ruleheader{$\mm{m}{e}{m}{v}$} % TODO header?
+    \ruleheader{$\mm{m}{e}{m}{v}$}
 
     \semrule{Exp-Cst}
 
@@ -56,8 +60,6 @@
     \semrule{Exp-Array}
 
     \semrule{Exp-Call-Ctx}
-
-    \semrule{Exp-Call-Err}
 
     \semrule{Exp-Call-Return-Unit}
 
@@ -81,8 +83,6 @@
     \semrule{Decl-Return}
 
     \semrule{Decl-Ctx}
-
-    \semrule{Decl-Err} % TODO pas à sa place
 
     \semrule{If-False}
 
@@ -109,8 +109,7 @@
     \semrule{Prog}
 \end{mathpar}
 
-\caption{Règles d'évaluation des instructions et phrases}
-% TODO programmes
+\caption{Règles d'évaluation des instructions, phrases et programmes}
 \end{figure}
 
 \begin{figure}

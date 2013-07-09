@@ -798,7 +798,7 @@ $\mcomp{Γ, x:t'}{m''}$.
 
 \end{proof}
 
-\section{Progrès et préservation}
+\section{Quelques lemmes}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
 théorèmes.
@@ -808,19 +808,9 @@ syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
 déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
 expression.
 
-% TODO la typographie des if/while/return
-
-%\textsc{Textsc}
-
-%\emph{emph}
-
-%\emph{\textsc{Emph Textsc}}
-
-%\textsc{\emph{Textsc Emph}}
-% https://www.writelatex.com/250750rcxkkd
-
 \begin{lemma}[Inversion]
 \label{lemma:inversion}
+% TODO voir si c'est pas plus simple de typer les contextes?
 
   À partir d'un jugement de typage, on peut en déduire des informations sur les
   types de ses sous-expressions.
@@ -906,9 +896,27 @@ expression.
 \item Fonction: si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
 $(t_1, …, t_n)$ et $t'$ tels que:
 
-  \[
-    t' = (t_1, …, t_n) → t
-  \]
+  \[ \begin{cases}
+    t' = (t_1, …, t_n) → t \\
+    Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t ⊢ i
+  \end{cases} \]
+
+\item Si $Γ ⊢ lv ← e : t$, alors $Γ ⊢ lv : t$ et $Γ ⊢ e : t$.
+\item Si $Γ ⊢ \&~lv : t$, alors il existe $t'$ tel que
+$Γ ⊢ lv : t'$ et $t = t'~*$.
+
+\item Instructions:
+\begin{itemize}
+\item Si $Γ ⊢ i_1;i_2$, alors $Γ ⊢ i_1$ et $Γ ⊢ i_2$.
+\item Si $Γ ⊢ e$, alors il existe $t$ tel que $Γ ⊢ e : t$.
+\item Si $Γ ⊢ \iDecl{x}{e}{i}$, alors il existe $t$ tel que
+      $Γ ⊢ e : t$ et $Γ, x:t ⊢ i$.
+\item Si $Γ ⊢ \iIf{e}{i_t}{i_f}$, alors $Γ ⊢ e : \tInt$,
+      $Γ ⊢ i_t$ et $Γ ⊢ i_f$.
+\item Si $Γ ⊢ \iWhile{e}{i}$, alors $Γ ⊢ e : \tInt$ et $Γ ⊢ i$.
+\item Si $Γ ⊢ \iReturn{e}$, alors il existe $t$ tel que $Γ ⊢ e : t$ et
+$Γ ⊢ \vRet : t$.
+\end{itemize}
 
 \end{itemize}
 
@@ -959,36 +967,93 @@ $\ctxSub{C}{e}$, on commence par donner un type aux contextes $C$.
 
 \begin{definition}[Typage des contextes d'évaluation]
 
-On note:
+On définit une relation de typage pour les contextes d'évaluation $C$. Elle
+permet de relier le type d'un sous-élément au type complet. Plusieurs cas se
+distinguent, selon la nature (instruction d'un côté, expression ou left-value de
+l'autre) du ``trou'' et de l'élement complet.
 
-\[
-    \tyctx{Γ}{C}{t_i}{t_e}
-\]
-
-% TODO
+\begin{align*}
+& \tyctx{Γ}{C}{t_i}{t_e} \\
+& \tyctx{Γ}{C}{}{t_e} \\
+& \tyctx{Γ}{C}{t_i}{} \\
+& \tyctx{Γ}{C}{}{}
+\end{align*}
 
 \end{definition}
+
+% TODO déf totale?
+
+On peut avoir par exemple:
+
+\begin{itemize}
+\item $\tyctx{Γ}{1+\ctxEmpty}{\tInt}{\tInt}$
+\item $\tyctx{Γ}{\iReturn{\ctxEmpty}}{\tInt}{}$
+\item $\tyctx{Γ}{\eFun{x}{\ctxEmpty}}{}{(\tInt) → \tInt}$
+\item $\tyctx{Γ}{\ctxEmpty;x ← 2}{}{}$
+\end{itemize}
 
 \begin{lemma}[Typage sous un contexte]
 \label{lemma:typ-ctx}
 
-Si $Γ ⊢ e : t_i$ et
-$\tyctx{Γ}{C}{t_i}{t_e}$, alors
-$Γ ⊢ \ctxSub{C}{e} : t_e$.
+Partant d'un jugement de typage de $C$ et de son ``trou'', on peut en déduire un
+jugement de typage sur la totalité.
 
-% TODO Décrire
+\begin{center}
+\begin{tabular}{ll@{\hspace{1.5cm}}l}
+\toprule
+Sous-élément & Contexte & Conclusion \\
+\midrule
+$Γ ⊢ e : t_i$ &
+$\tyctx{Γ}{C}{t_i}{t_e}$ &
+$Γ ⊢ \ctxSub{C}{e} : t_e$ \\
+$Γ ⊢ i$ &
+$\tyctx{Γ}{C}{}{t_e}$ &
+$Γ ⊢ \ctxSub{C}{e} : t_e$ \\
+$Γ ⊢ e : t_i$ &
+$\tyctx{Γ}{C}{t_i}{}$ &
+$Γ ⊢ \ctxSub{C}{e}$ \\
+$Γ ⊢ i$ &
+$\tyctx{Γ}{C}{}{}$ &
+$Γ ⊢ \ctxSub{C}{i}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 \end{lemma}
+
+% TODO preuve
 
 \begin{lemma}[Inversion du typage sous un contexte]
 \label{lemma:inv-ctx}
 
-Si $Γ ⊢ \ctxSub{C}{e} : t$, alors il existe $t'$ tel que
-$Γ ⊢ e : t'$
-et
-$\tyctx{Γ}{C}{t'}{t}$.
+Partant d'une relation de typage d'une entité syntaxique (expression,
+instruction ou left-value) de la forme $\ctxSub{C}{x}$, on peut en déduire une
+information de typage sur $C$ et $x$.
+
+\begin{center}
+\begin{tabular}{l@{\hspace{1.5cm}}ll}
+\toprule
+Hypothèse & \multicolumn{2}{l}{Conclusion: $∃ t',$ …} \\
+\midrule
+$Γ ⊢ \ctxSub{C}{e} : t$ &
+$Γ ⊢ e : t'$ &
+$\tyctx{Γ}{C}{t'}{t}$ \\
+$Γ ⊢ \ctxSub{C}{i} : t$ &
+$Γ ⊢ i$ &
+$\tyctx{Γ}{C}{}{t}$ \\
+$Γ ⊢ \ctxSub{C}{e}$ &
+$Γ ⊢ e : t'$ &
+$\tyctx{Γ}{C}{t'}{}$ \\
+$Γ ⊢ \ctxSub{C}{i}$ &
+$Γ ⊢ i$ &
+$\tyctx{Γ}{C}{}{}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 \end{lemma}
 
-% TODO preuves
+% TODO preuve
 
 Il est aussi possible de réaliser l'opération inverse: à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
@@ -1005,6 +1070,7 @@ $Γ = x:t$).
 
   \begin{center}
   \begin{tabular}{cc}
+  \toprule
   Type de $v$                     & Forme de $v$ \\
   \midrule
   $\tInt$                         & $n$ \\
@@ -1014,10 +1080,26 @@ $Γ = x:t$).
   $t[~]$                          & $\eArray{v_1; …; v_n}$ \\
   $\tStruct{l_1 : t_1;…;l_n:t_n}$ & $\eStruct{l_1 : v_1;…;l_n:v_n}$ \\
   $(t_1, …, t_n) → t$             & $\eFun{a_1, …, a_n}{i}$ \\
+  \bottomrule
   \end{tabular}
   \end{center}
 
 \end{lemma}
+
+\begin{lemma}[Affaiblissement]
+\label{lemma:affaiblissement}
+
+On peut ajouter des associations supplémentaires dans l'environnement sans
+modifier les typages dans cet environnement.
+
+Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
+
+% TODO on peut aussi changer des bindings si ça n'influe pas sur $e$
+\end{lemma}
+
+% TODO proof
+
+\section{Progrès et préservation}
 
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 Contrairement aux langages où tout est expression, il faut traiter séparément
@@ -1045,6 +1127,8 @@ le graphe suivant.
 
 \begin{theorem}[Progrès]
 \label{thm:progres}
+
+% TODO modifier progrès pour ajouter la clause cleanup
 
 Supposons que $Γ ⊢ i$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
 
@@ -1090,35 +1174,6 @@ C'est-à-dire, soit:
 \end{itemize}
 
 La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
-
-% TODO comm?
-%\begin{lemma}[Permutation]
-  %L'ordre dans lequel les variables apparaissent dans un environnement
-  %n'influe pas sur la relation de typage.
-
-  %Pour toute permutation $σ$ de $[1;n]$, on note $σ(x_1 : t_1, …, x_n : t_n) =
-  %x_{σ(1)} : t_{σ(1)}, … x_{σ(n)} : t_{σ(n)}$.
-
-  %Alors : si $Γ ⊢ e : t$ et $Γ' = σ(Γ)$, alors $Γ' ⊢ e : t$.
-%\end{lemma}
-
-%\begin{lemma}[Affaiblissement]
-  %De même que l'ordre n'influe pas le typage, on peut aussi ajouter des
-  %associations supplémentaires dans l'environnement sans modifier les typages
-  %dans cet environnement.
-
-  %Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
-%\end{lemma}
-
-%\begin{lemma}[Substitution]
-  %Si dans une expression $e$ il apparait une variable $x$ de type $t'$, le
-  %typage est préservé lorsqu'on remplace ses occurrences par une expression $e'$
-  %de même type.
-
-  %Si $Γ, x : t' ⊢ e : t$ et $Γ ⊢ e' : t'$, alors $Γ ⊢ e [x/e'] : t$.
-%\end{lemma}
-
-%Ces lemmes permettent de prouver le théorème suivant :
 
 \begin{lemma}[Représentabilité]
 \label{lemma:repr}

@@ -25,7 +25,7 @@
 \newcommand{\tFloat}{\textsc{Float}\xspace}
 \newcommand{\tUnit}{\textsc{Unit}\xspace}
 
-\def\structRec#1#2{\textsc{rec}(\&#1) #2} % TODO
+\def\structRec#1#2{\textsc{rec}(\&#1) #2}
 
 \newcommand{\tFV}[1]{\textrm{FreeVars}(#1)}
 
@@ -381,13 +381,12 @@
 \def\cExtend#1#2#3{\mathrm{Extend}(#1, #2 ↦ #3)}
 \def\cCleanup#1{\mathrm{Cleanup}(#1)}
 
-\newcommand{\motif}[1]{\cleaders\hbox{#1}\hfil}
-\newcommand{\chain}[2]{\leavevmode\hbox to #2{\motif{#1}}}
-\newcommand{\diamonds}{$\mkern-.6mu \diamond \mkern-.6mu$}
-
+% {{{
 \def\jolibreak{
-\fancybreak{\chain{\diamonds}{0.25\textwidth}}
+\fancybreak{\decosix \quad \decosix \quad \decosix}
 }
+% }}}
+
 
 \def\cDom#1{\mathrm{dom}(#1)}
 
@@ -406,4 +405,8 @@
 \def\cL#1#2{\mathrm{CleanL_{#1}(#2)}}
 \def\cV#1#2{\mathrm{CleanV_{#1}(#2)}}
 
-\def\tyctx#1#2#3#4{#1 ⊢ #2 : #3 ⇒ #4}
+\def\tyctx#1#2#3#4{%
+    \ifstrempty{#3#4}% both empty?
+        {#1 ⊢ #2}%
+        {#1 ⊢ #2 : #3 ⇒ #4}%
+}

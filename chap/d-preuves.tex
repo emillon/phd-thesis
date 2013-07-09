@@ -226,7 +226,7 @@ jugements $Γ ⊢ i$, $Γ ⊢ e : t$ et $Γ ⊢ lv : t$ sont interdépendants, o
 tous les cas par récursion mutuelle.
 
 Le squelette de cette preuve est une analyse de cas selon la dernière règle
-utilisée. La plupart des cas ont la même forme: , et on utilise l'hypothèse de
+utilisée. La plupart des cas ont la même forme: on utilise l'hypothèse de
 récurrence sur les sous-éléments syntaxiques (en appliquant éventuellement le
 lemme~\ref{lemma:inversion} d'inversion pour établir qu'ils sont bien typés).
 Dans le cas ``valeur'', on appelle une règle qui permet de transformer une
@@ -259,6 +259,8 @@ la division, ou l'opérateur $\phxx\cLookup$).
 %\item $\mm{m}{lv}{m'}{lv'}$.
 %\item $\msi{m}{lv} → Ω$.
 %\end{itemize}
+
+\subsection{Instructions}
 
 \paragraph{\textsc{Pass}  :} %{{{
 Ce cas est trivial.
@@ -333,7 +335,7 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 
     \end{itemize}
 
-\item $\mm{m}{e}{m'}{e'}$. On pose $C = \iDecl{x}{\ctxEmpty}$ et on conclut avec
+\item $\mm{m}{e}{m'}{e'}$. On pose $C = \iDecl{x}{\ctxEmpty}{i'}$ et on conclut avec
     la règle \textsc{Ctx}.
 \item $\msi{m}{e} → Ω$. Idem avec \textsc{Eval-Err}.
 \end{itemize}
@@ -362,11 +364,11 @@ Ici $i = \iIf{e}{i_1}{i_2}$. On applique l'hypothèse de récurrence à $e$.
 Ce cas est direct: la règle \textsc{While} peut toujours s'appliquer.
 
 % }}}
-\jolibreak
+
+\subsection{Expressions}
+
   \paragraph{\textsc{Cst-Int}:} % {{{
 $e$ est alors de la forme $n$, qui est une valeur.
-
-% TODO en fait n → \widehat{n} non? idem pour float null unit
 %}}}
   \paragraph{\textsc{Cst-Float}:} % {{{
 $e$ est alors de la forme $d$, qui est une valeur.
@@ -556,7 +558,9 @@ d'inversion garantit que $Γ' ⊢ i$).
 \end{itemize}
 
 %}}}
-\jolibreak
+
+\subsection{Left-values}
+
 \paragraph{\textsc{Lv-Var}:}%{{{
 
 Le but est d'appliquer \textsc{Phi-Var}. La seule condition pour que cela soit
@@ -623,8 +627,6 @@ si $n ∈ [0;p-1]$, la partie droite vaut $v_{n+1}$ et donc
 $\mm{m}{lv[e]}{m}{v_{n+1}}$.
 Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
 
-% TODO attention à l'off by one
-
 \item $\mm{m}{e}{m'}{e'}$.
 En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
 \item $\mm{m}{lv[e]}{m'}{lv[e']}$.
@@ -687,8 +689,7 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 
 %}}}
 \end{proof}
-% TODO vérifier que tous les contextes sont présents dans la figure
-% TODO vérifier que tous les cas sont dans le lemme d'inversion
+
 \section{Préservation}
 \label{proof:preservation}
 
@@ -701,7 +702,7 @@ On procède par induction sur la dérivation de $\mm{m}{\cdot}{m'}{\cdot}$.
 
 N.B. \textsc{Ctx} apparaît 3 fois.
 
-Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$.
+\subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
 \[
@@ -720,9 +721,7 @@ Enfin, grâce au lemme~\ref{lemma:typ-ctx}, on sait que
 $Γ ⊢ \ctxSub{C}{e'} : t$.
 % }}}
 
-\jolibreak
-
-Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$.
+\subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}
 
 \paragraph{\textsc{Exp-Cst}:} % {{{
 
@@ -783,35 +782,40 @@ Le lemme~\ref{lemma:repr} s'applique à ce cas.
 Idem, on conclut grâce au lemme de représentabilité.
 
 % }}}
-\paragraph{\textsc{Exp-Call-Return}:} % {{{ TODO
-\[ \semrule{Exp-Call-Return} \]
+\paragraph{\textsc{Exp-Call-Return}:} % {{{
+
+Par inversion, il vient que
+$Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t'$
+et
+$∀ i ∈ [1;n], Γ ⊢ v_i : t_i$.
+
+Posons $Γ' = Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t$. Alors par inversions
+successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t$.
+
+Par affaiblissement (lemme~\ref{lemma:affaiblissement})
+$Γ ⊢ v : t$. En particulier (par le lemme~\ref{lemma:repr}), il existe
+$τ$ tel que $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
+
+% TODO compat
 % }}}
-\paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{ TODO
-\[ \semrule{Exp-Call-Return-Unit} \]
+\paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{
+
+Idem. En fait dans le cas précédent, le type de $v$ et forcément celui de
+$\vRet$ sous $Γ'$ ; comme $\vRet$ n'est alors pas utilisé, son choix est libre
+et une dérivation avec $\vRet : \tUnit ∈ Γ'$ est possible.
+
+% TODO compat
 % }}}
 
-\jolibreak
+\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
 
-Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$.
-
-\paragraph{\textsc{Ctx}:} % {{{ TODO
-\[
-   \irule{Ctx}
-     { \mm{m}{lv}{m'}{lv'} }
-     { \mm{m}{\ctxSub{C}{lv}}{m'}{\ctxSub{C}{lv'}} }
-\]
+\paragraph{\textsc{Ctx}:} % {{{
+Idem que dans le cas des expressions.
 % }}}
 
-\jolibreak
+\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
-Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$.
-
-\paragraph{\textsc{Phi-Var}:} % {{{ TODO
-\[ \semrule{Phi-Var} \]
-% }}}
 \paragraph{\textsc{Phi-Deref}:} % {{{
-\[ \semrule{Phi-Deref} \]
-
 Puisque $Γ ⊢ *φ : t$, le lemme d'inversion nous assure que $Γ ⊢ φ : t~*$.
 On applique le lemme~\ref{lemma:mem-typ} à $φ$:
 il vient que $m ⊧ \widehat{\&}~φ' : τ'$ où $\tComp{τ'}{t~*}$.
@@ -821,19 +825,20 @@ $\semtypphi{m}{φ'}{τ}$ où $τ' = τ~*$.
 On conclut que $\tComp{τ'}{t}$ en inversant par \textsc{Comp-Ptr}.
 
 % }}}
-\paragraph{\textsc{Phi-Struct}:} % {{{ TODO
-\[ \semrule{Phi-Struct} \]
+\paragraph{\textsc{Phi-Var}, \textsc{Phi-Struct} et \textsc{Phi-Array}:} % {{{
+
+Tout d'abord, la mémoire n'est pas modifiée donc il n'est pas nécessaire de
+montrer la compatibilité de $m'$.
+
+Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
+lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
+
 % }}}
-\paragraph{\textsc{Phi-Array}:} % {{{ TODO
-\[ \semrule{Phi-Array} \]
-% }}}
 
-\jolibreak
+\subsection{Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$}
 
-Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$.
-
-\paragraph{\textsc{Ctx}:} % {{{ TODO
-\[ \semrule{Ctx} \]
+\paragraph{\textsc{Ctx}:} % {{{
+Idem que dans le cas des expressions.
 % }}}
 \paragraph{\textsc{Seq}:}%{{{
 D'après le lemme d'inversion, $Γ ⊢ i$.
@@ -843,6 +848,14 @@ D'après \textsc{Pass}, $Γ ⊢ \iPass$.
 %}}}
 \paragraph{\textsc{Decl-Pass}:}%{{{ TODO
 \[ \semrule{Decl-Pass} \]
+
+$Γ ⊢ \iPass$ est immédiat.
+
+Par inversion, on a $Γ, x:t ⊢ Pass$.
+
+On a $Γ ⊧ m$.
+
+On veut $Γ' ⊧ m-x$.
 %}}}
 \paragraph{\textsc{Decl-Return}:}%{{{ TODO
 \[ \semrule{Decl-Return} \]
@@ -873,8 +886,6 @@ Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
 
 %}}}
 
-% TODO vérifier que les cas du lemme d'inversion sont bien
-
 \end{proof}
 
 \section{Progrès pour les types qualifiés}
@@ -887,8 +898,6 @@ Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
 On procède de la même manière que pour le théorème~\ref{thm:progres} (prouvé en
 annexe~\ref{proof:progres}). En fait, puisque le schéma de preuve porte sur les
 règles de typage, il suffit de traiter les cas supplémentaires.
-
-% TODO qu'est-ce qui empêche *♢x ?
 
 \paragraph{\textsc{Taint} :} % {{{
 
@@ -964,8 +973,6 @@ Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 
 % }}}
 
-% TODO vérifier que tous les cas de contexte sont là
-
 \end{proof}
 
 \section{Préservation pour les types qualifiés}
@@ -973,4 +980,20 @@ Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 
 (théorème~\ref{thm:preservation-qualif})
 
-% TODO
+De même, il suffit de prouver les cas correspondant aux nouvelles règles.
+
+\paragraph{\textsc{Expr-Tainted}:} % {{{ TODO
+\[ \semrule{Expr-Tainted} \]
+% }}}
+\paragraph{\textsc{User-Get-OK}:} % {{{ TODO
+\[ \semrule{User-Get-OK} \]
+% }}}
+\paragraph{\textsc{User-Get-Err}:} % {{{ TODO
+\[ \semrule{User-Get-Err} \]
+% }}}
+\paragraph{\textsc{User-Put-OK}:} % {{{ TODO
+\[ \semrule{User-Put-OK} \]
+% }}}
+\paragraph{\textsc{User-Put-Err}:} % {{{ TODO
+\[ \semrule{User-Put-Err} \]
+% }}}
