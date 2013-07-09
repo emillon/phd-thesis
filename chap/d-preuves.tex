@@ -802,9 +802,6 @@ Idem que dans le cas des expressions.
 
 \subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
-\paragraph{\textsc{Phi-Var}:} % {{{ TODO
-\[ \semrule{Phi-Var} \]
-% }}}
 \paragraph{\textsc{Phi-Deref}:} % {{{
 Puisque $Γ ⊢ *φ : t$, le lemme d'inversion nous assure que $Γ ⊢ φ : t~*$.
 On applique le lemme~\ref{lemma:mem-typ} à $φ$:
@@ -815,16 +812,13 @@ $\semtypphi{m}{φ'}{τ}$ où $τ' = τ~*$.
 On conclut que $\tComp{τ'}{t}$ en inversant par \textsc{Comp-Ptr}.
 
 % }}}
-\paragraph{\textsc{Phi-Struct}:} % {{{
+\paragraph{\textsc{Phi-Var}, \textsc{Phi-Struct} et \textsc{Phi-Array}:} % {{{
 
-Par inversion, il vient que $Γ ⊢ φ : S$. On applique alors le
-lemme~\ref{lemma:repr} : on obtient l'existence de $τ$ tel que
-$m ⊧ φ : τ$ où $\tComp{τ}{t}$.
+Tout d'abord, la mémoire n'est pas modifiée donc il n'est pas nécessaire de
+montrer la compatibilité de $m'$.
 
-% }}}
-\paragraph{\textsc{Phi-Array}:} % {{{
-
-Idem.
+Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
+lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
 
 % }}}
 
