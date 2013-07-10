@@ -1,8 +1,9 @@
 Le système d'exploitation est le programme qui permet à un système informatique
 d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
-multiples. Dans ce chapitre, nous allons voir quel est son rôle, et comment il
-peut être implanté. Pour ce faire, nous étudierons l'exemple d'une architecture
-Intel 32 bits.
+multiples. Dans ce chapitre, nous allons voir à quoi il sert, et comment il peut
+être implanté. Pour ce faire, nous étudierons l'exemple d'un système Intel
+32 bits.
+% TODO md
 
 \section{Architecture physique}
 
@@ -41,6 +42,7 @@ mémoire (directement : \texttt{addr} ou indirectement : \texttt{(\%ecx)}
 ).
 
 Parmi les mnémoniques courants on peut citer les suivants.
+% TODO dire pourquoi tu les présentes
 
 \begin{itemize}
 
@@ -129,7 +131,7 @@ Le mécanisme de mémoire virtuelle permet de donner à deux tâches une vue
 différente de la mémoire: c'est-à-dire que vue de tâches différentes, une
 adresse contiendra une valeur différente (figure~\ref{fig:memoire-virtuelle}).
 
-\begin{figure} % fig:memoire-virtuelle {{{
+\begin{figure}[h] % fig:memoire-virtuelle {{{
 \centering
 \begin{tikzpicture}
   [memlayout/.style={draw
@@ -179,20 +181,20 @@ adresse contiendra une valeur différente (figure~\ref{fig:memoire-virtuelle}).
 \label{fig:memoire-virtuelle}
 \end{figure} % }}}
 
-\begin{figure}
-\input{fig/pagetables.tex}
-\caption{Implantation de la mémoire virtuelle}
-\label{fig:pagetables}
-\end{figure}
-
 \label{page:mem-virt}
 Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
 d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
 l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
 de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
-donnant l'adresse d'une page de 4 kibioctets (figure~\ref{fig:pagetables}).
+donnant l'adresse d'une page de 4 kio (figure~\ref{fig:pagetables}).
 Plus de détails sur l'utilisation de ce mécanisme seront donnés dans la
 section~\ref{sec:linux-sys}.
+
+\begin{figure}[h]
+\input{fig/pagetables.tex}
+\caption{Implantation de la mémoire virtuelle}
+\label{fig:pagetables}
+\end{figure}
 
 \section{Appels système}
 
@@ -288,9 +290,8 @@ contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused
 Deputy Problem}\cite{hardy88confused}.
 
 La bonne solution est de tester dynamiquement la valeur du pointeur: s'il pointe
-en espace noyau, il faut indiquer une erreur plutôt que d'écrire
-(figure~\ref{fig:mzone3}). Sinon, il peut toujours y avoir une erreur, mais au
-moins le noyau est protégé.
+en espace noyau, il faut indiquer une erreur plutôt que d'écrire. Sinon, il peut
+toujours y avoir une erreur, mais au moins le noyau est protégé.
 
 \begin{figure}
 \insertcode{implem-gettime.c}
@@ -301,6 +302,7 @@ moins le noyau est protégé.
 Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
 fonction \texttt{access\_ok} réalise le test décrit précédemment. Les fonctions
 \texttt{copy\_from\_user} et \url{copy_to_user} réalisent une copie de la
+% TODO url sans link
 mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
 système \texttt{gettimeofday} fait appel à celle-ci
 (figure~\ref{fig:implem-gettime}).
