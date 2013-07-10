@@ -44,7 +44,9 @@ l'exécution.}.
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
-le théorème de progrès (\ref{thm:progres}) n'est plus valable. % TODO détaille
+le théorème de progrès (\ref{thm:progres}) n'est plus valable. Cela signifie que
+le système de type classique présenté dans le chapitre~\ref{cha:typbase} ne
+suffit pas à capturer les propriétés de sécurité que nous voulons interdire.
 
 L'étape suivante est d'étendre, à son tour, le système de types de \langname{}
 en distinguant les types des pointeurs contrôlés par l'utilisateur des pointeurs
@@ -104,6 +106,13 @@ On peut remarquer que contrairement aux fonctions présentes dans le noyau Linux
 les fonctions $\cfuF$ et $\ctuF$ n'ont pas de paramètre indiquant la taille à
 copier. Cela est dû au fait que le modèle mémoire de \langname{} est plus haut
 niveau. L'information de taille est déjà présente dans chaque valeur.
+
+Une autre remarque à faire est qu'il n'y a pas de manière de copier des données
+de l'espace utilisateur vers l'espace utilisateur. Il est nécessaire de passer
+par l'espace noyau. La raison est que puisqu'il faut réaliser deux tests
+dynamiques, les erreurs peuvent arriver à ces deux endroits. Plutôt que de
+proposer un opérateur qui réalise cette copie, on laisse le programmeur faire
+les deux copies manuellement.
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
@@ -241,8 +250,6 @@ théorème~\ref{thm:progres}. Posons:
   m = ([[x↦0]], [~]) \\
 \end{cases}
 \]
-
-% TODO notation des littéraux stack frame / mémoire?
 
 Les hypothèses du théorème de progrès sont bien vérifiées, mais cependant la
 conclusion n'est pas vraie:
@@ -434,8 +441,6 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 \[
     \disprule{Taint}
 \]
-
-% TODO user to user
 
 Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
 à remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
