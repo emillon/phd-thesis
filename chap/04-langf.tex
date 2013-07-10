@@ -12,71 +12,6 @@ La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
 
 \section{Notations}
 
-\subsection*{Ensembles inductifs}
-
-% TODO inutile?
-
-Dans ce chapitre (et les chapitres suivants), on définit de nombreux ensembles
-inductifs. Plutôt que d'écrire la construction explicite par point fixe, on
-emploie une notation en grammaire.
-
-Étudions l'exemple des listes chaînées composées d'élements de $ℕ$.
-
-Notons $L$ cet ensemble; si $[]$ est la liste vide et $n::l$ la liste formée
-d'une «tête» $n ∈ ℕ$ et d'une «queue» $l ∈ L$. Toute liste est donc d'une des
-formes suivantes:
-
-\begin{itemize}
-\item $[]$
-\item $n_1::[]$
-\item $n_1::n_2::[]$
-\item etc.
-\end{itemize}
-
-On peut donc $L$ de la manière inductive suivante:
-
-\def\opfix{\textrm{fix}\xspace}
-
-\begin{align*}
-  \textsc{L} & = \opfix (L') \\
-  L'(E) & = \{[]\} \cup \{ n::l / n ∈ ℕ, l ∈ E \} \\
-\end{align*}
-
-où
-
-\begin{align*}
-  \opfix (f) & = \bigcup_{n=0}^{\infty} f^{n}(∅) \\
-  f^0(x) & = x \\
-  ∀ n > 0, f^n(x) & = f^{n-1}(f (x)) \\
-\end{align*}
-
-(L'itération $n$ de l'union correspond aux listes comprenant au plus $n$
-éléments)
-
-Plutôt que d'écrire cette définition précise mais chargée, on écrira à la place
-une définition en compréhension:
-
-\begin{align*}
-\gramdef[3cm]{Listes}{l}
-  {[]}{Liste vide}
-  {n::l}{Construction de liste}
-  {END}
-\end{align*}
-
-Chaque ensemble est identifié de manière unique par les noms de variables
-métasyntaxiques: $n$ pour les entiers et $l$ pour les listes ici. Si plusieurs
-métavariables du même ensemble doivent apparaître, elles sont indicées. Par
-exemple, on peut définir des arbres binaires d'entiers de la manière suivante:
-
-\begin{align*}
-\gramdef[3cm]{Arbres binaires}{a} { \textsc{F}              }{Feuille}
-              { \textsc{N}(a_1, n, a_2) }{Nœud}
-          {END}
-\end{align*}
-
-Cette notation a aussi l'avantage de s'étendre facilement aux définitions
-mutuellement récursives.
-
 \subsection*{Inférence}
 
 La sémantique opérationnelle consiste en la définition d'une relation de
@@ -1046,78 +981,6 @@ f ()                g (p)           h ()
 L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
 déréférencement de $p$ va modifier $x$.
 
-\begin{figure}%{{{
-  \centering
-
-
-  \begin{tikzpicture}
-    [ stack/.style={draw,minimum height=5mm,minimum width=3cm ,shape=rectangle}
-    , every node/.style={font=\footnotesize}
-    , faded/.style={fill=black!20}
-    , substack/.style={draw, minimum height=5mm, }
-    , oldstack/.style={loosely dashed}
-    , fixmatrix/.style={matrix, row sep=-\pgflinewidth, column sep=-\pgflinewidth}
-    , >=stealth'
-    ]
-
-    \path (0, 0)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, minimum width=10mm}] {
-        \node (p) { }; & \node { }; & \node (q) { }; \\
-      }
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
-        \node (x) { }; & \node (y) { }; \\
-      };
-
-      \node [fixmatrix, nodes={substack, minimum width=15mm}]
-        at (5, 0) {
-          \node (r) { }; & \node { }; \\
-      };
-
-      \draw[->] (p.center) -- ++(0, 0.5);
-      \draw[->] (q.center) -| ($ (r.center) - (3mm, 0) $);
-      \draw[->] ($ (r.center) + (3mm, 0) $) |- (y.center);
-
-      %%%%%
-
-    \path (0, -3)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [stack, faded] {}
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, minimum width=10mm}] {
-        \node (p2) { }; & \node { }; & \node (q2) { }; \\
-      }
-      -- ++ (0, 0.5)
-      node [fixmatrix, nodes={substack, oldstack, minimum width=15mm}]{
-        \node (x2) { }; & \node (y2) { }; \\
-      };
-
-      \node [fixmatrix, nodes={substack, minimum width=15mm}]
-        at (5, -3) {
-          \node (r2) { }; & \node { }; \\
-      };
-
-      \draw[->] (q2.center) -| ($ (r2.center) - (3mm, 0) $);
-
-      \def\crossat#1{
-        \draw ($ #1 + (2mm, 2mm) $) -- ++ (-4mm, -4mm);
-        \draw ($ #1 + (-2mm, 2mm) $) -- ++ (4mm, -4mm);
-      }
-
-      \crossat{(r2.center) + (3mm, 0)}
-      \crossat{(p2.center)}
-
-  \end{tikzpicture}
-
-  \caption{Nettoyage d'un cadre de pile}
-\label{fig:stackcleanup}
-\end{figure}%}}}
-
 \section{Accesseurs}
 \label{sec:mem-access}
 
@@ -1167,8 +1030,7 @@ l{[x]}_L  &=
     \end{cases} \\
 l{[x ← v]}_L  &=
     \begin{cases}
-        l{[n ← (x ↦ v)]}_I & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v_0. l_n = (x ↦ v_0) \\
-% TODO pourquoi v_0
+        l{[n ← (x ↦ v')]}_I & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v. l_n = (x ↦ v) \\
         \serr{var} & \mbox{ sinon }
     \end{cases} \\
 \end{align*}
@@ -1464,8 +1326,6 @@ x <- & s1
 \end{mathpar}
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
-
-% TODO figure cleanup fausse depuis les derefs changés
 
 \begin{figure}%{{{
 
