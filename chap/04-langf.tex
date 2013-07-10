@@ -1243,8 +1243,8 @@ ou une variable globale?
 Les règles portant sur le déréférencement et l'accès à un champ de structure
 sont similaires: on commence par évaluer la left-value sur laquelle porte ce
 modificateur, et on place le même modificateur sur le chemin résultant. Dans le
-cas des champs de structure, la définition de la structure $S$ n'est pas prise
-en compte. % TODO cad?
+cas des champs de structure, l'annotation de structure $S$ n'est pas prise
+en compte.
 
 \begin{mathpar}
   \semrule{Phi-Struct}
@@ -1271,7 +1271,28 @@ $\widehat{*}φ$.
 
 Cela ne fonctionne pas, car alors les déréférencements sont évalués trop tard:
 au moment de l'affectation dans la left-value plutôt qu'à sa définition. La
-figure~\ref{fig:lazy-deref} illustre ce problème. On s'intéresse à l'évaluation
+figure~\ref{fig:lazy-deref} illustre ce problème.
+
+%{{{
+\begin{SaveVerbatim}[]{LeLazy}
+Decl s0 = { .f = 0 } in
+Decl s1 = { .f = 1 } in
+Decl x  = & s0 in
+Decl p = & ((*x).f) in
+/* (a) */
+x <- & s1
+/* (a) */
+\end{SaveVerbatim}
+
+\begin{figure}[h]
+
+\hspace{1cm}\BUseVerbatim{LeLazy}
+
+\caption{Évaluation stricte ou paresseuse des left-values}
+\label{fig:lazy-deref}
+\end{figure}%}}}
+
+On s'intéresse à l'évaluation
 de l'expression \texttt{*p} aux points \texttt{(a)} et \texttt{(b)}. Avec une
 sémantique paresseuse (en ajoutant un $\widehat{*}φ$), la valeur de
 \texttt{p}
@@ -1294,28 +1315,13 @@ exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on montrera que la
 première est toujours évitée dans les programmes typés
 (théorème~\ref{thm:progres}).
 
-\begin{figure}%{{{
-\begin{Verbatim}
-Decl s0 = { .f = 0 } in
-Decl s1 = { .f = 1 } in
-Decl x  = & s0 in
-Decl p = & ((*x).f) in
-/* (a) */
-x <- & s1
-/* (a) */
-\end{Verbatim}
-
-\caption{Évaluation stricte ou paresseuse des left-values}
-\label{fig:lazy-deref}
-\end{figure}%}}}
-
 \begin{mathpar}
   \semrule{Phi-Deref}
 \end{mathpar}
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
 
-\begin{figure}%{{{
+\begin{figure}[h]%{{{
 
   \centering
 
