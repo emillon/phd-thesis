@@ -147,10 +147,8 @@ On définit les fonctions suivantes. Notons qu'elles ne sont pas définies sur l
 liste vide $[]$, qui pourra être traité comme un cas d'erreur.
 
 \begin{align*}
-  \mathrm{get}_T     (t::q) &= t \\
-  \mathrm{put}_T (t', t::q) &= t'::q \\
-  \mathrm{get}_Q     (t::q) &= q \\
-  \mathrm{put}_Q (q', t::q) &= t::q' \\
+  \mathrm{get}_T     (t::q) &= t   & \mathrm{put}_T (t', t::q) &= t'::q  \\
+  \mathrm{get}_Q     (t::q) &= q   & \mathrm{put}_Q (q', t::q) &= t::q'
 \end{align*}
 
 Alors
@@ -160,11 +158,9 @@ $Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \setLens{L(E)}{L(E)}$.
 
 On a par exemple:
 
-$\mathrm{get}_T (1::6::1::8::[]) = 1$
-
-et:
-
-$\mathrm{put}_Q (4::2::[], 3::6::1::5::[]) = 3::4::2::[]$.
+\begin{align*}
+\mathrm{get}_T (1::6::1::8::[]) &= 1   &   \mathrm{put}_Q (4::2::[], 3::6::1::5::[]) = 3::4::2::[]
+\end{align*}
 
 \end{example}
 
@@ -190,7 +186,7 @@ On note alors:
 
 Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 
-\begin{figure}
+\begin{figure}[h]
 
   \begin{align*}
     \lensGet{Δ(b)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &= \lensInnerStar{blue!30} \\
@@ -198,7 +194,7 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
     \lensPut{Δ(b)}{\lensInnerStar{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &=
       \lensNodeBigIdx{green!30}{blue!30}{red!30}{blue!30}{blue!30} \\
     \lensPut{Δ(c)}{\lensInner{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &=
-      \lensNodeBigIdx{green!30}{blue!30}{blue!30}{red!30}{blue!30} \\
+      \lensNodeBigIdx{green!30}{blue!30}{blue!30}{red!30}{blue!30}
   \end{align*}
 
 % TODO couleurs
@@ -228,9 +224,11 @@ Donc $T$ est une lentille indexée, et on a par exemple:
 \\
 (9,2,6,5,3) {[3 ← 1]}_T &= \mathrm{put}_{T(3)} (1, (9,2,6,5,3)) \\
                         &= (9,2,1,5,3)
-% TODO notation un peu bizarre
 \end{align*}
 \end{example}
+
+La notation $3 ← 1$ peut surprendre, mais il s'interprète de la manière
+suivante: en remplaçant l'élément d'indice $3$ par $1$.
 
 \begin{definition}[Composition de lentilles]
 \label{def:lens-comp}
@@ -249,13 +247,11 @@ Donc $T$ est une lentille indexée, et on a par exemple:
         (a, \mathrm{get}_{ℒ_1} r), r) \\
   \end{align*}
 
-  On notera alors $ℒ = ℒ_1 \ggg ℒ_2$.
-% TODO sens
-% TODO en français
+On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 
 \end{definition}
 
-\begin{figure}
+\begin{figure}[h]
 
 \centering
 
@@ -310,92 +306,75 @@ Donc $T$ est une lentille indexée, et on a par exemple:
 Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
 que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
-\section{Caractéristiques}
+%\section{Caractéristiques}
 
-% TODO mettre la syntaxe directe et intégrer ça a leur place
+%% TODO drôle d'ordre
 
-% TODO drôle d'ordre
+%\paragraph{Fonctions et procédures:} Un des problèmes classiques dans les
+%langages impératifs est de distinguer les fonctions (qui retournent une valeur)
+%et les procédures (qui n'en retournent pas). La solution choisie par C est de
+%marquer les procédures comme retournant un «faux» type \texttt{void}. Mais
+%c'est uniquement syntaxique: il n'est pas possible de manipuler de valeur de
+%type \texttt{void}.
 
-\paragraph{Fonctions et procédures:} Un des problèmes classiques dans les
-langages impératifs est de distinguer les fonctions (qui retournent une valeur)
-et les procédures (qui n'en retournent pas). La solution choisie par C est de
-marquer les procédures comme retournant un «faux» type \texttt{void}. Mais
-c'est uniquement syntaxique: il n'est pas possible de manipuler de valeur de
-type \texttt{void}.
+%L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
+%faire de distinction entre ces deux cas et d'interdire les procédures. Les
+%fonctions ne retournant pas de valeur «intéressante» renvoient alors une
+%valeur d'un type à un seul élément noté \eUnit\footnote{Cette notation évoque
+%un $n$-uplet à 0 composante.}, et donc le type sera noté \tUnit.
 
-L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
-faire de distinction entre ces deux cas et d'interdire les procédures. Les
-fonctions ne retournant pas de valeur «intéressante» renvoient alors une
-valeur d'un type à un seul élément noté \eUnit\footnote{Cette notation évoque
-un $n$-uplet à 0 composante.}, et donc le type sera noté \tUnit.
+%En C, puisqu'il n'y a pas de valeurs de type \texttt{void}, la notation
+%\texttt{void *} a un sens particulier: elle désigne les pointeurs de type non
+%défini, qui sont compatibles avec n'importe quel autre type de pointeur (c'est
+%la seule forme --- rudimentaire --- de généricité qu'offre le langage). En
+%\langname, la valeur $\eUnit$ est une valeur comme les autres, et on peut
+%constuire un pointeur de type $\tUnit *$ qui n'aura pas de signification
+%particulière: c'est seulement un pointeur vers une valeur de type \tUnit.
 
-En C, puisqu'il n'y a pas de valeurs de type \texttt{void}, la notation
-\texttt{void *} a un sens particulier: elle désigne les pointeurs de type non
-défini, qui sont compatibles avec n'importe quel autre type de pointeur (c'est
-la seule forme --- rudimentaire --- de généricité qu'offre le langage). En
-\langname, la valeur $\eUnit$ est une valeur comme les autres, et on peut
-constuire un pointeur de type $\tUnit *$ qui n'aura pas de signification
-particulière: c'est seulement un pointeur vers une valeur de type \tUnit.
+%\paragraph{Tableaux:} ce sont des valeurs composées qui contiennent un certain
+%nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
+%valeurs par un indice entier, qui dans le cas général n'est pas connu à la
+%compilation. C'est une erreur ($\serr{array}$) d'accéder à un tableau en dehors de
+%ses bornes, c'est-à-dire en dehors de $[0;n-1]$ pour un tableau à $n$
+%éléments.
 
-\paragraph{Tableaux:} ce sont des valeurs composées qui contiennent un certain
-nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
-valeurs par un indice entier, qui dans le cas général n'est pas connu à la
-compilation. C'est une erreur ($\serr{array}$) d'accéder à un tableau en dehors de
-ses bornes, c'est-à-dire en dehors de $[0;n-1]$ pour un tableau à $n$
-éléments.
+%Les tableaux sont notés $\eArray{e_1; …; e_n}$, et le cas dégénéré ($n = 0$) est
+%interdit.
 
-Les tableaux sont notés $\eArray{e_1; …; e_n}$, et le cas dégénéré ($n = 0$) est
-interdit.
+%\paragraph{Structures:} comme les tableaux, ce sont des valeurs composées mais
+%hétérogènes. Les différents éléments (appelés \emph{champs}) sont désignés par
+%noms $l$ (pour \emph{label}).
 
-\paragraph{Structures:} comme les tableaux, ce sont des valeurs composées mais
-hétérogènes. Les différents éléments (appelés \emph{champs}) sont désignés par
-noms $l$ (pour \emph{label}).
+%Les structures sont notées $\eStruct{ l_1 : e_1 ; … ; l_n : e_n }$ et comme dans le
+%cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
 
-Les structures sont notées $\eStruct{ l_1 : e_1 ; … ; l_n : e_n }$ et comme dans le
-cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
+%Dans le programme, le nom de champ $l$ est décoré de la définition complète de
+%la structure $S$. Celle-ci n'est pas utilisée dans l'évaluation et sera donc
+%décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
+%structure dans le code du programme serait fastidieux.
 
-Dans le programme, le nom de champ $l$ est décoré de la définition complète de
-la structure $S$. Celle-ci n'est pas utilisée dans l'évaluation et sera donc
-décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
-structure dans le code du programme serait fastidieux.
+%\paragraph{Types de données:} Entiers machine, flottants, pointeurs et types
+%composés (structures et tableaux) composés de ceux-ci.
 
-\paragraph{Types de données:} Entiers machine, flottants, pointeurs et types
-composés (structures et tableaux) composés de ceux-ci.
+%\paragraph{Variables:} elles sont mutables, et on peut passer des données par
+%valeur ou par pointeur.
 
-\paragraph{Variables:} elles sont mutables, et on peut passer des données par
-valeur ou par pointeur.
+%\paragraph{Flôt de contrôle:} il repose sur les construction «if» et
+%«while». Les autres types de boucle («for» et «do/while») peuvent être
+%construits avec ces opérateurs.
 
-\paragraph{Flôt de contrôle:} il repose sur les construction «if» et
-«while». Les autres types de boucle («for» et «do/while») peuvent être
-construits avec ces opérateurs.
-
-\paragraph{Fonctions:} le code est organisé en fonctions «simples»,
-c'est-à-dire qui ne sont pas des fermetures. Même si les fonctions locales sont
-possibles, il n'est pas possible d'accéder aux variables de la portée entourante
-depuis la fonction intérieure.
+%\paragraph{Fonctions:} le code est organisé en fonctions «simples»,
+%c'est-à-dire qui ne sont pas des fermetures. Même si les fonctions locales sont
+%possibles, il n'est pas possible d'accéder aux variables de la portée entourante
+%depuis la fonction intérieure.
 
 \section{Syntaxe}
 
-Les figures~\ref{fig:stx-data},~\ref{fig:stx} et~\ref{fig:stx-ops} présentent
+Les figures~\ref{fig:stx-data} et~\ref{fig:stx} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
 
-Un programme est organisé en fonctions, qui contiennent des instructions, qui
-elles-mêmes manipulent des expressions.
-
-Le flot de contrôle est simplifié par rapport à C:\@ il ne contient que
-l'alternative («if») et la boucle «while». Les autres formes de boucle
-(«do/while» et «for») peuvent être émulées par une boucle «while».
-
-Les fonctionnalités manquantes, et comment les émuler, seront examinées dans le
-chapitre~\ref{cha:conclusion}.
-
-Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
-\iIf{e}{i}{\iPass}$.
-
-Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
-
-\begin{figure}
+\begin{figure}[p]%{{{
 
   \begin{align*}
   \gramdef{Constantes}{c}
@@ -438,9 +417,9 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \caption{Syntaxe des expressions}
 \label{fig:stx-data}
-\end{figure}
+\end{figure}%}}}
 
-\begin{figure}
+\begin{figure}[p]%{{{
 
   \begin{align*}
   \gramdef{Instructions}{i}
@@ -467,9 +446,21 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \caption{Syntaxe des instructions}
 \label{fig:stx}
-\end{figure}
+\end{figure}%}}}
 
-\begin{figure}
+Un programme est organisé en fonctions, qui contiennent des instructions, qui
+elles-mêmes manipulent des expressions.
+
+Le flot de contrôle est simplifié par rapport à C:\@ il ne contient que
+l'alternative («if») et la boucle «while». Les autres formes de boucle
+(«do/while» et «for») peuvent être émulées par une boucle «while».
+
+Les fonctionnalités manquantes, et comment les émuler, seront examinées dans le
+chapitre~\ref{cha:conclusion}.
+
+Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
+
+\begin{figure}[h]%{{{
 
   \begin{align*}
   \gramdef{Opérateurs \linebreak binaires}{\opbin}
@@ -493,7 +484,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
   \caption{Syntaxe des opérateurs}
 \label{fig:stx-ops}
-\end{figure}
+\end{figure}%}}}
 
 \section{Mémoire et valeurs}
 
@@ -621,8 +612,6 @@ Les erreurs peuvent être de plusieurs types:
 
 \item $\serr{div}$ correspond à une division par zéro. Cela arrive si la seconde
 opérande de $/$, $\%$ ou $\floatop{/}$ est nulle.
-
-% TODO répétition wrt figure
 
 \item $\serr{array}$ signale un débordement de tableau.
 
@@ -777,8 +766,8 @@ Un certain nombre d'opérations est possible sur les valeurs
 
 \item
   les opérateurs arithmétiques unaires $+$, $-$, $\floatop{+}$ et $\floatop{-}$
-  sont équivalents à l'opération binaire correspondante avec $0$ ou $0.0$ comme
-  première opérande. %TODO ?
+  sont équivalents par définition à l'opération binaire correspondante.
+  Par exemple $\widehat{-}4 \eqdef 0\widehat{-}4$.
 
 \item
   $\sim$ inverse tous les bits de son opérande.
@@ -800,11 +789,13 @@ Un certain nombre d'opérations est possible sur les valeurs
   Chaque fonction peut accéder aux variables locales de la fonction en cours,
   ainsi qu'aux variables globales.
 
+  Remarque le cadre de variables locales le plus récent a toujours l'indice $1$.
+
 \[
   \cLookup{(s, g)}{x} =
         \begin{cases}
             (|s|, x) & \mbox{ si } |s| > 0
-                       \mbox{ et } (x ↦ v) ∈ s_1 \\ % TODO le dernier
+                       \mbox{ et } (x ↦ v) ∈ s_1 \\
             x        & \mbox{ si } (x ↦ v) ∈ g \\
             \serr{var} & \mbox{ sinon }
         \end{cases}
