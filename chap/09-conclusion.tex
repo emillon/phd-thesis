@@ -9,9 +9,9 @@ l'expressivité de ce système.
 
 \section{Contributions}
 
-\paragraph{Un langage impératif bien typable}
+\paragraph{Un langage impératif bien typé}
 
-Le système de types de C est trop rudimentaire pour permettre de d'obtenir des
+Le système de types de C est trop rudimentaire pour permettre d'obtenir des
 garanties sur l'exécution des programmes bien typés. En interdisant certaines
 constructions dangereuses et en en annotant certaines, nous avons isolé un
 langage impératif bien typable, pour lequel on peut définir un système de types
@@ -40,6 +40,10 @@ déréférence un pointeur dont la valeur est contrôlée par l'espace utilisate
 classes de problèmes comme par exemple éviter l'utilisation de certaines
 opérations sur les types entiers lorsqu'ils sont utilisés comme identificateurs
 ou masque de bits.
+
+% TODO liens EADS
+
+% TODO + expérimentation
 
 \section{Limitations et travaux futurs}
 
@@ -70,7 +74,7 @@ l'environnement.
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
 de capturer de nombreuses constructions qui sont possibles, ou même idiomatiques
 en C:\@ les unions, les conversions de types (explicites ou implicites) et le
-\emph{type punning} (défini ci-desosus). Les deux premières sont équivalentes.
+\emph{type punning} (défini ci-dessous). Les deux premières sont équivalentes.
 Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
 type $t_2$ par l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alors
 un ``trou'' dans le système de types. Cette fonction devrait en effet être typée
@@ -207,6 +211,8 @@ mémoire.
 
 \paragraph{Structures récursives}
 
+% TODO est-ce que cela empêche l'imbrication? types rec/ vals rec
+
 Une autre limitation est que seules les structures simples sont supportées. Les
 structures récursives, contenant un pointeur vers un objet du même type
 structure, ne sont pas typables. La raison est syntaxique: l'accès à un champ
@@ -320,5 +326,11 @@ On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si un
 encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de codec
 tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
 une fonction prenant en paramètre un numéro de \emph{frame}.
+
+% TODO + CCL
+
+% TODO Newspeak a-t'il été utilisé sur de gros codes?
+
+% TODO il serait pas mal de citer les membres du jury dans ta biblio
 
 % vim: spelllang=fr

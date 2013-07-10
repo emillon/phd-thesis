@@ -6,7 +6,7 @@ chapitre~\ref{cha:qualifs} et implanté dans le chapitre~\ref{cha:implem}.
 Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
 d'exploitation développé depuis le début des années 90 et ``figure de proue'' du
 mouvement open-source. Au départ écrit par Linus Torvalds sur son ordinateur
-personnel, il a au fil des années était porté sur de nombreuses architectures et
+personnel, il a au fil des années été porté sur de nombreuses architectures et
 s'est enrichi de nombreux pilotes de périphériques. Dans la version 3.9.8
 (2013), son code source comporte 11.2 millions de lignes de code (en grande
 majorité du C) dont 57\% de pilotes.
@@ -102,7 +102,7 @@ Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
 
 \begin{itemize}
 \item le code du programme
-\item les données du programmes (variables globales)
+\item les données du programme (variables globales)
 \item la pile utilisateur
 \item le tas (mémoire allouée par \texttt{malloc} et fonctions similaires)
 \item les bibliothèques partagées
@@ -197,7 +197,7 @@ peuvent être trouvés dans~\cite{userspaceaccess}.
 
 \section{Exemple de bug}
 
-On décrit le cas d'un pilote video qui contenait un bug de pointeur utilisateur.
+On décrit le cas d'un pilote vidéo qui contenait un bug de pointeur utilisateur.
 Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340. 
 
 Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
@@ -296,8 +296,8 @@ de traduire le noyau linux en \langname{}.
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
 environnement initial (via la variable \texttt{exttbl} décrite en
 section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
-pointeurs souillés on ajoute un commentaire spécial \texttt{!npk userptr x},
-qui fait unifier le type de \texttt{x} avec $\ptrU{t}$.
+pointeurs souillés on ajoute un commentaire spécial \texttt{!npk userptr x}, qui
+unifie le type de \texttt{x} avec $\ptrU{t}$ où $t$ est une inconnue de type.
 
 \begin{figure}
 \insertcode{ex-drm.c}
@@ -331,5 +331,8 @@ des bugs dans le noyau Linux. Pour le moment, il nécessite du code annoté, mai
 la phase de compilation depuis le code GNU C que comporte le noyau peut déjà
 être compilée automatiquement en \newspeak, puis dans une représentation proche
 de \langname.
+
+% TODO peut être un peu short
+% TODO URLs ? est-ce du logiciel libre?
 
 % vim: spelllang=fr
