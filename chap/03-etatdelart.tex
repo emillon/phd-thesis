@@ -4,11 +4,12 @@ propriété de sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se
 limite pas à celle-ci: il est également intéressant de considérer des analyses
 développées pour d'autres propriétés, celles-ci pouvant potentiellement
 s'adapter.
+% TODO des exemples!
 
 L'analyse statique de programmes est un sujet de recherche actif depuis
-l'apparition de la science informatique. On commence par en présenter une
-classification, puis on montrera des exemples pertinents permettant d'analyser
-du code système ou embarqué.
+l'apparition de l'informatique en tant que science. On commence par en présenter
+une classification, puis on montrera des exemples pertinents permettant
+d'analyser du code système ou embarqué.
 
 \section{Taxonomie}
 
@@ -29,9 +30,11 @@ plus simples à mettre en œuvre et permettent de trouver des erreurs pendant le
 processus de développement. De plus, on peut considérer qu'un programme avec une
 forte couverture par les tests a de grandes chances d'être correct pour toutes
 les entrées. C'est par exemple ce qui se passe dans l'avionique civile.
+% TODO à préciser
 
 Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
 uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
+% TODO et pourtant
 --- car il est impossible d'étudier l'ensemble complet de tous les comportements
 possibles. Par exemple, si un bug se présente lors d'une interaction entre deux
 composants qui n'a pas été testée, il passera inaperçu. Pour cette raison, la
@@ -45,6 +48,8 @@ cela n'est que rarement possible car l'ensemble des valeurs possibles lors de
 l'exécution d'un programme n'est pas un ensemble calculable (théorème de
 Rice~\cite{rice}). Autrement dit, il ne peut exister une procédure de décision
 prenant un programme et le déclarant correct ou incorrect.
+
+% TODO ex: arrêt
 
 Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
 trompant jamais. Toute technique statique va donc de se retrouver dans au moins
@@ -86,9 +91,11 @@ particulières.
 
 Ces techniques sont utiles parce qu'elles permettent de plonger rapidement dans
 le code, en identifiant par exemple des appels à des fonctions dangereuses. En
-revanche, cela n'est utile que lorsque les propriétés que l'ont recherche sont
+revanche, cela n'est utile que lorsque les propriétés que l'on recherche sont
 très locales. Elles offrent également peu de garantie (ce n'est pas parce qu'une
 construction dangereuse n'est pas présente que le code est correct).
+
+% TODO attention
 
 \section{Interprétation abstraite}
 
@@ -105,10 +112,10 @@ valeur exacte des données, mais préservant l'abstraction
 ``$-$'' $×$ ``$-$'' $=$ ``$+$''
 définissent le domaine abstrait des signes. Les domaines ont une structure de
 treillis, c'est-à-dire qu'ils possèdent les notions d'ordre partiel et d'union
-de valeurs. En calculant les valeurs extremales d'une variable, on obtient le
+de valeurs. En calculant les extrêmes limites d'une variable, on obtient le
 domaine des intervalles.
 
-\begin{figure}%{{{
+\begin{figure}[h]%{{{
 \centering
 
 \begin{minipage}{0.4\textwidth}
@@ -150,7 +157,7 @@ des relations affines de la forme $v_i - v_j \le c$ (figure~\ref{fig:dom-zones})
 les zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 (figure~\ref{fig:dom-octo}).
 
-\begin{figure}%{{{
+\begin{figure}[b]%{{{
 
   \centering
 
@@ -242,7 +249,7 @@ source à analyser dans un langage, et traduire les résultats de l'analyse en u
 ensemble d'alarmes à présenter à l'utilisateur.
 
 Cette technique est très puissante: si un interpréteur abstrait \emph{sound}
-(c'est-à-dire réalisant une surapproximation) analyse un programme et ne renvoie
+(c'est-à-dire ne manquant aucun programme incorrect) analyse un programme et ne renvoie
 pas d'erreur, alors on a prouvé que le programme est correct (par rapport aux
 propriétés que vérifient les domaines abstraits). Cela a été appliqué avec
 succès avec les analyseurs Astrée~\cite{Astree04,Astree05,AstreeScale} chez
@@ -282,6 +289,8 @@ annotations plus riches: par exemple en vérifiant statiquement que des listes
 ne sont pas vides\cite{lightweight-static-capabilities}, ou dans le domaine de
 la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
 
+% TODO citer caml flow, Simonet
+
 \paragraph{Qualificateurs de types}
 
 Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
@@ -301,17 +310,19 @@ permettent d'établir des propriétés sur le programme.
 
 Plus précisément, les jugements de typage de la forme $Γ ⊢ e : t$ sont remplacés
 par des jugements de typage qualifiés $Γ ⊢ e : t~q$. Les qualificateurs $q$
-permettent d'exprimer plusieurs jugements. Par exemple, pointeurs on peut
+permettent d'exprimer plusieurs jugements. Par exemple, on peut
 étudier le fait qu'une variable soit constante ou pas, que sa valeur soit connue
 à la compilation, ou encore qu'elle puisse être nulle ou pas. La spécificité de
 ce système est que les qualificateurs sont ordonnés, du plus spécifique au moins
 spécifique, et que l'on forme alors un treillis à partir de ces informations.
 Partant des deux caractéristiques précédentes, on forme le treillis de la
 figure~\ref{fig:cqual-treillis}. Le qualificateur \texttt{const} désigne les
+% TODO inversion
 données dont la valeur change au cours de l'exécution; \texttt{dynamic} celles
 qui peuvent être connues à la compilation; et \texttt{nonzero} celles qui ne
-peuvent jamais être nulles. Le cube sur lequel se trouvent correspond à une
-relation d'ordre, du plus spécifique (en bas) au plus général (en haut).
+peuvent jamais être nulles. Le cube sur lequel se trouvent les qualificateurs
+correspond à une relation d'ordre, du plus spécifique (en bas) au plus général
+(en haut).
 
 \begin{figure}
 \centering
@@ -344,20 +355,22 @@ inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
 pour les chaînes de format~\cite{usenix01} (pouvant poser des problèmes de
 sécurité~\cite{format-string-attacks}) et des propriétés dépendantes du flot de
 contrôle, comme des invariants sur les verrous~\cite{pldi02}, à rapprocher du
-concept de \emph{typestates}~\cite{tse12-typestate}. Il a également été appliqué
+concept de \emph{typestates}~\cite{tse12-typestate}.
+% TODO hyph
+Il a également été appliqué
 à la classe de vulnérabilités sur les pointeurs utilisateurs dont il est ici
 l'objet~\cite{cquk-usenix04}.
 
-Cette approche étant assez proche de la nôtre: on donne un type différent aux
-pointeurs selon leur provenance. Néanmoins cela est très différent de nôtre
-solution. Une première différence est dans le langage considéré. CQual
-s'applique sur un lambda-calcul à références, alors que pour étudier du code C
-nous présentons un modèle mémoire avec pile explicite plus proche de la machine.
-D'autre part, le système de type de CQual est fondamentalement modifié pour
-prendre en compte ces opérations, alors que dans le nôtre il s'agit d'une simple
-extension qui ne nécessite pas de modifier toutes les règles de typage. La
-conclusion de la partie~\ref{part:lang} (page~\pageref{cha:ccl2}) sera dédiée à
-une comparaison entre nos solutions.
+Cette approche est assez proche de la nôtre: on donne un type différent aux
+pointeurs selon leur provenance. Néanmoins cela est très différent. Une première
+différence est dans le langage considéré. CQual s'applique sur un lambda-calcul
+à références, alors que pour étudier du code C nous présentons un modèle mémoire
+avec pile explicite plus proche de la machine. D'autre part, le système de type
+de CQual est fondamentalement modifié pour prendre en compte ces opérations,
+alors que dans le nôtre il s'agit d'une simple extension qui ne nécessite pas de
+modifier toutes les règles de typage. La conclusion de la
+partie~\ref{part:lang}, page~\pageref{cha:ccl2}, sera dédiée à une comparaison
+entre ces solutions.
 
 Ces techniques de typage sont séduisantes parce qu'elles sont en général simples
 à mettre en place: à l'aide d'un ensemble de règles, on attribue un type à
@@ -369,6 +382,8 @@ Le typage statique peut également être implanté de manière efficace. La plup
 des systèmes de types peuvent être vérifiés en pratique dans un temps linéaire
 en la taille du programme considéré. L'inférence, en revanche, peut parfois
 ``exploser'' au dessus de cette complexité raisonnable.
+
+% TODO lien?
 
 \section{Analyse de code système}
 
@@ -406,14 +421,16 @@ nuls'' (\texttt{int @}; un test à l'exécution est alors inséré), et des
 mémoire pointée). L'arithmétique des pointeurs n'est autorisée que sur ces
 derniers, rendant impossibles les débordements de tableaux (ceux-ci étant
 détectés au pire à l'exécution). Le problème des \emph{dangling pointers} est
+% TODO définir une bonne fois pour toute les dangling
 résolu en utilisant un système de régions~\cite{cyclone-regions}, inspiré des
 travaux de Jouvelot, Talpin et \linebreak Tofte~\cite{jfp92,ToTa1993,popl94}.
 Cela permet d'interdire statiquement les constructions où l'on déréférence un
-pointeur faisant référence à une région de mémoire qui n'est plus allouée.
+pointeur faisant référence à une région de mémoire qui n'est plus allouée (par
+exemple en évitant de retourner l'adresse d'une variable locale).
 
-Le langage Rust~\link{rust} développé par Mozilla prend un approche similaire en
-distinguant plusieurs types de pointeurs pour gérer la mémoire de manière plus
-fine. Les \emph{managed pointers} (notés \texttt{@int}) utilisent un
+Le langage Rust~\link{rust} développé par Mozilla prend une approche similaire
+en distinguant plusieurs types de pointeurs pour gérer la mémoire de manière
+plus fine. Les \emph{managed pointers} (notés \texttt{@int}) utilisent un
 ramasse-miette pour libérer la mémoire allouée lorsqu'ils ne sont plus
 accessibles. Les \emph{owning pointers} (notés \texttt{\textasciitilde{}int})
 décrivent une relation 1 à 1 entre deux objets, comme les
@@ -421,13 +438,15 @@ décrivent une relation 1 à 1 entre deux objets, comme les
 l'est. Les \emph{borrowed pointers} (notés \texttt{\&int}) correspondent aux
 pointeurs obtenus en prenant l'adresse d'un objet, ou d'un champ d'un objet. Une
 analyse statique faite lors de la compilation s'assure que la durée de vie de
-ces pointeurs est plus longue que l'objet pointé, afin d'éviter les
+ces pointeurs est plus courte que l'objet pointé, afin d'éviter les
 \emph{dangling pointers} (pointeurs fous). Cette analyse est également basée sur
 les régions. Une fonction qui retourne l'adresse d'une variable locale sera donc
 rejetée par le compilateur. Enfin, le dernier type est celui des \emph{raw
 pointers} (notés \texttt{*int}), pour lesquels le langage n'apporte aucune
 garantie (il faut d'ailleurs encapsuler chaque utilisation dans un bloc marqué
 explicitement \texttt{unsafe}). Ils sont équivalents aux pointeurs de C.
+
+% TODO compteur de références?
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
 peut pas les appliquer pour étudier la correction de logiciels existants. Leurs
@@ -437,6 +456,8 @@ pointers} de C++. De cette approche on retient surtout l'analyse de régions de
 Rust qui permet de manipuler de manière sûre les adresses des variables locales,
 et les pointeurs lourds de Cyclone qui apportent une sûreté à l'arithmétique de
 pointeurs, au prix d'un test dynamique.
+
+% TODO dire un mot?
 
 \section{Logique de Hoare}
 
@@ -510,6 +531,7 @@ de types (par des annotations). Les types peuvent également dépendre d'autres
 types (par composition de types: par exemple, un couple de $a$ et de $b$ a pour
 type $a * b$). Enrichir l'expressivité du typage revient essentiellement à
 introduire des termes dans les types, comme $n$ dans l'exemple précédent du
+% TODO au sens expression
 vecteurs de $n$ entiers. C'est pourquoi on parle de types dépendants. Parmi les
 langages proposant ces types on peut citer Coq~\cite{coqmanual},
 Agda~\cite{agdatutorial} ou Isabelle~\cite{isabelletutorial}.
@@ -519,6 +541,9 @@ qu'il existe des termes ayant ces types. En revanche, avec les types dépendants
 ce n'est pas toujours vrai: par exemple ``vecteur de $-1$ entiers'' n'a pas
 d'habitants. Ainsi, pouvoir construire un terme d'un type donné est une
 information en soi.
+
+% TODO un langage comme Ada a des types dépendants ce qui ne pose pas de
+% problème à la vérification (≠ inf)
 
 On peut voir ce phénomène sous un autre angle: les termes sont à leur type ce
 que les preuves sont à leur théorème. C'est la correspondance de Curry-Howard.
@@ -530,12 +555,16 @@ on peut donc voir les systèmes de types dépendants comme des assistants de
 preuves généralistes où l'on peut faire vérifier par un compilateur des
 théorèmes mathématiques comme le théorème des 4 couleurs~\cite{4colproof}.
 
+% TODO BOF à discuter
+
 Cette technique fait se rejoindre les mondes du typage et des annotations par
 triplets de Hoare: on enrichit le langage des types suffisamment pour encoder
 une logique, et on vérifie suffisamment les triplets statiquement pour éliminer
 tous les tests dynamiques. Cependant cette technique est très complexe à mettre
 en œuvre, puisqu'il faut encoder toutes les propriétés voulues dans un
 formalisme de très bas niveau (similaire à la théorie des ensembles).
+
+% TODO que veux tu dire?
 
 \section*{Conclusion}
 
