@@ -15,7 +15,7 @@ aux micro-ordinateurs.
 Le noyau d'un système d'exploitation est chargé de faire l'intermédiaire entre
 le matériel (processeur, mémoire, périphériques, …) et les applications
 exécutées sur celui-ci (par exemple un navigateur web, une calculatrice ou un
-carnet d'adresses). Il doit aussi garantir la sécurité de celles-ci.
+carnet d'adresses). Il doit aussi garantir la sécurité de celles-ci. % TODO def
 
 En tant qu'intermédiaire de confiance, le noyau a un certain nombre de
 responsabilités et est le seul à avoir accès à certaines informations sensibles.
@@ -47,16 +47,19 @@ quitte à limiter la possibilité d'en écrire certains. C'est l'analyse statiqu
 de programmes.
 
 Une des techniques d'analyse statique les plus répandues est le typage statique,
-qui consiste à associer à chaque morceau de programme, une étiquette
+qui consiste % TODO hyph
+à associer à chaque morceau de programme, une étiquette
 décrivant quel genre de valeur sera produite par son évaluation. Par exemple, si
 $n$ est le nom d'une variable entière, alors $n + 2$ produira toujours une
 valeur entière.
 
 Pour garantir l'isolation d'un noyau de système d'exploitation, un des points
 cruciaux est de restreindre la manière dont sont traitées les informations
-provenant des programmes utilisateur. Le but de cet thèse est de montrer que le
-typage statique peut être utilisé pour détecter et interdire ces manipulations
-dangereuses.
+provenant des programmes utilisateur. Le but de cette thèse est de montrer que
+le typage statique peut être utilisé pour détecter et interdire ces
+manipulations dangereuses.
+
+% TODO uniformité entre guillemets `` '' vs « »
 
 \section{Rôle d'un système d'exploitation}
 
@@ -83,9 +86,9 @@ les uns à la suite des autres; et chaque programme aura à sa disposition une
 partie de la mémoire principale, ou du disque dur.
 
 Si plusieurs programmes s'exécutent de manière concurrente sur le même matériel,
-il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de l'autre, ou
-que les deux n'utilisent pas la carte réseau en même temps. Ce sont des rôles du
-système d'exploitation.
+il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de l'autre,
+ainsi que les deux n'utilisent pas la carte réseau en même temps. Ce sont des
+rôles du système d'exploitation.
 
 Ainsi, au lieu d'accéder directement au matériel via des instructions de bas
 niveau, les programmes communiquent avec le noyau, qui centralise donc les
@@ -209,8 +212,8 @@ manipulant des données utilisateur. D'après le tableau de la
 page~\pageref{page:erreursec}, aucune erreur ne se produit.
 
 Mais même si ce cas ne produit pas d'erreur à l'exécution, il est tout de même
-erroné. En effet, si on passe à l'appel système une adresse $a$ faisant partie
-de l'espace noyau, que se passe-t-il?
+codé de manière incorrecte. En effet, si on passe à l'appel système une adresse
+$a$ faisant partie de l'espace noyau, que se passe-t-il?
 
 L'exécution est presque identique: au moment de la copie on est en mode noyau,
 en train d'exécuter une instruction du noyau manipulant des données noyau.
@@ -231,6 +234,8 @@ La bonne manière d'implanter un appel système est donc d'interdire le
 déréférencement direct des pointeurs dont la valeur peut être contrôlée par
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celui-ci a bien les mêmes privilèges que l'appelant.
+
+% TODO[E] on a l'impression que c'est le seul pb
 
 Il est facile d'oublier d'ajouter cette vérification, puisque le cas ``normal''
 fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
@@ -273,9 +278,9 @@ la fonction renvoie une valeur, alors cette valeur sera un entier''. Cet
 ensemble de contrats peut être vérifié statiquement par le compilateur, à l'aide
 d'un système de types statique.
 
-Par exemple, on peut dire que l Ainsi l'opérateur ``$+$'' a pour type $(\tInt,
-\tInt) → \tInt$. Cela veut dire que si on lui passe deux entiers ($\tInt$
-\tInt), alors la valeur obtenue est également un entier.
+Par exemple, on peut dire que l'opérateur ``$+$'' a pour type $(\tInt, \tInt) →
+\tInt$. Cela veut dire que si on lui passe deux entiers ($\tInt$ \tInt), alors
+la valeur obtenue est également un entier.
 
 \paragraph{Typage fort ou faible}
 
@@ -284,9 +289,14 @@ séparation entre typage fort et faible est moins nette. En poussant à l'extrê
 les systèmes de types forts permettent d'éliminer totalement la nécessité de
 réaliser des tests de typage. Mais souvent ce n'est pas le cas, car il peut y
 avoir des constructions au sein du langage qui permettent de contourner le
-système de types, comme un opérateur de transtypage.
+système de types, comme un opérateur de transtypage. On parle alors de typage
+faible.
 
 \paragraph{Polymorphisme}
+
+% TODO[E] ici tu parles de polymorpphisme paralétrique ou tu veux etre fénérale
+% dans d'autres cas tu veux justement spécialiser: surcharge ou objet
+% TODO Il manque le polymorphisme objet
 
 Parfois, il est trop restrictif de donner un unique type à une fonction. Si on
 considère une fonction ajoutant un élément à une liste, ou une autre
@@ -345,11 +355,13 @@ programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
 machine: ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
 taille concrète. Son système de types est assez rudimentaire: toutes les formes
+% TODO il y a tout de même des erreurs de typage à la compil
 de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
 C. Le noyau du système Mac OSX d'Apple est également un dérivé d'Unix, et est
 donc aussi écrit dans ce langage.
+
 
 \paragraph{C++}
 
@@ -377,6 +389,8 @@ erreur \texttt{Constraint\_Error}. Bien qu'il ne se soit pas beaucoup développ�
 dans les applications grand public, Ada garde toujours une place de choix dans
 l'implantation de systèmes embarqués, notamment dans les applications spatiales
 et de défense.
+
+% TODO[E] + riche, réducteur
 
 \paragraph{Autres langages}
 
@@ -409,10 +423,11 @@ GIMPLE\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C, reposan
 sur de nombreuses macros afin de cacher les détails d'implantation interne
 pouvant varier entre deux versions. Cette représentation étant réputée difficile
 à manipuler, le projet MELT\cite{gcc-melt} permet de générer un greffon de
-compilateur à partir d'un dialecte de Lisp.
+compilateur écrit dans un dialecte de Lisp.
 
 \paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
-puis sponsorisé Apple. À la différence de GCC, sa base de code est écrite en
+% TODO laquelle
+puis sponsorisé par Apple. À la différence de GCC, sa base de code est écrite en
 C++. Il utilise une représentation intermédiaire qui peut être manipulée soit
 sous forme d'une structure de données C++, soit d'un fichier de code-octet
 compact, soit sous forme textuelle.
@@ -446,10 +461,12 @@ programmes.
 
 \paragraph{Compcert} est un projet qui vise à produire un compilateur certifié
 pour C. C'est-à-dire que le fait que les transformations conservent la
+% TODO un peu lourd
 sémantique est prouvé. Il utilise de nombreux langages intermédiaires, dont
 CIL.\@ Pour le front-end, le langage se nomme Clight\cite{cfront}. Les passes de
 middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
 
+% TODO dire un mot EADS
 \paragraph{Newspeak}\cite{newspeak} est un langage intermédiaire développé par
 EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
 interprétation abstraite. Il sera décrit plus en détails dans la
@@ -460,6 +477,11 @@ section~\ref{sec:npk}.
 Dans la suite de cette thèse nous nous appuierons sur \langname{}, un langage
 intermédiaire minimal, pour exprimer les règles de typage de la manière la plus
 simple possible.
+
+% TODO un peu court
+
+% TODO redire ici ce que tu veux faire, ou ce que tu as fait et ensuite
+% présenter ton plan
 
 \section{Plan de la thèse}
 
