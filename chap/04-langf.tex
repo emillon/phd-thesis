@@ -834,11 +834,9 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \end{definition}
 
 \begin{definition}[Hauteur d'une valeur]
+Une valeur peut être, ou contenir, une référence vers une variable de la pile.
 La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
 $-1$ sinon.
-
-% TODO je ne comprends pas la définition
-% TODO est-ce toujours le cadre local?h
 
 \begin{align*}
     \cH{\widehat{c}} &= -1 \\
@@ -956,17 +954,31 @@ La fonction $\mathrm{Cleanup}$ est donnée par:
 \cV{p}{v} &= v \mbox{ sinon}
 \end{align*}
 
-Sans cette règle, examinons le programme suivant:
+Sans cette règle, examinons le programme suivant de la
+figure~\ref{fig:prog-cleanup}.
 
-% TODO à centrer
+\begin{SaveVerbatim}[]{LeBonProgramme}
+f = Fun () {
+    Decl x = 0 in
+    return (&x);
+}
 
-\begin{Verbatim}
-f ()                g (p)           h ()
-  (x=0)               (x=0.0)         (p=f())
-{                   {               {
-  return (&x);        *p = 1;         g(p);
-}                   }               }
-\end{Verbatim}
+g = Fun (p) {
+    Decl x=0.0 in
+    *p = 1;
+}
+
+h = Fun () {
+    Decl p=f() in
+    g(p);
+}
+\end{SaveVerbatim}
+
+\begin{figure}[h]
+\hspace{1cm}\BUseVerbatim{LeBonProgramme}
+\caption{Cassage du typage par un pointeur fou}
+\label{fig:prog-cleanup}
+\end{figure}
 
 L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
 déréférencement de $p$ va modifier $x$.
