@@ -1,3 +1,7 @@
+% TODO 8 pages: c'est un peu court pour la partie originale de la thèse
+
+% TODO des points à revoir
+
 Jusqu'ici \langname{} est un langage impératif généraliste, ne prenant pas en
 compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
 
@@ -40,7 +44,7 @@ l'exécution.}.
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
-le théorème de progrès (\ref{thm:progres}) n'est plus valable.
+le théorème de progrès (\ref{thm:progres}) n'est plus valable. % TODO détaille
 
 L'étape suivante est d'étendre, à son tour, le système de types de \langname{}
 en distinguant les types des pointeurs contrôlés par l'utilisateur des pointeurs
@@ -67,9 +71,9 @@ $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
 utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et \linebreak
 $\ctuF$. Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen
-indiquant si la copie pu être faite (si le paramètre contrôlé par l'utilisateur
-pointe en espace noyau, les fonctions ne font pas la copie et signalent
-l'erreur).
+indiquant si la copie a pu être faite (si le paramètre contrôlé par
+l'utilisateur pointe en espace noyau, les fonctions ne font pas la copie et
+signalent l'erreur).
 
 Illustrons ceci par un exemple. Imaginons un appel système fictif qui renvoie la
 version du noyau, en remplissant par pointeur une structure contenant les champs
@@ -217,7 +221,7 @@ dynamique.
 \section{Insuffisance des types simples}
 
 Étant donné \langname{} augmenté de cette extension sémantique, on peut étendre
-trivialement le système de types avec la règle suivante:
+naïvement le système de types avec la règle suivante:
 
 \begin{mathpar}
   \irule{Taint-Ignore}
@@ -328,10 +332,10 @@ des pointeurs.
 
 \subsection*{Pointeurs utilisateurs}
 
-Le changement clef est l'ajout de \emph{pointeurs utilisateurs}. En plus des
-types pointeurs $\ptrK{t}$, on ajoute des types pointeurs $\ptrU{t}$. La
-différence entre les deux représente \emph{qui} contrôle leur valeur
-(section~\ref{sec:secu-syscalls}).
+Le changement clef est l'ajout de \emph{pointeurs utilisateur}. En plus des
+types pointeurs (noyau) $\ptrK{t}$, on ajoute des types pointeurs utilisateur
+$\ptrU{t}$. La différence entre les deux représente \emph{qui} contrôle leur
+valeur (section~\ref{sec:secu-syscalls}).
 
 Les différences sont les suivantes (figure~\ref{fig:qualif-changes-typ}):
 
@@ -414,10 +418,9 @@ l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur:
 
 \subsection*{Utilisations de pointeurs}
 
-La principale restriction, au cœur de ce chapitre et de cette thèse, est que
-seuls les pointeurs noyau peuvent être déréférencés de manière sûre. La règle
-capitale est donc la suivante (déjà introduite dans le
-chapitre~\ref{cha:typbase}):
+La principale restriction est que seuls les pointeurs noyau peuvent être
+déréférencés de manière sûre. La règle capitale est donc la suivante (déjà
+introduite dans le chapitre~\ref{cha:typbase}):
 
 \begin{mathpar}
   \disprule{Lv-Deref}
@@ -426,13 +429,13 @@ chapitre~\ref{cha:typbase}):
 Ainsi, on interdit le déréférencement des expressions de type $\ptrU{t}$ à la
 compilation.
 
-% TODO définir les stubs
-
 L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 
 \[
     \disprule{Taint}
 \]
+
+% TODO user to user
 
 Les ``fonctions'' $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
 à remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
@@ -449,6 +452,8 @@ celui d'un opérateur.
 Remarquons qu'il n'y a pas de sous-typage: les pointeurs noyau ne peuvent être
 utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs qu'en
 tant que pointeurs utilisateurs.
+
+ % TODO + gros
 
 \section{Sûreté du typage}
 
@@ -497,6 +502,8 @@ conclusion.
 
 Le déréférencement d'un pointeur dont la valeur est contrôlée par l'utilisateur
 ne peut se faire qu'à travers une fonction qui vérifie la sûreté de celui-ci.
+
+% TODO on ne voit pas ce qui a changé
 
 \begin{theorem}[Progrès pour les types qualifiés]
 \label{thm:progres-qual}
@@ -568,5 +575,7 @@ extensions de sémantique de la section~\ref{sec:extensions-noyau} et les
 extensions du système de type de la section~\ref{sec:extension-types}.
 
 % TODO version phrases?
+
+% TODO une conclusion de chapitre?
 
 % vim: spelllang=fr
