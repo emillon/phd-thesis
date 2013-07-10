@@ -1132,10 +1132,10 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
   \end{align*}
 
   Les accès à des sous-valeurs se font en composant les accesseurs
-  (définition~\ref{def:lens-comp}):
+  (définition~\ref{def:lens-comp}, page~\pageref{def:lens-comp}):
 
   \begin{align*}
-    Φ(φ.l)  &= Φ(φ) \ggg F(l) \\ % TODO d'où sortent ils? - rappel
+    Φ(φ.l)  &= Φ(φ) \ggg F(l) \\
     Φ(φ[i]) &= Φ(φ) \ggg T(i)
   \end{align*}
 
@@ -1145,20 +1145,6 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     m{[\eNull    ]}_Φ &= \serr{ptr} \\
     m{[\eNull ← v]}_Φ &= \serr{ptr}
   \end{align*}
-
-Cette dernière définition mérite une explication. Dans le cas de la lecture, il
-suffit d'appliquer les bons accesseurs: ${[\cdot]}_F$ pour $φ.l_S$, etc.
-
-En revanche, la modification est plus complexe. Le premier cas ($φ = a$) modifie
-directement une valeur complète (en modifiant une association), mais les deux
-suivants ($φ = φ'.l$ et $φ = φ'[i]$) ne font qu'altérer une sous-valeur
-existante. Il est donc nécessaire de procéder en 3 étapes:
-
-\begin{itemize}
-\item obtenir la valeur à modifier (soit $m{[φ]}_Φ$)
-\item construitre une valeur altérée (en appliquant par exemple ${[l←v]}_F$)
-\item affecter cette valeur au même chemin (le $m{[φ ← …]}_Φ$ externe)
-\end{itemize}
 
 \section{Contextes d'évaluation}
 
