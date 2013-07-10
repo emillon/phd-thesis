@@ -1,9 +1,9 @@
 Le système d'exploitation est le programme qui permet à un système informatique
 d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
 multiples. Dans ce chapitre, nous allons voir à quoi il sert, et comment il peut
-être implanté. Pour ce faire, nous étudierons l'exemple d'un système Intel
-32 bits.
-% TODO md
+être implanté. Pour ce faire, nous présentons ici de quoi est constitué un
+sustème Intel 32 bits et ce dont on se sert pour y implanter un système
+d'exploitation.
 
 \section{Architecture physique}
 
@@ -39,10 +39,8 @@ mémoire (directement : \texttt{addr} ou indirectement : \texttt{(\%ecx)}
   Cela consiste à interpréter le contenu du regitre \ecx comme une adresse
   mémoire.
 }
-).
-
-Parmi les mnémoniques courants on peut citer les suivants.
-% TODO dire pourquoi tu les présentes
+). On décrit les mnémoniques les plus utilisés, permettant de compiler un cœur
+de langage impératif:
 
 \begin{itemize}
 
