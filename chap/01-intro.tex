@@ -15,14 +15,15 @@ aux micro-ordinateurs.
 Le noyau d'un système d'exploitation est chargé de faire l'intermédiaire entre
 le matériel (processeur, mémoire, périphériques, …) et les applications
 exécutées sur celui-ci (par exemple un navigateur web, une calculatrice ou un
-carnet d'adresses). Il doit aussi garantir la sécurité de celles-ci. % TODO def
+carnet d'adresses).
 
-En tant qu'intermédiaire de confiance, le noyau a un certain nombre de
-responsabilités et est le seul à avoir accès à certaines informations sensibles.
-Il est capital de s'assurer qu'il est bien le seul à pouvoir y accéder. En
-particulier, il faut pouvoir vérifier que les requêtes faites par l'utilisateur
-au noyau ne peuvent pas volontairement ou involontairement détourner ce dernier
-et lui faire fuiter des informations confidentielles.
+Il doit aussi garantir la sécurité de celles-ci: en tant qu'intermédiaire de
+confiance, le noyau a un certain nombre de responsabilités et est le seul à
+avoir accès à certaines informations sensibles. Il est capital de s'assurer
+qu'il est bien le seul à pouvoir y accéder. En particulier, il faut pouvoir
+vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent pas
+volontairement ou involontairement détourner ce dernier et lui faire fuiter des
+informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Les
@@ -228,12 +229,10 @@ noyau au lieu de tester les privilèges de celui qui a fait la requête
 (l'utilisateur). Ce problème est connu sous le nom de \emph{confused deputy
 problem}~\cite{hardy88confused}.
 
-La bonne manière d'implanter un appel système est donc d'interdire le
+Pour implanter un appel système, il est donc nécessaire d'interdire le
 déréférencement direct des pointeurs dont la valeur peut être contrôlée par
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celui-ci a bien les mêmes privilèges que l'appelant.
-
-% TODO[E] on a l'impression que c'est le seul pb
 
 Il est facile d'oublier d'ajouter cette vérification, puisque le cas «normal»
 fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
@@ -292,10 +291,6 @@ faible.
 
 \paragraph{Polymorphisme}
 
-% TODO[E] ici tu parles de polymorpphisme paralétrique ou tu veux etre fénérale
-% dans d'autres cas tu veux justement spécialiser: surcharge ou objet
-% TODO Il manque le polymorphisme objet
-
 Parfois, il est trop restrictif de donner un unique type à une fonction. Si on
 considère une fonction ajoutant un élément à une liste, ou une autre
 triant un tableau en place, leur type doit-il faire intervenir le type des
@@ -312,6 +307,10 @@ définir séparément l'addition entre deux entiers, entre deux flottants, ou en
 un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
+
+Encore une autre technique est de déterminer la fonction appellée non pas par le
+type de ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet
+d'associer le comportement aux données. On parle alors de polymorphisme objet.
 
 La dernière possibilité est le polymorphisme paramétrique, qui consiste à
 utiliser le \linebreak même code quelque soit le type des arguments. Dans ce
@@ -352,14 +351,13 @@ contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
 programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
 machine: ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
-taille concrète. Son système de types est assez rudimentaire: toutes les formes
-% TODO il y a tout de même des erreurs de typage à la compil
+taille concrète. Son système de types, bien que statique (il peut y avoir des
+erreurs de typage à la compilation) est assez rudimentaire: toutes les formes
 de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
 C. Le noyau du système Mac OSX d'Apple est également un dérivé d'Unix, et est
 donc aussi écrit dans ce langage.
-
 
 \paragraph{C++}
 
@@ -379,16 +377,14 @@ Le langage C est bas niveau, mais son système de types n'est pas suffisamment
 compilé. Dans les années 1970, le département de la défense américain
 (\emph{DoD}) a créé un comité dans le but de créer un nouveau langage pour ses
 systèmes temps-réels embarqués. Le résultat est Ada, un langage impératif avec
-un système de types statique plus contraignant mais plus sûr que celui de C. Par
-exemple, deux types entiers différents (comme les entiers de 16 bits et ceux de
-32 bits) ne sont pas compatibles. Il faut ajouter une conversion explicite dans
-le code, qui se traduira par un test à l'exécution et éventuellement par une
-erreur \texttt{Constraint\_Error}. Bien qu'il ne se soit pas beaucoup développé
-dans les applications grand public, Ada garde toujours une place de choix dans
-l'implantation de systèmes embarqués, notamment dans les applications spatiales
-et de défense.
-
-% TODO[E] + riche, réducteur
+un système de types statique plus sûr que celui de C. Par exemple, deux types
+entiers différents (comme les entiers de 16 bits et ceux de 32 bits) ne sont pas
+compatibles. Il faut ajouter une conversion explicite dans le code, qui se
+traduira par un test à l'exécution et éventuellement par une erreur
+\texttt{Constraint\_Error}. De nombreuses fonctionnalités comme la programmation
+générique, le polymorphisme de surcharge, et un modèle de concurrence précis ont
+fait que ce langage garde toujours une place de choix dans l'implantation de
+systèmes embarqués, notamment dans les applications spatiales et de défense.
 
 \paragraph{Autres langages}
 
@@ -424,11 +420,10 @@ pouvant varier entre deux versions. Cette représentation étant réputée diffi
 compilateur écrit dans un dialecte de Lisp.
 
 \paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
-% TODO laquelle
-puis sponsorisé par Apple. À la différence de GCC, sa base de code est écrite en
-C++. Il utilise une représentation intermédiaire qui peut être manipulée soit
-sous forme d'une structure de données C++, soit d'un fichier de code-octet
-compact, soit sous forme textuelle.
+open-source puis sponsorisé par Apple. À la différence de GCC, sa base de code
+est écrite en C++. Il utilise une représentation intermédiaire qui peut être
+manipulée soit sous forme d'une structure de données C++, soit d'un fichier de
+code-octet compact, soit sous forme textuelle.
 
 \paragraph{Cmm} est une représentation interne utilisée pour la génération de
 code lors de la compilation d'Objective Caml~\link{ocamlManual}, et disponible
