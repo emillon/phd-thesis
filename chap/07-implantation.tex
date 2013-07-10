@@ -81,7 +81,7 @@ code lors de l'implémentation d'un analyseur.
 Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle for, Newspeak fournit une unique boucle
 \npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
-est toujours un saut vers l'avant (similaire à un ``\emph{break}'' généralisé).
+est toujours un saut vers l'avant (similaire à un «\emph{break}» généralisé).
 
 La sémantique de Newspeak et la traduction de C vers Newspeak sont décrites dans
 \cite{newspeak}.
@@ -121,7 +121,7 @@ une erreur de type.
 \label{fig:exunif:c}
 \end{figure} % }}}
 
-Prenons l'exemple de la figure~\ref{fig:exunif:c} et typons-le ``à la main''. On
+Prenons l'exemple de la figure~\ref{fig:exunif:c} et typons-le «à la main». On
 commence par oublier toutes les étiquettes de type présentes dans le programme.
 Celui-ci devient alors:
 
@@ -129,7 +129,7 @@ Celui-ci devient alors:
 
 La premiere ligne introduit deux variables. On peut noter leurs types respectifs
 (inconnus pour le moment) $t_1$ et $t_2$. La première affectation \texttt{p =
-\&x} implique que les deux côtés du signe ``$=$'' ont le même type. À gauche, le
+\&x} implique que les deux côtés du signe «$=$» ont le même type. À gauche, le
 type est $t_2$, et à droite $Ptr(t_1)$. On applique le même raisonnement à la
 seconde affectation: à gauche, le type est $t_1$ et à droite \texttt{Int}. On en
 déduit que le type de x est \texttt{Int} et celui de p est \verb!Ptr(Int)!.
@@ -346,11 +346,11 @@ Le reste de l'outil est résumé dans la fonction
 \begin{itemize}
 
 \item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!,
-  on ajoute des étiquettes ``vides'' (toutes égales à \verb!() : unit!).
+  on ajoute des étiquettes «vides» (toutes égales à \verb!() : unit!).
 
 \item L'ensemble des fonctions du programme est trié topologiquement selon la
-  relation~$\preceq$ définie par $f \preceq g \eqdef \textrm{``} g
-  \textrm{ apparaît dans la définition de } f \textrm{''}$. Cela est fait en
+  relation~$\preceq$ définie par $f \preceq g \eqdef \textrm{«} g
+  \textrm{ apparaît dans la définition de } f \textrm{»}$. Cela est fait en
   construisant une représentation de $\preceq$ sous forme de graphe, puis en
   faisant un parcours en largeur de celui-ci.
 
@@ -462,7 +462,7 @@ let infer_binop op (_, a) (_, b) =
 
 Les types de données utilisés sont donnés dans la figure~\ref{fig:implem-typ}.
 Les types \langname{} sont représentés soit par un constructeur de type
-``résolu'' immutable comme \texttt{Int}, soit par une référence dans le cas
+«résolu» immutable comme \texttt{Int}, soit par une référence dans le cas
 d'une variable inconnue (placée alors derrière le constructeur \texttt{Var}).
 
 Ces références contiennent une valeur du type
@@ -565,7 +565,7 @@ La fonction appellée directement par le reste du code, appellée \texttt{unify}
 peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la
 paire de types à unifier est mise dans une liste d'attente qui sera unifiée
 après le parcours du programme. Le but est d'instrumenter l'inférence de types
-afin de pouvoir en faire une exécution ``pas à pas''.
+afin de pouvoir en faire une exécution «pas à pas».
 
 \section{Exemple}
 
@@ -596,7 +596,7 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 L'opérateur \texttt{coerce[a,b]} est un artefact de Newspeak, destiné à détecter
 les débordements d'entiers lors d'une analyse de valeurs par interprétation
 abstraite. Dans le cas de notre analyse, les valeurs ne sont pas pertinentes et
-cet opérateur peut être vu que comme un ``plus'' unaire typé $(\tInt) → \tInt$.
+cet opérateur peut être vu que comme un «plus» unaire typé $(\tInt) → \tInt$.
 
 Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 

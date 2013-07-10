@@ -38,7 +38,7 @@ Pour prouver que cette approche est bien fondée, on procède en plusieurs étap
 Tout d'abord, on définit un nouveau type d'erreur $\serr{taint}$, déclenché
 lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau est
 déréférencé (le cas que l'on cherche à éviter)\footnote{Il est important de
-noter que ce cas d'erreur est ``virtuel'', la distinction entre pointeur
+noter que ce cas d'erreur est «virtuel», la distinction entre pointeur
 contrôlé par l'utilisateur et par le noyau n'étant normalement pas visible à
 l'exécution.}.
 
@@ -214,7 +214,7 @@ Ces règles sont à appliquer en priorité de la règle d'appel de fonction
 classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
 celles ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
 par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
-$\vTainted{φ}$. L'opération en ``boîte noire'' de ces deux fonctions permet
+$\vTainted{φ}$. L'opération en «boîte noire» de ces deux fonctions permet
 d'assurer que l'accès à l'espace utilisateur est toujours couplé à un test
 dynamique.
 
@@ -362,11 +362,11 @@ figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
 
 \begin{itemize}
 
-\item Les types ``$\ptrK{t}$'' s'appliquent aux pointeurs contrôlés par le
+\item Les types «$\ptrK{t}$» s'appliquent aux pointeurs contrôlés par le
 noyau. Par exemple, prendre l'adresse d'un objet de la pile noyau donne un
 pointeur noyau.
 
-\item Les types ``$\ptrU{t}$'', quant à eux, s'appliquent aux pointeurs qui
+\item Les types «$\ptrU{t}$», quant à eux, s'appliquent aux pointeurs qui
 proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
 d'interfaces particulières, comme les appels système ou les paramètres passés
 aux implantations de la fonction \texttt{ioctl}.
@@ -437,7 +437,7 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 
 % TODO user to user
 
-Les ``fonctions'' $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
+Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
 à remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
 type en $(t_1, t_2) → t$, car il faudrait un type polymorphe pour pouvoir les
 appliquer n'importe quel type de pointeurs. Leur typage est donc plus proche de

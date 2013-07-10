@@ -4,7 +4,7 @@ chapitre~\ref{cha:qualifs} et implanté dans le chapitre~\ref{cha:implem}.
 \section{Linux}
 
 Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
-d'exploitation développé depuis le début des années 90 et ``figure de proue'' du
+d'exploitation développé depuis le début des années 90 et «figure de proue» du
 mouvement open-source. Au départ écrit par Linus Torvalds sur son ordinateur
 personnel, il a au fil des années été porté sur de nombreuses architectures et
 s'est enrichi de nombreux pilotes de périphériques. Dans la version 3.9.8
@@ -38,7 +38,7 @@ Les attributs, quant à eux, rentrent dans trois catégories:
 
 \begin{itemize}
   \item les annotations de compilation; par exemple, \texttt{used} désactive
-    l'avertissement ``cette variable n'est pas utilisée ''.
+    l'avertissement «cette variable n'est pas utilisée».
 
   \item les optimisations; par exemple, les objets marqués \texttt{hot} sont
     groupés de telle manière qu'ils se retrouvent en cache ensemble.
@@ -75,8 +75,8 @@ interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
 des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
-doit donc avoir deux piles: une pile ``utilisateur'' qui sert pour
-l'application elle-même, et une pile ``noyau'' qui sert aux appels système.
+doit donc avoir deux piles: une pile «utilisateur» qui sert pour
+l'application elle-même, et une pile «noyau» qui sert aux appels système.
 
 \begin{figure} % fig:memmap {{{
 \centering
@@ -118,7 +118,7 @@ d'instructions privilégiées, et donc ne peuvent pas accéder directement au
 matériel. Pour qu'ils puissent interagir avec le système (afficher une sortie,
 écrire sur le disque…) le mécanisme des appels système est nécessaire. Il s'agit
 d'une interface de haut niveau entre les \emph{rings} 3 et 0. Du point de vue du
-programmeur, il s'agit d'un ensemble de fonctions C ``magiques'' qui font appel
+programmeur, il s'agit d'un ensemble de fonctions C «magiques» qui font appel
 au système d'exploitation pour effectuer des opérations.
 
 Voyons ce qui se passe derrière la magie apparente. Une explication plus
@@ -154,7 +154,7 @@ d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
 \paragraph{Dans l'implantation de l'appel système}
 
 Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
-fonction ``classique'', la convention d'appel \emph{cdecl} est respectée. La
+fonction «classique», la convention d'appel \emph{cdecl} est respectée. La
 fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc être
 écrite en C.
 

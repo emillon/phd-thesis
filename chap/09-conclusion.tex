@@ -77,8 +77,8 @@ en C:\@ les unions, les conversions de types (explicites ou implicites) et le
 \emph{type punning} (défini ci-dessous). Les deux premières sont équivalentes.
 Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
 type $t_2$ par l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alors
-un ``trou'' dans le système de types. Cette fonction devrait en effet être typée
-$(t_1) → t_2$, autrement dit le type ``maudit'' $α → β$ de \texttt{Obj.magic} en
+un «trou» dans le système de types. Cette fonction devrait en effet être typée
+$(t_1) → t_2$, autrement dit le type «maudit» $α → β$ de \texttt{Obj.magic} en
 OCaml ou \texttt{unsafeCoerce} en Haskell.
 
 Le \emph{type punning} consiste à modifier directement la suite de bits de
@@ -304,7 +304,7 @@ recevant un pointeur de l'espace utilisateur.
 
 Notre approche est basée sur le fait de rendre abstrait un type de C et
 d'y interdire certaines opérations: ici, on marque un certain type de pointeur
-comme ``utilisateur'' et on interdit l'opérateur \texttt{*} dessus.
+comme «utilisateur» et on interdit l'opérateur \texttt{*} dessus.
 
 Le langage C n'ayant pas de types abstraits, on ne peut pas séparer la
 représentation d'un type (par exemple: entier signé de 32 bits) des opérations

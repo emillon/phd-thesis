@@ -23,7 +23,7 @@ emploie une notation en grammaire.
 Étudions l'exemple des listes chaînées composées d'élements de $ℕ$.
 
 Notons $L$ cet ensemble; si $[]$ est la liste vide et $n::l$ la liste formée
-d'une ``tête'' $n ∈ ℕ$ et d'une ``queue'' $l ∈ L$. Toute liste est donc d'une des
+d'une «tête» $n ∈ ℕ$ et d'une «queue» $l ∈ L$. Toute liste est donc d'une des
 formes suivantes:
 
 \begin{itemize}
@@ -273,7 +273,7 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 \label{fig:lens-idx-ex}
 \end{figure}
 
-\begin{example}[Lentille ``n\ieme élément d'un tuple'']
+\begin{example}[Lentille «n\ieme élément d'un tuple»]
 
 Soient $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
 
@@ -385,13 +385,13 @@ que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}
 \paragraph{Fonctions et procédures:} Un des problèmes classiques dans les
 langages impératifs est de distinguer les fonctions (qui retournent une valeur)
 et les procédures (qui n'en retournent pas). La solution choisie par C est de
-marquer les procédures comme retournant un ``faux'' type \texttt{void}. Mais
+marquer les procédures comme retournant un «faux» type \texttt{void}. Mais
 c'est uniquement syntaxique: il n'est pas possible de manipuler de valeur de
 type \texttt{void}.
 
 L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
 faire de distinction entre ces deux cas et d'interdire les procédures. Les
-fonctions ne retournant pas de valeur ``intéressante'' renvoient alors une
+fonctions ne retournant pas de valeur «intéressante» renvoient alors une
 valeur d'un type à un seul élément noté \eUnit\footnote{Cette notation évoque
 un $n$-uplet à 0 composante.}, et donc le type sera noté \tUnit.
 
@@ -431,11 +431,11 @@ composés (structures et tableaux) composés de ceux-ci.
 \paragraph{Variables:} elles sont mutables, et on peut passer des données par
 valeur ou par pointeur.
 
-\paragraph{Flôt de contrôle:} il repose sur les construction ``if'' et
-``while''. Les autres types de boucle (``for'' et ``do/while'') peuvent être
+\paragraph{Flôt de contrôle:} il repose sur les construction «if» et
+«while». Les autres types de boucle («for» et «do/while») peuvent être
 construits avec ces opérateurs.
 
-\paragraph{Fonctions:} le code est organisé en fonctions ``simples'',
+\paragraph{Fonctions:} le code est organisé en fonctions «simples»,
 c'est-à-dire qui ne sont pas des fermetures. Même si les fonctions locales sont
 possibles, il n'est pas possible d'accéder aux variables de la portée entourante
 depuis la fonction intérieure.
@@ -450,8 +450,8 @@ Un programme est organisé en fonctions, qui contiennent des instructions, qui
 elles-mêmes manipulent des expressions.
 
 Le flot de contrôle est simplifié par rapport à C:\@ il ne contient que
-l'alternative (``if'') et la boucle ``while''. Les autres formes de boucle
-(``do/while'' et ``for'') peuvent être émulées par une boucle ``while''.
+l'alternative («if») et la boucle «while». Les autres formes de boucle
+(«do/while» et «for») peuvent être émulées par une boucle «while».
 
 Les fonctionnalités manquantes, et comment les émuler, seront examinées dans le
 chapitre~\ref{cha:conclusion}.
@@ -591,7 +591,7 @@ général non pas une variable mais une left-value. Pour représenter quelle par
 de la mémoire doit être accédée par cette left-value, on introduit la notion de
 chemin $φ$. Un chemin est une left-value évaluée: les cas sont similaires, sauf
 que tous les indices sont évalués. Par exemple, $φ = (5, x).p$ représente le
-champ ``$p$'' de la variable $x$ dans le 5\ieme cadre de pile. C'est à ce moment
+champ «$p$» de la variable $x$ dans le 5\ieme cadre de pile. C'est à ce moment
 qu'on évalue les déréférencements qui peuvent apparaître dans une left-value.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
@@ -793,7 +793,7 @@ Un certain nombre d'opérations est possible sur les valeurs
   L'opérateur $\%$ correspond au modulo (reste de la division euclidienne).
   En cas de division par zéro, l'erreur $\serr{div}$ est levée.
 \item
-  les versions ``pointées''
+  les versions «pointées»
   $\floatop{+}$,
   $\floatop{-}$,
   $\floatop{×}$
@@ -806,7 +806,7 @@ Un certain nombre d'opérations est possible sur les valeurs
 \item
   les opérations d'égalité $=$ et $≠$. L'égalité entre entiers ou entre
   flottants est immédiate. Deux valeurs composées (tableaux ou structures) sont
-  égales si elles ont la même ``forme'' (même taille pour les tableaux, et même
+  égales si elles ont la même «forme» (même taille pour les tableaux, et même
   champs pour les structures) et que toutes leurs sous-valeurs sont égales deux
   à deux. Deux références mémoire sont égales \linebreak lorsque les chemins
   qu'elles décrivent sont syntaxiquement égaux.
@@ -1341,8 +1341,8 @@ aux expressions et aux left-values: l'opération $\phxx\ctxSub$ est purement
 syntaxique.
 
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
-fait apparaître exactement un ``$C$''. Chaque contexte est donc constitué
-d'exactement un ``trou'' $\ctxEmpty$ (une dérivation de $C$ est toujours
+fait apparaître exactement un «$C$». Chaque contexte est donc constitué
+d'exactement un «trou» $\ctxEmpty$ (une dérivation de $C$ est toujours
 % TODO à définir
 linéaire). L'opération de substitution consiste à remplacer ce trou:
 $\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou left-value)
@@ -1547,9 +1547,9 @@ d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}
 \footnote{
 Cela est cohérent avec la norme C99:
-    ``If the pointer operand points to an element of an array object, and the
+    «If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
-    ''~\cite[6.5.6~§8]{AnsiC}}:
+    »~\cite[6.5.6~§8]{AnsiC}}:
 
 \begin{align*}
 \widehat{\&}~φ~+_p~i & = \serr{ptr} \textrm{ si }∄~(φ', i), φ = φ'[i] \\
@@ -1657,7 +1657,7 @@ Comme pour l'évaluation des expressions, on choisit une sémantique de
 réécriture à petits pas. La sémantique fonctionne de la manière suivante:
 partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
 d'évaluation suivantes permettent de réduire le problème en se ramenant à
-l'exécution d'une instruction $i'$ ``plus simple'' en partant d'un état mémoire
+l'exécution d'une instruction $i'$ «plus simple» en partant d'un état mémoire
 $m'$. Un tel pas est noté:
 
 \[
@@ -1719,8 +1719,8 @@ Enfin, si une erreur se produit elle est propagée.
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
 manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce
 cas), c'est la règle \textsc{If-False} qui est appliquée et l'instruction
-revient à évaluer la branche ``\emph{else}''. Dans les autres cas, c'est la règle
-\textsc{If-True} qui s'applique et la branche ``\emph{then}'' qui est prise.
+revient à évaluer la branche «\emph{else}». Dans les autres cas, c'est la règle
+\textsc{If-True} qui s'applique et la branche «\emph{then}» qui est prise.
 
 \begin{mathpar}
   \semrule{If-False}
