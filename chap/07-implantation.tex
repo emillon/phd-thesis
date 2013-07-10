@@ -8,6 +8,8 @@ références.
 En réalité, Newspeak (et donc Tyspeak) utilise une représentation de plus bas
 niveau que \langname donc les règles sont légèrement différentes.
 
+% TODO mieux décrire les 23
+
 \section{Newspeak}
 \label{sec:npk}
 
@@ -20,6 +22,7 @@ Newspeak~\cite{newspeak} est un langage conçu pour être à la fois:
   \item Simple: peu de primitives sont présentes.
   \item Minimal: aucun élément syntaxique ne peut être exprimé
     comme combinaison d'autres.
+% TODO ?
   \item Explicite: les constructions sont toutes indépendantes du
     contexte.
   \item Orienté analyse: les primitives sont décorées d'informations
@@ -61,6 +64,7 @@ annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessible
 dans l'arbre de syntaxe abstrait des passes suivantes.
 
 À ce niveau, les fichiers sont passés à l'outil \texttt{c2newspeak} qui les
+% TODO est-ce que tous les programmes passent?
 traduit vers Newspeak. Dans cette étape, les types et les noms sont résolus, et
 le programme est annoté de manière à rendre les prochaines étapes indépendante
 du contexte. Par exemple, chaque déclaration de variable est adjointe d'une
@@ -84,13 +88,13 @@ La sémantique de Newspeak et la traduction de C vers Newspeak sont décrites da
 
 Newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
-n'est faite entre l'accès à un champ et l'accès un l'élément d'un tableau (tous
-deux sont traduits par un décalage numérique depuis le début de la zone
+n'est faite entre l'accès à un champ et l'accès à un l'élément d'un tableau
+(tous deux sont traduits par un décalage numérique depuis le début de la zone
 mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
 structures internes de \texttt{c2newspeak}, où les informations nécessaires sont
 encore présentes.
 
-Ensuite, les différents fichiers sont liés ensemble. Cet étape consiste
+Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
 principalement à s'assurer que les hypothèses faites par les différentes unités
 de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
 invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
@@ -130,7 +134,11 @@ type est $t_2$, et à droite $Ptr(t_1)$. On applique le même raisonnement à la
 seconde affectation: à gauche, le type est $t_1$ et à droite \texttt{Int}. On en
 déduit que le type de x est \texttt{Int} et celui de p est \verb!Ptr(Int)!.
 
+% TODO a quel moment dis tu que c'est un programme ocaml?
+
 \insertcode{lambda-types.ml}
+
+% TODO c'est le code d'un typeur naif
 
 Pour implanter cet algorithme, on représente les types de données du programmes
 à typer par une valeur de type \texttt{ml\_type}. En plus des constantes de
@@ -142,9 +150,9 @@ fonctions manipulant un compteur global d'inconnues.
 
 \insertcode{exunif-counter.ml}
 
-De plus, on a un module gérant les environnements de typage. Il pourra être
-implanté avec des listes d'association ou des tables de hachage, par exemple. Sa
-signature est:
+De plus, un module gère les environnements de typage. Il peut être implanté avec
+des listes d'association ou des tables de hachage, par exemple. Sa signature
+est:
 
 \insertcode{exunif-env.ml}
 
@@ -305,7 +313,7 @@ pas présent dans le type à affecter.
 \item si les deux types sont des constructeurs de type, il faut que les
 constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 
-\item si les deux types sont des types structures, on étudie les types de leurs
+\item si les deux types sont des types structure, on étudie les types de leurs
 champs. On commence par unifier les types des champs de même nom, et on
 on ajoute à l'un les champs exclusifs à l'autre.
 
@@ -346,6 +354,8 @@ Le reste de l'outil est résumé dans la fonction
   construisant une représentation de $\preceq$ sous forme de graphe, puis en
   faisant un parcours en largeur de celui-ci.
 
+% TODO et pour les fonctions mutuellement récursives?
+
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial.
 
@@ -384,7 +394,14 @@ définies portant sur chaque type de fragment: \texttt{infer\_fdec} pour les
 déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 \texttt{infer\_stmtkind} pour les instructions, etc.
 
-\begin{figure}
+Les règles de typage sont implantées par \texttt{new\_unknown} et
+\texttt{unify}. Par exemple, pour typer une déclaration
+(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
+type \texttt{t0}. On étend l'environnement courant avec cette nouvelle
+association et sous ce nouvel environnement, on type le bloc de portée de la
+déclaration.
+
+\begin{figure}[h] %{{{
 
 \insertcode{infer-unif-stmt.ml}
 
@@ -392,14 +409,7 @@ déclarations de fonction, \texttt{infer\_exp} pour les expressions,
          fonction}
 
 \label{fig:implem-unif-stmt}
-\end{figure}
-
-Les règles de typage sont implantées par \texttt{new\_unknown} et
-\texttt{unify}. Par exemple, pour typer une déclaration
-(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
-type \texttt{t0}. On étend l'environnement courant avec cette nouvelle
-association et sous ce nouvel environnement, on type le bloc de portée de la
-déclaration.
+\end{figure}%}}}
 
 De même, pour typer un appel de fonction, on infère le type de ses arguments et
 left-values de retour. On obtient également le type de la fonction (à partir du
@@ -531,14 +541,6 @@ Cette analyse de cas est implantée dans la fonction \texttt{unify_now}
 \label{fig:implem-unify-now}
 \end{figure}
 
-cas structure (figure~\ref{fig:implem-unify-structs}).
-
-\begin{figure}
-  \insertcode{implem-structs.ml}
-\caption{Structures}
-\label{fig:implem-unify-structs}
-\end{figure}
-
 Pour les pointeurs, il est nécessaire de définir des fonctions similaires sur
 les qualificateurs (figure~\ref{fig:implem-qualifs}).
 
@@ -597,5 +599,9 @@ abstraite. Dans le cas de notre analyse, les valeurs ne sont pas pertinentes et
 cet opérateur peut être vu que comme un ``plus'' unaire typé $(\tInt) → \tInt$.
 
 Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
+
+% TODO pas de conclusion
+
+% TODO trop de figures
 
 % vim: spelllang=fr

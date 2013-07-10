@@ -1,15 +1,20 @@
+% TODO faire un vrai chapeau
+
 Dans ce chapitre nous présentons \langname, un langage impératif inspiré de C.
 Sa syntaxe est tout d'abord décrite; puis une sémantique opérationnelle est
 explicitée.
 
-Ce langage servira de support au systèmes de types décrit dans le
+Ce langage servira de support au système de types décrit dans le
 chapitre~\ref{cha:typbase} et enrichi dans le chapitre~\ref{cha:qualifs}.
 
 La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
+% TODO important
 
 \section{Notations}
 
 \subsection*{Ensembles inductifs}
+
+% TODO inutile?
 
 Dans ce chapitre (et les chapitres suivants), on définit de nombreux ensembles
 inductifs. Plutôt que d'écrire la construction explicite par point fixe, on
@@ -99,6 +104,8 @@ Certaines règles n'ont pas de prémisse, ce sont des axiomes:
 Compte-tenu de la structure des règles, la preuve d'un jugement pourra donc être
 vue sous la forme d'un arbre:
 
+% TODO sens
+
 \[
   \irule{r1}{
     \irule{r2}
@@ -119,10 +126,10 @@ vue sous la forme d'un arbre:
 \subsection*{Listes}
 
 On suppose avoir à notre disposition un ensemble infini dénombrable
-d'identificateurs $\sId$ (par exemple des chaînes de caractères).
+d'identificateurs $\sId$. % TODO inutile?
 
 $X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
-X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son ensemble de
+X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son domaine de
 définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
 suite.
 
@@ -131,12 +138,16 @@ telle que $|[]| = 0$. On définit en outre la construction de suite de la maniè
 suivante: si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
 que:
 
+% TODO INDIQUER LES AUTRES CHOIX
+
 \begin{align*}
                        v_1 & = x \\
   ∀ i ∈ [1; |u|] , v_{i+1} & = u_i
 \end{align*}
 
 \subsection*{Lentilles}
+
+% TODO il faut introduire pourquoi tu les utilises
 
 La notion d'accesseur utilisée ici est directement inspirée des \emph{lentilles}
 utilisées en programmation fonctionnelle, décrite dans~\cite{PierceLenses}
@@ -170,7 +181,7 @@ telles que pour tous $a∈A, a'∈A, r∈R$:
 On note $ℒ =
 \mkLens{\mathrm{get}_{ℒ}}{\mathrm{put}_{ℒ}}$.
 
-\textsc{GetPut} signifie que si on lit une valeur puis qu'on la réecrit, l'objet
+\textsc{GetPut} signifie que si on lit une valeur puis qu'on la réécrit, l'objet
 n'est pas modifié; \textsc{PutGet} décrit l'opération inverse: si on écrit
 une valeur dans le champ, c'est la valeur qui sera lue; enfin, \textsc{PutPut}
 évoque le fait que chaque écriture est totale: quand deux écritures se suivent,
@@ -180,12 +191,14 @@ seule la seconde compte.
 
 Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 
-\begin{figure}
+\begin{figure}[h]
 
   \begin{align*}
   \lensGet{ℒ}{\lensNodeBig{green!30}{blue!30}} &= \lensInner{blue!30} \\
   \lensPut{ℒ}{\lensInner{red!30}}{\lensNodeBig{green!30}{blue!30}} &= \lensNodeBig{green!30}{red!30} \\
   \end{align*}
+
+% TODO couleurs
 
 \caption{Fonctionnement d'une lentille}
 \label{fig:lens-howto}
@@ -217,7 +230,7 @@ $\mathrm{get}_T (1::6::1::8::[]) = 1$
 
 et:
 
-$\mathrm{put}_Q (7, 3::6::1::5::[]) = 7::6::1::5::[]$.
+$\mathrm{put}_Q (4::2::[], 3::6::1::5::[]) = 3::4::2::[]$.
 
 \end{example}
 
@@ -254,6 +267,8 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
       \lensNodeBigIdx{green!30}{blue!30}{blue!30}{red!30}{blue!30} \\
   \end{align*}
 
+% TODO couleurs
+
 \caption{Fonctionnement d'une lentille indexée}
 \label{fig:lens-idx-ex}
 \end{figure}
@@ -279,6 +294,7 @@ Donc $T$ est une lentille indexée, et on a par exemple:
 \\
 (9,2,6,5,3) {[3 ← 1]}_T &= \mathrm{put}_{T(3)} (1, (9,2,6,5,3)) \\
                         &= (9,2,1,5,3)
+% TODO notation un peu bizarre
 \end{align*}
 \end{example}
 
@@ -300,6 +316,8 @@ Donc $T$ est une lentille indexée, et on a par exemple:
   \end{align*}
 
   On notera alors $ℒ = ℒ_1 \ggg ℒ_2$.
+% TODO sens
+% TODO en français
 
 \end{definition}
 
@@ -358,28 +376,32 @@ Donc $T$ est une lentille indexée, et on a par exemple:
 Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
 que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
-\section{Fonctionnalités}
+\section{Caractéristiques}
+
+% TODO mettre la syntaxe directe et intégrer ça a leur place
+
+% TODO drôle d'ordre
 
 \paragraph{Fonctions et procédures:} Un des problèmes classiques dans les
 langages impératifs est de distinguer les fonctions (qui retournent une valeur)
 et les procédures (qui n'en retournent pas). La solution choisie par C est de
 marquer les procédures comme retournant un ``faux'' type \texttt{void}. Mais
-c'est uniquement syntaxique: il n'est pas possible de manipuler cette valeur de
-retour de type \texttt{void}.
+c'est uniquement syntaxique: il n'est pas possible de manipuler de valeur de
+type \texttt{void}.
 
 L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
 faire de distinction entre ces deux cas et d'interdire les procédures. Les
 fonctions ne retournant pas de valeur ``intéressante'' renvoient alors une
-valeur d'un type à un seul élément appelé \eUnit\footnote{Cette notation évoque
+valeur d'un type à un seul élément noté \eUnit\footnote{Cette notation évoque
 un $n$-uplet à 0 composante.}, et donc le type sera noté \tUnit.
 
 En C, puisqu'il n'y a pas de valeurs de type \texttt{void}, la notation
 \texttt{void *} a un sens particulier: elle désigne les pointeurs de type non
 défini, qui sont compatibles avec n'importe quel autre type de pointeur (c'est
-la seule forme --- rudimentaire --- de généricité qu'offre le langage). Ici, la
-valeur $\eUnit$ est une valeur comme les autres, et on peut constuire un
-pointeur de type $\tUnit *$ qui n'aura pas de signification particulière: c'est
-seulement un pointeur vers une valeur de type \tUnit.
+la seule forme --- rudimentaire --- de généricité qu'offre le langage). En
+\langname, la valeur $\eUnit$ est une valeur comme les autres, et on peut
+constuire un pointeur de type $\tUnit *$ qui n'aura pas de signification
+particulière: c'est seulement un pointeur vers une valeur de type \tUnit.
 
 \paragraph{Tableaux:} ce sont des valeurs composées qui contiennent un certain
 nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
@@ -393,19 +415,18 @@ interdit.
 
 \paragraph{Structures:} comme les tableaux, ce sont des valeurs composées mais
 hétérogènes. Les différents éléments (appelés \emph{champs}) sont désignés par
-noms $l$ (pour \emph{label}) et de manière statique (il n'y a pas de mécanisme
-pour faire référence à un nom dans le programme).
+noms $l$ (pour \emph{label}).
 
 Les structures sont notées $\eStruct{ l_1 : e_1 ; … ; l_n : e_n }$ et comme dans le
 cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
 
-Dans le programme, le nom de champ $l$ est complété de la définition complète de
+Dans le programme, le nom de champ $l$ est décoré de la définition complète de
 la structure $S$. Celle-ci n'est pas utilisée dans l'évaluation et sera donc
 décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
 structure dans le code du programme serait fastidieux.
 
-\paragraph{Types de données:} très simples. Entiers machine, flottants,
-pointeurs et types composés (structures et tableaux) composés de ceux-ci.
+\paragraph{Types de données:} Entiers machine, flottants, pointeurs et types
+composés (structures et tableaux) composés de ceux-ci.
 
 \paragraph{Variables:} elles sont mutables, et on peut passer des données par
 valeur ou par pointeur.
@@ -415,9 +436,9 @@ valeur ou par pointeur.
 construits avec ces opérateurs.
 
 \paragraph{Fonctions:} le code est organisé en fonctions ``simples'',
-c'est-à-dire qui ne sont pas des fermetures. Même si le corps
-d'une fonction peut être inclus dans le corps d'une autre, il n'est pas possible
-d'accéder aux variables de la portée entourante depuis la fonction intérieure.
+c'est-à-dire qui ne sont pas des fermetures. Même si les fonctions locales sont
+possibles, il n'est pas possible d'accéder aux variables de la portée entourante
+depuis la fonction intérieure.
 
 \section{Syntaxe}
 
@@ -432,7 +453,7 @@ Le flot de contrôle est simplifié par rapport à C:\@ il ne contient que
 l'alternative (``if'') et la boucle ``while''. Les autres formes de boucle
 (``do/while'' et ``for'') peuvent être émulées par une boucle ``while''.
 
-Les fonctionnalités manquantes, et comment les émuler, seront discutés dans le
+Les fonctionnalités manquantes, et comment les émuler, seront examinées dans le
 chapitre~\ref{cha:conclusion}.
 
 Pour l'alternative, on introduit également la forme courte $\iThen{e}{i} =
@@ -568,11 +589,10 @@ Les affectations peuvent avoir la forme $x ← e$ où $x$ est une variable et $e
 est une expression, mais pas seulement. En effet, à gauche de $←$ on trouve en
 général non pas une variable mais une left-value. Pour représenter quelle partie
 de la mémoire doit être accédée par cette left-value, on introduit la notion de
-chemin $φ$. Un chemin est en quelque sorte une left-value symbolique évaluée:
-les cas sont similaires, sauf que tous les indices sont évalués. Par exemple, $φ
-= (5, x).p$ représente le champ ``$p$'' de la variable $x$ dans le 5\ieme cadre
-de pile. C'est à ce moment qu'on évalue les déréférencements qui peuvent
-apparaître dans une left-value.
+chemin $φ$. Un chemin est une left-value évaluée: les cas sont similaires, sauf
+que tous les indices sont évalués. Par exemple, $φ = (5, x).p$ représente le
+champ ``$p$'' de la variable $x$ dans le 5\ieme cadre de pile. C'est à ce moment
+qu'on évalue les déréférencements qui peuvent apparaître dans une left-value.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
 figure~\ref{fig:interp-val}):
@@ -608,10 +628,10 @@ l'expression $\eArray{ x, y }$ s'évaluera en valeur $\widehat{\eArray{ 2, 3 }}$
 
 \item
 
-$\widehat{f}$: une fonction. Les valeurs fonctions comportent l'intégralité de
-la définition de la fonction (liste de paramètres, de variables locales et
-corps). Remarquons que contrairement à certains langages, l'environnement n'est
-pas capturé (il n'y a pas de clôture lexicale).
+$\widehat{f}$: une fonction. On garde en mémoire l'intégralité de la définition
+de la fonction (liste de paramètres, de variables locales et corps). Remarquons
+que contrairement à certains langages, l'environnement n'est pas capturé (il n'y
+a pas de clôture lexicale).
 
 \item $Ω$: une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
 
@@ -667,6 +687,8 @@ Les erreurs peuvent être de plusieurs types:
 
 \item $\serr{div}$ correspond à une division par zéro. Cela arrive si la seconde
 opérande de $/$, $\%$ ou $\floatop{/}$ est nulle.
+
+% TODO répétition wrt figure
 
 \item $\serr{array}$ signale un débordement de tableau.
 
@@ -762,7 +784,7 @@ ajouter une règle :
 \section{Opérations sur les valeurs}
 \label{sec:sem-ops}
 
-Un certain nombre d'opérations est possibles sur les valeurs
+Un certain nombre d'opérations est possible sur les valeurs
 (figure~\ref{fig:stx-ops}):
 
 \begin{itemize}
@@ -784,14 +806,14 @@ Un certain nombre d'opérations est possibles sur les valeurs
 \item
   les opérations d'égalité $=$ et $≠$. L'égalité entre entiers ou entre
   flottants est immédiate. Deux valeurs composées (tableaux ou structures) sont
-  égales si elles ont la meme ``forme'' (même taille pour les tableaux, et même
+  égales si elles ont la même ``forme'' (même taille pour les tableaux, et même
   champs pour les structures) et que toutes leurs sous-valeurs sont égales deux
   à deux. Deux références mémoire sont égales \linebreak lorsque les chemins
   qu'elles décrivent sont syntaxiquement égaux.
 \item
   les opérations de comparaison $≤,≥,<,>$ sont définies avec leur sémantique
   habituelle sur les entiers et les flottants. Sur les références mémoires,
-  elles sont définies dans le cas où les deux opérarandes sont de la forme
+  elles sont définies dans le cas où les deux opérandes sont de la forme
   $φ[\cdot]$ par: $φ[n]~\opbin~φ[m] \eqdef n~\opbin~m$. Dans les autres cas,
   l'erreur $\serr{ptr}$ est renvoyée.
 \item
@@ -822,7 +844,7 @@ Un certain nombre d'opérations est possibles sur les valeurs
 \item
   les opérateurs arithmétiques unaires $+$, $-$, $\floatop{+}$ et $\floatop{-}$
   sont équivalents à l'opération binaire correspondante avec $0$ ou $0.0$ comme
-  première opérande.
+  première opérande. %TODO ?
 
 \item
   $\sim$ inverse tous les bits de son opérande.
@@ -848,7 +870,7 @@ Un certain nombre d'opérations est possibles sur les valeurs
   \cLookup{(s, g)}{x} =
         \begin{cases}
             (|s|, x) & \mbox{ si } |s| > 0
-                       \mbox{ et } (x ↦ v) ∈ s_1 \\
+                       \mbox{ et } (x ↦ v) ∈ s_1 \\ % TODO le dernier
             x        & \mbox{ si } (x ↦ v) ∈ g \\
             \serr{var} & \mbox{ sinon }
         \end{cases}
@@ -876,6 +898,8 @@ l'appelant, il faudra supprimer ce cadre de pile.
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
 
+% TODO pourquoi?
+
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
   \[
@@ -887,6 +911,9 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \begin{definition}[Hauteur d'une valeur]
 La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
 $-1$ sinon.
+
+% TODO je ne comprends pas la définition
+% TODO est-ce toujours le cadre local?h
 
 \begin{align*}
     \cH{\widehat{c}} &= -1 \\
@@ -1006,6 +1033,8 @@ La fonction $\mathrm{Cleanup}$ est donnée par:
 
 Sans cette règle, examinons le programme suivant:
 
+% TODO à centrer
+
 \begin{Verbatim}
 f ()                g (p)           h ()
   (x=0)               (x=0.0)         (p=f())
@@ -1092,6 +1121,8 @@ déréférencement de $p$ va modifier $x$.
 \section{Accesseurs}
 \label{sec:mem-access}
 
+% TODO un peu long
+
 On définit ici quelques lentilles. Le but est de définir rigoureusement les
 accès à la mémoire. À partir d'un état mémoire $m$ et d'une left-value $φ$, on
 veut pouvoir obtenir:
@@ -1137,6 +1168,7 @@ l{[x]}_L  &=
 l{[x ← v]}_L  &=
     \begin{cases}
         l{[n ← (x ↦ v)]}_I & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v_0. l_n = (x ↦ v_0) \\
+% TODO pourquoi v_0
         \serr{var} & \mbox{ sinon }
     \end{cases} \\
 \end{align*}
@@ -1239,7 +1271,7 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
   (définition~\ref{def:lens-comp}):
 
   \begin{align*}
-    Φ(φ.l)  &= Φ(φ) \ggg F(l) \\
+    Φ(φ.l)  &= Φ(φ) \ggg F(l) \\ % TODO d'où sortent ils? - rappel
     Φ(φ[i]) &= Φ(φ) \ggg T(i) \\
   \end{align*}
 
@@ -1311,6 +1343,7 @@ syntaxique.
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
 fait apparaître exactement un ``$C$''. Chaque contexte est donc constitué
 d'exactement un ``trou'' $\ctxEmpty$ (une dérivation de $C$ est toujours
+% TODO à définir
 linéaire). L'opération de substitution consiste à remplacer ce trou:
 $\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou left-value)
 obtenu en remplaçant l'unique $\ctxEmpty$ dans $C$ par $X$. Par exemple,
@@ -1321,9 +1354,8 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \begin{enumerate}
 \item
-  on commence par évaluer, d'une manière ou d'une autre, l'expression
-  $e_1$ en une valeur $v_1$. Le nouvel état mémoire est noté $m'$. Soit
-  donc $\mm{m}{e_1}{m'}{v_1}$.
+  on commence par évaluer, l'expression $e_1$ en une valeur $v_1$. Le nouvel
+  état mémoire est noté $m'$. Soit donc $\mm{m}{e_1}{m'}{v_1}$.
 \item
   En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
   une des formes possibles pour un contexte d'évaluation), on déduit de 1.\ que
@@ -1349,30 +1381,6 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \section{Left-values}
 \label{sec:eval-lv}
 
-\begin{figure}
-
-  \centering
-
-  \begin{tikzpicture}
-    \node              (a1) {$x$};
-    \node[right of=a1] (a2) {$.l_S$};
-    \node[right of=a2] (a3) {$[2*n]$};
-    \node[right of=a3] (a4) {$.g$};
-
-    \node[below of=a1] (b1) {$(2, x)$};
-    \node[below of=a2] (b2) {$.l$};
-    \node[below of=a3] (b3) {$[4]$};
-    \node[below of=a4] (b4) {$.g$};
-
-    \draw[->] (a1) -- (b1);
-    \draw[->] (a2) -- (b2);
-    \draw[->] (a3) -- (b3);
-    \draw[->] (a4) -- (b4);
-  \end{tikzpicture}
-
-  \caption{Évaluation des left-values.}
-\label{fig:eval-lv}
-\end{figure}
 
 Obtenir un chemin à partir d'un nom de variable revient à résoudre le nom de
 cette variable: est-elle accessible? Le nom désigne-t-il une variable locale
@@ -1386,7 +1394,7 @@ Les règles portant sur le déréférencement et l'accès à un champ de structu
 sont similaires: on commence par évaluer la left-value sur laquelle porte ce
 modificateur, et on place le même modificateur sur le chemin résultant. Dans le
 cas des champs de structure, la définition de la structure $S$ n'est pas prise
-en compte.
+en compte. % TODO cad?
 
 \begin{mathpar}
   \semrule{Phi-Struct}
@@ -1436,7 +1444,7 @@ exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on montrera que la
 première est toujours évitée dans les programmes typés
 (théorème~\ref{thm:progres}).
 
-\begin{figure}
+\begin{figure}%{{{
 \begin{Verbatim}
 Decl s0 = { .f = 0 } in
 Decl s1 = { .f = 1 } in
@@ -1449,13 +1457,40 @@ x <- & s1
 
 \caption{Évaluation stricte ou paresseuse des left-values}
 \label{fig:lazy-deref}
-\end{figure}
+\end{figure}%}}}
 
 \begin{mathpar}
   \semrule{Phi-Deref}
 \end{mathpar}
 
 Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
+
+% TODO figure cleanup fausse depuis les derefs changés
+
+\begin{figure}%{{{
+
+  \centering
+
+  \begin{tikzpicture}
+    \node              (a1) {$x$};
+    \node[right of=a1] (a2) {$.l_S$};
+    \node[right of=a2] (a3) {$[2*n]$};
+    \node[right of=a3] (a4) {$.g$};
+
+    \node[below of=a1] (b1) {$(2, x)$};
+    \node[below of=a2] (b2) {$.l$};
+    \node[below of=a3] (b3) {$[4]$};
+    \node[below of=a4] (b4) {$.g$};
+
+    \draw[->] (a1) -- (b1);
+    \draw[->] (a2) -- (b2);
+    \draw[->] (a3) -- (b3);
+    \draw[->] (a4) -- (b4);
+  \end{tikzpicture}
+
+  \caption{Évaluation des left-values.}
+\label{fig:eval-lv}
+\end{figure}%}}}
 
 \section{Expressions}
 \label{sec:eval-exp}
@@ -1595,6 +1630,8 @@ faut donc transmettre le pas à la main. C'est le but des deux règles
 \textsc{Exp-Call-Ctx} et \textsc{Exp-Call-Err}. D'autre part, les cas terminaux
 sont \textsc{Exp-Call-Return-Unit} et \textsc{Exp-Call-Return}:
 
+% TODO détailler, important
+
 \begin{mathpar}
     \semrule{Exp-Call-Ctx}
 
@@ -1611,6 +1648,8 @@ Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
 \label{sec:eval-instr}
+
+% TODO plus tôt la def?
 
 \begin{definition}{Évaluation d'une instruction}
 
@@ -1651,7 +1690,7 @@ ci-dessus.
   \semrule{Exp}
 \end{mathpar}
 
-L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ peut se faire de plusieurs manières.
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait de la manière suivante.
 La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous une
 déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
 mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
@@ -1689,78 +1728,11 @@ revient à évaluer la branche ``\emph{else}''. Dans les autres cas, c'est la r�
   \semrule{If-True}
 \end{mathpar}
 
-Pour traiter la boucle, on peut être tenté de procéder de la même manière:
-
-\begin{mathpar}
-  \irule{While-False-Bad}
-    { v ≠ 0 }
-    { \mmi{m}{\iWhile{v}{i}}{m}{\iPass} }
-
-  \irule{While-True-Bad}
-    { }
-    { \mmi{m}{\iWhile{0}{i}}{m'}{i;\iWhile{e}{i}}}
-\end{mathpar}
-
-Mais la seconde règle est impossible: puisque $e$ a déjà été évaluée, il est
-impossible de la réintroduire non évaluée en partie droite.
-
-À la place, on exprime la sémantique de la boucle comme une simple règle de
-réécriture:
+On exprime la sémantique de la boucle comme une simple règle de réécriture:
 
 \begin{mathpar}
   \semrule{While}
 \end{mathpar}
-
-Cette règle revient à dire qu'on peut dérouler une boucle. Pour la comprendre,
-on peut remarquer qu'une boucle ``\emph{while}'' est en réalité équivalente une
-infinité de ``\emph{if}'' imbriqués.
-
-\begin{minipage}{0.3\textwidth}
-\begin{Verbatim}
-while(e) {
-    i
-}
-\end{Verbatim}
-\end{minipage}
-$\widehat{=}$\hspace{1cm}
-\begin{minipage}{0.3\textwidth}
-\begin{Verbatim}
-if(e) {
-    i;
-    if(e) {
-        i;
-        if(e) {
-            i;
-            if(e) {
-                i;
-                ...
-            }
-        }
-    }
-}
-\end{Verbatim}
-\end{minipage}
-
-Donc en remplaçant le second ``\emph{if}'' par le ``\emph{while}'', on obtient:
-
-\begin{minipage}{0.3\textwidth}
-\begin{Verbatim}
-while(e) {
-    i
-}
-\end{Verbatim}
-\end{minipage}
-$\widehat{=}$\hspace{1cm}
-\begin{minipage}{0.3\textwidth}
-\begin{Verbatim}
-if(e) {
-    i;
-    while(e) {
-        i
-    }
-}
-\end{Verbatim}
-\end{minipage}
 
 Enfin, si un $\phx\iReturn$ apparaît dans une séquence, on peut supprimer la suite:
 
@@ -1780,7 +1752,7 @@ de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-expression ou sous instruction est définie en fonction des contextes $C$
 (figure~\ref{fig:eval-err}).
 
-\begin{figure}
+\begin{figure}[h]
 \begin{mathpar}
   \ruleheader{$Ξ → Ω$}
 
@@ -1809,7 +1781,7 @@ avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}).
 
 Notons que ces évaluations se font à grands pas.
 
-\begin{figure}
+\begin{figure}[h]
 \begin{mathpar}
   \ruleheader{$\ph{m}{p}{m'}$}
 

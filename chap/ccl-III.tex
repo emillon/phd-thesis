@@ -31,7 +31,7 @@ unes de ces extensions possibles.
 
 Le chapitre~\ref{cha:etudedecas} permet de démontrer que notre approche
 fonctionne. Le bug \url{http://freedesktop.org} \#29340 est la manifestation
-d'un problème de pointeur utilisateur mal utilisé dans le noyau, ainsi que
+d'un problème de pointeur utilisateur mal déréférencé dans le noyau, ainsi que
 décrit dans le chapitre~\ref{cha:os}. En lançant notre analyse sur le code
 présentant un problème, l'erreur est détectée. Au contraire, en la lançant sur
 le code après application du correctif (\emph{commit} \texttt{ad8ab3557}),
@@ -43,3 +43,5 @@ vérifiant les autres \emph{ioctls} de ce pilote, puis l'ensemble des
 \emph{ioctls} des modules ayant la même interface, puis d'autres types
 d'interfaces qui manipulent des pointeurs utilisateurs: par exemple d'autres
 pilotes de périphériques ou des systèmes de fichiers.
+
+% TODO ce para = money shot

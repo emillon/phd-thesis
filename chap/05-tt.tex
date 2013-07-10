@@ -42,11 +42,11 @@ f = Fun() {
 
 \end{figure}
 
-Le but d'un tel système de types est de rejeter les programmes qui sont
-``évidemment faux'', c'est-à-dire dont on peut prouver qu'il provoqueraient des
-erreurs à l'exécution dues à une incompatibilité entre valeurs. En ajoutant
-cette étape, on restreint la classe d'erreurs qui pourraient bloquer la
-sémantique.
+Le but d'un tel système de types est de rejeter les programmes pour lesquels ont
+peut facilement déterminer qu'ils sont faux, c'est-à-dire dont on peut prouver
+qu'il provoqueraient des erreurs à l'exécution dues à une incompatibilité entre
+valeurs. En ajoutant cette étape, on restreint la classe d'erreurs qui
+pourraient bloquer la sémantique.
 
 \section{Principe}
 
@@ -75,7 +75,11 @@ programme est donc mal typé.
 
 \section{Environnements et notations}
 
-\begin{figure}
+Les types associés aux expressions sont décrits dans la
+figure~\ref{fig:les-types}. Tous sont des types concrets: il n'y a pas de
+polymorphisme.
+
+\begin{figure}[h]
 
   \begin{align*}
   \gramdef{Type}{t}
@@ -104,15 +108,11 @@ programme est donc mal typé.
 
 \end{figure}
 
-Les types associés aux expressions sont décrits dans la
-figure~\ref{fig:les-types}. Tous sont des types concrets: il n'y a pas de
-polymorphisme.
-
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
 Plus précisément, un environnement $Γ$ est une liste de couples (variable,
-type), c'est à dire une suite finie ${(γ_i)}_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
+type), c'est-à-dire une suite finie ${(γ_i)}_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
 On utilise les notations suivantes:
 
 \begin{align*}
@@ -138,6 +138,12 @@ Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais
 n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
+% TODO un mot sur les structures et pourquoi S est toplevel
+
+% TODO mettre ces choses là à leur place
+
+% TODO mettre les règles des suites de phrases à la fin
+
 \paragraph{Typage d'une expression:} on note de la manière suivante le fait
 qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
 pour type $t$ dans le contexte $Γ$.
@@ -147,7 +153,7 @@ pour type $t$ dans le contexte $Γ$.
   \]
 
 \paragraph{Typage d'une instruction:} les instructions n'ont en revanche pas de
-type. Mais il est tout de même nécessaire de vérifier que troutes les
+type. Mais il est tout de même nécessaire de vérifier que toutes les
 sous-expressions apparaissant dans une instruction sont cohérentes ensemble.
 
 On note de la manière suivante le fait que sous l'environnement $Γ$
@@ -172,7 +178,7 @@ si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 On étend cette notation aux suites de phrases, ce qui définit le typage d'un
 programme, ce que l'on note $⊢ P$ (figure~\ref{fig:typ-suite-phrases}).
 
-\begin{figure}
+\begin{figure}[h]
   \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
 
   \begin{mathpar}
@@ -253,7 +259,7 @@ une fois le type de base du type tableau ($t$ pour $t[]$).
 \end{mathpar}
 
 Le typage de l'accès à un champ est facilité par le fait que dans le programme,
-le type complet de la structure est accessible sur le champ.
+le type complet de la structure est accessible sur chaque accès.
 
 Dans la définition de cette règle on utilise la notation:
 
@@ -282,7 +288,18 @@ De même sur \tFloat.
   \disprule{Op-Float}
 \end{mathpar}
 
-\begin{figure}
+Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
+type qui supporte l'égalité. Ceci est représenté par un jugement
+$\textsc{Eq}(t)$ qui est vrai pour les types $\tInt$, $\tFloat$ et pointeurs,
+ainsi que les types composés si les types de leurs composantes
+(figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
+\tInt:
+
+\begin{mathpar}
+  \disprule{Op-Eq}
+\end{mathpar}
+
+\begin{figure}[h]
 
   \ruleheader{$\textsc{Eq}(t)$}
 
@@ -299,17 +316,6 @@ De même sur \tFloat.
 \caption{Jugements d'égalité sur les types}
 \label{fig:jugement-eq}
 \end{figure}
-
-Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
-type qui supporte l'égalité. Ceci est représenté par un jugement
-$\textsc{Eq}(t)$ qui est vrai pour les types $\tInt$, $\tFloat$ et pointeurs,
-ainsi que les types composés si les types de leurs composantes
-(figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
-\tInt:
-
-\begin{mathpar}
-  \disprule{Op-Eq}
-\end{mathpar}
 
 Les opérateurs unaires ``$+$'' et ``$-$'' appliquent aux entiers, et leurs
 équivalents ``$\floatop{+}$'' et ``$\floatop{-}$'' aux flottants.
@@ -414,6 +420,8 @@ bien typées, et si la condition est d'un type entier.
 Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
 revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$.
 
+% TODO donner une référence : Pascal?
+
 \begin{mathpar}
   \disprule{Return}
 \end{mathpar}
@@ -441,7 +449,14 @@ typable en $(t_1, …, t_n) → t$ sous $Γ$.
 
 \section{Phrases}
 
-\begin{figure}
+Le typage des phrases est détaillé dans la figure~\ref{fig:typ-ph}. Le typage
+d'une expression est le cas le plus simple. En effet, il y a juste à vérifier
+que celle-ci est bien typable (avec ce type) dans l'environnement de départ:
+l'environnement n'est pas modifié. En revanche, la déclaration d'une variable
+globale commence de la même manière, mais on enrichit l'environnement de cette
+nouvelle valeur.
+
+\begin{figure}[h]
 
   \ruleheader{$\typh{Γ}{p}{Γ'}$}
 
@@ -455,13 +470,6 @@ typable en $(t_1, …, t_n) → t$ sous $Γ$.
 \label{fig:typ-ph}
 
 \end{figure}
-
-Le typage des phrases est détaillé dans la figure~\ref{fig:typ-ph}. Le typage
-d'une expression est le cas le plus simple. En effet, il y a juste à vérifier
-que celle-ci est bien typable (avec ce type) dans l'environnement de départ:
-l'environnement n'est pas modifié. En revanche, la déclaration d'une variable
-globale commence de la même manière, mais on enrichit l'environnement de cette
-nouvelle valeur.
 
 \section{Sûreté du typage}
 
@@ -495,6 +503,7 @@ programmes, nous allons avoir à traiter des environnements de typage $Γ$ et de
 états mémoires $m$. La première chose à faire est donc d'établir une
 correspondance entre ces deux mondes.
 
+% TODO dénomination
 Étant donné un état mémoire $m$, on associe un type de valeur (ou type
 sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement
 $\semtyp{m}{v}{τ}$.
@@ -515,10 +524,12 @@ codéfini par:
     \semtyp{m}{m[φ]_Φ}{τ}
 \]
 
+% TODO détailler
+
 Les règles de définition du typage sémantique sont données dans la
 figure~\ref{fig:types-semantiques}.
 
-\begin{figure}
+\begin{figure}[h]%{{{
 \begin{align*}
 \gramdef[2.5cm]{Type\\sémantique}{τ}
     { \tInt                       }{Entier}
@@ -533,9 +544,15 @@ figure~\ref{fig:types-semantiques}.
 
 \caption{Types sémantiques}
 \label{fig:types-semantiques}
-\end{figure}
+\end{figure}%}}}
 
-\begin{figure}
+Les règles sont détaillées dans la figure~\ref{fig:regles-typ-sem}: les types
+des constantes sont simples à retrouver car il y a assez d'information en
+mémoire. Pour les références, ce qui peut être déréférencé en une valeur de type
+$τ$ est un $τ~*$. Le typage des valeurs composées se fait en profondeur. Enfin,
+la seule information restant à l'exécution sur les fonctions est son arité.
+
+\begin{figure}[h]%{{{
   \ruleheader{$\semtyp{m}{v}{τ}$}
 
   \begin{mathpar}
@@ -559,20 +576,14 @@ figure~\ref{fig:types-semantiques}.
   \caption{Règles de typage sémantique}
 \label{fig:regles-typ-sem}
 
-\end{figure}
-
-Les règles sont détaillées dans la figure~\ref{fig:regles-typ-sem}: les types
-des constantes sont simples à retrouver car il y a assez d'information en
-mémoire. Pour les références, ce qui peut être déréférencé en une valeur de type
-$τ$ est un $τ~*$. Le typage des valeurs composées se fait en profondeur. Enfin,
-la seule information restant à l'exécution sur les fonctions est son arité.
+\end{figure}%}}}
 
 La prochaine étape est de définir une relation de compatibilité entre les types
 sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
 $\tComp{τ}{t}$. Les règles sont décrites dans la
 figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
 
-\begin{figure}
+\begin{figure}[h]%{{{
   \ruleheader{$\tComp{τ}{t}$}
 
   \begin{mathpar}
@@ -603,7 +614,9 @@ figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
 
   \caption{Compatibilité entre types sémantiques et statiques}
 \label{fig:regles-comp-typ}
-\end{figure}
+\end{figure}%}}}
+
+% TODO rq sur le comp-ground ou t et τ se confondent
 
 Grâce à ce jugement, on peut donner la définition suivante.
 
@@ -630,7 +643,7 @@ Grâce à ce jugement, on peut donner la définition suivante.
   \]
 
     $\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
-    récents ainsi que des variables globales:
+    récents ainsi que celles des variables globales:
 
 \[
 \cVisible{(s, g)} \eqdef \{ (x_i) / (x_i ↦ v_i) ∈ g \}
@@ -807,6 +820,8 @@ Les règles précédentes ont la particularité suivante: pour chaque forme
 syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
 déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
 expression.
+
+% TODO?? 1er fois que cela apparait
 
 \begin{lemma}[Inversion]
 \label{lemma:inversion}
@@ -1096,8 +1111,11 @@ Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
 % TODO on peut aussi changer des bindings si ça n'influe pas sur $e$
 \end{lemma}
 
-\begin{proof}
-% TODO proof
+\begin{proof}[Démonstration (esquisse)]
+On procède par induction sur une dérivation de $Γ ⊢ e : t$. Le seul cas où $Γ$
+est accédé en lecture (et pas uniquement propagé de prémisses en prémisses) est
+le cas de l'accès à une variable où la prémisse a pour forme $y : t ∈ Γ$. Or, si
+celle ci est vraie, alors $y:t ∈ Γ, x:t'$ est également vérifiée.
 \end{proof}
 
 \section{Progrès et préservation}
@@ -1385,6 +1403,8 @@ s'applique. En ajoutant un système de type, on s'assure que les termes peuvent
 aux différentes parties du programme. Cela permet surtout de s'assurer que les
 programmes ne peuvent provoquer une erreur d'exécution que dans certains cas
 particuliers, comme les division ou les accès aux tableaux.
+
+% TODO trop court
 
 % TODO Return implicite
 
