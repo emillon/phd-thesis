@@ -1096,8 +1096,11 @@ Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
 % TODO on peut aussi changer des bindings si ça n'influe pas sur $e$
 \end{lemma}
 
-\begin{proof}
-% TODO proof
+\begin{proof}[Démonstration (esquisse)]
+On procède par induction sur une dérivation de $Γ ⊢ e : t$. Le seul cas où $Γ$
+est accédé en lecture (et pas uniquement propagé de prémisses en prémisses) est
+le cas de l'accès à une variable où la prémisse a pour forme $y : t ∈ Γ$. Or, si
+celle ci est vraie, alors $y:t ∈ Γ, x:t'$ est également vérifiée.
 \end{proof}
 
 \section{Progrès et préservation}
