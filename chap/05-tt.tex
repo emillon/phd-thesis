@@ -138,11 +138,7 @@ Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais
 n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
-% TODO un mot sur les structures et pourquoi S est toplevel
-
 % TODO mettre ces choses là à leur place
-
-% TODO mettre les règles des suites de phrases à la fin
 
 \paragraph{Typage d'une expression:} on note de la manière suivante le fait
 qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
@@ -176,34 +172,7 @@ On note
 si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
 On étend cette notation aux suites de phrases, ce qui définit le typage d'un
-programme, ce que l'on note $⊢ P$ (figure~\ref{fig:typ-suite-phrases}).
-
-\begin{figure}[h]
-  \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
-
-  \begin{mathpar}
-    \irule{T*-Nil}
-      { }
-      { \typhstar{Γ}{[~]}{Γ} }
-
-    \irule{T*-Cons}
-      { \typh{Γ_1}{p}{Γ_2}
-     \\ \typhstar{Γ_2}{ps}{Γ_3}
-      }
-      { \typhstar{Γ_1}{p::ps}{Γ_3} }
-  \end{mathpar}
-
-  \ruleheader{$Γ ⊢ P$}
-
-  \begin{mathpar}
-    \irule{Prog}
-      { \typhstar{[~]}{P}{Γ} }
-      { ⊢ P }
-  \end{mathpar}
-
-  \caption{Typage d'une suite de phrases et d'un programme}
-\label{fig:typ-suite-phrases}
-\end{figure}
+programme, ce que l'on note $⊢ P$.
 
 \section{Expressions}
 
@@ -418,9 +387,9 @@ bien typées, et si la condition est d'un type entier.
 \section{Fonctions}
 
 Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
-revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$.
-
-% TODO donner une référence : Pascal?
+revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$. Cela rappelle le
+langage Pascal, où pour retourner une valeur on l'affecte à une variable nommée
+comme la fonction courante.
 
 \begin{mathpar}
   \disprule{Return}
@@ -466,7 +435,29 @@ nouvelle valeur.
     \disprule{T-Var}
   \end{mathpar}
 
-  \caption{Typage des phrases}
+  \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
+
+  \begin{mathpar}
+    \irule{T*-Nil}
+      { }
+      { \typhstar{Γ}{[~]}{Γ} }
+
+    \irule{T*-Cons}
+      { \typh{Γ_1}{p}{Γ_2}
+     \\ \typhstar{Γ_2}{ps}{Γ_3}
+      }
+      { \typhstar{Γ_1}{p::ps}{Γ_3} }
+  \end{mathpar}
+
+  \ruleheader{$Γ ⊢ P$}
+
+  \begin{mathpar}
+    \irule{Prog}
+      { \typhstar{[~]}{P}{Γ} }
+      { ⊢ P }
+  \end{mathpar}
+
+  \caption{Typage des phrases et programmes}
 \label{fig:typ-ph}
 
 \end{figure}
@@ -503,7 +494,7 @@ programmes, nous allons avoir à traiter des environnements de typage $Γ$ et de
 états mémoires $m$. La première chose à faire est donc d'établir une
 correspondance entre ces deux mondes.
 
-% TODO dénomination
+% TODO dénomination : type sémantique?
 Étant donné un état mémoire $m$, on associe un type de valeur (ou type
 sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement
 $\semtyp{m}{v}{τ}$.
@@ -582,6 +573,11 @@ La prochaine étape est de définir une relation de compatibilité entre les typ
 sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
 $\tComp{τ}{t}$. Les règles sont décrites dans la
 figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
+Notons qu'on garde le même nom pour les types de base, et que par exemple
+$\tInt$ peut être vu soit comme un type statique, soit comme un type de valeur.
+Il y a donc un abus de notation dans la règle \textsc{Comp-Ground}: quand on
+note $\tComp{\tInt}{\tInt}$, le premier désigne le type des valeurs à
+l'exécution, et le second le type statique.
 
 \begin{figure}[h]%{{{
   \ruleheader{$\tComp{τ}{t}$}
@@ -615,8 +611,6 @@ figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
   \caption{Compatibilité entre types sémantiques et statiques}
 \label{fig:regles-comp-typ}
 \end{figure}%}}}
-
-% TODO rq sur le comp-ground ou t et τ se confondent
 
 Grâce à ce jugement, on peut donner la définition suivante.
 
