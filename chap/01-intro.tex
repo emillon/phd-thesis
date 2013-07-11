@@ -453,28 +453,33 @@ greffons, elle permet de prototyper rapidement des analyses statiques de
 programmes.
 
 \paragraph{Compcert} est un projet qui vise à produire un compilateur certifié
-pour C. C'est-à-dire que le fait que les transformations conservent la
-% TODO un peu lourd
-sémantique est prouvé. Il utilise de nombreux langages intermédiaires, dont
-CIL.\@ Pour le front-end, le langage se nomme Clight\cite{cfront}. Les passes de
-middle-end, quant à elles, utilisent Cminor\cite{cminorSL}.
-
-% TODO dire un mot EADS
-\paragraph{Newspeak}\cite{newspeak} est un langage intermédiaire développé par
-EADS Innovation Works, et qui est spécialisé dans l'analyse de valeurs par
-interprétation abstraite. Il sera décrit plus en détails dans la
-section~\ref{sec:npk}.
+pour C. C'est-à-dire que les transformations sémantiques sont faites de manière
+prouvée. Il utilise de nombreux langages intermédiaires, dont CIL.\@ Pour le
+front-end, le langage se nomme Clight\cite{cfront}. Les passes de middle-end,
+quant à elles, utilisent Cminor\cite{cminorSL}.
 
 \subsection*{La solution retenue: \langname{}}
 
-Dans la suite de cette thèse nous nous appuierons sur \langname{}, un langage
-intermédiaire minimal, pour exprimer les règles de typage de la manière la plus
-simple possible.
+Dans le monde de l'aéronautique, il est nécessaire de s'assurer que les
+logiciels embarqués critiques ne vont pas subir d'erreurs à l'exécution, dont
+les conséquences financières ou même humaines peuvent être tragiques.
 
-% TODO un peu court
+Afin de vérifier leur absence, des outils basés sur l'interprétation abstraite
+(section~\ref{sec:absint}) on été développés chez EADS Innovation Works dans le
+cadre du projet Penjili (\url{http://penjili.org}). On y trouve notamment un
+langage intermédiaire, Newspeak\cite{newspeak}, ainsi que des compilateurs
+permettant de traduire du code C et Ada vers celui-ci. L'analyseur statique
+Penjili, reposant sur ces outils, a été utilisé pour analyser des logiciels
+embarqués critiques de plusieurs millions de lignes de code. Il n'est pour le
+moment pas open source.
 
-% TODO redire ici ce que tu veux faire, ou ce que tu as fait et ensuite
-% présenter ton plan
+Nous avons choisi de basé notre analyse sur Newspeak, dans le but de bénéficier
+de ces outils existants et dans la perspective de guider les analyses de valeur
+par des information de typage.
+
+Plus précisément, nous utilisons un langage nommé \langname, inspiré de Newspeak
+mais avec un modèle mémoire de plus haut niveau permettant de garantir la sûreté
+des programmes bien typés. L'implantation quant à elle, se fait sur Newspeak.
 
 \section{Plan de la thèse}
 
