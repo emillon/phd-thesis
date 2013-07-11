@@ -12,7 +12,7 @@ Les différences principales avec C sont les suivantes :
 \item
   les opérateurs pour entiers et les flottants sont différenciées.
 \item
-  toutes les variables locales sont ``remontées'' en début de fonction.
+  toutes les variables locales sont «remontées» en début de fonction.
 \end{itemize}
 
 \section{Sémantique}
@@ -94,7 +94,7 @@ Pour représenter le flot de contrôle dans la sémantique, plusieurs choix sont
 possibles. L'un est d'établir un graphe de flot de contrôle explicite et de
 raisonner en termes de points de contrôle. Celui que nous retenons consiste à
 voir l'exécution du programme en terme de continuations. Une continuation
-capture ``ce qu'il reste à faire'' pour terminer l'exécution d'un programme.
+capture «ce qu'il reste à faire» pour terminer l'exécution d'un programme.
 
 Dans le cas le plus simple, il n'y a rien à faire (si le bloc d'initialisation
 est vide par exemple ; ce sera aussi le cas de base de la plupart des autres
@@ -165,7 +165,7 @@ mutuellement récursive.
 La mémoire est organisée en adresses, mais pourtant dans le programme cette
 notion n'est pas directement visible. Les accès sont réalisés à travers des
 "left values". Dans le langage C, elles correspondent aux constructions qui
-peuvent se retrouver à gauche du signe ``='' dans une affectation.
+peuvent se retrouver à gauche du signe «=» dans une affectation.
 
 \begin{definition}[Adresse effective]
   Sous un environnement $Γ$ et un état mémoire $σ$, une left-value peut
@@ -351,7 +351,7 @@ le plus interne ; dans l'autre, on sort d'un bloc qui n'est pas final.
 \end{mathpar}
 
 Pour la conditionnelle, on évalue la condition. Si elle s'évalue en un entier
-non nul, la suite est le bloc ``vrai'', sinon c'est le bloc ``faux''.
+non nul, la suite est le bloc «vrai», sinon c'est le bloc «faux».
 
 \begin{mathpar}
 \irule{Instr-If-True}

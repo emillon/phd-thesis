@@ -37,7 +37,7 @@ objets~\cite{liang2012taint}.
 L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
 leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
 l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
-montre l'exemple célèbre du mode ``souillé'' (\emph{tainted}) de
+montre l'exemple célèbre du mode «souillé» (\emph{tainted}) de
 Perl~\cite{perlCamelBook}. Il est aussi possible, d'appliquer
 cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
 En revanche cela est plus délicat car l'environnement d'exécution n'est pas
@@ -93,7 +93,7 @@ dans~\cite{floatpitfalls}.
 % --- Comparaison à C
 
 Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
-``assembleur portable''. Ses types de données et les opérations associées sont
+«assembleur portable». Ses types de données et les opérations associées sont
 donc naturellement très bas niveau.
 
 Les types de données de C sont établis pour représenter les mots mémoire
@@ -141,7 +141,7 @@ We present \langname, a memory-safe imperative programming language. Let us go
 through its major features.
 
 \paragraph{Scalar data:} there are four types of scalars: integers, floats,
-pointers and a special ``unit'' value. Integers are 32 bit wide signed integers,
+pointers and a special «unit» value. Integers are 32 bit wide signed integers,
 akin to the \texttt{int32\_t} data type in C, but this size is arbitrary. Floats
 are 32 bit wide floating point numbers with their usual semantics,
 Pointers are used to reference any modifiable piece of data, as embodied by the
@@ -241,7 +241,7 @@ from enclosing scopes happen at the site of a function declaration.
 This is a compromise between C where functions can only be global, and
 functional languages where it is necessary to build closures containing (pointers
 to) captured variables at each function call. This also eliminates the need for
-special-cased ``function pointers''.
+special-cased «function pointers».
 
 Each function call creates a stack frame to hold room for the function's
 parameters and local variables. Upon return, the most recent frame is destroyed.
@@ -717,7 +717,7 @@ a global variable.
 
 \begin{itemize}
 \item
-  6.1.1 français dans ``qui représente qui contrôle sa valeur''
+  6.1.1 français dans «qui représente qui contrôle sa valeur»
 \item
   6.1.1 mettre une ref sur la description du noyau linux
 \item
@@ -740,16 +740,16 @@ Sarah 13/02
 \item
   typo intro systme
 \item
-  6.1 phrase ``tout d'abord\ldots{}'' pas très français non ?
+  6.1 phrase «tout d'abord\ldots{}» pas très français non ?
 \item
-  5.1 étape ``ensuite'' à quoi correspond le phi ?
+  5.1 étape «ensuite» à quoi correspond le phi ?
 \item
   figure 6.1 ça serait plus propre de tout remettre et surligner/colorer
   les nouveautés (à expliquer dans le texte)
 \item
   6.2 pourquoi ne pas nommer cette extension de C\_ML
 \item
-  3ème parag 6.3 choisir entre ``qui représente'' et ``qui contrôle''
+  3ème parag 6.3 choisir entre «qui représente» et «qui contrôle»
 \item
   idem figure 6.2 ça serait plus clair de remettre tout
 \item
@@ -899,7 +899,7 @@ $\tInt × \tInt$ et \texttt{y} de type $\tInt$, donc f est de type $\tInt × \tI
 
 Pour implanter cette analyse, on peut remarquer qu'étant donné la forme d'un
 terme, on peut savoir quelle règle de typage a été utilisée en dernier. Il est
-ainsi possible de ``remonter'' l'arbre d'inférence afin de savoir quelles règles
+ainsi possible de «remonter» l'arbre d'inférence afin de savoir quelles règles
 ont été employées (figure~\ref{fig:inftree-rules})\footnote{Par souci de clarté,
 les prémisses des applications de \textsc{(Var)} ne sont pas notées.}. Pour le
 moment, on ne connait pas les types.
@@ -917,8 +917,8 @@ Une fois à cette étape, on peut donner un nom à chaque type inconnu : $t_1, t
 \ldots$. L'utilisation qui en est faite permet de générer un ensemble de
 contraintes d'unification (figure~\ref{fig:stlc-const}).
 
-Le symbole $?$ qui apparait dans les règles correspond à ``n'importe quel
-type'', dans le sens où l'unification avec ce symbole est toujours possible.
+Le symbole $?$ qui apparait dans les règles correspond à «n'importe quel
+type», dans le sens où l'unification avec ce symbole est toujours possible.
 
 \begin{figure} % {{{
   \def\stlcConst#1#2{
@@ -1201,7 +1201,7 @@ License, and is available on \texttt{http://penjili.org} (directory
 following steps.
 
 but to analyze larger parts of the kernel, it may be
-necessary to define a ``maximal'' configuration file (which is impossible
+necessary to define a «maximal» configuration file (which is impossible
 because of incompatibilities between some options).%}}}
 
 \section{Étude de cas}%{{{
@@ -1213,9 +1213,9 @@ mémoire du noyau à travers le message d'erreur.
 Le problème est modélisé de la façon suivante : on associe à chaque variable
 \texttt{x} un type de données \texttt{t}, ce que l'on note \texttt{x:t}. En
 plus des types présents dans le langage C, on ajoute une distinction
-supplémentaire pour les pointeurs. D'une part, les pointeurs ``noyau'' (de type
+supplémentaire pour les pointeurs. D'une part, les pointeurs «noyau» (de type
 \texttt{t~*}) sont créés en prenant l'adresse d'un objet présent dans le code
-source. D'autre part, les pointeurs ``utilisateurs'' (leur type est noté
+source. D'autre part, les pointeurs «utilisateurs» (leur type est noté
 \texttt{t user*}) proviennent des interfaces avec l'espace utilisateur.
 
 Il est sûr de déréférencer un pointeur noyau, mais pas un pointeur
@@ -1255,7 +1255,7 @@ aurait pas d'erreur de typage car cette fonction peut accepter les arguments
 
 Le principe de cette technique (associer des types aux valeurs puis restreindre
 les opérations sur certains types) peut être repris. Par exemple, si on définit
-un type ``numéro de bloc'' comme étant un nouvel alias de \texttt{int}, on peut
+un type «numéro de bloc» comme étant un nouvel alias de \texttt{int}, on peut
 considérer que multiplier deux telles valeurs est une erreur.%}}}
 
 \section{Conclusion}%{{{

@@ -1,9 +1,9 @@
 Le système d'exploitation est le programme qui permet à un système informatique
 d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
 multiples. Dans ce chapitre, nous allons voir à quoi il sert, et comment il peut
-être implanté. Pour ce faire, nous étudierons l'exemple d'un système Intel
-32 bits.
-% TODO md
+être implanté. Pour ce faire, nous présentons ici de quoi est constitué un
+sustème Intel 32 bits et ce dont on se sert pour y implanter un système
+d'exploitation.
 
 \section{Architecture physique}
 
@@ -39,10 +39,8 @@ mémoire (directement : \texttt{addr} ou indirectement : \texttt{(\%ecx)}
   Cela consiste à interpréter le contenu du regitre \ecx comme une adresse
   mémoire.
 }
-).
-
-Parmi les mnémoniques courants on peut citer les suivants.
-% TODO dire pourquoi tu les présentes
+). On décrit les mnémoniques les plus utilisés, permettant de compiler un cœur
+de langage impératif:
 
 \begin{itemize}
 
@@ -244,7 +242,7 @@ problèmes de sécurité.
 Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un
 côté, une interface pas assez fine serait trop restrictive et ne permettrait pas
 d'implémenter tout type de logiciel. De l'autre, une interface trop laxiste
-(``écrire dans tel registre matériel'') empêche toute isolation. Il faut
+(«écrire dans tel registre matériel») empêche toute isolation. Il faut
 donc trouver la bonne granularité.
 
 Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
@@ -301,8 +299,7 @@ toujours y avoir une erreur, mais au moins le noyau est protégé.
 
 Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
 fonction \texttt{access\_ok} réalise le test décrit précédemment. Les fonctions
-\texttt{copy\_from\_user} et \url{copy_to_user} réalisent une copie de la
-% TODO url sans link
+\texttt{copy\_from\_user} et \nolinkurl{copy_to_user} réalisent une copie de la
 mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
 système \texttt{gettimeofday} fait appel à celle-ci
 (figure~\ref{fig:implem-gettime}).
@@ -345,7 +342,7 @@ tels défauts.
 %une trace des calculs en cours. Par exemple, c'est ici que seront stockées les
 %données propres à chaque fonction appelée: paramètres, adresse de retour et
 %variables locales. La pile est manipulée par un pointeur de pile (\emph{stack
-%pointer}), qui est l'adresse du ``haut de la pile''. On peut la manipuler en
+%pointer}), qui est l'adresse du «haut de la pile». On peut la manipuler en
 %empilant des données (les placer au niveau du pointeur de pile et déplacer celui
 %si) ou dépilant des données (déplacer le pointeur de pile dans l'autre sens et
 %retourner la valeur présente à cet endroit).
@@ -417,7 +414,7 @@ tels défauts.
     %indirectement: \texttt{(\%ecx)}. L'adresse effective est le contenu
     %du registre.
   %\item
-    %``base + déplacement'': \texttt{4(\%ecx)}. L'adresse effective est
+    %«base + déplacement»: \texttt{4(\%ecx)}. L'adresse effective est
     %le contenu du registre plus le déplacement (4 ici).
   %\end{itemize}
 %\end{itemize}

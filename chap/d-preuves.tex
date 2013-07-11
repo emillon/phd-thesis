@@ -229,12 +229,12 @@ Le squelette de cette preuve est une analyse de cas selon la dernière règle
 utilisée. La plupart des cas ont la même forme: on utilise l'hypothèse de
 récurrence sur les sous-éléments syntaxiques (en appliquant éventuellement le
 lemme~\ref{lemma:inversion} d'inversion pour établir qu'ils sont bien typés).
-Dans le cas ``valeur'', on appelle une règle qui permet de transformer une
+Dans le cas «valeur», on appelle une règle qui permet de transformer une
 opération syntaxique en opération sémantique (par exemple, on transforme le $+$
-unaire en un $\widehat{+}$ sémantique). Dans le cas ``évaluation'', on applique
+unaire en un $\widehat{+}$ sémantique). Dans le cas «évaluation», on applique
 la règle \textsc{Ctx} avec un contexte particulier qui permet de passer d'un
 jugement $\mm{m}{a}{m'}{a'}$ à un jugement $\mm{m}{b}{m'}{b'}$ (où $a$ apparaît
-dans $b$). Enfin, dans le cas ``erreur'', on utilise \textsc{Eval-Err} avec ce
+dans $b$). Enfin, dans le cas «erreur», on utilise \textsc{Eval-Err} avec ce
 même contexte $C$.
 
 Ceci est valable pour la majorité des cas. Il faut faire attention en
@@ -300,8 +300,8 @@ $\mms{i}{i_2}$.
 % }}}
 \paragraph{\textsc{Exp}   :} %{{{
 
-Ici $i = e$. On peut appliquer l'hypothèse de récurrence à $e$ qui est ``plus
-petit'' que $i$ ($i \gramisa e$ introduit un constructeur implicite).
+Ici $i = e$. On peut appliquer l'hypothèse de récurrence à $e$ qui est «plus
+petit» que $i$ ($i \gramisa e$ introduit un constructeur implicite).
 
 \begin{itemize}
 \item $e = v$. Alors on peut appliquer \textsc{Exp}: $\mms{e}{\iPass}$.
