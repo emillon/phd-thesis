@@ -491,8 +491,6 @@ Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation
 lorsque c'est possible, sinon à l'exécution.
 
-%TODO[B] Le rapport avec la prog sys? un cite ? (ça a forcément été fait)
-
 La règle de conséquence permet de découpler les propriétés du programme
 lui-même: plusieurs niveaux d'annotations sont possibles, du moins précis au
 plus précis. En fait, il est même possible d'annoter chaque point de contrôle
@@ -506,8 +504,8 @@ de manipulation de chaînes en C.
 
 Ce type d'annotations a été implanté par exemple pour le langage Java dans le
 système JML~\cite{jmlkluwer} ou pour le langage C\# dans Spec\#~\cite{krml136}.
-
-% TODO [E] ce sont juste des langages d'annotations: qu'en fait-on après ?
+Il est aussi possible d'utiliser cette technique pour annoter du code assembleur
+de bas niveau~\cite{mc-hoare-logic}.
 
 \section{Assistants de preuve}
 
