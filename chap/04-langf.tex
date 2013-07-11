@@ -376,44 +376,7 @@ présentes dans les langages impératifs comme C.
 
 \begin{figure}[p]%{{{
 
-  \begin{align*}
-  \gramdef{Constantes}{c}
-                 { n      }{ Entier }
-                 { d      }{ Flottant }
-                 { \eNull }{ Pointeur nul }
-                 { \eUnit }{ Valeur unité }
-                 {END}
-  \\
-  \\
-  \gramdef{Expressions}{e}
-                 { c               }{ Constante }
-                 { lv              }{ Accès mémoire }
-                 { \opun~e         }{ Opération unaire }
-                 { e~\opbin~e      }{ Opération binaire }
-                 { \& lv           }{ Pointeur }
-                 { lv ← e          }{ Affectation }
-                 { \eStruct{
-                    l_1 : e_1
-                    ; …
-                    ; l_n : e_n }  }{ Structure }
-                 { \eArray{e_1 ;…; e_n} }{ Tableau }
-                 { f               }{ Fonction }
-                 { e (e_1, …, e_n) }{ Appel de fonction }
-                 {END}
-  \\
-  \\
-  \gramdef{Left-values}{lv}
-                  { x      }{ Variable }
-                  { *e     }{ Déréférencement }
-                  { lv.l_S }{ Accès à un champ }
-                  { lv[e]  }{ Accès à un élément }
-                  {END}
-  \\
-  \\
-  \gramdef{Fonctions}{f}
-                 { \eFun{x_1, …, x_n}{i} }{Arguments, corps}
-                 {END}
-  \end{align*}
+  \figstxdata{}
 
   \caption{Syntaxe des expressions}
 \label{fig:stx-data}
@@ -421,28 +384,7 @@ présentes dans les langages impératifs comme C.
 
 \begin{figure}[p]%{{{
 
-  \begin{align*}
-  \gramdef{Instructions}{i}
-                 { \iPass          }{Instruction vide}
-                 { i;i             }{Séquence}
-                 { e               }{Expression}
-                 { \iDecl{x}{e}{i} }{Déclaration de variable}
-                 { \iIf{e}{i}{i}   }{Alternative}
-                 { \iWhile{e}{i}   }{Boucle}
-                 { \iReturn{e}     }{Retour de fonction}
-                 {END}
-  \\
-  \\
-  \gramdef{Phrases}{p}
-                 { x = e }{Variable globale}
-                 { e     }{Évaluation d'expression}
-                 {END}
-  \\
-  \\
-  \gramdef{Programme}{P}
-                 { (p_1, …, p_n)}{Phrases}
-                 {END}
-  \end{align*}
+  \figstxinstr{}
 
   \caption{Syntaxe des instructions}
 \label{fig:stx}
@@ -462,25 +404,7 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 
 \begin{figure}[h]%{{{
 
-  \begin{align*}
-  \gramdef{Opérateurs \linebreak binaires}{\opbin}
-      { +,-,\times,/,\% }{Arithmétique entière}
-      { +.,-.,\times.,/.}{Arithmétique flottante}
-      { +_p, -_p        }{Arithmétique de pointeurs}
-      { =,≠,≤,≥,<,>     }{Comparaisons}
-      { \&,|,\opxor     }{Opérateurs bit à bit}
-      { \&\&,||         }{Opérateurs logiques}
-      { \ll, \gg        }{Décalages}
-      {END}
-  \\
-  \\
-  \gramdef{Opérateurs unaires}{\opun}
-      { +,-   }{Arithmétique entière}
-      { +.,-. }{Arithmétique flottante}
-      { \sim  }{Négation bit à bit}
-      { !     }{Négation logique}
-      {END}
-  \end{align*}
+  \figstxops{}
 
   \caption{Syntaxe des opérateurs}
 \label{fig:stx-ops}
