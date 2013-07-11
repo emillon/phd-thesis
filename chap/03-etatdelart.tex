@@ -509,9 +509,10 @@ de bas niveau~\cite{mc-hoare-logic}.
 
 \section{Assistants de preuve}
 
-Avec un système de types classique, le fait qu'un terme soit bien typé amène
-quelques propriétés sur son exécution. Par exemple, le fait que seulement un
-ensemble réduit d'erreurs puisse arriver (comme la division par zéro).
+Avec un système de types classique, le fait qu'un terme (au sens «expression» ou
+«instruction») soit bien typé amène quelques propriétés sur son exécution. Par
+exemple, le fait que seulement un ensemble réduit d'erreurs puisse arriver
+(comme la division par zéro).
 
 En enrichissant le langage des types, on peut augmenter l'expressivité du
 typage. Par exemple, on peut former des types «entier pair», «vecteur de $n$
@@ -522,7 +523,6 @@ de types (par des annotations). Les types peuvent également dépendre d'autres
 types (par composition de types: par exemple, un couple de $a$ et de $b$ a pour
 type $a * b$). Enrichir l'expressivité du typage revient essentiellement à
 introduire des termes dans les types, comme $n$ dans l'exemple précédent du
-% TODO au sens expression
 vecteurs de $n$ entiers. C'est pourquoi on parle de types dépendants. Parmi les
 langages proposant ces types on peut citer Coq~\cite{coqmanual},
 Agda~\cite{agdatutorial} ou Isabelle~\cite{isabelletutorial}.
