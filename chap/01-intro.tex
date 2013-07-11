@@ -47,12 +47,11 @@ l'exécuter et de refuser de lancer les programmes qui contiennent des erreurs,
 quitte à limiter la possibilité d'en écrire certains. C'est l'analyse statique
 de programmes.
 
-Une des techniques d'analyse statique les plus répandues est le typage statique,
-qui consiste % TODO hyph
-à associer à chaque morceau de programme, une étiquette
-décrivant quel genre de valeur sera produite par son évaluation. Par exemple, si
-$n$ est le nom d'une variable entière, alors $n + 2$ produira toujours une
-valeur entière.
+Une des techniques d'analyse statique les plus répandues et les plus simples est
+le typage statique, qui consiste à associer à chaque morceau de programme, une
+étiquette décrivant quel genre de valeur sera produite par son évaluation. Par
+exemple, si $n$ est le nom d'une variable entière, alors $n + 2$ produira
+toujours une valeur entière.
 
 Pour garantir l'isolation d'un noyau de système d'exploitation, un des points
 cruciaux est de restreindre la manière dont sont traitées les informations
@@ -466,12 +465,11 @@ les conséquences financières ou même humaines peuvent être tragiques.
 
 Afin de vérifier leur absence, des outils basés sur l'interprétation abstraite
 (section~\ref{sec:absint}) on été développés chez EADS Innovation Works dans le
-cadre du projet Penjili (\url{http://penjili.org}). On y trouve notamment un
-langage intermédiaire, Newspeak\cite{newspeak}, ainsi que des compilateurs
-permettant de traduire du code C et Ada vers celui-ci. L'analyseur statique
-Penjili, reposant sur ces outils, a été utilisé pour analyser des logiciels
-embarqués critiques de plusieurs millions de lignes de code. Il n'est pour le
-moment pas open source.
+cadre du projet Penjili~\link{penjili}. On y trouve notamment un langage
+intermédiaire, Newspeak\cite{newspeak}, ainsi que des compilateurs permettant de
+traduire du code C et Ada vers celui-ci. L'analyseur statique Penjili, reposant
+sur ces outils, a été utilisé pour analyser des logiciels embarqués critiques de
+plusieurs millions de lignes de code. Il n'est pour le moment pas open source.
 
 Nous avons choisi de basé notre analyse sur Newspeak, dans le but de bénéficier
 de ces outils existants et dans la perspective de guider les analyses de valeur
