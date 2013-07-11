@@ -2,9 +2,8 @@ Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
 permettant d'analyser des programmes. En particulier, on s'intéresse à la
 propriété de sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se
 limite pas à celle-ci: il est également intéressant de considérer des analyses
-développées pour d'autres propriétés, celles-ci pouvant potentiellement
-s'adapter.
-% TODO des exemples!
+développées pour d'autres propriétés (comme par exemple s'assurer de l'absence
+d'erreurs à l'exécution), celles-ci pouvant potentiellement s'adapter.
 
 L'analyse statique de programmes est un sujet de recherche actif depuis
 l'apparition de l'informatique en tant que science. On commence par en présenter
@@ -29,8 +28,8 @@ Les techniques dynamiques sont néanmoins les plus répandues, puisqu'elles sont
 plus simples à mettre en œuvre et permettent de trouver des erreurs pendant le
 processus de développement. De plus, on peut considérer qu'un programme avec une
 forte couverture par les tests a de grandes chances d'être correct pour toutes
-les entrées. C'est par exemple ce qui se passe dans l'avionique civile.
-% TODO à préciser
+les entrées. C'est par exemple ce qui se passe dans l'avionique civile où on
+utilise les critères de couverture MC/DC pour les logiciels les plus critiques.
 
 Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
 uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
@@ -288,8 +287,6 @@ annotations plus riches: par exemple en vérifiant statiquement que des listes
 ne sont pas vides\cite{lightweight-static-capabilities}, ou dans le domaine de
 la sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
 
-% TODO citer caml flow, Simonet
-
 \paragraph{Qualificateurs de types}
 
 Dans le cas particulier des vulnérabilités liées à une mauvaise utilisation de
@@ -367,6 +364,11 @@ alors que dans le nôtre il s'agit d'une simple extension qui ne nécessite pas 
 modifier toutes les règles de typage. La conclusion de la
 partie~\ref{part:lang}, page~\pageref{cha:ccl2}, sera dédiée à une comparaison
 entre ces solutions.
+
+Le système Flow Caml~\cite{flowcaml} repose également sur cette approche, en
+ajoutant une étiquette de sécurité à chaque type. Par exemple, les entiers sont
+typés \texttt{'a int} où \texttt{'a} est le niveau de sécurité associé. Couplé à
+un système d'effets, cela permet de suivre la provenance de chaque expression.
 
 Ces techniques de typage sont séduisantes parce qu'elles sont en général simples
 à mettre en place: à l'aide d'un ensemble de règles, on attribue un type à
