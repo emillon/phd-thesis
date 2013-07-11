@@ -47,9 +47,9 @@ satisfont ou non un ensemble de propriétés fixées à l'avance. Malheureusemen
 cela n'est que rarement possible car l'ensemble des valeurs possibles lors de
 l'exécution d'un programme n'est pas un ensemble calculable (théorème de
 Rice~\cite{rice}). Autrement dit, il ne peut exister une procédure de décision
-prenant un programme et le déclarant correct ou incorrect.
-
-% TODO ex: arrêt
+prenant un programme et le déclarant correct ou incorrect. Un résultat similaire
+est qu'on ne peut pas écrire une procédure qui détermine si un programme
+arbitraire boucle indéfiniment ou pas (le problème de l'arrêt).
 
 Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
 trompant jamais. Toute technique statique va donc de se retrouver dans au moins
@@ -89,13 +89,12 @@ sensible à la syntaxe et au flot de contrôle du programme. Cette notion de
 \emph{patches sémantiques} pour détecter ou modifier des constructions
 particulières.
 
-Ces techniques sont utiles parce qu'elles permettent de plonger rapidement dans
-le code, en identifiant par exemple des appels à des fonctions dangereuses. En
-revanche, cela n'est utile que lorsque les propriétés que l'on recherche sont
-très locales. Elles offrent également peu de garantie (ce n'est pas parce qu'une
-construction dangereuse n'est pas présente que le code est correct).
-
-% TODO attention
+Ces techniques peuvent parfois être utiles parce qu'elles permettent de plonger
+rapidement dans le code, en identifiant par exemple des appels à des fonctions
+dangereuses. En revanche, cela n'est utile que lorsque les propriétés que l'on
+recherche sont très locales. Elles n'offrent également que peu de garantie (ce
+n'est pas parce qu'une construction dangereuse n'est pas présente que le code
+est correct).
 
 \section{Interprétation abstraite}
 \label{sec:absint}
@@ -311,19 +310,18 @@ permettent d'établir des propriétés sur le programme.
 
 Plus précisément, les jugements de typage de la forme $Γ ⊢ e : t$ sont remplacés
 par des jugements de typage qualifiés $Γ ⊢ e : t~q$. Les qualificateurs $q$
-permettent d'exprimer plusieurs jugements. Par exemple, on peut
-étudier le fait qu'une variable soit constante ou pas, que sa valeur soit connue
-à la compilation, ou encore qu'elle puisse être nulle ou pas. La spécificité de
-ce système est que les qualificateurs sont ordonnés, du plus spécifique au moins
+permettent d'exprimer plusieurs jugements. Par exemple, on peut étudier le fait
+qu'une variable soit constante ou pas, que sa valeur soit connue à la
+compilation, ou encore qu'elle puisse être nulle ou pas. La spécificité de ce
+système est que les qualificateurs sont ordonnés, du plus spécifique au moins
 spécifique, et que l'on forme alors un treillis à partir de ces informations.
 Partant des deux caractéristiques précédentes, on forme le treillis de la
 figure~\ref{fig:cqual-treillis}. Le qualificateur \texttt{const} désigne les
-% TODO inversion
-données dont la valeur change au cours de l'exécution; \texttt{dynamic} celles
-qui peuvent être connues à la compilation; et \texttt{nonzero} celles qui ne
-peuvent jamais être nulles. Le cube sur lequel se trouvent les qualificateurs
-correspond à une relation d'ordre, du plus spécifique (en bas) au plus général
-(en haut).
+données dont la valeur ne change pas au cours de l'exécution; \texttt{dynamic}
+celles qui ne peuvent pas être connues à la compilation; et \texttt{nonzero}
+celles qui ne peuvent jamais être nulles. Le cube sur lequel se trouvent les
+qualificateurs correspond à une relation d'ordre, du plus spécifique (en bas) au
+plus général (en haut).
 
 \begin{figure}
 \centering
@@ -356,9 +354,7 @@ inférer les annotations \texttt{const}~\cite{pldi99}, à l'analyse de souillure
 pour les chaînes de format~\cite{usenix01} (pouvant poser des problèmes de
 sécurité~\cite{format-string-attacks}) et des propriétés dépendantes du flot de
 contrôle, comme des invariants sur les verrous~\cite{pldi02}, à rapprocher du
-concept de \emph{typestates}~\cite{tse12-typestate}.
-% TODO hyph
-Il a également été appliqué
+concept de \emph{typestates}~\cite{tse12-typestate}. Il a également été appliqué
 à la classe de vulnérabilités sur les pointeurs utilisateurs dont il est ici
 l'objet~\cite{cquk-usenix04}.
 
@@ -379,12 +375,10 @@ chaque expression. Si le typage se termine sans erreur, alors on est assuré de
 la correction du programme (par rapport aux propriétés capturées par le système
 de types).
 
-Le typage statique peut également être implanté de manière efficace. La plupart
-des systèmes de types peuvent être vérifiés en pratique dans un temps linéaire
-en la taille du programme considéré. L'inférence, en revanche, peut parfois
-«exploser» au dessus de cette complexité raisonnable.
-
-% TODO lien?
+Le typage statique peut également être implanté de manière efficace. Même si
+l'inférence, peut dans certains cas atteindre une complexité considérable, la
+plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
+linéaire en la taille du programme considéré.
 
 \section{Analyse de code système}
 
@@ -432,7 +426,7 @@ exemple en évitant de retourner l'adresse d'une variable locale).
 Le langage Rust~\link{rust} développé par Mozilla prend une approche similaire
 en distinguant plusieurs types de pointeurs pour gérer la mémoire de manière
 plus fine. Les \emph{managed pointers} (notés \texttt{@int}) utilisent un
-ramasse-miette pour libérer la mémoire allouée lorsqu'ils ne sont plus
+ramasse-miettes pour libérer la mémoire allouée lorsqu'ils ne sont plus
 accessibles. Les \emph{owning pointers} (notés \texttt{\textasciitilde{}int})
 décrivent une relation 1 à 1 entre deux objets, comme les
 \texttt{std::unique\_ptr} de C++: la mémoire est libérée lorsque le pointeur
@@ -446,8 +440,6 @@ rejetée par le compilateur. Enfin, le dernier type est celui des \emph{raw
 pointers} (notés \texttt{*int}), pour lesquels le langage n'apporte aucune
 garantie (il faut d'ailleurs encapsuler chaque utilisation dans un bloc marqué
 explicitement \texttt{unsafe}). Ils sont équivalents aux pointeurs de C.
-
-% TODO compteur de références?
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
 peut pas les appliquer pour étudier la correction de logiciels existants. Leurs
