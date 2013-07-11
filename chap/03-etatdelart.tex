@@ -459,8 +459,6 @@ Rust qui permet de manipuler de manière sûre les adresses des variables locale
 et les pointeurs lourds de Cyclone qui apportent une sûreté à l'arithmétique de
 pointeurs, au prix d'un test dynamique.
 
-% TODO dire un mot?
-
 \section{Logique de Hoare}
 
 Une technique pour vérifier statiquement des propriétés sur la sémantique d'un
@@ -542,29 +540,18 @@ ce n'est pas toujours vrai: par exemple «vecteur de $-1$ entiers» n'a pas
 d'habitants. Ainsi, pouvoir construire un terme d'un type donné est une
 information en soi.
 
-% TODO un langage comme Ada a des types dépendants ce qui ne pose pas de
-% problème à la vérification (≠ inf)
-
 On peut voir ce phénomène sous un autre angle: les termes sont à leur type ce
-que les preuves sont à leur théorème. C'est la correspondance de Curry-Howard.
-Prenons un exemple: si on dispose d'un terme de type $a$, et d'une fonction de
-type $a → b$, alors on peut en déduire (par simple application) un terme de type
-$b$. Vu sous forme logique: si on a une preuve de $A$, et une preuve de $A ⇒
-B$, alors on peut en tirer une preuve de $B$. À l'aide de cette correspondance,
-on peut donc voir les systèmes de types dépendants comme des assistants de
-preuves généralistes où l'on peut faire vérifier par un compilateur des
-théorèmes mathématiques comme le théorème des 4 couleurs~\cite{4colproof}.
+que les preuves sont à leur théorème. Exhiber un terme ayant un type revient à
+donner la preuve d'un théorème. À l'aide de cette correspondance, il est
+possible de voir un algorithme de vérification de typage comme un algorithme de
+vérification de preuve automatique. Ces preuves ne portent pas forcément sur des
+programmes. Par exemple, le théorème des 4 couleurs a été prouvé en
+Coq~\cite{4colproof} .
 
-% TODO BOF à discuter
-
-Cette technique fait se rejoindre les mondes du typage et des annotations par
-triplets de Hoare: on enrichit le langage des types suffisamment pour encoder
-une logique, et on vérifie suffisamment les triplets statiquement pour éliminer
-tous les tests dynamiques. Cependant cette technique est très complexe à mettre
-en œuvre, puisqu'il faut encoder toutes les propriétés voulues dans un
-formalisme de très bas niveau (similaire à la théorie des ensembles).
-
-% TODO que veux tu dire?
+Cette technique est très complexe à mettre en œuvre, puisqu'il faut encoder
+toutes les propriétés voulues dans un formalisme de très bas niveau (du niveau
+de la théorie des ensembles). De plus, l'inférence de types devient rapidement
+indécidable.
 
 \section*{Conclusion}
 
