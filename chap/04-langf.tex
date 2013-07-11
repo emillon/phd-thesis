@@ -740,14 +740,12 @@ l'appelant, il faudra supprimer ce cadre de pile.
       \cPush{(s, g)}{c} = (c::s, g)
   \]
 
-  On définit aussi l'extension du dernier cadre de pile
-  (figure~\ref{fig:stackops-extend}):
+  On définit aussi l'extension du dernier cadre de pile, qui sert aux
+  déclarations de variables locales (figure~\ref{fig:stackops-extend}):
 
   \[
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
-
-% TODO pourquoi?
 
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
@@ -1116,8 +1114,7 @@ syntaxique.
 
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
 fait apparaître exactement un «$C$». Chaque contexte est donc constitué
-d'exactement un «trou» $\ctxEmpty$ (une dérivation de $C$ est toujours
-% TODO à définir
+d'exactement une occurrence de $\ctxEmpty$ (une dérivation de $C$ est toujours
 linéaire). L'opération de substitution consiste à remplacer ce trou:
 $\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou left-value)
 obtenu en remplaçant l'unique $\ctxEmpty$ dans $C$ par $X$. Par exemple,
