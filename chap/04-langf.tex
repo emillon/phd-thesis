@@ -549,38 +549,47 @@ a pas de clôture lexicale).
 \label{fig:interp-val}
 \end{figure}%}}}
 
-Les erreurs peuvent être de plusieurs types:
+Les erreurs peuvent être classifiées en deux grand groupes: d'une part,
+$\serr{field}$, $\serr{var}$ et $\serr{typ}$ sont des erreur de typage
+dynamique, qui arrivent lorsqu'on accède dynamiquement a des données qui
+n'existent pas où qu'on manipule des types de données incompatibles. D'autre
+part, $\serr{div}$, $\serr{array}$ et $\serr{ptr}$ correspondent à des valeurs
+mal utilisées. Le but du système de types du chapitre~\ref{cha:typbase} sera
+d'éliminer complètement les erreurs du premier groupe.
 
-\begin{itemize}
-
-\item $\serr{div}$ correspond à une division par zéro. Cela arrive si la seconde
-opérande de $/$, $\%$ ou $\floatop{/}$ est nulle.
-
-\item $\serr{array}$ signale un débordement de tableau.
-
-\item $\serr{ptr}$ correspond à une manipulation ou un déréférencement de
-pointeur invalide. Par exemple, déréférencer le pointeur nul ou appliquer
-l'arithmétique en dehors d'un tableau provoque cette erreur.
-
-\item $\serr{field}$ arrive lorsqu'on accède à un champ inexistant d'une
-structure. Ce cas sera entièrement évité grâce au typage dans le
-chapitre~\ref{cha:typbase}.
-
-\item $\serr{var}$ se produit lorsqu'on accède à une variable qui n'est pas
-visible dans un état mémoire. Ce cas est également évité dans les programmes
-bien typés.
-
-\item $\serr{typ}$ est levée lorsque une opération est appellée sur des types de
-données incompatibles. Par exemple, appliquer un «$-$» unaire sur une valeur
-pointeur.
-
-\end{itemize}
+\section{Interprète}
 
 La figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
 couples (nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une
 pile et $g$ un cadre de pile (qui représente les variables globales).
 On note $|m| = |s|$ la hauteur de la pile (en nombre de cadres).
+
+\begin{figure}%{{{
+
+  \begin{align*}
+  \gramdef{Pile}{s}
+    { [] }{Pile vide}
+    { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
+    {END}
+  \\
+  \\
+  \gramdef{État mémoire}{m}
+    { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
+    {END}
+  \\
+  \\
+  \gramdef[4cm]{État d'interprète}{Ξ}
+    { \msi{m}{e} }{Expression, mémoire}
+    { \msi{m}{i} }{Instruction, mémoire}
+    { Ω          }{Erreur}
+    {END}
+  \end{align*}
+
+  \caption{Composantes d'un état mémoire}
+\label{fig:interp-stack}
+\end{figure}%}}}
+
 
 Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 états $Ξ$; ces états sont d'une des formes suivantes:
@@ -625,31 +634,6 @@ ajouter une règle :
         }
         { Ξ_1 → Ξ_3}
 \end{mathpar}
-
-\begin{figure}%{{{
-
-  \begin{align*}
-  \gramdef{Pile}{s}
-    { [] }{Pile vide}
-    { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
-    {END}
-  \\
-  \\
-  \gramdef{État mémoire}{m}
-    { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
-    {END}
-  \\
-  \\
-  \gramdef[4cm]{État d'interprète}{Ξ}
-    { \msi{m}{e} }{Expression, mémoire}
-    { \msi{m}{i} }{Instruction, mémoire}
-    { Ω          }{Erreur}
-    {END}
-  \end{align*}
-
-  \caption{Composantes d'un état mémoire}
-\label{fig:interp-stack}
-\end{figure}%}}}
 
 \section{Opérations sur les valeurs}
 \label{sec:sem-ops}
