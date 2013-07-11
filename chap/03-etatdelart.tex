@@ -416,13 +416,21 @@ nuls» (\texttt{int @}; un test à l'exécution est alors inséré), et des
 «pointeurs lourds» (\verb!int ?!; qui contiennent des informations sur la zone
 mémoire pointée). L'arithmétique des pointeurs n'est autorisée que sur ces
 derniers, rendant impossibles les débordements de tableaux (ceux-ci étant
-détectés au pire à l'exécution). Le problème des \emph{dangling pointers} est
-% TODO définir une bonne fois pour toute les dangling
-résolu en utilisant un système de régions~\cite{cyclone-regions}, inspiré des
-travaux de Jouvelot, Talpin et \linebreak Tofte~\cite{jfp92,ToTa1993,popl94}.
-Cela permet d'interdire statiquement les constructions où l'on déréférence un
-pointeur faisant référence à une région de mémoire qui n'est plus allouée (par
-exemple en évitant de retourner l'adresse d'une variable locale).
+détectés au pire à l'exécution). Le problème des pointeurs fous
+\footnote{
+    Les pointeurs fous, encore appelés pointeurs fantômes ou \emph{dangling
+    pointers}, correspondent à une zone mémoire invalide ou expirée. Il y a deux
+    sources principales de pointeurs fous: les variables de type pointeur non
+    initialisés, et les pointeurs vers des objets dont la mémoire a été libérée.
+    C'est par exemple ce qui arrive aux adresses de variables locales une fois
+    que la fonction dans laquelle ils ont été définies retourne.
+}
+est résolu en utilisant un système de régions~\cite{cyclone-regions}, inspiré
+des travaux de Jouvelot, Talpin et \linebreak
+Tofte~\cite{jfp92,ToTa1993,popl94}. Cela permet d'interdire statiquement les
+constructions où l'on déréférence un pointeur faisant référence à une région de
+mémoire qui n'est plus allouée (par exemple en évitant de retourner l'adresse
+d'une variable locale).
 
 Le langage Rust~\link{rust} développé par Mozilla prend une approche similaire
 en distinguant plusieurs types de pointeurs pour gérer la mémoire de manière
@@ -434,13 +442,13 @@ décrivent une relation 1 à 1 entre deux objets, comme les
 l'est. Les \emph{borrowed pointers} (notés \texttt{\&int}) correspondent aux
 pointeurs obtenus en prenant l'adresse d'un objet, ou d'un champ d'un objet. Une
 analyse statique faite lors de la compilation s'assure que la durée de vie de
-ces pointeurs est plus courte que l'objet pointé, afin d'éviter les
-\emph{dangling pointers} (pointeurs fous). Cette analyse est également basée sur
-les régions. Une fonction qui retourne l'adresse d'une variable locale sera donc
-rejetée par le compilateur. Enfin, le dernier type est celui des \emph{raw
-pointers} (notés \texttt{*int}), pour lesquels le langage n'apporte aucune
-garantie (il faut d'ailleurs encapsuler chaque utilisation dans un bloc marqué
-explicitement \texttt{unsafe}). Ils sont équivalents aux pointeurs de C.
+ces pointeurs est plus courte que l'objet pointé, afin d'éviter les pointeurs
+fous. Cette analyse est également basée sur les régions. Une fonction qui
+retourne l'adresse d'une variable locale sera donc rejetée par le compilateur.
+Enfin, le dernier type est celui des \emph{raw pointers} (notés \texttt{*int}),
+pour lesquels le langage n'apporte aucune garantie (il faut d'ailleurs
+encapsuler chaque utilisation dans un bloc marqué explicitement
+\texttt{unsafe}). Ils sont équivalents aux pointeurs de C.
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
 peut pas les appliquer pour étudier la correction de logiciels existants. Leurs
@@ -578,7 +586,7 @@ compilation.
 Ensuite, les accès aux tableaux et aux pointeurs sont vérifiés dynamiquement.
 Dans le cas où une erreur est déclenchée, l'exécution s'arrête plutôt que de
 corrompre la mémoire. La pile est également nettoyée à chaque retour de fonction
-afin d'éviter les pointeurs fous (\emph{dangling pointers}).
+afin d'éviter les pointeurs fous.
 
 Enfin, les pointeurs provenant de l'espace utilisateur sont repérés statiquement
 afin que leur déréférencement se fasse au sein de fonctions sûres. Cela permet
