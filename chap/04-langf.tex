@@ -86,10 +86,11 @@ que:
 
 \subsection*{Lentilles}
 
-% TODO il faut introduire pourquoi tu les utilises
-
-La notion d'accesseur utilisée ici est directement inspirée des \emph{lentilles}
-utilisées en programmation fonctionnelle, décrite dans~\cite{PierceLenses}
+Dans la définition de la sémantique de \langname, on utilise des \emph{lentilles
+bidirectionnelles}. Cette notion n'est pas propre à la sémantique des
+programmes. Il s'agit d'une technique permettant de relier la modification d'un
+objet à la modification d'un de ses sous-composants. On peut en trouver des
+descriptions plus détaillées décrite dans~\cite{PierceLenses}
 et~\cite{LaarhovenLenses}.
 
 \begin{definition}[Lentille]
@@ -132,12 +133,15 @@ Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 
 \begin{figure}[h]
 
-  \begin{align*}
-  \lensGet{ℒ}{\lensNodeBig{green!30}{blue!30}} &= \lensInner{blue!30} \\
-  \lensPut{ℒ}{\lensInner{red!30}}{\lensNodeBig{green!30}{blue!30}} &= \lensNodeBig{green!30}{red!30} \\
-  \end{align*}
+\tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
+\tikzstyle{lenspatB}=[fill=black!50]
+\tikzstyle{lenspatC}=[fill=black!20]
 
-% TODO couleurs
+  \begin{align*}
+  \lensGet{ℒ}{\lensNodeBig{lenspatA}{lenspatB}} &= \lensInner{lenspatB} \\
+  \lensPut{ℒ}{\lensInner{lenspatC}}{\lensNodeBig{lenspatA}{lenspatB}}
+        &= \lensNodeBig{lenspatA}{lenspatC} \\
+  \end{align*}
 
 \caption{Fonctionnement d'une lentille}
 \label{fig:lens-howto}
@@ -193,16 +197,18 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 
 \begin{figure}[h]
 
-  \begin{align*}
-    \lensGet{Δ(b)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &= \lensInnerStar{blue!30} \\
-    \lensGet{Δ(c)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &= \lensInner{blue!30} \\
-    \lensPut{Δ(b)}{\lensInnerStar{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &=
-      \lensNodeBigIdx{green!30}{blue!30}{red!30}{blue!30}{blue!30} \\
-    \lensPut{Δ(c)}{\lensInner{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &=
-      \lensNodeBigIdx{green!30}{blue!30}{blue!30}{red!30}{blue!30}
-  \end{align*}
+\tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
+\tikzstyle{lenspatB}=[fill=black!50]
+\tikzstyle{lenspatC}=[fill=black!20]
 
-% TODO couleurs
+  \begin{align*}
+    \lensGet{Δ(b)}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &= \lensInnerStar{lenspatB} \\
+    \lensGet{Δ(c)}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &= \lensInner{lenspatB} \\
+    \lensPut{Δ(b)}{\lensInnerStar{lenspatC}}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &=
+      \lensNodeBigIdx{lenspatA}{lenspatB}{lenspatC}{lenspatB}{lenspatB} \\
+    \lensPut{Δ(c)}{\lensInner{lenspatC}}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &=
+      \lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatC}{lenspatB}
+  \end{align*}
 
 \caption{Fonctionnement d'une lentille indexée}
 \label{fig:lens-idx-ex}
@@ -260,16 +266,21 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 
 \centering
 
+\tikzstyle{lensInnerBefore}=[fill=black!85]
+\tikzstyle{lensInnerAfter}=[fill=black!10]
+\tikzstyle{lensMid}=[fill=black!50]
+\tikzstyle{lensExt}=[fill=white,pattern=crosshatch dots]
+
 \shorthandoff{!}
 \begin{tikzpicture}
 [node distance=2cm
-,bignode/.style={draw,shape=rectangle,minimum size=1cm,fill=green!30}
-,smallnode/.style={draw,shape=circle,minimum size=8mm,fill=blue!30}
+,bignode/.style={draw,shape=rectangle,minimum size=1cm,lensExt}
+,smallnode/.style={draw,shape=circle,minimum size=8mm,lensMid}
 ,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
 ]
 \node[bignode] (A) {};
 \node[right of=A,smallnode] (B) {};
-\node[right of=B,trinode,fill=violet] (C) {};
+\node[right of=B,trinode,lensInnerAfter] (C) {};
 \node[below of=B,smallnode] (D) {};
 \node[below of=A,node distance=4cm,bignode] (E) {};
 
@@ -280,23 +291,23 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 \draw (D) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_1}$} ($(A)!0.75!(E)$);
 
 \node[smallnode] at (A) {};
-\node[trinode,fill=orange] at (A) {};
+\node[trinode,lensInnerBefore] at (A) {};
 
-\node[trinode,fill=orange] at (B) {};
+\node[trinode,lensInnerBefore] at (B) {};
 
-\node[trinode,fill=violet] at (D) {};
+\node[trinode,lensInnerAfter] at (D) {};
 
 \node[smallnode] at (E) {};
-\node[trinode,fill=violet] at (E) {};
+\node[trinode,lensInnerAfter] at (E) {};
 
 \node[left of=A, node distance=4cm,bignode] (GA) {};
 \node[below of=GA,smallnode] (GB) {};
-\node[below of=GB,trinode,fill=orange] (GC) {};
+\node[below of=GB,trinode,lensInnerBefore] (GC) {};
 
 \node[smallnode] at (GA) {};
 
-\node[trinode, fill=orange] at (GA) {};
-\node[trinode, fill=orange] at (GB) {};
+\node[trinode, lensInnerBefore] at (GA) {};
+\node[trinode, lensInnerBefore] at (GB) {};
 
 \draw [->] (GA) to node[auto] {$\mathrm{get}_{ℒ_1}$} (GB);
 \draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
