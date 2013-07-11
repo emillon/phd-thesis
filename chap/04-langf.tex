@@ -1,14 +1,22 @@
-% TODO faire un vrai chapeau
+Dans ce chapitre, on décrit le cœur de notre travail: le langage \langname, sur
+lequel s'appuieront les analyses de typage des chapitres~\ref{cha:typbase}
+et~\ref{cha:qualifs}.
 
-Dans ce chapitre nous présentons \langname, un langage impératif inspiré de C.
-Sa syntaxe est tout d'abord décrite; puis une sémantique opérationnelle est
-explicitée.
+Tout d'abord, on commence par présenter les notations qui accompagneront le
+reste des chapitres. Cela inclut la définition de la notion de lentille, qui est
+utilisée dans certaines définitions.
 
-Ce langage servira de support au système de types décrit dans le
-chapitre~\ref{cha:typbase} et enrichi dans le chapitre~\ref{cha:qualifs}.
+Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
+description de ses caractéristiques principales. En particulier, le modèle
+mémoire est expliqué, ainsi que les valeurs manipulées par le langage.
 
-La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
-% TODO important
+Enfin, on décrit une sémantique opérationnelle pour ce langage. Cela permet de
+définir précisément l'exécution d'un programme \langname au niveau de la
+mémoire.
+
+L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}. En
+particulier, on y verra comment traduire un sous-ensemble de C vers Newspeak,
+sur lequel notre implantation est faite.
 
 \section{Notations}
 
