@@ -615,9 +615,9 @@ opérande de $/$, $\%$ ou $\floatop{/}$ est nulle.
 
 \item $\serr{array}$ signale un débordement de tableau.
 
-\item $\serr{ptr}$ signale une manipulation ou un déréférencement de pointeur
-invalide. Par exemple, déréférencer le pointeur nul ou appliquer l'arithmétique
-en dehors d'un tableau provoque cette erreur.
+\item $\serr{ptr}$ correspond à une manipulation ou un déréférencement de
+pointeur invalide. Par exemple, déréférencer le pointeur nul ou appliquer
+l'arithmétique en dehors d'un tableau provoque cette erreur.
 
 \item $\serr{field}$ arrive lorsqu'on accède à un champ inexistant d'une
 structure. Ce cas sera entièrement évité grâce au typage dans le
@@ -729,7 +729,7 @@ Un certain nombre d'opérations est possible sur les valeurs
 \item
   les opérations d'égalité $=$ et $≠$. L'égalité entre entiers ou entre
   flottants est immédiate. Deux valeurs composées (tableaux ou structures) sont
-  égales si elles ont la même «forme» (même taille pour les tableaux, et même
+  égales si elles ont la même forme (même taille pour les tableaux, ou même
   champs pour les structures) et que toutes leurs sous-valeurs sont égales deux
   à deux. Deux références mémoire sont égales \linebreak lorsque les chemins
   qu'elles décrivent sont syntaxiquement égaux.
