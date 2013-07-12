@@ -1,14 +1,22 @@
-% TODO faire un vrai chapeau
+Dans ce chapitre, on décrit le cœur de notre travail: le langage \langname, sur
+lequel s'appuieront les analyses de typage des chapitres~\ref{cha:typbase}
+et~\ref{cha:qualifs}.
 
-Dans ce chapitre nous présentons \langname, un langage impératif inspiré de C.
-Sa syntaxe est tout d'abord décrite; puis une sémantique opérationnelle est
-explicitée.
+Tout d'abord, on commence par présenter les notations qui accompagneront le
+reste des chapitres. Cela inclut la définition de la notion de lentille, qui est
+utilisée dans certaines définitions.
 
-Ce langage servira de support au système de types décrit dans le
-chapitre~\ref{cha:typbase} et enrichi dans le chapitre~\ref{cha:qualifs}.
+Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
+description de ses caractéristiques principales. En particulier, le modèle
+mémoire est expliqué, ainsi que les valeurs manipulées par le langage.
 
-La traduction depuis C sera explicitée dans le chapitre~\ref{cha:implem}.
-% TODO important
+Enfin, on décrit une sémantique opérationnelle pour ce langage. Cela permet de
+définir précisément l'exécution d'un programme \langname au niveau de la
+mémoire.
+
+L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}. En
+particulier, on y verra comment traduire un sous-ensemble de C vers Newspeak,
+sur lequel notre implantation est faite.
 
 \section{Notations}
 
@@ -59,9 +67,6 @@ conclusion est la racine, en bas.
 
 \subsection*{Listes}
 
-On suppose avoir à notre disposition un ensemble infini dénombrable
-d'identificateurs $\sId$. % TODO inutile?
-
 $X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
 X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son domaine de
 définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
@@ -72,19 +77,21 @@ telle que $|[]| = 0$. On définit en outre la construction de suite de la maniè
 suivante: si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
 que:
 
-% TODO INDIQUER LES AUTRES CHOIX
-
 \begin{align*}
                        v_1 & = x \\
   ∀ i ∈ [1; |u|] , v_{i+1} & = u_i
 \end{align*}
 
+Cela signifie que la tête de liste ($x$ dans la liste $x :: u$) est toujours
+accessible à l'indice $1$.
+
 \subsection*{Lentilles}
 
-% TODO il faut introduire pourquoi tu les utilises
-
-La notion d'accesseur utilisée ici est directement inspirée des \emph{lentilles}
-utilisées en programmation fonctionnelle, décrite dans~\cite{PierceLenses}
+Dans la définition de la sémantique de \langname, on utilise des \emph{lentilles
+bidirectionnelles}. Cette notion n'est pas propre à la sémantique des
+programmes. Il s'agit d'une technique permettant de relier la modification d'un
+objet à la modification d'un de ses sous-composants. On peut en trouver des
+descriptions plus détaillées décrite dans~\cite{PierceLenses}
 et~\cite{LaarhovenLenses}.
 
 \begin{definition}[Lentille]
@@ -127,12 +134,15 @@ Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 
 \begin{figure}[h]
 
-  \begin{align*}
-  \lensGet{ℒ}{\lensNodeBig{green!30}{blue!30}} &= \lensInner{blue!30} \\
-  \lensPut{ℒ}{\lensInner{red!30}}{\lensNodeBig{green!30}{blue!30}} &= \lensNodeBig{green!30}{red!30} \\
-  \end{align*}
+\tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
+\tikzstyle{lenspatB}=[fill=black!50]
+\tikzstyle{lenspatC}=[fill=black!20]
 
-% TODO couleurs
+  \begin{align*}
+  \lensGet{ℒ}{\lensNodeBig{lenspatA}{lenspatB}} &= \lensInner{lenspatB} \\
+  \lensPut{ℒ}{\lensInner{lenspatC}}{\lensNodeBig{lenspatA}{lenspatB}}
+        &= \lensNodeBig{lenspatA}{lenspatC} \\
+  \end{align*}
 
 \caption{Fonctionnement d'une lentille}
 \label{fig:lens-howto}
@@ -188,16 +198,18 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 
 \begin{figure}[h]
 
-  \begin{align*}
-    \lensGet{Δ(b)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &= \lensInnerStar{blue!30} \\
-    \lensGet{Δ(c)}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &= \lensInner{blue!30} \\
-    \lensPut{Δ(b)}{\lensInnerStar{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &=
-      \lensNodeBigIdx{green!30}{blue!30}{red!30}{blue!30}{blue!30} \\
-    \lensPut{Δ(c)}{\lensInner{red!30}}{\lensNodeBigIdx{green!30}{blue!30}{blue!30}{blue!30}{blue!30}} &=
-      \lensNodeBigIdx{green!30}{blue!30}{blue!30}{red!30}{blue!30}
-  \end{align*}
+\tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
+\tikzstyle{lenspatB}=[fill=black!50]
+\tikzstyle{lenspatC}=[fill=black!20]
 
-% TODO couleurs
+  \begin{align*}
+    \lensGet{Δ(b)}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &= \lensInnerStar{lenspatB} \\
+    \lensGet{Δ(c)}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &= \lensInner{lenspatB} \\
+    \lensPut{Δ(b)}{\lensInnerStar{lenspatC}}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &=
+      \lensNodeBigIdx{lenspatA}{lenspatB}{lenspatC}{lenspatB}{lenspatB} \\
+    \lensPut{Δ(c)}{\lensInner{lenspatC}}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &=
+      \lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatC}{lenspatB}
+  \end{align*}
 
 \caption{Fonctionnement d'une lentille indexée}
 \label{fig:lens-idx-ex}
@@ -255,16 +267,21 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 
 \centering
 
+\tikzstyle{lensInnerBefore}=[fill=black!85]
+\tikzstyle{lensInnerAfter}=[fill=black!10]
+\tikzstyle{lensMid}=[fill=black!50]
+\tikzstyle{lensExt}=[fill=white,pattern=crosshatch dots]
+
 \shorthandoff{!}
 \begin{tikzpicture}
 [node distance=2cm
-,bignode/.style={draw,shape=rectangle,minimum size=1cm,fill=green!30}
-,smallnode/.style={draw,shape=circle,minimum size=8mm,fill=blue!30}
+,bignode/.style={draw,shape=rectangle,minimum size=1cm,lensExt}
+,smallnode/.style={draw,shape=circle,minimum size=8mm,lensMid}
 ,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
 ]
 \node[bignode] (A) {};
 \node[right of=A,smallnode] (B) {};
-\node[right of=B,trinode,fill=violet] (C) {};
+\node[right of=B,trinode,lensInnerAfter] (C) {};
 \node[below of=B,smallnode] (D) {};
 \node[below of=A,node distance=4cm,bignode] (E) {};
 
@@ -275,23 +292,23 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 \draw (D) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_1}$} ($(A)!0.75!(E)$);
 
 \node[smallnode] at (A) {};
-\node[trinode,fill=orange] at (A) {};
+\node[trinode,lensInnerBefore] at (A) {};
 
-\node[trinode,fill=orange] at (B) {};
+\node[trinode,lensInnerBefore] at (B) {};
 
-\node[trinode,fill=violet] at (D) {};
+\node[trinode,lensInnerAfter] at (D) {};
 
 \node[smallnode] at (E) {};
-\node[trinode,fill=violet] at (E) {};
+\node[trinode,lensInnerAfter] at (E) {};
 
 \node[left of=A, node distance=4cm,bignode] (GA) {};
 \node[below of=GA,smallnode] (GB) {};
-\node[below of=GB,trinode,fill=orange] (GC) {};
+\node[below of=GB,trinode,lensInnerBefore] (GC) {};
 
 \node[smallnode] at (GA) {};
 
-\node[trinode, fill=orange] at (GA) {};
-\node[trinode, fill=orange] at (GB) {};
+\node[trinode, lensInnerBefore] at (GA) {};
+\node[trinode, lensInnerBefore] at (GB) {};
 
 \draw [->] (GA) to node[auto] {$\mathrm{get}_{ℒ_1}$} (GB);
 \draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
@@ -374,7 +391,7 @@ Les figures~\ref{fig:stx-data} et~\ref{fig:stx} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
 présentes dans les langages impératifs comme C.
 
-\begin{figure}[p]%{{{
+\begin{figure}%{{{
 
   \figstxdata{}
 
@@ -382,7 +399,7 @@ présentes dans les langages impératifs comme C.
 \label{fig:stx-data}
 \end{figure}%}}}
 
-\begin{figure}[p]%{{{
+\begin{figure}%{{{
 
   \figstxinstr{}
 
@@ -454,15 +471,16 @@ les constructions syntaxique des constructions sémantiques. Par exemple, à la
 syntaxe $3$ correspond la valeur $\widehat{3}$.
 
 Les valeurs entières sont les entiers signés sur 32 bits, c'est-à-dire entre
-$-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire: de la même manière, on
-aurait pu choisir des nombres à 64 bits ou même de précision arbitraire.
+$-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire: on
+aurait pu choisir des nombres à 64 bits, par exemple.
 Les flottants sont les flottants IEEE 754 de 32 bits~\cite{ieee754}.
 
 \item
 
-$φ$: une référence mémoire. Ce chemin correspond à un pointeur sur une
-left-value. Par exemple, l'expression $\&x$ s'évalue en $φ = (5, x)$ si $x$
-désigne lexicalement une variable dans le 5\ieme cadre de pile.
+$\widehat{\&}~φ$: une référence mémoire. Ce chemin correspond à un pointeur sur
+une left-value. Par exemple, l'expression $\&x$ s'évalue en $\widehat{\&}~φ =
+\widehat{\&}~(5, x)$ si $x$ désigne lexicalement une variable dans le 5\ieme
+cadre de pile.
 
 \item
 
@@ -523,6 +541,7 @@ a pas de clôture lexicale).
     { \serr{div}   }{Division par zéro}
     { \serr{field} }{Erreur de champ}
     { \serr{var}   }{Variable inconnue}
+    { \serr{typ}   }{Données incompatibles}
     {END}
   \end{align*}
 
@@ -530,34 +549,47 @@ a pas de clôture lexicale).
 \label{fig:interp-val}
 \end{figure}%}}}
 
-Les erreurs peuvent être de plusieurs types:
+Les erreurs peuvent être classifiées en deux grand groupes: d'une part,
+$\serr{field}$, $\serr{var}$ et $\serr{typ}$ sont des erreur de typage
+dynamique, qui arrivent lorsqu'on accède dynamiquement a des données qui
+n'existent pas où qu'on manipule des types de données incompatibles. D'autre
+part, $\serr{div}$, $\serr{array}$ et $\serr{ptr}$ correspondent à des valeurs
+mal utilisées. Le but du système de types du chapitre~\ref{cha:typbase} sera
+d'éliminer complètement les erreurs du premier groupe.
 
-\begin{itemize}
-
-\item $\serr{div}$ correspond à une division par zéro. Cela arrive si la seconde
-opérande de $/$, $\%$ ou $\floatop{/}$ est nulle.
-
-\item $\serr{array}$ signale un débordement de tableau.
-
-\item $\serr{ptr}$ correspond à une manipulation ou un déréférencement de
-pointeur invalide. Par exemple, déréférencer le pointeur nul ou appliquer
-l'arithmétique en dehors d'un tableau provoque cette erreur.
-
-\item $\serr{field}$ arrive lorsqu'on accède à un champ inexistant d'une
-structure. Ce cas sera entièrement évité grâce au typage dans le
-chapitre~\ref{cha:typbase}.
-
-\item $\serr{var}$ se produit lorsqu'on accède à une variable qui n'est pas
-visible dans un état mémoire. Ce cas est également évité dans les programmes
-bien typés.
-
-\end{itemize}
+\section{Interprète}
 
 La figure~\ref{fig:interp-stack} résume comment ces valeurs sont organisées. Une
 pile est une liste de cadre de piles, et un cadre de pile est une liste de
 couples (nom, valeur). Un état mémoire $m$ est un couple $(s, g)$ où $s$ est une
 pile et $g$ un cadre de pile (qui représente les variables globales).
 On note $|m| = |s|$ la hauteur de la pile (en nombre de cadres).
+
+\begin{figure}%{{{
+
+  \begin{align*}
+  \gramdef{Pile}{s}
+    { [] }{Pile vide}
+    { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
+    {END}
+  \\
+  \\
+  \gramdef{État mémoire}{m}
+    { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
+    {END}
+  \\
+  \\
+  \gramdef[4cm]{État d'interprète}{Ξ}
+    { \msi{m}{e} }{Expression, mémoire}
+    { \msi{m}{i} }{Instruction, mémoire}
+    { Ω          }{Erreur}
+    {END}
+  \end{align*}
+
+  \caption{Composantes d'un état mémoire}
+\label{fig:interp-stack}
+\end{figure}%}}}
+
 
 Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 états $Ξ$; ces états sont d'une des formes suivantes:
@@ -602,31 +634,6 @@ ajouter une règle :
         }
         { Ξ_1 → Ξ_3}
 \end{mathpar}
-
-\begin{figure}%{{{
-
-  \begin{align*}
-  \gramdef{Pile}{s}
-    { [] }{Pile vide}
-    { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
-    {END}
-  \\
-  \\
-  \gramdef{État mémoire}{m}
-    { (s, \{ x_1 ↦v_1; … ; x_n ↦v_n\})}{Pile, globales}
-    {END}
-  \\
-  \\
-  \gramdef[4cm]{État d'interprète}{Ξ}
-    { \msi{m}{e} }{Expression, mémoire}
-    { \msi{m}{i} }{Instruction, mémoire}
-    { Ω          }{Erreur}
-    {END}
-  \end{align*}
-
-  \caption{Composantes d'un état mémoire}
-\label{fig:interp-stack}
-\end{figure}%}}}
 
 \section{Opérations sur les valeurs}
 \label{sec:sem-ops}
@@ -699,7 +706,9 @@ Un certain nombre d'opérations est possible sur les valeurs
   c'est-à-dire que $!0 = 1$ et si $n ≠ 0$, $!n = 0$.
 \end{itemize}
 
-% TODO que se passe-t-il dans les autres cas? introduire un \serr{typ}?
+Si ces opérateurs sémantiques reçoivent des données incompatibles (par exemple
+si on tente d'ajouter une fonction et un entier), l'erreur spéciale $\serr{typ}$
+est renvoyée.
 
 \section{Opérations sur les états mémoire}
 \label{sec:memops}
@@ -747,6 +756,9 @@ l'appelant, il faudra supprimer ce cadre de pile.
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
 
+  L'opération inverse de $\phxx\cExtend$ sera simplement notée «$-$» : $m - x$,
+  par exemple.
+
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
   \[
@@ -782,7 +794,7 @@ où:
 
 Les opérations $\mathrm{Extend}$ et $\mathrm{Pop}$ ne sont définies que pour une
 pile non vides. Néanmoins cela ne pose pas de problème, puisque lors de
-l'éxecution, la pile n'est vide que lors de l'évaluation d'expressions dans les
+l'exécution, la pile n'est vide que lors de l'évaluation d'expressions dans les
 phrases de programme. À cet endroit, seules des expressions peuvent apparaître,
 et leur évaluation ne manipule jamais la pile avec ces opérations.
 
@@ -862,21 +874,42 @@ En effet, si une référence au dernier cadre est toujours présente après
 le retour, elle pourra se résoudre en un objet différent plus tard dans
 l'exécution du programme.
 
-La fonction $\mathrm{Cleanup}$ est donnée par:
+On commence par définir une fonction générique supprimant les valeurs satisfiant
+un prédicat sur les chemins que la mémoire contient:
 
 \begin{align*}
-      \mathrm{Cleanup}((s, g)) &= (s', g') \\
-                 \mbox{où } s' &= (\cL{|s|}{s_1}, …, \cL{|s|}{s_|s|}) \\
-                            g' &= \cL{|s|}{g} \\
-\cL{p}{(x_1 ↦ v_1, …, x_n ↦ v_n)} &= (x_1 ↦ \cV{v_1}, …, x_n ↦ \cV{v_n}) \\
-\cV{p}{\widehat{\&}~φ} &= \begin{cases}
-                              \eNull         & \mbox{ si } \cH{φ} > p \\
-                              \widehat{\&}~φ & \mbox{ sinon}
-                           \end{cases} \\
-\cV{p}{v} &= v \mbox{ sinon}
+                \cP{p}{(s, g)} &= (s', g') \\
+                 \mbox{où } s' &= (\cLP{p}{s_1}, …, \cLP{p}{s_{|s|}}) \\
+                            g' &=  \cLP{p}{g} \\
+\cLP{p}{(x_1 ↦ v_1, …, x_n ↦ v_n)} &= (x_1 ↦ \cVP{p}{v_1}, …, x_n ↦ \cVP{p}{v_n}) \\
+\cVP{p}{\widehat{c}} &= \widehat{c} \\
+\cVP{p}{\widehat{f}} &= \widehat{f} \\
+\cVP{p}{\wphi{φ}} &= \begin{cases}
+                       \eNull   & \mbox{ si }    p(φ) \\
+                       \wphi{φ} & \mbox{ sinon}
+                     \end{cases} \\
+\cVP{p}{\widehat{\eStruct{l_1:v_1, …, l_n:v_n}}} &=
+    \widehat{\eStruct{l_1:\cVP{p}{v_1}, …, l_n:\cVP{p}{v_n}}} \\
+\cVP{p}{\widehat{\eArray{v_1, …, v_n}}} &=
+    \widehat{\eStruct{\cVP{p}{v_1}, …, \cVP{p}{v_n}}}
 \end{align*}
 
-Sans cette règle, examinons le programme suivant de la
+La fonction $\mathrm{Cleanup}$, et une version pour les valeurs, sont données
+par:
+
+\begin{align*}
+\cCleanup{m} &=  \cP{λφ: \cHphi{φ} > |m|)}{m} \\
+\cV{p}{v}    &= \cVP{λφ: \cHphi{φ} > |m|)}{v}
+\end{align*}
+
+On définit aussi une opération pour supprimer une variable de la mémoire:
+
+\begin{align*}
+    \cCleanVar{m}{a}  &= \cP{λφ: φ = a}{m} \\
+    \cVV{v}{a}        &= \cVP{λφ: φ = a}{v}
+\end{align*}
+
+Sans ces opérations, examinons le programme suivant de la
 figure~\ref{fig:prog-cleanup}.
 
 \begin{SaveVerbatim}[]{LeBonProgramme}
@@ -1476,6 +1509,10 @@ le pas d'exécution\footnote{
     d'ajouter une variable, il ne préserve pas la mémoire.
 }.
 
+\label{page:decl-masquage}
+On suppose qu'il n'y a pas de masquage au sein d'une fonction, c'est-à-dire que
+le nom d'une variable déclarée n'est pas visible avant cette déclaration.
+
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 
@@ -1540,7 +1577,7 @@ de sous-expression ou sous instruction est définie en fonction des contextes $C
 \label{fig:eval-err}
 \end{figure}
 
-\section{Phrases}
+\section{Phrases et exécution d'un programme}
 
 Un programme est constitué d'une suite de phrases: déclarations de fonctions,
 de variables et de types, et évaluation d'expressions.
@@ -1552,9 +1589,11 @@ L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
-avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}).
+avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}). Notons que
+ces évaluations se font à grands pas.
 
-Notons que ces évaluations se font à grands pas.
+Enfin, l'exécution d'un programme est sans surprise l'exécution de ses phrases,
+les unes à la suite des autres.
 
 \begin{figure}[h]
 \begin{mathpar}
@@ -1564,30 +1603,20 @@ Notons que ces évaluations se font à grands pas.
 
   \semrule{T-Var}
 
+  \ruleheader{$\phstar{m}{p}{m'}$}
+
+  \semrule{T*-Nil}
+
+  \semrule{T*-Cons}
+
+  \ruleheader{$\phprog{P}{m}$}
+
+  \semrule{Prog}
 \end{mathpar}
 
 \caption{Évaluation des phrases d'un programme}
 \label{fig:eval-toplevel}
 \end{figure}
-
-\section{Exécution}
-
-L'exécution d'un programme est sans surprise l'exécution de ses phrases, les
-unes à la suite des autres.
-
-On commence par étendre l'extension $→^*$ au listes de la relation $→$:
-
-\begin{mathpar}
-  \semrule{T*-Nil}
-
-  \semrule{T*-Cons}
-\end{mathpar}
-
-L'exécution d'un programme est définie par:
-
-\begin{mathpar}
-  \semrule{Prog}
-\end{mathpar}
 
 \section*{Conclusion}
 
@@ -1596,5 +1625,7 @@ et une description nous permettent de voir ce qui le rapproche de C. Sa
 sémantique est explicitée entièrement, ce qui nous permet de prouver des
 propriétés dynamiques sur les analyses de typage décrites dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
+
+% TODO Return implicite
 
 % vim: spelllang=fr

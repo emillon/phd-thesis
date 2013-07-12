@@ -515,8 +515,6 @@ codéfini par:
     \semtyp{m}{m[φ]_Φ}{τ}
 \]
 
-% TODO détailler
-
 Les règles de définition du typage sémantique sont données dans la
 figure~\ref{fig:types-semantiques}.
 
@@ -672,17 +670,38 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
         \irule{M-Push}
             { \mcomp{Γ}{m}
-           \\ ?
+           \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
+           \\ …
+           \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
+            { \mcomp{Γ, x_1:t_1, …, x_n:↦t_n}
+                     {\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
             }
 
         \irule{M-Pop}
-            { \mcomp{Γ}{m}
-           \\ ?
+            { \mcomp{Γ, x_1:t_1, …, x_n:t_n}{m}
+           \\ m = (s, g)
+           \\ s_1 = (x_1↦v_1, …, x_n↦v_n)
+           \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
+           \\ …
+           \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
+           % TODO peut etre ajouter le R
             }
             { \mcomp{Γ}{\cPop{m}}
             }
+
+        \irule{M-Decl}
+            { \mcomp{Γ}{m}
+           \\ m ⊧ v : τ
+           \\ \tComp{τ}{t}
+           \\ x ∉ Γ
+            }
+            { \mcomp{Γ, x:t}{\cExtend{m}{x}{v}} }
+
+        \irule{M-DeclClean}
+            { \mcomp{Γ, x:t}{m}
+            }
+            { \mcomp{Γ}{\cCleanVar{m - x}{x}} }
 
         \irule{M-Write}
             { \mcomp{Γ}{m}
@@ -695,6 +714,8 @@ Grâce à ce jugement, on peut donner la définition suivante.
               \mcomp{Γ}{m'}
             }
     \end{mathpar}
+
+% TODO les locales dans le Γ doivent disparaitre
 
 \end{definition}
 
@@ -741,23 +762,11 @@ Idem.
 \begin{lemma}[Accès à une mémoire bien typée]
 \label{lemma:mem-typ}
 
-Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors:
-
-\begin{itemize}
-\item $m[φ]_Φ$ est une valeur $v$ et
-    $m ⊧ v : τ$
-    où
-    $\tComp{τ}{t}$.
-
-\item si $v$ est une valeur telle que
-    $m ⊧ v : τ$
-    où
-    $\tComp{τ}{t}$,
-    alors en posant $m' = m[φ ← v]_Φ$,
-    on a
-    $\mcomp{Γ}{m'}$.
-
-\end{itemize}
+Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors
+$m[φ]_Φ$ est une valeur $v$ et
+$m ⊧ v : τ$
+où
+$\tComp{τ}{t}$.
 
 \end{lemma}
 
@@ -800,6 +809,10 @@ $\mcomp{Γ, x:t'}{m''}$.
 % }}}
 \paragraph{\textsc{M-Pop}:} % {{{ TODO
 % }}}
+\paragraph{\textsc{M-Decl}:} % {{{ TODO
+% }}}
+\paragraph{\textsc{M-DeclClean}:} % {{{ TODO
+% }}}
 \paragraph{\textsc{M-Write}:} % {{{ TODO
 % }}}
 
@@ -809,13 +822,6 @@ $\mcomp{Γ, x:t'}{m''}$.
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
 théorèmes.
-
-Les règles précédentes ont la particularité suivante: pour chaque forme
-syntaxique, il n'y a souvent qu'une règle qui peut s'appliquer. Cela permet de
-déduire quelle règle il faut appliquer pour vérifier (ou inférer) le type d'une
-expression.
-
-% TODO?? 1er fois que cela apparait
 
 \begin{lemma}[Inversion]
 \label{lemma:inversion}
@@ -1094,16 +1100,15 @@ $Γ = x:t$).
 
 \end{lemma}
 
-\begin{lemma}[Affaiblissement]
-\label{lemma:affaiblissement}
+%\begin{lemma}[Affaiblissement]
+%\label{lemma:affaiblissement}
 
-On peut ajouter des associations supplémentaires dans l'environnement sans
-modifier les typages dans cet environnement.
+%On peut ajouter des associations supplémentaires dans l'environnement sans
+%modifier les typages dans cet environnement.
 
-Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
+%Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
 
-% TODO on peut aussi changer des bindings si ça n'influe pas sur $e$
-\end{lemma}
+%\end{lemma}
 
 \begin{proof}[Démonstration (esquisse)]
 On procède par induction sur une dérivation de $Γ ⊢ e : t$. Le seul cas où $Γ$
@@ -1140,8 +1145,6 @@ le graphe suivant.
 
 \begin{theorem}[Progrès]
 \label{thm:progres}
-
-% TODO modifier progrès pour ajouter la clause cleanup
 
 Supposons que $Γ ⊢ i$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
 
@@ -1299,25 +1302,23 @@ Alors:
 \begin{itemize}
 \item
     Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$,
-    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ e' : t$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ e' : t$.
 
 \item
     Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
-    alors $\mcomp{Γ}{m'}$ et $m ⊧ v : τ$ où $\tComp{τ}{t}$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
 
 \item
     Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
-    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ i'$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ i'$.
 
 \item
     Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$,
-    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ lv' : t$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ lv' : t$.
 
 \item
     Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$,
-    alors $\mcomp{Γ}{m'}$ et $\semtypphi{m}{φ}{τ}$ où $\tComp{τ}{t}$.
-
-% TODO la compat est à faire sur m'
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $\semtypphi{m'}{φ}{τ}$ où $\tComp{τ}{t}$.
 
 \end{itemize}
 
@@ -1325,6 +1326,16 @@ Alors:
   modifie pas son type et préserve le typage de la mémoire.
 
 \end{theorem}
+
+\paragraph{Remarque}
+
+Dans la formulation classique de ce théorème, on indique que $\mcomp{Γ}{m}$
+implique $\mcomp{Γ}{m'}$. Ici, la conclusion est moins forte en indiquant
+seulement que $\mcomp{Γ}{\cCleanup{m'}}$. Cela indique que la compatibilité
+mémoire est établie mais peut localement introduire des pointeurs fous. En fait,
+comme une étape de $\phx\cCleanup$ est faite après chaque appel de fonction et
+chaque déclaration, la propriété classique est vraie mais uniquement sur un plus
+grand pas d'exécution.
 
 La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 
@@ -1399,7 +1410,5 @@ programmes ne peuvent provoquer une erreur d'exécution que dans certains cas
 particuliers, comme les division ou les accès aux tableaux.
 
 % TODO trop court
-
-% TODO Return implicite
 
 % vim: spelllang=fr

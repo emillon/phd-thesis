@@ -341,15 +341,17 @@
                                }
                           }
     {Exp-Call-Return}{ \irule{Exp-Call-Return}
-                          { m' = \cCleanup{m}}
+                          { m' = \cCleanup{m}
+                         \\ v' = \cV{|m|}{v}
+                          }
                           { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
-                               {m'}{v}
+                               {m'}{v'}
                           }
                      }
     {Exp-Call-Ctx}{ \irule{Exp-Call-Ctx}
                         { m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}
                        \\ \mm{m_1}{i}{m_2}{i'}
-                       \\ ∀ i ∈ [1;n], v'_i = m_2[(0, a_i)]_A
+                       \\ ∀ i ∈ [1;n], v'_i = m_2[(|m_2|, a_i)]_A
                        \\ m_3 = \cPop{m_2}
                         }
                         { \mm{m_0}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) }
@@ -373,27 +375,29 @@
     {Decl}{ \irule{Decl}
             { m' = \cExtend{m}{x}{v}
            \\ \mmi{m'}{i}{m''}{\iPass}
-           \\ m''' = \cCleanup{m'' - x}
+           \\ m''' = \cCleanVar{m''}{(|m|, x)}
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
-    } % TODO définir le "-"
+    }
     {Decl-Pass}{ \irule{Decl-Pass}
-                     { m' = \cCleanup{m-x} }
+                     { m' = \cCleanVar{m - x}{(|m|, x)} }
                      { \mm{m}{\iDecl{x}{v}{\iPass}}
                          {m'}{\iPass}
                      }
     }
     {Decl-Return}{ \irule{Decl-Return}
-                        { m' = \cCleanup{m-x} }
+                        { m' = \cCleanVar{m - x}{(|m|, x)}
+                       \\ v'' = \cVV{v'}{(|m|, x)}
+                        }
                         { \mm{m}{ \iDecl{x}{v}{\iReturn{v'}} }
-                            {m'}{\iReturn{v'}}
+                            {m'}{\iReturn{v''}}
                         }
     }
     {Decl-Ctx}{ \irule{Decl-Ctx}
                    { m' = \cExtend{m}{x}{v}
                    \\ \mm{m'}{i}{m''}{i'}
-                   \\ v' = m''[(0, x)]_A
-                   \\ m''' = m'' - x % TODO définir le "-"
+                   \\ v' = m''[(|m''|, x)]_A
+                   \\ m''' = m'' - x
                    }
                    { \mm{m}{\iDecl{x}{v}{i}}
                        {m'''}{\iDecl{x}{v'}{i'}}

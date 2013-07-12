@@ -61,7 +61,6 @@
 \def\vRet{\underline{R}}
 
 % sets pour semantique
-\def\sId{\textsc{Id}\xspace}
 \def\sMem{\textsc{Mem}\xspace}
 \def\sAddr{\textsc{Addr}\xspace}
 \def\sInt{\textsc{Int}\xspace}
@@ -272,6 +271,7 @@
 
 \def\eqdef{\overset{\mathrm{def}}{=\joinrel=}\xspace}
 
+
 % Lens
 \def\mkLens#1#2{\langle #1 | #2 \rangle}
 \def\setLens#1#2{\textsc{Lens}_{#1, #2}}
@@ -282,26 +282,26 @@
 \def\lensNodeBig#1#2{
 \vcenter{\hbox{
 \begin{tikzpicture}[scale=0.7]
-\draw[fill=#1] (-0.5,-0.5) rectangle ++ (1,1);
-\draw[fill=#2] (0,0) circle (0.3);
+\draw[#1] (-0.5,-0.5) rectangle ++ (1,1);
+\draw[#2] (0,0) circle (0.3);
 \end{tikzpicture}
 }}
 }
 \def\lensInner#1{
 \vcenter{\hbox{
 \begin{tikzpicture}[scale=0.7]
-\draw[fill=#1] (0, 0) circle (0.3);
+\draw[#1] (0, 0) circle (0.3);
 \end{tikzpicture}
 }}
 }
 \def\lensNodeBigIdx#1#2#3#4#5{
 \vcenter{\hbox{
 \begin{tikzpicture}[scale=0.7]
-  \draw[fill=#1] (-1.25,-1.25) rectangle ++ (2.5,2.5);
-  \node[fill=#2, draw, star, minimum size=6mm] at (-0.6, 0.6) {};
-  \node[fill=#3, draw, star, minimum size=6mm] at ( 0.6, 0.6) {};
-  \node[fill=#4, draw, circle, minimum size=6mm] at (-0.6,-0.6) {};
-  \node[fill=#5, draw, regular polygon, regular polygon sides=5, minimum size=6mm] at ( 0.6,-0.6) {};
+  \draw[#1] (-1.25,-1.25) rectangle ++ (2.5,2.5);
+  \node[#2, draw, star, minimum size=6mm] at (-0.6, 0.6) {};
+  \node[#3, draw, star, minimum size=6mm] at ( 0.6, 0.6) {};
+  \node[#4, draw, circle, minimum size=6mm] at (-0.6,-0.6) {};
+  \node[#5, draw, regular polygon, regular polygon sides=5, minimum size=6mm] at ( 0.6,-0.6) {};
   \node at (-2,  0.6) {a};
   \node at ( 2,  0.6) {b};
   \node at (-2, -0.6) {c};
@@ -312,10 +312,11 @@
 \def\lensInnerStar#1{
 \vcenter{\hbox{
 \begin{tikzpicture}[scale=0.7]
-\node[draw, fill=#1, star] {};
+\node[draw, #1, star] {};
 \end{tikzpicture}
 }}
 }
+
 
 % Erreurs
 
@@ -327,6 +328,7 @@
     {div}{Ω_{div}}
     {field}{Ω_{field}}
     {var}{Ω_{var}}
+    {typ}{Ω_{typ}}
     {END}
     % important : étendre la description dans le chapitre 4 et la figure de
     % liste
@@ -402,11 +404,18 @@
 
 \def\cH#1{\mathcal{H}(#1)}
 \def\cHphi#1{\mathcal{H}_Φ(#1)}
-\def\cL#1#2{\mathrm{CleanL_{#1}(#2)}}
-\def\cV#1#2{\mathrm{CleanV_{#1}(#2)}}
+\def\cV#1#2{\mathrm{CleanV}_{#1}(#2)}
+\def\cP#1#2{\mathrm{CleanP}(#1, #2)}
+\def\cLP#1#2{\mathrm{CleanLP}(#1, #2)}
+\def\cVP#1#2{\mathrm{CleanVP}(#1, #2)}
+
+\def\cCleanVar#1#2{\mathrm{CleanVar}(#1, #2)}
+\def\cVV#1#2{\mathrm{CleanVarV}(#1, #2)}
 
 \def\tyctx#1#2#3#4{%
     \ifstrempty{#3#4}% both empty?
         {#1 ⊢ #2}%
         {#1 ⊢ #2 : #3 ⇒ #4}%
 }
+
+\def\wphi#1{\widehat{\&}~#1}
