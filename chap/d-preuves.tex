@@ -873,7 +873,6 @@ manière analogue au cas \textsc{Exp-Call-Return}.
 
 %}}}
 \paragraph{\textsc{Decl-Ctx}:}%{{{
-\[ \semrule{Decl-Ctx} \]
 
 On part de $Γ ⊢ \iDecl{x}{v}{i}$.
 Par inversion, il existe $t$ tel que
@@ -909,9 +908,24 @@ Enfin par \textsc{If} il vient $Γ ⊢ \iThen{e}{i ; \iWhile{e}{i}}$.
 
 Par le lemme d'inversion, $Γ ⊢ \iReturn{v}$.
 %}}}
-\paragraph{\textsc{Exp-Call-Ctx}:}%{{{ TODO
+\paragraph{\textsc{Exp-Call-Ctx}:}%{{{
 
-\[ \semrule{Exp-Call-Ctx} \]
+On sait que $Γ ⊢ \eFun{a_1, …, a_n}{i} (v_1, …, v_n)$ et
+$\mcomp{Γ}{m_0}$. D'après le lemme d'inversion, il existe
+$t_1, …, t_n$ tels que $∀i ∈ [1;n], Γ ⊢ v_i : t_i$,
+$Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t$, donc qu'en posant
+$Γ' = Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t$ on a $Γ' ⊢ i$.
+
+D'un autre côté, il existe par le lemme~\ref{lemma:repr} des types $τ_i$ tels
+que $∀ i ∈ [1;n], m_0 ⊧ v_i : τ_i$ avec $\tComp{τ_i}{t_i}$. En appliquant
+\textsc{M-Push}, on a donc $\mcomp{Γ'}{m_1}$.
+
+On peut alors appliquer l'hypothèse d'induction à $\mm{m_1}{i}{m_2}{i'}$: la
+conclusion est que $Γ' ⊢ i'$ et $\mcomp{Γ'}{m_2}$. Comme $Γ' ⊢ a_i : t_i$, on
+a $∀ i ∈ [1;n], Γ' ⊢ v'_i : t_i$. Donc on a bien
+$Γ ⊢ \eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n)$.
+
+D'autre part, en appliquant \textsc{M-Pop}, on obtient que $\mcomp{Γ}{m_3}$.
 
 %}}}
 
