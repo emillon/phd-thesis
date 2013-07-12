@@ -674,7 +674,7 @@ Grâce à ce jugement, on peut donner la définition suivante.
            \\ …
            \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ, x_1:t_1, …, x_n:↦t_n}
+            { \mcomp{Γ, x_1:t_1, …, x_n:t_n}
                      {\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
             }
 
@@ -779,30 +779,21 @@ Il n'existe pas de $φ$ tel que $Γ ⊢ φ : t$. En effet, on montre par inducti
 sur la forme de $φ$ que cela implique qu'il existe $a$ tel que
 $\cVarname{a} ∈ \cDom{Γ}$.
 % }}}
-\paragraph{\textsc{M-Global}:} % {{{ TODO
+\paragraph{\textsc{M-Global}:} % {{{
 
-Soit $φ$ tel que $Γ, x:t' ⊢ φ : t$.
-Soit $m' = (s, ((x↦v)::g))$.
+Soient $φ$ tel que $Γ, x:t' ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
 
-On veut:
-
-$m'[φ]_Φ$ est une valeur $v$
+On veut montrer que $m'[φ]_Φ$ est une valeur $v'$
 tq
-$m' ⊧ v : τ$
+$m' ⊧ v' : τ$
 où
 $\tComp{τ}{t}$.
 
-
-et
-
-si $v$ est une valeur telle que
-$m' ⊧ v : τ$
-où
-$\tComp{τ}{t}$,
-alors en posant $m'' = m'[φ ← v]_Φ$,
-on a
-$\mcomp{Γ, x:t'}{m''}$.
-
+Deux cas peuvent se produire selon la variable $a$ que référence $φ$: si $a =
+(x)$: dans ce cas, $m'[φ]_Φ = v$. On conclut en appliquant les hypothèses de
+\textsc{M-Global}. Dans tous les autres cas, $a$ est contenue dans $m$ car sinon
+$φ$ ne serait pas typable. On peut donc appliquer l'hypothèse d'induction.
+% TODO semi-bien
 
 % }}}
 \paragraph{\textsc{M-Push}:} % {{{ TODO
