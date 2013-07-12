@@ -375,18 +375,18 @@
     {Decl}{ \irule{Decl}
             { m' = \cExtend{m}{x}{v}
            \\ \mmi{m'}{i}{m''}{\iPass}
-           \\ m''' = \cCleanup{m'' - x}
+           \\ m''' = \cCleanVar{m''}{(|m|, x)}
             }
             {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
-    } % TODO définir le "-"
+    }
     {Decl-Pass}{ \irule{Decl-Pass}
-                     { m' = \cCleanup{m-x} }
+                     { m' = \cCleanVar{m}{(|m|, x)} }
                      { \mm{m}{\iDecl{x}{v}{\iPass}}
                          {m'}{\iPass}
                      }
     }
     {Decl-Return}{ \irule{Decl-Return}
-                        { m' = \cCleanup{m-x} }
+                        { m' = \cCleanVar{m}{(|m|, x)} }
                         { \mm{m}{ \iDecl{x}{v}{\iReturn{v'}} }
                             {m'}{\iReturn{v'}}
                         }

@@ -871,21 +871,41 @@ En effet, si une référence au dernier cadre est toujours présente après
 le retour, elle pourra se résoudre en un objet différent plus tard dans
 l'exécution du programme.
 
-La fonction $\mathrm{Cleanup}$ est donnée par:
+On commence par définir une fonction générique supprimant les valeurs satisfiant
+un prédicat sur les chemins que la mémoire contient:
 
 \begin{align*}
-      \mathrm{Cleanup}((s, g)) &= (s', g') \\
-                 \mbox{où } s' &= (\cL{|s|}{s_1}, …, \cL{|s|}{s_|s|}) \\
-                            g' &= \cL{|s|}{g} \\
-\cL{p}{(x_1 ↦ v_1, …, x_n ↦ v_n)} &= (x_1 ↦ \cV{p}{v_1}, …, x_n ↦ \cV{p}{v_n}) \\
-\cV{p}{\widehat{\&}~φ} &= \begin{cases}
-                              \eNull         & \mbox{ si } \cH{φ} > p \\
-                              \widehat{\&}~φ & \mbox{ sinon}
-                           \end{cases} \\
-\cV{p}{v} &= v \mbox{ sinon}
+                \cP{p}{(s, g)} &= (s', g') \\
+                 \mbox{où } s' &= (\cLP{p}{s_1}, …, \cLP{p}{s_{|s|}}) \\
+                            g' &=  \cLP{p}{g} \\
+\cLP{p}{(x_1 ↦ v_1, …, x_n ↦ v_n)} &= (x_1 ↦ \cVP{p}{v_1}, …, x_n ↦ \cVP{p}{v_n}) \\
+\cVP{p}{\widehat{c}} &= \widehat{c} \\
+\cVP{p}{\widehat{f}} &= \widehat{f} \\
+\cVP{p}{\wphi{φ}} &= \begin{cases}
+                       \eNull   & \mbox{ si }    p(φ) \\
+                       \wphi{φ} & \mbox{ sinon}
+                     \end{cases} \\
+\cVP{p}{\widehat{\eStruct{l_1:v_1, …, l_n:v_n}}} &=
+    \widehat{\eStruct{l_1:\cVP{p}{v_1}, …, l_n:\cVP{p}{v_n}}} \\
+\cVP{p}{\widehat{\eArray{v_1, …, v_n}}} &=
+    \widehat{\eStruct{\cVP{p}{v_1}, …, \cVP{p}{v_n}}}
 \end{align*}
 
-Sans cette règle, examinons le programme suivant de la
+La fonction $\mathrm{Cleanup}$, et une version pour les valeurs, sont données
+par:
+
+\begin{align*}
+\cCleanup{m} &=  \cP{λφ: \cHphi{φ} > |m|)}{m} \\
+\cV{p}{v}    &= \cVP{λφ: \cHphi{φ} > |m|)}{v}
+\end{align*}
+
+On définit aussi une opération pour supprimer une variable de la mémoire:
+
+\begin{align*}
+    \cCleanVar{m}{a} &= \cP{λφ: φ = a}{m}
+\end{align*}
+
+Sans ces opérations, examinons le programme suivant de la
 figure~\ref{fig:prog-cleanup}.
 
 \begin{SaveVerbatim}[]{LeBonProgramme}
