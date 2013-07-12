@@ -791,7 +791,24 @@ Si on définit $m'' = \cPush{m}{a_1↦v_1, …, a_n↦v_n}$, alors par \textsc{M
 on obtient que $\mcomp{Γ'}{m''}$. Donc, par le lemme~\ref{lemma:repr}, il existe
 $τ$ tel que $m'' ⊧ v : τ$ où $\tComp{τ}{t}$.
 
-Il reste à montrer que $m' ⊧ v' : τ$. % TODO
+Il reste à montrer que $m' ⊧ v' : τ$. On distingue selon la forme de $v$.
+
+\begin{itemize}
+\item $v = \widehat{c}$ ou $v = \widehat{f}$:
+C'est établi car la dérivation n'utilise pas $m$.
+
+\item $v = \wphi{φ}$: alors $\semtypphi{m''}{φ}{τ}$ c'est-à-dire
+$\semtypphi{m''}{m[φ]_Φ}{τ}$. Si $\cHphi{φ} > m'$, alors $v' = \eNull$ (car $v'
+= \cV{|m|}{v}$) et on conclut. Si $\cHphi{φ} ≤ m'$, alors $m' ⊧ m'[φ]_Φ : τ$, donc
+$\semtypphi{m'}{φ}{τ}$ et $m' ⊧ \wphi{φ} : τ$.
+
+\item Structures et tableaux: on applique le raisonnement ci-dessus
+successivement.
+
+\end{itemize}
+
+C'est clair pour les valeurs de la forme
+$\widehat{c}$ ou $\widehat{f}$. Supposons que $v = \wphi{φ}$.
 % }}}
 \paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{
 

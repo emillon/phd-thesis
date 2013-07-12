@@ -682,6 +682,10 @@ Grâce à ce jugement, on peut donner la définition suivante.
             { \mcomp{Γ, x_1:t_1, …, x_n:t_n}{m}
            \\ m = (s, g)
            \\ s_1 = (x_1↦v_1, …, x_n↦v_n)
+           \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
+           \\ …
+           \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
+           % TODO peut etre ajouter le R
             }
             { \mcomp{Γ}{\cPop{m}}
             }
