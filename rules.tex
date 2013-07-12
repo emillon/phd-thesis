@@ -341,9 +341,11 @@
                                }
                           }
     {Exp-Call-Return}{ \irule{Exp-Call-Return}
-                          { m' = \cCleanup{m}}
+                          { m' = \cCleanup{m}
+                         \\ v' = \cV{|m|}{v}
+                          }
                           { \mm{m}{\eFun{a_1, …, a_n}{\iReturn{v}} (v_1, …, v_n)}
-                               {m'}{v}
+                               {m'}{v'}
                           }
                      }
     {Exp-Call-Ctx}{ \irule{Exp-Call-Ctx}

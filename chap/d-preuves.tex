@@ -777,6 +777,8 @@ Idem, on conclut grâce au lemme de représentabilité.
 % }}}
 \paragraph{\textsc{Exp-Call-Return}:} % {{{
 
+\[ \semrule{Exp-Call-Return} \]
+
 Par inversion, il vient que
 $Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t'$
 et
@@ -785,11 +787,11 @@ $∀ i ∈ [1;n], Γ ⊢ v_i : t_i$.
 Posons $Γ' = Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t$. Alors par inversions
 successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t$.
 
-Par affaiblissement (lemme~\ref{lemma:affaiblissement})
-$Γ ⊢ v : t$. En particulier (par le lemme~\ref{lemma:repr}), il existe
-$τ$ tel que $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
+Si on définit $m'' = \cPush{m}{a_1↦v_1, …, a_n↦v_n}$, alors par \textsc{M-Push}
+on obtient que $\mcomp{Γ'}{m''}$. Donc, par le lemme~\ref{lemma:repr}, il existe
+$τ$ tel que $m'' ⊧ v : τ$ où $\tComp{τ}{t}$.
 
-% TODO compat
+Il reste à montrer que $m' ⊧ v' : τ$. % TODO
 % }}}
 \paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{
 
@@ -797,7 +799,6 @@ Idem. En fait dans le cas précédent, le type de $v$ et forcément celui de
 $\vRet$ sous $Γ'$ ; comme $\vRet$ n'est alors pas utilisé, son choix est libre
 et une dérivation avec $\vRet : \tUnit ∈ Γ'$ est possible.
 
-% TODO compat
 % }}}
 
 \subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
