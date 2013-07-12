@@ -743,23 +743,11 @@ Idem.
 \begin{lemma}[Accès à une mémoire bien typée]
 \label{lemma:mem-typ}
 
-Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors:
-
-\begin{itemize}
-\item $m[φ]_Φ$ est une valeur $v$ et
-    $m ⊧ v : τ$
-    où
-    $\tComp{τ}{t}$.
-
-\item si $v$ est une valeur telle que
-    $m ⊧ v : τ$
-    où
-    $\tComp{τ}{t}$,
-    alors en posant $m' = m[φ ← v]_Φ$,
-    on a
-    $\mcomp{Γ}{m'}$.
-
-\end{itemize}
+Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors
+$m[φ]_Φ$ est une valeur $v$ et
+$m ⊧ v : τ$
+où
+$\tComp{τ}{t}$.
 
 \end{lemma}
 
