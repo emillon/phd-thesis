@@ -690,6 +690,19 @@ Grâce à ce jugement, on peut donner la définition suivante.
             { \mcomp{Γ}{\cPop{m}}
             }
 
+        \irule{M-Decl}
+            { \mcomp{Γ}{m}
+           \\ m ⊧ v : τ
+           \\ \tComp{τ}{t}
+           \\ x ∉ Γ
+            }
+            { \mcomp{Γ, x:t}{\cExtend{m}{x}{v}} }
+
+        \irule{M-DeclClean}
+            { \mcomp{Γ, x:t}{m}
+            }
+            { \mcomp{Γ}{\cCleanVar{m}{x}} }
+
         \irule{M-Write}
             { \mcomp{Γ}{m}
            \\ Γ ⊢ φ : t
@@ -793,6 +806,10 @@ $\mcomp{Γ, x:t'}{m''}$.
 \paragraph{\textsc{M-Push}:} % {{{ TODO
 % }}}
 \paragraph{\textsc{M-Pop}:} % {{{ TODO
+% }}}
+\paragraph{\textsc{M-Decl}:} % {{{ TODO
+% }}}
+\paragraph{\textsc{M-DeclClean}:} % {{{ TODO
 % }}}
 \paragraph{\textsc{M-Write}:} % {{{ TODO
 % }}}

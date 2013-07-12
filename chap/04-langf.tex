@@ -1505,6 +1505,10 @@ le pas d'exécution\footnote{
     d'ajouter une variable, il ne préserve pas la mémoire.
 }.
 
+\label{page:decl-masquage}
+On suppose qu'il n'y a pas de masquage au sein d'une fonction, c'est-à-dire que
+le nom d'une variable déclarée n'est pas visible avant cette déclaration.
+
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 

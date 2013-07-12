@@ -857,16 +857,13 @@ D'après le lemme d'inversion, $Γ ⊢ i$.
 \paragraph{\textsc{Exp}:}%{{{
 D'après \textsc{Pass}, $Γ ⊢ \iPass$.
 %}}}
-\paragraph{\textsc{Decl-Pass}:}%{{{ TODO
-\[ \semrule{Decl-Pass} \]
+\paragraph{\textsc{Decl-Pass}:}%{{{
 
-$Γ ⊢ \iPass$ est immédiat.
+$Γ ⊢ \iPass$ est immédiat, et $\mcomp{Γ}{m'}$ est établi par \textsc{M-Decl}
+suivi de \textsc{M-DeclClean}. On a bien $x ∉ Γ$ car les déclarations de
+variable ne peuvent pas masquer de variables visibles existantes
+(page~\pageref{page:decl-masquage}).
 
-Par inversion, on a $Γ, x:t ⊢ Pass$.
-
-On a $Γ ⊧ m$.
-
-On veut $Γ' ⊧ m-x$.
 %}}}
 \paragraph{\textsc{Decl-Return}:}%{{{ TODO
 \[ \semrule{Decl-Return} \]
