@@ -1355,18 +1355,13 @@ tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}
+$\serr{ptr}$.
 \footnote{
 Cela est cohérent avec la norme C99:
     «If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
-    »~\cite[6.5.6~§8]{AnsiC}}:
-
-\begin{align*}
-\widehat{\&}~φ~+_p~i & = \serr{ptr} \textrm{ si }∄~(φ', i), φ = φ'[i] \\
-\widehat{\&}~φ~-_p~i & = \serr{ptr} \textrm{ si }∄~(φ', i), φ = φ'[i] \\
-        \eNull~+_p~i & = \serr{ptr} \\
-        \eNull~-_p~i & = \serr{ptr} \\
-\end{align*}
+    »~\cite[6.5.6~§8]{AnsiC}}
+et l'opérateur $\widehat{\opbin}$ renvoie
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
@@ -1397,50 +1392,57 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
   \semrule{Exp-Array}
 \end{mathpar}
 
-\shorthandoff{!}
-\begin{figure}%{{{
+%\shorthandoff{!}
+%\begin{figure}%{{{
 
-  \centering
+  %\centering
 
-  \begin{tikzpicture}
-    [node distance=2cm]
+  %\begin{tikzpicture}
+    %[node distance=2cm]
 
-    \node (m0) {$m_0$};
-    \node[right of=m0, node distance=3cm] (m1) {$m_1$};
-    \node[below of=m1]                    (m2) {$m_2$};
-    \node at ($(m0)!(m2)!(0,1)$)          (m3) {$m_3$};
-    \node[below of=m3]                    (m4) {$m_4$};
+    %\node (m0) {$m_0$};
+    %\node[right of=m0, node distance=3cm] (m1) {$m_1$};
+    %\node[below of=m1]                    (m2) {$m_2$};
+    %\node at ($(m0)!(m2)!(0,1)$)          (m3) {$m_3$};
+    %\node[below of=m3]                    (m4) {$m_4$};
 
-    \draw [->] (m0) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m1);
-    \draw [->] (m1) -- node[auto] {$i → \iReturn{v_r}$}                 (m2);
-    \draw [->] (m2) -- node[auto] {$\mathrm{Pop}$}                      (m3);
-    \draw [->] (m3) -- node[auto] {$\mathrm{Cleanup}$}                  (m4);
+    %\draw [->] (m0) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m1);
+    %\draw [->] (m1) -- node[auto] {$i → \iReturn{v_r}$}                 (m2);
+    %\draw [->] (m2) -- node[auto] {$\mathrm{Pop}$}                      (m3);
+    %\draw [->] (m3) -- node[auto] {$\mathrm{Cleanup}$}                  (m4);
 
-    \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
-                    -- node[auto, swap] {$f(\vec{e}) → v$}
-                       ($ (m4) + (-5mm, 3mm) $);
+    %\draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
+                    %-- node[auto, swap] {$f(\vec{e}) → v$}
+                       %($ (m4) + (-5mm, 3mm) $);
 
-  \end{tikzpicture}
+  %\end{tikzpicture}
 
-  \caption[Appel d'une fonction]
-  { Appel d'une fonction.
-    La taille de la pile croît de gauche à droite,
-    et les réductions se font de haut en bas.
-  }
-\label{fig:fcall-details}
+  %\caption[Appel d'une fonction]
+  %{ Appel d'une fonction.
+    %La taille de la pile croît de gauche à droite,
+    %et les réductions se font de haut en bas.
+  %}
+%\label{fig:fcall-details}
 
-\end{figure}%}}}
-\shorthandon{!}
+%\end{figure}%}}}
+%\shorthandon{!}
 
-L'appel de fonction est traité de manière similaire à la déclaration de
-fonction: on ne peut pas facilement relier un pas d'évaluation de $i$ à un pas
-d'évaluation de $\eFun{a}{i} (v_1,…,v_n)$, donc un contexte
-$C \gramisa \eFun{a}{\ctxEmpty} (v_1,…,v_n)$ n'est pas à considérer. Il
-faut donc transmettre le pas à la main. C'est le but des deux règles
-\textsc{Exp-Call-Ctx} et \textsc{Exp-Call-Err}. D'autre part, les cas terminaux
-sont \textsc{Exp-Call-Return-Unit} et \textsc{Exp-Call-Return}:
+L'appel de fonction est traité de la manière suivante. On ne peut pas facilement
+relier un pas d'évaluation de $i$ à un pas d'évaluation de $\eFun{a}{i}
+(v_1,…,v_n)$, donc un contexte $C \gramisa \eFun{a}{\ctxEmpty} (v_1,…,v_n)$
+n'est pas à considérer. En effet, l'empilement suivi du dépilement modifie la
+mémoire.
 
-% TODO détailler, important
+On emploie donc une règle \textsc{Exp-Call-Ctx} qui relie un pas
+interne $\mm{m_1}{i}{m_2}{i'}$ à un pas externe. Si une fois l'instruction
+interne réduite d'un pas, on évalue les arguments en des valeurs $v'_i$. Ils
+correspondent aux nouvelles valeurs à passer à la fonction.
+
+Les autres fonctions permettent de transférer le flot de contrôle: en retournant
+la même instruction pour une instruction terminale, ou en propageant une erreur.
+Dans le cas où on transmet une instruction terminale ($i = \iPass$ ou $i =
+\iReturn{v}$), il faut alors supprimer les références aux variables
+qui ont disparu grâce aux opérateurs $\phx\cCleanup$ et $\phxx\cV$.
 
 \begin{mathpar}
     \semrule{Exp-Call-Ctx}
@@ -1451,10 +1453,6 @@ sont \textsc{Exp-Call-Return-Unit} et \textsc{Exp-Call-Return}:
 
     \semrule{Exp-Call-Return}
 \end{mathpar}
-
-% TODO blabla sur cleanup
-
-Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
 \label{sec:eval-instr}
@@ -1500,7 +1498,8 @@ ci-dessus.
   \semrule{Exp}
 \end{mathpar}
 
-L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait de la manière suivante.
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait de la manière suivante,
+similaire à l'appel de fonction.
 La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous une
 déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
 mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
