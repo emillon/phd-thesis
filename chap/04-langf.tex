@@ -560,6 +560,10 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
   mémoire. La réduction des instructions est traitée dans la
   section~\ref{sec:eval-instr}.
+  Par exemple, $ \msi{m}{(x ← 3 ; y ← x)} → \msi{m [x ↦ \widehat{3}]}{y ← x}
+                           → \msi{m [x ↦ \widehat{3}][y ↦
+    \widehat{3}]}{\iPass}$.
+
 \item
   un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
   L'évaluation des left-values est décrite en section~\ref{sec:eval-lv}.
@@ -667,8 +671,6 @@ est renvoyée.
 
 \section{Opérations sur les états mémoire}
 \label{sec:memops}
-
-% TODO faire un blabla similaire sur les instructions
 
 \begin{definition}[Recherche de variable]
 
@@ -1412,40 +1414,7 @@ qui ont disparu grâce aux opérateurs $\phx\cCleanup$ et $\phxx\cV$.
 \section{Instructions}
 \label{sec:eval-instr}
 
-% TODO plus tôt la def?
-
-\begin{definition}{Évaluation d'une instruction}
-
-Comme pour l'évaluation des expressions, on choisit une sémantique de
-réécriture à petits pas. La sémantique fonctionne de la manière suivante:
-partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
-d'évaluation suivantes permettent de réduire le problème en se ramenant à
-l'exécution d'une instruction $i'$ «plus simple» en partant d'un état mémoire
-$m'$. Un tel pas est noté:
-
-\[
-  \mmi{m}{i}{m'}{i'}
-\]
-
-\end{definition}
-
-Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
-mémoire dans lequel on a déjà réalisé la première affectation. La seconde
-affectation se réalise de même et permet de réécrire l'instruction restante en
-$\iPass$:
-
-\begin{align*}
-  \msi{m}{(x ← 3 ; y ← x)} → & \msi{m [x ↦ \widehat{3}]}{y ← x} \\
-                           → & \msi{m [x ↦ \widehat{3}][y ↦ \widehat{3}]}{\iPass}
-\end{align*}
-
-Il n'est pas possible de réduire plus loin l'instruction $\iPass$. Dans un tel
-cas, l'évaluation est terminée.
-
-Les seuls cas terminaux sont $\iPass$ et $\iReturn{e}$.
-
-Les cas de la séquence et de l'affectation ont été utilisés dans l'exemple
-ci-dessus.
+Les cas de la séquence et de l'évaluation d'une expression sont sans surprise.
 
 \begin{mathpar}
   \semrule{Seq}
