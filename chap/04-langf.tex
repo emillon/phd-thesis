@@ -772,6 +772,7 @@ Une valeur peut être, ou contenir, une référence vers une variable de la pile
 La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
 $-1$ sinon.
 
+\begin{minipage}{0.3\textwidth}
 \begin{align*}
     \cH{\widehat{c}} &= -1 \\
     \cH{\widehat{f}} &= -1 \\
@@ -779,15 +780,16 @@ $-1$ sinon.
     \cH{\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}} &= \max_{i∈[1;n]} \cH{v_i} \\
     \cH{\widehat{\eArray{v_1,…,v_n}}} &= \max_{i∈[1;n]} \cH{v_i}
 \end{align*}
-
+\end{minipage}
 où:
-
+\begin{minipage}{0.3\textwidth}
 \begin{align*}
     \cHphi{(x)} &= -1 \\
     \cHphi{(n,x)} &= n \\
     \cHphi{φ\widehat{.}l} &= \cHphi{φ} \\
     \cHphi{φ\widehat{[n]}} &= \cHphi{φ}
 \end{align*}
+\end{minipage}
 
 \end{definition}
 
