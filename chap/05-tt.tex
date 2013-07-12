@@ -701,7 +701,7 @@ Grâce à ce jugement, on peut donner la définition suivante.
         \irule{M-DeclClean}
             { \mcomp{Γ, x:t}{m}
             }
-            { \mcomp{Γ}{\cCleanVar{m}{x}} }
+            { \mcomp{Γ}{\cCleanVar{m - x}{x}} }
 
         \irule{M-Write}
             { \mcomp{Γ}{m}
