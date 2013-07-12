@@ -806,14 +806,24 @@ auquel cas on applique l'hypothèse de récurrence.
 \paragraph{\textsc{M-Decl}:} % {{{
 Idem, on distingue selon si $φ$ fait référence à la variable déclarée ou non.
 % }}}
-\paragraph{\textsc{M-Pop}:} % {{{ TODO
+\paragraph{\textsc{M-Pop}:} % {{{
+Les $φ$ faisant référence à un des $x_i$ ne sont pas typables car $x_i ∉ Γ$. Il
+reste donc les variables plus basses dans la pile pour lesquelles l'hypothèse de
+récurrence s'applique.
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{
 Il est impossible que $φ$ fasse référence à $x$ car $x ∉ Γ$. Donc $Γ ⊢ φ : t$ et
 l'hypothèse de récurrence s'applique.
 % }}}
-\paragraph{\textsc{M-Write}:} % {{{ TODO
+\paragraph{\textsc{M-Write}:} % {{{
+
+On distingue selon si le $φ$ utilisé lors de la lecture est le même que celui
+lors de l'écriture. Si oui, il suffit d'appliquer \textsc{PutGet}:
+$m[φ ← v]_Φ[φ]_Φ = v$. Sinon, on applique l'hypothèse de récurrence.
+
 % }}}
+
+% TODO ces démos sont n'imp
 
 \end{proof}
 
