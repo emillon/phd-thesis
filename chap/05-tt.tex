@@ -670,14 +670,18 @@ Grâce à ce jugement, on peut donner la définition suivante.
 
         \irule{M-Push}
             { \mcomp{Γ}{m}
-           \\ ?
+           \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
+           \\ …
+           \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
+            { \mcomp{Γ, x_1:t_1, …, x_n:↦t_n}
+                     {\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
             }
 
         \irule{M-Pop}
-            { \mcomp{Γ}{m}
-           \\ ?
+            { \mcomp{Γ, x_1:t_1, …, x_n:t_n}{m}
+           \\ m = (s, g)
+           \\ s_1 = (x_1↦v_1, …, x_n↦v_n)
             }
             { \mcomp{Γ}{\cPop{m}}
             }
