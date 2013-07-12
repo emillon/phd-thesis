@@ -1517,21 +1517,14 @@ transition est faite vers cet état d'erreur.
 
 Cela est aussi vrai d'une sous-expression ou sous-instruction: si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
-de sous-expression ou sous instruction est définie en fonction des contextes $C$
-(figure~\ref{fig:eval-err}).
+de sous-expression ou sous instruction est définie en fonction des contextes
+$C$.
 
-\begin{figure}[h]
 \begin{mathpar}
-  \ruleheader{$Ξ → Ω$}
-
   \semrule{Exp-Err}
 
   \semrule{Eval-Err}
 \end{mathpar}
-
-\caption{Cas d'erreur lors d'une évaluation}
-\label{fig:eval-err}
-\end{figure}
 
 \section{Phrases et exécution d'un programme}
 
@@ -1545,34 +1538,23 @@ L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
-avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}). Notons que
+avec ce couple (variable, valeur). Notons que
 ces évaluations se font à grands pas.
 
 Enfin, l'exécution d'un programme est sans surprise l'exécution de ses phrases,
 les unes à la suite des autres.
 
-\begin{figure}[h]
 \begin{mathpar}
-  \ruleheader{$\ph{m}{p}{m'}$}
-
   \semrule{T-Exp}
 
   \semrule{T-Var}
-
-  \ruleheader{$\phstar{m}{p}{m'}$}
 
   \semrule{T*-Nil}
 
   \semrule{T*-Cons}
 
-  \ruleheader{$\phprog{P}{m}$}
-
   \semrule{Prog}
 \end{mathpar}
-
-\caption{Évaluation des phrases d'un programme}
-\label{fig:eval-toplevel}
-\end{figure}
 
 \section*{Conclusion}
 
