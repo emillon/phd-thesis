@@ -865,8 +865,12 @@ variable ne peuvent pas masquer de variables visibles existantes
 (page~\pageref{page:decl-masquage}).
 
 %}}}
-\paragraph{\textsc{Decl-Return}:}%{{{ TODO
-\[ \semrule{Decl-Return} \]
+\paragraph{\textsc{Decl-Return}:}%{{{
+
+La compatibilité mémoire se démontre de la même manière que pour
+\textsc{Decl-Pass}. Il reste à montrer que $Γ ⊢ \iReturn{v''}$, ce qui fait de
+manière analogue au cas \textsc{Exp-Call-Return}.
+
 %}}}
 \paragraph{\textsc{Decl-Ctx}:}%{{{ TODO
 \[ \semrule{Decl-Ctx} \]

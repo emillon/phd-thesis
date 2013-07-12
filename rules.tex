@@ -386,9 +386,11 @@
                      }
     }
     {Decl-Return}{ \irule{Decl-Return}
-                        { m' = \cCleanVar{m}{(|m|, x)} }
+                        { m' = \cCleanVar{m}{(|m|, x)}
+                       \\ v'' = \cVV{v'}{(|m|, x)}
+                        }
                         { \mm{m}{ \iDecl{x}{v}{\iReturn{v'}} }
-                            {m'}{\iReturn{v'}}
+                            {m'}{\iReturn{v''}}
                         }
     }
     {Decl-Ctx}{ \irule{Decl-Ctx}
