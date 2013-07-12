@@ -404,7 +404,7 @@ Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
           division par zéro ($ \opbin ∈ \{ / ; \% ; /. \} $ et
           $ v_2 = 0 $) où alors $v_1~\widehat{\opbin}~v_2 = \serr{div}$. Dans ce cas, on a
           alors par \textsc{Exp-Err} $\msi{m}{e} → \serr{div}$.
-% TODO pourquoi \serr{typ} ne peut pas être levé
+          Notons que comme les opérandes sont bien typées, $\serr{typ}$ ne peut pas être levée.
 
         \item $∃ (e'_2, m''), \mm{m'}{e_2}{m''}{e'_2}$.
 
@@ -872,8 +872,25 @@ La compatibilité mémoire se démontre de la même manière que pour
 manière analogue au cas \textsc{Exp-Call-Return}.
 
 %}}}
-\paragraph{\textsc{Decl-Ctx}:}%{{{ TODO
+\paragraph{\textsc{Decl-Ctx}:}%{{{
 \[ \semrule{Decl-Ctx} \]
+
+On part de $Γ ⊢ \iDecl{x}{v}{i}$.
+Par inversion, il existe $t$ tel que
+$Γ ⊢ v : t$ et $Γ' ⊢ i$ où $Γ' = Γ, x:t$.
+
+Comme $\mcomp{Γ}{m}$, le lemme~\ref{lemma:repr} s'applique : il existe
+$τ$ tel que $m ⊧ v : τ$ où $\tComp{τ}{t}$.
+De plus $x ∉ Γ$ car il n'y a pas de masquage (page~\pageref{page:decl-masquage}).
+
+En appliquant \textsc{M-Decl}, on obtient donc que $\mcomp{Γ'}{m'}$.
+
+On applique alors l'hypothèse d'induction à $\mm{m'}{i}{m''}{i'}$. Il vient que
+$Γ' ⊢ i'$ et $\mcomp{Γ'}{m''}$.
+
+On a donc $Γ' ⊢ \iDecl{x}{v'}{i'}$ par \textsc{Decl} et
+$\mcomp{Γ}{\cCleanup{m'''}}$ par \textsc{M-DeclClean}.
+
 %}}}
 \paragraph{\textsc{If-False}:}%{{{
 D'après le lemme d'inversion, $Γ ⊢ i_f$.
