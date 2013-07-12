@@ -796,11 +796,17 @@ $φ$ ne serait pas typable. On peut donc appliquer l'hypothèse d'induction.
 % TODO semi-bien
 
 % }}}
-\paragraph{\textsc{M-Push}:} % {{{ TODO
+\paragraph{\textsc{M-Push}:} % {{{
+
+On procède d'une manière similaire. $φ$ peut faire référence soit à un des
+$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable plus profonde
+auquel cas on applique l'hypothèse de récurrence.
+
+% }}}
+\paragraph{\textsc{M-Decl}:} % {{{
+Idem, on distingue selon si $φ$ fait référence à la variable déclarée ou non.
 % }}}
 \paragraph{\textsc{M-Pop}:} % {{{ TODO
-% }}}
-\paragraph{\textsc{M-Decl}:} % {{{ TODO
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{ TODO
 % }}}
