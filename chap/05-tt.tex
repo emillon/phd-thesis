@@ -1136,8 +1136,6 @@ le graphe suivant.
 \begin{theorem}[Progrès]
 \label{thm:progres}
 
-% TODO modifier progrès pour ajouter la clause cleanup
-
 Supposons que $Γ ⊢ i$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
 
 Alors l'un des cas suivants est vrai:
@@ -1294,25 +1292,23 @@ Alors:
 \begin{itemize}
 \item
     Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$,
-    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ e' : t$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ e' : t$.
 
 \item
     Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
-    alors $\mcomp{Γ}{m'}$ et $m ⊧ v : τ$ où $\tComp{τ}{t}$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
 
 \item
     Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
-    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ i'$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ i'$.
 
 \item
     Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$,
-    alors $\mcomp{Γ}{m'}$ et $Γ ⊢ lv' : t$.
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ lv' : t$.
 
 \item
     Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$,
-    alors $\mcomp{Γ}{m'}$ et $\semtypphi{m}{φ}{τ}$ où $\tComp{τ}{t}$.
-
-% TODO la compat est à faire sur m'
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $\semtypphi{m'}{φ}{τ}$ où $\tComp{τ}{t}$.
 
 \end{itemize}
 
@@ -1320,6 +1316,16 @@ Alors:
   modifie pas son type et préserve le typage de la mémoire.
 
 \end{theorem}
+
+\paragraph{Remarque}
+
+Dans la formulation classique de ce théorème, on indique que $\mcomp{Γ}{m}$
+implique $\mcomp{Γ}{m'}$. Ici, la conclusion est moins forte en indiquant
+seulement que $\mcomp{Γ}{\cCleanup{m'}}$. Cela indique que la compatibilité
+mémoire est établie mais peut localement introduire des pointeurs fous. En fait,
+comme une étape de $\phx\cCleanup$ est faite après chaque appel de fonction et
+chaque déclaration, la propriété classique est vraie mais uniquement sur un plus
+grand pas d'exécution.
 
 La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 
