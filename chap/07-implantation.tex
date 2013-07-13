@@ -14,27 +14,27 @@ niveau que \langname donc les règles sont légèrement différentes.
 \section{Newspeak}
 \label{sec:npk}
 
-Newspeak~\cite{newspeak} est un langage conçu pour être à la fois:
+Newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
+statiques, contrairement à des langages conçus pour les programmeurs comme C.
+Plusieurs points en font un langage pratique à utiliser. Tout d'abord, il est
+suffisamment expressif pour compiler tout C, y compris de nombreuses extensions
+GNU utilisées dans le noyau Linux (section~\label{sec:gnuc}), et des traducteurs
+automatiques depuis C et Ada existent (section~\label{sec:compil}).
 
-\begin{itemize}
-  \item Précis: sa sémantique est définie formellement dans~\cite{newspeak}
-  \item Expressif: la plupart des primitives présentes dans les
-    langages de bas niveau sont compilables en Newspeak.
-  \item Simple: peu de primitives sont présentes.
-  \item Minimal: aucun élément syntaxique ne peut être exprimé
-    comme combinaison d'autres.
-% TODO ?
-  \item Explicite: les constructions sont toutes indépendantes du
-    contexte.
-  \item Orienté analyse: les primitives sont décorées d'informations
-    reflétant leur validité (tests de bornes, etc)
-  \item Indépendant de l'architecture: toutes les caractéristiques comme
-    la taille des types ou l'alignement des structures sont rendues explicites.
-\end{itemize}
+Ensuite, ses instructions sont orthogonales et minimales: il existe en général
+une seule manière de faire les choses. Par exemple, le flot de contrôle est
+restreint à la boucle infinie et au saut en avant («\emph{break}» généralisé).
+
+Enfin, lorsque certaines constructions sont ambigües, un choix est
+fait. Par exemple, l'évaluation des arguments d'une fonction est
+faite de manière explicite, les tailles des types sont indiqués à chaque
+déclaration de variable, etc. Sa sémantique d'exécution (ainsi qu'une partie des
+étapes de compilation depuis C) est décrites dans \cite{newspeak}.
 
 % TODO syntaxe de npk
 
 \section{Chaîne de compilation}
+\label{sec:compil}
 
 \begin{figure}
   \centering
@@ -83,9 +83,6 @@ Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle for, Newspeak fournit une unique boucle
 \npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
 est toujours un saut vers l'avant (similaire à un «\emph{break}» généralisé).
-
-La sémantique de Newspeak et la traduction de C vers Newspeak sont décrites dans
-\cite{newspeak}.
 
 Newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
