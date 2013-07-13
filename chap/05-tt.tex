@@ -138,7 +138,10 @@ Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais
 n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
-% TODO mettre ces choses là à leur place
+Le typage correspond à la définition des trois jugements suivants. Les deux
+premiers sont mutuellement récursifs car une instruction peut consister en
+l'évaluation d'une expression, et la définition d'une fonction repose sur le
+typage de son corps.
 
 \paragraph{Typage d'une expression:} on note de la manière suivante le fait
 qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
