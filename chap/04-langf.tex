@@ -1402,13 +1402,14 @@ supprimer les références aux variables qui ont disparu grâce aux opérateurs
 $\phx\cCleanup$ et $\phxx\cV$.
 
 \label{page:return-fonction}
-On suppose que l'exécution de chaque fonction se termine par une instruction
-$\iReturn{\cdot}$. Cela veut dire que la dernière instruction doit être soit de cette
-forme, soit par exemple une alternative dans laquelle les deux branches se
-terminent par un $\iReturn{\cdot}$. C'est une propriété qui peut être détectée
-statiquement avant l'exécution. Néanmoins, dans la syntaxe concrète, on peut
-supposer qu'un $\iReturn{\eUnit}$ est inséré automatiquement en fin de fonction
-lorsqu'aucun $\iReturn{\cdot}$ n'est présent dans son corps.
+On suppose deux choses sur chaque fonction: d'une part, les noms de ses
+arguments sont deux à deux différents, et d'autre part, son corps se termine par
+une instruction $\iReturn{\cdot}$. Cela veut dire que la dernière instruction
+doit être soit de cette forme, soit par exemple une alternative dans laquelle
+les deux branches se terminent par un $\iReturn{\cdot}$. C'est une propriété qui
+peut être détectée statiquement avant l'exécution. Néanmoins, dans la syntaxe
+concrète, on peut supposer qu'un $\iReturn{\eUnit}$ est inséré automatiquement
+en fin de fonction lorsqu'aucun $\iReturn{\cdot}$ n'est présent dans son corps.
 
 \begin{mathpar}
     \semrule{Exp-Call-Ctx}
@@ -1514,8 +1515,8 @@ L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
-avec ce couple (variable, valeur). Notons que
-ces évaluations se font à grands pas.
+avec ce couple (variable, valeur). On suppose que les variables globales ont
+toutes des noms différents. Notons que ces évaluations se font à grands pas.
 
 Enfin, l'exécution d'un programme est sans surprise l'exécution de ses phrases,
 les unes à la suite des autres.
