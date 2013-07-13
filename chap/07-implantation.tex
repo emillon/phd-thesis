@@ -442,6 +442,28 @@ cet opérateur peut être vu que comme un «plus» unaire typé $(\tInt) → \tI
 
 Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
+\section{Performance}
+
+Sur les exemples testés nous n'avons pas noté de délai d'exécution notable. Cela
+est dû au fait que l'algorithme d'inférence est assez efficace: son temps
+d'exécution dépend essentiellement de la taille des types du programme, et pour
+du code C ils sont en général très simples.
+
+La compilation de C vers \newspeak peut être plus coûteuse, notamment lorsque
+le fichier d'entrée est de taille importante. Le temps de traitement est plus
+long que celui d'un compilateur comme GCC ou \texttt{clang}, mais reste
+raisonnable. \ctonewspeak a été utilisé pour compiler des projets de l'ordre du
+million de lignes de code source prétraité, et son exécution ne prenait pas plus
+de quelques minutes.
+
+Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres
+optimisations sont certainement possibles, mais la performance n'est pas
+bloquante pour le moment: on ne compile en général qu'une seule fois le code à
+analyser.
+
+\section{Conclusion}
+
 % TODO pas de conclusion
+
 
 % vim: spelllang=fr
