@@ -627,28 +627,7 @@ It is also depicted in figure~\ref{fig:eval-steps}.
 
 \end{figure}
 
-Evaluation rules are given in annex in figures~X and~Y. Most are simple, but a
-few deserve to be explained in detail.
 
-\paragraph{Error propagation} is done in two cases. First, if an expression
-produces an error (seen as a value), then the same error (seen as a state $Ξ$)
-propagates to the interpreter. Second, if a sub-expression causes an error, then
-a bigger expression causes the same error.%
-{ \small
-\begin{mathpar}
-    \semrule{Exp-Err}
-
-    \semrule{Eval-Err}
-\end{mathpar}}%
-
-\paragraph{Programs} are evaluated one sentence after another. Declarations add
-a global variable.
-
-\begin{mathpar}
-    \semrule{T-Exp}
-
-    \semrule{T-Var}
-\end{mathpar}
 % }}}
 
 \section{Typage}%{{{

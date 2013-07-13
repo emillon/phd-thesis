@@ -418,11 +418,11 @@
               { }
               { \mmi{m}{\iReturn{v};i}{m}{\iReturn{v}} }
     }
-    {T-Exp}{ \irule{T-Exp}
+    {ET-Exp}{ \irule{ET-Exp}
                 {\mm{m}{e}{m'}{v}}
                 {\ph{m}{e}{m'}}
             }
-    {T-Var}{ \irule{T-Var}
+    {ET-Var}{ \irule{ET-Var}
                 {\mm{m}{e}{m'}{v}}
                 {\ph{(s,g)}{x = e}{(s, (x ↦ v)::g)}}
     }

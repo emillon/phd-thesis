@@ -1374,25 +1374,15 @@ On suppose en outre que l'évaluation de $p$ termine.
 
 Alors $∃ m'. \ph{m}{p}{m'}$.
 
-% TODO passer à un plus petit pas.
-
 \end{theorem}
 
 \begin{proof}
 
-On distingue selon la dernière règle de typage appliquée dans la dérivation de
-$\typh{Γ}{p}{Γ'}$.
+Ici il n'y a pas de difficulté puisque la contrainte (forte) de terminaison se
+lit $\mm{m}{e}{m'}{v'}$ où $e$ est l'expression apparaissant dans $p$.
 
-\paragraph{\textsc{T-Exp}:} % {{{
-
-On applique le théorème de progrès à $e$. Puisque l'évaluation termine, il
-existe $v$ et $m'$ tels que $\mm{m}{e}{m'}{v}$. Alors on peut appliquer
-\textsc{T-Exp}.
-
-%}}}
-\paragraph{\textsc{T-Var}:} % {{{
-Idem avec \textsc{T-Var}.
-%}}}
+Selon la forme de $p$, il suffit alors d'appliquer la règle
+\textsc{ET-Exp} ou \textsc{ET-Var}.
 
 \end{proof}
 
@@ -1413,7 +1403,24 @@ Alors $\mcomp{Γ'}{m'}$.
 \end{theorem}
 
 \begin{proof}
-% TODO
+
+On distingue selon la dernière règle appliquée dans la dérivation de
+$\ph{m}{p}{m'}$.
+
+\paragraph{\textsc{ET-Exp}:}%{{{
+La dernière règle appliquée pour dériver $typh{Γ}{p}{Γ'}$ est donc
+\textsc{T-Exp}. D'après les prémisses de ces deux règles, on a donc
+$Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$. Alors, d'après le théorème de préservation,
+$\mcomp{Γ}{m'}$.
+%}}}
+\paragraph{\textsc{ET-Var}:}%{{{ TODO
+\begin{mathpar}
+    \semrule{ET-Var}
+
+    \disprule{T-Var}
+\end{mathpar}
+%}}}
+
 \end{proof}
 
 \section*{Conclusion}
