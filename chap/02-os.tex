@@ -1,5 +1,5 @@
 Le système d'exploitation est le programme qui permet à un système informatique
-d'exécuter d'autre programmes. Son rôle est donc capital et ses responsabilités
+d'exécuter d'autres programmes. Son rôle est donc capital et ses responsabilités
 multiples. Dans ce chapitre, nous allons voir à quoi il sert, et comment il peut
 être implanté. Pour ce faire, nous présentons ici de quoi est constitué un
 sustème Intel 32 bits et ce dont on se sert pour y implanter un système
@@ -29,7 +29,7 @@ cycle :
   \emph{(optionnel)} stocker en la mémoire les données modifiées
 \end{itemize}
 
-Les instructions sont constitués d'un mnémonique (indicant quelle opération
+Les instructions sont constituées d'un mnémonique (indicant quelle opération
 faire) et d'un ensemble d'opérandes. La signification des opérandes dépend du
 mnémonique, mais en général elles permettent de désigner les sources et la
 destination. Les opérandes peuvent avoir plusieurs formes : une valeur
@@ -70,9 +70,9 @@ de langage impératif:
 
 Certaines de ces instructions font référence à la pile par le biais du registre
 \esp. Cette zone mémoire n'est pas gérée de manière particulière. Elle permet de
-la pile des appels de fonction en cours grâce à la manière dont \texttt{jmp} et
-\texttt{ret} fonctionnent. Elle sert aussi à stocker les variables locales des
-fonctions.
+gérer la pile des appels de fonction en cours grâce à la manière dont
+\texttt{jmp} et \texttt{ret} fonctionnent. Elle sert aussi à stocker les
+variables locales des fonctions.
 
 À l'aide de ces quelques instructions on peut implanter des algorithmes
 impératifs. Mais pour faire quelque chose de visible, comme afficher à l'écran
