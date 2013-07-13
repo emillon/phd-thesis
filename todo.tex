@@ -4,16 +4,9 @@ Rq Sarah 01/03
 
 \begin{itemize}
 \item
-  3.2 on ne peut être que partiellement sensible au flot dans ce type
-  d'analyse non ?
-\item
-  dans les techniques classiques, tu as aussi le software model checking
-  et le SMT solving
-\item
   remarque générale sur ce chapitre : pourquoi ne pas parler seulement
   du C puisque tu ne traites ensuite que de cela ?
 \end{itemize}
-
 
 \begin{itemize}
 \item difficultés : récursion
@@ -21,29 +14,8 @@ Rq Sarah 01/03
 \item
   types : citer H98\cite{haskell98}, perl \cite{perlCamelBook}, DAOC\cite{DAOC}
   \& RWH\cite{rwh}?
-\item
-  Analyse de flot :
-Ce que nous voulons vérifier peut être vue comme une propriété de flot. Un tour
-d'horizon des problèmes et techniques existantes peut être trouvé
-dans~\cite{sm-jsac03}.
-
-\item Divers : Taint sequences \cite{mdv10}, % MLP/Mounier
-
-L'interprétation abstraite a été utilisée pour analyser le flot de données entre
-objets~\cite{liang2012taint}.
 
 \end{itemize}
-
-L'analyse de taintage consiste à ajouter des étiquettes au données décrivant
-leur provenance, de manière à ce que chaque accès dangereux soit vérifié à
-l'exécution. Cela se marie bien avec les langages typés dynamiquement, comme le
-montre l'exemple célèbre du mode «souillé» (\emph{tainted}) de
-Perl~\cite{perlCamelBook}. Il est aussi possible, d'appliquer
-cette technique à des langages compilés~\cite{clause-etal-issta07,oakland10}.
-En revanche cela est plus délicat car l'environnement d'exécution n'est pas
-autant contrôlé.
-
-% TODO [E]: à préciser
 
 \begin{itemize}
 \item
@@ -797,10 +769,5 @@ the type of global functions.%}}}
 
 % Emmanuel 6/5
 
-  %Sur la première partie, je dirai que le point le plus important est de justifier ta proposition à la fin du ch
-%+apitre 3,
-   %et pour cela peut-être enlevé certains discussions préalables pour faire de 3.7 une vraie section complètemen
-%+t argumentée.
-  %Comme cela tu peux décrire CQual de manière neutre, puis dans la partie choix dire pourquoi avoir des types qu
-%+alifiés te semble être la bonne démarche
-    %avec un système de types plus simple et plus facile à exprimer.
+  %Sur la première partie, je dirai que le point le plus important est de
+  %justifier ta proposition à la fin du ch +apitre 3,

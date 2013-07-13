@@ -378,6 +378,8 @@ Le système Flow Caml~\cite{flowcaml} repose également sur cette approche, en
 ajoutant une étiquette de sécurité à chaque type. Par exemple, les entiers sont
 typés \texttt{'a int} où \texttt{'a} est le niveau de sécurité associé. Couplé à
 un système d'effets, cela permet de suivre la provenance de chaque expression.
+Cette technique d'analyse de flot permet d'encoder de nombreuses propriétés de
+sécurité~\cite{sm-jsac03}.
 
 Ces techniques de typage sont séduisantes parce qu'elles sont en général simples
 à mettre en place: à l'aide d'un ensemble de règles, on attribue un type à
