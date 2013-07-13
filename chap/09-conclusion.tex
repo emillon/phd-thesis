@@ -49,7 +49,12 @@ D'autre part, ce prototype a été utilisé pour confirmer l'existence d'un bug
 dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
 vérifier du code de production à l'aide de techniques de typage.
 
-\section{Limitations et travaux futurs} % TODO[S] renommer
+\section{Différences avec C}
+
+\langname a été construit pour pouvoir ajouter un système de types à un langage
+proche de C. Ces deux langages diffèrent donc sur certains points. On détaille
+ici ces différences et selon les cas, comment les combler ou pourquoi cela est
+impossible de manière inhérente.
 
 \paragraph{Arithmétique}
 
@@ -71,7 +76,7 @@ similaire: les littéraux entier ont le type de précision arbitraire
 \texttt{Integer} et est converti dans le bon type en appelant la fonction
 \texttt{fromInteger} du type synthétisé à partir de l'environnement.
 
-\paragraph{Transtypage}
+\paragraph{Transtypage et unions}
 
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
 de capturer de nombreuses constructions qui sont possibles, ou même idiomatiques
@@ -94,14 +99,20 @@ cas, il faudrait encapsuler la manipulation dans une fonction et y ajouter une
 information de type explicite, comme $\texttt{float\_exponent} : (\tFloat) →
 \tInt$.
 
-En fait, les casts entre types entiers ne posent pas de problème. Ceux entre
-% TODO[S] pourquoi
-types pointeurs ne posent pas de problème non plus puisqu'au moment de la
-traduction en \langname{} on efface les étiquettes de types sur les pointeurs.
+Pour ces conversions de types, on distingue en fait plusieurs cas: les
+conversions entre types numériques, entre types pointeurs, ou entre un type
+entier et un type pointeur.
 
-Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
-casts, on peut néanmoins trouver la solution suivante.
-% TODO pas clair
+Le premier ne pose pas de problème: il est toujours possible de donner une
+sémantique à une conversion entre deux types numériques. Dans le cas éventuel ou
+une conversion n'est pas possible, on peut signaler une erreur à l'exécution (de
+la même nature qu'une divition par zéro).
+
+Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
+types pointeurs revient à convertir entre les types pointés.
+
+Le vrai problème provient des conversions entre entiers et pointeurs. Une
+solution naïve serait typée:
 
 \begin{mathpar}
 \irule{PtrInt-Bad}
@@ -113,8 +124,9 @@ casts, on peut néanmoins trouver la solution suivante.
   { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
 \end{mathpar}
 
-Cela pose problème car il est alors possible de créer une fonction qui convertit
-n'importe quel type pointeur en n'importe quel autre type pointeur:
+Tout d'abord, cela pose problème car il est alors possible de créer une fonction
+qui convertit n'importe quel type pointeur en n'importe quel autre type
+pointeur:
 
 \begin{align*}
   ⊢ &~ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} } \\
@@ -132,9 +144,9 @@ beaucoup plus précise que notre modèle mémoire actuel. Celle-ci dépend de
 beaucoup de paramètres: dans quel sens croit la pile, quelle est la taille des
 types, etc.
 
-La conversion dans le sens inverse, d'entier vers pointeur, est
-encore plus complexe. D'une part cela suppose qu'on puisse retrouver la taille
-des valeurs à partir de leur adresse. Dans de nombreux langages, on résout ce
+La conversion dans le sens inverse, d'entier vers pointeur, est encore plus
+complexe. Entre autres, cela suppose qu'on puisse retrouver la taille des
+valeurs à partir de leur adresse. Dans de nombreux langages, on résout ce
 problème en ajoutant la taille de chaque valeur avec elle.
 
 Mais cela fait s'éloigner du modèle mémoire de C, où le déréférencement porte
@@ -144,6 +156,9 @@ nous avons éliminée dans \langname. Il y a une incompatibilité entre ces deux
 approches : pour pouvoir typer la mémoire, il faut associer un type à chaque
 zone mémoire, alors qu'avec une sémantique de bas niveau les valeurs sont créées
 à la volée par le déréférencement.
+
+% TODO types fonction
+
 
 % TODO[S] ok mais pas dans npk, les valeurs conservent leur type
 
