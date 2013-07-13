@@ -111,8 +111,12 @@ la même nature qu'une divition par zéro).
 Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
 types pointeurs revient à convertir entre les types pointés.
 
-Le vrai problème provient des conversions entre entiers et pointeurs. Une
-solution naïve serait typée:
+Le vrai problème provient des conversions entre entiers et pointeurs, qui sont
+des données fondamentalement différentes. Le même problème se pose d'ailleurs si
+on cherche à convertir une fonction en entier ou en pointeur, même si les
+raisons valables pour faire cela sont moins nombreuses.
+Si on s'en tient aux conversions entre entiers et pointeurs, une manière naïve
+de typer ces opération est:
 
 \begin{mathpar}
 \irule{PtrInt-Bad}
@@ -153,17 +157,9 @@ Mais cela fait s'éloigner du modèle mémoire de C, où le déréférencement p
 sur une adresse mais également sur une taille (portée implicitement par le type
 du pointeur). D'ailleurs le langage \newspeak{} conserve cette distinction, que
 nous avons éliminée dans \langname. Il y a une incompatibilité entre ces deux
-approches : pour pouvoir typer la mémoire, il faut associer un type à chaque
-zone mémoire, alors qu'avec une sémantique de bas niveau les valeurs sont créées
-à la volée par le déréférencement.
-
-% TODO types fonction
-
-
-% TODO[S] ok mais pas dans npk, les valeurs conservent leur type
-
-% (e) le pb est qu'on a besoin du programme pour typer la mémoire, à l'exécution
-% il n'y a que des octets
+approches : dans le cas de C (et de \newspeak), on laisse le programmeur gérer
+l'organisation de la mémoire alors qu'avec \langname ces choix sont faits par le
+langage. En contrepartie, cela permet d'avoir d'assurer la sûreté du typage.
 
 \paragraph{Environnement d'exécution}
 
