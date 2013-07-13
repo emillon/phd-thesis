@@ -212,14 +212,13 @@ celle-ci). Le typage est alors direct:
 \end{mathpar}
 
 En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
-états mémoire: $m = (s, g, h)$ où $h$ associe à une étiquette numérique une
-valeur (comme les globales mais indexées par des entiers plutôt que par leur
-% TODO[S] expliquer le h
-nom). La libération de mémoire est problématique parce qu'il faut faire
-confiance au programmeur pour ne pas accéder aux zones mémoires libérées. Encore
-une fois, on peut utiliser une analyse préalable comme~\cite{ifm10}. Il est sûr
-(mais pas possible en pratique) d'ignorer les commandes de libération de
-mémoire. 
+états mémoire: $m = (s, g, h)$ où $h$ est une liste d'association entre des
+entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
+entière et met à jour $h$. La libération de mémoire est en revanche
+problématique parce qu'il faut faire confiance au programmeur pour ne pas
+accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
+analyse préalable comme~\cite{ifm10}. Il est sûr (mais pas possible en pratique)
+d'ignorer les commandes de libération de mémoire.
 
 % TODO régions
 
