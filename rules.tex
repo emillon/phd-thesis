@@ -200,8 +200,8 @@
                 { \typh{Γ}{e}{Γ} }
             }
     {T-Var}{ \irule{T-Var}
-                { Γ ⊢ e : t \\
-                  Γ' = (x, t), Γ
+                { Γ ⊢ e : t
+               \\ Γ' = Γ, x:t
                 }
                 { \typh{Γ}{x=e}{Γ'} }
             }
@@ -423,8 +423,11 @@
                 {\ph{m}{e}{m'}}
             }
     {ET-Var}{ \irule{ET-Var}
-                {\mm{m}{e}{m'}{v}}
-                {\ph{(s,g)}{x = e}{(s, (x ↦ v)::g)}}
+                {\mm{m}{e}{m'}{v}
+               \\ m'  = (s, g)
+               \\ m'' = (s, (x ↦ v)::g)
+                }
+                {\ph{m}{x = e}{m''}}
     }
     {T*-Nil}{ \irule{T*-Nil}
                  { }

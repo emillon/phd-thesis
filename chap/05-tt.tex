@@ -1408,18 +1408,24 @@ On distingue selon la dernière règle appliquée dans la dérivation de
 $\ph{m}{p}{m'}$.
 
 \paragraph{\textsc{ET-Exp}:}%{{{
-La dernière règle appliquée pour dériver $typh{Γ}{p}{Γ'}$ est donc
+La dernière règle appliquée pour dériver $\typh{Γ}{p}{Γ'}$ est donc
 \textsc{T-Exp}. D'après les prémisses de ces deux règles, on a donc
 $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$. Alors, d'après le théorème de préservation,
 $\mcomp{Γ}{m'}$.
 %}}}
-\paragraph{\textsc{ET-Var}:}%{{{ TODO
-\begin{mathpar}
-    \semrule{ET-Var}
+\paragraph{\textsc{ET-Var}:}%{{{
 
-    \disprule{T-Var}
-\end{mathpar}
-%}}}
+Ici, la dérivation de $\typh{Γ}{p}{Γ'}$ termine par \textsc{T-Var}.
+D'après leurs prémisses, on a donc :
+$Γ ⊢ e : t$, $Γ' = Γ, x:t$, et
+$m'' = (s, (x ↦ v)::g)$ où $(s, g) = m'$
+(on cherche à prouver que $\mcomp{Γ'}{m''}$).
+
+En appliquant le théorème de préservation, on obtient que $Γ ⊢ v : t$ et
+$\mcomp{Γ}{m'}$. D'après le lemme~\ref{lemma:repr}, il existe $τ$ tel que
+$m' ⊧ v : τ$ où $\tComp{τ}{t}$. On peut alors appliquer \textsc{M-Global} qui
+nous donne que $\mcomp{Γ'}{m''}$.
+% }}}
 
 \end{proof}
 
