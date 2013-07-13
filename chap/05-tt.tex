@@ -111,28 +111,33 @@ polymorphisme.
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
-Plus précisément, un environnement $Γ$ est une liste de couples (variable,
-type), c'est-à-dire une suite finie ${(γ_i)}_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
-On utilise les notations suivantes:
+Plus précisément, un environnement $Γ$ est composé de deux listes de couples (variable,
+type): une pour les variables locales, et une pour les variables
+globales
+\footnote{
+    Cette distinction est nécessaire pour les définition de fonction: on
+    remplace la liste des variables locales, mais on conserve le type des
+    variables globales.
+}
+
+Si $Γ = (Γ_G, Γ_L) = ({(γ_i)}_{i∈[1;n]}, {(η_i)}_{i∈[1;m]})$, 
+avec $γ_i = (g_i, t_i)$ et $η_i = (l_i, u_i)$,
+on utilise les notations suivantes:
 
 \begin{align*}
-  x:t ∈ Γ &\eqdef ∃i ∈ [1;n], γ_i = (x, t) \\
-  \cDom{Γ} &\eqdef \{ x_i / i ∈ [1;n] \} \\
-  Γ, x:t  &\eqdef {(γ'_i)}_{i∈[1;n+1]}~\textrm{tel que}
+x:t ∈ Γ &\eqdef ∃i ∈ [1;n], γ_i = (x, t) ∨ ∃i ∈ [1;m], η_i = (x, t) \\
+\cDom{Γ} &\eqdef \{ g_i / i ∈ [1;n] \} ∪ \{ l_i / i ∈ [1;m] \}\\
+\extendGlobal{Γ}{x}{t} &\eqdef ({(γ'_i)}_{i∈[1;n+1]}, Γ_L) ~\textrm{tel que}
                         \begin{cases}
                           ∀ i ∈ [1;n], γ'_i    = γ_i \\
-                                       γ_{n+1} = (x,t) \\
+                                       γ_{n+1} = (x, t) \\
                         \end{cases} \\
-  Γ - x   &\eqdef {(γ'_i)}_{i∈[1;n-1]}~\textrm{tel que}
+\extendLocal{Γ}{x}{t} &\eqdef (Γ_G, {(η'_i)}_{i∈[1;m+1]}) ~\textrm{tel que}
                         \begin{cases}
-                          ∀ i ∈ [1;p-1], γ'_i = γ_i \\
-                          ∀ i ∈ [p;n-1], γ'_i = γ_{i+1} \\
+                          ∀ i ∈ [1;m], η'_i    = η_i \\
+                                       η_{n+1} = (x, t) \\
                         \end{cases}
-                        \mbox{ où } γ_p = (x, t_p)
 \end{align*}
-
-Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ en
-$\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
 
 Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
 n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
@@ -410,8 +415,8 @@ environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes:
 
 \begin{itemize}
 \item
-  on enlève (s'il existe) le couple $\vRet : t_f$ correspondant à la
-  valeur de retour de la fonction appelante
+  on enlève l'ensemble des locales. Cela inclut le couple $\vRet : t_f$
+  correspondant à la valeur de retour de la fonction appelante.
 \item
   on ajoute les types des arguments $a_i : t_i$
 \item
@@ -432,8 +437,8 @@ Le typage des phrases est détaillé dans la figure~\ref{fig:typ-ph}. Le typage
 d'une expression est le cas le plus simple. En effet, il y a juste à vérifier
 que celle-ci est bien typable (avec ce type) dans l'environnement de départ:
 l'environnement n'est pas modifié. En revanche, la déclaration d'une variable
-globale commence de la même manière, mais on enrichit l'environnement de cette
-nouvelle valeur.
+globale commence de la même manière, mais on enrichit l'environnement de typage
+des globales de cette nouvelle association.
 
 \begin{figure}[h]
 
@@ -681,16 +686,17 @@ dans la figure~\ref{fig:comp-mem}.
            \\ m ⊧ v : τ
            \\ \tComp{τ}{t}
             }
-            { \mcomp{Γ, x:t}{(s, ((x↦v)::g))} }
+            { \mcomp{\extendGlobal{Γ}{x}{t}}{(s, ((x↦v)::g))} }
 
         \irule{M-Push}
             { \mcomp{Γ}{m}
            \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
            \\ …
            \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
+           \\ Γ  = (Γ_G, Γ_L)
+           \\ Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n] ) % TODO le \vRet ?
             }
-            { \mcomp{Γ, x_1:t_1, …, x_n:t_n}
-                     {\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
+            { \mcomp{Γ'}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
             }
 
         \irule{M-Pop}
@@ -703,7 +709,7 @@ dans la figure~\ref{fig:comp-mem}.
            % TODO peut etre ajouter le R
             }
             { \mcomp{Γ}{\cCleanup{\cPop{m}} }
-            }
+            } % TODO utile???
 
         \irule{M-Decl}
             { \mcomp{Γ}{m}
@@ -711,10 +717,10 @@ dans la figure~\ref{fig:comp-mem}.
            \\ \tComp{τ}{t}
            \\ x ∉ Γ
             }
-            { \mcomp{Γ, x:t}{\cExtend{m}{x}{v}} }
+            { \mcomp{\extendLocal{Γ}{x}{t}}{\cExtend{m}{x}{v}} }
 
         \irule{M-DeclClean}
-            { \mcomp{Γ, x:t}{m}
+            { \mcomp{\extendLocal{Γ}{x}{t}}{m}
             }
             { \mcomp{Γ}{\cCleanVar{m - x}{x}} }
 
@@ -935,12 +941,12 @@ théorèmes.
     \end{cases}
   \]
 
-\item Fonction: si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
+\item Fonction: si $(Γ_G, Γ_L) ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
 $(t_1, …, t_n)$ et $t'$ tels que:
 
   \[ \begin{cases}
     t' = (t_1, …, t_n) → t \\
-    Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t ⊢ i
+    (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t]) ⊢ i
   \end{cases} \]
 
 \item Si $Γ ⊢ lv ← e : t$, alors $Γ ⊢ lv : t$ et $Γ ⊢ e : t$.
@@ -1428,7 +1434,7 @@ $\mcomp{Γ}{m'}$.
 
 Ici, la dérivation de $\typh{Γ}{p}{Γ'}$ termine par \textsc{T-Var}.
 D'après leurs prémisses, on a donc :
-$Γ ⊢ e : t$, $Γ' = Γ, x:t$, et
+$Γ ⊢ e : t$, $Γ' = \extendGlobal{Γ}{x}{t}$, et
 $m'' = (s, (x ↦ v)::g)$ où $(s, g) = m'$
 (on cherche à prouver que $\mcomp{Γ'}{m''}$).
 

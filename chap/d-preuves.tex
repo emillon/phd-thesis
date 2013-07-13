@@ -538,9 +538,10 @@ $f (v_1, …, v_n)$
 avec
 $f = \eFun{\vec{a}}{i}$.
 
-Soient $Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n, \vRet : t$
+Soient $Γ' = (Γ_G, [a_1 : t_1, …, a_n : t_n, \vRet : t])$
 et
-$m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}$.
+$m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}$
+où $Γ = (Γ_G, Γ_L)$.
 
 On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
 d'inversion garantit que $Γ' ⊢ i$).
@@ -782,8 +783,8 @@ $Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t'$
 et
 $∀ i ∈ [1;n], Γ ⊢ v_i : t_i$.
 
-Posons $Γ' = Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t$. Alors par inversions
-successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t$.
+Posons $Γ' = (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t])$ où $Γ = (Γ_G, Γ_L)$. Alors
+par inversions successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t$.
 
 Si on définit $m'' = \cPush{m}{a_1↦v_1, …, a_n↦v_n}$, alors par \textsc{M-Push}
 on obtient que $\mcomp{Γ'}{m''}$. Donc, par le lemme~\ref{lemma:repr}, il existe
@@ -907,7 +908,7 @@ On sait que $Γ ⊢ \eFun{a_1, …, a_n}{i} (v_1, …, v_n)$ et
 $\mcomp{Γ}{m_0}$. D'après le lemme d'inversion, il existe
 $t_1, …, t_n$ tels que $∀i ∈ [1;n], Γ ⊢ v_i : t_i$,
 $Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t$, donc qu'en posant
-$Γ' = Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t$ on a $Γ' ⊢ i$.
+$Γ' = (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t])$ où $Γ = (Γ_G, Γ_L)$ on a $Γ' ⊢ i$.
 
 D'un autre côté, il existe par le lemme~\ref{lemma:repr} des types $τ_i$ tels
 que $∀ i ∈ [1;n], m_0 ⊧ v_i : τ_i$ avec $\tComp{τ_i}{t_i}$. En appliquant

@@ -162,7 +162,7 @@
          }
     {Decl}{ \irule{Decl}
               { Γ ⊢ e : t
-             \\ Γ, x:t ⊢ i
+             \\ \extendLocal{Γ}{x}{t} ⊢ i
               }
               { Γ ⊢ \iDecl{x}{e}{i} }
           }
@@ -184,12 +184,15 @@
                 { Γ ⊢ \iReturn{e} }
             }
     {Fun}{ \irule{Fun}
-             { Γ' = (Γ - \vRet),
-                     a_1 : t_1,
-                     …,
-                     a_n : t_n,
-                     \vRet : t \\
-               Γ' ⊢ i
+             { Γ  = (Γ_G, Γ_L)
+            \\ Γ' = (Γ_G,
+                     [ a_1 : t_1,
+                       …,
+                       a_n : t_n,
+                       \vRet : t
+                     ]
+                    )
+            \\ Γ' ⊢ i
              }
              { Γ ⊢ \eFun{a_1, …, a_n}{i}
                     : (t_1, …, t_n) → t
@@ -199,9 +202,9 @@
                 { Γ ⊢ e : t }
                 { \typh{Γ}{e}{Γ} }
             }
-    {T-Var}{ \irule{T-Var}
+    {T-Var}{ \irule{T-Var} % TODO màj
                 { Γ ⊢ e : t
-               \\ Γ' = Γ, x:t
+               \\ Γ' = \extendGlobal{Γ}{x}{t}
                 }
                 { \typh{Γ}{x=e}{Γ'} }
             }
