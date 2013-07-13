@@ -161,7 +161,12 @@ Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
 décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
 simple. Puisqu'ils sont suffisament proches du lambda calcul simplement typé, on
 peut utiliser une variante de l'algorithme W de Damas et
-Milner~\cite{DamasMilner}. On utilise l'optimisation classique qui consiste à se
+Milner~\cite{DamasMilner}.
+
+Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
+inconnues de type, et d'une fonction pour unifier deux types partiellement
+inconnus. Cet algorithme sera décrit dans la section~\ref{sec:unif}. En
+pratique, on utilise l'optimisation classique qui consiste à se
 reposer sur le partage de références pour réaliser l'unification, plutôt que de
 faire des substitutions explicites. Puisque ces systèmes de types sont
 monomorphes, on présente une erreur si des variable de type libres sont
@@ -170,197 +175,217 @@ présentes.
 À la fin de cette étape, on obtient soit un programme complètement annoté, soit
 une erreur de type.
 
-\begin{figure} % fig:exunif:c {{{
+%\begin{figure} % fig:exunif:c {{{
 
-  \insertcode{ex-unif-c.c}
+  %\insertcode{ex-unif-c.c}
 
-  \caption{Exemple de programme C à compiler}
-\label{fig:exunif:c}
-\end{figure} % }}}
+  %\caption{Exemple de programme C à compiler}
+%\label{fig:exunif:c}
+%\end{figure} % }}}
 
-Prenons l'exemple de la figure~\ref{fig:exunif:c} et typons-le «à la main». On
-commence par oublier toutes les étiquettes de type présentes dans le programme.
-Celui-ci devient alors:
+%Prenons l'exemple de la figure~\ref{fig:exunif:c} et typons-le «à la main». On
+%commence par oublier toutes les étiquettes de type présentes dans le programme.
+%Celui-ci devient alors:
 
-\insertcode{exunif-code.c}
+%\insertcode{exunif-code.c}
 
-La premiere ligne introduit deux variables. On peut noter leurs types respectifs
-(inconnus pour le moment) $t_1$ et $t_2$. La première affectation \texttt{p =
-\&x} implique que les deux côtés du signe «$=$» ont le même type. À gauche, le
-type est $t_2$, et à droite $Ptr(t_1)$. On applique le même raisonnement à la
-seconde affectation: à gauche, le type est $t_1$ et à droite \texttt{Int}. On en
-déduit que le type de x est \texttt{Int} et celui de p est \verb!Ptr(Int)!.
+%La premiere ligne introduit deux variables. On peut noter leurs types respectifs
+%(inconnus pour le moment) $t_1$ et $t_2$. La première affectation \texttt{p =
+%\&x} implique que les deux côtés du signe «$=$» ont le même type. À gauche, le
+%type est $t_2$, et à droite $Ptr(t_1)$. On applique le même raisonnement à la
+%seconde affectation: à gauche, le type est $t_1$ et à droite \texttt{Int}. On en
+%déduit que le type de x est \texttt{Int} et celui de p est \verb!Ptr(Int)!.
 
-\insertcode{lambda-types.ml}
+%\insertcode{lambda-types.ml}
 
-% TODO c'est le code d'un typeur naif
+%% TODO c'est le code d'un typeur naif
 
-Pour implanter cet algorithme, on représente les types de données du programmes
-à typer par une valeur de type \texttt{ml\_type}. En plus des constantes de
-types comme int ou float, et des constructeurs de type comme pair et fun, le
-constructeur Var permet d'exprimer les variables de types (inconnues ou non).
+%Pour implanter cet algorithme, on représente les types de données du programmes
+%à typer par une valeur de type \texttt{ml\_type}. En plus des constantes de
+%types comme int ou float, et des constructeurs de type comme pair et fun, le
+%constructeur Var permet d'exprimer les variables de types (inconnues ou non).
 
-Celles-ci sont numérotées par un int, on suppose avoir à disposition deux
-fonctions manipulant un compteur global d'inconnues.
+%Celles-ci sont numérotées par un int, on suppose avoir à disposition deux
+%fonctions manipulant un compteur global d'inconnues.
 
-\insertcode{exunif-counter.ml}
+%\insertcode{exunif-counter.ml}
 
-De plus, un module gère les environnements de typage. Il peut être implanté avec
-des listes d'association ou des tables de hachage, par exemple. Sa signature
-est:
+%De plus, un module gère les environnements de typage. Il peut être implanté avec
+%des listes d'association ou des tables de hachage, par exemple. Sa signature
+%est:
 
-\insertcode{exunif-env.ml}
+%\insertcode{exunif-env.ml}
 
-Reprenons l'exemple précédent. Partant d'un environnement vide (Env.empty), on
-commence par l'étendre de deux variables. Comme on n'a aucune information, il
-fait allouer des nouveaux noms d'inconnues (qui correspondent à $t_1$ et $t_2$):
+%Reprenons l'exemple précédent. Partant d'un environnement vide (Env.empty), on
+%commence par l'étendre de deux variables. Comme on n'a aucune information, il
+%fait allouer des nouveaux noms d'inconnues (qui correspondent à $t_1$ et $t_2$):
 
-\insertcode{exunif-1.ml}
+%\insertcode{exunif-1.ml}
 
-La première instruction indique que les deux côtés de l'affectation doivent
-avoir le même type.
+%La première instruction indique que les deux côtés de l'affectation doivent
+%avoir le même type.
 
-\insertcode{exunif-2.ml}
+%\insertcode{exunif-2.ml}
 
-\begin{figure}
-  \centering
-  \begin{tikzpicture}
-    [scale=2.3]
+%\begin{figure}
+  %\centering
+  %\begin{tikzpicture}
+    %[scale=2.3]
 
-    \node at (0,  0) (n0a) {t1:};
-    \node at (0, -1) (n0b) {t2:};
+    %\node at (0,  0) (n0a) {t1:};
+    %\node at (0, -1) (n0b) {t2:};
 
-    \node at (1,  0) (n1a) {Var\_type};
-    \node at (2,  0) (n2a) {ref};
-    \node at (3,  0) (n3a) {Unknown 0};
+    %\node at (1,  0) (n1a) {Var\_type};
+    %\node at (2,  0) (n2a) {ref};
+    %\node at (3,  0) (n3a) {Unknown 0};
 
-    \node at (1, -1) (n1b) {Var\_type};
-    \node at (2, -1) (n2b) {ref};
-    \node at (3, -1) (n3b) {Instanciated};
-    \node at (4, -1) (n4b) {Ptr};
+    %\node at (1, -1) (n1b) {Var\_type};
+    %\node at (2, -1) (n2b) {ref};
+    %\node at (3, -1) (n3b) {Instanciated};
+    %\node at (4, -1) (n4b) {Ptr};
 
-    \draw [->] (n1a) -- (n2a);
-    \draw [->] (n2a) -- (n3a);
+    %\draw [->] (n1a) -- (n2a);
+    %\draw [->] (n2a) -- (n3a);
 
-    \draw [->] (n1b) -- (n2b);
-    \draw [->] (n2b) -- (n3b);
-    \draw [->] (n3b) -- (n4b);
+    %\draw [->] (n1b) -- (n2b);
+    %\draw [->] (n2b) -- (n3b);
+    %\draw [->] (n3b) -- (n4b);
 
-    \draw [->] (n4b) -- ++ (0, 0.5) -| (n1a);
+    %\draw [->] (n4b) -- ++ (0, 0.5) -| (n1a);
 
-  \end{tikzpicture}
-  \caption{Partage lors de l'unification}
-\label{fig:unifsharing}
-\end{figure}
+  %\end{tikzpicture}
+  %\caption{Partage lors de l'unification}
+%\label{fig:unifsharing}
+%\end{figure}
 
-Ici il se passe plusieurs choses intéréssantes. D'une part nous faisont appel à
-une fonction externe typeof qui retourne le type d'une expression sous un
-environnement (dans une implantation complète il s'agirait d'un appel récursif).
-Dans ce cas, \texttt{typeof lhs1 env} est identique à \texttt{Env.get lhs1 env}
-et \texttt{typeof rhs1 env} à \texttt{Ptr\_type t1}. L'autre aspect intéressant
-est la dernière ligne: la fonction \texttt{unify} va modifier en place les
-représentations des types afin de les rendre égales. L'implantation de
-\texttt{unify} sera décrite plus tard. Dans ce cas précis, elle va faire pointer
-la référence dans t2 vers t1 (figure~\ref{fig:unifsharing}).
+%Ici il se passe plusieurs choses intéréssantes. D'une part nous faisont appel à
+%une fonction externe typeof qui retourne le type d'une expression sous un
+%environnement (dans une implantation complète il s'agirait d'un appel récursif).
+%Dans ce cas, \texttt{typeof lhs1 env} est identique à \texttt{Env.get lhs1 env}
+%et \texttt{typeof rhs1 env} à \texttt{Ptr\_type t1}. L'autre aspect intéressant
+%est la dernière ligne: la fonction \texttt{unify} va modifier en place les
+%représentations des types afin de les rendre égales. L'implantation de
+%\texttt{unify} sera décrite plus tard. Dans ce cas précis, elle va faire pointer
+%la référence dans t2 vers t1 (figure~\ref{fig:unifsharing}).
 
-Enfin, la seconde affectation se déroule à peu près de la même manière.
+%Enfin, la seconde affectation se déroule à peu près de la même manière.
 
-\insertcode{exunif-3.ml}
+%\insertcode{exunif-3.ml}
 
-Ici \texttt{typeof lhs2 env} est identique à
-\verb!Ptr_type (Env.get "p" env)! et \texttt{typeof lhs2 env} à \texttt{Const\_type Int\_type}. Et dans cas,
-l'unification doit se faire entre t1 et \texttt{Const\_type Int\_type}: cela
-mute la référence derrière t1 (figure~\ref{fig:typeunifref}).
+%Ici \texttt{typeof lhs2 env} est identique à
+%\verb!Ptr_type (Env.get "p" env)! et \texttt{typeof lhs2 env} à \texttt{Const\_type Int\_type}. Et dans cas,
+%l'unification doit se faire entre t1 et \texttt{Const\_type Int\_type}: cela
+%mute la référence derrière t1 (figure~\ref{fig:typeunifref}).
 
-\begin{figure}
-  \begin{tikzpicture}
-    [scale=2.3]
+%\begin{figure}
+  %\begin{tikzpicture}
+    %[scale=2.3]
 
-    \node at (0,  0) (n0a) {t1:};
-    \node at (0, -1) (n0b) {t2:};
+    %\node at (0,  0) (n0a) {t1:};
+    %\node at (0, -1) (n0b) {t2:};
 
-    \node at (1,  0) (n1a) {Var\_type};
-    \node at (2,  0) (n2a) {ref};
-    \node at (3,  0) (n3a) {Instanciated};
-    \node at (4,  0) (n4a) {Const\_type};
-    \node at (5,  0) (n5a) {Int\_type};
+    %\node at (1,  0) (n1a) {Var\_type};
+    %\node at (2,  0) (n2a) {ref};
+    %\node at (3,  0) (n3a) {Instanciated};
+    %\node at (4,  0) (n4a) {Const\_type};
+    %\node at (5,  0) (n5a) {Int\_type};
 
-    \node at (1, -1) (n1b) {Var\_type};
-    \node at (2, -1) (n2b) {ref};
-    \node at (3, -1) (n3b) {Instanciated};
-    \node at (4, -1) (n4b) {Ptr};
+    %\node at (1, -1) (n1b) {Var\_type};
+    %\node at (2, -1) (n2b) {ref};
+    %\node at (3, -1) (n3b) {Instanciated};
+    %\node at (4, -1) (n4b) {Ptr};
 
-    \draw [->] (n1a) -- (n2a);
-    \draw [->] (n2a) -- (n3a);
-    \draw [->] (n3a) -- (n4a);
-    \draw [->] (n4a) -- (n5a);
+    %\draw [->] (n1a) -- (n2a);
+    %\draw [->] (n2a) -- (n3a);
+    %\draw [->] (n3a) -- (n4a);
+    %\draw [->] (n4a) -- (n5a);
 
-    \draw [->] (n1b) -- (n2b);
-    \draw [->] (n2b) -- (n3b);
-    \draw [->] (n3b) -- (n4b);
+    %\draw [->] (n1b) -- (n2b);
+    %\draw [->] (n2b) -- (n3b);
+    %\draw [->] (n3b) -- (n4b);
 
-    \draw [->] (n4b) -- ++ (0, 0.5) -| (n1a);
+    %\draw [->] (n4b) -- ++ (0, 0.5) -| (n1a);
 
-  \end{tikzpicture}
-  \caption{Unification par mutation de références}
-\label{fig:typeunifref}
-\end{figure}
+  %\end{tikzpicture}
+  %\caption{Unification par mutation de références}
+%\label{fig:typeunifref}
+%\end{figure}
 
-L'essence de l'algorithme d'inférence se situe donc dans 2 fonctions. D'une
-part, \texttt{unify} qui réalise l'unification des types grâce à au partage des
-références. D'autre part, la \texttt{typeof} qui encode les règles de typage
-elles-mêmes et les applique à l'aide de \texttt{unify}.
+%L'essence de l'algorithme d'inférence se situe donc dans 2 fonctions. D'une
+%part, \texttt{unify} qui réalise l'unification des types grâce à au partage des
+%références. D'autre part, la \texttt{typeof} qui encode les règles de typage
+%elles-mêmes et les applique à l'aide de \texttt{unify}.
 
-\subsection*{Algorithme d'unification}
+\section{Algorithme d'unification}
+\label{sec:unif}
 
-Voici une implantation de la fonction \texttt{unify}.
+On présente ici la fonction \texttt{unify}. Celle-ci prend en entrée deux
+représentations de types pouvant contenir des inconnues de la forme \texttt{Var
+n}, et retourne une liste de couples $(n, t)$ indiquant les substitutions à
+faire.
 
-Celle-ci prend en entrée deux types $t_1$ et $t_2$. À l'issue de l'exécution de
-\texttt{unify}, ces deux types doivent pouvoir être considérés comme égaux. Si
-ce n'est pas possible, une erreur sera levée.
+Cet algorithme (figure~\ref{fig:algo-unif}) prend un chemin différent selon la
+forme des deux types d'entrée:
 
-La première étape est de réduire ces deux types, c'est-à-dire à transformer les
-constructions \texttt{Var (ref (Instanciated t))} en \texttt{t}.
+\begin{figure}[h]%{{{
+\begin{Verbatim}
+unify (ta, tb):
+    match (ta, tb) with
+        Var na, Var nb ->
+            if na == nb then
+                Return []
+            else
+                Return [(na, tb)]
 
-Ensuite, cela dépend des formes qu'ont les types réduits:
+        Var na, tb ->
+            if occurs(na, tb) then
+                erreur
+            else
+                Return [(na, tb)]
 
-\begin{figure}
-  \centering
-  \begin{tikzpicture}
-    [every node/.style={node distance=2cm}
-    ,>=latex
-    ]
+        ta, Var nb ->
+            Return unify(tb, ta)
 
-    \node (n1) {Ptr};
-    \node[right of=n1] (n2) {Var};
-    \node[right of=n2] (n3) {ref};
-    \node[right of=n3] (n4) {Instanciated};
+        Int, Int -> Return []
 
-    \draw [->] (n1) -- (n2);
-    \draw [->] (n2) -- (n3);
-    \draw [->] (n3) -- (n4);
+        Float, Float -> Return []
 
-    \draw [->] (n4) -- ++ (0, -1cm) -| (n1);
+        Array a, Array b -> Return (unify (a, b))
 
-  \end{tikzpicture}
-  \caption{Cycle dans le graphe de types}
-\label{fig:typecycle}
-\end{figure}
+        Ptr a, Ptr b -> Return (unify (a, b))
+
+        UserPtr a, UserPtr b -> Return (unify (a, b))
+
+        Fun (la, ra), Fun (lb, rb) ->
+            r = unify (ra, rb)
+            n = length(la)
+            if length(lb) != n then
+                erreur
+            for i = 0 to n-1 do
+                r += unify (la[i], lb[i])
+            Return r
+
+        _ -> erreur
+
+\end{Verbatim}
+
+\caption{Algorithme d'unification}
+\label{fig:algo-unif}
+\end{figure}%}}}
 
 \begin{itemize}
 
-\item si les deux types sont inconnus (de la forme \texttt{Var (ref
-(Instanciated t))}), on fait pointer l'une des deux références vers le premier
-type. Notons que cela crée un type de la forme \texttt{Var (ref (Instanciated
-(Var (ref (Unknown n)))))} qui sera réduit lors d'une prochaine étape
-d'unification.
+\item si les deux types sont inconnus (de la forme \texttt{Var n}), on substitue
+l'un par l'autre.
 
-\item si un type est inconnu et pas l'autre, il faut de la même manière affecter la
-référence. Mais en faisant ça inconditionnellement, cela peut poser problème:
+\item si un type est inconnu et pas l'autre, il faut de la même manière faire
+une substitution.
+Mais en faisant ça inconditionnellement, cela peut poser problème:
 par exemple en tentant d'unifier \texttt{a} avec \verb!Ptr(a)! on pourrait
-créer un cycle dans le graphe (figure~\ref{fig:typecycle}).
+créer une substitution cyclique.
 Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
-pas présent dans le type à affecter.
+pas présent dans le type à affecter. C'est le but de la fonction
+\texttt{occurs(n, t)} qui calcule si \texttt{Var n} apparaît dans \texttt{t}.
 
 \item si les deux types sont des types de base (comme $\tInt$ ou $\tFloat$)
 égaux, on ne fait rien.
@@ -370,7 +395,8 @@ constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 
 \item si les deux types sont des types structure, on étudie les types de leurs
 champs. On commence par unifier les types des champs de même nom, et on
-on ajoute à l'un les champs exclusifs à l'autre.
+on ajoute à l'un les champs exclusifs à l'autre. Cette partie n'est pas faite
+par substitution et donc n'apparaît pas dans la figure~\ref{fig:algo-unif}.
 
 \item dans les autres cas, l'algorithme échoue.
 
@@ -379,9 +405,10 @@ on ajoute à l'un les champs exclusifs à l'autre.
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
-L'outil \ptrtype{} lit un programme Newspeak (ou un fichier C), et réalise
-l'inférence de qualificateurs. En sortie, il affiche soit le programme
-complètement annoté, soit une erreur. Le cœur de l'outil est dans la
+Cette analyse est implantée dans un outil du nom de \ptrtype{}. Il lit un
+programme Newspeak (ou un fichier C), et réalise l'inférence de types. En
+sortie, il affiche soit le programme complètement annoté, soit une erreur. Le
+cœur de l'outil est dans la
 
 Si l'argument à \ptrtype{} est un fichier C, il est tout d'abord compilé vers
 Newspeak grâce à l'utilitaire \texttt{c2newspeak}. Ensuite, les autres passes
