@@ -43,21 +43,24 @@ ou masque de bits.
 
 % TODO liens EADS
 
-% TODO + expérimentation
+% TODO[E] + expérimentation
 
-\section{Limitations et travaux futurs}
+% TODO[S] un outil
+
+\section{Limitations et travaux futurs} % TODO[S] renommer
 
 \paragraph{Arithmétique}
 
 En C, on dispose de plusieurs types entiers, pouvant avoir plusieurs tailles et
 être signés ou non signés, ainsi que des types flottants qui diffèrent par leur
-taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier. La
-raison pour cela est que nous ne nous intéressons pas du tout aux problématiques
-de sémantique entière: les débordements, dénormalisations, etc, sont supposés ne
-pas arriver.
+taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier et
+un seul type de flottant. La raison pour cela est que nous ne nous intéressons
+pas du tout aux problématiques de sémantique entière: les débordements,
+dénormalisations, etc, sont supposés ne pas arriver.
 
 Comme en C il n'est pas possible de définir de nouveaux types de base (des
 entiers de 24 bits par exemple), il est facile d'étendre le système de types de
+% TODO[S] sauf dans les champs de struct?
 \langname{} pour ajouter tous ces nouveaux types. La traduction depuis Newspeak
 insère déjà des opérateurs de transtypage pour lesquels il est facile de donner
 une sémantique (pouvant lever une erreur en cas de débordement, comme en Ada) et
@@ -92,12 +95,14 @@ cas, il faudrait encapsuler la manipulation dans une fonction et y ajouter une
 information de type explicite, comme $\texttt{float\_exponent} : (\tFloat) →
 \tInt$.
 
-En fait, les casts entre types entiers ne posent pas de problèmes. Ceux entre
+En fait, les casts entre types entiers ne posent pas de problème. Ceux entre
+% TODO[S] pourquoi
 types pointeurs ne posent pas de problème non plus puisqu'au moment de la
 traduction en \langname{} on efface les étiquettes de types sur les pointeurs.
 
 Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
 casts, on peut néanmoins trouver la solution suivante.
+% TODO pas clair
 
 \begin{mathpar}
 \irule{PtrInt-Bad}
@@ -133,13 +138,18 @@ encore plus complexe. D'une part cela suppose qu'on puisse retrouver la taille
 des valeurs à partir de leur adresse. Dans de nombreux langages, on résout ce
 problème en ajoutant la taille de chaque valeur avec elle.
 
-Mais cela fait s'éloigner du modèle mémoire de C, ou le déréférencement porte
+Mais cela fait s'éloigner du modèle mémoire de C, où le déréférencement porte
 sur une adresse mais également sur une taille (portée implicitement par le type
 du pointeur). D'ailleurs le langage \newspeak{} conserve cette distinction, que
 nous avons éliminée dans \langname. Il y a une incompatibilité entre ces deux
 approches : pour pouvoir typer la mémoire, il faut associer un type à chaque
 zone mémoire, alors qu'avec une sémantique de bas niveau les valeurs sont créées
 à la volée par le déréférencement.
+
+% TODO[S] ok mais pas dans npk, les valeurs conservent leur type
+
+% (e) le pb est qu'on a besoin du programme pour typer la mémoire, à l'exécution
+% il n'y a que des octets
 
 \paragraph{Environnement d'exécution}
 
@@ -182,9 +192,9 @@ mémoire contenant cette valeur (la taille de chaque valeur fait partie de
 celle-ci). Le typage est alors direct:
 
 \begin{mathpar}
-  \irule{Malloc}
+  \irule{New}
     { Γ ⊢ e : t }
-    { Γ ⊢ \textsc{Alloc}(e) : \ptrK{t} }
+    { Γ ⊢ \textsc{New}(e) : \ptrK{t} }
 
   \irule{Free}
     { Γ ⊢ e : \ptrK{t} }
@@ -194,6 +204,7 @@ celle-ci). Le typage est alors direct:
 En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
 états mémoire: $m = (s, g, h)$ où $h$ associe à une étiquette numérique une
 valeur (comme les globales mais indexées par des entiers plutôt que par leur
+% TODO[S] expliquer le h
 nom). La libération de mémoire est problématique parce qu'il faut faire
 confiance au programmeur pour ne pas accéder aux zones mémoires libérées. Encore
 une fois, on peut utiliser une analyse préalable comme~\cite{ifm10}. Il est sûr
@@ -205,6 +216,8 @@ mémoire.
 \paragraph{Structures récursives}
 
 % TODO est-ce que cela empêche l'imbrication? types rec/ vals rec
+
+% TODO[S] Si tu l'as résolu alors pourquoi le mettre ici?
 
 Une autre limitation est que seules les structures simples sont supportées. Les
 structures récursives, contenant un pointeur vers un objet du même type
@@ -270,10 +283,10 @@ Ces structures sont respectivement traduites en:
   B &= \mathrm{fix} (p → \{ value : \tFloat ; next : \{ value : \tInt   ; next : p \}~* \})
 \end{align*}
 
-Ce schéma suffit à compiler toutes les types de structures possibles en C. En
+Ce schéma suffit à compiler tous les types de structures possibles en C. En
 effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
-structure en cours de définition; et il n'est alors possible que d'y accéder
-par pointeur.
+structure en cours de définition; et il n'est alors possible que d'y accéder par
+pointeur.
 
 \paragraph{Assembleur}
 
@@ -283,7 +296,9 @@ de Linux, le code est fait pour être portable, et les parties dépendantes d'un
 certaine architecture (et donc le code assembleur) sont isolées explicitement.
 On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
 l'implantation est faite en assembleur, mais au sein de cette implantation on ne
-peut bien sûr rien dire.
+peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
+couverte par la sûreté du typage: après son exécution on ne peut plus rien
+garantir sur le programme.
 
 \paragraph{Analyse du noyau Linux}
 
@@ -294,6 +309,7 @@ KMS, et même à toutes les fonctions faisant partie des différentes interfaces
 recevant un pointeur de l'espace utilisateur.
 
 \paragraph{Autres types abstraits}
+%TODO[S] ??
 
 Notre approche est basée sur le fait de rendre abstrait un type de C et
 d'y interdire certaines opérations: ici, on marque un certain type de pointeur
@@ -325,5 +341,8 @@ une fonction prenant en paramètre un numéro de \emph{frame}.
 % TODO Newspeak a-t'il été utilisé sur de gros codes?
 
 % TODO il serait pas mal de citer les membres du jury dans ta biblio
+
+% TODO[S] et d'autres classes de propriété de sécurité ? Plus fonctionnelles par
+% ex?
 
 % vim: spelllang=fr
