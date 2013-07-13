@@ -60,19 +60,16 @@ un seul type de flottant. La raison pour cela est que nous ne nous intéressons
 pas du tout aux problématiques de sémantique entière: les débordements,
 dénormalisations, etc, sont supposés ne pas arriver.
 
-Comme en C il n'est pas possible de définir de nouveaux types de base (des
-entiers de 24 bits par exemple), il est facile d'étendre le système de types de
-% TODO[S] sauf dans les champs de struct?
-\langname{} pour ajouter tous ces nouveaux types. La traduction depuis Newspeak
-insère déjà des opérateurs de transtypage pour lesquels il est facile de donner
-une sémantique (pouvant lever une erreur en cas de débordement, comme en Ada) et
-un typage. Les littéraux numériques peuvent poser problème, puisqu'ils
-deviennent alors polymorphes. Une solution peut être de leur donner le plus
-grand type entier et d'insérer un opérateur de transtypage à chaque littéral.
-Haskell utilise une solution similaire: les littéraux entier ont le type de
-précision arbitraire \texttt{Integer} et est converti dans le bon type en
-appelant la fonction \texttt{fromInteger} du type synthétisé à partir de
-l'environnement.
+Il est possible d'étendre le système de types de \langname{} pour ajouter tous
+ces nouveaux types. La traduction depuis Newspeak insère déjà des opérateurs de
+transtypage pour lesquels il est facile de donner une sémantique (pouvant lever
+une erreur en cas de débordement, comme en Ada) et un typage. Les littéraux
+numériques peuvent poser problème, puisqu'ils deviennent alors polymorphes. Une
+solution peut être de leur donner le plus grand type entier et d'insérer un
+opérateur de transtypage à chaque littéral. Haskell utilise une solution
+similaire: les littéraux entier ont le type de précision arbitraire
+\texttt{Integer} et est converti dans le bon type en appelant la fonction
+\texttt{fromInteger} du type synthétisé à partir de l'environnement.
 
 \paragraph{Transtypage}
 
