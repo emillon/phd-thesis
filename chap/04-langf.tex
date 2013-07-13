@@ -1,4 +1,3 @@
-% TODO un point sur les pointeurs sur fonction
 Dans ce chapitre, on décrit le cœur de notre travail: le langage \langname, sur
 lequel s'appuieront les analyses de typage des chapitres~\ref{cha:typbase}
 et~\ref{cha:qualifs}.
@@ -476,7 +475,10 @@ $\widehat{f}$: une fonction. On garde en mémoire l'intégralité de la définit
 de la fonction (liste de paramètres, de variables locales et corps). Même si les
 fonctions locales sont possibles, il n'est pas possible d'accéder aux variables
 de la portée entourante depuis la fonction intérieure (il n'y a pas de
-fermetures).
+fermetures). Contrairement à C, les fonctions ne sont pas des cas spéciaux. Par
+exemple, les fonctions globales sont simplement des variables globales de type
+fonctionnel, et «les pointeurs sur fonction» de C sont remplacés par des
+variables de type fonction.
 
 \item $Ω$: une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
 
