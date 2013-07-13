@@ -334,12 +334,6 @@
                    { \widehat{\eArray{ v_1, … , v_n } }}
                  }
     }
-    {Exp-Call-Return-Unit}{ \irule{Exp-Call-Return-Unit}
-                               { m' = \cCleanup{m}}
-                               { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
-                                    {m'}{\eUnit}
-                               }
-                          }
     {Exp-Call-Return}{ \irule{Exp-Call-Return}
                           { m' = \cCleanup{m}
                          \\ v' = \cV{|m|}{v}

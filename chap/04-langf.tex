@@ -1397,16 +1397,23 @@ correspondent aux nouvelles valeurs à passer à la fonction.
 
 Les autres fonctions permettent de transférer le flot de contrôle: en retournant
 la même instruction pour une instruction terminale, ou en propageant une erreur.
-Dans le cas où on transmet une instruction terminale ($i = \iPass$ ou $i =
-\iReturn{v}$), il faut alors supprimer les références aux variables
-qui ont disparu grâce aux opérateurs $\phx\cCleanup$ et $\phxx\cV$.
+Dans le cas où on retourne de la fonction par $i = \iReturn{v}$, il faut alors
+supprimer les références aux variables qui ont disparu grâce aux opérateurs
+$\phx\cCleanup$ et $\phxx\cV$.
+
+\label{page:return-fonction}
+On suppose que l'exécution de chaque fonction se termine par une instruction
+$\iReturn{\cdot}$. Cela veut dire que la dernière instruction doit être soit de cette
+forme, soit par exemple une alternative dans laquelle les deux branches se
+terminent par un $\iReturn{\cdot}$. C'est une propriété qui peut être détectée
+statiquement avant l'exécution. Néanmoins, dans la syntaxe concrète, on peut
+supposer qu'un $\iReturn{\eUnit}$ est inséré automatiquement en fin de fonction
+lorsqu'aucun $\iReturn{\cdot}$ n'est présent dans son corps.
 
 \begin{mathpar}
     \semrule{Exp-Call-Ctx}
 
     \semrule{Exp-Call-Err}
-
-    \semrule{Exp-Call-Return-Unit}
 
     \semrule{Exp-Call-Return}
 \end{mathpar}
@@ -1532,7 +1539,5 @@ et une description nous permettent de voir ce qui le rapproche de C. Sa
 sémantique est explicitée entièrement, ce qui nous permet de prouver des
 propriétés dynamiques sur les analyses de typage décrites dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
-
-% TODO Return implicite
 
 % vim: spelllang=fr

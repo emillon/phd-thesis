@@ -389,7 +389,14 @@ bien typées, et si la condition est d'un type entier.
 Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
 revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$. Cela rappelle le
 langage Pascal, où pour retourner une valeur on l'affecte à une variable nommée
-comme la fonction courante.
+comme la fonction courante
+\footnote{
+    Si on n'avait pas introduit la restriction que chaque fonction doit terminer
+    par un $\iReturn{\cdot}$ (page~\pageref{page:return-fonction}), alors le type de
+    $\vRet$ pourrait rester inconnu. En pratique cela veut dire que la valeur de
+    retour d'une telle fonction serait compatible avec n'importe quel type $t$, ce
+    qui briserait la sûreté du typage.
+}.
 
 \begin{mathpar}
   \disprule{Return}

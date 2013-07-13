@@ -546,9 +546,9 @@ On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
 d'inversion garantit que $Γ' ⊢ i$).
 
 \begin{itemize}
-\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Call-Return-Unit}.
-
-\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Call-Return}.
+\item $i = \iPass$. Ce cas est impossible puisqu'on prend l'hypothèse que les
+fonctions se terminent par une instruction $\iReturn{\cdot}$
+(page~\pageref{page:return-fonction}).
 
 \item $\mm{m_1}{i}{m_2}{i'}$.
 
@@ -807,13 +807,6 @@ successivement.
 
 C'est clair pour les valeurs de la forme
 $\widehat{c}$ ou $\widehat{f}$. Supposons que $v = \wphi{φ}$.
-% }}}
-\paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{
-
-Idem. En fait dans le cas précédent, le type de $v$ et forcément celui de
-$\vRet$ sous $Γ'$ ; comme $\vRet$ n'est alors pas utilisé, son choix est libre
-et une dérivation avec $\vRet : \tUnit ∈ Γ'$ est possible.
-
 % }}}
 
 \subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
