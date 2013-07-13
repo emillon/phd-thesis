@@ -700,16 +700,15 @@ dans la figure~\ref{fig:comp-mem}.
             }
 
         \irule{M-Pop}
-            { \mcomp{Γ, x_1:t_1, …, x_n:t_n}{m}
-           \\ m = (s, g)
-           \\ s_1 = (x_1↦v_1, …, x_n↦v_n)
-           \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
+            { Γ = (Γ_G, Γ_L)
+           \\ \mcomp{Γ}{m}
+           \\ m' = \cPush{m}{x_1↦v_1, …, x_n↦v_n}
+           \\ \mcomp{(Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])}{m'}
+           \\ m' ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
            \\ …
-           \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
-           % TODO peut etre ajouter le R
+           \\ m' ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ}{\cCleanup{\cPop{m}} }
-            } % TODO utile???
+            { \mcomp{Γ}{\cCleanup{\cPop{m'}}} }
 
             % TODO supprimer tous les Γ, ...
         \irule{M-Decl}
@@ -836,6 +835,7 @@ Idem, on distingue selon si $φ$ fait référence à la variable déclarée ou n
 Les $φ$ faisant référence à un des $x_i$ ne sont pas typables car $x_i ∉ Γ$. Il
 reste donc les variables plus basses dans la pile pour lesquelles l'hypothèse de
 récurrence s'applique.
+% TODO refaire avec le nouveau M-Pop
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{
 Il est impossible que $φ$ fasse référence à $x$ car $x ∉ Γ$. Donc $Γ ⊢ φ : t$ et
