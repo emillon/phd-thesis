@@ -11,6 +11,9 @@ niveau que \langname donc les règles sont légèrement différentes.
 
 % TODO mieux décrire les 3
 
+Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
+license libre, la \emph{GNU Lesser General Public License}.
+
 \section{Newspeak}
 \label{sec:npk}
 
@@ -349,14 +352,15 @@ val unify : Types.simple -> Types.simple -> unit
 La fonction \texttt{infer} s'appuie sur un ensemble de fonctions récursivement
 définies portant sur chaque type de fragment: \texttt{infer\_fdec} pour les
 déclarations de fonction, \texttt{infer\_exp} pour les expressions,
-\texttt{infer\_stmtkind} pour les instructions, etc.
+\texttt{infer\_stmtkind} pour les instructions, etc. Grâce au
+lemme~\ref{lemma:inversion}, on sait quelle règle appliquer en fonction de
+l'expression ou instruction considérée.
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
 \texttt{unify}. Par exemple, pour typer une déclaration
-(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau
-type \texttt{t0}. On étend l'environnement courant avec cette nouvelle
-association et sous ce nouvel environnement, on type le bloc de portée de la
-déclaration.
+(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau type \texttt{t0}. On
+étend l'environnement courant avec cette nouvelle association et sous ce nouvel
+environnement, on type le bloc de portée de la déclaration.
 
 \begin{figure}[h] %{{{
 
@@ -463,7 +467,20 @@ analyser.
 
 \section{Conclusion}
 
-% TODO pas de conclusion
+Les analyses de typage correspondant aux chapitres~\ref{cha:typbase}
+et~\ref{cha:qualifs} ont été implantées sous forme d'un prototype utilisant le
+langage \newspeak développé par EADS. Cela permet de réutiliser les phases de
+compilation déjà implantées, et d'exprimer les règles de typage sur un langage
+suffisament simple.
 
+On utilise un algorithme par unification, qui donne une forme simple
+programme d'inférence. Pour chaque expression ou instruction à typer, on
+détermine grâce au lemme~\ref{lemma:inversion} quelle règle il faut appliquer.
+Ensuite, on génère les inconnues de type nécessaires pour appliquer cette règle
+et on indique les contraintes en appelant la fonction d'unification.
+
+Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
+incomplet mais permet de traiter des parties du noyau Linux comme on le verra
+dans le chapitre suivant.
 
 % vim: spelllang=fr
