@@ -620,51 +620,56 @@ l'exécution, et le second le type statique.
 \label{fig:regles-comp-typ}
 \end{figure}%}}}
 
-Grâce à ce jugement, on peut donner la définition suivante.
+%Grâce à ce jugement, on peut donner la définition suivante.
 
-\begin{definition}[État mémoire bien typé]
-  On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
-  l'on note $\mcomp{Γ}{m}$, si les domaines de $Γ$ et $m$ coïncident sur la
-  partie visible, et que les types sémantiques des variables visibles coïncident
-  avec leurs types statiques.
+%\begin{definition}[État mémoire bien typé]
+  %On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
+  %l'on note $\mcomp{Γ}{m}$, si les domaines de $Γ$ et $m$ coïncident sur la
+  %partie visible, et que les types sémantiques des variables visibles coïncident
+  %avec leurs types statiques.
 
-  \[
-    \mcomp{Γ}{m} \eqdef
-        \begin{cases}
-            \cDom{Γ} = \{ \cVarname{a} / a ∈ \cVisible{m} \} \\
-            ∀ a ∈ \cVisible{m}.
-            ∃ τ,t.
-            \begin{cases}
-                Γ ⊢ \cVarname{a} : t
-                \\
-                \semtyp{m}{m[a]_A}{τ}
-                \\
-                \tComp{τ}{t}
-            \end{cases}
-        \end{cases}
-  \]
+  %\[
+    %\mcomp{Γ}{m} \eqdef
+        %\begin{cases}
+            %\cDom{Γ} = \{ \cVarname{a} / a ∈ \cVisible{m} \} \\
+            %∀ a ∈ \cVisible{m}.
+            %∃ τ,t.
+            %\begin{cases}
+                %Γ ⊢ \cVarname{a} : t
+                %\\
+                %\semtyp{m}{m[a]_A}{τ}
+                %\\
+                %\tComp{τ}{t}
+            %\end{cases}
+        %\end{cases}
+  %\]
 
-    $\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
-    récents ainsi que celles des variables globales:
+    %$\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
+    %récents ainsi que celles des variables globales:
 
-\[
-\cVisible{(s, g)} \eqdef \{ (x_i) / (x_i ↦ v_i) ∈ g \}
-                       ∪ \{ (|s|, x_i) / (x_i ↦ v_i) ∈ s_0 \}
-\]
+%\[
+%\cVisible{(s, g)} \eqdef \{ (x_i) / (x_i ↦ v_i) ∈ g \}
+                       %∪ \{ (|s|, x_i) / (x_i ↦ v_i) ∈ s_0 \}
+%\]
 
-    $\cVarname{a}$ désigne le nom simple d'une variable :
+    %$\cVarname{a}$ désigne le nom simple d'une variable :
 
-\begin{align*}
-\cVarname{(x)} &\eqdef x \\
-\cVarname{(n,x)} &\eqdef x
-\end{align*}
+%\begin{align*}
+%\cVarname{(x)} &\eqdef x \\
+%\cVarname{(n,x)} &\eqdef x
+%\end{align*}
 
-\end{definition}
+%\end{definition}
 
-\begin{definition}[État mémoire bien typé]
+On définit enfin la notion d'état mémoire bien typé. Cela se fait par induction
+sur la forme de $Γ$ et $m$. Fonctionnellement, cela veut implique que les accès
+à la mémoire retournent des valeurs en accord avec le type statique
+(lemme~\ref{lemma:mem-typ}). Les règles définissant cette relation sont données
+dans la figure~\ref{fig:comp-mem}.
 
-    On définit par induction une relation entre les environnements de typage $Γ$
-    et les états mémoire $m$.
+\begin{figure}[h]%{{{
+
+\centering
 
     \begin{mathpar}
         \irule{M-Empty}
@@ -697,7 +702,7 @@ Grâce à ce jugement, on peut donner la définition suivante.
            \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
            % TODO peut etre ajouter le R
             }
-            { \mcomp{Γ}{\cCleanup{\cPop{m}}}
+            { \mcomp{Γ}{\cCleanup{\cPop{m}} }
             }
 
         \irule{M-Decl}
@@ -725,10 +730,14 @@ Grâce à ce jugement, on peut donner la définition suivante.
             }
     \end{mathpar}
 
+    \caption{Compatibilité entre états mémoire et environnements de typage}
+\label{fig:comp-mem}
+
+\end{figure}%}}}
+
 % TODO les locales dans le Γ doivent disparaitre
 
-\end{definition}
-
+% TODO ici?
 \begin{lemma}[Hauteur des chemins typés]
 
     Si $m ⊧ v : τ$, alors $\cH{v} ≤ |m|$.

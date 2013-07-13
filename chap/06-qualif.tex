@@ -256,19 +256,21 @@ conclusion n'est pas vraie:
 
 \begin{itemize}
   \item
-    On a bien $\mcomp{Γ}{m}$. En effet $\cVisible{m} = \{(0, x)\}$ et:
+    On a bien $\mcomp{Γ}{m}$. En effet:
 
- % TODO refaire avec la nouvelle def de mcomp
-
-    \[
-    \begin{cases}
-      Γ ⊢ x : \tInt
-      \\
-      \semtyp{m}{0}{\tInt}
-      \\
-      \tComp{\tInt}{\tInt}
-    \end{cases}
-    \]
+    \begin{mathpar}
+        \irule{M-Push}
+            {
+                \irule{M-Empty}
+                    { }
+                    { \mcomp{[~]}{([~], [~])} }
+            \\
+            [~] ⊧ 0 : \tInt
+            \\
+            \tComp{\tInt}{\tInt}
+            }
+            { \mcomp{x:\tInt}{([[x↦0]], [~])} }
+    \end{mathpar}
 
   \item
     $e$ est bien typée sous $Γ$:
