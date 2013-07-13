@@ -39,7 +39,7 @@ correct dès la première version.
 
 Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le
 programme sous un environnement contrôlé. On peut alors détecter des
-comportements non désirés. Mais même avec des tests les plus exhaustifs il n'est
+comportements non désirés. Mais même avec une grande quantité de tests il n'est
 pas possible de couvrir tous les cas d'utilisation.
 
 Une autre approche est d'analyser le code source du programme avant de
@@ -153,7 +153,9 @@ chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
-par un \Square), une erreur se produit et l'exécution s'arrête.
+par un \Square), une erreur se produit et l'exécution s'arrête. Par exemple,
+l'avant-dernière ligne indique que si un programme tente de lire une variable du
+noyau, celui-ci sera arrêté par une exception.
 
 \begin{center}
 \def\modeK{Noyau\xspace}
@@ -183,11 +185,10 @@ réservés au mode le plus privilégié: par exemple les lectures ou écritures 
 des ports matériels, ou celles qui permettent de définir les niveaux de
 privilèges des différentes zones mémoire.
 
-Les programmes utilisateur ne pouvant pas accéder à ces instructions de bas
-niveau, ils sont très limités dans ce qu'ils peuvent faire. Puisque
-l'interaction avec le matériel (comme l'écriture sur un disque dur) se fait
-uniquement via des instructions privilégiées, ils sont limités à l'utilisation
-du processeur et de la mémoire, permettant uniquement de réaliser des calculs.
+Comme les programmes utilisateur ne pouvant pas accéder à ces instructions de
+bas niveau, ils sont très limités dans ce qu'ils peuvent faire. En utilisant
+seulement les seules instructions non privilégiées, on peut uniquement réaliser
+des calculs, sans réaliser d'opération visibles depuis l'extérieur du programme.
 
 Pour utiliser le matériel ou accéder à des abstractions de haut niveau (comme
 créer un nouveau processus), ils doivent donc passer par l'intermédiaire du
@@ -335,7 +336,7 @@ Le noyau d'un système d'exploitation nécessite d'accéder au matériel, donc i
 est naturellement bas niveau. Pour accéder aux fonctionnalités spécifiques de
 chaque processeur, il est donc nécessaire d'en implanter une partie dans le
 langage d'assemblage natif de chaque architecture. Historiquement, les premiers
-système d'exploitations étaient entièrement écrits en assembleur. Cela est de
+systèmes d'exploitation étaient entièrement écrits en assembleur. Cela est de
 plus en plus rare, sauf dans les cas où les ressources sont trop limitées pour
 exécuter du code compilé, comme dans les systèmes embarqués ou temps-réel.
 
@@ -394,6 +395,8 @@ niveau. On peut par exemple trouver des systèmes d'exploitation écrits en
 C\#~\cite{SingularityOverview}, Haskell~\cite{HaskellOS} ou
 Ocaml~\cite{unikernels}.
 
+% TODO[S] dire que toi tu fais du C seulement?
+
 \section{Langages d'analyse}
 
 Les langages décrits précédemments sont faits pour être facilement écrits par
@@ -402,6 +405,9 @@ implicites. Pour analyser du code source, il est plus pratique d'avoir une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
 dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été définis
 pour aller dans ce sens.
+
+% TODO[S] nous en analysons ici quelques uns
+% on ne comprend pas ce que tu vas dire
 
 \subsection*{Middle-ends}
 
