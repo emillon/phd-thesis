@@ -217,10 +217,10 @@ entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
 entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
 accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
-analyse préalable comme~\cite{ifm10}. Il est sûr (mais pas possible en pratique)
-d'ignorer les commandes de libération de mémoire.
-
-% TODO régions
+analyse préalable comme~\cite{ifm10}. Il est aussi possible d'utiliser un système de
+régions~\cite{jfp92}. En plus de donner un type à chaque expression, on calcule
+statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
+correspond à un ramasse-miette fait statiquement.
 
 %\paragraph{Structures récursives}
 
@@ -309,13 +309,13 @@ peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
 couverte par la sûreté du typage: après son exécution on ne peut plus rien
 garantir sur le programme.
 
-\paragraph{Analyse du noyau Linux}
+%\paragraph{Analyse du noyau Linux}
 
-Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
-d'une interface programmation particulière. Mais le principe de l'analyse est
-applicable à toutes les fonctions de traitement d'\texttt{ioctl}s des pilotes
-KMS, et même à toutes les fonctions faisant partie des différentes interfaces
-recevant un pointeur de l'espace utilisateur.
+%Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
+%d'une interface programmation particulière. Mais le principe de l'analyse est
+%applicable à toutes les fonctions de traitement d'\texttt{ioctl}s des pilotes
+%KMS, et même à toutes les fonctions faisant partie des différentes interfaces
+%recevant un pointeur de l'espace utilisateur.
 
 \paragraph{Autres types abstraits}
 %TODO[S] ??
