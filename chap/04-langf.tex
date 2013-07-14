@@ -1521,7 +1521,8 @@ transition est faite vers cet état d'erreur.
 Cela est aussi vrai d'une sous-expression ou sous-instruction: si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-expression ou sous instruction est définie en fonction des contextes
-$C$.
+$C$. Notons que dans \textsc{Eval-Err}, $\ctxSub{C}{e}$ peut être une expression
+ou une instruction.
 
 \begin{mathpar}
   \semrule{Exp-Err}
