@@ -318,7 +318,7 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 
 \begin{itemize}
 \item $e = v$. On applique alors l'hypothèse de récurrence à $i$ sous
-    $Γ' = Γ, x:t$ et avec $m' = \cExtend{m}{x}{v}$.
+    $Γ' = \extendLocal{Γ}{x}{t}$ et avec $m' = \cExtend{m}{x}{v}$.
 
     \begin{itemize}
     \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
@@ -700,7 +700,8 @@ Plusieurs remarques sont à faire: d'une part, en ce qui concerne le typage de l
 mémoire, il suffit de montrer que $\mcomp{Γ}{m'}$ car cela implique que
 $\mcomp{Γ}{\cCleanup{m'}}$. D'autre part, la règle \textsc{Ctx} apparaît 3 fois
 car elle peut être appliquée en contexte d'expression, d'instructions ou de
-left-values.
+left-values. De même la règle \textsc{Trans} ne pose pas de problème, il suffit
+d'appliquer l'hypothèse de récurrence à ses prémisses.
 
 \subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
@@ -870,7 +871,7 @@ manière analogue au cas \textsc{Exp-Call-Return}.
 
 On part de $Γ ⊢ \iDecl{x}{v}{i}$.
 Par inversion, il existe $t$ tel que
-$Γ ⊢ v : t$ et $Γ' ⊢ i$ où $Γ' = Γ, x:t$.
+$Γ ⊢ v : t$ et $Γ' ⊢ i$ où $Γ' = \extendLocal{Γ}{x}{t}$.
 
 Comme $\mcomp{Γ}{m}$, le lemme~\ref{lemma:repr} s'applique : il existe
 $τ$ tel que $m ⊧ v : τ$ où $\tComp{τ}{t}$.
@@ -927,7 +928,7 @@ $\mcomp{Γ}{\cCleanup{m_3}}$.
 
 \end{proof}
 
-\section{Progrès pour les types qualifiés}
+\section{Progrès pour les extensions noyau}
 \label{proof:progres-qualif}
 
 (Théorème~\ref{thm:progres-qual})
@@ -1014,7 +1015,7 @@ Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 
 \end{proof}
 
-\section{Préservation pour les types qualifiés}
+\section{Préservation pour les extensions noyau}
 \label{proof:preservation-qualif}
 
 (Théorème~\ref{thm:preservation-qualif})

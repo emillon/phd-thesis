@@ -588,6 +588,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   Par exemple, $ \msi{m}{(x ← 3 ; y ← x)} → \msi{m [x ↦ \widehat{3}]}{y ← x}
                            → \msi{m [x ↦ \widehat{3}][y ↦
     \widehat{3}]}{\iPass}$.
+% TODO continuation, citer Blazy
 
 \item
   un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
@@ -738,7 +739,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
 
-  L'opération inverse de $\phxx\cExtend$ sera simplement notée «$-$» : $m - x$,
+  L'opération inverse de $\phxxx\cExtend$ sera simplement notée «$-$» : $m - x$,
   par exemple.
 
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
@@ -750,6 +751,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \end{definition}
 
 \begin{definition}[Hauteur d'une valeur]
+\label{def:hauteur-val}
 Une valeur peut être, ou contenir, une référence vers une variable de la pile.
 La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
 $-1$ sinon.
@@ -997,6 +999,9 @@ Les accès aux locales reviennent à accéder à la bonne variable du bon cadre 
 pile. Cela revient naturellement à composer les lentilles $L$ et $I$. On définit
 donc une lentille $ℒ_{n,x} = I(|s|-n+1) \ggg L(x)$ qui accède à la variable $x$
 du $n$\ieme cadre de pile.
+
+% TODO vérifier les off by one
+% TODO lentilles fst et snd?
 
 \begin{align*}
 m {[(n, x)]}_A     & = \begin{cases}
@@ -1517,7 +1522,8 @@ transition est faite vers cet état d'erreur.
 Cela est aussi vrai d'une sous-expression ou sous-instruction: si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-expression ou sous instruction est définie en fonction des contextes
-$C$.
+$C$. Notons que dans \textsc{Eval-Err}, $\ctxSub{C}{e}$ peut être une expression
+ou une instruction.
 
 \begin{mathpar}
   \semrule{Exp-Err}

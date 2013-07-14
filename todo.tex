@@ -1,45 +1,5 @@
 \section{État de l'art}%{{{
 
-\begin{itemize}
-\item
-Les pointeurs sur fonction rendent floue la limite qui est habituellement
-présente entre instructions et données. En leur présence il est impossible de
-faire une analyse de flot de contrôle indépendante du flot de données. Pour
-pouvoir les traiter, il faut que le domaine abstrait en question soit assez
-précis pour qu'un pointeur abstrait se concrétise en un ensemble réduit de
-fonctions. Dans le cas où le domaine ne peut pas borner l'ensemble des fonctions
-possibles et renvoie $\top$, l'analyse ne peut pas continuer.
-
-\item
-L'allocation dynamique de données, présente dans le langage C par le biais des
-fonctions \texttt{malloc} et \texttt{free}, modifie le modèle mémoire
-nécessaire. Sans celle-ci, l'ensemble des zones mémoire possibles peut être
-décrit statiquement : ce sont les noms de variable. Ce qu'introduit
-\texttt{malloc} au langage, c'est une zone mémoire qui n'a pas de nom, et sur
-laquelle on n'a qu'un pointeur.
-
-% TODO, bof + expand
-
-\item
-Le transtypage (\emph{casts}) entre entiers et pointeurs est particulièrement
-délicat à traiter. Dans les modèles abstraits, les pointeurs sur données ou sur
-fonctions n'ont pas de représentation numérique, seulement une représentation
-symbolique. Même dans l'exécution concrète, la représentation numérique d'un
-pointeur est lié à de nombreux choix faits par l'environnement d'exécution
-(comme la randomisation de l'espace d'adressage) qui ne peuvent pas facilement
-être modélisés.
-
-\item
-Les nombres flottants (types \texttt{float}, \texttt{double} et \texttt{long
-double}) ont une sémantique particulière, et il n'est pas correct d'approcher
-leur sémantique par une sémantique dans $ℝ$. Afin d'être correct, il faut
-établir des domaines spécifiques au flottant, comme~\cite{floatpoly}. Un tour
-d'horizon des difficultés liées aux flottants est effectué
-dans~\cite{floatpitfalls}.
-
-\end{itemize}
-
-% TODO [E] setjmp/longjmp, unions
 % difficultés : récursion
 
 %}}}
@@ -65,15 +25,6 @@ Limitations :
 
 \section{Typage}%{{{
 
-\begin{itemize}
-\item ordre des sections
-\item versions $Γ ⊢ i$ des propriétés
-\item preuve de progres : état mémoire : doublet/triplet
-\item définir les opérations d'ajout/remplacement sur les contextes de typage
-\item 2 pointeurs peuvent etre égaux sans comparer les valeurs pointées
-\item extension de contextes : :: ou , ?
-\end{itemize}
-
 \subsection*{Fonctions}
 
 \begin{itemize}
@@ -81,14 +32,6 @@ Limitations :
   page 50 règle CALL une remarque disant que cette règle doit être
   utilisée avec une autre qui va typer le corps de la fonction (mettre
   la ref) parce que sinon ça surprend
-\item
-  5.5 le fait de choisir une unique variable R t'oblige à ajouter une
-  opération de suppression du R de la fonction appelante factice.
-  Pourquoi ne pas générer des variables fraîches à partir du nom de la
-  fonction + un identifiant unique ?
-\item
-  lemme 5.1 cas fonction, à quoi ça sert d'introduire la notation t'
-  alors qu'il n'apparaît pas dans une règle ?
 \end{itemize}
 
 \subsection*{Rq}
@@ -96,158 +39,25 @@ Limitations :
 
 \begin{itemize}
 \item
-  5.3 left-values la règle LV-VAR suppose que x n'apparaît qu'une fois
-  dans $\Gamma$ ou alors toujours accompagné du même type
-\item
   p53 le terme de dérivation (première phrase de la preuve) n'a jamais
   été expliqué ?
 \item
-  lemme 5.1 constantes. Il faut expliquer à quel ensemble n et f
-  appartiennent
-\item
-  lemme 5.2 même remarque que 5.1 concernant n et f (plus confusion f
-  float et f fonction)
-\item
   lemme 5.3 ça ne marche que si une variable n'apparaît qu'une fois dans
   le contexte ou avec toujours le même type (cf rem ci-dessous sur 5.3)
-\item
-  il manque les preuves de 5.3 et 5.4
 \item
   théormèe 5.2 rappeler où a été défini l'évaluation d'une expression et
   dans quel cas elle produit des valeurs
 \end{itemize}%}}}
 
-\section{Qualificateurs}%{{{
-
-\begin{itemize}
-\item appliquer taint sur des sous-valeurs?
-\item vTaint doit se propager aux accès de champ
-\item étendre l'état mémoire aux variables utilisateur
-\end{itemize}
-
-(passe Sarah)
-
-\begin{itemize}
-\item
-  6.1.1 français dans «qui représente qui contrôle sa valeur»
-\item
-  6.1.1 mettre une ref sur la description du noyau linux
-\item
-  la traduction de taintage par teintage est incorrecte (et des fois du
-  garde la même orthographe que celle anglaise avec le `a') La
-  traduction de tainted c'est plutôt sali, pollué. Tu peux aussi garder
-  le terme anglais et le mettre en italique
-\item
-  j'ai arrêté de lire à partir de 6.2 parce que le texte n'est pas
-  vraiment clair
-\end{itemize}
+\section{Qualificateurs}
 
 Sarah 13/02
 
 \begin{itemize}
 \item
-  expliquer pourquoi on a besoin d'étendre l'expressivité de C\_ML
-  (rappeler le contexte des pointeurs usr et kernel et dire que ce sont
-  les ptrs maitrises par le usr qui sont souillés)
-\item
-  typo intro systme
-\item
-  6.1 phrase «tout d'abord\ldots{}» pas très français non ?
-\item
-  5.1 étape «ensuite» à quoi correspond le phi ?
-\item
-  figure 6.1 ça serait plus propre de tout remettre et surligner/colorer
-  les nouveautés (à expliquer dans le texte)
 \item
   6.2 pourquoi ne pas nommer cette extension de C\_ML
-\item
-  3ème parag 6.3 choisir entre «qui représente» et «qui contrôle»
-\item
-  idem figure 6.2 ça serait plus clair de remettre tout
-\item
-  je me demande si ça ne serait pas plus clair de présenter d'abord
-  l'extension des types ptr à KERNEL et USR et ensuite d'expliquer que
-  ce qu'on cherche c'est de voir quelles expressions/valeurs sont
-  TAINTED (donc à mettre après)
 \end{itemize}
-
-
-% le cimetière des règles
-
-%\begin{mathpar}
-%\irule{Taint-Erase}
-  %{ }
-  %{ \mmi{m}{\iTaint{x}}{m}{\iPass} }
-%\end{mathpar}
-
-%\begin{mathpar}
-%\irule{Taint-Write-Old}
-  %{ }
-  %{ \mmi{m}{\iTaint{x}}{m[x ← \vTainted{m[x]}]}{\iPass} }
-%\end{mathpar}
-
-%\begin{mathpar}
-%\irule{Taint-Write}
-  %{ }
-  %{ \mmi{m}{\iTaint{φ}}{m[φ ← \vTainted{m[φ]}]}{\iPass} }
-%\end{mathpar}
-
-\section*{Extrait PLAS}
-
-The main distinctiveness is that instead of having a plain pointer type
-$t~*$, our one is decorated with a type qualifier $q$. This annotation expresses
-who controls the value of the pointer. If the kernel controls the value of the
-pointer, then it cannot be abused. On the other hand, one has to be careful
-with user-controlled pointers, because the caller can abuse the kernel and
-access reserved memory. The only safe case when dereferencing such a pointer is
-if its value is outside the kernel's memory.
-
-In order to avoid dangerous cases, we have to dynamically check that the
-destination of every user-controlled pointer is in userspace. Kernel pointers
-(that is to say, kernel-controlled pointers) can be dereferenced without further
-check, but user pointers have to be manipulated with a restricted interface that
-will check whether their destination is in userspace.
-
-As mentioned before, this is done using the following constructs:%
-{\small
-\begin{mathpar}
-    \disprule{GetU}
-
-    \disprule{PutU}
-\end{mathpar}}%
-To add qualifiers to a type system, the rules of interest are those that
-manipulate pointers: dereferencing, pointer arithmetic and referencing (taking
-the address of a left-value).
-
-Dereferencing the easiest one ; our goal is to authorize dereferencing only
-\qKernel pointers:
-
-{\small \[ \disprule{Lv-Deref} \]}%
-
-Pointer arithmetic can be done inside a \qUser or \qKernel memory zone. There is
-no concern of jumping from userspace to kernelspace, because pointer arithmetic
-is checked at runtime: if these operators overflow or are applied to a bad
-pointer (such as a pointer to an integer field), $\serr{ptr}$ is raised.
-
-{\small \[ \disprule{Ptr-Arith} \]}%
-
-The reference case is trickier because a type qualifier has to be synthesized.
-Because it is created on the kernel stack, it has a \qKernel qualifier in all
-cases:
-{\small \[
-  \disprule{Addr}
-\]}%
-
-The $\eTaint{\cdot}$ operator turns a \qUser pointer into a \qKernel pointer.
-It is an important rule, because it is the only source of \qUser pointers in the
-type system.
-
-The return value of a function is emulated with a virtual left-value $\vRet$.%
-{\small \begin{mathpar}
-  \disprule{Return}
-
-  \disprule{Fun}
-\end{mathpar}}%%}}}
 
 \section{Étude de cas}%{{{
 
@@ -303,43 +113,10 @@ les opérations sur certains types) peut être repris. Par exemple, si on défin
 un type «numéro de bloc» comme étant un nouvel alias de \texttt{int}, on peut
 considérer que multiplier deux telles valeurs est une erreur.%}}}
 
-\section{Conclusion}%{{{
-
-\subsection{Future work}
-
-We showed that type theory can be a useful tool for verifying the absence of
-certain run-time properties. While adding static labels to variables seems to be
-a crude approximation of reality, in some cases it has enough power to capture
-real-world problems.
-
-In this particular example, we work around C's lack of abstract types in order
-to disallow dereference for a certain class of pointers, distinguished by
-syntactic rules.
-
-We defined an imperative language with an explicit stack, and described
-operational semantics for it modelling that of the C programming language. It
-includes a memory model that expresses the separation between user and kernel
-spaces present in most operating systems. We added a type system that is sound
-with respect to a property of isolation between this two memory spaces.
-
-Finally, we demonstrate an implementation on this analysis on a bug that
-affected the Linux kernel.
-
-A first step towards making this analysis more practical is to demonstrate its
-scalability by running it on larger fragments of the kernel.
-
-There are also several places where we can improve significantly the
-expressivity of our type system. For example, our current type system is only
-monomorphic; but it would make sense to generalize free qualifier variables in
-the type of global functions.%}}}
-
 % Sarah 9/5
 
 %chapeau de l'intro
 %- manque de structures/liens entre les petits paragraphes.
-%- il manque le plan de l'intro
-%- incohérence entre tests exhaustifs et "on ne peut pas couvrir tout". En général, on dit que la taille actuelle des logiciels empêche l'exhaustivité des tests
-%- dernier paragraphe pas clair : ça veut dire quoi restreindre la manière dont sont traitées les infos ? Tu peux peut-être détailler un peu plus puisque tu poses ici la problématique de ta thèse
 
 %1.2
     %- tu pourrais ajouter un ex d'appel système en C pour expliquer le pb du déréférencement

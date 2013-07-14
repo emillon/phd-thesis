@@ -241,7 +241,7 @@ problèmes de sécurité.
 
 Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un
 côté, une interface pas assez fine serait trop restrictive et ne permettrait pas
-d'implémenter tout type de logiciel. De l'autre, une interface trop laxiste
+d'implanter tout type de logiciel. De l'autre, une interface trop laxiste
 («écrire dans tel registre matériel») empêche toute isolation. Il faut
 donc trouver la bonne granularité.
 
@@ -270,7 +270,7 @@ utilisé par exemple par la fonction \texttt{gettimeofday}
 \label{fig:appel-gettimeofday}
 \end{figure}
 
-Considérons une implémentation naïve de cet appel système qui écrirait
+Considérons une implantation naïve de cet appel système qui écrirait
 directement à l'adresse pointée. Si le pointeur fourni est dans l'espace
 d'adressage du processus, on est dans le cas d'utilisation normal et l'écriture
 est donc possible.

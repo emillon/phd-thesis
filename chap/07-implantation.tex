@@ -35,7 +35,7 @@ etc. Sa sémantique d'exécution (ainsi qu'une partie des étapes de compilation
 depuis C) est décrites dans \cite{newspeak}. Sa syntaxe est donnée dans la
 figure~\ref{fig:stx-npk}.
 
-\begin{figure}
+\begin{figure}%{{{
 
 \def\npkstyle#1{\mathrm{#1}}
 
@@ -95,7 +95,7 @@ figure~\ref{fig:stx-npk}.
 \end{align*}
 \caption{Syntaxe simplifiée de Newspeak}
 \label{fig:stx-npk}
-\end{figure}
+\end{figure}%}}}
 
 \section{Chaîne de compilation}
 \label{sec:compil}
@@ -139,7 +139,7 @@ propose de nombreuses constructions ambigües ou redondantes.
 Au contraire, Newspeak propose un nombre réduit de constructions. Rappelons que
 le but de ce langage est de faciliter l'analyse statique: des constructions
 orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
-code lors de l'implémentation d'un analyseur.
+code lors de l'implantation d'un analyseur.
 
 Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle for, Newspeak fournit une unique boucle
@@ -354,7 +354,9 @@ définies portant sur chaque type de fragment: \texttt{infer\_fdec} pour les
 déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 \texttt{infer\_stmtkind} pour les instructions, etc. Grâce au
 lemme~\ref{lemma:inversion}, on sait quelle règle appliquer en fonction de
-l'expression ou instruction considérée.
+l'expression ou instruction considérée. Notons que même si le programme
+\newspeak est décoré d'informations de types (celles qui existent dans le
+programme C), elles ne sont pas utilisées.
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
 \texttt{unify}. Par exemple, pour typer une déclaration
@@ -482,5 +484,7 @@ et on indique les contraintes en appelant la fonction d'unification.
 Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
 incomplet mais permet de traiter des parties du noyau Linux comme on le verra
 dans le chapitre suivant.
+
+% TODO décrire les structs avec le row polymorphism (cf ccl)
 
 % vim: spelllang=fr

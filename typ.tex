@@ -46,7 +46,9 @@
 {%
 \setlength{\fboxsep}{20pt}%
 \adjustbox{minipage=\textwidth-2\fboxsep-2\fboxrule,cfbox=lightgrey,center}%
-          {\partintro}%
+          {\setlength{\parindent}{3em}%
+           \noindent%
+           \partintro}%
 }%
 }
 \vfil
@@ -77,40 +79,32 @@
 \titleUL{}
 \end{titlingpage}
 
-\cleartorecto
+%\cleartorecto TODO release: decommenter%{{{
 
-\begin{headingpage}
-\hfill%
-\begin{minipage}{0.6\textwidth}
-\shorthandoff{;}
-\begin{shadequote}[r]{Peter van den Linden}
-Many C programmers believe that «strong typing»
-just means pounding extra hard on the keyboard.
-\end{shadequote}
-
-% TODO les quotes font un poil lame
-
-%\begin{shadequote}[r]{Pete Fenelon}
-%A friend of mine in a compiler writing class produced a compiler with one error
-%message «you lied to me when you told me this was a program».
+%\begin{headingpage}
+%\hfill%
+%\begin{minipage}{0.6\textwidth}
+%\shorthandoff{;}
+%\begin{shadequote}[r]{Peter van den Linden}
+%Many C programmers believe that «strong typing»
+%just means pounding extra hard on the keyboard.
 %\end{shadequote}
 
-%\begin{shadequote}[r]{Henry Spencer}
-%Those who don't understand UNIX are condemned to reinvent it, poorly.
-%\end{shadequote}
+%The fundamental problem addressed by a type theory is to ensure that programs
+%have meaning. The fundamental problem caused by a type theory is that meaningful
+%programs may not have meanings ascribed to them. The quest for richer type
+%systems results from this tension.
+% Mark Manasse
 
-%\begin{shadequote}[r]{Charles Babbage, Passages from the Life of a Philosopher}
-%On two occasions I have been asked, «Pray, Mr.\ Babbage, if you put into the
-%machine wrong figures, will the right answers come out?»… I am not able rightly
-%to apprehend the kind of confusion of ideas that could provoke such a question.
-%\end{shadequote}
-\shorthandon{;}
-\end{minipage}
-\end{headingpage}
+%\shorthandon{;}
+%\end{minipage}
+%\end{headingpage}%}}}
 
-\asuacknowledgements
+%{{{ TODO release: decommenter
+%\asuacknowledgements
 
-\input{remerciements.tex}
+%\input{remerciements.tex}
+%}}}
 
 \clearpage
 

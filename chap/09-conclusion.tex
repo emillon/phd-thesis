@@ -5,8 +5,9 @@ l'expressivité de ce système.
 
 % TODO liens EADS
 
-
 \section{Contributions}
+
+Cette thèse comporte 4 contributions principales.
 
 \paragraph{Un langage impératif bien typé}
 
@@ -56,7 +57,7 @@ proche de C. Ces deux langages diffèrent donc sur certains points. On détaille
 ici ces différences et selon les cas, comment les combler ou pourquoi cela est
 impossible de manière inhérente.
 
-\paragraph{Arithmétique}
+\paragraph{Types numériques}
 
 En C, on dispose de plusieurs types entiers, pouvant avoir plusieurs tailles et
 être signés ou non signés, ainsi que des types flottants qui diffèrent par leur
@@ -181,6 +182,26 @@ locales ne seront plus accessibles au retour d'une fonction, alors on peut
 supprimer le nettoyage en posant $\mathrm{Cleanup}(m) = m$. Cette garantie peut
 être obtenue avec une analyse statique préalable~\cite{ifm10}.
 
+\paragraph{Les fonctions \texttt{setjmp} et \texttt{longjmp}}
+
+Le langage C propose deux fonctions qui permettent de sauvegarder un état
+d'exécution et d'y sauter: ce sont respectivement les fonctions \texttt{setjmp}
+et \texttt{longjmp}. Elles sont très puissantes puisqu'elles permettent
+d'exprimer n'importe quel flot de contrôle, à la manière d'une continuation.
+
+Cette fonctionnalité peut servir par exemple à implanter des exceptions, ou des
+coroutines. En pratique, il est rare de trouver ces fonctions dans du code noyau
+ou embarqué, donc ce manque n'a pas beaucoup d'impact.
+
+Avec l'interprète du chapitre~\ref{cha:lang}, il n'est pas possible de donner
+une sémantique à ces constructions. Une des manières de faire est de modifier
+les états de l'interprète : au lieu de retenir l'instruction à évaluer avec
+$\msi{m}{i}$, on retient la continuation complète : $\msi{m}{k}$.
+Pour faciliter ce changement, on peut tout d'abord passer à une sémantique
+monadique (ainsi qu'évoqué dans la conclusion de la partie~\ref{part:lang},
+page~\pageref{page:ccl-II-monad}) puis ajouter les continuations à la monade
+sous-jacente.
+
 \paragraph{Allocation dynamique}
 
 La plupart des programmes, et le noyau Linux en particulier, utilisent la notion
@@ -217,85 +238,41 @@ entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
 entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
 accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
-analyse préalable comme~\cite{ifm10}. Il est sûr (mais pas possible en pratique)
-d'ignorer les commandes de libération de mémoire.
+analyse préalable comme~\cite{ifm10}. Il est aussi possible d'utiliser un système de
+régions~\cite{jfp92}. En plus de donner un type à chaque expression, on calcule
+statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
+correspond à un ramasse-miette fait statiquement.
 
-% TODO régions
+\paragraph{Types structures}
 
-\paragraph{Structures récursives}
+L'accès à un type structure est délicat car on voudrait à partir d'une
+expression de la forme $x.l$ en déduire une information sur les types de $x$ et
+de $x.l$. La solution que nous avons choisi consiste à s'assurer que chaque $l$
+est associé à un seul type de structure $S$. On suppose qu'une passe de
+prétraitement a annoté le code pour transformer $x.l$ en $x.l_S$ où $S$ est la
+définition complète de la structure. Cela n'est pas satisfaisant pour deux
+raisons: d'une part, les types doivent apparaître dans le code du programme, ce
+qui annule l'avantage de l'inférence de types. D'autre part, cela veut dire
+qu'on ne peut pas exprimer de types structures contenant un pointeur vers une
+valeur du même type (par exemple, pour une liste chaînée). Un moyen de
+contourner cette limitation est d'enrichir le langage des types pour autoriser
+les structures récursives, à l'aide d'un opérateur de point fixe.
 
-% TODO est-ce que cela empêche l'imbrication? types rec/ vals rec
+Il existe d'autres solutions à ce problème, sans ajouter l'annotation totale de
+type. On ne connaît alors à l'accès qu'un seul nom de champ. La première est
+d'employer du sous-typage, en déclarant qu'un type structure contenant moins de
+champ est moins général qu'un autre. Au fur et à mesure de l'inférence, on
+obtient alors un type de plus en plus précis. En revanche dans ce cas là on perd
+la décidabilité de l'inférence. Une autre manière de faire est d'employer le
+polymorphisme de rangée (\emph{row polymorphism}): plutôt que de cacher les
+champs inconnus derrière le sous-typage, on en fait une variable $ρ$ qui pourra
+s'unifier avec d'autres champs. Par exemple, partant de $x.l ← 0$ on déduit que
+$x.l$ a pour type $\tInt$ et que $x$ a pour type $\{ l : \tInt ; ρ \} $.
+En pratique, l'implantation décrite dans le chapitre~\ref{cha:implem} utilise
+une technique similaire pour inférer les types des structures à partir du code
+\newspeak.
 
-% TODO[S] Si tu l'as résolu alors pourquoi le mettre ici?
-
-Une autre limitation est que seules les structures simples sont supportées. Les
-structures récursives, contenant un pointeur vers un objet du même type
-structure, ne sont pas typables. La raison est syntaxique: l'accès à un champ
-est noté $lv.l_S$ afin d'avoir à disposition le type complet de la structure.
-
-Par exemple, une liste chaînée d'entiers peut être décrite de la manière
-suivante en C:\@
-
-\begin{verbatim}
-struct int_list {
-    int value;
-    struct int_list *next;
-};
-\end{verbatim}
-
-% TODO et les listes chainées de Linux ? safety + typage
-
-La compilation est possible car la définition complète de \texttt{struct
-int\_list} n'est pas nécessaire pour connaître la taille d'un pointeur vers un
-objet de ce type.
-
-Pour compiler \texttt{l.next} en \langname, il faudrait écrire le type en
-extension:
-
-\[
-  l.next_{ value:\tInt ; next : \{ value : \tInt ; next : … \}~*}
-\]
-
-On peut fermer cette récursion infinie en ajoutant directement un opérateur de
-point fixe qui rend accessible le type d'un pointeur vers le type structure en
-train d'être défini.
-
-\begin{align*}
-    S \gramisa & … \gramorx \mathrm{fix}(p → S)
-\end{align*}
-
-On écrit alors:
-
-\[
-  l.next_{ \mathrm{fix}(p → \{ value : \tInt ; next : p \}) }
-\]
-
-Les structures mutuellement récursives peuvent être également exprimées de cette
-manière.
-
-\begin{verbatim}
-struct a {
-    int value;
-    struct b *next;
-};
-
-struct b {
-    float value;
-    struct a *next;
-};
-\end{verbatim}
-
-Ces structures sont respectivement traduites en:
-
-\begin{align*}
-  A &= \mathrm{fix} (p → \{ value : \tInt   ; next : \{ value : \tFloat ; next : p \}~* \}) \\
-  B &= \mathrm{fix} (p → \{ value : \tFloat ; next : \{ value : \tInt   ; next : p \}~* \})
-\end{align*}
-
-Ce schéma suffit à compiler tous les types de structures possibles en C. En
-effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
-structure en cours de définition; et il n'est alors possible que d'y accéder par
-pointeur.
+%% TODO et les listes chainées de Linux ? safety + typage
 
 \paragraph{Assembleur}
 
@@ -309,13 +286,13 @@ peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
 couverte par la sûreté du typage: après son exécution on ne peut plus rien
 garantir sur le programme.
 
-\paragraph{Analyse du noyau Linux}
+%\paragraph{Analyse du noyau Linux}
 
-Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
-d'une interface programmation particulière. Mais le principe de l'analyse est
-applicable à toutes les fonctions de traitement d'\texttt{ioctl}s des pilotes
-KMS, et même à toutes les fonctions faisant partie des différentes interfaces
-recevant un pointeur de l'espace utilisateur.
+%Ici nous avons présenté l'analyse expérimentale d'une fonction problématique
+%d'une interface programmation particulière. Mais le principe de l'analyse est
+%applicable à toutes les fonctions de traitement d'\texttt{ioctl}s des pilotes
+%KMS, et même à toutes les fonctions faisant partie des différentes interfaces
+%recevant un pointeur de l'espace utilisateur.
 
 \paragraph{Autres types abstraits}
 %TODO[S] ??
@@ -340,18 +317,69 @@ le type \texttt{int}. Le langage autorise donc par exemple de multiplier entre
 eux deux descripteurs de fichiers, ce qui ne correspond pas à une opération
 concrète.
 
-On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si un
-encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de codec
-tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
-une fonction prenant en paramètre un numéro de \emph{frame}.
+On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si on
+manipule des images, on peut éviter de nombreuses erreurs de programmation en
+définissant un type «indice de ligne» et un type «indice de colonne»
+incompatibles entre eux.
 
 % TODO il serait pas mal de citer les membres du jury dans ta biblio
+% Jouvelot  > the type and effect discipline?
+% Blazy     >
+% Levillain > NPK?
+% Chailloux > DAOC?
 
 % TODO[S] et d'autres classes de propriété de sécurité ? Plus fonctionnelles par
 % ex?
 
 \section{Conclusion}
 
-% TODO
+L'importance des logiciels grandit par deux effets:
+d'une part, ils sont présents dans de plus en plus d'appareils,
+et d'autre part leur taille part, leur taille est de plus en plus importante.
+Entre les appareils dédiés au calcul, à la communication, au multimedia, et au
+transport, on est facilement exposé en une journée au fonctionnement de plus
+d'une dizaine de millions de lignes de code.
+Il est primordial de vérifier que tout ce code, ne peut pas être détourné de son
+utilisation initiale, les conséquences pouvant être selon le logiciel gênantes
+ou catastrophiques.
+
+Au cœur de la plupart de ces systèmes informatiques, se trouve la plupart du
+temps un noyau qui abstrait les détails du matériel pour fournir aux programmes
+des abstractions sûres, permettant de protéger les données sensibles contenues
+dans ce système. Si une simple erreur de programmation peut briser cette
+isolation, on voit pourquoi la vérification est si importante.
+
+Dans ce but, les systèmes de types sont des outils bien connus de programmeurs.
+Même dans les langages dits faiblement typés comme C, les compilateurs aident de
+plus en plus les programmeurs à trouver des erreurs de programmation. De très
+nombreuses analyses peuvent être faites rien qu'en classifiant les expressions
+selon le genre de valeurs qu'elles créent à l'exécution --- c'est la définition
+que donne Pierce d'un système de types~\cite[p.~1]{TAPL}.
+
+L'utilisation d'un système de types comme analyseur statique léger est donc
+séduisante. Pour des propriétés qui ne dépendent pas de la valeur des
+expressions, mais uniquement de leur forme, c'est d'ailleurs la solution la plus
+simple, puisque comme nous l'avons montré elle est simple à mettre en œuvre et
+efficace à exécuter.
+
+On peut se poser la question suivante: pourquoi a-t'on besoin d'une analyse
+statique dédiée, plutôt que de passer par le langage C lui-même? Le problème
+vient du fait que celui-ci considère avant tout les types définissent une
+représentation en mémoire, et guère plus d'information. On peut définir des
+nouveaux noms pour un type, mais l'ancien et le nouveau sont alors compatibles.
+En un mot il est impossible de distinguer le rôle d'un type (son intention) de
+sa représentation (son extension).
+
+Ici, nous avons amené une solution au problème de pointeurs utilisateur en
+introduisant un type ayant la même représentation que les pointeurs classique,
+mais pour lequel l'ensemble des opérations est différents: c'est un type
+opaque. Cela suffit déjà à détecter des erreurs de programmation.
+
+Si on ajoutait cette construction au langage, on pourrait définir des nouveaux
+types partageant la représentation d'un type C existant, mais qui ne soit pas
+compatible avec le type d'origine, et pour lequel l'ensemble des opérations est
+restreint. Avec cette fonctionnalité dans un langage, non seulement on peut
+détecter d'autres classes de problèmes, mais surtout on laisse le programmeur
+définir de nouvelles analyses lui-même.
 
 % vim: spelllang=fr

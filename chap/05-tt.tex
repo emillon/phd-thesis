@@ -111,6 +111,7 @@ polymorphisme.
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
+\label{page:gamma-split}
 Plus précisément, un environnement $Γ$ est composé de deux listes de couples (variable,
 type): une pour les variables locales, et une pour les variables
 globales
@@ -120,7 +121,7 @@ globales
     variables globales.
 }
 
-Si $Γ = (Γ_G, Γ_L) = ({(γ_i)}_{i∈[1;n]}, {(η_i)}_{i∈[1;m]})$, 
+Si $Γ = (Γ_G, Γ_L) = ({(γ_i)}_{i∈[1;n]}, {(η_i)}_{i∈[1;m]})$,
 avec $γ_i = (g_i, t_i)$ et $η_i = (l_i, u_i)$,
 on utilise les notations suivantes:
 
@@ -509,17 +510,15 @@ programmes, nous allons avoir à traiter des environnements de typage $Γ$ et de
 états mémoires $m$. La première chose à faire est donc d'établir une
 correspondance entre ces deux mondes.
 
-% TODO dénomination : type sémantique?
-Étant donné un état mémoire $m$, on associe un type de valeur (ou type
-sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement
-$\semtyp{m}{v}{τ}$.
+Étant donné un état mémoire $m$, on associe un type de valeur $τ$ aux valeurs
+$v$. Cela est fait sous la forme d'un jugement $\semtyp{m}{v}{τ}$.
 
-Ces types sémantiques ne sont pas exactement les mêmes que les types statiques.
+Ces types de valeurs ne sont pas exactement les mêmes que les types statiques.
 Pour les calculer, on n'a pas accès au code du programme, seulement à ses
-données. Il est par exemple possible de reconnaître le type des constantes,
-mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
-impossible de déterminer statiquement. On le remplace donc par un cas plus
-simple où seul l'arité est conservée.
+données. Il est par exemple possible de reconnaître le type des constantes, mais
+pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
+de déterminer statiquement. On le remplace donc par un cas plus simple où seul
+l'arité est conservée.
 
 Le cas des références (règle \textsc{S-Ptr}) utilise le typage des left-values,
 codéfini par:
@@ -530,12 +529,12 @@ codéfini par:
     \semtyp{m}{m[φ]_Φ}{τ}
 \]
 
-Les règles de définition du typage sémantique sont données dans la
+Les règles de définition du typage des valeurs sont données dans la
 figure~\ref{fig:types-semantiques}.
 
 \begin{figure}[h]%{{{
 \begin{align*}
-\gramdef[2.5cm]{Type\\sémantique}{τ}
+\gramdef[2.5cm]{Type\\de valeur}{τ}
     { \tInt                       }{Entier}
     { \tFloat                     }{Flottant}
     { \tUnit                      }{Unité}
@@ -546,7 +545,7 @@ figure~\ref{fig:types-semantiques}.
     {END}
 \end{align*}
 
-\caption{Types sémantiques}
+\caption{Types de valeurs}
 \label{fig:types-semantiques}
 \end{figure}%}}}
 
@@ -577,13 +576,13 @@ la seule information restant à l'exécution sur les fonctions est son arité.
     \disprule{S-Fun}
   \end{mathpar}
 
-  \caption{Règles de typage sémantique}
+  \caption{Règles de typage des valeurs}
 \label{fig:regles-typ-sem}
 
 \end{figure}%}}}
 
 La prochaine étape est de définir une relation de compatibilité entre les types
-sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
+de valeurs $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
 $\tComp{τ}{t}$. Les règles sont décrites dans la
 figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
 Notons qu'on garde le même nom pour les types de base, et que par exemple
@@ -621,7 +620,7 @@ l'exécution, et le second le type statique.
       }
   \end{mathpar}
 
-  \caption{Compatibilité entre types sémantiques et statiques}
+  \caption{Compatibilité entre types de valeurs et statiques}
 \label{fig:regles-comp-typ}
 \end{figure}%}}}
 
@@ -630,7 +629,7 @@ l'exécution, et le second le type statique.
 %\begin{definition}[État mémoire bien typé]
   %On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
   %l'on note $\mcomp{Γ}{m}$, si les domaines de $Γ$ et $m$ coïncident sur la
-  %partie visible, et que les types sémantiques des variables visibles coïncident
+  %partie visible, et que les types des valeurs associées aux variables visibles coïncident
   %avec leurs types statiques.
 
   %\[
@@ -690,11 +689,11 @@ dans la figure~\ref{fig:comp-mem}.
 
         \irule{M-Push}
             { \mcomp{Γ}{m}
+           \\ Γ  = (Γ_G, Γ_L)
+           \\ Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t] )
            \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
            \\ …
            \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
-           \\ Γ  = (Γ_G, Γ_L)
-           \\ Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n] ) % TODO le \vRet ?
             }
             { \mcomp{Γ'}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
             }
@@ -708,9 +707,8 @@ dans la figure~\ref{fig:comp-mem}.
            \\ …
            \\ m' ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ}{\cCleanup{\cPop{m'}}} }
+            { \mcomp{Γ}{\cCleanup{\cPop{m'}} } }
 
-            % TODO supprimer tous les Γ, ...
         \irule{M-Decl}
             { \mcomp{Γ}{m}
            \\ m ⊧ v : τ
@@ -741,10 +739,12 @@ dans la figure~\ref{fig:comp-mem}.
 
 \end{figure}%}}}
 
-% TODO les locales dans le Γ doivent disparaitre
-
 % TODO ici?
 \begin{lemma}[Hauteur des chemins typés]
+
+    Une valeur typée ne peut jamais pointer au dessus du niveau courant de pile.
+($\phx\cH$ provient de la définition~\ref{def:hauteur-val},
+page~\pageref{def:hauteur-val}).
 
     Si $m ⊧ v : τ$, alors $\cH{v} ≤ |m|$.
 
@@ -797,60 +797,97 @@ $\tComp{τ}{t}$.
 
 \begin{proof}
 
-On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
+\def\cVar#1{\mathrm{Var}(#1)}
+\def\cVars#1{\mathrm{Vars}(#1)} % TODO utile?
+
+Commençons par donner un résultat préliminaires. On utilise les notations
+suivantes:
+
+\begin{itemize}
+
+\item $\cVar{φ}$ la variable qui apparaît dans $φ$:
+
+\begin{align*}
+    \cVar{a}    &= a \\
+    \cVar{φ.l}  &= \cVar{φ} \\
+    \cVar{φ[n]} &= \cVar{φ}
+\end{align*}
+
+\item $\cVars{m}$ est l'ensemble des variables de $m$:
+
+\[
+\cVars{([s_1, …, s_n], g)} =
+\{ (x) / x↦v ∈ g \}
+\cup
+\bigcup_{i ∈ [1;n]} \{ (n - i, x) / x↦v ∈ s_i \}
+\]
+
+% TODO check off by one
+
+\end{itemize}
+
+Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$
+est soit une variable globale $(x)$ avec $x ∈ Γ_G$, soit une variable locale
+$(|m|, x)$ du plus haut cadre de pile avec $x ∈ Γ_L$. Cela se prouve par
+récurrence sur la dérivation de $\mcomp{Γ}{m}$.
+
+% TODO présenter informellement l'autre
+
+À l'aide de ce résultat, on prouve le lemme~\ref{lemma:mem-typ} par induction
+sur une dérivation de $\mcomp{Γ}{m}$.
 
 \paragraph{\textsc{M-Empty}:} % {{{
-Il n'existe pas de $φ$ tel que $Γ ⊢ φ : t$. En effet, on montre par induction
-sur la forme de $φ$ que cela implique qu'il existe $a$ tel que
-$\cVarname{a} ∈ \cDom{Γ}$.
+$Γ_G = Γ_L = [~]$, la prémisse $Γ ⊢ φ : t$ est donc impossible à satisfaire.
 % }}}
 \paragraph{\textsc{M-Global}:} % {{{
+Soient $φ$ tel que $\extendGlobal{Γ}{x}{t'} ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
+Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈ Γ_G$,
+soit $(|m|, y)$ avec $y ∈ Γ_L$.
 
-Soient $φ$ tel que $Γ, x:t' ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
+Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
 
-On veut montrer que $m'[φ]_Φ$ est une valeur $v'$
-tq
-$m' ⊧ v' : τ$
-où
-$\tComp{τ}{t}$.
-
-Deux cas peuvent se produire selon la variable $a$ que référence $φ$: si $a =
-(x)$: dans ce cas, $m'[φ]_Φ = v$. On conclut en appliquant les hypothèses de
-\textsc{M-Global}. Dans tous les autres cas, $a$ est contenue dans $m$ car sinon
-$φ$ ne serait pas typable. On peut donc appliquer l'hypothèse d'induction.
-% TODO semi-bien
-
+Dans les autres cas, $\cVar{φ} ∈ \cVars{m}$. Donc $m'[φ]_Φ = m[φ]_Φ$, ce qui
+nous permet de conclure grâce à l'hypothèse d'induction.
 % }}}
 \paragraph{\textsc{M-Push}:} % {{{
 
 On procède d'une manière similaire. $φ$ peut faire référence soit à un des
-$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable plus profonde
-auquel cas on applique l'hypothèse de récurrence.
+$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable globale, auquel
+cas on applique l'hypothèse de récurrence.
+
+% }}}
+\paragraph{\textsc{M-Pop}:} % {{{
+
+Partant de $\mcomp{Γ}{\cCleanup{\cPop{m'}} }$ et $Γ ⊢ φ : t$, on déduit que
+$\cVar{Φ}$ est soit une globale soit une locale de hauteur
+$|\cCleanup{\cPop{m'}}| = |m'| - 1 = |m|$.
+
+% TODO
 
 % }}}
 \paragraph{\textsc{M-Decl}:} % {{{
-Idem, on distingue selon si $φ$ fait référence à la variable déclarée ou non.
-% }}}
-\paragraph{\textsc{M-Pop}:} % {{{
-Les $φ$ faisant référence à un des $x_i$ ne sont pas typables car $x_i ∉ Γ$. Il
-reste donc les variables plus basses dans la pile pour lesquelles l'hypothèse de
-récurrence s'applique.
-% TODO refaire avec le nouveau M-Pop
+On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
+locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les prémisses
+nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ = m[φ]$ et on
+applique l'hypothèse d'induction.
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{
-Il est impossible que $φ$ fasse référence à $x$ car $x ∉ Γ$. Donc $Γ ⊢ φ : t$ et
-l'hypothèse de récurrence s'applique.
+
+% TODO
+
 % }}}
 \paragraph{\textsc{M-Write}:} % {{{
+On partant de $\mcomp{Γ}{m'}$ où $m' = m[φ ← v]_Φ$, et on suppose que
+$Γ ⊢ φ' : t'$.
 
-On distingue selon si le $φ$ utilisé lors de la lecture est le même que celui
-lors de l'écriture. Si oui, il suffit d'appliquer \textsc{PutGet}:
-$m[φ ← v]_Φ[φ]_Φ = v$. Sinon, on applique l'hypothèse de récurrence.
+Si $φ = φ'$: alors il suffit d'appliquer \textsc{GetPut} à la lentille $Φ$:
+$m[φ ← m[φ]_Φ]_Φ = m$, ce qui donne directement la conclusion.
 
+Si $φ ≠ φ'$:
+$Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$. En
+particulier $\cVar{φ'} ∈ \cVars{m'}$. Comme $φ ≠ φ'$, $m'[φ']_Φ = m[φ']_Φ$ et on
+conclut grâce à l'hypothèse d'induction.
 % }}}
-
-% TODO ces démos sont n'imp
-
 \end{proof}
 
 \section{Propriétés du typage}
@@ -959,7 +996,7 @@ $Γ ⊢ lv : t'$ et $t = t'~*$.
 \item Si $Γ ⊢ i_1;i_2$, alors $Γ ⊢ i_1$ et $Γ ⊢ i_2$.
 \item Si $Γ ⊢ e$, alors il existe $t$ tel que $Γ ⊢ e : t$.
 \item Si $Γ ⊢ \iDecl{x}{e}{i}$, alors il existe $t$ tel que
-      $Γ ⊢ e : t$ et $Γ, x:t ⊢ i$.
+      $Γ ⊢ e : t$ et $\extendLocal{Γ}{x}{t} ⊢ i$.
 \item Si $Γ ⊢ \iIf{e}{i_t}{i_f}$, alors $Γ ⊢ e : \tInt$,
       $Γ ⊢ i_t$ et $Γ ⊢ i_f$.
 \item Si $Γ ⊢ \iWhile{e}{i}$, alors $Γ ⊢ e : \tInt$ et $Γ ⊢ i$.
@@ -997,7 +1034,7 @@ Ces cas sont définis par les règles suivantes:
 
 \begin{mathpar}
 \irule{T-Ctx-EE}
-    {Γ, x : t_i ⊢ \ctxSub{C}{x} : t_2}
+    {\extendLocal{Γ}{x}{t_i} ⊢ \ctxSub{C}{x} : t_2}
     {\tyctx{Γ}{C}{t_i}{t_e}}
 
 \irule{T-Ctx-IE}
@@ -1005,7 +1042,7 @@ Ces cas sont définis par les règles suivantes:
     { \tyctx{Γ}{C}{}{t_e} }
 \\
 \irule{T-Ctx-EI}
-    { Γ, x : t_i ⊢ \ctxSub{C}{x} }
+    { \extendLocal{Γ}{x}{t_i} ⊢ \ctxSub{C}{x} }
     { \tyctx{Γ}{C}{t_i}{} }
 
 \irule{T-Ctx-II}
@@ -1066,8 +1103,8 @@ Il suffit alors d'instancier le $i$ correspondant dans la prémisse de la règle
 \paragraph{\textsc{T-Ctx-EE} et \textsc{T-Ctx-EI}:}
 
 Ce cas repose sur un lemme de substitution admis ici. Si une construction est
-bien typée sous $Γ, x:t$, alors reste bien typée sous $Γ$ si l'on y remplace $x$
-par une expression typée $t$.
+bien typée sous $\extendLocal{Γ}{x}{t}$, alors reste bien typée sous $Γ$ si l'on
+y remplace $x$ par une expression de type $t$.
 \end{proof}
 
 \begin{lemma}[Inversion du typage sous un contexte]
@@ -1125,7 +1162,7 @@ $Γ = x:t$).
   $\tInt$                         & $n$ \\
   $\tFloat$                       & $d$ \\
   $\tUnit$                        & $\eUnit$ \\
-  $t*$                            & $φ$ ou $\eNull$ \\
+  $t*$                            & $\wphi{φ}$ ou $\eNull$ \\
   $t[~]$                          & $\eArray{v_1; …; v_n}$ \\
   $\tStruct{l_1 : t_1;…;l_n:t_n}$ & $\eStruct{l_1 : v_1;…;l_n:v_n}$ \\
   $(t_1, …, t_n) → t$             & $\eFun{a_1, …, a_n}{i}$ \\
@@ -1135,21 +1172,9 @@ $Γ = x:t$).
 
 \end{lemma}
 
-%\begin{lemma}[Affaiblissement]
-%\label{lemma:affaiblissement}
-
-%On peut ajouter des associations supplémentaires dans l'environnement sans
-%modifier les typages dans cet environnement.
-
-%Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
-
-%\end{lemma}
-
 \begin{proof}[Démonstration (esquisse)]
-On procède par induction sur une dérivation de $Γ ⊢ e : t$. Le seul cas où $Γ$
-est accédé en lecture (et pas uniquement propagé de prémisses en prémisses) est
-le cas de l'accès à une variable où la prémisse a pour forme $y : t ∈ Γ$. Or, si
-celle ci est vraie, alors $y:t ∈ Γ, x:t'$ est également vérifiée.
+On fait l'inventaire, pour chaque forme syntaxique, des règles pouvant arriver à
+cette dérivation.
 \end{proof}
 
 \section{Progrès et préservation}

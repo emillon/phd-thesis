@@ -202,7 +202,7 @@
                 { Γ ⊢ e : t }
                 { \typh{Γ}{e}{Γ} }
             }
-    {T-Var}{ \irule{T-Var} % TODO màj
+    {T-Var}{ \irule{T-Var}
                 { Γ ⊢ e : t
                \\ Γ' = \extendGlobal{Γ}{x}{t}
                 }
@@ -448,8 +448,6 @@
     {Eval-Err}{ \irule{Eval-Err}
                   { \msi{m}{e} → Ω }
                   { \msi{m}{\ctxSub{C}{e}} → Ω }
-% TODO préciser que ça s'étend à i dans progres
-% return
     }
     {Prog}{ \irule{Prog}
               {\phstar{([~], [~])}{P}{m}}

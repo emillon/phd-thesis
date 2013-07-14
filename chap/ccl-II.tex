@@ -1,7 +1,48 @@
-% TODO dans chapeau de eval?
-% TODO et les lentilles (vs monades)
+On vient de décrire en détail un langage impératif, \langname: tout d'abord sa
+syntaxe et sa sémantique dans le chapitre~\ref{cha:typbase}.
+Une des particularités de cette sémantique est l'utilisation de lentilles pour
+modifier les valeurs composées en profondeur.
 
-% TODO[S] ton travail !
+\label{page:ccl-II-monad}
+Il y a plusieurs alternatives à cette présentation. La première est la solution
+classique qui consiste à décrire les modifications de la mémoire en extension.
+C'est en général long et laborieux puisqu'il faut définir les accès en lecture
+et écriture à chaque étape (avec des lentilles on décrit ces deux opérations
+uniquement sur les briques du calcul, et la composition fait le reste). La
+seconde solution est d'employer une sémantique monadique. Les transisitions sont
+alors encodés comme des actions monadiques qui représentent les modifications de
+la mémoire. Un des avantages de cette solution est qu'elle est très extensible.
+Par exemple, la propagation des erreurs, ou l'ajout de continuations
+(c'est-à-dire le support des fonctions \texttt{setjmp} et \texttt{longjmp})
+peuvent facilement être exprimées dans un formalisme monadique.
+
+Ensuite, dans le chapitre~\ref{cha:typbase} nous avons ajouté un système de
+types à \langname. Le but est de restreindre le genre d'erreurs qui peuvent
+arriver lors de l'évaluation d'un programme. Par le théorème de progrès
+(théorème~\ref{thm:progres} , page~\pageref{thm:progres}), on interdit les
+erreurs qui signalent une manipulation de valeurs incompatibles, l'accès à un
+champ de structure inconnu, et l'accès à une variable inexistante. Et le
+théorème de préservation (théorème~\ref{thm:préservation},
+page~\pageref{thm:preservation}) formalise le résultat classique qu'une étape
+d'évaluation ne modifier pas le typage.
+Une particularité de \langname est que son état mémoire est structuré, avec une
+pile de variables locales explicite. On retrouve donc cette distinction dans le
+typage: les variables globales et les variable locales sont séparées dans les
+environnement de typage $Γ$ (page~\pageref{page:gamma-split}).
+
+Enfin, on étend dans le chapitre~\ref{cha:qualifs} le langage pour exprimer la
+notion de pointeurs utilisateur. Cela permet d'écrire des fonctions qui se
+comportent comme des appels système. On commence par montrer qu'une extension
+naïve du système de types ne suffit pas, car le théorème de progrès est alors
+invalidé. On ajoute donc un type dédié aux pointeurs utilisateur. Les valeurs de
+ce type sont créées explicitement et passés aux appels système. La règle de
+typage du déréférencement est restreinte aux pointeurs noyau, ce qui permet de
+ré-établir les théorèmes de progrès et préservation.
+
+Notre technique de typage permet donc d'exprimer correctement les problèmes liés
+à la manipulation mémoire lors des appels système, ainsi que décrits dans le
+chapitre~\ref{cha:os}: c'est une méthode simple pour détecter et empêcher les
+problèmes de sécurité qui proviennent des pointeurs utilisateur.
 
 Comme nous l'avons fait remarquer dans le chapitre~\ref{cha:etatdelart},
 utiliser une technique de typage pour étudier des propriétés sur les données a
@@ -58,8 +99,4 @@ les systèmes embarqués de manipuler des pointeurs provenant d'espaces mémoire
 indépendants : par exemple, de la de la mémoire flash, de la RAM, ou une EEPROM
 de configuration. Ces différentes mémoires possèdent des adresses, et un
 pointeur est interprété comme faisant référence à une ou l'autre selon le code
-dont il est tiré. Dans ces cas, la notion de sous-typage n'est pas adaptée.
-
-% TODO pas si clair
-
-% TODO les int
+dont il est tiré.
