@@ -700,9 +700,8 @@ Plusieurs remarques sont à faire: d'une part, en ce qui concerne le typage de l
 mémoire, il suffit de montrer que $\mcomp{Γ}{m'}$ car cela implique que
 $\mcomp{Γ}{\cCleanup{m'}}$. D'autre part, la règle \textsc{Ctx} apparaît 3 fois
 car elle peut être appliquée en contexte d'expression, d'instructions ou de
-left-values.
-
-% TODO + trans
+left-values. De même la règle \textsc{Trans} ne pose pas de problème, il suffit
+d'appliquer l'hypothèse de récurrence à ses prémisses.
 
 \subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
