@@ -401,13 +401,13 @@ Ocaml~\cite{unikernels}.
 
 Les langages décrits précédemments sont faits pour être facilement écrits par
 des programmeurs humains. En général ils sont ambigüs ou ont des comportements
-implicites. Pour analyser du code source, il est plus pratique d'avoir une
-représentation intermédiaire plus simple afin d'avoir moins de traitements
-dupliqués. Dans de nombreux projets, des sous-ensembles de C ont été définis
-pour aller dans ce sens.
+implicites.
 
-% TODO[S] nous en analysons ici quelques uns
-% on ne comprend pas ce que tu vas dire
+Si on veut analyser des programmes, il est plus pratique de travailler sur une
+représentation intermédiaire plus simple afin d'avoir moins de traitements
+dupliqués. Dans ce cas on ajoute une phase préliminaire à l'analyse, qui
+consiste à convertire le code à étudier vers cette représentation. On présente
+quelques candidats langages qui peuvent servir ce rôle:
 
 \subsection*{Middle-ends}
 
@@ -475,19 +475,20 @@ cadre du projet Penjili~\link{penjili}. On y trouve notamment un langage
 intermédiaire, Newspeak\cite{newspeak}, ainsi que des compilateurs permettant de
 traduire du code C et Ada vers celui-ci. L'analyseur statique Penjili, reposant
 sur ces outils, a été utilisé pour analyser des logiciels embarqués critiques de
-plusieurs millions de lignes de code. Il n'est pour le moment pas open source.
+plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
+source.
 
-Nous avons choisi de basé notre analyse sur Newspeak, dans le but de bénéficier
+Nous avons choisi de baser notre analyse sur Newspeak, dans le but de bénéficier
 de ces outils existants et dans la perspective de guider les analyses de valeur
 par des information de typage.
 
 Plus précisément, nous utilisons un langage nommé \langname, inspiré de Newspeak
 mais avec un modèle mémoire de plus haut niveau permettant de garantir la sûreté
-des programmes bien typés. L'implantation quant à elle, se fait sur Newspeak.
+des programmes bien typés. L'implantation quant à elle se fait sur Newspeak.
 
 \section{Plan de la thèse}
 
-Cette thèse comporte trois parties.
+Cette thèse comporte trois parties. % TODO étendre
 
 \paragraph{La partie~\ref{part:ctx}} présente le contexte de ces travaux. Le
 fonctionnement général d'un système d'exploitation y est détaillé, et les
