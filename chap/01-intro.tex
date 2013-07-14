@@ -494,27 +494,36 @@ notre solution, \langname, d'un point de vue théorique. La troisième rend comp
 de la démarche expérimentale: comment la solution a été implantée et en quoi
 elle est applicable en pratique.
 
-\paragraph{La partie~\ref{part:ctx}} présente le contexte de ces travaux. Le
-fonctionnement général d'un système d'exploitation y est détaillé, et les
-problèmes de manipulation de pointeurs contrôlés par l'utilisateur y sont
-introduits. On fait ensuite un tour d'horizon des techniques existantes
-permettant de traiter ce problème. Cette partie se conclut par la proposition au
-cœur de cette thèse.
+\paragraph{Dans la partie~\ref{part:ctx},} on présente tout d'abord le
+fonctionnement général d'un système d'exploitation. On y introduit aussi les
+problèmes de manipulation de pointeurs contrôlés par l'utilisateur. Ceux-ci sont
+centraux puisqu'on désire les interdire. On fait ensuite un tour d'horizon des
+techniques existantes permettant de traiter ce problème par analyse statique de
+code source. Enfin, on conclut en énonçant précisément la proposition au cœur de
+cette thèse.
 
-\paragraph{La partie~\ref{part:lang}} décrit notre solution: \langname{}, un
-langage impératif. On y décrit sa syntaxe, sa sémantique ainsi qu'un système de
-types statiques. On l'étend ensuite pour capturer les problèmes d'adressage
-mémoire présents dans les systèmes d'exploitation en ajoutant des pointeurs
-contrôlés par l'utilisateur. Le système de types est également étendu. Pour
-chacune de ces variantes, on établit la propriété de sûreté de typage reliant la
-sémantique d'exécution aux types statiques.
+\paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution:
+\langname{}, un langage impératif. Sa syntaxe y est d'abord décrite, puis sa
+sémantique ainsi qu'un système de types statiques. À ce niveau on a un bon
+support pour décrire des analyses statiques sur un langage impératif. On étend
+ensuite le système de types pour capturer les problèmes d'adressage mémoire
+présents dans les systèmes d'exploitation. Pour ce faire, on ajoute des
+pointeurs contrôlés par l'utilisateur à la sémantique et au système de types. À
+chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
+de sûreté de typage reliant la sémantique d'exécution aux types statiques.
 
-\paragraph{La partie~\ref{part:xp}} documente la démarche expérimentale associée
-à ces travaux. L'implantation du système de types est décrite, ainsi que la
-manière de transformer automatiquement du code C en \langname{}. Un cas d'étude
-est déroulé portant sur un bug ayant touché le noyau Linux. Il est démontré que
-le système de type capture précisément ce genre d'erreur de programmation.
-Enfin, les possibilités d'extension tant théoriques qu'expérimentales sont
-présentées.
+\paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale associée
+à ces travaux.
+L'implantation du système de types sur le langage \newspeak est d'abord décrite,
+à l'aide d'une variante de l'algorithme W de Damas et Milner.
+La manière de compiler depuis du code C est également présentée.
+Ensuite, on applique cette implantation à un cas d'étude concret. Il s'agit d'un
+bug ayant touché le noyau Linux. En lançant notre prototype, la version non
+corrigée lève une erreur alors que dans la version corrigée, un type correct est
+inféré. On montre ainsi que le système de type capture précisément ce genre
+d'erreur de programmation.
+
+On conclut enfin en décrivant les possibilités d'extension autant sur le point
+théorique qu'expérimental.
 
 % vim: spelllang=fr
