@@ -738,7 +738,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
 
-  L'opération inverse de $\phxx\cExtend$ sera simplement notée «$-$» : $m - x$,
+  L'opération inverse de $\phxxx\cExtend$ sera simplement notée «$-$» : $m - x$,
   par exemple.
 
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
@@ -750,6 +750,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 \end{definition}
 
 \begin{definition}[Hauteur d'une valeur]
+\label{def:hauteur-val}
 Une valeur peut être, ou contenir, une référence vers une variable de la pile.
 La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
 $-1$ sinon.

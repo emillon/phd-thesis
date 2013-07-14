@@ -741,6 +741,10 @@ dans la figure~\ref{fig:comp-mem}.
 % TODO ici?
 \begin{lemma}[Hauteur des chemins typés]
 
+    Une valeur typée ne peut jamais pointer au dessus du niveau courant de pile.
+($\phx\cH$ provient de la définition~\ref{def:hauteur-val},
+page~\pageref{def:hauteur-val}).
+
     Si $m ⊧ v : τ$, alors $\cH{v} ≤ |m|$.
 
 \end{lemma}
