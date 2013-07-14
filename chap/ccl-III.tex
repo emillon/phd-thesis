@@ -43,10 +43,17 @@ par exemple du polymorphisme. Le chapitre~\ref{cha:conclusion} présente quelque
 unes de ces extensions possibles.
 
 L'expérimentation, quant à elle, est pour le moment limitée, mais on peut
-l'étendre à des domaines de plus en plus importants dans le noyau Linux: tout
-d'abord, en vérifiant les autres \emph{ioctls} de ce pilote, puis l'ensemble des
-\emph{ioctls} des modules ayant la même interface, puis d'autres types
-d'interfaces qui manipulent des pointeurs utilisateurs: par exemple d'autres
-pilotes de périphériques ou des systèmes de fichiers.
+l'étendre à des domaines de plus en plus importants dans le noyau Linux.
+Tout d'abord, ce même module définit d'autres fonctions implantant des
+\emph{ioctls}. Celles-ci reçoivent donc égalament des pointeurs utilisateur et
+sont susptibles d'être vulnérables à ce genre d'erreurs de programmation.
+Ensuite, d'autres modules exposent une interface similaire, à commencer par les
+autres pilotes de cartes graphiques. Ceux-ci sont également un terrain sur
+lequel appliquer cette analyse.
+
+De manière générale, toutes les interfaces du noyau manipulant des pointeurs
+utilisateur gagnent à être analysées. Outre les implantations des \emph{ioctls}
+dans chaque pilote et les appels systèmes, les systèmes de fichiers manipulent
+aussi de tels pointeurs via leurs opération de lecture et d'écriture.
 
 % TODO ce para = money shot
