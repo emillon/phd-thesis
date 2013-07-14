@@ -222,80 +222,80 @@ d'ignorer les commandes de libération de mémoire.
 
 % TODO régions
 
-\paragraph{Structures récursives}
+%\paragraph{Structures récursives}
 
-% TODO est-ce que cela empêche l'imbrication? types rec/ vals rec
+%% TODO est-ce que cela empêche l'imbrication? types rec/ vals rec
 
-% TODO[S] Si tu l'as résolu alors pourquoi le mettre ici?
+%% TODO[S] Si tu l'as résolu alors pourquoi le mettre ici?
 
-Une autre limitation est que seules les structures simples sont supportées. Les
-structures récursives, contenant un pointeur vers un objet du même type
-structure, ne sont pas typables. La raison est syntaxique: l'accès à un champ
-est noté $lv.l_S$ afin d'avoir à disposition le type complet de la structure.
+%Une autre limitation est que seules les structures simples sont supportées. Les
+%structures récursives, contenant un pointeur vers un objet du même type
+%structure, ne sont pas typables. La raison est syntaxique: l'accès à un champ
+%est noté $lv.l_S$ afin d'avoir à disposition le type complet de la structure.
 
-Par exemple, une liste chaînée d'entiers peut être décrite de la manière
-suivante en C:\@
+%Par exemple, une liste chaînée d'entiers peut être décrite de la manière
+%suivante en C:\@
 
-\begin{verbatim}
-struct int_list {
-    int value;
-    struct int_list *next;
-};
-\end{verbatim}
+%\begin{verbatim}
+%struct int_list {
+    %int value;
+    %struct int_list *next;
+%};
+%\end{verbatim}
 
-% TODO et les listes chainées de Linux ? safety + typage
+%% TODO et les listes chainées de Linux ? safety + typage
 
-La compilation est possible car la définition complète de \texttt{struct
-int\_list} n'est pas nécessaire pour connaître la taille d'un pointeur vers un
-objet de ce type.
+%La compilation est possible car la définition complète de \texttt{struct
+%int\_list} n'est pas nécessaire pour connaître la taille d'un pointeur vers un
+%objet de ce type.
 
-Pour compiler \texttt{l.next} en \langname, il faudrait écrire le type en
-extension:
+%Pour compiler \texttt{l.next} en \langname, il faudrait écrire le type en
+%extension:
 
-\[
-  l.next_{ value:\tInt ; next : \{ value : \tInt ; next : … \}~*}
-\]
+%\[
+  %l.next_{ value:\tInt ; next : \{ value : \tInt ; next : … \}~*}
+%\]
 
-On peut fermer cette récursion infinie en ajoutant directement un opérateur de
-point fixe qui rend accessible le type d'un pointeur vers le type structure en
-train d'être défini.
+%On peut fermer cette récursion infinie en ajoutant directement un opérateur de
+%point fixe qui rend accessible le type d'un pointeur vers le type structure en
+%train d'être défini.
 
-\begin{align*}
-    S \gramisa & … \gramorx \mathrm{fix}(p → S)
-\end{align*}
+%\begin{align*}
+    %S \gramisa & … \gramorx \mathrm{fix}(p → S)
+%\end{align*}
 
-On écrit alors:
+%On écrit alors:
 
-\[
-  l.next_{ \mathrm{fix}(p → \{ value : \tInt ; next : p \}) }
-\]
+%\[
+  %l.next_{ \mathrm{fix}(p → \{ value : \tInt ; next : p \}) }
+%\]
 
-Les structures mutuellement récursives peuvent être également exprimées de cette
-manière.
+%Les structures mutuellement récursives peuvent être également exprimées de cette
+%manière.
 
-\begin{verbatim}
-struct a {
-    int value;
-    struct b *next;
-};
+%\begin{verbatim}
+%struct a {
+    %int value;
+    %struct b *next;
+%};
 
-struct b {
-    float value;
-    struct a *next;
-};
-\end{verbatim}
+%struct b {
+    %float value;
+    %struct a *next;
+%};
+%\end{verbatim}
 
-Ces structures sont respectivement traduites en:
+%Ces structures sont respectivement traduites en:
 
-\begin{align*}
-  A &= \mathrm{fix} (p → \{ value : \tInt   ; next : \{ value : \tFloat ; next : p \}~* \}) \\
-  B &= \mathrm{fix} (p → \{ value : \tFloat ; next : \{ value : \tInt   ; next : p \}~* \})
-\end{align*}
+%\begin{align*}
+  %A &= \mathrm{fix} (p → \{ value : \tInt   ; next : \{ value : \tFloat ; next : p \}~* \}) \\
+  %B &= \mathrm{fix} (p → \{ value : \tFloat ; next : \{ value : \tInt   ; next : p \}~* \})
+%\end{align*}
 
-Ce schéma suffit à compiler tous les types de structures possibles en C. En
-effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
-structure en cours de définition; et il n'est alors possible que d'y accéder par
-pointeur.
+%Ce schéma suffit à compiler tous les types de structures possibles en C. En
+%effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
+%structure en cours de définition; et il n'est alors possible que d'y accéder par
+%pointeur.
 
 \paragraph{Assembleur}
 
@@ -353,5 +353,35 @@ une fonction prenant en paramètre un numéro de \emph{frame}.
 \section{Conclusion}
 
 % TODO
+
+L'importance des logiciels grandit par deux effets.
+D'une part, les logiciels deviennent de plus en plus présents.
+D'autre part, leur taille est de plus en plus importante.
+Entre les appareils dédiés au calcul, à la communication, au multimedia, et au
+transport, on est facilement exposé en une journée au fonctionnement de plus
+d'une dizaine de millions de lignes de code.
+Il est primordial de vérifier que tout ce code, ne peut pas être détourné de son
+utilisation initiale, les conséquences pouvant être selon le logiciel gênantes
+ou catastrophiques.
+
+Au cœur de la plupart de ces systèmes informatiques, se trouve la plupart du
+temps un noyau qui abstrait les détails du matériel pour fournir aux programmes
+des abstractions sûres, permettant de protéger les données sensibles contenues
+dans ce système. Si une simple erreur de programmation peut briser cette
+isolation, on voit pourquoi la vérification est si importante.
+
+\jolibreak
+
+Les systèmes de types sont des outils bien connus de programmeurs. Même dans les
+langages dits faiblement typés comme C, les compilateurs aident de plus en plus
+les programmeurs à trouver des erreurs de programmation. De très nombreuses
+analyses peuvent être faites rien qu'en classifiant les expressions selon le
+genre de valeurs qu'elles créent à l'exécution --- c'est la définition que donne
+Pierce d'un système de types~\cite[p.~1]{TAPL}.
+
+L'utilisation d'un système de types statique pour analyser
+
+% TODO
+
 
 % vim: spelllang=fr
