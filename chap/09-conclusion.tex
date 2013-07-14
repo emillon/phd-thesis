@@ -5,8 +5,9 @@ l'expressivité de ce système.
 
 % TODO liens EADS
 
-
 \section{Contributions}
+
+Cette thèse comporte 4 contributions principales.
 
 \paragraph{Un langage impératif bien typé}
 
@@ -56,7 +57,7 @@ proche de C. Ces deux langages diffèrent donc sur certains points. On détaille
 ici ces différences et selon les cas, comment les combler ou pourquoi cela est
 impossible de manière inhérente.
 
-\paragraph{Arithmétique}
+\paragraph{Types numériques}
 
 En C, on dispose de plusieurs types entiers, pouvant avoir plusieurs tailles et
 être signés ou non signés, ainsi que des types flottants qui diffèrent par leur
@@ -181,14 +182,21 @@ locales ne seront plus accessibles au retour d'une fonction, alors on peut
 supprimer le nettoyage en posant $\mathrm{Cleanup}(m) = m$. Cette garantie peut
 être obtenue avec une analyse statique préalable~\cite{ifm10}.
 
-\paragraph{\texttt{setjmp} et \texttt{longjmp}}
+\paragraph{Les fonctions \texttt{setjmp} et \texttt{longjmp}}
 
 Le langage C propose deux fonctions qui permettent de sauvegarder un état
 d'exécution et d'y sauter: ce sont respectivement les fonctions \texttt{setjmp}
 et \texttt{longjmp}. Elles sont très puissantes puisqu'elles permettent
 d'exprimer n'importe quel flot de contrôle, à la manière d'une continuation.
 
-% TODO monades & co
+Avec l'interprète du chapitre~\ref{cha:lang}, il n'est pas possible de donner
+une sémantique à ces constructions. Une des manières de faire est de modifier
+les états de l'interprète : au lieu de retenir l'instruction à évaluer avec
+$\msi{m}{i}$, on retient la continuation complète : $\msi{m}{k}$.
+Pour faciliter ce changement, on peut tout d'abord passer à une sémantique
+monadique (ainsi qu'évoqué dans la conclusion de la partie~\ref{part:lang},
+page~\pageref{page:ccl-II-monad}) puis ajouter les continuations à la monade
+sous-jacente.
 
 \paragraph{Allocation dynamique}
 
