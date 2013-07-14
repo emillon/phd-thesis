@@ -509,17 +509,15 @@ programmes, nous allons avoir à traiter des environnements de typage $Γ$ et de
 états mémoires $m$. La première chose à faire est donc d'établir une
 correspondance entre ces deux mondes.
 
-% TODO dénomination : type sémantique?
-Étant donné un état mémoire $m$, on associe un type de valeur (ou type
-sémantique) $τ$ aux valeurs $v$. Cela est fait sous la forme d'un jugement
-$\semtyp{m}{v}{τ}$.
+Étant donné un état mémoire $m$, on associe un type de valeur $τ$ aux valeurs
+$v$. Cela est fait sous la forme d'un jugement $\semtyp{m}{v}{τ}$.
 
-Ces types sémantiques ne sont pas exactement les mêmes que les types statiques.
+Ces types de valeurs ne sont pas exactement les mêmes que les types statiques.
 Pour les calculer, on n'a pas accès au code du programme, seulement à ses
-données. Il est par exemple possible de reconnaître le type des constantes,
-mais pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est
-impossible de déterminer statiquement. On le remplace donc par un cas plus
-simple où seul l'arité est conservée.
+données. Il est par exemple possible de reconnaître le type des constantes, mais
+pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
+de déterminer statiquement. On le remplace donc par un cas plus simple où seul
+l'arité est conservée.
 
 Le cas des références (règle \textsc{S-Ptr}) utilise le typage des left-values,
 codéfini par:
@@ -530,12 +528,12 @@ codéfini par:
     \semtyp{m}{m[φ]_Φ}{τ}
 \]
 
-Les règles de définition du typage sémantique sont données dans la
+Les règles de définition du typage des valeurs sont données dans la
 figure~\ref{fig:types-semantiques}.
 
 \begin{figure}[h]%{{{
 \begin{align*}
-\gramdef[2.5cm]{Type\\sémantique}{τ}
+\gramdef[2.5cm]{Type\\de valeur}{τ}
     { \tInt                       }{Entier}
     { \tFloat                     }{Flottant}
     { \tUnit                      }{Unité}
@@ -546,7 +544,7 @@ figure~\ref{fig:types-semantiques}.
     {END}
 \end{align*}
 
-\caption{Types sémantiques}
+\caption{Types de valeurs}
 \label{fig:types-semantiques}
 \end{figure}%}}}
 
@@ -577,13 +575,13 @@ la seule information restant à l'exécution sur les fonctions est son arité.
     \disprule{S-Fun}
   \end{mathpar}
 
-  \caption{Règles de typage sémantique}
+  \caption{Règles de typage des valeurs}
 \label{fig:regles-typ-sem}
 
 \end{figure}%}}}
 
 La prochaine étape est de définir une relation de compatibilité entre les types
-sémantiques $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
+de valeurs $τ$ et statiques $t$. Nous noterons ceci sous la forme d'un jugement
 $\tComp{τ}{t}$. Les règles sont décrites dans la
 figure~\ref{fig:regles-comp-typ}, la règle importante étant \textsc{Comp-Fun}.
 Notons qu'on garde le même nom pour les types de base, et que par exemple
@@ -621,7 +619,7 @@ l'exécution, et le second le type statique.
       }
   \end{mathpar}
 
-  \caption{Compatibilité entre types sémantiques et statiques}
+  \caption{Compatibilité entre types de valeurs et statiques}
 \label{fig:regles-comp-typ}
 \end{figure}%}}}
 
@@ -630,7 +628,7 @@ l'exécution, et le second le type statique.
 %\begin{definition}[État mémoire bien typé]
   %On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
   %l'on note $\mcomp{Γ}{m}$, si les domaines de $Γ$ et $m$ coïncident sur la
-  %partie visible, et que les types sémantiques des variables visibles coïncident
+  %partie visible, et que les types des valeurs associées aux variables visibles coïncident
   %avec leurs types statiques.
 
   %\[
