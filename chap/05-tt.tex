@@ -694,7 +694,7 @@ dans la figure~\ref{fig:comp-mem}.
            \\ …
            \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
            \\ Γ  = (Γ_G, Γ_L)
-           \\ Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n] ) % TODO le \vRet ?
+           \\ Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t] )
             }
             { \mcomp{Γ'}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
             }
@@ -708,7 +708,7 @@ dans la figure~\ref{fig:comp-mem}.
            \\ …
            \\ m' ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ}{\cCleanup{\cPop{m'}}} }
+            { \mcomp{Γ}{\cCleanup{\cPop{m'}} } }
 
         \irule{M-Decl}
             { \mcomp{Γ}{m}
@@ -739,8 +739,6 @@ dans la figure~\ref{fig:comp-mem}.
 \label{fig:comp-mem}
 
 \end{figure}%}}}
-
-% TODO les locales dans le Γ doivent disparaitre
 
 % TODO ici?
 \begin{lemma}[Hauteur des chemins typés]
