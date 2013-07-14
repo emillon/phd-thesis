@@ -538,17 +538,18 @@ $f (v_1, …, v_n)$
 avec
 $f = \eFun{\vec{a}}{i}$.
 
-Soient $Γ' = (Γ - \vRet), a_1 : t_1, …, a_n : t_n, \vRet : t$
+Soient $Γ' = (Γ_G, [a_1 : t_1, …, a_n : t_n, \vRet : t])$
 et
-$m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}$.
+$m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}$
+où $Γ = (Γ_G, Γ_L)$.
 
 On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
 d'inversion garantit que $Γ' ⊢ i$).
 
 \begin{itemize}
-\item $i = \iPass$. Alors on peut appliquer \textsc{Exp-Call-Return-Unit}.
-
-\item $i = \iReturn{v}$. Idem avec \textsc{Exp-Call-Return}.
+\item $i = \iPass$. Ce cas est impossible puisqu'on prend l'hypothèse que les
+fonctions se terminent par une instruction $\iReturn{\cdot}$
+(page~\pageref{page:return-fonction}).
 
 \item $\mm{m_1}{i}{m_2}{i'}$.
 
@@ -782,8 +783,8 @@ $Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t'$
 et
 $∀ i ∈ [1;n], Γ ⊢ v_i : t_i$.
 
-Posons $Γ' = Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t$. Alors par inversions
-successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t$.
+Posons $Γ' = (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t])$ où $Γ = (Γ_G, Γ_L)$. Alors
+par inversions successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t$.
 
 Si on définit $m'' = \cPush{m}{a_1↦v_1, …, a_n↦v_n}$, alors par \textsc{M-Push}
 on obtient que $\mcomp{Γ'}{m''}$. Donc, par le lemme~\ref{lemma:repr}, il existe
@@ -807,13 +808,6 @@ successivement.
 
 C'est clair pour les valeurs de la forme
 $\widehat{c}$ ou $\widehat{f}$. Supposons que $v = \wphi{φ}$.
-% }}}
-\paragraph{\textsc{Exp-Call-Return-Unit}:} % {{{
-
-Idem. En fait dans le cas précédent, le type de $v$ et forcément celui de
-$\vRet$ sous $Γ'$ ; comme $\vRet$ n'est alors pas utilisé, son choix est libre
-et une dérivation avec $\vRet : \tUnit ∈ Γ'$ est possible.
-
 % }}}
 
 \subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
@@ -914,7 +908,7 @@ On sait que $Γ ⊢ \eFun{a_1, …, a_n}{i} (v_1, …, v_n)$ et
 $\mcomp{Γ}{m_0}$. D'après le lemme d'inversion, il existe
 $t_1, …, t_n$ tels que $∀i ∈ [1;n], Γ ⊢ v_i : t_i$,
 $Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t$, donc qu'en posant
-$Γ' = Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t$ on a $Γ' ⊢ i$.
+$Γ' = (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t])$ où $Γ = (Γ_G, Γ_L)$ on a $Γ' ⊢ i$.
 
 D'un autre côté, il existe par le lemme~\ref{lemma:repr} des types $τ_i$ tels
 que $∀ i ∈ [1;n], m_0 ⊧ v_i : τ_i$ avec $\tComp{τ_i}{t_i}$. En appliquant
@@ -925,7 +919,9 @@ conclusion est que $Γ' ⊢ i'$ et $\mcomp{Γ'}{m_2}$. Comme $Γ' ⊢ a_i : t_i$
 a $∀ i ∈ [1;n], Γ' ⊢ v'_i : t_i$. Donc on a bien
 $Γ ⊢ \eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n)$.
 
-D'autre part, en appliquant \textsc{M-Pop}, on obtient que $\mcomp{Γ}{m_3}$.
+D'autre part, en appliquant \textsc{M-Pop}, on obtient que
+$\mcomp{Γ}{\cCleanup{m_3}}$.
+% TODO check avec le nouveau M-Pop
 
 %}}}
 

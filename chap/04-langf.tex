@@ -2,6 +2,28 @@ Dans ce chapitre, on décrit le cœur de notre travail: le langage \langname, su
 lequel s'appuieront les analyses de typage des chapitres~\ref{cha:typbase}
 et~\ref{cha:qualifs}.
 
+Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
+«assembleur portable». Ses types de données et les opérations associées sont
+donc naturellement très bas niveau.
+
+Ses types de données sont établis pour représenter les mots mémoire manipulables
+par les processeurs : essentiellement des entiers et flottants de plusieurs
+tailles. Les types composés correespondent à des zones de mémoire contigües,
+homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
+structures).
+
+Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
+c'est-à-dire des variables qui représentent directement une adresse en mémoire.
+Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
+stocké à cette adresse) ou non typés.
+
+Son système de types rudimentaire ne permet pas d'avoir beaucoup de garanties
+sur la sûreté du programme. En effet, aucune vérification n'est effectuée en
+dehors de celles faites par le programmeur.
+
+Le but ici est de définir \langname, un langage plus simple mais qui permettra
+de raisonner sur une certaine classe de programmes C.
+
 Tout d'abord, on commence par présenter les notations qui accompagneront le
 reste des chapitres. Cela inclut la définition de la notion de lentille, qui est
 utilisée dans certaines définitions.
@@ -323,68 +345,6 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
 que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
-%\section{Caractéristiques}
-
-%% TODO drôle d'ordre
-
-%\paragraph{Fonctions et procédures:} Un des problèmes classiques dans les
-%langages impératifs est de distinguer les fonctions (qui retournent une valeur)
-%et les procédures (qui n'en retournent pas). La solution choisie par C est de
-%marquer les procédures comme retournant un «faux» type \texttt{void}. Mais
-%c'est uniquement syntaxique: il n'est pas possible de manipuler de valeur de
-%type \texttt{void}.
-
-%L'autre possibilité, souvent prise dans les langages fonctionnels, est de ne pas
-%faire de distinction entre ces deux cas et d'interdire les procédures. Les
-%fonctions ne retournant pas de valeur «intéressante» renvoient alors une
-%valeur d'un type à un seul élément noté \eUnit\footnote{Cette notation évoque
-%un $n$-uplet à 0 composante.}, et donc le type sera noté \tUnit.
-
-%En C, puisqu'il n'y a pas de valeurs de type \texttt{void}, la notation
-%\texttt{void *} a un sens particulier: elle désigne les pointeurs de type non
-%défini, qui sont compatibles avec n'importe quel autre type de pointeur (c'est
-%la seule forme --- rudimentaire --- de généricité qu'offre le langage). En
-%\langname, la valeur $\eUnit$ est une valeur comme les autres, et on peut
-%constuire un pointeur de type $\tUnit *$ qui n'aura pas de signification
-%particulière: c'est seulement un pointeur vers une valeur de type \tUnit.
-
-%\paragraph{Tableaux:} ce sont des valeurs composées qui contiennent un certain
-%nombre de valeurs d'un même type. Par exemple, 100 entiers. On accède à ces
-%valeurs par un indice entier, qui dans le cas général n'est pas connu à la
-%compilation. C'est une erreur ($\serr{array}$) d'accéder à un tableau en dehors de
-%ses bornes, c'est-à-dire en dehors de $[0;n-1]$ pour un tableau à $n$
-%éléments.
-
-%Les tableaux sont notés $\eArray{e_1; …; e_n}$, et le cas dégénéré ($n = 0$) est
-%interdit.
-
-%\paragraph{Structures:} comme les tableaux, ce sont des valeurs composées mais
-%hétérogènes. Les différents éléments (appelés \emph{champs}) sont désignés par
-%noms $l$ (pour \emph{label}).
-
-%Les structures sont notées $\eStruct{ l_1 : e_1 ; … ; l_n : e_n }$ et comme dans le
-%cas des tableaux, le cas dégénéré ($n = 0$) est interdit.
-
-%Dans le programme, le nom de champ $l$ est décoré de la définition complète de
-%la structure $S$. Celle-ci n'est pas utilisée dans l'évaluation et sera donc
-%décrite au chapitre~\ref{cha:typbase}. Bien sûr, écrire la totalité de la
-%structure dans le code du programme serait fastidieux.
-
-%\paragraph{Types de données:} Entiers machine, flottants, pointeurs et types
-%composés (structures et tableaux) composés de ceux-ci.
-
-%\paragraph{Variables:} elles sont mutables, et on peut passer des données par
-%valeur ou par pointeur.
-
-%\paragraph{Flôt de contrôle:} il repose sur les construction «if» et
-%«while». Les autres types de boucle («for» et «do/while») peuvent être
-%construits avec ces opérateurs.
-
-%\paragraph{Fonctions:} le code est organisé en fonctions «simples»,
-%c'est-à-dire qui ne sont pas des fermetures. Même si les fonctions locales sont
-%possibles, il n'est pas possible d'accéder aux variables de la portée entourante
-%depuis la fonction intérieure.
-
 \section{Syntaxe}
 
 Les figures~\ref{fig:stx-data} et~\ref{fig:stx} présentent
@@ -432,9 +392,9 @@ Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
 L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
-La mémoire est constituée de variables, qui contiennent des valeurs. Ces
-variables sont organisées, d'une part en un ensemble de variables globales, et
-d'autre part en une pile de contextes d'appel (qu'on appellera donc
+La mémoire est constituée de variables (toutes mutables), qui contiennent des
+valeurs. Ces variables sont organisées, d'une part en un ensemble de variables
+globales, et d'autre part en une pile de contextes d'appel (qu'on appellera donc
 aussi cadres de pile, ou \emph{stack frames} en anglais). Cette structure
 empilée permet de représenter les différents contextes à chaque appel de
 fonction: par exemple, si une fonction s'appelle récursivement, plusieurs
@@ -475,6 +435,12 @@ $-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire: on
 aurait pu choisir des nombres à 64 bits, par exemple.
 Les flottants sont les flottants IEEE 754 de 32 bits~\cite{ieee754}.
 
+Il n'y a pas de distinction entre procédures et fonction, toutes les fonction
+doivent renvoyer une valeur. Celles qui ne retournent pas de valeur
+«intéressante» renvoient alors une valeur d'un type à un seul élément noté
+\eUnit\footnote{Cette notation évoque un $n$-uplet à 0 composante.}, et donc le
+type sera noté \tUnit.
+
 \item
 
 $\widehat{\&}~φ$: une référence mémoire. Ce chemin correspond à un pointeur sur
@@ -484,21 +450,35 @@ cadre de pile.
 
 \item
 
-$\widehat{ \eStruct{ l_1 : v_1 ; … ; l_n : v_n } }$: une structure. Comme
-précédemment, on note $\widehat{\eStruct{\cdot}}$ pour dénoter les valeurs.
+$\widehat{ \eArray{v_1 ;…; v_n} }$: un tableau. C'est une valeur composée qui
+contiennt un certain nombre de valeurs d'un même type. Par exemple, 100 entiers.
+On accède à ces valeurs par un indice entier, compilation. C'est une erreur
+($\serr{array}$) d'accéder à un tableau en dehors de ses bornes, c'est-à-dire en
+dehors de $[0;n-1]$ pour un tableau à $n$ éléments. Pareillement,
+$\widehat{\eArray{\cdot}}$ permet de désigner les valeurs tableau. Par exemple,
+si $x$ vaut $2$ et $y$ vaut $3$, l'expression $\eArray{ x, y }$ s'évaluera en
+valeur $\widehat{\eArray{ 2, 3 }}$
 
 \item
 
-$\widehat{ \eArray{v_1 ;…; v_n} }$: un tableau. Pareillement, $\widehat{\eArray{\cdot}}$
-permet de désigner les valeurs. Par exemple, si $x$ vaut $2$ et $y$ vaut $3$,
-l'expression $\eArray{ x, y }$ s'évaluera en valeur $\widehat{\eArray{ 2, 3 }}$
+$\widehat{ \eStruct{ l_1 : v_1 ; … ; l_n : v_n } }$: une structure. C'est une
+valeur composée mais hétérogène. Les différents éléments (appelés \emph{champs})
+sont désignés par noms $l$ (pour \emph{label}). Dans le programme, le nom de
+champ $l$ est décoré de la définition complète de la structure $S$. Celle-ci
+n'est pas utilisée dans l'évaluation et sera donc décrite au
+chapitre~\ref{cha:typbase}. Comme précédemment, on note
+$\widehat{\eStruct{\cdot}}$ pour dénoter les valeurs.
 
 \item
 
 $\widehat{f}$: une fonction. On garde en mémoire l'intégralité de la définition
-de la fonction (liste de paramètres, de variables locales et corps). Remarquons
-que contrairement à certains langages, l'environnement n'est pas capturé (il n'y
-a pas de clôture lexicale).
+de la fonction (liste de paramètres, de variables locales et corps). Même si les
+fonctions locales sont possibles, il n'est pas possible d'accéder aux variables
+de la portée entourante depuis la fonction intérieure (il n'y a pas de
+fermetures). Contrairement à C, les fonctions ne sont pas des cas spéciaux. Par
+exemple, les fonctions globales sont simplement des variables globales de type
+fonctionnel, et «les pointeurs sur fonction» de C sont remplacés par des
+variables de type fonction.
 
 \item $Ω$: une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
 
@@ -605,6 +585,10 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   un couple $\msi{m}{i}$ où $i$ est une instruction et $m$ un état
   mémoire. La réduction des instructions est traitée dans la
   section~\ref{sec:eval-instr}.
+  Par exemple, $ \msi{m}{(x ← 3 ; y ← x)} → \msi{m [x ↦ \widehat{3}]}{y ← x}
+                           → \msi{m [x ↦ \widehat{3}][y ↦
+    \widehat{3}]}{\iPass}$.
+
 \item
   un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
   L'évaluation des left-values est décrite en section~\ref{sec:eval-lv}.
@@ -713,8 +697,6 @@ est renvoyée.
 \section{Opérations sur les états mémoire}
 \label{sec:memops}
 
-% TODO faire un blabla similaire sur les instructions
-
 \begin{definition}[Recherche de variable]
 
   La recherche de variable permet d'associer à une variable $x$ une adresse $a$.
@@ -772,6 +754,7 @@ Une valeur peut être, ou contenir, une référence vers une variable de la pile
 La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
 $-1$ sinon.
 
+\begin{minipage}{0.3\textwidth}
 \begin{align*}
     \cH{\widehat{c}} &= -1 \\
     \cH{\widehat{f}} &= -1 \\
@@ -779,15 +762,16 @@ $-1$ sinon.
     \cH{\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}} &= \max_{i∈[1;n]} \cH{v_i} \\
     \cH{\widehat{\eArray{v_1,…,v_n}}} &= \max_{i∈[1;n]} \cH{v_i}
 \end{align*}
-
+\end{minipage}
 où:
-
+\begin{minipage}{0.3\textwidth}
 \begin{align*}
     \cHphi{(x)} &= -1 \\
     \cHphi{(n,x)} &= n \\
     \cHphi{φ\widehat{.}l} &= \cHphi{φ} \\
     \cHphi{φ\widehat{[n]}} &= \cHphi{φ}
 \end{align*}
+\end{minipage}
 
 \end{definition}
 
@@ -941,11 +925,8 @@ déréférencement de $p$ va modifier $x$.
 \section{Accesseurs}
 \label{sec:mem-access}
 
-% TODO un peu long
-
-On définit ici quelques lentilles. Le but est de définir rigoureusement les
-accès à la mémoire. À partir d'un état mémoire $m$ et d'une left-value $φ$, on
-veut pouvoir obtenir:
+Le but de cette section est de définir rigoureusement les accès à la mémoire. À
+partir d'un état mémoire $m$ et d'une left-value $φ$, on veut pouvoir obtenir:
 
 \begin{itemize}
     \item la valeur accessible au chemin $φ$: $m[φ]_Φ$
@@ -1353,18 +1334,13 @@ tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}
+$\serr{ptr}$.
 \footnote{
 Cela est cohérent avec la norme C99:
     «If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
-    »~\cite[6.5.6~§8]{AnsiC}}:
-
-\begin{align*}
-\widehat{\&}~φ~+_p~i & = \serr{ptr} \textrm{ si }∄~(φ', i), φ = φ'[i] \\
-\widehat{\&}~φ~-_p~i & = \serr{ptr} \textrm{ si }∄~(φ', i), φ = φ'[i] \\
-        \eNull~+_p~i & = \serr{ptr} \\
-        \eNull~-_p~i & = \serr{ptr} \\
-\end{align*}
+    »~\cite[6.5.6~§8]{AnsiC}}
+et l'opérateur $\widehat{\opbin}$ renvoie
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
@@ -1395,102 +1371,80 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
   \semrule{Exp-Array}
 \end{mathpar}
 
-\shorthandoff{!}
-\begin{figure}%{{{
+%\shorthandoff{!}
+%\begin{figure}%{{{
 
-  \centering
+  %\centering
 
-  \begin{tikzpicture}
-    [node distance=2cm]
+  %\begin{tikzpicture}
+    %[node distance=2cm]
 
-    \node (m0) {$m_0$};
-    \node[right of=m0, node distance=3cm] (m1) {$m_1$};
-    \node[below of=m1]                    (m2) {$m_2$};
-    \node at ($(m0)!(m2)!(0,1)$)          (m3) {$m_3$};
-    \node[below of=m3]                    (m4) {$m_4$};
+    %\node (m0) {$m_0$};
+    %\node[right of=m0, node distance=3cm] (m1) {$m_1$};
+    %\node[below of=m1]                    (m2) {$m_2$};
+    %\node at ($(m0)!(m2)!(0,1)$)          (m3) {$m_3$};
+    %\node[below of=m3]                    (m4) {$m_4$};
 
-    \draw [->] (m0) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m1);
-    \draw [->] (m1) -- node[auto] {$i → \iReturn{v_r}$}                 (m2);
-    \draw [->] (m2) -- node[auto] {$\mathrm{Pop}$}                      (m3);
-    \draw [->] (m3) -- node[auto] {$\mathrm{Cleanup}$}                  (m4);
+    %\draw [->] (m0) -- node[auto] {$\mathrm{Push}(\vec{a}↦\vec{v})$}    (m1);
+    %\draw [->] (m1) -- node[auto] {$i → \iReturn{v_r}$}                 (m2);
+    %\draw [->] (m2) -- node[auto] {$\mathrm{Pop}$}                      (m3);
+    %\draw [->] (m3) -- node[auto] {$\mathrm{Cleanup}$}                  (m4);
 
-    \draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
-                    -- node[auto, swap] {$f(\vec{e}) → v$}
-                       ($ (m4) + (-5mm, 3mm) $);
+    %\draw [dashed, ->] ($ (m0) + (-5mm, -3mm) $)
+                    %-- node[auto, swap] {$f(\vec{e}) → v$}
+                       %($ (m4) + (-5mm, 3mm) $);
 
-  \end{tikzpicture}
+  %\end{tikzpicture}
 
-  \caption[Appel d'une fonction]
-  { Appel d'une fonction.
-    La taille de la pile croît de gauche à droite,
-    et les réductions se font de haut en bas.
-  }
-\label{fig:fcall-details}
+  %\caption[Appel d'une fonction]
+  %{ Appel d'une fonction.
+    %La taille de la pile croît de gauche à droite,
+    %et les réductions se font de haut en bas.
+  %}
+%\label{fig:fcall-details}
 
-\end{figure}%}}}
-\shorthandon{!}
+%\end{figure}%}}}
+%\shorthandon{!}
 
-L'appel de fonction est traité de manière similaire à la déclaration de
-fonction: on ne peut pas facilement relier un pas d'évaluation de $i$ à un pas
-d'évaluation de $\eFun{a}{i} (v_1,…,v_n)$, donc un contexte
-$C \gramisa \eFun{a}{\ctxEmpty} (v_1,…,v_n)$ n'est pas à considérer. Il
-faut donc transmettre le pas à la main. C'est le but des deux règles
-\textsc{Exp-Call-Ctx} et \textsc{Exp-Call-Err}. D'autre part, les cas terminaux
-sont \textsc{Exp-Call-Return-Unit} et \textsc{Exp-Call-Return}:
+L'appel de fonction est traité de la manière suivante. On ne peut pas facilement
+relier un pas d'évaluation de $i$ à un pas d'évaluation de $\eFun{a}{i}
+(v_1,…,v_n)$, donc un contexte $C \gramisa \eFun{a}{\ctxEmpty} (v_1,…,v_n)$
+n'est pas à considérer. En effet, l'empilement suivi du dépilement modifie la
+mémoire.
 
-% TODO détailler, important
+On emploie donc une règle \textsc{Exp-Call-Ctx} qui relie un pas
+interne $\mm{m_1}{i}{m_2}{i'}$ à un pas externe. Si une fois l'instruction
+interne réduite d'un pas, on évalue les arguments en des valeurs $v'_i$. Ils
+correspondent aux nouvelles valeurs à passer à la fonction.
+
+Les autres fonctions permettent de transférer le flot de contrôle: en retournant
+la même instruction pour une instruction terminale, ou en propageant une erreur.
+Dans le cas où on retourne de la fonction par $i = \iReturn{v}$, il faut alors
+supprimer les références aux variables qui ont disparu grâce aux opérateurs
+$\phx\cCleanup$ et $\phxx\cV$.
+
+\label{page:return-fonction}
+On suppose deux choses sur chaque fonction: d'une part, les noms de ses
+arguments sont deux à deux différents, et d'autre part, son corps se termine par
+une instruction $\iReturn{\cdot}$. Cela veut dire que la dernière instruction
+doit être soit de cette forme, soit par exemple une alternative dans laquelle
+les deux branches se terminent par un $\iReturn{\cdot}$. C'est une propriété qui
+peut être détectée statiquement avant l'exécution. Néanmoins, dans la syntaxe
+concrète, on peut supposer qu'un $\iReturn{\eUnit}$ est inséré automatiquement
+en fin de fonction lorsqu'aucun $\iReturn{\cdot}$ n'est présent dans son corps.
 
 \begin{mathpar}
     \semrule{Exp-Call-Ctx}
 
     \semrule{Exp-Call-Err}
 
-    \semrule{Exp-Call-Return-Unit}
-
     \semrule{Exp-Call-Return}
 \end{mathpar}
-
-% TODO blabla sur cleanup
-
-Cette évaluation est décrite dans la figure~\ref{fig:fcall-details}.
 
 \section{Instructions}
 \label{sec:eval-instr}
 
-% TODO plus tôt la def?
-
-\begin{definition}{Évaluation d'une instruction}
-
-Comme pour l'évaluation des expressions, on choisit une sémantique de
-réécriture à petits pas. La sémantique fonctionne de la manière suivante:
-partant d'un état mémoire $m$, on veut exécuter une instruction $i$. Les règles
-d'évaluation suivantes permettent de réduire le problème en se ramenant à
-l'exécution d'une instruction $i'$ «plus simple» en partant d'un état mémoire
-$m'$. Un tel pas est noté:
-
-\[
-  \mmi{m}{i}{m'}{i'}
-\]
-
-\end{definition}
-
-Par exemple, exécuter $x ← 3 ; y ← x$ revient à évaluer $y ← x$ depuis un état
-mémoire dans lequel on a déjà réalisé la première affectation. La seconde
-affectation se réalise de même et permet de réécrire l'instruction restante en
-$\iPass$:
-
-\begin{align*}
-  \msi{m}{(x ← 3 ; y ← x)} → & \msi{m [x ↦ \widehat{3}]}{y ← x} \\
-                           → & \msi{m [x ↦ \widehat{3}][y ↦ \widehat{3}]}{\iPass}
-\end{align*}
-
-Il n'est pas possible de réduire plus loin l'instruction $\iPass$. Dans un tel
-cas, l'évaluation est terminée.
-
-Les seuls cas terminaux sont $\iPass$ et $\iReturn{e}$.
-
-Les cas de la séquence et de l'affectation ont été utilisés dans l'exemple
-ci-dessus.
+Les cas de la séquence et de l'évaluation d'une expression sont sans surprise.
 
 \begin{mathpar}
   \semrule{Seq}
@@ -1498,7 +1452,8 @@ ci-dessus.
   \semrule{Exp}
 \end{mathpar}
 
-L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait de la manière suivante.
+L'évaluation de $\iDecl{x}{v}{i}$ sous $m$ se fait de la manière suivante,
+similaire à l'appel de fonction.
 La règle principale est \textsc{Decl-Ctx} qui relie un pas d'évaluation sous une
 déclaration à un pas d'évaluation externe : pour ce faire, on étend l'état
 mémoire en ajoutant $x$, on effectue le pas, puis on enlève $x$. L'instruction
@@ -1561,21 +1516,14 @@ transition est faite vers cet état d'erreur.
 
 Cela est aussi vrai d'une sous-expression ou sous-instruction: si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
-de sous-expression ou sous instruction est définie en fonction des contextes $C$
-(figure~\ref{fig:eval-err}).
+de sous-expression ou sous instruction est définie en fonction des contextes
+$C$.
 
-\begin{figure}[h]
 \begin{mathpar}
-  \ruleheader{$Ξ → Ω$}
-
   \semrule{Exp-Err}
 
   \semrule{Eval-Err}
 \end{mathpar}
-
-\caption{Cas d'erreur lors d'une évaluation}
-\label{fig:eval-err}
-\end{figure}
 
 \section{Phrases et exécution d'un programme}
 
@@ -1589,34 +1537,23 @@ L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeller
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
-avec ce couple (variable, valeur) (figure~\ref{fig:eval-toplevel}). Notons que
-ces évaluations se font à grands pas.
+avec ce couple (variable, valeur). On suppose que les variables globales ont
+toutes des noms différents. Notons que ces évaluations se font à grands pas.
 
 Enfin, l'exécution d'un programme est sans surprise l'exécution de ses phrases,
 les unes à la suite des autres.
 
-\begin{figure}[h]
 \begin{mathpar}
-  \ruleheader{$\ph{m}{p}{m'}$}
+  \semrule{ET-Exp}
 
-  \semrule{T-Exp}
-
-  \semrule{T-Var}
-
-  \ruleheader{$\phstar{m}{p}{m'}$}
+  \semrule{ET-Var}
 
   \semrule{T*-Nil}
 
   \semrule{T*-Cons}
 
-  \ruleheader{$\phprog{P}{m}$}
-
   \semrule{Prog}
 \end{mathpar}
-
-\caption{Évaluation des phrases d'un programme}
-\label{fig:eval-toplevel}
-\end{figure}
 
 \section*{Conclusion}
 
@@ -1625,7 +1562,5 @@ et une description nous permettent de voir ce qui le rapproche de C. Sa
 sémantique est explicitée entièrement, ce qui nous permet de prouver des
 propriétés dynamiques sur les analyses de typage décrites dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
-
-% TODO Return implicite
 
 % vim: spelllang=fr

@@ -162,7 +162,7 @@
          }
     {Decl}{ \irule{Decl}
               { Γ ⊢ e : t
-             \\ Γ, x:t ⊢ i
+             \\ \extendLocal{Γ}{x}{t} ⊢ i
               }
               { Γ ⊢ \iDecl{x}{e}{i} }
           }
@@ -184,12 +184,15 @@
                 { Γ ⊢ \iReturn{e} }
             }
     {Fun}{ \irule{Fun}
-             { Γ' = (Γ - \vRet),
-                     a_1 : t_1,
-                     …,
-                     a_n : t_n,
-                     \vRet : t \\
-               Γ' ⊢ i
+             { Γ  = (Γ_G, Γ_L)
+            \\ Γ' = (Γ_G,
+                     [ a_1 : t_1,
+                       …,
+                       a_n : t_n,
+                       \vRet : t
+                     ]
+                    )
+            \\ Γ' ⊢ i
              }
              { Γ ⊢ \eFun{a_1, …, a_n}{i}
                     : (t_1, …, t_n) → t
@@ -199,9 +202,9 @@
                 { Γ ⊢ e : t }
                 { \typh{Γ}{e}{Γ} }
             }
-    {T-Var}{ \irule{T-Var}
-                { Γ ⊢ e : t \\
-                  Γ' = (x, t), Γ
+    {T-Var}{ \irule{T-Var} % TODO màj
+                { Γ ⊢ e : t
+               \\ Γ' = \extendGlobal{Γ}{x}{t}
                 }
                 { \typh{Γ}{x=e}{Γ'} }
             }
@@ -334,12 +337,6 @@
                    { \widehat{\eArray{ v_1, … , v_n } }}
                  }
     }
-    {Exp-Call-Return-Unit}{ \irule{Exp-Call-Return-Unit}
-                               { m' = \cCleanup{m}}
-                               { \mm{m}{\eFun{a_1, …, a_n}{\iPass} (v_1, …, v_n)}
-                                    {m'}{\eUnit}
-                               }
-                          }
     {Exp-Call-Return}{ \irule{Exp-Call-Return}
                           { m' = \cCleanup{m}
                          \\ v' = \cV{|m|}{v}
@@ -424,13 +421,16 @@
               { }
               { \mmi{m}{\iReturn{v};i}{m}{\iReturn{v}} }
     }
-    {T-Exp}{ \irule{T-Exp}
+    {ET-Exp}{ \irule{ET-Exp}
                 {\mm{m}{e}{m'}{v}}
                 {\ph{m}{e}{m'}}
             }
-    {T-Var}{ \irule{T-Var}
-                {\mm{m}{e}{m'}{v}}
-                {\ph{(s,g)}{x = e}{(s, (x ↦ v)::g)}}
+    {ET-Var}{ \irule{ET-Var}
+                {\mm{m}{e}{m'}{v}
+               \\ m'  = (s, g)
+               \\ m'' = (s, (x ↦ v)::g)
+                }
+                {\ph{m}{x = e}{m''}}
     }
     {T*-Nil}{ \irule{T*-Nil}
                  { }

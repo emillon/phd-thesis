@@ -94,7 +94,7 @@ recherche sont très locales. Elles n'offrent également que peu de garantie (ce
 n'est pas parce qu'une construction dangereuse n'est pas présente que le code
 est correct).
 
-\section{Interprétation abstraite}
+\section{Analyse de valeurs et interprétation abstraite}
 \label{sec:absint}
 
 L'interprétation abstraite est une technique d'analyse générique qui permet de
@@ -268,6 +268,15 @@ qualité sur certains logiciels open source. Néanmoins, de part leur aspect non
 \emph{sound}, les analyses réalisées ne peuvent pas être assimilées à de la
 vérification formelle en tant que telle.
 
+Enfin, l'interprétation abstraite n'est pas la seule technique pour analyser
+finement les valeurs d'un programme. Par exemple, le système
+Saturn~\cite{paste07}, conçu pour analyser du code système écrit en C, utilise
+des clauses logiques et un solveur SAT pour manipuler des invariants sur la
+mémoire. En particulier il traite le problème des pointeurs utilisateur en
+utilisant une analyse de forme «pointe-sur»~\cite{oakland08}. Comme
+l'interprétation abstraite, le but de cette analyse est d'être très précis, au
+détriment d'un temps de calcul important dans certains cas.
+
 \section{Typage}
 
 Le typage, introduit dans la section~\ref{sec:types-intro}, peut aussi être
@@ -369,6 +378,8 @@ Le système Flow Caml~\cite{flowcaml} repose également sur cette approche, en
 ajoutant une étiquette de sécurité à chaque type. Par exemple, les entiers sont
 typés \texttt{'a int} où \texttt{'a} est le niveau de sécurité associé. Couplé à
 un système d'effets, cela permet de suivre la provenance de chaque expression.
+Cette technique d'analyse de flot permet d'encoder de nombreuses propriétés de
+sécurité~\cite{sm-jsac03}.
 
 Ces techniques de typage sont séduisantes parce qu'elles sont en général simples
 à mettre en place: à l'aide d'un ensemble de règles, on attribue un type à
@@ -380,26 +391,6 @@ Le typage statique peut également être implanté de manière efficace. Même s
 l'inférence, peut dans certains cas atteindre une complexité considérable, la
 plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
 linéaire en la taille du programme considéré.
-
-\section{Analyse de code système}
-
-Les logiciels système demandent des garanties de sécurité et de fiabilité. Pour
-les assurer, de nombreuses analyses \emph{ad-hoc} ciblent les noyaux de systèmes
-d'exploitation.
-
-Ajouter un système de types forts à C est l'idée centrale de
-CCured~\cite{ccured-toplas}. Dans les cas où il n'est pas possible de conclure,
-des vérifications à l'exécution sont ajoutées. Cependant, cela nécessite une
-instrumentation dynamique qui se paye en performances.
-
-Saturn~\cite{paste07} est un système pour analyser du code système écrit en C.
-Il traite le problème des pointeurs utilisateur en utilisant une analyse de
-forme «pointe-sur»~\cite{oakland08}. Comme l'interprétation abstraite, son but
-est d'être très précis, au détriment d'un temps de calcul important dans
-certains cas.
-
-%TODO[E]: à préciser
-% TODO ccl
 
 \section{Langages sûrs}
 
@@ -451,13 +442,19 @@ encapsuler chaque utilisation dans un bloc marqué explicitement
 \texttt{unsafe}). Ils sont équivalents aux pointeurs de C.
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
-peut pas les appliquer pour étudier la correction de logiciels existants. Leurs
-systèmes de types apportent dans le langage différents types de pointeurs,
-permettant de manipuler finement la mémoire, à la manière des \emph{smart
-pointers} de C++. De cette approche on retient surtout l'analyse de régions de
-Rust qui permet de manipuler de manière sûre les adresses des variables locales,
-et les pointeurs lourds de Cyclone qui apportent une sûreté à l'arithmétique de
-pointeurs, au prix d'un test dynamique.
+peut pas les appliquer pour étudier la correction de logiciels existants. Dans
+cette perspective, le langage CCured~\cite{ccured-toplas} a pour but d'ajouter
+un système de types forts à C (y compris pour des programmes existants). Dans
+les cas où il n'est pas possible de prouver que le programme s'exécutera
+correctement, des vérifications à l'exécution sont ajoutées. Cependant, cela
+nécessite une instrumentation dynamique qui se paye en performances.
+
+Le systèmes de types de ces projets apportent dans le langage différents types
+de pointeurs. Cela permet de manipuler finement la mémoire, à la manière des
+\emph{smart pointers} de C++. De cette approche on retient surtout l'analyse de
+régions de Rust qui permet de manipuler de manière sûre les adresses des
+variables locales, et les pointeurs lourds de Cyclone qui apportent une sûreté à
+l'arithmétique de pointeurs, au prix d'un test dynamique.
 
 \section{Logique de Hoare}
 

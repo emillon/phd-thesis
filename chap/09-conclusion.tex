@@ -3,9 +3,8 @@ contributions réalisées. On fait ensuite un tour des aspects posant problème,
 traités de manière incomplète, en évoquant les travaux possibles pour enrichir
 l'expressivité de ce système.
 
-%On commence par décrire les
-%limitations de \langname, au niveau de sa sémantique, de son système de types ou
-%des étapes de traduction automatique depuis C.
+% TODO liens EADS
+
 
 \section{Contributions}
 
@@ -27,8 +26,6 @@ permet de définir de manière déclarative la modification en profondeur de
 valeurs dans la mémoire, sans avoir à distinguer le cas de la lecture et celui
 de l'écriture.
 
-% TODO citer
-
 \paragraph{Un système de types abstraits}
 
 En partant de ce système de types, on a décrit une extension permettant de créer
@@ -41,35 +38,45 @@ classes de problèmes comme par exemple éviter l'utilisation de certaines
 opérations sur les types entiers lorsqu'ils sont utilisés comme identificateurs
 ou masque de bits.
 
-% TODO liens EADS
+\paragraph{Un prototype d'analyseur statique}
 
-% TODO + expérimentation
+Les analyses de typage ici décrites ont été implantées sous forme d'un prototype
+d'analyseur statique distribué avec le langage Newspeak.
+D'une part, cela permet de vérifier la propriété d'isolation des appels système
+sur du code C existant, et d'autre part cela fournit une base saine pour
+implanter d'autres analyses de typage sur le langage Newspeak.
+D'autre part, ce prototype a été utilisé pour confirmer l'existence d'un bug
+dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
+vérifier du code de production à l'aide de techniques de typage.
 
-\section{Limitations et travaux futurs}
+\section{Différences avec C}
+
+\langname a été construit pour pouvoir ajouter un système de types à un langage
+proche de C. Ces deux langages diffèrent donc sur certains points. On détaille
+ici ces différences et selon les cas, comment les combler ou pourquoi cela est
+impossible de manière inhérente.
 
 \paragraph{Arithmétique}
 
 En C, on dispose de plusieurs types entiers, pouvant avoir plusieurs tailles et
 être signés ou non signés, ainsi que des types flottants qui diffèrent par leur
-taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier. La
-raison pour cela est que nous ne nous intéressons pas du tout aux problématiques
-de sémantique entière: les débordements, dénormalisations, etc, sont supposés ne
-pas arriver.
+taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier et
+un seul type de flottant. La raison pour cela est que nous ne nous intéressons
+pas du tout aux problématiques de sémantique entière: les débordements,
+dénormalisations, etc, sont supposés ne pas arriver.
 
-Comme en C il n'est pas possible de définir de nouveaux types de base (des
-entiers de 24 bits par exemple), il est facile d'étendre le système de types de
-\langname{} pour ajouter tous ces nouveaux types. La traduction depuis Newspeak
-insère déjà des opérateurs de transtypage pour lesquels il est facile de donner
-une sémantique (pouvant lever une erreur en cas de débordement, comme en Ada) et
-un typage. Les littéraux numériques peuvent poser problème, puisqu'ils
-deviennent alors polymorphes. Une solution peut être de leur donner le plus
-grand type entier et d'insérer un opérateur de transtypage à chaque littéral.
-Haskell utilise une solution similaire: les littéraux entier ont le type de
-précision arbitraire \texttt{Integer} et est converti dans le bon type en
-appelant la fonction \texttt{fromInteger} du type synthétisé à partir de
-l'environnement.
+Il est possible d'étendre le système de types de \langname{} pour ajouter tous
+ces nouveaux types. La traduction depuis Newspeak insère déjà des opérateurs de
+transtypage pour lesquels il est facile de donner une sémantique (pouvant lever
+une erreur en cas de débordement, comme en Ada) et un typage. Les littéraux
+numériques peuvent poser problème, puisqu'ils deviennent alors polymorphes. Une
+solution peut être de leur donner le plus grand type entier et d'insérer un
+opérateur de transtypage à chaque littéral. Haskell utilise une solution
+similaire: les littéraux entier ont le type de précision arbitraire
+\texttt{Integer} et est converti dans le bon type en appelant la fonction
+\texttt{fromInteger} du type synthétisé à partir de l'environnement.
 
-\paragraph{Transtypage}
+\paragraph{Transtypage et unions}
 
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
 de capturer de nombreuses constructions qui sont possibles, ou même idiomatiques
@@ -92,12 +99,24 @@ cas, il faudrait encapsuler la manipulation dans une fonction et y ajouter une
 information de type explicite, comme $\texttt{float\_exponent} : (\tFloat) →
 \tInt$.
 
-En fait, les casts entre types entiers ne posent pas de problèmes. Ceux entre
-types pointeurs ne posent pas de problème non plus puisqu'au moment de la
-traduction en \langname{} on efface les étiquettes de types sur les pointeurs.
+Pour ces conversions de types, on distingue en fait plusieurs cas: les
+conversions entre types numériques, entre types pointeurs, ou entre un type
+entier et un type pointeur.
 
-Mais les casts entre entiers et pointeurs posent problème. Si on autorise les
-casts, on peut néanmoins trouver la solution suivante.
+Le premier ne pose pas de problème: il est toujours possible de donner une
+sémantique à une conversion entre deux types numériques. Dans le cas éventuel ou
+une conversion n'est pas possible, on peut signaler une erreur à l'exécution (de
+la même nature qu'une divition par zéro).
+
+Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
+types pointeurs revient à convertir entre les types pointés.
+
+Le vrai problème provient des conversions entre entiers et pointeurs, qui sont
+des données fondamentalement différentes. Le même problème se pose d'ailleurs si
+on cherche à convertir une fonction en entier ou en pointeur, même si les
+raisons valables pour faire cela sont moins nombreuses.
+Si on s'en tient aux conversions entre entiers et pointeurs, une manière naïve
+de typer ces opération est:
 
 \begin{mathpar}
 \irule{PtrInt-Bad}
@@ -109,8 +128,9 @@ casts, on peut néanmoins trouver la solution suivante.
   { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
 \end{mathpar}
 
-Cela pose problème car il est alors possible de créer une fonction qui convertit
-n'importe quel type pointeur en n'importe quel autre type pointeur:
+Tout d'abord, cela pose problème car il est alors possible de créer une fonction
+qui convertit n'importe quel type pointeur en n'importe quel autre type
+pointeur:
 
 \begin{align*}
   ⊢ &~ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} } \\
@@ -128,18 +148,18 @@ beaucoup plus précise que notre modèle mémoire actuel. Celle-ci dépend de
 beaucoup de paramètres: dans quel sens croit la pile, quelle est la taille des
 types, etc.
 
-La conversion dans le sens inverse, d'entier vers pointeur, est
-encore plus complexe. D'une part cela suppose qu'on puisse retrouver la taille
-des valeurs à partir de leur adresse. Dans de nombreux langages, on résout ce
+La conversion dans le sens inverse, d'entier vers pointeur, est encore plus
+complexe. Entre autres, cela suppose qu'on puisse retrouver la taille des
+valeurs à partir de leur adresse. Dans de nombreux langages, on résout ce
 problème en ajoutant la taille de chaque valeur avec elle.
 
-Mais cela fait s'éloigner du modèle mémoire de C, ou le déréférencement porte
+Mais cela fait s'éloigner du modèle mémoire de C, où le déréférencement porte
 sur une adresse mais également sur une taille (portée implicitement par le type
 du pointeur). D'ailleurs le langage \newspeak{} conserve cette distinction, que
 nous avons éliminée dans \langname. Il y a une incompatibilité entre ces deux
-approches : pour pouvoir typer la mémoire, il faut associer un type à chaque
-zone mémoire, alors qu'avec une sémantique de bas niveau les valeurs sont créées
-à la volée par le déréférencement.
+approches : dans le cas de C (et de \newspeak), on laisse le programmeur gérer
+l'organisation de la mémoire alors qu'avec \langname ces choix sont faits par le
+langage. En contrepartie, cela permet d'avoir d'assurer la sûreté du typage.
 
 \paragraph{Environnement d'exécution}
 
@@ -182,9 +202,9 @@ mémoire contenant cette valeur (la taille de chaque valeur fait partie de
 celle-ci). Le typage est alors direct:
 
 \begin{mathpar}
-  \irule{Malloc}
+  \irule{New}
     { Γ ⊢ e : t }
-    { Γ ⊢ \textsc{Alloc}(e) : \ptrK{t} }
+    { Γ ⊢ \textsc{New}(e) : \ptrK{t} }
 
   \irule{Free}
     { Γ ⊢ e : \ptrK{t} }
@@ -192,20 +212,21 @@ celle-ci). Le typage est alors direct:
 \end{mathpar}
 
 En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
-états mémoire: $m = (s, g, h)$ où $h$ associe à une étiquette numérique une
-valeur (comme les globales mais indexées par des entiers plutôt que par leur
-nom). La libération de mémoire est problématique parce qu'il faut faire
-confiance au programmeur pour ne pas accéder aux zones mémoires libérées. Encore
-une fois, on peut utiliser une analyse préalable comme~\cite{ifm10}. Il est sûr
-(mais pas possible en pratique) d'ignorer les commandes de libérations de
-mémoire. 
+états mémoire: $m = (s, g, h)$ où $h$ est une liste d'association entre des
+entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
+entière et met à jour $h$. La libération de mémoire est en revanche
+problématique parce qu'il faut faire confiance au programmeur pour ne pas
+accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
+analyse préalable comme~\cite{ifm10}. Il est sûr (mais pas possible en pratique)
+d'ignorer les commandes de libération de mémoire.
 
-% TODO [E] pointeurs fantômes
 % TODO régions
 
 \paragraph{Structures récursives}
 
 % TODO est-ce que cela empêche l'imbrication? types rec/ vals rec
+
+% TODO[S] Si tu l'as résolu alors pourquoi le mettre ici?
 
 Une autre limitation est que seules les structures simples sont supportées. Les
 structures récursives, contenant un pointeur vers un objet du même type
@@ -271,10 +292,10 @@ Ces structures sont respectivement traduites en:
   B &= \mathrm{fix} (p → \{ value : \tFloat ; next : \{ value : \tInt   ; next : p \}~* \})
 \end{align*}
 
-Ce schéma suffit à compiler toutes les types de structures possibles en C. En
+Ce schéma suffit à compiler tous les types de structures possibles en C. En
 effet, les seuls cas posant problème arrivent lorsqu'on fait référence à la
-structure en cours de définition; et il n'est alors possible que d'y accéder
-par pointeur.
+structure en cours de définition; et il n'est alors possible que d'y accéder par
+pointeur.
 
 \paragraph{Assembleur}
 
@@ -284,7 +305,9 @@ de Linux, le code est fait pour être portable, et les parties dépendantes d'un
 certaine architecture (et donc le code assembleur) sont isolées explicitement.
 On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
 l'implantation est faite en assembleur, mais au sein de cette implantation on ne
-peut bien sûr rien dire.
+peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
+couverte par la sûreté du typage: après son exécution on ne peut plus rien
+garantir sur le programme.
 
 \paragraph{Analyse du noyau Linux}
 
@@ -295,6 +318,7 @@ KMS, et même à toutes les fonctions faisant partie des différentes interfaces
 recevant un pointeur de l'espace utilisateur.
 
 \paragraph{Autres types abstraits}
+%TODO[S] ??
 
 Notre approche est basée sur le fait de rendre abstrait un type de C et
 d'y interdire certaines opérations: ici, on marque un certain type de pointeur
@@ -321,10 +345,13 @@ encodeur vidéo manipule des numéros de \emph{frame} et des identifiants de cod
 tous les deux entiers, on peut interdire d'utiliser avec un identifiant de codec
 une fonction prenant en paramètre un numéro de \emph{frame}.
 
-% TODO + CCL
-
-% TODO Newspeak a-t'il été utilisé sur de gros codes?
-
 % TODO il serait pas mal de citer les membres du jury dans ta biblio
+
+% TODO[S] et d'autres classes de propriété de sécurité ? Plus fonctionnelles par
+% ex?
+
+\section{Conclusion}
+
+% TODO
 
 % vim: spelllang=fr

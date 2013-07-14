@@ -41,8 +41,6 @@ CODESAMPLES=$(notdir $(wildcard code/*))
 
 gentex: $(addprefix gen/, $(addsuffix .pyg.tex, $(CODESAMPLES)))
 
-gentex: gen/travaux.pdf
-
 snapshot:
 	make distclean
 	git checkout pdf

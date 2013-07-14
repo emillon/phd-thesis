@@ -111,34 +111,42 @@ polymorphisme.
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
-Plus précisément, un environnement $Γ$ est une liste de couples (variable,
-type), c'est-à-dire une suite finie ${(γ_i)}_{i∈[1;n]}$ avec $γ_i = (x_i, t_i)$.
-On utilise les notations suivantes:
+Plus précisément, un environnement $Γ$ est composé de deux listes de couples (variable,
+type): une pour les variables locales, et une pour les variables
+globales
+\footnote{
+    Cette distinction est nécessaire pour les définition de fonction: on
+    remplace la liste des variables locales, mais on conserve le type des
+    variables globales.
+}
+
+Si $Γ = (Γ_G, Γ_L) = ({(γ_i)}_{i∈[1;n]}, {(η_i)}_{i∈[1;m]})$, 
+avec $γ_i = (g_i, t_i)$ et $η_i = (l_i, u_i)$,
+on utilise les notations suivantes:
 
 \begin{align*}
-  x:t ∈ Γ &\eqdef ∃i ∈ [1;n], γ_i = (x, t) \\
-  \cDom{Γ} &\eqdef \{ x_i / i ∈ [1;n] \} \\
-  Γ, x:t  &\eqdef {(γ'_i)}_{i∈[1;n+1]}~\textrm{tel que}
+x:t ∈ Γ &\eqdef ∃i ∈ [1;n], γ_i = (x, t) ∨ ∃i ∈ [1;m], η_i = (x, t) \\
+\cDom{Γ} &\eqdef \{ g_i / i ∈ [1;n] \} ∪ \{ l_i / i ∈ [1;m] \}\\
+\extendGlobal{Γ}{x}{t} &\eqdef ({(γ'_i)}_{i∈[1;n+1]}, Γ_L) ~\textrm{tel que}
                         \begin{cases}
                           ∀ i ∈ [1;n], γ'_i    = γ_i \\
-                                       γ_{n+1} = (x,t) \\
+                                       γ_{n+1} = (x, t) \\
                         \end{cases} \\
-  Γ - x   &\eqdef {(γ'_i)}_{i∈[1;n-1]}~\textrm{tel que}
+\extendLocal{Γ}{x}{t} &\eqdef (Γ_G, {(η'_i)}_{i∈[1;m+1]}) ~\textrm{tel que}
                         \begin{cases}
-                          ∀ i ∈ [1;p-1], γ'_i = γ_i \\
-                          ∀ i ∈ [p;n-1], γ'_i = γ_{i+1} \\
+                          ∀ i ∈ [1;m], η'_i    = η_i \\
+                                       η_{n+1} = (x, t) \\
                         \end{cases}
-                        \mbox{ où } γ_p = (x, t_p)
 \end{align*}
-
-Par exemple, $(p, \tInt*) ∈ Γ$ permet de typer (sous $Γ$) l'expression $p$ en
-$\tInt*$, $*p$ en $\tInt$ et $p +_p 4$ en $\tInt*$.
 
 Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
 n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
 toujours présents dans un type fonctionnel.
 
-% TODO mettre ces choses là à leur place
+Le typage correspond à la définition des trois jugements suivants. Les deux
+premiers sont mutuellement récursifs car une instruction peut consister en
+l'évaluation d'une expression, et la définition d'une fonction repose sur le
+typage de son corps.
 
 \paragraph{Typage d'une expression:} on note de la manière suivante le fait
 qu'une expression $e$ (telle que définie dans la figure~\ref{fig:stx-data}) ait
@@ -389,7 +397,14 @@ bien typées, et si la condition est d'un type entier.
 Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
 revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$. Cela rappelle le
 langage Pascal, où pour retourner une valeur on l'affecte à une variable nommée
-comme la fonction courante.
+comme la fonction courante
+\footnote{
+    Si on n'avait pas introduit la restriction que chaque fonction doit terminer
+    par un $\iReturn{\cdot}$ (page~\pageref{page:return-fonction}), alors le type de
+    $\vRet$ pourrait rester inconnu. En pratique cela veut dire que la valeur de
+    retour d'une telle fonction serait compatible avec n'importe quel type $t$, ce
+    qui briserait la sûreté du typage.
+}.
 
 \begin{mathpar}
   \disprule{Return}
@@ -400,8 +415,8 @@ environnement de typage $Γ'$ obtenu par la suite d'opérations suivantes:
 
 \begin{itemize}
 \item
-  on enlève (s'il existe) le couple $\vRet : t_f$ correspondant à la
-  valeur de retour de la fonction appelante
+  on enlève l'ensemble des locales. Cela inclut le couple $\vRet : t_f$
+  correspondant à la valeur de retour de la fonction appelante.
 \item
   on ajoute les types des arguments $a_i : t_i$
 \item
@@ -422,8 +437,8 @@ Le typage des phrases est détaillé dans la figure~\ref{fig:typ-ph}. Le typage
 d'une expression est le cas le plus simple. En effet, il y a juste à vérifier
 que celle-ci est bien typable (avec ce type) dans l'environnement de départ:
 l'environnement n'est pas modifié. En revanche, la déclaration d'une variable
-globale commence de la même manière, mais on enrichit l'environnement de cette
-nouvelle valeur.
+globale commence de la même manière, mais on enrichit l'environnement de typage
+des globales de cette nouvelle association.
 
 \begin{figure}[h]
 
@@ -610,51 +625,56 @@ l'exécution, et le second le type statique.
 \label{fig:regles-comp-typ}
 \end{figure}%}}}
 
-Grâce à ce jugement, on peut donner la définition suivante.
+%Grâce à ce jugement, on peut donner la définition suivante.
 
-\begin{definition}[État mémoire bien typé]
-  On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
-  l'on note $\mcomp{Γ}{m}$, si les domaines de $Γ$ et $m$ coïncident sur la
-  partie visible, et que les types sémantiques des variables visibles coïncident
-  avec leurs types statiques.
+%\begin{definition}[État mémoire bien typé]
+  %On dit qu'un état mémoire $m$ est bien typé sous un environnement $Γ$, ce que
+  %l'on note $\mcomp{Γ}{m}$, si les domaines de $Γ$ et $m$ coïncident sur la
+  %partie visible, et que les types sémantiques des variables visibles coïncident
+  %avec leurs types statiques.
 
-  \[
-    \mcomp{Γ}{m} \eqdef
-        \begin{cases}
-            \cDom{Γ} = \{ \cVarname{a} / a ∈ \cVisible{m} \} \\
-            ∀ a ∈ \cVisible{m}.
-            ∃ τ,t.
-            \begin{cases}
-                Γ ⊢ \cVarname{a} : t
-                \\
-                \semtyp{m}{m[a]_A}{τ}
-                \\
-                \tComp{τ}{t}
-            \end{cases}
-        \end{cases}
-  \]
+  %\[
+    %\mcomp{Γ}{m} \eqdef
+        %\begin{cases}
+            %\cDom{Γ} = \{ \cVarname{a} / a ∈ \cVisible{m} \} \\
+            %∀ a ∈ \cVisible{m}.
+            %∃ τ,t.
+            %\begin{cases}
+                %Γ ⊢ \cVarname{a} : t
+                %\\
+                %\semtyp{m}{m[a]_A}{τ}
+                %\\
+                %\tComp{τ}{t}
+            %\end{cases}
+        %\end{cases}
+  %\]
 
-    $\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
-    récents ainsi que celles des variables globales:
+    %$\cVisible{m}$ désigne l'ensemble des adresses du cadre de pile le plus
+    %récents ainsi que celles des variables globales:
 
-\[
-\cVisible{(s, g)} \eqdef \{ (x_i) / (x_i ↦ v_i) ∈ g \}
-                       ∪ \{ (|s|, x_i) / (x_i ↦ v_i) ∈ s_0 \}
-\]
+%\[
+%\cVisible{(s, g)} \eqdef \{ (x_i) / (x_i ↦ v_i) ∈ g \}
+                       %∪ \{ (|s|, x_i) / (x_i ↦ v_i) ∈ s_0 \}
+%\]
 
-    $\cVarname{a}$ désigne le nom simple d'une variable :
+    %$\cVarname{a}$ désigne le nom simple d'une variable :
 
-\begin{align*}
-\cVarname{(x)} &\eqdef x \\
-\cVarname{(n,x)} &\eqdef x
-\end{align*}
+%\begin{align*}
+%\cVarname{(x)} &\eqdef x \\
+%\cVarname{(n,x)} &\eqdef x
+%\end{align*}
 
-\end{definition}
+%\end{definition}
 
-\begin{definition}[État mémoire bien typé]
+On définit enfin la notion d'état mémoire bien typé. Cela se fait par induction
+sur la forme de $Γ$ et $m$. Fonctionnellement, cela veut implique que les accès
+à la mémoire retournent des valeurs en accord avec le type statique
+(lemme~\ref{lemma:mem-typ}). Les règles définissant cette relation sont données
+dans la figure~\ref{fig:comp-mem}.
 
-    On définit par induction une relation entre les environnements de typage $Γ$
-    et les états mémoire $m$.
+\begin{figure}[h]%{{{
+
+\centering
 
     \begin{mathpar}
         \irule{M-Empty}
@@ -666,40 +686,41 @@ Grâce à ce jugement, on peut donner la définition suivante.
            \\ m ⊧ v : τ
            \\ \tComp{τ}{t}
             }
-            { \mcomp{Γ, x:t}{(s, ((x↦v)::g))} }
+            { \mcomp{\extendGlobal{Γ}{x}{t}}{(s, ((x↦v)::g))} }
 
         \irule{M-Push}
             { \mcomp{Γ}{m}
            \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
            \\ …
            \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
+           \\ Γ  = (Γ_G, Γ_L)
+           \\ Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n] ) % TODO le \vRet ?
             }
-            { \mcomp{Γ, x_1:t_1, …, x_n:↦t_n}
-                     {\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
+            { \mcomp{Γ'}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
             }
 
         \irule{M-Pop}
-            { \mcomp{Γ, x_1:t_1, …, x_n:t_n}{m}
-           \\ m = (s, g)
-           \\ s_1 = (x_1↦v_1, …, x_n↦v_n)
-           \\ m ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
+            { Γ = (Γ_G, Γ_L)
+           \\ \mcomp{Γ}{m}
+           \\ m' = \cPush{m}{x_1↦v_1, …, x_n↦v_n}
+           \\ \mcomp{(Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])}{m'}
+           \\ m' ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
            \\ …
-           \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
-           % TODO peut etre ajouter le R
+           \\ m' ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ}{\cPop{m}}
-            }
+            { \mcomp{Γ}{\cCleanup{\cPop{m'}}} }
 
+            % TODO supprimer tous les Γ, ...
         \irule{M-Decl}
             { \mcomp{Γ}{m}
            \\ m ⊧ v : τ
            \\ \tComp{τ}{t}
            \\ x ∉ Γ
             }
-            { \mcomp{Γ, x:t}{\cExtend{m}{x}{v}} }
+            { \mcomp{\extendLocal{Γ}{x}{t}}{\cExtend{m}{x}{v}} }
 
         \irule{M-DeclClean}
-            { \mcomp{Γ, x:t}{m}
+            { \mcomp{\extendLocal{Γ}{x}{t}}{m}
             }
             { \mcomp{Γ}{\cCleanVar{m - x}{x}} }
 
@@ -715,10 +736,14 @@ Grâce à ce jugement, on peut donner la définition suivante.
             }
     \end{mathpar}
 
+    \caption{Compatibilité entre états mémoire et environnements de typage}
+\label{fig:comp-mem}
+
+\end{figure}%}}}
+
 % TODO les locales dans le Γ doivent disparaitre
 
-\end{definition}
-
+% TODO ici?
 \begin{lemma}[Hauteur des chemins typés]
 
     Si $m ⊧ v : τ$, alors $\cH{v} ≤ |m|$.
@@ -779,42 +804,52 @@ Il n'existe pas de $φ$ tel que $Γ ⊢ φ : t$. En effet, on montre par inducti
 sur la forme de $φ$ que cela implique qu'il existe $a$ tel que
 $\cVarname{a} ∈ \cDom{Γ}$.
 % }}}
-\paragraph{\textsc{M-Global}:} % {{{ TODO
+\paragraph{\textsc{M-Global}:} % {{{
 
-Soit $φ$ tel que $Γ, x:t' ⊢ φ : t$.
-Soit $m' = (s, ((x↦v)::g))$.
+Soient $φ$ tel que $Γ, x:t' ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
 
-On veut:
-
-$m'[φ]_Φ$ est une valeur $v$
+On veut montrer que $m'[φ]_Φ$ est une valeur $v'$
 tq
-$m' ⊧ v : τ$
+$m' ⊧ v' : τ$
 où
 $\tComp{τ}{t}$.
 
-
-et
-
-si $v$ est une valeur telle que
-$m' ⊧ v : τ$
-où
-$\tComp{τ}{t}$,
-alors en posant $m'' = m'[φ ← v]_Φ$,
-on a
-$\mcomp{Γ, x:t'}{m''}$.
-
+Deux cas peuvent se produire selon la variable $a$ que référence $φ$: si $a =
+(x)$: dans ce cas, $m'[φ]_Φ = v$. On conclut en appliquant les hypothèses de
+\textsc{M-Global}. Dans tous les autres cas, $a$ est contenue dans $m$ car sinon
+$φ$ ne serait pas typable. On peut donc appliquer l'hypothèse d'induction.
+% TODO semi-bien
 
 % }}}
-\paragraph{\textsc{M-Push}:} % {{{ TODO
+\paragraph{\textsc{M-Push}:} % {{{
+
+On procède d'une manière similaire. $φ$ peut faire référence soit à un des
+$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable plus profonde
+auquel cas on applique l'hypothèse de récurrence.
+
 % }}}
-\paragraph{\textsc{M-Pop}:} % {{{ TODO
+\paragraph{\textsc{M-Decl}:} % {{{
+Idem, on distingue selon si $φ$ fait référence à la variable déclarée ou non.
 % }}}
-\paragraph{\textsc{M-Decl}:} % {{{ TODO
+\paragraph{\textsc{M-Pop}:} % {{{
+Les $φ$ faisant référence à un des $x_i$ ne sont pas typables car $x_i ∉ Γ$. Il
+reste donc les variables plus basses dans la pile pour lesquelles l'hypothèse de
+récurrence s'applique.
+% TODO refaire avec le nouveau M-Pop
 % }}}
-\paragraph{\textsc{M-DeclClean}:} % {{{ TODO
+\paragraph{\textsc{M-DeclClean}:} % {{{
+Il est impossible que $φ$ fasse référence à $x$ car $x ∉ Γ$. Donc $Γ ⊢ φ : t$ et
+l'hypothèse de récurrence s'applique.
 % }}}
-\paragraph{\textsc{M-Write}:} % {{{ TODO
+\paragraph{\textsc{M-Write}:} % {{{
+
+On distingue selon si le $φ$ utilisé lors de la lecture est le même que celui
+lors de l'écriture. Si oui, il suffit d'appliquer \textsc{PutGet}:
+$m[φ ← v]_Φ[φ]_Φ = v$. Sinon, on applique l'hypothèse de récurrence.
+
 % }}}
+
+% TODO ces démos sont n'imp
 
 \end{proof}
 
@@ -907,12 +942,12 @@ théorèmes.
     \end{cases}
   \]
 
-\item Fonction: si $Γ ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
+\item Fonction: si $(Γ_G, Γ_L) ⊢ \eFun{a_1, …, a_n}{i} : t$, alors il existe
 $(t_1, …, t_n)$ et $t'$ tels que:
 
   \[ \begin{cases}
     t' = (t_1, …, t_n) → t \\
-    Γ - \vRet, a_1:t_1, …, a_n:t_n, \vRet:t ⊢ i
+    (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t]) ⊢ i
   \end{cases} \]
 
 \item Si $Γ ⊢ lv ← e : t$, alors $Γ ⊢ lv : t$ et $Γ ⊢ e : t$.
@@ -1347,6 +1382,7 @@ converge, alors une valeur du type inféré sera produite.
 Enfin, on donne une version de ces propriétés pour les phrases de programme.
 
 \begin{theorem}[Progrès pour les phrases]
+\label{thm:prog-phr}
 
 Soient $Γ$ un environnement de typage, $m$ un état mémoire et $p$ une phrase de
 programme. Supposons que $\typh{Γ}{p}{Γ'}$ et $\mcomp{Γ}{m}$.
@@ -1355,29 +1391,20 @@ On suppose en outre que l'évaluation de $p$ termine.
 
 Alors $∃ m'. \ph{m}{p}{m'}$.
 
-% TODO passer à un plus petit pas.
-
 \end{theorem}
 
 \begin{proof}
 
-On distingue selon la dernière règle de typage appliquée dans la dérivation de
-$\typh{Γ}{p}{Γ'}$.
+Ici il n'y a pas de difficulté puisque la contrainte (forte) de terminaison se
+lit $\mm{m}{e}{m'}{v'}$ où $e$ est l'expression apparaissant dans $p$.
 
-\paragraph{\textsc{T-Exp}:} % {{{
-
-On applique le théorème de progrès à $e$. Puisque l'évaluation termine, il
-existe $v$ et $m'$ tels que $\mm{m}{e}{m'}{v}$. Alors on peut appliquer
-\textsc{T-Exp}.
-
-%}}}
-\paragraph{\textsc{T-Var}:} % {{{
-Idem avec \textsc{T-Var}.
-%}}}
+Selon la forme de $p$, il suffit alors d'appliquer la règle
+\textsc{ET-Exp} ou \textsc{ET-Var}.
 
 \end{proof}
 
 \begin{theorem}[Préservation pour les phrases]
+\label{thm:presa-phr}
 
 On suppose que les trois propriétés suivantes sont vérifiées:
 
@@ -1394,7 +1421,30 @@ Alors $\mcomp{Γ'}{m'}$.
 \end{theorem}
 
 \begin{proof}
-% TODO
+
+On distingue selon la dernière règle appliquée dans la dérivation de
+$\ph{m}{p}{m'}$.
+
+\paragraph{\textsc{ET-Exp}:}%{{{
+La dernière règle appliquée pour dériver $\typh{Γ}{p}{Γ'}$ est donc
+\textsc{T-Exp}. D'après les prémisses de ces deux règles, on a donc
+$Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$. Alors, d'après le théorème de préservation,
+$\mcomp{Γ}{m'}$.
+%}}}
+\paragraph{\textsc{ET-Var}:}%{{{
+
+Ici, la dérivation de $\typh{Γ}{p}{Γ'}$ termine par \textsc{T-Var}.
+D'après leurs prémisses, on a donc :
+$Γ ⊢ e : t$, $Γ' = \extendGlobal{Γ}{x}{t}$, et
+$m'' = (s, (x ↦ v)::g)$ où $(s, g) = m'$
+(on cherche à prouver que $\mcomp{Γ'}{m''}$).
+
+En appliquant le théorème de préservation, on obtient que $Γ ⊢ v : t$ et
+$\mcomp{Γ}{m'}$. D'après le lemme~\ref{lemma:repr}, il existe $τ$ tel que
+$m' ⊧ v : τ$ où $\tComp{τ}{t}$. On peut alors appliquer \textsc{M-Global} qui
+nous donne que $\mcomp{Γ'}{m''}$.
+% }}}
+
 \end{proof}
 
 \section*{Conclusion}
