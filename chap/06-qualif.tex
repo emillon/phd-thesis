@@ -125,8 +125,6 @@ Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
 la figure~\ref{fig:qualif-changes}.
 
-%TODO[E]: détailler diamant
-
 \begin{figure}%{{{
 
 \begin{align*}
@@ -164,6 +162,23 @@ chapitre~\ref{cha:lang})}
 \label{fig:qualif-changes}
 
 \end{figure}%}}}
+
+En résumé, on a deux constructions pour créer des pointeurs à partir d'une
+left-value : $\&~\cdot$ crée un pointeur noyau, et $\eTaint{\cdot}$ crée un
+pointeur utilisateur. Seul la première est fait pour être utilisé dans le code à
+analyser. La seconde sert uniquement à modéliser les points d'entrée du noyau.
+Par exemple, la fonction $\mathrm{sys\_getver}$ de la
+figure~\ref{fig:ex-sys-getver} peut être appelée de la manière suivante:
+
+{
+\setlength{\parindent}{1cm}
+\begin{align*}
+  & \indent \textsc{Decl}~v= \{~\texttt{major} : 0
+                              ; \texttt{minor} : 0
+                              ; \texttt{patch} : 0~\}~\textsc{in} \\
+  & \indent \mathrm{sys\_getver} (\eTaint{v})
+\end{align*}
+}
 
 \section{Extensions sémantiques}
 
