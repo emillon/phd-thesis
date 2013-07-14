@@ -318,7 +318,7 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 
 \begin{itemize}
 \item $e = v$. On applique alors l'hypothèse de récurrence à $i$ sous
-    $Γ' = Γ, x:t$ et avec $m' = \cExtend{m}{x}{v}$.
+    $Γ' = \extendLocal{Γ}{x}{t}$ et avec $m' = \cExtend{m}{x}{v}$.
 
     \begin{itemize}
     \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
@@ -870,7 +870,7 @@ manière analogue au cas \textsc{Exp-Call-Return}.
 
 On part de $Γ ⊢ \iDecl{x}{v}{i}$.
 Par inversion, il existe $t$ tel que
-$Γ ⊢ v : t$ et $Γ' ⊢ i$ où $Γ' = Γ, x:t$.
+$Γ ⊢ v : t$ et $Γ' ⊢ i$ où $Γ' = \extendLocal{Γ}{x}{t}$.
 
 Comme $\mcomp{Γ}{m}$, le lemme~\ref{lemma:repr} s'applique : il existe
 $τ$ tel que $m ⊧ v : τ$ où $\tComp{τ}{t}$.

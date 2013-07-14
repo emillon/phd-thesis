@@ -710,7 +710,6 @@ dans la figure~\ref{fig:comp-mem}.
             }
             { \mcomp{Γ}{\cCleanup{\cPop{m'}}} }
 
-            % TODO supprimer tous les Γ, ...
         \irule{M-Decl}
             { \mcomp{Γ}{m}
            \\ m ⊧ v : τ
@@ -806,7 +805,7 @@ $\cVarname{a} ∈ \cDom{Γ}$.
 % }}}
 \paragraph{\textsc{M-Global}:} % {{{
 
-Soient $φ$ tel que $Γ, x:t' ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
+Soient $φ$ tel que $\extendGlobal{Γ}{x}{t'} ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
 
 On veut montrer que $m'[φ]_Φ$ est une valeur $v'$
 tq
@@ -959,7 +958,7 @@ $Γ ⊢ lv : t'$ et $t = t'~*$.
 \item Si $Γ ⊢ i_1;i_2$, alors $Γ ⊢ i_1$ et $Γ ⊢ i_2$.
 \item Si $Γ ⊢ e$, alors il existe $t$ tel que $Γ ⊢ e : t$.
 \item Si $Γ ⊢ \iDecl{x}{e}{i}$, alors il existe $t$ tel que
-      $Γ ⊢ e : t$ et $Γ, x:t ⊢ i$.
+      $Γ ⊢ e : t$ et $\extendLocal{Γ}{x}{t} ⊢ i$.
 \item Si $Γ ⊢ \iIf{e}{i_t}{i_f}$, alors $Γ ⊢ e : \tInt$,
       $Γ ⊢ i_t$ et $Γ ⊢ i_f$.
 \item Si $Γ ⊢ \iWhile{e}{i}$, alors $Γ ⊢ e : \tInt$ et $Γ ⊢ i$.
@@ -997,7 +996,7 @@ Ces cas sont définis par les règles suivantes:
 
 \begin{mathpar}
 \irule{T-Ctx-EE}
-    {Γ, x : t_i ⊢ \ctxSub{C}{x} : t_2}
+    {\extendLocal{Γ}{x}{t_i} ⊢ \ctxSub{C}{x} : t_2}
     {\tyctx{Γ}{C}{t_i}{t_e}}
 
 \irule{T-Ctx-IE}
@@ -1005,7 +1004,7 @@ Ces cas sont définis par les règles suivantes:
     { \tyctx{Γ}{C}{}{t_e} }
 \\
 \irule{T-Ctx-EI}
-    { Γ, x : t_i ⊢ \ctxSub{C}{x} }
+    { \extendLocal{Γ}{x}{t_i} ⊢ \ctxSub{C}{x} }
     { \tyctx{Γ}{C}{t_i}{} }
 
 \irule{T-Ctx-II}
@@ -1066,8 +1065,8 @@ Il suffit alors d'instancier le $i$ correspondant dans la prémisse de la règle
 \paragraph{\textsc{T-Ctx-EE} et \textsc{T-Ctx-EI}:}
 
 Ce cas repose sur un lemme de substitution admis ici. Si une construction est
-bien typée sous $Γ, x:t$, alors reste bien typée sous $Γ$ si l'on y remplace $x$
-par une expression typée $t$.
+bien typée sous $\extendLocal{Γ}{x}{t}$, alors reste bien typée sous $Γ$ si l'on
+y remplace $x$ par une expression de type $t$.
 \end{proof}
 
 \begin{lemma}[Inversion du typage sous un contexte]
@@ -1135,22 +1134,7 @@ $Γ = x:t$).
 
 \end{lemma}
 
-%\begin{lemma}[Affaiblissement]
-%\label{lemma:affaiblissement}
-
-%On peut ajouter des associations supplémentaires dans l'environnement sans
-%modifier les typages dans cet environnement.
-
-%Si $Γ ⊢ e : t$ et $x ∉ \cDom{Γ}$, alors $Γ, x : t' ⊢ e : t$.
-
-%\end{lemma}
-
-\begin{proof}[Démonstration (esquisse)]
-On procède par induction sur une dérivation de $Γ ⊢ e : t$. Le seul cas où $Γ$
-est accédé en lecture (et pas uniquement propagé de prémisses en prémisses) est
-le cas de l'accès à une variable où la prémisse a pour forme $y : t ∈ Γ$. Or, si
-celle ci est vraie, alors $y:t ∈ Γ, x:t'$ est également vérifiée.
-\end{proof}
+% TODO proof
 
 \section{Progrès et préservation}
 
