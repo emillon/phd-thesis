@@ -999,6 +999,9 @@ pile. Cela revient naturellement à composer les lentilles $L$ et $I$. On défin
 donc une lentille $ℒ_{n,x} = I(|s|-n+1) \ggg L(x)$ qui accède à la variable $x$
 du $n$\ieme cadre de pile.
 
+% TODO vérifier les off by one
+% TODO lentilles fst et snd?
+
 \begin{align*}
 m {[(n, x)]}_A     & = \begin{cases}
                            \lensGet{ℒ_{n,x}}{s} & \mbox{ si $n ∈ [1 ; |s|]$} \\
