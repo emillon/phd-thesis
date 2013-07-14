@@ -35,7 +35,7 @@ etc. Sa sémantique d'exécution (ainsi qu'une partie des étapes de compilation
 depuis C) est décrites dans \cite{newspeak}. Sa syntaxe est donnée dans la
 figure~\ref{fig:stx-npk}.
 
-\begin{figure}
+\begin{figure}%{{{
 
 \def\npkstyle#1{\mathrm{#1}}
 
@@ -95,7 +95,7 @@ figure~\ref{fig:stx-npk}.
 \end{align*}
 \caption{Syntaxe simplifiée de Newspeak}
 \label{fig:stx-npk}
-\end{figure}
+\end{figure}%}}}
 
 \section{Chaîne de compilation}
 \label{sec:compil}
@@ -354,7 +354,9 @@ définies portant sur chaque type de fragment: \texttt{infer\_fdec} pour les
 déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 \texttt{infer\_stmtkind} pour les instructions, etc. Grâce au
 lemme~\ref{lemma:inversion}, on sait quelle règle appliquer en fonction de
-l'expression ou instruction considérée.
+l'expression ou instruction considérée. Notons que même si le programme
+\newspeak est décoré d'informations de types (celles qui existent dans le
+programme C), elles ne sont pas utilisées.
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
 \texttt{unify}. Par exemple, pour typer une déclaration
