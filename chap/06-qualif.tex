@@ -247,6 +247,7 @@ dynamique.
 Étant donné \langname{} augmenté de cette extension sémantique, on peut étendre
 naïvement le système de types avec la règle suivante:
 
+\label{page:rule-taint-ignore}
 \begin{mathpar}
   \irule{Taint-Ignore}
     { Γ ⊢ lv : t }
@@ -551,13 +552,34 @@ La preuve de ce théorème est en annexe~\ref{proof:preservation-qualif}.
 Ces extensions ne modifient pas les théorème de progrès et préservation sur les
 phrases (théorèmes~\label{thm:prog-phr} et~\label{thm:presa-phr}).
 
-\section{Conclusion}
-
 La sûreté du typage étant à nouveau établie, on a montré que les qualificateurs
 de types sur les pointeurs suffisent pour avoir une adéquation entre les
 extensions de sémantique de la section~\ref{sec:extensions-noyau} et les
 extensions du système de type de la section~\ref{sec:extension-types}.
 
-% TODO une conclusion de chapitre?
+\section{Conclusion}
+
+On a décrit une simple extension au système de types présenté dans le
+chapitre~\ref{cha:typbase}. Celle-ci permet d'exprimer les pointeurs vers
+l'espace utilisateur, qui sont utiles pour l'implantation d'appels système
+(chapitre~\ref{cha:os}).
+
+Une première idée pour le typage de ces constructions est de ne pas faire la
+distinction entre les pointeurs utilisateur et les pointeurs noyau. Cela revient
+à employe la règle \textsc{Taint-Ignore} de la
+page~\pageref{page:rule-taint-ignore}. On a montré ensuite que ce typage naïf ne
+suffit pas: il permet en effet de faire fuiter de l'information, ce qu'on note
+par un cas d'erreur $\serr{taint}$. En termes de systèmes de types, cela
+signifie que le théorème de progrès (théorème~\ref{thm:progres},
+page~\pageref{thm:progres}) n'est plus vérifié.
+
+Le langage des types est donc enrichi pour séparer les pointeurs utilisateur des
+pointeurs noyau: les premiers sont explicitement construits par un ensemble de
+sources bien déterminé, et les autres sont créés par exemple en prenant
+l'adresse d'une variable. La règle de typage \textsc{Lv-Deref} assure que seuls
+les pointeurs noyau peuvent être déréférencés. Pour accéder aux pointeurs
+utilisateur, il faut appeller les constructions $\ctuF$ et $\cfuF$ qui sont
+typées adéquatement et vérifient dynamiquement que les pointeurs dont la valeur
+est contrôlée par l'utilisateur pointent vers l'espace utilisateur.
 
 % vim: spelllang=fr
