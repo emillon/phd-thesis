@@ -1,5 +1,5 @@
 \def\opbinintset{\{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg,≤,≥,<,> \}}
-\def\opbinfloatset{\{+_.,-_.,\times_.,/_.,≤_.,≥_.,<_.,>_.\}}
+\def\opbinfloatset{\{+.,-.,\times.,/.,≤.,≥.,<.,>.\}}
 
 \def\disprule#1{
   \switch{#1}
@@ -594,7 +594,9 @@
       { +,-,\times,/,\% }{Arithmétique entière}
       { +.,-.,\times.,/.}{Arithmétique flottante}
       { +_p, -_p        }{Arithmétique de pointeurs}
-      { =,≠,≤,≥,<,>     }{Comparaisons}
+      { ≤,≥,<,>         }{Comparaison sur les entiers}
+      { ≤.,≥.,<.,>.     }{Comparaison sur les flottants}
+      { =,≠             }{Tests d'égalité}
       { \&,|,\opxor     }{Opérateurs bit à bit}
       { \&\&,||         }{Opérateurs logiques}
       { \ll, \gg        }{Décalages}
