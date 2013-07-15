@@ -990,18 +990,22 @@ On pose $m = (s, g)$.
 Les accès aux globales se font de la manière suivante. Si la variable n'existe
 pas, notons que $L$ retourne $\serr{var}$.
 
-\begin{align*}
-m {[x]}_A     &= g{[x]}_L \\
-m {[x ← v]}_A &= (s, g{[x←v]}_L) \\
-\end{align*}
+\[
+A((x)) = \mathrm{Snd} \ggg L(x)
+\]
+
+$\mathrm{Snd}$ désigne la lentille entre un couple et sa deuxième composante.
+Ainsi, par exemple $m{[(x) ← v]}_A = (s, g[x←v]_L)$.
+
+%\begin{align*}
+%m {[x]}_A     &= g{[x]}_L \\
+%m {[x ← v]}_A &= (s, g{[x←v]}_L) \\
+%\end{align*}
 
 Les accès aux locales reviennent à accéder à la bonne variable du bon cadre de
 pile. Cela revient naturellement à composer les lentilles $L$ et $I$. On définit
 donc une lentille $ℒ_{n,x} = I(|s|-n+1) \ggg L(x)$ qui accède à la variable $x$
 du $n$\ieme cadre de pile.
-
-% TODO vérifier les off by one
-% TODO lentilles fst et snd?
 
 \begin{align*}
 m {[(n, x)]}_A     & = \begin{cases}
@@ -1236,14 +1240,14 @@ On s'intéresse à l'évaluation
 de l'expression \texttt{*p} aux points \texttt{(a)} et \texttt{(b)}. Avec une
 sémantique paresseuse (en ajoutant un $\widehat{*}φ$), la valeur de
 \texttt{p}
-est $\widehat{\&}~((*(0,x)).f)$, donc
+est $\widehat{\&}~((*(1,x)).f)$, donc
 \texttt{*p} est évalué à $0$ en
 \texttt{(a)}
 et $1$ en
 \texttt{(b)}.
 Au contraire, avec une sémantique stricte (correcte),
 \texttt{p} vaut
-$\widehat{\&}~(((0,s0).f)$ et donc
+$\widehat{\&}~(((1,s0).f)$ et donc
 \texttt{*p} est évalué à $0$ en
 \texttt{(a)}
 et en

@@ -1,15 +1,10 @@
 Dans ce chapitre, nous décrivons la mise en œuvre des analyses statiques
 précédentes. Nous commençons par décrire la représentation intermédiaire
-utilisée: Newspeak. La chaîne de compilation est explicitée, partant de C pour
-aller jusqu'à Tyspeak, sur lequel nous décrivons d'un algorithme d'inférence de
-types à la Hindley-Milner, reposant sur l'unification et le partage de
-références. Toutes ces étapes sont implantées dans le langage
-OCaml~\link{ocaml}.
-
-En réalité, Newspeak (et donc Tyspeak) utilise une représentation de plus bas
-niveau que \langname donc les règles sont légèrement différentes.
-
-% TODO mieux décrire les 3
+utilisée: \newspeak. Ensuite, nous décrivons la phase de compilation, de C à
+\newspeak, auquel on rajoute ensuite des étiquettes de types. Celles-ci sont
+calculées par un algorithme d'inférence de types à la Hindley-Milner, reposant
+sur l'unification et le partage de références. Toutes ces étapes sont implantées
+dans le langage OCaml~\link{ocaml}.
 
 Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
 license libre, la \emph{GNU Lesser General Public License}.
@@ -234,7 +229,7 @@ unify (ta, tb):
 \caption{Algorithme d'unification}
 \label{fig:algo-unif}
 \end{figure}%}}}
-% TODO algorithmicx?
+% TODx algorithmicx?
 
 \begin{itemize}
 
@@ -256,14 +251,22 @@ pas présent dans le type à affecter. C'est le but de la fonction
 \item si les deux types sont des constructeurs de type, il faut que les
 constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 
-\item si les deux types sont des types structure, on étudie les types de leurs
-champs. On commence par unifier les types des champs de même nom, et on
-on ajoute à l'un les champs exclusifs à l'autre. Cette partie n'est pas faite
-par substitution et donc n'apparaît pas dans la figure~\ref{fig:algo-unif}.
-
 \item dans les autres cas, l'algorithme échoue.
 
 \end{itemize}
+
+Le traitement des types structures est géré dans l'implantation d'une manière
+différente de la présentation du chapitre~\ref{cha:lang}. C'est pourquoi elle
+n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directement
+au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
+chaque accès. C'est à dire qu'on va par exemple inférer le type $\tStruct{ l:
+\tInt ; … }$ où $…$ désigne l'ensemble des champs inconnus. En unifiant
+$\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient
+en sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$.
+Plus présisément, pour unifier deux types structure, on étudie les types de
+leurs champs. On commence par unifier les types des champs de même nom, et on on
+ajoute à l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme
+de rangée (\emph{row polymorphism}) présent dans les langages comme OCaml.
 
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
@@ -484,7 +487,5 @@ et on indique les contraintes en appelant la fonction d'unification.
 Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
 incomplet mais permet de traiter des parties du noyau Linux comme on le verra
 dans le chapitre suivant.
-
-% TODO décrire les structs avec le row polymorphism (cf ccl)
 
 % vim: spelllang=fr
