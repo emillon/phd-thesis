@@ -534,26 +534,26 @@
   \\
   \gramdef{Expressions}{e}
                  { c               }{ Constante }
-                 { lv              }{ Accès mémoire }
                  { \opun~e         }{ Opération unaire }
                  { e~\opbin~e      }{ Opération binaire }
-                 { \& lv           }{ Pointeur }
+                 { lv              }{ Accès mémoire }
                  { lv ← e          }{ Affectation }
+                 { \& lv           }{ Pointeur }
+                 { f               }{ Fonction }
+                 { e (e_1, …, e_n) }{ Appel de fonction }
                  { \eStruct{
                     l_1 : e_1
                     ; …
                     ; l_n : e_n }  }{ Structure }
                  { \eArray{e_1 ;…; e_n} }{ Tableau }
-                 { f               }{ Fonction }
-                 { e (e_1, …, e_n) }{ Appel de fonction }
                  {END}
   \\
   \\
   \gramdef{Left-values}{lv}
                   { x      }{ Variable }
-                  { *e     }{ Déréférencement }
                   { lv.l_S }{ Accès à un champ }
                   { lv[e]  }{ Accès à un élément }
+                  { *e     }{ Déréférencement }
                   {END}
   \\
   \\

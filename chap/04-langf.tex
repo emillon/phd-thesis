@@ -317,6 +317,7 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 \tikzstyle{lensExt}=[fill=white,pattern=crosshatch dots]
 
 \shorthandoff{!}
+\vspace{5mm}
 \begin{tikzpicture}
 [node distance=2cm
 ,bignode/.style={draw,shape=rectangle,minimum size=1cm,lensExt}
@@ -358,6 +359,7 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 \draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
 
 \end{tikzpicture}
+\vspace{5mm}
 \shorthandoff{!}
 
 \caption{Composition de lentilles}
@@ -368,8 +370,6 @@ Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
 que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
 \section{Syntaxe}
-
-% TODO il faut mettre les figures ici et les décrire
 
 Les figures~\ref{fig:stx-data} et~\ref{fig:stx} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
@@ -383,6 +383,33 @@ présentes dans les langages impératifs comme C.
 \label{fig:stx-data}
 \end{figure}%}}}
 
+Parmi les expressions, les constantes comportent les entiers et flottants, ainsi
+que le pointeur \eNull qui correspond à une valeur par défaut pour les
+pointeurs, et la valeur unité \eUnit qui pourra être retournée par les fonctions
+travaillant par effets de bord uniquement.
+
+Les accès mémoire en lecture et écriture se font au travers de left-values:
+comme en C, elles tiennent leur nom du fait que ce sont ces valeurs qui sont à
+gauche du signe d'affectation. En plus des variables, on obtient une left-values
+en accédant par nom à un champ ou par indice à un élément d'une left-value, ou
+encore en appliquant l'opérateur \texttt{*} de déréférencement à une expression.
+Pour assister le typage, l'accès à un champ doit être décoré du type complet
+$S$, mais cette annotation est ignorée lors de l'évaluation. Les left-values
+correspondent aussi à l'unité d'adressage: c'est-à-dire que les pointeurs sont
+construits en prenant l'adresse d'une left-value avec l'opérateur \texttt{\&}.
+
+Les fonctions sont des expressions comme les autres, contrairement à C où elles
+sont forcément déclarées globalement. Cela veut dire qu'on peut affecter une
+fonction $f$ à une variable $x$ et l'appeller avec $x(a_1, a_2)$. Il est aussi
+possible de déclarer une fonction au sein d'une fonction. Cependant cela ne
+respecte pas l'imbrication lexicale: dans la fonction interne il n'est pas
+possible de faire référence à des variables locales de la fonction externe,
+seulement à des variables globales. En mémoire les fonctions sont donc
+uniquement représentées par leur code: il n'y a pas de fermetures.
+
+Enfin, on trouve aussi des expression permettant de construire des valeurs
+composées: les structures et les valeurs.
+
 \begin{figure}%{{{
 
   \figstxinstr{}
@@ -391,17 +418,31 @@ présentes dans les langages impératifs comme C.
 \label{fig:stx}
 \end{figure}%}}}
 
-Un programme est organisé en fonctions, qui contiennent des instructions, qui
-elles-mêmes manipulent des expressions.
+Les instructions sont typiques de la programmation impérative. \langname
+comporte bien sûr l'instruction vide qui ne fait rien et la séquence qui chaîne
+deux instructions.
 
-Le flot de contrôle est simplifié par rapport à C:\@ il ne contient que
-l'alternative («if») et la boucle «while». Les autres formes de boucle
-(«do/while» et «for») peuvent être émulées par une boucle «while».
+Une expression peut être évaluée dans un contexte d'instruction, pour ses effets
+de bord. Remarquons que l'affectation n'est pas présente ici: c'est en effet une
+instruction, qui renvoie la valeur qui a été affectée. Cela permet d'écrire $x ←
+(y ← z)$, comme dans un programme C où on écrirait \texttt{x = y = z}.
 
-Les fonctionnalités manquantes, et comment les émuler, seront examinées dans le
-chapitre~\ref{cha:conclusion}.
+Il est également possible de déclarer une variable locale avec
+$\iDecl{x}{v}{i}$. $x$ est alors une nouvelle variable visible dans $i$ avec
+pour valeur initiale $v$.
 
-Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}.
+L'alternative et la conditionnelle sont classiques: en revanche, on ne fournit
+qu'un seul type de boucle et pas de saut (instruction \texttt{goto}).
+
+Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}. Ils correspondent
+à ceux du langage C. La différence principale est que les opérations sur les
+entiers, flottants et pointeurs sont annotés avec le type de données sur lequel
+ils travaillent. Par exemple «$+$» désigne l'addition sur les entiers et «$+.$»
+l'addition sur les flottants. Les opérations de test d'égalité, en revanche,
+sont possibles pour les types numériques, les pointeurs, ainsi que les
+types composés récursiblement de types comparables.
+
+% TODO bug syntaxe sur les ops
 
 \begin{figure}[h]%{{{
 
@@ -1002,6 +1043,7 @@ La figure~\ref{fig:dep-lens} résume ces dépendances.
 
 \begin{figure}[h]
 \centering
+\vspace{5mm}
 \begin{tikzpicture}
 \node[draw] (I) {I};
 \node[draw, below of=I] (L) {L};
@@ -1019,6 +1061,7 @@ La figure~\ref{fig:dep-lens} résume ces dépendances.
 \draw[dotted] (L) -- ++(-5mm,  0) |- (F);
 \draw[dotted] (I) -- ++(-10mm, 0) |- (T);
 \end{tikzpicture}
+\vspace{5mm}
 
 \caption[Dépendances entre les lentilles]{
 Dépendances entre les lentilles. Les lignes pleines indiquent quelles sont les
