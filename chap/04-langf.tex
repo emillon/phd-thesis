@@ -242,7 +242,7 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 \label{fig:lens-idx-ex}
 \end{figure}
 
-\begin{example}[Lentille «n\ieme élément d'un tuple»]
+\begin{example}[Lentille «$n$\ieme élément d'un tuple»]
 
 Soient $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
 
@@ -961,6 +961,54 @@ partir d'un état mémoire $m$ et d'une left-value $φ$, on veut pouvoir obtenir
 Pour définir cette lentille indexée $Φ$, on commence par définir des lentilles
 élémentaires, et on les compose pour pouvoir définir des lentilles entre
 valeurs.
+
+On commence par définir deux lentilles $I$ et $L$ pour accéder aux structures de
+listes. $I$ accède par indice et $L$ par clef (dans une liste d'association,
+donc).
+
+Cela permet ensuite de définir $A$, qui extrait une valeur à partir d'un nom de
+variable et d'une éventuelle hauteur de pile. Pour cela, on compose les
+lentilles $I$ et $L$.
+
+Les autres travaillent sur des valeurs composées, c'est-à-dire sur les
+structures et tableaux. La lentille $F$ extrait une sous-valeur
+correspondant au champ d'une structure. Le fonctionnement est similaire à la
+lentille $L$ puisqu'on accède par nom à une sous-structure.
+La lentille $T$, quant à elle, permet d'accéder au $n$\ieme élement d'un
+tableau. De ce point de vue, elle est similaire à $I$ mais en travaillant sur
+les valeurs.
+
+Enfin, on définit $Φ$ pour accèder à n'importe quelle sous-valeur d'une variable
+dans la mémoire. Cela utilise $A$, $F$ et $T$ précedemment définis.
+
+La figure~\ref{fig:dep-lens} résume ces dépendances.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\node[draw] (I) {I};
+\node[draw, below of=I] (L) {L};
+\node[draw, below of=L] (F) {F};
+\node[draw, below of=F] (T) {T};
+\node[draw, right of=L, node distance=2cm, yshift=5mm] (A) {A};
+\node[draw, right of=F, node distance=4cm, yshift=-5mm] (P) {$Φ$};
+
+\draw[->] (I) -- (A.north west);
+\draw[->] (L) -- (A.south west);
+\draw[->] (A) -- (P.north west);
+\draw[->] (F) -- (P.west);
+\draw[->] (T) -- (P.south west);
+
+\draw[dotted] (L) -- ++(-5mm,  0) |- (F);
+\draw[dotted] (I) -- ++(-10mm, 0) |- (T);
+\end{tikzpicture}
+
+\caption[Dépendances entre les lentilles]{
+Dépendances entre les lentilles. Les lignes pleines indiquent quelles sont les
+définitions utilisées, et les pointillés relient les lentilles similaires.}
+\label{fig:dep-lens}
+
+\end{figure}
 
 \subsection*{Accès à une liste par indice : $I$}
 
