@@ -15,13 +15,10 @@
 \end{figure}
 
 \begin{figure}
-\begin{mathpar}
-    \semrule{Ctx}
-\end{mathpar}
 
     \figctx{}
 
-\caption{Règles d'évaluation des contextes}
+\caption{Contextes d'évaluation}
 \end{figure}
 
 \begin{figure}
@@ -44,6 +41,12 @@
 \begin{figure}
 
 \begin{mathpar}
+    \ruleheader{$\mm{m}{e}{m'}{e'}$}
+
+    \semrule{Ctx}
+
+    \semrule{Exp-Call-Ctx}
+
     \ruleheader{$\mm{m}{lv}{m}{φ}$}
 
     \semrule{Phi-Var}
@@ -73,8 +76,6 @@
     \semrule{Exp-Struct}
 
     \semrule{Exp-Array}
-
-    \semrule{Exp-Call-Ctx}
 
     \semrule{Exp-Call-Return}
 \end{mathpar}

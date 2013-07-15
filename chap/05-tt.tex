@@ -1377,25 +1377,24 @@ Alors:
 
 \begin{itemize}
 \item
-    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ e' : t$.
-
-\item
-    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
-
-\item
-    Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ i'$.
+    Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $\semtypphi{m'}{φ}{τ}$ où $\tComp{τ}{t}$.
 
 \item
     Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$,
     alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ lv' : t$.
 
 \item
-    Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $\semtypphi{m'}{φ}{τ}$ où $\tComp{τ}{t}$.
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
 
+\item
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ e' : t$.
+
+\item
+    Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ i'$.
 \end{itemize}
 
   Autrement dit, si une construction est typable, alors un pas d'évaluation ne

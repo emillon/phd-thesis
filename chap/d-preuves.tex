@@ -717,6 +717,37 @@ car elle peut être appliquée en contexte d'expression, d'instructions ou de
 left-values. De même la règle \textsc{Trans} ne pose pas de problème, il suffit
 d'appliquer l'hypothèse de récurrence à ses prémisses.
 
+% TODO vérifier la cohérence depuis le changement d'ordre
+\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
+
+\paragraph{\textsc{Phi-Deref}:} % {{{
+
+On sait que $Γ ⊢ *~v : t$ où $v = \widehat{\&}~φ$.
+Par inversion, $Γ ⊢ v : t~*$.
+Alors d'après le lemme~\ref{lemma:repr}, il existe
+$τ'$ tel que $m ⊧ v : τ'$ et $\tComp{τ'}{t~*}$.
+Par inversion de la relation de typage sémantique,
+$τ' = τ~*$ où $\tComp{τ}{t}$.
+Alors par inversion de \textsc{S-Ptr}, on obtient que
+$\semtypphi{m}{φ}{τ}$.
+
+% }}}
+\paragraph{\textsc{Phi-Var}, \textsc{Phi-Struct} et \textsc{Phi-Array}:} % {{{
+
+Tout d'abord, la mémoire n'est pas modifiée donc il n'est pas nécessaire de
+montrer la compatibilité de $m'$.
+
+Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
+lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
+
+% }}}
+
+\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
+
+\paragraph{\textsc{Ctx}:} % {{{
+Idem que dans le cas des expressions.
+% }}}
+
 \subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
@@ -823,36 +854,6 @@ successivement.
 
 C'est clair pour les valeurs de la forme
 $\widehat{c}$ ou $\widehat{f}$. Supposons que $v = \wphi{φ}$.
-% }}}
-
-\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
-
-\paragraph{\textsc{Ctx}:} % {{{
-Idem que dans le cas des expressions.
-% }}}
-
-\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
-
-\paragraph{\textsc{Phi-Deref}:} % {{{
-
-On sait que $Γ ⊢ *~v : t$ où $v = \widehat{\&}~φ$.
-Par inversion, $Γ ⊢ v : t~*$.
-Alors d'après le lemme~\ref{lemma:repr}, il existe
-$τ'$ tel que $m ⊧ v : τ'$ et $\tComp{τ'}{t~*}$.
-Par inversion de la relation de typage sémantique,
-$τ' = τ~*$ où $\tComp{τ}{t}$.
-Alors par inversion de \textsc{S-Ptr}, on obtient que
-$\semtypphi{m}{φ}{τ}$.
-
-% }}}
-\paragraph{\textsc{Phi-Var}, \textsc{Phi-Struct} et \textsc{Phi-Array}:} % {{{
-
-Tout d'abord, la mémoire n'est pas modifiée donc il n'est pas nécessaire de
-montrer la compatibilité de $m'$.
-
-Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
-lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
-
 % }}}
 
 \subsection{Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$}
