@@ -333,12 +333,11 @@ conclusion n'est pas vraie:
 
 \end{itemize}
 
-%TODO[E] à détailler avant
-
 Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
 \textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
-dans la section~\ref{sec:extensions-noyau}.
+dans la section~\ref{sec:extensions-noyau}. Il faut donc raffiner les règles de
+typage pour interdire ce cas.
 
 \section{Extensions du système de types}
 \label{sec:extension-types}
