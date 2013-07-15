@@ -127,7 +127,9 @@ on utilise les notations suivantes:
 
 \begin{align*}
 x:t ∈ Γ &\eqdef ∃i ∈ [1;n], γ_i = (x, t) ∨ ∃i ∈ [1;m], η_i = (x, t) \\
-\cDom{Γ} &\eqdef \{ g_i / i ∈ [1;n] \} ∪ \{ l_i / i ∈ [1;m] \}\\ % TODO ou de Γ_*
+\cDom{Γ_G} &\eqdef \{ g_i / i ∈ [1;n] \} \\
+\cDom{Γ_L} &\eqdef \{ l_i / i ∈ [1;m] \} \\
+\cDom{Γ} &\eqdef \cDom{Γ_G} ∪ \cDom{Γ_L} \\
 \extendGlobal{Γ}{x}{t} &\eqdef ({(γ'_i)}_{i∈[1;n+1]}, Γ_L) ~\textrm{tel que}
                         \begin{cases}
                           ∀ i ∈ [1;n], γ'_i    = γ_i \\
@@ -739,51 +741,6 @@ dans la figure~\ref{fig:comp-mem}.
 
 \end{figure}%}}}
 
-% TODO ici?
-\begin{lemma}[Hauteur des chemins typés]
-
-    Une valeur typée ne peut jamais pointer au dessus du niveau courant de pile.
-($\phx\cH$ provient de la définition~\ref{def:hauteur-val},
-page~\pageref{def:hauteur-val}).
-
-    Si $m ⊧ v : τ$, alors $\cH{v} ≤ |m|$.
-
-\end{lemma}
-
-\begin{proof}%{{{
-On procède par induction sur la forme de $v$.
-
-\paragraph{$\widehat{c}$:} Alors $\cH{v} = -1$. Comme $|m| ≥ 0$, ce cas est
-établi.
-
-\paragraph{$\widehat{f}$:} Idem.
-
-\paragraph{$\widehat{\&}~(x)$:} Idem.
-
-\paragraph{$\widehat{\&}~(n, x)$:}
-D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
-$m ⊧ v : τ$ est \textsc{S-Ptr}, donc $m[(n, x)]_Φ$ est une valeur.
-D'après la définition de $φ$, $n ≤ |m|$.
-
-\paragraph{$\widehat{\&}~φ.l$:} %
-On procède par induction sur $v' = \widehat{\&}~φ$.
-Comme $\cH{\widehat{\&}~φ} ≤ |m|$ et
-$\cH{\widehat{\&}~φ.l} = \cH{\widehat{\&}~φ}$,
-on en déduit que
-$\cH{\widehat{\&}~φ.l} ≤ |m|$
-
-\paragraph{$\widehat{\&}~φ[n]$:}
-Idem
-
-\paragraph{$\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$:}
-Par induction, $∀i ∈ [1;n], \cH{v_i} ≤ |m|$. Donc il en est de même pour leur
-maximum, et $\cH{v} ≤ |m|$.
-
-\paragraph{$\widehat{\eArray{v_1,…,v_n}}$:}
-Idem.
-
-\end{proof}%}}}
-
 \section{Propriétés du typage}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
@@ -1071,6 +1028,52 @@ On fait l'inventaire, pour chaque forme syntaxique, des règles pouvant arriver 
 cette dérivation.
 \end{proof}
 
+\begin{lemma}[Hauteur des chemins typés]
+\label{lemma:hauteur-chem}
+
+    Une valeur typée ne peut jamais pointer au dessus du niveau courant de pile.
+($\phx\cH$ provient de la définition~\ref{def:hauteur-val},
+page~\pageref{def:hauteur-val}).
+
+    Si $m ⊧ v : τ$, alors $\cH{v} ≤ |m|$.
+
+\end{lemma}
+
+\begin{proof}%{{{
+On procède par induction sur la forme de $v$.
+
+\paragraph{$\widehat{c}$:} Alors $\cH{v} = -1$. Comme $|m| ≥ 0$, ce cas est
+établi.
+
+\paragraph{$\widehat{f}$:} Idem.
+
+\paragraph{$\widehat{\&}~(x)$:} Idem.
+
+\paragraph{$\widehat{\&}~(n, x)$:}
+D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
+$m ⊧ v : τ$ est \textsc{S-Ptr}, donc $m[(n, x)]_Φ$ est une valeur.
+D'après la définition de $φ$, $n ≤ |m|$.
+
+\paragraph{$\widehat{\&}~φ.l$:} %
+On procède par induction sur $v' = \widehat{\&}~φ$.
+Comme $\cH{\widehat{\&}~φ} ≤ |m|$ et
+$\cH{\widehat{\&}~φ.l} = \cH{\widehat{\&}~φ}$,
+on en déduit que
+$\cH{\widehat{\&}~φ.l} ≤ |m|$
+
+\paragraph{$\widehat{\&}~φ[n]$:}
+Idem
+
+\paragraph{$\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$:}
+Par induction, $∀i ∈ [1;n], \cH{v_i} ≤ |m|$. Donc il en est de même pour leur
+maximum, et $\cH{v} ≤ |m|$.
+
+\paragraph{$\widehat{\eArray{v_1,…,v_n}}$:}
+Idem.
+
+\end{proof}%}}}
+
+
 \begin{lemma}[Accès à une mémoire bien typée]
 \label{lemma:mem-typ}
 
@@ -1112,9 +1115,8 @@ suivantes:
 \end{itemize}
 
 Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$
-est soit une variable globale $(x)$ avec $x ∈ Γ_G$, soit une variable locale
-% TODO \cDom
-$(|m|, x)$ du plus haut cadre de pile avec $x ∈ Γ_L$. Cela se prouve par
+est soit une variable globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale
+$(|m|, x)$ du plus haut cadre de pile avec $x ∈ \cDom{Γ_L}$. Cela se prouve par
 récurrence sur la dérivation de $\mcomp{Γ}{m}$.
 
 % TODO présenter informellement l'autre
@@ -1127,8 +1129,8 @@ $Γ_G = Γ_L = [~]$, la prémisse $Γ ⊢ φ : t$ est donc impossible à satisfa
 % }}}
 \paragraph{\textsc{M-Global}:} % {{{
 Soient $φ$ tel que $\extendGlobal{Γ}{x}{t'} ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
-Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈ Γ_G$,
-soit $(|m|, y)$ avec $y ∈ Γ_L$.
+Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈
+\cDom{Γ_G}$, soit $(|m|, y)$ avec $y ∈ \cDom{Γ_L}$.
 
 Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
 
@@ -1164,13 +1166,13 @@ cas on applique l'hypothèse de récurrence.
 On part de $\mcomp{Γ}{m''}$ où $m'' = \cCleanup{\cPop{m'}}$. Deux cas se
 produisent selon la forme de $\cVar{φ}$.
 
-Si $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où
-$Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])$.
-On applique alors l'hypothèse de récurrence sur $Γ ⊧ m'$: il vient que
-$m'[φ]_Φ = v$ où $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. Comme $\cH{v} ≤ |m'|$, deux
-cas peuvent se produire. Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a
-bien la compatibilité mémoire (l'argument est similaire au cas
-\textsc{Decl-Clean}). Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
+Si $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où $Γ' = (Γ_G,
+[x_1:t_1, …, x_n:t_n, \vRet:t])$. On applique alors l'hypothèse de récurrence
+sur $Γ ⊧ m'$: il vient que $m'[φ]_Φ = v$ où $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$.
+Comme $\cH{v} ≤ |m'|$ (lemme~\ref{lemma:hauteur-chem}), deux cas peuvent se
+produire. Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a bien la
+compatibilité mémoire (l'argument est similaire au cas \textsc{Decl-Clean}).
+Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
 
 Si $\cVar{φ} = (|m''|, x)$, on procède de la mème manière sauf qu'on invoque alors
 le cas d'induction sur $\mcomp{Γ}{m}$.
