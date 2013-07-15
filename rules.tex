@@ -180,7 +180,9 @@
                { Γ ⊢ \iWhile{e}{i} }
            }
     {Return}{ \irule{Return}
-                { Γ ⊢ \vRet ← e }
+                { \vRet:t ∈ Γ
+               \\ Γ ⊢ e : t
+                }
                 { Γ ⊢ \iReturn{e} }
             }
     {Fun}{ \irule{Fun}

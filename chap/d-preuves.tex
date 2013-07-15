@@ -3,8 +3,110 @@
 \label{proof:compo-lens}
 
 \begin{proof}
-Pour prouver que $ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$, il suffit de prouver les trois
-propriétés caractéristiques.
+
+On cherche à prouver que si 
+$ℒ_1 ∈ \setLens{A}{B}$
+et
+$ℒ_2 ∈ \setLens{B}{C}$, alors
+$ℒ = ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
+
+$\ggg$ est la composition de lentilles, définie page~\pageref{def:lens-comp}.
+
+Il suffit pour cela d'établir les trois propriétés caractéristiques qui
+définissent les lentilles: \textsc{PutPut}, \textsc{GetPut} et \textsc{PutGet}.
+Cela est essentiellement calculatoire: on utilise la définition de $\ggg$ et les
+propriétés caractéristiques sur $ℒ_1$ et $ℒ_2$.
+
+\paragraph{PutPut}%{{{
+
+\begin{conteq}[onecolumn]
+  \lensPut{ℒ}{a'}{
+    \lensPut{ℒ}{a}{r}
+  } \\
+= \lensPut{ℒ}{a'}{
+    \lensPut{ℒ_1}
+      {
+        \lensPut{ℒ_2}
+          {a}
+          { \lensGet{ℒ_1}{r} }
+      }
+      { r }
+  }
+& définition de \lensPutX{ℒ} \\
+= \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{
+            \lensPut{ℒ_1}
+              {
+                \lensPut{ℒ_2}
+                  {a}
+                  { \lensGet{ℒ_1}{r} }
+              }
+              { r }
+          }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    }
+& définition de \lensPutX{ℒ} \\
+= \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        {
+          \lensPut{ℒ_2}
+            {a}
+            { \lensGet{ℒ_1}{r} }
+        }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    }
+& \textsc{GetPut} sur $ℒ_1$ \\
+= \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    {
+        \lensPut{ℒ_1}
+          {
+            \lensPut{ℒ_2}
+              {a}
+              { \lensGet{ℒ_1}{r} }
+          }
+          { r }
+    }
+& \textsc{PutPut} sur $ℒ_2$ \\
+= \lensPut{ℒ_1}
+    {
+      \lensPut{ℒ_2}
+        {a'}
+        { \lensGet{ℒ_1}{r} }
+    }
+    { r
+    }
+& \textsc{PutPut} sur $ℒ_1$ \\
+= \lensPut{ℒ}{a'}{r}
+& définition de $\ggg$ \\
+\end{conteq}
+%}}}
 
 \paragraph{GetPut}%{{{
 
@@ -121,97 +223,6 @@ propriétés caractéristiques.
 \end{conteq}
 %}}}
 
-\paragraph{PutPut}%{{{
-
-\begin{conteq}[onecolumn]
-  \lensPut{ℒ}{a'}{
-    \lensPut{ℒ}{a}{r}
-  } \\
-= \lensPut{ℒ}{a'}{
-    \lensPut{ℒ_1}
-      {
-        \lensPut{ℒ_2}
-          {a}
-          { \lensGet{ℒ_1}{r} }
-      }
-      { r }
-  }
-& définition de \lensPutX{ℒ} \\
-= \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        { \lensGet{ℒ_1}{
-            \lensPut{ℒ_1}
-              {
-                \lensPut{ℒ_2}
-                  {a}
-                  { \lensGet{ℒ_1}{r} }
-              }
-              { r }
-          }
-        }
-    }
-    {
-        \lensPut{ℒ_1}
-          {
-            \lensPut{ℒ_2}
-              {a}
-              { \lensGet{ℒ_1}{r} }
-          }
-          { r }
-    }
-& définition de \lensPutX{ℒ} \\
-= \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        {
-          \lensPut{ℒ_2}
-            {a}
-            { \lensGet{ℒ_1}{r} }
-        }
-    }
-    {
-        \lensPut{ℒ_1}
-          {
-            \lensPut{ℒ_2}
-              {a}
-              { \lensGet{ℒ_1}{r} }
-          }
-          { r }
-    }
-& \textsc{GetPut} sur $ℒ_1$ \\
-= \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        { \lensGet{ℒ_1}{r} }
-    }
-    {
-        \lensPut{ℒ_1}
-          {
-            \lensPut{ℒ_2}
-              {a}
-              { \lensGet{ℒ_1}{r} }
-          }
-          { r }
-    }
-& \textsc{PutPut} sur $ℒ_2$ \\
-= \lensPut{ℒ_1}
-    {
-      \lensPut{ℒ_2}
-        {a'}
-        { \lensGet{ℒ_1}{r} }
-    }
-    { r
-    }
-& \textsc{PutPut} sur $ℒ_1$ \\
-= \lensPut{ℒ}{a'}{r}
-& définition de $\ggg$ \\
-\end{conteq}
-%}}}
-
 \end{proof}
 
 \section{Progrès}
@@ -263,11 +274,13 @@ la division, ou l'opérateur $\phxx\cLookup$).
 \subsection{Instructions}
 
 \paragraph{\textsc{Pass}  :} %{{{
-Ce cas est trivial.
+Ce cas est immédiat.
 % }}}
 \paragraph{\textsc{Return}:} %{{{
-Partant de $i = \iReturn{e}$, on applique le lemme d'inversion. Il vient :
-$∃ t_t, Γ ⊢ e : t_r$. On applique l'hypothèse de récurrence à $e$.
+
+Partant de $i = \iReturn{e}$, on applique le lemme d'inversion. Il nous donne
+l'existence de $t$ tel que $Γ ⊢ e : t$. On applique alors l'hypothèse de
+récurrence à $e$.
 
 \begin{itemize}
 \item $e = v$. Alors $i = \iReturn{v}$, ce qui nous permet de conclure.
