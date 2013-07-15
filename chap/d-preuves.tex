@@ -996,8 +996,7 @@ On applique l'hypothèse de récurrence à $e_d$.
     \begin{itemize}
         \item $φ_s = \vTainted{φ}$. Alors on applique
         \textsc{User-Get-OK}. Le lemme~\ref{lemma:mem-typ} adapté aux extensions
-        noyau assure que les prémisses sont correctes et que $Γ ⊧ m'$.
-        % TODO vérifier quand même
+        noyau assure que les prémisses sont correctes.
 
         \item $∄~φ, φ_s = \vTainted{φ}$. Alors on applique
         \textsc{User-Get-Err}.
@@ -1032,15 +1031,14 @@ De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 
 \paragraph{\textsc{Expr-Tainted}:} % {{{
 
-On applique le lemme de représentation. % TODO
+On applique le lemme de représentation, qu'on a étend avec le cas
+$\cRepr{t~@} = \cRepr{\cRepr{t}~@}$.
 
 % }}}
 \paragraph{\textsc{User-Get-OK}:} % {{{
 Tout d'abord, d'après le lemme~\ref{lemma:inv-qualif}, $t = \tInt$, donc la
 préservation du type est établie car $m' ⊧ 0 : \tInt$
-
-Le lemme~\ref{lemma:mem-typ} adapté aux extensions noyau % TODO
-permet de conclure quant à la compatibilité mémoire.
+La compatibilité mémoire est obtenue en appliquant \textsc{M-Write}.
 % }}}
 \paragraph{\textsc{User-Get-Err}:} % {{{
 La seule partie à prouver est la préservation, qui se fait de la même manière
