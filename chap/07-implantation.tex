@@ -140,6 +140,9 @@ Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle for, Newspeak fournit une unique boucle
 \npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
 est toujours un saut vers l'avant (similaire à un «\emph{break}» généralisé).
+Par conséquence, notre implantation gère les sauts, alors que dans \langname,
+cette construction n'est pas possible (figure~\ref{fig:stx}, page
+\pageref{fig:stx}).
 
 Newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
@@ -487,7 +490,5 @@ et on indique les contraintes en appelant la fonction d'unification.
 Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
 incomplet mais permet de traiter des parties du noyau Linux comme on le verra
 dans le chapitre suivant.
-
-% TODO goto c7
 
 % vim: spelllang=fr
