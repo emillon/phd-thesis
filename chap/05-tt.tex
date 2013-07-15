@@ -784,110 +784,6 @@ Idem.
 
 \end{proof}%}}}
 
-\begin{lemma}[Accès à une mémoire bien typée]
-\label{lemma:mem-typ}
-
-Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors
-$m[φ]_Φ$ est une valeur $v$ et
-$m ⊧ v : τ$
-où
-$\tComp{τ}{t}$.
-
-\end{lemma}
-
-\begin{proof}
-
-\def\cVar#1{\mathrm{Var}(#1)}
-\def\cVars#1{\mathrm{Vars}(#1)} % TODO utile?
-
-Commençons par donner un résultat préliminaires. On utilise les notations
-suivantes:
-
-\begin{itemize}
-
-\item $\cVar{φ}$ la variable qui apparaît dans $φ$:
-
-\begin{align*}
-    \cVar{a}    &= a \\
-    \cVar{φ.l}  &= \cVar{φ} \\
-    \cVar{φ[n]} &= \cVar{φ}
-\end{align*}
-
-\item $\cVars{m}$ est l'ensemble des variables de $m$:
-
-\[
-\cVars{([s_1, …, s_n], g)} =
-\{ (x) / x↦v ∈ g \}
-\cup
-\bigcup_{i ∈ [1;n]} \{ (n - i + 1, x) / x↦v ∈ s_i \}
-\]
-
-\end{itemize}
-
-Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$
-est soit une variable globale $(x)$ avec $x ∈ Γ_G$, soit une variable locale
-$(|m|, x)$ du plus haut cadre de pile avec $x ∈ Γ_L$. Cela se prouve par
-récurrence sur la dérivation de $\mcomp{Γ}{m}$.
-
-% TODO présenter informellement l'autre
-
-À l'aide de ce résultat, on prouve le lemme~\ref{lemma:mem-typ} par induction
-sur une dérivation de $\mcomp{Γ}{m}$.
-
-\paragraph{\textsc{M-Empty}:} % {{{
-$Γ_G = Γ_L = [~]$, la prémisse $Γ ⊢ φ : t$ est donc impossible à satisfaire.
-% }}}
-\paragraph{\textsc{M-Global}:} % {{{
-Soient $φ$ tel que $\extendGlobal{Γ}{x}{t'} ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
-Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈ Γ_G$,
-soit $(|m|, y)$ avec $y ∈ Γ_L$.
-
-Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
-
-Dans les autres cas, $\cVar{φ} ∈ \cVars{m}$. Donc $m'[φ]_Φ = m[φ]_Φ$, ce qui
-nous permet de conclure grâce à l'hypothèse d'induction.
-% }}}
-\paragraph{\textsc{M-Push}:} % {{{
-
-On procède d'une manière similaire. $φ$ peut faire référence soit à un des
-$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable globale, auquel
-cas on applique l'hypothèse de récurrence.
-
-% }}}
-\paragraph{\textsc{M-Pop}:} % {{{
-
-Partant de $\mcomp{Γ}{\cCleanup{\cPop{m'}} }$ et $Γ ⊢ φ : t$, on déduit que
-$\cVar{Φ}$ est soit une globale soit une locale de hauteur
-$|\cCleanup{\cPop{m'}}| = |m'| - 1 = |m|$.
-
-% TODO
-
-% }}}
-\paragraph{\textsc{M-Decl}:} % {{{
-On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
-locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les prémisses
-nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ = m[φ]$ et on
-applique l'hypothèse d'induction.
-% }}}
-\paragraph{\textsc{M-DeclClean}:} % {{{
-
-% TODO
-
-% }}}
-\paragraph{\textsc{M-Write}:} % {{{
-On partant de $\mcomp{Γ}{m'}$ où $m' = m[φ ← v]_Φ$, et on suppose que
-$Γ ⊢ φ' : t'$.
-
-Si $φ = φ'$: alors il suffit d'appliquer \textsc{GetPut} à la lentille $Φ$:
-$m[φ ← m[φ]_Φ]_Φ = m$, ce qui donne directement la conclusion.
-
-Si $φ ≠ φ'$:
-$Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$. En
-particulier $\cVar{φ'} ∈ \cVars{m'}$. Comme $φ ≠ φ'$, $m'[φ']_Φ = m[φ']_Φ$ et on
-conclut grâce à l'hypothèse d'induction.
-% }}}
-\end{proof}
-
 \section{Propriétés du typage}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
@@ -1174,6 +1070,117 @@ $Γ = x:t$).
 On fait l'inventaire, pour chaque forme syntaxique, des règles pouvant arriver à
 cette dérivation.
 \end{proof}
+
+\begin{lemma}[Accès à une mémoire bien typée]
+\label{lemma:mem-typ}
+
+Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors
+$m[φ]_Φ$ est une valeur $v$ et
+$m ⊧ v : τ$
+où
+$\tComp{τ}{t}$.
+
+\end{lemma}
+
+\begin{proof}
+
+\def\cVar#1{\mathrm{Var}(#1)}
+\def\cVars#1{\mathrm{Vars}(#1)} % TODO utile?
+
+Commençons par donner un résultat préliminaires. On utilise les notations
+suivantes:
+
+\begin{itemize}
+
+\item $\cVar{φ}$ la variable qui apparaît dans $φ$:
+
+\begin{align*}
+    \cVar{a}    &= a \\
+    \cVar{φ.l}  &= \cVar{φ} \\
+    \cVar{φ[n]} &= \cVar{φ}
+\end{align*}
+
+\item $\cVars{m}$ est l'ensemble des variables de $m$:
+
+\[
+\cVars{([s_1, …, s_n], g)} =
+\{ (x) / x↦v ∈ g \}
+\cup
+\bigcup_{i ∈ [1;n]} \{ (n - i + 1, x) / x↦v ∈ s_i \}
+\]
+
+\end{itemize}
+
+Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$
+est soit une variable globale $(x)$ avec $x ∈ Γ_G$, soit une variable locale
+$(|m|, x)$ du plus haut cadre de pile avec $x ∈ Γ_L$. Cela se prouve par
+récurrence sur la dérivation de $\mcomp{Γ}{m}$.
+
+% TODO présenter informellement l'autre
+
+À l'aide de ce résultat, on prouve le lemme~\ref{lemma:mem-typ} par induction
+sur une dérivation de $\mcomp{Γ}{m}$.
+
+\paragraph{\textsc{M-Empty}:} % {{{
+$Γ_G = Γ_L = [~]$, la prémisse $Γ ⊢ φ : t$ est donc impossible à satisfaire.
+% }}}
+\paragraph{\textsc{M-Global}:} % {{{
+Soient $φ$ tel que $\extendGlobal{Γ}{x}{t'} ⊢ φ : t$ et $m' = (s, ((x↦v)::g))$.
+Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈ Γ_G$,
+soit $(|m|, y)$ avec $y ∈ Γ_L$.
+
+Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
+
+Dans les autres cas, $\cVar{φ} ∈ \cVars{m}$. Donc $m'[φ]_Φ = m[φ]_Φ$, ce qui
+nous permet de conclure grâce à l'hypothèse d'induction.
+% }}}
+\paragraph{\textsc{M-Push}:} % {{{
+
+On procède d'une manière similaire. $φ$ peut faire référence soit à un des
+$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable globale, auquel
+cas on applique l'hypothèse de récurrence.
+
+% }}}
+\paragraph{\textsc{M-Pop}:} % {{{
+
+Partant de $\mcomp{Γ}{\cCleanup{\cPop{m'}} }$ et $Γ ⊢ φ : t$, on déduit que
+$\cVar{Φ}$ est soit une globale soit une locale de hauteur
+$|\cCleanup{\cPop{m'}}| = |m'| - 1 = |m|$.
+
+% TODO
+
+% }}}
+\paragraph{\textsc{M-Decl}:} % {{{
+On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
+locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les prémisses
+nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ = m[φ]$ et on
+applique l'hypothèse d'induction.
+% }}}
+\paragraph{\textsc{M-DeclClean}:} % {{{
+
+On suppose que $Γ ⊢ φ : t'$. Alors $\extendLocal{Γ}{x}{t} ⊢ φ : t'$ par
+affaiblissement. On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
+$m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$.
+Si $v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
+l'opération $\phxx\cCleanVar$. Le type $τ'$ étant un type pointeur par le
+lemme~\ref{lemma:canon}, on peut conclure.
+Dans les autres cas $m[φ]_Φ = m'[φ]_Φ$ ce qui termine ce cas.
+
+% }}}
+\paragraph{\textsc{M-Write}:} % {{{
+On partant de $\mcomp{Γ}{m'}$ où $m' = m[φ ← v]_Φ$, et on suppose que
+$Γ ⊢ φ' : t'$.
+
+Si $φ = φ'$: alors il suffit d'appliquer \textsc{GetPut} à la lentille $Φ$:
+$m[φ ← m[φ]_Φ]_Φ = m$, ce qui donne directement la conclusion.
+
+Si $φ ≠ φ'$:
+$Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$. En
+particulier $\cVar{φ'} ∈ \cVars{m'}$. Comme $φ ≠ φ'$, $m'[φ']_Φ = m[φ']_Φ$ et on
+conclut grâce à l'hypothèse d'induction.
+% }}}
+\end{proof}
+
 
 \section{Progrès et préservation}
 
