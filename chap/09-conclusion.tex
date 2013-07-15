@@ -285,17 +285,17 @@ $\tInt$ et que $x$ a pour type $\{ l : \tInt ; ρ \} $. En pratique,
 l'implantation décrite dans le chapitre~\ref{cha:implem} utilise une technique
 similaire pour inférer les types des structures à partir du code \newspeak.
 
-\paragraph{Assembleur}
+%\paragraph{Assembleur}
 
-Comme la plupart des outils d'analyse de code C, il est impossible de traiter
-l'assembleur en ligne qui peut se trouver entre deux instructions. Dans le cas
-de Linux, le code est fait pour être portable, et les parties dépendantes d'une
-certaine architecture (et donc le code assembleur) sont isolées explicitement.
-On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
-l'implantation est faite en assembleur, mais au sein de cette implantation on ne
-peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
-couverte par la sûreté du typage: après son exécution on ne peut plus rien
-garantir sur le programme.
+%Comme la plupart des outils d'analyse de code C, il est impossible de traiter
+%l'assembleur en ligne qui peut se trouver entre deux instructions. Dans le cas
+%de Linux, le code est fait pour être portable, et les parties dépendantes d'une
+%certaine architecture (et donc le code assembleur) sont isolées explicitement.
+%On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
+%l'implantation est faite en assembleur, mais au sein de cette implantation on ne
+%peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
+%couverte par la sûreté du typage: après son exécution on ne peut plus rien
+%garantir sur le programme.
 
 %\paragraph{Analyse du noyau Linux}
 
@@ -305,33 +305,26 @@ garantir sur le programme.
 %KMS, et même à toutes les fonctions faisant partie des différentes interfaces
 %recevant un pointeur de l'espace utilisateur.
 
-\paragraph{Autres types abstraits}
-%TODO[S] ??
+%\paragraph{Autres types abstraits}
 
-Notre approche est basée sur le fait de rendre abstrait un type de C et
-d'y interdire certaines opérations: ici, on marque un certain type de pointeur
-comme «utilisateur» et on interdit l'opérateur \texttt{*} dessus.
+%Notre approche est basée sur le fait de rendre abstrait un type de C et
+%d'y interdire certaines opérations: ici, on marque un certain type de pointeur
+%comme «utilisateur» et on interdit l'opérateur \texttt{*} dessus.
 
-Le langage C n'ayant pas de types abstraits, on ne peut pas séparer la
-représentation d'un type (par exemple: entier signé de 32 bits) des opérations
-qui y sont attachées. La seule abstraction possible est lorsqu'on manipule une
-structure par pointeur. Il n'est alors pas nécessaire de connaître sa définition
-totale. L'idiome est alors de placer uniquement une déclaration en avance
-(\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner la définition
-complète dans l'implantation (\texttt{.c}). Cette technique de \emph{pointeurs
-opaques} n'est pas applicable aux autres types.
+%Le langage C n'ayant pas de types abstraits, on ne peut pas séparer la
+%représentation d'un type (par exemple: entier signé de 32 bits) des opérations
+%qui y sont attachées. La seule abstraction possible est lorsqu'on manipule une
+%structure par pointeur. Il n'est alors pas nécessaire de connaître sa définition
+%totale. L'idiome est alors de placer uniquement une déclaration en avance
+%(\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner la définition
+%complète dans l'implantation (\texttt{.c}). Cette technique de \emph{pointeurs
+%opaques} n'est pas applicable aux autres types.
 
-Dans de nombreuses interfaces, on emploie des types entiers qui servent
-d'étiquettes. Par exemple, les descripteurs de fichiers renvoyés par la fonction
-\verb!open()! et passés au fonctions \verb!read()! et \verb!write()! ont
-le type \texttt{int}. Le langage autorise donc par exemple de multiplier entre
-eux deux descripteurs de fichiers, ce qui ne correspond pas à une opération
-concrète.
+%Dans de nombreuses interfaces, on emploie des types entiers qui servent
+%d'étiquettes. Par exemple, les descripteurs de fichiers renvoyés par la fonction
+%\verb!open()! et passés au fonctions \verb!read()! et \verb!write()! ont
+%le type \texttt{int}.
 
-On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si on
-manipule des images, on peut éviter de nombreuses erreurs de programmation en
-définissant un type «indice de ligne» et un type «indice de colonne»
-incompatibles entre eux.
 
 % TODO il serait pas mal de citer les membres du jury dans ta biblio
 % Jouvelot  > the type and effect discipline?

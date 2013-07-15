@@ -23,13 +23,18 @@ n'importe quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
 identificateurs pour lesquels les opérations usuelles comme l'addition n'ont pas
 de sens. Par exemple, sous Linux, l'opération d'ouverture de fichier renvoie un
 entier, dit \emph{descripteur de fichier}, qui identifie ce fichier pour ce
-processus. Il est passé à toutes les fonctions de lecture et d'écriture. Un
-autre idiome est d'utiliser des entiers comme des ensembles de bits (on parle de
-\emph{bitmask}).
+processus. Il est passé à toutes les fonctions de lecture et d'écriture de
+fichiers.
+Le langage autorise donc par exemple de multiplier entre
+eux deux descripteurs de fichiers, mais le résultat n'a pas de raison \emph{a
+priori} d'être un descripteur de fichier valide.
+
+
+%Un
+%autre idiome est d'utiliser des entiers comme des ensembles de bits (on parle de
+%\emph{bitmask}).
 %Un prototype d'analyse statique sur ces \emph{bitmasks} est
 %présenté en annexe~\ref{anx:bitmasks}.
-
-% TODO à merger
 
 En n'offrant pas cette distinction, le langage C permet d'écrire du code qui
 peut s'exécuter mais dont la sémantique n'est, quelque part, pas bien fondée.
@@ -40,16 +45,17 @@ même représentation : il n'y a pas de types abstraits. Certes, \texttt{typedef
 permet d'introduire un nouveau nom pour un type, mais ce n'est qu'un raccourci
 syntaxique. Le compilateur ne peut en effet pas considérer un programme sans
 avoir la définition quasi-complète des types qui y apparaissent. La seule
-exception concerne les pointeurs sur structures : si on ne fait que les passer,
-il n'est pas nécessaire de connaître la taille ni la disposition de la
-structure, donc il est possible de ne pas connaître ces informations. Cette
-technique, connue sous le nom de \emph{pointeurs opaques}, n'est pas applicable
-aux autres types.
+exception concerne les pointeurs sur structures : si on ne fait que les
+affecter, il n'est pas nécessaire de connaître la taille ni la disposition de la
+structure, donc la définition peut ne pas être visible. Cette technique, connue
+sous le nom de \emph{pointeurs opaques}, n'est pas applicable aux autres types.
 
 En ajoutant une couche de typage, on interdit ces opérations à la compilation.
 Cela permet deux choses : pour le code déjà écrit, de détecter et corriger les
 manipulations dangereuses ; et pour le nouveau code, de s'assurer qu'il est
-correct.
+correct. Par exemple, si on écrit un programme de manipulation d'images, on peut
+éviter de nombreuses erreurs de programmation en définissant un type «indice de
+ligne» et un type «indice de colonne» incompatibles entre eux.
 
 Le but de cette thèse est donc de définir un langage intermédiaire proche de C,
 mais bien typable, et de l'adjoindre d'un système de types tel que les
