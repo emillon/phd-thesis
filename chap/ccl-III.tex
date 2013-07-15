@@ -27,7 +27,7 @@ analyses précises de valeur reposant sur l'interprétation abstraite, et
 nécessite donc un modèle mémoire de plus bas niveau (où on peut créer des
 valeurs à partir d'une suite d'octets, par exemple). Il est aussi à noter que
 bien que l'évaluation de \langname ait été décrite ici, c'est principalement
-dans le but de démontrer des propriétés sémantiques: l'évaluateur n'a pas été
+dans le but de démontrer des propriétés sémantiques: l'interprète n'a pas été
 implanté.
 
 Le prototype d'implantation peut évoluer dans deux directions: d'une part, en
@@ -43,13 +43,13 @@ par exemple du polymorphisme. Le chapitre~\ref{cha:conclusion} présente quelque
 unes de ces extensions possibles.
 
 L'expérimentation, quant à elle, est pour le moment limitée, mais on peut
-l'étendre à des domaines de plus en plus importants dans le noyau Linux.
-Tout d'abord, ce même module définit d'autres fonctions implantant des
-\emph{ioctls}. Celles-ci reçoivent donc égalament des pointeurs utilisateur et
-sont susptibles d'être vulnérables à ce genre d'erreurs de programmation.
-Ensuite, d'autres modules exposent une interface similaire, à commencer par les
-autres pilotes de cartes graphiques. Ceux-ci sont également un terrain sur
-lequel appliquer cette analyse.
+l'étendre à des domaines de plus en plus importants dans le noyau Linux. Tout
+d'abord, ce même module définit d'autres fonctions implantant des \emph{ioctls}.
+Celles-ci reçoivent donc également des pointeurs utilisateur et sont
+susceptibles d'être vulnérables à ce genre d'erreurs de programmation. Ensuite,
+d'autres modules exposent une interface similaire, à commencer par les autres
+pilotes de cartes graphiques. Ceux-ci sont également un terrain sur lequel
+appliquer cette analyse.
 
 De manière générale, toutes les interfaces du noyau manipulant des pointeurs
 utilisateur gagnent à être analysées. Outre les implantations des \emph{ioctls}
@@ -59,4 +59,4 @@ aussi de tels pointeurs via leurs opération de lecture et d'écriture.
 % TODO ce para = money shot
 
 
-% TODO les int
+% vim: spelllang=fr
