@@ -49,12 +49,14 @@ valeurs. En ajoutant cette étape, on restreint la classe d'erreurs qui
 pourraient bloquer la sémantique.
 
 On emploie un système de types monomorphes: à chaque expression, on associe un
-type, et non un schéma un de types. La seule exception notable est le pointeur
-$\eNull$, qui a pour type $t~*$. Néanmoins cela ne repose pas sur une
-généralisation de $t$, cela implique seulement que $\eNull$ est est compatible
-avec n'importe quel type pointeur.
-
-% TODO Eq(t)
+type, et non un schéma un de types. Il y a deux exceptions : tout d'abord, le
+pointeur $\eNull$ a pour type $t~*$. Mais cela ne pose pas de complications, car
+il n'y a pas d'étape de généralisation de $t$. Cela indique seulement que
+$\eNull$ est compatible avec n'importe quel type pointeur. L'autre cas concerne
+les tests d'égalité, qu'on veut pouvoir faire sur les valeurs de types scalaires
+et tous les types qui sont composés de ces types (on veut par exemple éviter de
+tester l'égalité de deux fonctions). Là encore, cela ne pose pas de problème,
+puisqu'on peut statiquement savoir si un type a cette propriété ou pas.
 
 En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut construire des
 types composés: pointeurs, tableaux, structures et fonctions.
