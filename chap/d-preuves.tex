@@ -715,7 +715,6 @@ car elle peut être appliquée en contexte d'expression, d'instructions ou de
 left-values. De même la règle \textsc{Trans} ne pose pas de problème, il suffit
 d'appliquer l'hypothèse de récurrence à ses prémisses.
 
-% TODO vérifier la cohérence depuis le changement d'ordre
 \subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
 \paragraph{\textsc{Phi-Deref}:} % {{{
@@ -734,7 +733,6 @@ $\semtypphi{m}{φ}{τ}$.
 
 Tout d'abord, la mémoire n'est pas modifiée donc il n'est pas nécessaire de
 montrer la compatibilité de $m'$.
-
 Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
 lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
 
@@ -743,20 +741,20 @@ lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
 \subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
-Idem que dans le cas des expressions.
+En appliquant le lemme~\ref{lemma:inv-ctx}, on obtient l'existence de $t'$ tel
+que $Γ ⊢ lv : t'$ et $\tyctx{Γ}{C}{t'}{t}$.
+
+Comme $\mm{m}{lv}{m'}{lv'}$, on peut appliquer l'hypothèse de récurrence:
+$\mcomp{Γ}{m'}$ et $Γ ⊢ lv' : t'$.
+
+Enfin, grâce au lemme~\ref{lemma:typ-ctx}, on sait que
+$Γ ⊢ \ctxSub{C}{lv'} : t$.
 % }}}
 
 \subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
-En appliquant le lemme~\ref{lemma:inv-ctx}, on obtient l'existence de $t'$ tel
-que $Γ ⊢ e : t'$ et $\tyctx{Γ}{C}{t'}{t}$.
-
-Comme $\mm{m}{e}{m'}{e'}$, on peut appliquer l'hypothèse de récurrence:
-$\mcomp{Γ}{m'}$ et $Γ ⊢ e' : t'$.
-
-Enfin, grâce au lemme~\ref{lemma:typ-ctx}, on sait que
-$Γ ⊢ \ctxSub{C}{e'} : t$.
+Idem que dans le cas des left-values.
 % }}}
 
 \subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}
@@ -799,13 +797,10 @@ On peut appliquer le lemme~\ref{lemma:repr}, qui nous donne un $τ$ qui convient
 
 Deux propriétés sont à prouver. D'une part, $Γ ⊢ v : t$, et d'autre part,
 $\mcomp{Γ}{m'}$ où $m' = m[φ←v]_Φ$.
-
 Tout d'abord, le lemme d'inversion appliqué à $Γ ⊢ φ ← v : t$ nous donne que
 $Γ ⊢ φ : t$ et $Γ ⊢ v : t$.
-
 Ensuite, comme $Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$, on peut appliquer le
 lemme~\ref{lemma:repr}: il existe $τ$ tel que $m ⊧ v : τ$ et $\tComp{τ}{t}$.
-
 On peut donc appliquer le lemme~\ref{lemma:mem-typ}, qui nous permet de conclure
 que $\mcomp{Γ}{m'}$.
 
