@@ -91,6 +91,7 @@ bas.
 \]
 
 \subsection*{Listes}
+\label{page:def-listes}
 
 $X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
 X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son domaine de
@@ -1014,6 +1015,8 @@ définitions utilisées, et les pointillés relient les lentilles similaires.}
 
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
 permettant d'accéder aux éléments d'une liste par leur indice.
+On rappelle que les listes sont des suites finies, définies
+page~\pageref{page:def-listes}.
 
 \begin{align*}
     l{[n]}_I     &= l_n \mbox{ si } n ∈ [1; |l|] \\
@@ -1258,7 +1261,7 @@ Les règles portant sur le déréférencement et l'accès à un champ de structu
 sont similaires: on commence par évaluer la left-value sur laquelle porte ce
 modificateur, et on place le même modificateur sur le chemin résultant. Dans le
 cas des champs de structure, l'annotation de structure $S$ n'est pas prise
-en compte.
+en compte pour l'évaluation: elle servira uniquement au typage.
 
 \begin{mathpar}
   \semrule{Phi-Struct}
