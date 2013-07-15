@@ -48,13 +48,32 @@ qu'il provoqueraient des erreurs à l'exécution dues à une incompatibilité en
 valeurs. En ajoutant cette étape, on restreint la classe d'erreurs qui
 pourraient bloquer la sémantique.
 
-\section{Principe}
+On emploie un système de types monomorphe: à chaque expression, on associe un
+type, et non un schéma de types. Il y a deux exceptions : tout d'abord, le
+pointeur $\eNull$ a pour type $t~*$. Mais cela ne pose pas de complications, car
+il n'y a pas d'étape de généralisation de $t$. Cela indique seulement que
+$\eNull$ est compatible avec n'importe quel type pointeur. L'autre cas concerne
+les tests d'égalité, qu'on veut pouvoir faire sur les valeurs de types scalaires
+et tous les types qui sont composés de ces types (on veut par exemple éviter de
+tester l'égalité de deux fonctions). Là encore, cela ne pose pas de problème,
+puisqu'on peut statiquement savoir si un type a cette propriété ou pas.
 
-Le principe est d'associer à chaque construction syntaxique une étiquette
-représentant le genre de valeurs qu'elle produira. Dans le programme de la
-figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la valeur
-$0$, c'est donc un entier. Cela signifie que dans tout le programme, toutes les
-instances de cette variable
+En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut construire des
+types composés: pointeurs, tableaux, structures et fonctions.
+
+Pour typer les structures, on suppose avoir à notre disposition (par un
+prétraitement, par exemple) le type complet de la structure à chaque accès d'un
+champ. Cela alourdit la présentation, mais permet d'éviter le sous-typage qui
+rend l'inférence indécidable. En pratique, dans l'implantation décrite dans le
+chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
+(\emph{row polymorphism}) présent dans OCaml pour unifier deux types structures
+partiellement connus.
+
+Le principe du typage est d'associer à chaque construction syntaxique une
+étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
+de la figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la
+valeur $0$, c'est donc un entier. Cela signifie que dans tout le programme,
+toutes les instances de cette variable
 \footnote{Deux variables peuvent avoir le même nom dans deux fonctions
   différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
   entre ces deux variables. L'analyse de typage se fait toujours dans un
@@ -63,7 +82,7 @@ instances de cette variable
 porteront ce type. La première instruction est l'affectation de la constante $1$
 (entière) à $x$ dont on sait qu'elle porte des valeurs entières, ce qui est donc
 correct. Le fait de rencontrer $\iReturn{x}$ permet de conclure que le type de
-la fonction est $() → \tInt$.
+la fonction est $(~) → \tInt$.
 
 Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
 début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
@@ -72,6 +91,13 @@ $t*$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout $t$
 ($\tInt$, $\tFloat$ ou même $t'*$: le déréférencement d'un pointeur sur pointeur
 donne un pointeur), mais le type de $x$, $\tInt$, n'est pas de cette forme. Ce
 programme est donc mal typé.
+
+Dans ce chapitre, on commence par poser les notations qui vont servir à définir
+la relation de typage. Ensuite, on explique les différentes règles de typage sur
+les composantes de \langname: expressions, instructions et phrases. Enfin, dans
+le reste du chapitre on établit des propriétés qui sont respectées par les
+programmes bien typées. On conclut par les théorèmes de progrès et de
+préservation qui établissent la sûreté du typage.
 
 \section{Environnements et notations}
 
@@ -95,11 +121,6 @@ polymorphisme.
   \gramdef{Structure}{S}
       { \tStruct{ l_1 : t_1; … ; l_n : t_n } }{Structure simple}
       {END} \\
-  \\
-  \gramdef{Environnement de typage}{Γ}
-      { []         }{Environnement vide}
-      { (a, t)::Γ' }{Extension}
-      {END}
   \end{align*}
 
   \caption{Types et environnements de typage}
@@ -486,8 +507,8 @@ Comme nous l'évoquions au début de ce chapitre, le but du typage est de rejete
 certains programmes afin de ne garder que ceux qui ne provoquent pas un certain
 type d'erreurs à l'exécution.
 
-Dans cette section, nous donnons des propriétés que respectent tous les
-programmes bien typés. Il est traditionnel de rappeler l'adage de Robin Milner:
+Dans la suite, nous donnons des propriétés que respectent tous les programmes
+bien typés. Il est traditionnel de rappeler l'adage de Robin Milner:
 
 \begin{quote}
   Well-typed programs don't go wrong.
@@ -1024,8 +1045,8 @@ $Γ = x:t$).
 \end{lemma}
 
 \begin{proof}[Démonstration (esquisse)]
-On fait l'inventaire, pour chaque forme syntaxique, des règles pouvant arriver à
-cette dérivation.
+On fait comme pour le lemme d'inversion: Pour chaque forme syntaxique, on fait
+l'inventaire des règles pouvant arriver à cette dérivation.
 \end{proof}
 
 \begin{lemma}[Hauteur des chemins typés]
@@ -1073,6 +1094,28 @@ Idem.
 
 \end{proof}%}}}
 
+Pour la suite on définit la variable
+
+
+\begin{lemma}[Accès à des variables bien typées]
+\label{lemma:var-typ}
+
+Soit $\cVar{φ}$ la variable qui apparaît dans $φ$:
+
+\begin{align*}
+    \cVar{a}    &= a \\
+    \cVar{φ.l}  &= \cVar{φ} \\
+    \cVar{φ[n]} &= \cVar{φ}
+\end{align*}
+
+Alors, si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$ est soit une variable
+globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale $(|m|, x)$ du plus
+haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
+\end{lemma}
+
+\begin{proof}[Démonstration (esquisse)]
+On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
+\end{proof}
 
 \begin{lemma}[Accès à une mémoire bien typée]
 \label{lemma:mem-typ}
@@ -1087,42 +1130,23 @@ $\tComp{τ}{t}$.
 
 \begin{proof}
 
-\def\cVar#1{\mathrm{Var}(#1)}
-\def\cVars#1{\mathrm{Vars}(#1)} % TODO utile?
+%\def\cVars#1{\mathrm{Vars}(#1)} % utile?
 
-Commençons par donner un résultat préliminaire. On utilise les notations
-suivantes:
+%\begin{itemize}
 
-\begin{itemize}
+%\item $\cVars{m}$ est l'ensemble des variables de $m$:
 
-\item $\cVar{φ}$ la variable qui apparaît dans $φ$:
+%\[
+%\cVars{([s_1, …, s_n], g)} =
+%\{ (x) / x↦v ∈ g \}
+%\cup
+%\bigcup_{i ∈ [1;n]} \{ (n - i + 1, x) / x↦v ∈ s_i \}
+%\]
 
-\begin{align*}
-    \cVar{a}    &= a \\
-    \cVar{φ.l}  &= \cVar{φ} \\
-    \cVar{φ[n]} &= \cVar{φ}
-\end{align*}
+%\end{itemize}
 
-\item $\cVars{m}$ est l'ensemble des variables de $m$:
-
-\[
-\cVars{([s_1, …, s_n], g)} =
-\{ (x) / x↦v ∈ g \}
-\cup
-\bigcup_{i ∈ [1;n]} \{ (n - i + 1, x) / x↦v ∈ s_i \}
-\]
-
-\end{itemize}
-
-Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$
-est soit une variable globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale
-$(|m|, x)$ du plus haut cadre de pile avec $x ∈ \cDom{Γ_L}$. Cela se prouve par
-récurrence sur la dérivation de $\mcomp{Γ}{m}$.
-
-% TODO présenter informellement l'autre
-
-À l'aide de ce résultat, on prouve le lemme~\ref{lemma:mem-typ} par induction
-sur une dérivation de $\mcomp{Γ}{m}$.
+À partir du lemme~\ref{lemma:var-typ}, on prouve celui-ci par induction sur une
+dérivation de $\mcomp{Γ}{m}$.
 
 \paragraph{\textsc{M-Empty}:} % {{{
 $Γ_G = Γ_L = [~]$, la prémisse $Γ ⊢ φ : t$ est donc impossible à satisfaire.
@@ -1134,8 +1158,9 @@ Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈
 
 Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
 
-Dans les autres cas, $\cVar{φ} ∈ \cVars{m}$. Donc $m'[φ]_Φ = m[φ]_Φ$, ce qui
-nous permet de conclure grâce à l'hypothèse d'induction.
+Dans les autres cas, $m'[φ]_Φ = m[φ]_Φ$, ce qui nous permet de conclure grâce à
+l'hypothèse d'induction.
+
 % }}}
 \paragraph{\textsc{M-Decl}:} % {{{
 On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
@@ -1186,9 +1211,8 @@ Si $φ = φ'$: alors il suffit d'appliquer \textsc{GetPut} à la lentille $Φ$:
 $m[φ ← m[φ]_Φ]_Φ = m$, ce qui donne directement la conclusion.
 
 Si $φ ≠ φ'$:
-$Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$. En
-particulier $\cVar{φ'} ∈ \cVars{m'}$. Comme $φ ≠ φ'$, $m'[φ']_Φ = m[φ']_Φ$ et on
-conclut grâce à l'hypothèse d'induction.
+$Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$.
+Donc $m'[φ']_Φ = m[φ']_Φ$ et on conclut grâce à l'hypothèse d'induction.
 % }}}
 \end{proof}
 
@@ -1377,25 +1401,24 @@ Alors:
 
 \begin{itemize}
 \item
-    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ e' : t$.
-
-\item
-    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
-
-\item
-    Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ i'$.
+    Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $\semtypphi{m'}{φ}{τ}$ où $\tComp{τ}{t}$.
 
 \item
     Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$,
     alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ lv' : t$.
 
 \item
-    Si $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $\semtypphi{m'}{φ}{τ}$ où $\tComp{τ}{t}$.
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
 
+\item
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ e' : t$.
+
+\item
+    Si $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $Γ ⊢ i'$.
 \end{itemize}
 
   Autrement dit, si une construction est typable, alors un pas d'évaluation ne

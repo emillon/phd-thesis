@@ -1,7 +1,5 @@
 % TODO 8 pages: c'est un peu court pour la partie originale de la thèse
 
-% TODO des points à revoir
-
 Jusqu'ici \langname{} est un langage impératif généraliste, ne prenant pas en
 compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
 
@@ -65,8 +63,12 @@ construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ désigne une
 variable classique (un pointeur noyau) et l'opérateur $\phx\vTainted$ permet de
 l'interpréter comme un pointeur vers l'espace utilisateur, contrairement à
 $\widehat{\&}\cdot$ qui crée des pointeurs vers l'espace noyau. En quelque
-sorte, on ne classifie pas les valeur selon la variable pointée mais selon la
+sorte, on ne classifie pas les valeurs selon la variable pointée mais selon la
 construction du pointeur.
+
+Remarquons qu'on n'introduit pas de sous-typage: les pointeurs noyau ne peuvent
+être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
+qu'en tant que pointeurs utilisateurs.
 
 En plus du déréférencement par \texttt{*} (qui devra donc renvoyer
 $\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
@@ -335,12 +337,11 @@ conclusion n'est pas vraie:
 
 \end{itemize}
 
-%TODO[E] à détailler avant
-
 Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
 \textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
-dans la section~\ref{sec:extensions-noyau}.
+dans la section~\ref{sec:extensions-noyau}. Il faut donc raffiner les règles de
+typage pour interdire ce cas.
 
 \section{Extensions du système de types}
 \label{sec:extension-types}
@@ -472,12 +473,6 @@ celui d'un opérateur.
     \disprule{PutU}
 \end{mathpar}
 
-Remarquons qu'il n'y a pas de sous-typage: les pointeurs noyau ne peuvent être
-utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs qu'en
-tant que pointeurs utilisateurs.
-
- % TODO + gros
-
 \section{Sûreté du typage}
 
 \subsection*{Typage sémantique}
@@ -485,7 +480,6 @@ tant que pointeurs utilisateurs.
 La définition du typage sémantique doit aussi être étendue au cas $φ =
 \vTainted{φ'}$.
 
-% TODO en annexe?
 \begin{mathpar}
   \irule{S-Tainted}
     { \semtyp{m}{          φ' }{τ} }
@@ -529,7 +523,7 @@ travers une fonction qui vérifie la sûreté de celui-ci.
 
 En fait il s'agit des théorèmes de sûreté du chapitre précédent.
 
-\begin{theorem}[Progrès pour les types qualifiés]
+\begin{theorem}[Progrès pour les extensions noyau]
 \label{thm:progres-qual}
 
 Le théorème~\ref{thm:progres} reste valable avec les extensions de ce chapitre.
@@ -539,7 +533,8 @@ Le théorème~\ref{thm:progres} reste valable avec les extensions de ce chapitre
 La preuve de ce théorème est en annexe~\ref{proof:progres-qualif}.
 
 
-\begin{theorem}[Préservation pour les types qualifiés]
+\begin{theorem}[Préservation pour les extensions noyau]
+
 \label{thm:preservation-qualif}
 
 Le théorème~\ref{thm:preservation} reste valable avec les extensions de ce
@@ -552,10 +547,10 @@ La preuve de ce théorème est en annexe~\ref{proof:preservation-qualif}.
 Ces extensions ne modifient pas les théorème de progrès et préservation sur les
 phrases (théorèmes~\label{thm:prog-phr} et~\label{thm:presa-phr}).
 
-La sûreté du typage étant à nouveau établie, on a montré que les qualificateurs
-de types sur les pointeurs suffisent pour avoir une adéquation entre les
-extensions de sémantique de la section~\ref{sec:extensions-noyau} et les
-extensions du système de type de la section~\ref{sec:extension-types}.
+La sûreté du typage étant à nouveau établie, on a montré que l'ajout de types
+pointeurs utilisateur suffit pour avoir une adéquation entre les extensions de
+sémantique de la section~\ref{sec:extensions-noyau} et les extensions du système
+de type de la section~\ref{sec:extension-types}.
 
 \section{Conclusion}
 

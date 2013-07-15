@@ -140,6 +140,9 @@ Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle for, Newspeak fournit une unique boucle
 \npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
 est toujours un saut vers l'avant (similaire à un «\emph{break}» généralisé).
+Par conséquence, notre implantation gère les sauts, alors que dans \langname,
+cette construction n'est pas possible (figure~\ref{fig:stx}, page
+\pageref{fig:stx}).
 
 Newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
@@ -266,7 +269,7 @@ en sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$.
 Plus présisément, pour unifier deux types structure, on étudie les types de
 leurs champs. On commence par unifier les types des champs de même nom, et on on
 ajoute à l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme
-de rangée (\emph{row polymorphism}) présent dans les langages comme OCaml.
+de rangée présent dans les langages comme OCaml.
 
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}

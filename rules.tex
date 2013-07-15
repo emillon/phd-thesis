@@ -1,5 +1,5 @@
 \def\opbinintset{\{+,-,\times,/,\&,|,\opxor,\&\&,||,\ll,\gg,≤,≥,<,> \}}
-\def\opbinfloatset{\{+_.,-_.,\times_.,/_.,≤_.,≥_.,<_.,>_.\}}
+\def\opbinfloatset{\{+.,-.,\times.,/.,≤.,≥.,<.,>.\}}
 
 \def\disprule#1{
   \switch{#1}
@@ -180,7 +180,9 @@
                { Γ ⊢ \iWhile{e}{i} }
            }
     {Return}{ \irule{Return}
-                { Γ ⊢ \vRet ← e }
+                { \vRet:t ∈ Γ
+               \\ Γ ⊢ e : t
+                }
                 { Γ ⊢ \iReturn{e} }
             }
     {Fun}{ \irule{Fun}
@@ -458,9 +460,8 @@
                       { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
     }
     {User-Get-OK}{ \irule{User-Get-OK}
-                     { \widehat{\&}~φ = m[φ_d]_Φ
-                    \\ v  = m[φ_s]_Φ
-                    \\ m' = m[φ ← v]_Φ
+                     { v  = m[φ_s]_Φ
+                    \\ m' = m[φ_d ← v]_Φ
                      }
                      { \mm{m}{\uGet{φ_d}{\vTainted{φ_s}}}
                        {m'}{0}
@@ -475,9 +476,8 @@
                       }
     }
     {User-Put-OK}{ \irule{User-Put-OK}
-                     { \widehat{\&}~φ = m[φ_d]_Φ
-                    \\ v = m[φ_s]_Φ
-                    \\ m' = m[φ ← v]_Φ
+                     { v = m[φ_s]_Φ
+                    \\ m' = m[φ_d ← v]_Φ
                      }
                      { \mm{m}{ \uPut{\vTainted{φ_d}}{φ_s} }
                          {m'}{0}
@@ -532,26 +532,26 @@
   \\
   \gramdef{Expressions}{e}
                  { c               }{ Constante }
-                 { lv              }{ Accès mémoire }
                  { \opun~e         }{ Opération unaire }
                  { e~\opbin~e      }{ Opération binaire }
-                 { \& lv           }{ Pointeur }
+                 { lv              }{ Accès mémoire }
                  { lv ← e          }{ Affectation }
+                 { \& lv           }{ Pointeur }
+                 { f               }{ Fonction }
+                 { e (e_1, …, e_n) }{ Appel de fonction }
                  { \eStruct{
                     l_1 : e_1
                     ; …
                     ; l_n : e_n }  }{ Structure }
                  { \eArray{e_1 ;…; e_n} }{ Tableau }
-                 { f               }{ Fonction }
-                 { e (e_1, …, e_n) }{ Appel de fonction }
                  {END}
   \\
   \\
   \gramdef{Left-values}{lv}
                   { x      }{ Variable }
-                  { *e     }{ Déréférencement }
                   { lv.l_S }{ Accès à un champ }
                   { lv[e]  }{ Accès à un élément }
+                  { *e     }{ Déréférencement }
                   {END}
   \\
   \\
@@ -592,7 +592,9 @@
       { +,-,\times,/,\% }{Arithmétique entière}
       { +.,-.,\times.,/.}{Arithmétique flottante}
       { +_p, -_p        }{Arithmétique de pointeurs}
-      { =,≠,≤,≥,<,>     }{Comparaisons}
+      { ≤,≥,<,>         }{Comparaison sur les entiers}
+      { ≤.,≥.,<.,>.     }{Comparaison sur les flottants}
+      { =,≠             }{Tests d'égalité}
       { \&,|,\opxor     }{Opérateurs bit à bit}
       { \&\&,||         }{Opérateurs logiques}
       { \ll, \gg        }{Décalages}
