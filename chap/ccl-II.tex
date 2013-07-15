@@ -1,7 +1,7 @@
 On vient de décrire en détail un langage impératif, \langname: tout d'abord sa
-syntaxe et sa sémantique dans le chapitre~\ref{cha:typbase}.
-Une des particularités de cette sémantique est l'utilisation de lentilles pour
-modifier les valeurs composées en profondeur.
+syntaxe et sa sémantique d'évaluation dans le chapitre~\ref{cha:lang}. Une des
+particularités de cette sémantique est l'utilisation de lentilles pour modifier
+les valeurs composées en profondeur.
 
 \label{page:ccl-II-monad}
 Il y a plusieurs alternatives à cette présentation. La première est la solution
@@ -10,11 +10,13 @@ C'est en général long et laborieux puisqu'il faut définir les accès en lectu
 et écriture à chaque étape (avec des lentilles on décrit ces deux opérations
 uniquement sur les briques du calcul, et la composition fait le reste). La
 seconde solution est d'employer une sémantique monadique. Les transisitions sont
-alors encodés comme des actions monadiques qui représentent les modifications de
+alors encodées comme des actions monadiques qui représentent les modifications de
 la mémoire. Un des avantages de cette solution est qu'elle est très extensible.
 Par exemple, la propagation des erreurs, ou l'ajout de continuations
 (c'est-à-dire le support des fonctions \texttt{setjmp} et \texttt{longjmp})
 peuvent facilement être exprimées dans un formalisme monadique.
+
+% TODO on ne comprend pas pourquoi tu ne l'as pas fait
 
 Ensuite, dans le chapitre~\ref{cha:typbase} nous avons ajouté un système de
 types à \langname. Le but est de restreindre le genre d'erreurs qui peuvent
@@ -22,7 +24,7 @@ arriver lors de l'évaluation d'un programme. Par le théorème de progrès
 (théorème~\ref{thm:progres} , page~\pageref{thm:progres}), on interdit les
 erreurs qui signalent une manipulation de valeurs incompatibles, l'accès à un
 champ de structure inconnu, et l'accès à une variable inexistante. Et le
-théorème de préservation (théorème~\ref{thm:préservation},
+théorème de préservation (théorème~\ref{thm:preservation},
 page~\pageref{thm:preservation}) formalise le résultat classique qu'une étape
 d'évaluation ne modifier pas le typage.
 Une particularité de \langname est que son état mémoire est structuré, avec une
@@ -66,6 +68,8 @@ type qualifié $\qUser~\tInt$, alors $(\tFloat~*)~e$ aura pour type qualifié
 $\qUser~\tFloat~*$, et déréférencer cette expression produira une erreur de
 typage. \langname, dans son état actuel, ne permet pas de traiter ce cas.
 
+% TODO et donc c'est bien?
+
 Au contraire, nous ne modifions le système de types que là où cela est
 nécessaire, c'est-à-dire sur les types pointeurs. Cela permet de ne pas avoir à
 modifier en profondeur un système de types existant.
@@ -80,7 +84,7 @@ mémoire plus proche de C, reposant sur une pile de variables, et une gestion
 manuelle de la mémoire.
 
 Une autre différence fondamentale est que le système de types de CQual fait
-intervenir une relation de sous-typage. Dans le cas particulier du problème
+intervenir une relation de sous-typage. Le cas particulier du problème de
 déréférencement des pointeurs utilisateurs peut être traité dans ce cadre en
 posant $\qKernel \preceq \qUser$ pour restreindre certaines opérations aux
 pointeurs $\qKernel$.
@@ -91,6 +95,8 @@ $\ptrK{t}$ (comme la taille et la représentation) mais incompatible avec
 certaines opérations. C'est à rapprocher du système de masquage par interface
 des langages ML, ou encore de la définition de types abstraits par le mot-clef
 \texttt{newtype} en Haskell.
+
+% TODO c'est une approche type abstrait!
 
 Les perspectives de travaux futurs sont également très différentes. Dans le cas
 des pointeurs, même si le noyau Linux (et la plupart des systèmes
