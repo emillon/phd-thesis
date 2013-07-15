@@ -151,12 +151,9 @@ y sont présentes
 }.
 
 Par exemple, supposons qu'un programme utilisateur contienne l'instruction
-\texttt{mov \%eax, \hexa{54c3b2f7}}. Celle-ci consiste à déplacer le contenu du
-registre \eax{} vers l'adresse mémoire \texttt{\hexa{54c3b2f7}}. Puisque cette
-adresse est dans l'espace utilisateur (la raison est décrite dans le
-chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
-
-% TODO ne faut il pas dire un mot plus précis ici? à voir
+«déplacer le contenu du registre \eax{} vers l'adresse mémoire \texttt{a}», où
+\texttt{a} fait partie de l'espace mémoire de l'utilisateur. Alors aucune erreur
+de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
@@ -288,14 +285,13 @@ la valeur obtenue est également un entier.
 
 \paragraph{Typage fort ou faible}
 
-Contrairement à la distinction claire entre typage statique ou dynamique, la
-séparation entre typage fort et faible est moins nette. En poussant à l'extrême,
-% TODO pourquoi alors que la dernière phrase explicite?
-les systèmes de types forts permettent d'éliminer totalement la nécessité de
-réaliser des tests de typage. Mais souvent ce n'est pas le cas, car il peut y
-avoir des constructions au sein du langage qui permettent de contourner le
-système de types, comme un opérateur de transtypage. On parle alors de typage
-faible.
+Indépendamment du moment où est faite cette analyse, on peut avoir plus ou moins
+de garanties sur les programmes sans erreurs de typage. En poussant à l'extrême,
+les systèmes de types forts garantissent que les valeurs ont toujours le type
+attendu. Avec du typage statique, cela permet d'éliminer totalement les tests de
+typage à l'exécution. Mais souvent ce n'est pas le cas, car il peut y avoir des
+constructions au sein du langage qui permettent de contourner le système de
+types, comme un opérateur de transtypage. On parle alors de typage faible.
 
 \paragraph{Polymorphisme}
 
@@ -316,11 +312,13 @@ un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
 
-Une autre technique est de déterminer la fonction appellée non pas par le type
+Une autre technique est de déterminer la fonction appelée non pas par le type
 de ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet
 d'associer le comportement aux données. On parle alors de polymorphisme objet.
-
-% TODO sans parler de sous typage?
+Dans ce cas, celui repose sur le sous-typage: si $A_1$ et $A_2$ sont des
+sous-types de $B$, on peut utiliser des valeurs de type $A_1$ ou $A_2$ là où une
+valeur de type $B$ est attendu. Dans ce cas, la fonction correspondante sera
+appelée.
 
 La dernière possibilité est le polymorphisme paramétrique, qui consiste à
 utiliser le \linebreak même code quelque soit le type des arguments. Dans ce
