@@ -1,16 +1,22 @@
+% TODO titre: évaluation?
+
 Dans ce chapitre, on décrit le support de notre travail: un langage impératif
 nommé \langname, sur lequel s'appuieront les analyses de typage des
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 
 Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
 «assembleur portable». Ses types de données et les opérations associées sont
-donc naturellement très bas niveau.
+donc naturellement de très bas niveau.
 
 Ses types de données sont établis pour représenter les mots mémoire manipulables
 par les processeurs : essentiellement des entiers et flottants de plusieurs
 tailles. Les types composés correespondent à des zones de mémoire contigües,
 homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
 structures).
+
+% TODO du ne parles pas bcp des lentilles dans cette intro: tu peux indiquer
+% qu'une des difficultés est de représenterles chemins mémoire (accès et
+% modificateurs)
 
 Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
 c'est-à-dire des variables qui représentent directement une adresse en mémoire.
@@ -123,10 +129,11 @@ une opération qui permet de définir un nouvel enregistrement dans lequel seul 
 champ a été mis à jour. C'est ce qui se passe avec le langage
 Haskell~\link{haskell}: \texttt{r \{ x = 5 \}} représente une valeur
 enregistrement égale à \texttt{p} sur tous les champs, sauf pour le champ
-\texttt{x} où elle vaut \texttt{5}. Utiliser des lentilles revient à réifier
-dans le langage la notion de champ. Elles ont l'avantage de pouvoir se
-composer, c'est à dire que si on a un champ nommé $x$ qui contient un champ
-nommé $y$, alors on peut modifier le champ du champ automatiquement.
+\texttt{x} où elle vaut \texttt{5}. Utiliser des lentilles revient à ajouter
+dans le langage la notion de champ en tant que valeur de première classe. Elles
+ont l'avantage de pouvoir se composer, c'est à dire que si on a un champ nommé
+$x$ qui contient un champ nommé $y$, alors on peut modifier le champ du champ
+automatiquement.
 
 Dans ce cadre, les lentilles ont été popularisées par Van
 Laarhoven~\cite{LaarhovenLenses}. Puisque cela sert à manipuler des données
@@ -181,6 +188,7 @@ Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 \tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
 \tikzstyle{lenspatB}=[fill=black!50]
 \tikzstyle{lenspatC}=[fill=black!20]
+% TODO couleur: est-ce possible d'avoir de la couleur qui passe en N&B?
 
   \begin{align*}
   \lensGet{ℒ}{\lensNodeBig{lenspatA}{lenspatB}} &= \lensInner{lenspatB} \\
@@ -245,6 +253,8 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 \tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
 \tikzstyle{lenspatB}=[fill=black!50]
 \tikzstyle{lenspatC}=[fill=black!20]
+
+% TODO couleur: est-ce possible d'avoir de la couleur qui passe en N&B?
 
   \begin{align*}
     \lensGet{Δ(b)}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &= \lensInnerStar{lenspatB} \\
@@ -324,6 +334,7 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 ,smallnode/.style={draw,shape=circle,minimum size=8mm,lensMid}
 ,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
 ]
+% TODO couleur: est-ce possible d'avoir de la couleur qui passe en N&B?
 \node[bignode] (A) {};
 \node[right of=A,smallnode] (B) {};
 \node[right of=B,trinode,lensInnerAfter] (C) {};
@@ -1704,5 +1715,7 @@ propriétés dynamiques sur les analyses de typage décrites dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 
 % TODO un peu court, reviens sur les lentilles et les accesseurs
+
+% TODO peut être rappeler le but...
 
 % vim: spelllang=fr

@@ -33,9 +33,15 @@ programmation.
 
 Ces erreurs, ou \emph{bugs}, peuvent avoir des conséquences dramatiques sur le
 plan matériel ou humain. Dans le cadre des produits d'EADS, il est donc capital
+% TODO que veut dire EADS ? pourquoi l'introduire ici?
+% produits?
 de vérifier la correction des logiciels embarqués. De plus, le coût de déployer
 des correctifs est assez important: il est d'autant plus important d'être
 correct dès la première version.
+
+
+% TODO tu vas un peu vite dans le passage on typ es entiers puis on veut isoler
+% des parties de l'OS: ajoute une phrase de lien
 
 Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le
 programme sous un environnement contrôlé. On peut alors détecter des
@@ -151,6 +157,8 @@ Par exemple, supposons qu'un programme utilisateur contienne l'instruction
 registre \eax{} vers l'adresse mémoire \texttt{\hexa{54c3b2f7}}. Puisque cette
 adresse est dans l'espace utilisateur (la raison est décrite dans le
 chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
+
+% TODO ne faut il pas dire un mot plus précis ici? à voir
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
@@ -284,6 +292,7 @@ la valeur obtenue est également un entier.
 
 Contrairement à la distinction claire entre typage statique ou dynamique, la
 séparation entre typage fort et faible est moins nette. En poussant à l'extrême,
+% TODO pourquoi alors que la dernière phrase explicite?
 les systèmes de types forts permettent d'éliminer totalement la nécessité de
 réaliser des tests de typage. Mais souvent ce n'est pas le cas, car il peut y
 avoir des constructions au sein du langage qui permettent de contourner le
@@ -309,9 +318,11 @@ un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
 
-Encore une autre technique est de déterminer la fonction appellée non pas par le
-type de ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet
+Une autre technique est de déterminer la fonction appellée non pas par le type
+de ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet
 d'associer le comportement aux données. On parle alors de polymorphisme objet.
+
+% TODO sans parler de sous typage?
 
 La dernière possibilité est le polymorphisme paramétrique, qui consiste à
 utiliser le \linebreak même code quelque soit le type des arguments. Dans ce
@@ -502,6 +513,7 @@ centraux puisqu'on désire les interdire. On fait ensuite un tour d'horizon des
 techniques existantes permettant de traiter ce problème par analyse statique de
 code source. Enfin, on conclut en énonçant précisément la proposition au cœur de
 cette thèse.
+% TODO un peu général :)
 
 \paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution:
 \langname{}, un langage impératif. Sa syntaxe y est d'abord décrite, puis sa
@@ -523,6 +535,9 @@ bug ayant touché le noyau Linux. En lançant notre prototype, la version non
 corrigée lève une erreur alors que dans la version corrigée, un type correct est
 inféré. On montre ainsi que le système de type capture précisément ce genre
 d'erreur de programmation.
+
+% TODO il faut peut être indiquer la classe de problèmes traités et son
+% expérimentation
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.

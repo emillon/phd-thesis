@@ -33,12 +33,12 @@ non.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
-Tout d'abord, on définit un nouveau type d'erreur $\serr{taint}$, déclenché
+Tout d'abord, on définit une nouvelle erreur $\serr{taint}$, déclenchée
 lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau est
 déréférencé (le cas que l'on cherche à éviter)\footnote{Il est important de
-noter que ce cas d'erreur est «virtuel», la distinction entre pointeur
-contrôlé par l'utilisateur et par le noyau n'étant normalement pas visible à
-l'exécution.}.
+noter que ce cas d'erreur est «virtuel», la distinction entre pointeur contrôlé
+par l'utilisateur et par le noyau n'étant normalement pas visible à
+l'exécution.}. % TODO la footnote tue
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
@@ -555,14 +555,17 @@ de type de la section~\ref{sec:extension-types}.
 \section{Conclusion}
 
 On a décrit une simple extension au système de types présenté dans le
+% TODO simple parce que le boulot était fait avant
 chapitre~\ref{cha:typbase}. Celle-ci permet d'exprimer les pointeurs vers
 l'espace utilisateur, qui sont utiles pour l'implantation d'appels système
 (chapitre~\ref{cha:os}).
 
 Une première idée pour le typage de ces constructions est de ne pas faire la
 distinction entre les pointeurs utilisateur et les pointeurs noyau. Cela revient
-à employe la règle \textsc{Taint-Ignore} de la
-page~\pageref{page:rule-taint-ignore}. On a montré ensuite que ce typage naïf ne
+à employer la règle \textsc{Taint-Ignore} de la
+page~\pageref{page:rule-taint-ignore}.
+% TODO que fait-elle
+On a montré ensuite que ce typage naïf ne
 suffit pas: il permet en effet de faire fuiter de l'information, ce qu'on note
 par un cas d'erreur $\serr{taint}$. En termes de systèmes de types, cela
 signifie que le théorème de progrès (théorème~\ref{thm:progres},
