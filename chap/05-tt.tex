@@ -1037,8 +1037,8 @@ $Γ = x:t$).
 \end{lemma}
 
 \begin{proof}[Démonstration (esquisse)]
-On fait l'inventaire, pour chaque forme syntaxique, des règles pouvant arriver à
-cette dérivation.
+On fait comme pour le lemme d'inversion: Pour chaque forme syntaxique, on fait
+l'inventaire des règles pouvant arriver à cette dérivation.
 \end{proof}
 
 \begin{lemma}[Hauteur des chemins typés]
@@ -1086,6 +1086,28 @@ Idem.
 
 \end{proof}%}}}
 
+Pour la suite on définit la variable
+
+
+\begin{lemma}[Accès à des variables bien typées]
+\label{lemma:var-typ}
+
+Soit $\cVar{φ}$ la variable qui apparaît dans $φ$:
+
+\begin{align*}
+    \cVar{a}    &= a \\
+    \cVar{φ.l}  &= \cVar{φ} \\
+    \cVar{φ[n]} &= \cVar{φ}
+\end{align*}
+
+Alors, si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$ est soit une variable
+globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale $(|m|, x)$ du plus
+haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
+\end{lemma}
+
+\begin{proof}[Démonstration (esquisse)]
+On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
+\end{proof}
 
 \begin{lemma}[Accès à une mémoire bien typée]
 \label{lemma:mem-typ}
@@ -1100,42 +1122,23 @@ $\tComp{τ}{t}$.
 
 \begin{proof}
 
-\def\cVar#1{\mathrm{Var}(#1)}
-\def\cVars#1{\mathrm{Vars}(#1)} % TODO utile?
+%\def\cVars#1{\mathrm{Vars}(#1)} % utile?
 
-Commençons par donner un résultat préliminaire. On utilise les notations
-suivantes:
+%\begin{itemize}
 
-\begin{itemize}
+%\item $\cVars{m}$ est l'ensemble des variables de $m$:
 
-\item $\cVar{φ}$ la variable qui apparaît dans $φ$:
+%\[
+%\cVars{([s_1, …, s_n], g)} =
+%\{ (x) / x↦v ∈ g \}
+%\cup
+%\bigcup_{i ∈ [1;n]} \{ (n - i + 1, x) / x↦v ∈ s_i \}
+%\]
 
-\begin{align*}
-    \cVar{a}    &= a \\
-    \cVar{φ.l}  &= \cVar{φ} \\
-    \cVar{φ[n]} &= \cVar{φ}
-\end{align*}
+%\end{itemize}
 
-\item $\cVars{m}$ est l'ensemble des variables de $m$:
-
-\[
-\cVars{([s_1, …, s_n], g)} =
-\{ (x) / x↦v ∈ g \}
-\cup
-\bigcup_{i ∈ [1;n]} \{ (n - i + 1, x) / x↦v ∈ s_i \}
-\]
-
-\end{itemize}
-
-Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$
-est soit une variable globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale
-$(|m|, x)$ du plus haut cadre de pile avec $x ∈ \cDom{Γ_L}$. Cela se prouve par
-récurrence sur la dérivation de $\mcomp{Γ}{m}$.
-
-% TODO présenter informellement l'autre
-
-À l'aide de ce résultat, on prouve le lemme~\ref{lemma:mem-typ} par induction
-sur une dérivation de $\mcomp{Γ}{m}$.
+À partir du lemme~\ref{lemma:var-typ}, on prouve celui-ci par induction sur une
+dérivation de $\mcomp{Γ}{m}$.
 
 \paragraph{\textsc{M-Empty}:} % {{{
 $Γ_G = Γ_L = [~]$, la prémisse $Γ ⊢ φ : t$ est donc impossible à satisfaire.
@@ -1147,8 +1150,9 @@ Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈
 
 Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
 
-Dans les autres cas, $\cVar{φ} ∈ \cVars{m}$. Donc $m'[φ]_Φ = m[φ]_Φ$, ce qui
-nous permet de conclure grâce à l'hypothèse d'induction.
+Dans les autres cas, $m'[φ]_Φ = m[φ]_Φ$, ce qui nous permet de conclure grâce à
+l'hypothèse d'induction.
+
 % }}}
 \paragraph{\textsc{M-Decl}:} % {{{
 On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
@@ -1199,9 +1203,8 @@ Si $φ = φ'$: alors il suffit d'appliquer \textsc{GetPut} à la lentille $Φ$:
 $m[φ ← m[φ]_Φ]_Φ = m$, ce qui donne directement la conclusion.
 
 Si $φ ≠ φ'$:
-$Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$. En
-particulier $\cVar{φ'} ∈ \cVars{m'}$. Comme $φ ≠ φ'$, $m'[φ']_Φ = m[φ']_Φ$ et on
-conclut grâce à l'hypothèse d'induction.
+$Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$.
+Donc $m'[φ']_Φ = m[φ']_Φ$ et on conclut grâce à l'hypothèse d'induction.
 % }}}
 \end{proof}
 

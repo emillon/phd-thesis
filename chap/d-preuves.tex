@@ -581,6 +581,8 @@ fonctions se terminent par une instruction $\iReturn{\cdot}$
 Le but est d'appliquer \textsc{Phi-Var}. La seule condition pour que cela soit
 possible est que $\cLookup{x}{m}$ renvoie une adresse et non $\serr{var}$.
 
+Puisque $Γ ⊢ x : t$, on peut appliquer le lemme~\ref{lemma:var-typ}.
+
 Puisque $Γ ⊢ x : t$, on en déduit que $x:t ∈ Γ$ (par le lemme d'inversion), donc
 que $x ∈ \cDom{Γ}$. Comme $\mcomp{Γ}{m}$, $x ∈ \{ \cVarname{a} / a ∈
 \cVisible{m} \}$, donc $∃ a ∈ \cVisible{m}. x = \cVarname{a}$ et
