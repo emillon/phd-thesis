@@ -48,8 +48,8 @@ qu'il provoqueraient des erreurs à l'exécution dues à une incompatibilité en
 valeurs. En ajoutant cette étape, on restreint la classe d'erreurs qui
 pourraient bloquer la sémantique.
 
-On emploie un système de types monomorphes: à chaque expression, on associe un
-type, et non un schéma un de types. Il y a deux exceptions : tout d'abord, le
+On emploie un système de types monomorphe: à chaque expression, on associe un
+type, et non un schéma de types. Il y a deux exceptions : tout d'abord, le
 pointeur $\eNull$ a pour type $t~*$. Mais cela ne pose pas de complications, car
 il n'y a pas d'étape de généralisation de $t$. Cela indique seulement que
 $\eNull$ est compatible avec n'importe quel type pointeur. L'autre cas concerne
@@ -60,6 +60,14 @@ puisqu'on peut statiquement savoir si un type a cette propriété ou pas.
 
 En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut construire des
 types composés: pointeurs, tableaux, structures et fonctions.
+
+Pour typer les structures, on suppose avoir à notre disposition (par un
+prétraitement, par exemple) le type complet de la structure à chaque accès d'un
+champ. Cela alourdit la présentation, mais permet d'éviter le sous-typage qui
+rend l'inférence indécidable. En pratique, dans l'implantation décrite dans le
+chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
+(\emph{row polymorphism}) présent dans OCaml pour unifier deux types structures
+partiellement connus.
 
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme

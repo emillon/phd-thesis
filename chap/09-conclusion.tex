@@ -278,13 +278,12 @@ d'employer du sous-typage, en déclarant qu'un type structure contenant moins de
 champ est moins général qu'un autre. Au fur et à mesure de l'inférence, on
 obtient alors un type de plus en plus précis. En revanche dans ce cas là on perd
 la décidabilité de l'inférence. Une autre manière de faire est d'employer le
-polymorphisme de rangée (\emph{row polymorphism}): plutôt que de cacher les
-champs inconnus derrière le sous-typage, on en fait une variable $ρ$ qui pourra
-s'unifier avec d'autres champs. Par exemple, partant de $x.l ← 0$ on déduit que
-$x.l$ a pour type $\tInt$ et que $x$ a pour type $\{ l : \tInt ; ρ \} $.
-En pratique, l'implantation décrite dans le chapitre~\ref{cha:implem} utilise
-une technique similaire pour inférer les types des structures à partir du code
-\newspeak.
+polymorphisme de rangée: plutôt que de cacher les champs inconnus derrière le
+sous-typage, on en fait une variable $ρ$ qui pourra s'unifier avec d'autres
+champs. Par exemple, partant de $x.l ← 0$ on déduit que $x.l$ a pour type
+$\tInt$ et que $x$ a pour type $\{ l : \tInt ; ρ \} $. En pratique,
+l'implantation décrite dans le chapitre~\ref{cha:implem} utilise une technique
+similaire pour inférer les types des structures à partir du code \newspeak.
 
 %% TODO et les listes chainées de Linux ? safety + typage
 
