@@ -127,7 +127,7 @@ on utilise les notations suivantes:
 
 \begin{align*}
 x:t ∈ Γ &\eqdef ∃i ∈ [1;n], γ_i = (x, t) ∨ ∃i ∈ [1;m], η_i = (x, t) \\
-\cDom{Γ} &\eqdef \{ g_i / i ∈ [1;n] \} ∪ \{ l_i / i ∈ [1;m] \}\\
+\cDom{Γ} &\eqdef \{ g_i / i ∈ [1;n] \} ∪ \{ l_i / i ∈ [1;m] \}\\ % TODO ou de Γ_*
 \extendGlobal{Γ}{x}{t} &\eqdef ({(γ'_i)}_{i∈[1;n+1]}, Γ_L) ~\textrm{tel que}
                         \begin{cases}
                           ∀ i ∈ [1;n], γ'_i    = γ_i \\
@@ -703,9 +703,9 @@ dans la figure~\ref{fig:comp-mem}.
            \\ \mcomp{Γ}{m}
            \\ m' = \cPush{m}{x_1↦v_1, …, x_n↦v_n}
            \\ \mcomp{(Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])}{m'}
-           \\ m' ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
-           \\ …
-           \\ m' ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
+           %\\ m' ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
+           %\\ …
+           %\\ m' ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
             { \mcomp{Γ}{\cCleanup{\cPop{m'}} } }
 
@@ -1087,7 +1087,7 @@ $\tComp{τ}{t}$.
 \def\cVar#1{\mathrm{Var}(#1)}
 \def\cVars#1{\mathrm{Vars}(#1)} % TODO utile?
 
-Commençons par donner un résultat préliminaires. On utilise les notations
+Commençons par donner un résultat préliminaire. On utilise les notations
 suivantes:
 
 \begin{itemize}
@@ -1113,6 +1113,7 @@ suivantes:
 
 Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$
 est soit une variable globale $(x)$ avec $x ∈ Γ_G$, soit une variable locale
+% TODO \cDom
 $(|m|, x)$ du plus haut cadre de pile avec $x ∈ Γ_L$. Cela se prouve par
 récurrence sur la dérivation de $\mcomp{Γ}{m}$.
 
@@ -1134,22 +1135,6 @@ Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
 Dans les autres cas, $\cVar{φ} ∈ \cVars{m}$. Donc $m'[φ]_Φ = m[φ]_Φ$, ce qui
 nous permet de conclure grâce à l'hypothèse d'induction.
 % }}}
-\paragraph{\textsc{M-Push}:} % {{{
-
-On procède d'une manière similaire. $φ$ peut faire référence soit à un des
-$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable globale, auquel
-cas on applique l'hypothèse de récurrence.
-
-% }}}
-\paragraph{\textsc{M-Pop}:} % {{{
-
-Partant de $\mcomp{Γ}{\cCleanup{\cPop{m'}} }$ et $Γ ⊢ φ : t$, on déduit que
-$\cVar{Φ}$ est soit une globale soit une locale de hauteur
-$|\cCleanup{\cPop{m'}}| = |m'| - 1 = |m|$.
-
-% TODO
-
-% }}}
 \paragraph{\textsc{M-Decl}:} % {{{
 On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
 locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les prémisses
@@ -1165,6 +1150,30 @@ Si $v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
 l'opération $\phxx\cCleanVar$. Le type $τ'$ étant un type pointeur par le
 lemme~\ref{lemma:canon}, on peut conclure.
 Dans les autres cas $m[φ]_Φ = m'[φ]_Φ$ ce qui termine ce cas.
+
+% }}}
+\paragraph{\textsc{M-Push}:} % {{{
+
+On procède d'une manière similaire. $φ$ peut faire référence soit à un des
+$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable globale, auquel
+cas on applique l'hypothèse de récurrence.
+
+% }}}
+\paragraph{\textsc{M-Pop}:} % {{{
+
+On part de $\mcomp{Γ}{m''}$ où $m'' = \cCleanup{\cPop{m'}}$. Deux cas se
+produisent selon la forme de $\cVar{φ}$.
+
+Si $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où
+$Γ' = (Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])$.
+On applique alors l'hypothèse de récurrence sur $Γ ⊧ m'$: il vient que
+$m'[φ]_Φ = v$ où $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. Comme $\cH{v} ≤ |m'|$, deux
+cas peuvent se produire. Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a
+bien la compatibilité mémoire (l'argument est similaire au cas
+\textsc{Decl-Clean}). Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
+
+Si $\cVar{φ} = (|m''|, x)$, on procède de la mème manière sauf qu'on invoque alors
+le cas d'induction sur $\mcomp{Γ}{m}$.
 
 % }}}
 \paragraph{\textsc{M-Write}:} % {{{
