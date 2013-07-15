@@ -13,7 +13,7 @@ Cette thèse comporte 4 contributions principales.
 
 Le système de types de C est trop rudimentaire pour permettre d'obtenir des
 garanties sur l'exécution des programmes bien typés. En interdisant certaines
-constructions dangereuses et en en annotant certaines, nous avons isolé un
+constructions dangereuses et en annotant certaines autres, nous avons isolé un
 langage impératif bien typable, pour lequel on peut définir un système de types
 sûr.
 
@@ -49,6 +49,8 @@ implanter d'autres analyses de typage sur le langage Newspeak.
 D'autre part, ce prototype a été utilisé pour confirmer l'existence d'un bug
 dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
 vérifier du code de production à l'aide de techniques de typage.
+Des travaux d'expérimentation sont en cours afin d'analyser de plus grandes
+partie du noyau.
 
 \section{Différences avec C}
 
@@ -171,16 +173,20 @@ cruciale de cette approche: en effet, si on suppose que les programmes que l'on
 analyse sont corrects de ce point de vue, on peut désactiver ces vérifications
 et le reste des propriétés est toujours valable.
 
-Un autre endroit, plus problématique, où des tests dynamiques sont faits est
-lorsqu'on recherche en mémoire des pointeurs référençant un cadre d'appel qui
-n'est plus valide (à l'aide de l'opérateur $\mathrm{Cleanup}(\cdot)$). Supprimer
-ce test rend l'analyse incorrecte, car il est alors possible de faire référence
-à une variable avec un type différent.
+On repose sur l'environnement d'exécution à un endroit plus problématique. À la
+sortie de chaque portée (au retour d'une fonction et après la portée d'une
+variable locale déclarée), on parcourt la mémoire à la recherche des pointeurs
+référençant les variables qui ne sont plus valides. Supprimer ce test rend
+l'analyse incorrecte, car il est alors possible de faire référence à une
+variable avec un type différent.
 
-De même, si on peut avoir une garantie statique que les adresses des variables
-locales ne seront plus accessibles au retour d'une fonction, alors on peut
-supprimer le nettoyage en posant $\mathrm{Cleanup}(m) = m$. Cette garantie peut
-être obtenue avec une analyse statique préalable~\cite{ifm10}.
+Si on peut avoir une garantie statique que les adresses des variables locales ne
+seront plus accessibles au retour d'une fonction, alors on peut supprimer cette
+étape de nettoyage. Cette garantie peut être obtenue avec une analyse statique
+préalable. Par exemple les régions~\cite{jfp92} peuvent être utilisées à cet
+effet: en plus de donner un type à chaque expression, on calcule
+statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
+correspond à un ramasse-miette fait statiquement.
 
 \paragraph{Flot de contrôle}
 
@@ -200,7 +206,7 @@ peut imaginer qu'il est possible de l'utiliser pour faire la conversion inverse.
 En plus de ces sauts locaux, le langage C contient une manière de sauvegarder un
 état d'exécution et d'y sauter, même entre deux fonctions: ce sont
 respectivement les constructions \texttt{setjmp} et \texttt{longjmp}. Elles sont
-très puissantes puisqu'elles permettent d'exprimer n'importe quel flot de
+très puissantes puisqu'elles permettent d'exprimer n'importe quelle structure de
 contrôle, à la manière d'une continuation.
 
 Cette fonctionnalité peut servir par exemple à implanter des exceptions, ou des
@@ -253,9 +259,9 @@ entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
 accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
 analyse préalable comme~\cite{ifm10}. Il est aussi possible d'utiliser un système de
-régions~\cite{jfp92}. En plus de donner un type à chaque expression, on calcule
-statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
-correspond à un ramasse-miette fait statiquement.
+régions~\cite{jfp92}.
+
+% TODO les expliquer
 
 %\paragraph{Types structures}
 
