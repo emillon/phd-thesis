@@ -32,16 +32,9 @@ temps de développement, il est facile de laisser passer des défauts de
 programmation.
 
 Ces erreurs, ou \emph{bugs}, peuvent avoir des conséquences dramatiques sur le
-plan matériel ou humain. Dans le cadre des produits d'EADS, il est donc capital
-% TODO que veut dire EADS ? pourquoi l'introduire ici?
-% produits?
-de vérifier la correction des logiciels embarqués. De plus, le coût de déployer
-des correctifs est assez important: il est d'autant plus important d'être
-correct dès la première version.
-
-
-% TODO tu vas un peu vite dans le passage on typ es entiers puis on veut isoler
-% des parties de l'OS: ajoute une phrase de lien
+plan matériel ou humain. À titre d'exemple, un Airbus A320 embarque près de 10
+millions de lignes de code: il est capital de vérifier que celles-ci ne peuvent
+pas mettre en danger la sûreté des passagers.
 
 Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le
 programme sous un environnement contrôlé. On peut alors détecter des
@@ -49,19 +42,24 @@ comportements non désirés. Mais même avec une grande quantité de tests il n'
 pas possible de couvrir tous les cas d'utilisation.
 
 Une autre approche est d'analyser le code source du programme avant de
-l'exécuter et de refuser de lancer les programmes qui contiennent des erreurs,
-quitte à limiter la possibilité d'en écrire certains. C'est l'analyse statique
-de programmes.
+l'exécuter et de refuser de lancer les programmes qui contiennent certaines
+constructions dangereuses. C'est l'analyse statique de programmes.
 
 Une des techniques d'analyse statique les plus répandues et les plus simples est
 le typage statique, qui consiste à associer à chaque morceau de programme, une
 étiquette décrivant quel genre de valeur sera produite par son évaluation. Par
 exemple, si $n$ est le nom d'une variable entière, alors $n + 2$ produira
 toujours une valeur entière.
+Cela permet de savoir si les programmes manipuleront des données incompatibles
+entre eux.
 
-Pour garantir l'isolation d'un noyau de système d'exploitation, un des points
-cruciaux est de restreindre la manière dont sont traitées les informations
-provenant des programmes utilisateur.
+Pour en revenir aux noyaux de système d'exploitation, ceux-ci manipulent à la
+fois des données sensibles et des données provenant du monde extérieur, pour
+lesquelles on n'a aucune garantie. On veut pouvoir distinguer celles-ci.
+
+Plus précisément, un des points cruciaux pour garantir l'isolation d'un noyau de
+système d'exploitation est de restreindre la manière dont sont traitées les
+informations provenant des programmes utilisateur.
 
 Le but de cette thèse est de montrer que le typage statique peut être utilisé
 pour détecter et interdire ces manipulations dangereuses.
