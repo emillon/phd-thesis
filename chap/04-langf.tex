@@ -25,8 +25,9 @@ Le but ici est de définir \langname, un langage plus simple mais qui permettra
 de raisonner sur une certaine classe de programmes C.
 
 Tout d'abord, on commence par présenter les notations qui accompagneront le
-reste des chapitres. Cela inclut la définition de la notion de lentille, qui est
-utilisée dans certaines définitions.
+reste des chapitres. Cela inclut la notion de lentille, qui est
+utilisée pour définir les accès profonds à la mémoire (une sous-valeur d'une
+variable, par exemple).
 
 Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
 description de ses caractéristiques principales. En particulier, le modèle
@@ -39,8 +40,6 @@ mémoire.
 L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}. En
 particulier, on y verra comment traduire un sous-ensemble de C vers Newspeak,
 sur lequel notre implantation est faite.
-
-% TODO INDIQUE DANS LE CHAPEAU LES PARTIES IMPORTANTES DU CHAPITRE
 
 \section{Notations}
 
@@ -116,11 +115,30 @@ accessible à l'indice $1$.
 Dans la définition de la sémantique de \langname, on utilise des \emph{lentilles
 bidirectionnelles}. Cette notion n'est pas propre à la sémantique des
 programmes. Il s'agit d'une technique permettant de relier la modification d'un
-objet à la modification d'un de ses sous-composants. On peut en trouver des
-descriptions plus détaillées décrite dans~\cite{PierceLenses}
-et~\cite{LaarhovenLenses}.
+objet à la modification d'un de ses sous-composants. Cela a plusieurs
+applications possibles. En programmation fonctionnelle pure (sans mutation), on
+ne peut pas mettre à jour partiellement les valeurs composées comme des
+enregistrements (\emph{records}). Pour simuler cette opération, on a en général
+une opération qui permet de définir un nouvel enregistrement dans lequel seul un
+champ a été mis à jour. C'est ce qui se passe avec le langage
+Haskell~\link{haskell}: \texttt{r \{ x = 5 \}} représente une valeur
+enregistrement égale à \texttt{p} sur tous les champs, sauf pour le champ
+\texttt{x} où elle vaut \texttt{5}. Utiliser des lentilles revient à réifier
+dans le langage la notion de champ. Elles ont l'avantage de pouvoir se
+composer, c'est à dire que si on a un champ nommé $x$ qui contient un champ
+nommé $y$, alors on peut modifier le champ du champ automatiquement.
 
-% TODO indiquer d'où cela vient, record, structures, et pourquoi on l'utilise
+Dans ce cadre, les lentilles ont été popularisées par Van
+Laarhoven~\cite{LaarhovenLenses}. Puisque cela sert à manipuler des données
+arborescentes, on peut aussi appliquer cet outil aux systèmes de bases de
+données ou aux documents structurés comme par exemple en
+XML~\cite{PierceLenses}.
+
+Dans notre cas, cela permettra par exemple de modifier un élément d'un tableau
+qui est un champ de structure de la variable nommée $x$ dans le 3\ieme cadre de
+pile.
+
+% TODO Objective Caml -> OCaml
 
 \begin{definition}[Lentille]
 
