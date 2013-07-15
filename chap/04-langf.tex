@@ -1,6 +1,6 @@
-Dans ce chapitre, on décrit le cœur de notre travail: le langage \langname, sur
-lequel s'appuieront les analyses de typage des chapitres~\ref{cha:typbase}
-et~\ref{cha:qualifs}.
+Dans ce chapitre, on décrit le support de notre travail: un langage impératif
+nommé \langname, sur lequel s'appuieront les analyses de typage des
+chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 
 Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
 «assembleur portable». Ses types de données et les opérations associées sont
@@ -30,7 +30,7 @@ utilisée dans certaines définitions.
 
 Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
 description de ses caractéristiques principales. En particulier, le modèle
-mémoire est expliqué, ainsi que les valeurs manipulées par le langage.
+mémoire est détaillé, ainsi que les valeurs manipulées par le langage.
 
 Enfin, on décrit une sémantique opérationnelle pour ce langage. Cela permet de
 définir précisément l'exécution d'un programme \langname au niveau de la
@@ -40,25 +40,27 @@ L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}. En
 particulier, on y verra comment traduire un sous-ensemble de C vers Newspeak,
 sur lequel notre implantation est faite.
 
+% TODO INDIQUE DANS LE CHAPEAU LES PARTIES IMPORTANTES DU CHAPITRE
+
 \section{Notations}
 
 \subsection*{Inférence}
 
 La sémantique opérationnelle consiste en la définition d'une relation de
-transition $\cdot\rightarrow\cdot$ entre états de l'interpréteur\footnote{Dans le
+transition $\cdot\rightarrow\cdot$ entre états de l'interprète\footnote{Dans le
 chapitre~\ref{cha:typbase}, la relation de typage $\cdot ⊢ \cdot : \cdot$ sera
 définie par la même technique.}.
 
 Cette relation est définie inductivement sur la syntaxe du programme. Plutôt que
 de présenter l'induction explicitement, elle est représentée par des jugements
-logiques et des règles d'inférences, de la forme:
+logiques et des règles d'inférence, de la forme:
 
 \[
 \irule{Nom}{P_1 \\ … \\ P_n}{C}
 \]
 
 Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
-la manière suivante: si les $P_i$ sont prouvées, alors $C$ est prouvée.
+la manière suivante: si les $P_i$ sont vraies, alors $C$ est vraie.
 
 Certaines règles n'ont pas de prémisse, ce sont des axiomes:
 
@@ -66,9 +68,10 @@ Certaines règles n'ont pas de prémisse, ce sont des axiomes:
 \iaxiom{Ax}{A}
 \]
 
-Compte-tenu de la structure des règles, la preuve d'un jugement pourra donc être
-vue sous la forme d'un arbre où les axiomes sont les feuilles, en haut, et la
-conclusion est la racine, en bas.
+Compte-tenu de la structure des règles, la dérivation d'une preuve (l'ordre dans
+lequel les règles sont appliquées) pourra donc être vue sous la forme d'un arbre
+où les axiomes sont les feuilles, en haut, et la conclusion est la racine, en
+bas.
 
 \[
   \irule{r1}{
@@ -116,10 +119,12 @@ objet à la modification d'un de ses sous-composants. On peut en trouver des
 descriptions plus détaillées décrite dans~\cite{PierceLenses}
 et~\cite{LaarhovenLenses}.
 
+% TODO indiquer d'où cela vient, record, structures, et pourquoi on l'utilise
+
 \begin{definition}[Lentille]
 
 Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈ \setLens{R}{A}$
-(ou \emph{accesseur}) est un moyen d'accéder en lecture ou en écriture à
+(ou \emph{accesseur}) est un moyen d'accéder en lecture ou en écriture à une
 sous-valeur de type $A$ au sein d'une valeur de type $R$ (pour \emph{record}).
 Elle est consistuée des opérations suivantes:
 
@@ -176,7 +181,7 @@ Soit $E$ un ensemble. On considère $L(E)$, l'ensemble des listes d'éléments d
 $E$.
 
 On définit les fonctions suivantes. Notons qu'elles ne sont pas définies sur la
-liste vide $[]$, qui pourra être traité comme un cas d'erreur.
+liste vide $[]$, qui pourra être traitée comme un cas d'erreur.
 
 \begin{align*}
   \mathrm{get}_T     (t::q) &= t   & \mathrm{put}_T (t', t::q) &= t'::q  \\
@@ -346,6 +351,8 @@ Cette définition est illustrée dans la figure~\ref{fig:compo-lens}. Une preuve
 que la composition est une lentille est donnée en annexe~\ref{proof:compo-lens}.
 
 \section{Syntaxe}
+
+% TODO il faut mettre les figures ici et les décrire
 
 Les figures~\ref{fig:stx-data} et~\ref{fig:stx} présentent
 notre langage intermédiaire. Il contient la plupart des fonctionnalités
@@ -530,8 +537,8 @@ variables de type fonction.
 \end{figure}%}}}
 
 Les erreurs peuvent être classifiées en deux grand groupes: d'une part,
-$\serr{field}$, $\serr{var}$ et $\serr{typ}$ sont des erreur de typage
-dynamique, qui arrivent lorsqu'on accède dynamiquement a des données qui
+$\serr{field}$, $\serr{var}$ et $\serr{typ}$ sont des erreurs de typage
+dynamique, qui arrivent lorsqu'on accède dynamiquement à des données qui
 n'existent pas où qu'on manipule des types de données incompatibles. D'autre
 part, $\serr{div}$, $\serr{array}$ et $\serr{ptr}$ correspondent à des valeurs
 mal utilisées. Le but du système de types du chapitre~\ref{cha:typbase} sera
@@ -752,7 +759,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
 \begin{definition}[Hauteur d'une valeur]
 \label{def:hauteur-val}
-Une valeur peut être, ou contenir, une référence vers une variable de la pile.
+Une valeur peut contenir une référence vers une variable de la pile.
 La hauteur d'une valeur est l'indice du plus haut cadre qu'elle référence, ou
 $-1$ sinon.
 
@@ -779,7 +786,7 @@ où:
 
 
 Les opérations $\mathrm{Extend}$ et $\mathrm{Pop}$ ne sont définies que pour une
-pile non vides. Néanmoins cela ne pose pas de problème, puisque lors de
+pile non vide. Néanmoins cela ne pose pas de problème, puisque lors de
 l'exécution, la pile n'est vide que lors de l'évaluation d'expressions dans les
 phrases de programme. À cet endroit, seules des expressions peuvent apparaître,
 et leur évaluation ne manipule jamais la pile avec ces opérations.
@@ -857,17 +864,49 @@ On définit aussi une opération de nettoyage de pile, qui sera utile pour les
 retours de fonction.
 
 En effet, si une référence au dernier cadre est toujours présente après
-le retour, elle pourra se résoudre en un objet différent plus tard dans
-l'exécution du programme.
+le retour d'une fonction, cela peut casser le typage.
 
-On commence par définir une fonction générique supprimant les valeurs satisfiant
-un prédicat sur les chemins que la mémoire contient:
+Par exemple, dans la figure~\ref{fig:prog-cleanup}, l'exécution de $h()$ donne à
+$p$ la valeur $(1, x)$. Puis en arrivant dans $g$, le déréférencement de $p$ va
+modifier $x$ qui va avoir la valeur $1$. $x$, variable flottante, contient donc
+un entier.
+Dans la ligne marquée \texttt{(*)}, on réalise donc l'addition
+d'un entier (contenu dans $x$ malgré son type et d'un flottant). Cette opération
+est bien typée mais provoquera une erreur $\serr{typ}$ à l'exécution.
+
+Pour empêcher cela, on instrumente donc le retour de la fonction
+\texttt{f} pour que \texttt{p} soit remplacé par $\eNull$. Alors dans
+\texttt{h}, le déréférencement provoquera une erreur et empêchera la violation
+du typage.
+
+\begin{SaveVerbatim}[]{LeBonProgramme}
+f = Fun () {
+    Decl x = 0 in
+    return (&x);
+}
+
+g = Fun (p) {
+    Decl x=0.0 in
+    *p = 1;
+    x <- x + 2.0; // (*)
+}
+
+h = Fun () {
+    Decl p = f() in
+    g(p);
+}
+\end{SaveVerbatim}
+
+\begin{figure}
+\hspace{1cm}\BUseVerbatim{LeBonProgramme}
+\caption{Cassage du typage par un pointeur fou}
+\label{fig:prog-cleanup}
+\end{figure}
+
+Pour définir l'opération de nettoyage, on commence par définir une opération
+nettoyant une valeur selon un prédicat sur les chemins:
 
 \begin{align*}
-                \cP{p}{(s, g)} &= (s', g') \\
-                 \mbox{où } s' &= (\cLP{p}{s_1}, …, \cLP{p}{s_{|s|}}) \\
-                            g' &=  \cLP{p}{g} \\
-\cLP{p}{(x_1 ↦ v_1, …, x_n ↦ v_n)} &= (x_1 ↦ \cVP{p}{v_1}, …, x_n ↦ \cVP{p}{v_n}) \\
 \cVP{p}{\widehat{c}} &= \widehat{c} \\
 \cVP{p}{\widehat{f}} &= \widehat{f} \\
 \cVP{p}{\wphi{φ}} &= \begin{cases}
@@ -880,49 +919,32 @@ un prédicat sur les chemins que la mémoire contient:
     \widehat{\eStruct{\cVP{p}{v_1}, …, \cVP{p}{v_n}}}
 \end{align*}
 
-La fonction $\mathrm{Cleanup}$, et une version pour les valeurs, sont données
-par:
+On l'étend ensuite aux cadres de pile, puis aux états mémoire:
 
 \begin{align*}
-\cCleanup{m} &=  \cP{λφ: \cHphi{φ} > |m|)}{m} \\
-\cV{p}{v}    &= \cVP{λφ: \cHphi{φ} > |m|)}{v}
+\cLP{p}{(x_1 ↦ v_1, …, x_n ↦ v_n)} &= (x_1 ↦ \cVP{p}{v_1}, …, x_n ↦ \cVP{p}{v_n}) \\
+\\
+                \cP{p}{(s, g)} &= (s', g') \\
+                 \mbox{où } s' &= (\cLP{p}{s_1}, …, \cLP{p}{s_{|s|}}) \\
+                            g' &=  \cLP{p}{g}
 \end{align*}
 
-On définit aussi une opération pour supprimer une variable de la mémoire:
+À l'aide de ces fonctions, on définit quatre opérations, permettant de nettoyer
+des états mémoire ou des valeurs en enlevant tout un niveau de pile ou seulement
+une variable:
 
-\begin{align*}
-    \cCleanVar{m}{a}  &= \cP{λφ: φ = a}{m} \\
-    \cVV{v}{a}        &= \cVP{λφ: φ = a}{v}
-\end{align*}
+\begin{mathpar}
+\cCleanup{m} =  \cP{λφ: \cHphi{φ} > |m|)}{m}
 
-Sans ces opérations, examinons le programme suivant de la
-figure~\ref{fig:prog-cleanup}.
+\cCleanVar{m}{a}  = \cP{λφ: φ = a}{m}
 
-\begin{SaveVerbatim}[]{LeBonProgramme}
-f = Fun () {
-    Decl x = 0 in
-    return (&x);
-}
+\cV{p}{v}    = \cVP{λφ: \cHphi{φ} > |m|)}{v}
 
-g = Fun (p) {
-    Decl x=0.0 in
-    *p = 1;
-}
+\cVV{v}{a}        = \cVP{λφ: φ = a}{v}
+\end{mathpar}
 
-h = Fun () {
-    Decl p=f() in
-    g(p);
-}
-\end{SaveVerbatim}
-
-\begin{figure}[h]
-\hspace{1cm}\BUseVerbatim{LeBonProgramme}
-\caption{Cassage du typage par un pointeur fou}
-\label{fig:prog-cleanup}
-\end{figure}
-
-L'exécution de $h()$ donne à $p$ la valeur $(1, x)$. Donc en arrivant dans $g$, le
-déréférencement de $p$ va modifier $x$.
+Ces 4 fonctions seront utilisées dans plusieurs règles dans la suite de ce
+chapitre.
 
 \section{Accesseurs}
 \label{sec:mem-access}
