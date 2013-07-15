@@ -199,7 +199,7 @@ peuvent être trouvés dans~\cite{userspaceaccess}.
 \section{Exemple de bug}
 
 On décrit le cas d'un pilote vidéo qui contenait un bug de pointeur utilisateur.
-Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340. 
+Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340.
 
 Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
 \emph{Kernel Mode Setting} (KMS).
@@ -300,6 +300,18 @@ section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
 pointeurs souillés on ajoute un commentaire spécial \texttt{!npk userptr x}, qui
 unifie le type de \texttt{x} avec $\ptrU{t}$ où $t$ est une inconnue de type.
 
+Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
+l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
+d'origine, \texttt{info->value} est transtypé en \texttt{unsigned long} puis en
+\texttt{uint32\_t *}. En \newspeak, cela correspond à des opérateurs
+\texttt{PtrToInt} et \texttt{IntToPtr} mais si on les autorise, on casse le
+typage puisqu'il est alors possible de transformer n'importe quel type en un
+autre. De plus, on modifie la définition de
+\texttt{struct drm\_radeon\_info} pour que son champ \texttt{value} ait pour
+type `uint32_t *` plutôt que `uint64_t`. En effet, dans ce cas d'étude, cet
+entier est uniquement utilisé en tant que pointeur au cours de toute
+l'exécution.
+
 \begin{figure}
 \insertcode{ex-drm.c}
 
@@ -332,8 +344,6 @@ des bugs dans le noyau Linux. Pour le moment, il nécessite du code annoté, mai
 la phase de compilation depuis le code GNU C que comporte le noyau peut déjà
 être compilée automatiquement en \newspeak, puis dans une représentation proche
 de \langname.
-
-% TODO dire pourquoi on vire le double cast
 
 % TODO peut être un peu short
 
