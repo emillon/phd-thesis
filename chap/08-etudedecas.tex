@@ -25,6 +25,11 @@ déréférencé directement, pouvant provoquer une fuite d'informations
 confidentielles dans le noyau. Les détails sur ce bug peuvent être trouvés sur
 \url{https://bugs.freedesktop.org/show_bug.cgi?id=29340}.
 
+On commence par décrire les difficultés rencontrées pour analyser le code du
+noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système dans
+ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin le bug
+étudié, et comment l'adapter pour traiter le code en question.
+
 \section{GNU C}
 \label{sec:gnuc}
 
@@ -319,16 +324,20 @@ d'origine, \texttt{info->value} est transtypé en \texttt{unsigned long} puis en
 typage puisqu'il est alors possible de transformer n'importe quel type en un
 autre. De plus, on modifie la définition de
 \texttt{struct drm\_radeon\_info} pour que son champ \texttt{value} ait pour
-type `uint32_t *` plutôt que `uint64_t`. En effet, dans ce cas d'étude, cet
-entier est uniquement utilisé en tant que pointeur au cours de toute
-l'exécution.
+type \texttt{uint32\_t *} plutôt que \texttt{uint64\_t}. En effet, dans ce cas
+d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
+toute l'exécution.
 
 \begin{figure}
 \insertcode{ex-drm.c}
 
-\caption{Code du noyau annoté}
+\caption{Code du noyau minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
+
+% TODO et le code correct?
+
+% TODO c'est juste le champ value qui est user?
 
 En ce qui concerne les fonctions de manipulation de pointeurs fournies
 par le noyau (\texttt{get\_user}, \texttt{put\_user},
@@ -348,13 +357,28 @@ Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
 type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
 unification a échoué.
 
+% TODO c'est pas des qualifs
+
 \section*{Conclusion}
+
+Après voir décrit notre l'implantation de notre solution, on a montré comment
+celle-ci peut s'appliquer à détecter un bug dans le noyau Linux. La première
+difficulté est de traduire en \newspeak le code source écrit dans le dialecte
+GNU C.
+
+En partant d'un bug existant, on montre que la version originale du code
+(incluant une erreur de programmation) ne peut pas être typée.
+
+% TODO et la version correcte?
+
 
 Le prototype décrit dans le chapitre~\ref{cha:implem} peut s'adapter à détecter
 des bugs dans le noyau Linux. Pour le moment, il nécessite du code annoté, mais
 la phase de compilation depuis le code GNU C que comporte le noyau peut déjà
 être compilée automatiquement en \newspeak, puis dans une représentation proche
 de \langname.
+
+
 
 % TODO peut être un peu short
 
