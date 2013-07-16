@@ -425,3 +425,6 @@
 \def\extendGlobal#1#2#3{#1, \mathrm{global}~#2:#3}
 
 \def\cVar#1{\mathrm{Var}(#1)}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}

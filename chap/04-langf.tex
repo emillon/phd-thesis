@@ -37,8 +37,6 @@ d'une variable, et une qui relie une valeur à une de ses sous-valeurs. Avec
 cette technique, on peut définir en une seule fois les opération de lecture et
 d'écriture de sous-valeurs imbriquées.
 
-% TODO schémas lentilles comme dans pres APR
-
 Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
 description de ses caractéristiques principales. En particulier, le modèle
 mémoire est détaillé, ainsi que les valeurs manipulées par le langage.
@@ -1059,10 +1057,16 @@ Enfin, on définit $Φ$ pour accèder à n'importe quelle sous-valeur d'une vari
 dans la mémoire. Cela utilise $A$, $F$ et $T$ précedemment définis.
 
 La figure~\ref{fig:dep-lens} résume ces dépendances.
+ Les lignes pleines indiquent quelles sont les
+définitions utilisées, et les pointillés relient les lentilles similaires. À
+droite, on donne un exemple des lentilles de base. La valeur entourée correspond
+au «curseur» de la lentille, c'est-à-dire la valeur qui peut être renvoyée ou
+mise à jour.
 
 \begin{figure}[h]
 \centering
 \vspace{5mm}
+\begin{minipage}[b]{0.4\textwidth}
 \begin{tikzpicture}
 \node[draw] (I) {I};
 \node[draw, below of=I] (L) {L};
@@ -1080,11 +1084,18 @@ La figure~\ref{fig:dep-lens} résume ces dépendances.
 \draw[dotted] (L) -- ++(-5mm,  0) |- (F);
 \draw[dotted] (I) -- ++(-10mm, 0) |- (T);
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}[b]{0.5\textwidth}
+\begin{align*}
+I(3)     &: (3, 14, \circled{15}, 92, 65) \\
+L(toto)  &: ((toto, \circled{3}), (tata, 6), (titi, 2)) \\
+F(y)     &: \{ x: 0; y: \circled{-3} \} \\
+T(0)     &: \eArray{\circled{1}, 2, 3, 5} \\
+\end{align*}
+\end{minipage}
 \vspace{5mm}
 
-\caption[Dépendances entre les lentilles]{
-Dépendances entre les lentilles. Les lignes pleines indiquent quelles sont les
-définitions utilisées, et les pointillés relient les lentilles similaires.}
+\caption{Dépendances entre les lentilles}
 \label{fig:dep-lens}
 
 \end{figure}
