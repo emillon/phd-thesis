@@ -1,4 +1,9 @@
-\begin{figure}[h]
+On rappelle ici l'ensemble des règles de typage décrites dans les
+chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
+
+\section*{Règles de typage des constantes et left-values}
+
+\begin{framed}
 
 \begin{mathpar}
     \ruleheader{$Γ ⊢ c : t$}
@@ -21,10 +26,11 @@
 
     \disprule{Lv-Field}
 \end{mathpar}
-\caption{Règles de typage des constantes et variables}
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\newpage
+\section*{Règles de typage des opérateurs}
+\begin{framed}
 \begin{mathpar}
     \ruleheader{$Γ ⊢ \opun~e : t$}
 
@@ -58,10 +64,11 @@
 
     \disprule{Eq-Struct}
 \end{mathpar}
-\caption{Règles de typage des opérateurs}
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\newpage
+\section*{Règles de typage des expressions et instructions}
+\begin{framed}
 \begin{mathpar}
     \ruleheader{$Γ ⊢ e : t$}
 
@@ -100,10 +107,11 @@
     \disprule{T-Var}
 \end{mathpar}
 
-\caption{Règles de typage}
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\newpage
+\section*{Règles de typage des valeurs}
+\begin{framed}
   \ruleheader{$\semtyp{m}{v}{τ}$}
 
   \begin{mathpar}
@@ -124,10 +132,10 @@
     \disprule{S-Fun}
   \end{mathpar}
 
-  \caption{Règles de typage sémantique}
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\section*{Règles de typage des extensions noyau}
+\begin{framed}
 
 \begin{mathpar}
   \disprule{Taint}
@@ -141,5 +149,4 @@
   \disprule{Ptr-Arith-User}
 \end{mathpar}
 
-\caption{Règles de typage des extensions noyau}
-\end{figure}
+\end{framed}
