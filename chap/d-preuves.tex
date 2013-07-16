@@ -337,6 +337,7 @@ récurrence à $e$.
 \item $\mm{m}{e}{m'}{e'}$.
 Alors en appliquant \textsc{Ctx} avec
 $C = \iReturn{\ctxEmpty}$, on conclut que
+\linebreak
 $\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
 
 \item $\msi{m}{e} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
@@ -479,6 +480,7 @@ Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 
   \item $∃(e_1', m'), \mm{m}{e_1}{m'}{e'_1}$.
     En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
+    \linebreak
     $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
     $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
 
@@ -506,7 +508,7 @@ Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$:
   \widehat{+}~v_1$, $\mm{m}{e}{m}{v}$.
 \item
   soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
-avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
+avec $C = +~\ctxEmpty$, on obtient \linebreak $\mm{m}{e}{m'}{e'_1}$.
 \item
   soit $\msi{m}{e_1} → Ω$.
   De \textsc{Eval-Err} avec $C = +~\ctxEmpty$ il vient$\msi{m}{e} → Ω$.
@@ -931,8 +933,8 @@ D'après \textsc{Pass}, $Γ ⊢ \iPass$.
 \paragraph{\textsc{Decl-Pass}:}%{{{
 
 $Γ ⊢ \iPass$ est immédiat, et $\mcomp{Γ}{m'}$ est établi par \textsc{M-Decl}
-suivi de \textsc{M-DeclClean}. On a bien $x ∉ Γ$ car les déclarations de
-variable ne peuvent pas masquer de variables visibles existantes
+suivie de \linebreak \textsc{M-DeclClean}. On a bien $x ∉ Γ$ car les
+déclarations de variable ne peuvent pas masquer de variables visibles existantes
 (page~\pageref{page:decl-masquage}).
 
 %}}}
@@ -1099,6 +1101,7 @@ De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 \paragraph{\textsc{Expr-Tainted}:} % {{{
 
 On applique le lemme de représentation, qu'on a étend avec le cas
+\linebreak
 $\cRepr{t~@} = \cRepr{\cRepr{t}~@}$.
 
 % }}}

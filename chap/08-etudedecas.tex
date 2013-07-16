@@ -132,11 +132,12 @@ Cette zone contient le code du noyau, les piles noyau des processus, etc.
 
 Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas contenir
 d'instructions privilégiées, et donc ne peuvent pas accéder directement au
-matériel. Pour qu'ils puissent interagir avec le système (afficher une sortie,
-écrire sur le disque…) le mécanisme des appels système est nécessaire. Il s'agit
-d'une interface de haut niveau entre les \emph{rings} 3 et 0. Du point de vue du
-programmeur, il s'agit d'un ensemble de fonctions C «magiques» qui font appel
-au système d'exploitation pour effectuer des opérations.
+matériel. Pour que ces programmes puissent interagir avec le système (afficher
+une sortie, écrire sur le disque…) le mécanisme des appels système est
+nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 et
+0. Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
+«magiques» qui font appel au système d'exploitation pour effectuer des
+opérations.
 
 Voyons ce qui se passe derrière la magie apparente. Une explication plus
 détaillée est disponible dans la documentation fournie par Intel
@@ -157,7 +158,7 @@ logicielle est ensuite déclenchée (\verb!int 0x80!).
 le processeur est configuré --- tout dépend uniquement de l'état de certains
 registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
 Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
-prédéfini (\verb!arch/x86/kernel/entry_32.S!, \verb!ENTRY(system_call)!).
+prédéfini (dans \verb!arch/x86/kernel/entry_32.S!).
 
 \insertcode{entry-syscall.s}
 
@@ -291,11 +292,11 @@ Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
 d'origine, \texttt{info->value} est transtypé en \texttt{unsigned long} puis en
 \texttt{uint32\_t *}. En \newspeak, cela correspond à des opérateurs
-\texttt{PtrToInt} et \texttt{IntToPtr} mais si on les autorise, on casse le
-typage puisqu'il est alors possible de transformer n'importe quel type en un
-autre. De plus, on modifie la définition de
-\texttt{struct drm\_radeon\_info} pour que son champ \texttt{value} ait pour
-type \texttt{uint32\_t *} plutôt que \texttt{uint64\_t}. En effet, dans ce cas
+\texttt{PtrToInt} \linebreak et \texttt{IntToPtr} mais si on les autorise, on
+casse le typage puisqu'il est alors possible de transformer n'importe quel type
+en un autre. De plus, on modifie la définition du type \texttt{struct
+drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
+\texttt{uint32\_t *} plutôt que \texttt{uint64\_t}. En effet, dans ce cas
 d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
 toute l'exécution.
 

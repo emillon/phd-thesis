@@ -132,13 +132,12 @@ de typer ces opération est:
 \end{mathpar}
 
 Tout d'abord, cela pose problème car il est alors possible de créer une fonction
-qui convertit n'importe quel type pointeur en n'importe quel autre type
+pouvant convertir n'importe quel type pointeur en n'importe quel autre type
 pointeur:
 
-\begin{align*}
-  ⊢ &~ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} } \\
-  : &~ (\ptrK{t_a}) → \ptrK{t_b}
-\end{align*}
+\[
+  ⊢ ~ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} } : ~ (\ptrK{t_a}) → \ptrK{t_b}
+\]
 
 Si on crée une variable du type $t_a$, prend son adresse, la convertit à l'aide
 de cette fonction, puis déréférence le résultat, on obtient une valeur du type
@@ -158,7 +157,7 @@ problème en ajoutant la taille de chaque valeur avec elle.
 
 Mais cela fait s'éloigner du modèle mémoire de C, où le déréférencement porte
 sur une adresse mais également sur une taille (portée implicitement par le type
-du pointeur). D'ailleurs le langage \newspeak{} conserve cette distinction, que
+du pointeur). Le langage \newspeak{} conserve d'ailleurs cette distinction, que
 nous avons éliminée dans \langname. Il y a une incompatibilité entre ces deux
 approches : dans le cas de C (et de \newspeak), on laisse le programmeur gérer
 l'organisation de la mémoire alors qu'avec \langname ces choix sont faits par le
@@ -166,12 +165,13 @@ langage. En contrepartie, cela permet d'avoir d'assurer la sûreté du typage.
 
 \paragraph{Environnement d'exécution}
 
-La sémantique opérationnelle utilise un environnement d'exécution pour certains
-cas. Contrairement à C, les débordements de tampon et les déréférencements de
-pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une caractéristique
-cruciale de cette approche: en effet, si on suppose que les programmes que l'on
-analyse ne comportent pas de telles erreurs de programmation, on peut désactiver
-ces vérifications et le reste des propriétés est toujours valable.
+La sémantique opérationnelle utilise un environnement \linebreak d'exécution
+pour certains cas. Contrairement à C, les débordements de tampon et les
+déréférencements de pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une
+caractéristique cruciale de cette approche: en effet, si on suppose que les
+programmes que l'on analyse ne comportent pas de telles erreurs de
+programmation, on peut désactiver ces vérifications et le reste des propriétés
+est toujours valable.
 
 On repose sur l'environnement d'exécution à un endroit plus problématique. À la
 sortie de chaque portée (au retour d'une fonction et après la portée d'une
@@ -356,8 +356,8 @@ ou catastrophiques.
 Au cœur de la plupart de ces systèmes informatiques, se trouve la plupart du
 temps un noyau qui abstrait les détails du matériel pour fournir aux programmes
 des abstractions sûres, permettant de protéger les données sensibles contenues
-dans ce système. Si une simple erreur de programmation peut briser cette
-isolation, on voit pourquoi la vérification est si importante.
+dans ce système. Si une \linebreak simple erreur de programmation peut briser
+cette isolation, on voit pourquoi la vérification est si importante.
 
 Dans ce but, les systèmes de types sont des outils bien connus de programmeurs.
 Même dans les langages dits faiblement typés comme C, les compilateurs aident de
