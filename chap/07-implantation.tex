@@ -401,7 +401,7 @@ let infer_binop op (_, a) (_, b) =
 
 Pour prendre l'adresse d'une variable, la règle \textsc{AddrOf-Kernel}
 s'applique: on prend le type de la left-value et on construit un pointeur noyau
-à partir de lui:
+à partir de lui.
 
 \begin{verbatim}
 | T.AddrOf lv ->
@@ -409,6 +409,14 @@ s'applique: on prend le type de la left-value et on construit un pointeur noyau
     let ty = lval_type env lv in
     (T.AddrOf lv', Ptr (Kernel, ty))
 \end{verbatim}
+
+\label{page:qualifs-pas-qualifs}
+Notons que dans la représentation des types pointeurs, une étiquette séparée
+tient compte de qui contrôle la valeur. Cela vient du fait qu'une première
+présentation de ce système de types utilisait des qualificateurs explicites (sur
+les pointeurs uniquement), avant de passer à deux types indépendants. Cette
+représentation a néanmoins l'avantage de permettre la factorisation de code, par
+exemple pour typer l'arithmétique de pointeurs.
 
 Enfin, pour déréférencer une expression, on unifie tout d'abord son type avec le
 type d'un pointeur noyau.

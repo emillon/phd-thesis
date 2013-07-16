@@ -322,10 +322,16 @@ figure~\ref{fig:ex-drm}, on obtient la sortie suivante:
 
 Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
 type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
-unification a échoué.
+unification a échoué. Le message d'erreur fait apparaître des qualificateurs
+explicites: comme on l'explique page~\pageref{page:qualifs-pas-qualifs}, c'est
+un reste d'une première présentation basée sur les qualificateurs.
+Dans l'implantation, il est cependant agréable de manipuler ces étiquettes
+séparément des pointeurs auxquels elles sont attachées.
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
+
+% TODx le faire
 
 \begin{figure}
 
@@ -335,10 +341,6 @@ celle-ci, l'inférence se fait sans erreur.
     \label{fig:ex-drm-ok}
 
 \end{figure}
-
-% TODx le faire
-
-% TODO c'est pas des qualifs
 
 \section*{Conclusion}
 
