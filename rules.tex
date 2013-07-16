@@ -463,7 +463,7 @@
                      { v  = m[φ_s]_Φ
                     \\ m' = m[φ_d ← v]_Φ
                      }
-                     { \mm{m}{\uGet{φ_d}{\vTainted{φ_s}}}
+                     { \mm{m}{\uGet{\wphi{φ_d}}{\wphi{(\vTainted{φ_s})}}}
                        {m'}{0}
                      }
     }
@@ -471,7 +471,7 @@
                       {
                         ∄~φ_s. φ = \vTainted{φ_s}
                       }
-                      { \mm{m}{\uGet{φ_d}{φ}}
+                      { \mm{m}{\uGet{\wphi{φ_d}}{\wphi{φ}}}
                            {m}{-1}
                       }
     }
@@ -479,7 +479,7 @@
                      { v = m[φ_s]_Φ
                     \\ m' = m[φ_d ← v]_Φ
                      }
-                     { \mm{m}{ \uPut{\vTainted{φ_d}}{φ_s} }
+                     { \mm{m}{ \uPut{\wphi{(\vTainted{φ_d})}}{\wphi{φ_s}} }
                          {m'}{0}
                      }
     }
@@ -487,7 +487,7 @@
                       {
                         ∄~φ_d. φ = \vTainted{φ_d}
                       }
-                      { \mm{m}{\uPut{φ}{φ_s}}
+                      { \mm{m}{\uPut{\wphi{φ}}{\wphi{φ_s}}}
                            {m}{-1}
                       }
     }
