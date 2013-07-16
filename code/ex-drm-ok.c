@@ -4,7 +4,7 @@ struct drm_radeon_info {
     uint32_t *value;
 };
 
-int radeon_info_ioctl(struct drm_device *d, void *data, struct drm_file *f)
+int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 {
 	/*!npk userptr_fieldp data value*/
 	struct drm_radeon_info *info;
@@ -15,6 +15,8 @@ int radeon_info_ioctl(struct drm_device *d, void *data, struct drm_file *f)
 
 	info = data;
 	value_ptr = info->value;
+        if (copy_from_user(&value, value_ptr, sizeof(value)))
+            return -14;
         value = *value_ptr;
         return 0;
 }
