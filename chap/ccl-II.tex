@@ -10,13 +10,13 @@ C'est en général long et laborieux puisqu'il faut définir les accès en lectu
 et écriture à chaque étape (avec des lentilles on décrit ces deux opérations
 uniquement sur les briques du calcul, et la composition fait le reste). La
 seconde solution est d'employer une sémantique monadique. Les transisitions sont
-alors encodées comme des actions monadiques qui représentent les modifications de
-la mémoire. Un des avantages de cette solution est qu'elle est très extensible.
-Par exemple, la propagation des erreurs, ou l'ajout de continuations
+alors encodées comme des actions monadiques qui représentent les modifications
+de la mémoire. Un des avantages de cette solution est qu'elle est très
+extensible. Par exemple, la propagation des erreurs, ou l'ajout de continuations
 (c'est-à-dire le support des fonctions \texttt{setjmp} et \texttt{longjmp})
-peuvent facilement être exprimées dans un formalisme monadique.
-
-% TODO on ne comprend pas pourquoi tu ne l'as pas fait
+peuvent facilement être exprimées dans un formalisme monadique. Nous avons
+préféré une présentation classique qui reste plus accessible, et suffisante
+compte tenu de la simplicité des constructions à interpréter dans le langage.
 
 Ensuite, dans le chapitre~\ref{cha:typbase} nous avons ajouté un système de
 types à \langname. Le but est de restreindre le genre d'erreurs qui peuvent
