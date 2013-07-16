@@ -33,15 +33,15 @@ non.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
-Tout d'abord, on définit une nouvelle erreur $\serr{taint}$, déclenchée
-lorsqu'un pointeur \linebreak contrôlé par l'utilisateur et pointant vers le noyau est
-déréférencé (le cas que l'on cherche à éviter). Il est important de noter que ce
-cas d'erreur est «virtuel», c'est-à-dire qu'on l'ajoute à la sémantique pour
-pouvoir le détecter facilement comme un cas d'erreur, mais dans une sémantique
-de plus bas niveau, l'erreur ne serait pas déclenchée, comme en C. D'un point de
-vue opérationnel, cela équivaut à ajouter un test dynamique à chaque
-déréférencement, ce qui est sûr mais se paye en performances. Ajouter ce cas
-d'erreur virtuel dans la sémantique d'évaluation permet de transformer un
+Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour sécurité),
+déclenchée lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le
+noyau est déréférencé (le cas que l'on cherche à éviter). Il est important de
+noter que ce cas d'erreur est «virtuel», c'est-à-dire qu'on l'ajoute à la
+sémantique pour pouvoir le détecter facilement comme un cas d'erreur, mais dans
+une sémantique de plus bas niveau, l'erreur ne serait pas déclenchée, comme en
+C. D'un point de vue opérationnel, cela équivaut à ajouter un test dynamique à
+chaque déréférencement, ce qui est sûr mais se paye en performances. Ajouter ce
+cas d'erreur virtuel dans la sémantique d'évaluation permet de transformer un
 problème de sécurité (empêcher les fuites d'information) en problème de sûreté
 (empêcher les erreurs à l'exécution).
 
@@ -76,7 +76,7 @@ Remarquons qu'on n'introduit pas de sous-typage: les pointeurs noyau ne peuvent
 qu'en tant que pointeurs utilisateurs.
 
 En plus du déréférencement par \texttt{*} (qui devra donc renvoyer
-$\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
+$\serr{sec}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
 utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et \linebreak
 $\ctuF$. Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen
@@ -128,7 +128,7 @@ $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il fa
 une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $φ$,
 $\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts: une un
 nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
-Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher lorsqu'on
+Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
 la figure~\ref{fig:qualif-changes}.
 
@@ -159,7 +159,7 @@ la figure~\ref{fig:qualif-changes}.
 \\
 \gramdef{Erreurs}{Ω}
   { … }{}
-  { \serr{taint} }{Erreur de souillure}
+  { \serr{sec} }{Erreur de sécurité}
   {END}
 \end{align*}
 
@@ -197,7 +197,7 @@ règle suivante:
 \]
 
 Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
-déclencher une erreur $\serr{taint}$ en cas de déréférencement d'un pointeur
+déclencher une erreur $\serr{sec}$ en cas de déréférencement d'un pointeur
 utilisateur. Les accès mémoire en lecture proviennent de la règle
 \textsc{Exp-Lv} et ceux en lecture, de la règle \textsc{Exp-Set}, rappellées
 ici:
@@ -213,7 +213,7 @@ suffit donc d'adapter sa définition (page~\pageref{subsec:acces-phi}) de
 celle-ci en rajoutant le cas:
 
 \begin{align*}
-Φ(\vTainted{φ}) &= \serr{taint}
+Φ(\vTainted{φ}) &= \serr{sec}
 \end{align*}
 
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
@@ -327,17 +327,17 @@ conclusion n'est pas vraie:
             {
               \inferrule*
                 { }
-                {m[*\vTainted{x}] = \serr{taint}}
+                {m[*\vTainted{x}] = \serr{sec}}
             }
-            { \mm{m}{* \eTaint {x}}{m}{\serr{taint}} }
+            { \mm{m}{* \eTaint {x}}{m}{\serr{sec}} }
           \\
           \irule{Eval-Err}
             { }
             {
-              \msi{m}{\serr{taint}} → \serr{taint}
+              \msi{m}{\serr{sec}} → \serr{sec}
             }
         }
-        {\msi{m}{e} → \serr{taint}}
+        {\msi{m}{e} → \serr{sec}}
       \end{mathpar}
 
 \end{itemize}
@@ -570,7 +570,7 @@ l'espace utilisateur, qui sont utilisés pour l'implantation d'appels système
 Une première idée pour le typage de ces nouveaux pointeurs est de leur donner le
 même type que les pointeurs classiques. On a montré ensuite que ce typage naïf
 ne suffit pas: il permet en effet de faire fuiter de l'information, ce qu'on
-note par un cas d'erreur $\serr{taint}$. En termes de systèmes de types, cela
+note par un cas d'erreur $\serr{sec}$. En termes de systèmes de types, cela
 signifie que le théorème de progrès (théorème~\ref{thm:progres},
 page~\pageref{thm:progres}) n'est plus vérifié.
 

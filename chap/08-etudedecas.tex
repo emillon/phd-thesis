@@ -283,10 +283,11 @@ de traduire le noyau linux en \langname{}.
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
 environnement initial (via la variable \texttt{exttbl} décrite en
 section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
-pointeurs souillés on ajoute un commentaire spécial \texttt{!npk userptr\_fieldp
-x f}, qui indique que \texttt{x} est un pointeur vers une structure contenant un
-pointeur utilisateur dans le champ \texttt{f}. En fait, il unifie le type de
-\texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une inconnue de type.
+pointeurs utilisateur on ajoute un commentaire spécial \texttt{!npk
+userptr\_fieldp x f}, qui indique que \texttt{x} est un pointeur vers une
+structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
+il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
+inconnue de type.
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
