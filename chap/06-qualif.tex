@@ -508,6 +508,9 @@ permettent de remonter un jugement de typage.
 
 \begin{itemize}
 \item
+    Si $Γ ⊢ \eTaint{e} : t$, alors il existe $t'$ tel que
+    $t = t'~@$ et $Γ ⊢ e : t'$.
+\item
     Si $Γ ⊢ \uGet{e_d}{e_s} : t$, alors
     $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ φ_d : t~*$ et
     $Γ ⊢ φ_s : t~@$.
