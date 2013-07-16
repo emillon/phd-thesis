@@ -4,7 +4,7 @@ chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 
 Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
 «assembleur portable». Ses types de données et les opérations associées sont
-donc naturellement très bas niveau.
+donc naturellement de très bas niveau.
 
 Ses types de données sont établis pour représenter les mots mémoire manipulables
 par les processeurs : essentiellement des entiers et flottants de plusieurs
@@ -25,9 +25,17 @@ Le but ici est de définir \langname, un langage plus simple mais qui permettra
 de raisonner sur une certaine classe de programmes C.
 
 Tout d'abord, on commence par présenter les notations qui accompagneront le
-reste des chapitres. Cela inclut la notion de lentille, qui est
-utilisée pour définir les accès profonds à la mémoire (une sous-valeur d'une
-variable, par exemple).
+reste des chapitres. Cela inclut la notion de lentille, qui est utilisée pour
+définir les accès profonds à la mémoire. Cela permet de résoudre le problème de
+mettre à jour une sous-valeur (par exemple un champ de structure) d'une
+variable, par exemple. Les lentilles permettent de définir de manière
+déclarative que pour faire cette opération, il faut obtenir l'ancienne valeur de
+la variable, puis calculer une nouvelle valeur en remplaçant la sous-valeur la
+mémoire, avant de replacer cette nouvelle valeur à sa place en mémoire. En
+pratique, on définira deux lentilles: une qui relie un état mémoire à la valeur
+d'une variable, et une qui relie une valeur à une de ses sous-valeurs. Avec
+cette technique, on peut définir en une seule fois les opération de lecture et
+d'écriture de sous-valeurs imbriquées.
 
 Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
 description de ses caractéristiques principales. En particulier, le modèle
@@ -123,10 +131,11 @@ une opération qui permet de définir un nouvel enregistrement dans lequel seul 
 champ a été mis à jour. C'est ce qui se passe avec le langage
 Haskell~\link{haskell}: \texttt{r \{ x = 5 \}} représente une valeur
 enregistrement égale à \texttt{p} sur tous les champs, sauf pour le champ
-\texttt{x} où elle vaut \texttt{5}. Utiliser des lentilles revient à réifier
-dans le langage la notion de champ. Elles ont l'avantage de pouvoir se
-composer, c'est à dire que si on a un champ nommé $x$ qui contient un champ
-nommé $y$, alors on peut modifier le champ du champ automatiquement.
+\texttt{x} où elle vaut \texttt{5}. Utiliser des lentilles revient à ajouter
+dans le langage la notion de champ en tant que valeur de première classe. Elles
+ont l'avantage de pouvoir se composer, c'est à dire que si on a un champ nommé
+$x$ qui contient un champ nommé $y$, alors on peut modifier le champ du champ
+automatiquement.
 
 Dans ce cadre, les lentilles ont été popularisées par Van
 Laarhoven~\cite{LaarhovenLenses}. Puisque cela sert à manipuler des données
@@ -179,8 +188,8 @@ Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 \begin{figure}[h]
 
 \tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
-\tikzstyle{lenspatB}=[fill=black!50]
-\tikzstyle{lenspatC}=[fill=black!20]
+\tikzstyle{lenspatB}=[fill=blue!50]
+\tikzstyle{lenspatC}=[fill=red!20]
 
   \begin{align*}
   \lensGet{ℒ}{\lensNodeBig{lenspatA}{lenspatB}} &= \lensInner{lenspatB} \\
@@ -242,9 +251,13 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 
 \begin{figure}[h]
 
+% N&B
+%\tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
+%\tikzstyle{lenspatB}=[fill=black!50]
+%\tikzstyle{lenspatC}=[fill=black!20]
 \tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
-\tikzstyle{lenspatB}=[fill=black!50]
-\tikzstyle{lenspatC}=[fill=black!20]
+\tikzstyle{lenspatB}=[fill=blue!50]
+\tikzstyle{lenspatC}=[fill=red!20]
 
   \begin{align*}
     \lensGet{Δ(b)}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &= \lensInnerStar{lenspatB} \\
@@ -311,9 +324,15 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 
 \centering
 
-\tikzstyle{lensInnerBefore}=[fill=black!85]
-\tikzstyle{lensInnerAfter}=[fill=black!10]
-\tikzstyle{lensMid}=[fill=black!50]
+%N&B
+%\tikzstyle{lensInnerBefore}=[fill=black!85]
+%\tikzstyle{lensInnerAfter}=[fill=black!10]
+%\tikzstyle{lensMid}=[fill=black!50]
+%\tikzstyle{lensExt}=[fill=white,pattern=crosshatch dots]
+
+\tikzstyle{lensInnerBefore}=[fill=green!85]
+\tikzstyle{lensInnerAfter}=[fill=orange!30]
+\tikzstyle{lensMid}=[fill=blue!50]
 \tikzstyle{lensExt}=[fill=white,pattern=crosshatch dots]
 
 \shorthandoff{!}
@@ -324,6 +343,7 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 ,smallnode/.style={draw,shape=circle,minimum size=8mm,lensMid}
 ,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
 ]
+
 \node[bignode] (A) {};
 \node[right of=A,smallnode] (B) {};
 \node[right of=B,trinode,lensInnerAfter] (C) {};
@@ -651,7 +671,13 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   Par exemple, $ \msi{m}{(x ← 3 ; y ← x)} → \msi{m [x ↦ \widehat{3}]}{y ← x}
                            → \msi{m [x ↦ \widehat{3}][y ↦
     \widehat{3}]}{\iPass}$.
-% TODO continuation, citer Blazy
+
+  Dans le cas général, utiliser des instructions pour représenter l'état des
+  calculs ne suffit pas, il faut utiliser une continuation.
+  C'est ce qui est fait par exemple dans la sémantique de
+  CMinor~\cite{cminorSL}.
+  Ici, le flot de contrôle est plus simple et on peut se contenter de retenir
+  une simple instruction, ce qui simplifie la présentation.
 
 \item
   un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
@@ -1038,10 +1064,16 @@ Enfin, on définit $Φ$ pour accèder à n'importe quelle sous-valeur d'une vari
 dans la mémoire. Cela utilise $A$, $F$ et $T$ précedemment définis.
 
 La figure~\ref{fig:dep-lens} résume ces dépendances.
+ Les lignes pleines indiquent quelles sont les
+définitions utilisées, et les pointillés relient les lentilles similaires. À
+droite, on donne un exemple des lentilles de base. La valeur entourée correspond
+au «curseur» de la lentille, c'est-à-dire la valeur qui peut être renvoyée ou
+mise à jour.
 
 \begin{figure}[h]
 \centering
 \vspace{5mm}
+\begin{minipage}[b]{0.4\textwidth}
 \begin{tikzpicture}
 \node[draw] (I) {I};
 \node[draw, below of=I] (L) {L};
@@ -1059,11 +1091,18 @@ La figure~\ref{fig:dep-lens} résume ces dépendances.
 \draw[dotted] (L) -- ++(-5mm,  0) |- (F);
 \draw[dotted] (I) -- ++(-10mm, 0) |- (T);
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}[b]{0.5\textwidth}
+\begin{align*}
+I(3)     &: (3, 14, \circled{15}, 92, 65) \\
+L(toto)  &: ((toto, \circled{3}), (tata, 6), (titi, 2)) \\
+F(y)     &: \{ x: 0; y: \circled{-3} \} \\
+T(0)     &: \eArray{\circled{1}, 2, 3, 5} \\
+\end{align*}
+\end{minipage}
 \vspace{5mm}
 
-\caption[Dépendances entre les lentilles]{
-Dépendances entre les lentilles. Les lignes pleines indiquent quelles sont les
-définitions utilisées, et les pointillés relient les lentilles similaires.}
+\caption{Dépendances entre les lentilles}
 \label{fig:dep-lens}
 
 \end{figure}
@@ -1674,7 +1713,7 @@ Donc l'évaluation d'une phrase $p$ fait passer d'un état mémoire $m$
 à un autre $m'$, ce que l'on note $\ph{m}{p}{m'}$.
 
 L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
-exemple, après avoir défini les fonctions du programme, on pourra appeller
+exemple, après avoir défini les fonctions du programme, on pourra appeler
 $\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
 quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
 avec ce couple (variable, valeur). On suppose que les variables globales ont
@@ -1697,12 +1736,25 @@ les unes à la suite des autres.
 
 \section*{Conclusion}
 
-Nous venons de décrire un langage impératif, \langname. D'une part, sa syntaxe
-et une description nous permettent de voir ce qui le rapproche de C. Sa
-sémantique est explicitée entièrement, ce qui nous permet de prouver des
-propriétés dynamiques sur les analyses de typage décrites dans les
-chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
+On vient de définir un langage impératif, \langname. Le but est que celui-ci
+serve de support à des analyses statiques, notamment de montrer une propriété de
+sécurité sur les pointeurs. Pour le moment, on a seulement défini ce que sont
+les programmes (leur syntaxe) et comment ils s'exécutent (leur sémantique). Sur
+ces deux points, on note que nous sommes restés suffisamment proches de C, tout
+en utilisant pour la mémoire un modèle plus structuré qu'une simple suite
+d'octets.
 
-% TODO un peu court, reviens sur les lentilles et les accesseurs
+Afin de manipuler les états mémoire dans la sémantique d'évaluation, nous avons
+utilisé le concept des lentilles, qui permettent de chaîner des accesseurs entre
+eux et d'accéder simplement à des valeurs profondes de la mémoire, en utilisant
+le même outil pour la lecture et l'écriture.
+
+Pour le moment, on ne peut rien présager de l'exécution d'un programme bien
+formé syntaxiquement. Pour la grande majorité des programmes bien formés (à la
+syntaxe correcte), l'évaluation s'arrêtera soit par une erreur, soit parce
+qu'aucune règle d'évaluation ne peut s'appliquer. Dans les
+chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}, nous allons donc définir un
+système de types qui permettre de rejeter ces programmes se comportant mal à
+l'exécution.
 
 % vim: spelllang=fr

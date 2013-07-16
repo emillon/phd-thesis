@@ -1,0 +1,6 @@
+Listes chainées de Linux ? safety + typage
+
+[S] et d'autres classes de propriété de sécurité ? Plus fonctionnelles par
+ex?
+
+Possibilité d'utiliser coccinelle?

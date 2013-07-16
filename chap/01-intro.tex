@@ -32,10 +32,9 @@ temps de développement, il est facile de laisser passer des défauts de
 programmation.
 
 Ces erreurs, ou \emph{bugs}, peuvent avoir des conséquences dramatiques sur le
-plan matériel ou humain. Dans le cadre des produits d'EADS, il est donc capital
-de vérifier la correction des logiciels embarqués. De plus, le coût de déployer
-des correctifs est assez important: il est d'autant plus important d'être
-correct dès la première version.
+plan matériel ou humain. À titre d'exemple, un Airbus A320 embarque près de 10
+millions de lignes de code: il est capital de vérifier que celles-ci ne peuvent
+pas mettre en danger la sûreté des passagers.
 
 Une technique efficace est de réaliser des tests, c'est-à-dire exécuter le
 programme sous un environnement contrôlé. On peut alors détecter des
@@ -43,19 +42,24 @@ comportements non désirés. Mais même avec une grande quantité de tests il n'
 pas possible de couvrir tous les cas d'utilisation.
 
 Une autre approche est d'analyser le code source du programme avant de
-l'exécuter et de refuser de lancer les programmes qui contiennent des erreurs,
-quitte à limiter la possibilité d'en écrire certains. C'est l'analyse statique
-de programmes.
+l'exécuter et de refuser de lancer les programmes qui contiennent certaines
+constructions dangereuses. C'est l'analyse statique de programmes.
 
 Une des techniques d'analyse statique les plus répandues et les plus simples est
 le typage statique, qui consiste à associer à chaque morceau de programme, une
 étiquette décrivant quel genre de valeur sera produite par son évaluation. Par
 exemple, si $n$ est le nom d'une variable entière, alors $n + 2$ produira
 toujours une valeur entière.
+Cela permet de savoir si les programmes manipuleront des données incompatibles
+entre eux.
 
-Pour garantir l'isolation d'un noyau de système d'exploitation, un des points
-cruciaux est de restreindre la manière dont sont traitées les informations
-provenant des programmes utilisateur.
+Pour en revenir aux noyaux de système d'exploitation, ceux-ci manipulent à la
+fois des données sensibles et des données provenant du monde extérieur, pour
+lesquelles on n'a aucune garantie. On veut pouvoir distinguer celles-ci.
+
+Plus précisément, un des points cruciaux pour garantir l'isolation d'un noyau de
+système d'exploitation est de restreindre la manière dont sont traitées les
+informations provenant des programmes utilisateur.
 
 Le but de cette thèse est de montrer que le typage statique peut être utilisé
 pour détecter et interdire ces manipulations dangereuses.
@@ -147,10 +151,9 @@ y sont présentes
 }.
 
 Par exemple, supposons qu'un programme utilisateur contienne l'instruction
-\texttt{mov \%eax, \hexa{54c3b2f7}}. Celle-ci consiste à déplacer le contenu du
-registre \eax{} vers l'adresse mémoire \texttt{\hexa{54c3b2f7}}. Puisque cette
-adresse est dans l'espace utilisateur (la raison est décrite dans le
-chapitre~\ref{cha:os}), aucune erreur de protection mémoire n'est déclenchée.
+«déplacer le contenu du registre \eax{} vers l'adresse mémoire \texttt{a}», où
+\texttt{a} fait partie de l'espace mémoire de l'utilisateur. Alors aucune erreur
+de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
@@ -282,13 +285,13 @@ la valeur obtenue est également un entier.
 
 \paragraph{Typage fort ou faible}
 
-Contrairement à la distinction claire entre typage statique ou dynamique, la
-séparation entre typage fort et faible est moins nette. En poussant à l'extrême,
-les systèmes de types forts permettent d'éliminer totalement la nécessité de
-réaliser des tests de typage. Mais souvent ce n'est pas le cas, car il peut y
-avoir des constructions au sein du langage qui permettent de contourner le
-système de types, comme un opérateur de transtypage. On parle alors de typage
-faible.
+Indépendamment du moment où est faite cette analyse, on peut avoir plus ou moins
+de garanties sur les programmes sans erreurs de typage. En poussant à l'extrême,
+les systèmes de types forts garantissent que les valeurs ont toujours le type
+attendu. Avec du typage statique, cela permet d'éliminer totalement les tests de
+typage à l'exécution. Mais souvent ce n'est pas le cas, car il peut y avoir des
+constructions au sein du langage qui permettent de contourner le système de
+types, comme un opérateur de transtypage. On parle alors de typage faible.
 
 \paragraph{Polymorphisme}
 
@@ -309,9 +312,13 @@ un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
 
-Encore une autre technique est de déterminer la fonction appellée non pas par le
-type de ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet
+Une autre technique est de déterminer la fonction appelée non pas par le type
+de ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet
 d'associer le comportement aux données. On parle alors de polymorphisme objet.
+Dans ce cas, celui repose sur le sous-typage: si $A_1$ et $A_2$ sont des
+sous-types de $B$, on peut utiliser des valeurs de type $A_1$ ou $A_2$ là où une
+valeur de type $B$ est attendu. Dans ce cas, la fonction correspondante sera
+appelée.
 
 La dernière possibilité est le polymorphisme paramétrique, qui consiste à
 utiliser le \linebreak même code quelque soit le type des arguments. Dans ce
@@ -325,23 +332,7 @@ Cette technique a été décrite en premier dans~\cite{Milner78}.
 Pour un tour d'horizon de différents systèmes types de statiques, avec en
 particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
 
-\section{Langages d'implantation}
-
-Puisque notre but est d'analyser du code provenant de systèmes d'exploitation,
-il est nécessaire de s'intéresser aux langages de programmation dans lesquels
-ils sont écrits.
-
-\paragraph{Assembleur}
-
-Le noyau d'un système d'exploitation nécessite d'accéder au matériel, donc il
-est naturellement bas niveau. Pour accéder aux fonctionnalités spécifiques de
-chaque processeur, il est donc nécessaire d'en implanter une partie dans le
-langage d'assemblage natif de chaque architecture. Historiquement, les premiers
-systèmes d'exploitation étaient entièrement écrits en assembleur. Cela est de
-plus en plus rare, sauf dans les cas où les ressources sont trop limitées pour
-exécuter du code compilé, comme dans les systèmes embarqués ou temps-réel.
-
-\paragraph{C}
+\section{Langages}
 
 Le système Unix, développé à partir de 1969, a tout d'abord été développé en
 assembleur sur un mini-ordinateur PDP-7, puis a été porté sur d'autres
@@ -360,54 +351,14 @@ le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langa
 C. Le noyau du système Mac OSX d'Apple est également un dérivé d'Unix, et est
 donc aussi écrit dans ce langage.
 
-\paragraph{C++}
-
-Le manque de modularité de C a conduit à la création d'un nouveau langage plus
-riche autour de celui-ci. Dans les années 1980, C++ est apparu comme un C
-amélioré, avec de nombreuses fonctionnalités supplémentaires comme un modèle
-objet avec des classes, du polymorphisme \emph{ad hoc} et un système de
-\emph{templates} puissant permettant d'implanter une forme de polymorphisme
-universel. Microsoft Windows, initialement écrit en C, s'est enrichi de plus en
-plus de code C++, en faisant un des principaux systèmes d'exploitation écrits
-dans ce langage.
-
-\paragraph{Ada}
-
-Le langage C est bas niveau, mais son système de types n'est pas suffisamment
-évolué pour le rendre plus sûr que le langage d'assemblage vers lequel il est
-compilé. Dans les années 1970, le département de la défense américain
-(\emph{DoD}) a créé un comité dans le but de créer un nouveau langage pour ses
-systèmes temps-réels embarqués. Le résultat est Ada, un langage impératif avec
-un système de types statique plus sûr que celui de C. Par exemple, deux types
-entiers différents (comme les entiers de 16 bits et ceux de 32 bits) ne sont pas
-compatibles. Il faut ajouter une conversion explicite dans le code, qui se
-traduira par un test à l'exécution et éventuellement par une erreur
-\texttt{Constraint\_Error}. De nombreuses fonctionnalités comme la programmation
-générique, le polymorphisme de surcharge, et un modèle de concurrence précis ont
-fait que ce langage garde toujours une place de choix dans l'implantation de
-systèmes embarqués, notamment dans les applications spatiales et de défense.
-
-\paragraph{Autres langages}
-
-Il est bien sûr possible d'implanter un système d'exploitation dans n'importe
-quel langage, si celui-ci peut être compilé vers du langage machine et qu'il
-permet facilement d'inclure des fragments d'assembleur pour les parties de bas
-niveau. On peut par exemple trouver des systèmes d'exploitation écrits en
-C\#~\cite{SingularityOverview}, Haskell~\cite{HaskellOS} ou
-Ocaml~\cite{unikernels}.
-
-% TODO[S] dire que toi tu fais du C seulement?
-
-\section{Langages d'analyse}
-
-Les langages décrits précédemments sont faits pour être facilement écrits par
-des programmeurs humains. En général ils sont ambigüs ou ont des comportements
-implicites.
+Néanmoins ce langage n'est pas facile à analyser, car il est conçu pour être
+facilement écrit par des programmeurs humains. Certaines constructions sont
+ambigües, et de nombreux comportements sont implicites.
 
 Si on veut analyser des programmes, il est plus pratique de travailler sur une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
 dupliqués. Dans ce cas on ajoute une phase préliminaire à l'analyse, qui
-consiste à convertire le code à étudier vers cette représentation. On présente
+consiste à convertir le code à étudier vers cette représentation. On présente
 quelques candidats langages qui peuvent servir ce rôle:
 
 \subsection*{Middle-ends}
@@ -453,7 +404,7 @@ apporter une solution. Puisque qu'ils sont développés en parallèle des
 compilateurs, le support des extensions est en général moins important dans ces
 langages.
 
-\paragraph{CIL}\cite{NeculaCil} \link{kerneisCil} est une représentation en
+\paragraph{CIL}\cite{NeculaCil} \link{cil} est une représentation en
 OCaml d'un programme C, développée depuis 2002. Grâce à un mécanisme de
 greffons, elle permet de prototyper rapidement des analyses statiques de
 programmes.
@@ -500,8 +451,7 @@ fonctionnement général d'un système d'exploitation. On y introduit aussi les
 problèmes de manipulation de pointeurs contrôlés par l'utilisateur. Ceux-ci sont
 centraux puisqu'on désire les interdire. On fait ensuite un tour d'horizon des
 techniques existantes permettant de traiter ce problème par analyse statique de
-code source. Enfin, on conclut en énonçant précisément la proposition au cœur de
-cette thèse.
+code source.
 
 \paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution:
 \langname{}, un langage impératif. Sa syntaxe y est d'abord décrite, puis sa
@@ -519,7 +469,11 @@ L'implantation du système de types sur le langage \newspeak est d'abord décrit
 à l'aide d'une variante de l'algorithme W de Damas et Milner.
 La manière de compiler depuis du code C est également présentée.
 Ensuite, on applique cette implantation à un cas d'étude concret. Il s'agit d'un
-bug ayant touché le noyau Linux. En lançant notre prototype, la version non
+bug ayant touché un pilote de carte graphique dans le noyau Linux.
+En manipulant incorrectement un pointeur dont la valeur est contrôlée par
+l'utilisateur, il crée un problème de sécurité car un utilisateur malveillant
+lire ou écrire dans l'espace mémoire réservé au noyau.
+En lançant notre prototype, la version non
 corrigée lève une erreur alors que dans la version corrigée, un type correct est
 inféré. On montre ainsi que le système de type capture précisément ce genre
 d'erreur de programmation.

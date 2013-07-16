@@ -87,14 +87,12 @@ sensible à la syntaxe et au flot de contrôle du programme. Cette notion de
 \emph{patches sémantiques} pour détecter ou modifier des constructions
 particulières.
 
-Ces techniques peuvent parfois être utiles parce qu'elles permettent de plonger
-rapidement dans le code, en identifiant par exemple des appels à des fonctions
-dangereuses. En revanche, cela n'est utile que lorsque les propriétés que l'on
-recherche sont très locales. Elles n'offrent également que peu de garantie (ce
-n'est pas parce qu'une construction dangereuse n'est pas présente que le code
-est correct).
-
-% TODO attention à Muller
+Ces techniques sont utiles parce qu'elles permettent de plonger rapidement dans
+le code, en identifiant par exemple des appels à des fonctions dangereuses. En
+revanche, cela n'est possible que lorsque les propriétés que l'on recherche sont
+plutôt locales. Elles offrent également peu de garantie puisqu'elles ne prennent
+pas en compte la sémantique d'exécution du langage: il faudra en général
+vérifier manuellement la sortie de ces analyses.
 
 \section{Analyse de valeurs et interprétation abstraite}
 \label{sec:absint}

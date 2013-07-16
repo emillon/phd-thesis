@@ -13,7 +13,7 @@ Cette thèse comporte 4 contributions principales.
 
 Le système de types de C est trop rudimentaire pour permettre d'obtenir des
 garanties sur l'exécution des programmes bien typés. En interdisant certaines
-constructions dangereuses et en en annotant certaines, nous avons isolé un
+constructions dangereuses et en annotant certaines autres, nous avons isolé un
 langage impératif bien typable, pour lequel on peut définir un système de types
 sûr.
 
@@ -49,6 +49,8 @@ implanter d'autres analyses de typage sur le langage Newspeak.
 D'autre part, ce prototype a été utilisé pour confirmer l'existence d'un bug
 dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
 vérifier du code de production à l'aide de techniques de typage.
+Des travaux d'expérimentation sont en cours afin d'analyser de plus grandes
+partie du noyau.
 
 \section{Différences avec C}
 
@@ -107,7 +109,7 @@ entier et un type pointeur.
 Le premier ne pose pas de problème: il est toujours possible de donner une
 sémantique à une conversion entre deux types numériques. Dans le cas éventuel ou
 une conversion n'est pas possible, on peut signaler une erreur à l'exécution (de
-la même nature qu'une divition par zéro).
+la même nature qu'une division par zéro).
 
 Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
 types pointeurs revient à convertir entre les types pointés.
@@ -168,19 +170,25 @@ La sémantique opérationnelle utilise un environnement d'exécution pour certai
 cas. Contrairement à C, les débordements de tampon et les déréférencements de
 pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une caractéristique
 cruciale de cette approche: en effet, si on suppose que les programmes que l'on
-analyse sont corrects de ce point de vue, on peut désactiver ces vérifications
-et le reste des propriétés est toujours valable.
+analyse ne comportent pas de telles erreurs de programmation, on peut désactiver
+ces vérifications et le reste des propriétés est toujours valable.
 
-Un autre endroit, plus problématique, où des tests dynamiques sont faits est
-lorsqu'on recherche en mémoire des pointeurs référençant un cadre d'appel qui
-n'est plus valide (à l'aide de l'opérateur $\mathrm{Cleanup}(\cdot)$). Supprimer
-ce test rend l'analyse incorrecte, car il est alors possible de faire référence
-à une variable avec un type différent.
+On repose sur l'environnement d'exécution à un endroit plus problématique. À la
+sortie de chaque portée (au retour d'une fonction et après la portée d'une
+variable locale déclarée), on parcourt la mémoire à la recherche des pointeurs
+référençant les variables qui ne sont plus valides. Supprimer ce test rend
+l'analyse incorrecte, car il est alors possible de faire référence à une
+variable avec un type différent.
 
-De même, si on peut avoir une garantie statique que les adresses des variables
-locales ne seront plus accessibles au retour d'une fonction, alors on peut
-supprimer le nettoyage en posant $\mathrm{Cleanup}(m) = m$. Cette garantie peut
-être obtenue avec une analyse statique préalable~\cite{ifm10}.
+Si on peut avoir une garantie statique que les adresses des variables locales ne
+seront plus accessibles au retour d'une fonction, alors on peut supprimer cette
+étape de nettoyage. Cette garantie peut être obtenue avec une analyse statique
+préalable. Par exemple les régions~\cite{jfp92} peuvent être utilisées à cet
+effet: en plus de donner un type à chaque expression, on calcule
+statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
+correspond à un ramasse-miette fait statiquement.
+
+% TODO attention, on peut finir avec une seule région (pire des cas)
 
 \paragraph{Flot de contrôle}
 
@@ -194,14 +202,15 @@ réalisée par \ctonewspeak.
 
 Dans le noyau Linux, il est courant d'utiliser les sauts pour factoriser la
 libération de ressources à la fin d'une fonction. Il est d'ailleurs possible
-d'utiliser l'outil Coccinelle pour convertir du code ce style~\cite{lctes11}. On
-peut imaginer qu'il est possible de l'utiliser pour faire la conversion inverse.
+d'utiliser l'outil Coccinelle pour donne cette forme à du code utilisant un
+autre style de structures de contrôle~\cite{lctes11}. On peut imaginer qu'il est
+possible de l'utiliser pour faire la conversion inverse.
 
 En plus de ces sauts locaux, le langage C contient une manière de sauvegarder un
 état d'exécution et d'y sauter, même entre deux fonctions: ce sont
 respectivement les constructions \texttt{setjmp} et \texttt{longjmp}. Elles sont
-très puissantes puisqu'elles permettent d'exprimer n'importe quel flot de
-contrôle, à la manière d'une continuation.
+très puissantes puisqu'elles permettent d'exprimer de nouvelles structures de
+contrôle. Il s'agit de formes légères de continuations où la pile reste commune.
 
 Cette fonctionnalité peut servir par exemple à implanter des exceptions, ou des
 coroutines. En pratique, il est rare de trouver ces fonctions dans du code noyau
@@ -215,6 +224,9 @@ Pour faciliter ce changement, on peut tout d'abord passer à une sémantique
 monadique (ainsi qu'évoqué dans la conclusion de la partie~\ref{part:lang},
 page~\pageref{page:ccl-II-monad}) puis ajouter les continuations à la monade
 sous-jacente.
+
+% TODO il faut probablement indiquer ici pourquoi tu as préféré ne pas le faire
+% pour le noyau traité
 
 \paragraph{Allocation dynamique}
 
@@ -253,51 +265,49 @@ entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
 accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
 analyse préalable comme~\cite{ifm10}. Il est aussi possible d'utiliser un système de
-régions~\cite{jfp92}. En plus de donner un type à chaque expression, on calcule
-statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
-correspond à un ramasse-miette fait statiquement.
+régions~\cite{jfp92}.
 
-\paragraph{Types structures}
+% TODO les expliquer
 
-L'accès à un type structure est délicat car on voudrait à partir d'une
-expression de la forme $x.l$ en déduire une information sur les types de $x$ et
-de $x.l$. La solution que nous avons choisi consiste à s'assurer que chaque $l$
-est associé à un seul type de structure $S$. On suppose qu'une passe de
-prétraitement a annoté le code pour transformer $x.l$ en $x.l_S$ où $S$ est la
-définition complète de la structure. Cela n'est pas satisfaisant pour deux
-raisons: d'une part, les types doivent apparaître dans le code du programme, ce
-qui annule l'avantage de l'inférence de types. D'autre part, cela veut dire
-qu'on ne peut pas exprimer de types structures contenant un pointeur vers une
-valeur du même type (par exemple, pour une liste chaînée). Un moyen de
-contourner cette limitation est d'enrichir le langage des types pour autoriser
-les structures récursives, à l'aide d'un opérateur de point fixe.
+%\paragraph{Types structures}
 
-Il existe d'autres solutions à ce problème, sans ajouter l'annotation totale de
-type. On ne connaît alors à l'accès qu'un seul nom de champ. La première est
-d'employer du sous-typage, en déclarant qu'un type structure contenant moins de
-champ est moins général qu'un autre. Au fur et à mesure de l'inférence, on
-obtient alors un type de plus en plus précis. En revanche dans ce cas là on perd
-la décidabilité de l'inférence. Une autre manière de faire est d'employer le
-polymorphisme de rangée: plutôt que de cacher les champs inconnus derrière le
-sous-typage, on en fait une variable $ρ$ qui pourra s'unifier avec d'autres
-champs. Par exemple, partant de $x.l ← 0$ on déduit que $x.l$ a pour type
-$\tInt$ et que $x$ a pour type $\{ l : \tInt ; ρ \} $. En pratique,
-l'implantation décrite dans le chapitre~\ref{cha:implem} utilise une technique
-similaire pour inférer les types des structures à partir du code \newspeak.
+%L'accès à un type structure est délicat car on voudrait à partir d'une
+%expression de la forme $x.l$ en déduire une information sur les types de $x$ et
+%de $x.l$. La solution que nous avons choisi consiste à s'assurer que chaque $l$
+%est associé à un seul type de structure $S$. On suppose qu'une passe de
+%prétraitement a annoté le code pour transformer $x.l$ en $x.l_S$ où $S$ est la
+%définition complète de la structure. Cela n'est pas satisfaisant pour deux
+%raisons: d'une part, les types doivent apparaître dans le code du programme, ce
+%qui annule l'avantage de l'inférence de types. D'autre part, cela veut dire
+%qu'on ne peut pas exprimer de types structures contenant un pointeur vers une
+%valeur du même type (par exemple, pour une liste chaînée). Un moyen de
+%contourner cette limitation est d'enrichir le langage des types pour autoriser
+%les structures récursives, à l'aide d'un opérateur de point fixe.
 
-%% TODO et les listes chainées de Linux ? safety + typage
+%Il existe d'autres solutions à ce problème, sans ajouter l'annotation totale de
+%type. On ne connaît alors à l'accès qu'un seul nom de champ. La première est
+%d'employer du sous-typage, en déclarant qu'un type structure contenant moins de
+%champ est moins général qu'un autre. Au fur et à mesure de l'inférence, on
+%obtient alors un type de plus en plus précis. En revanche dans ce cas là on perd
+%la décidabilité de l'inférence. Une autre manière de faire est d'employer le
+%polymorphisme de rangée: plutôt que de cacher les champs inconnus derrière le
+%sous-typage, on en fait une variable $ρ$ qui pourra s'unifier avec d'autres
+%champs. Par exemple, partant de $x.l ← 0$ on déduit que $x.l$ a pour type
+%$\tInt$ et que $x$ a pour type $\{ l : \tInt ; ρ \} $. En pratique,
+%l'implantation décrite dans le chapitre~\ref{cha:implem} utilise une technique
+%similaire pour inférer les types des structures à partir du code \newspeak.
 
-\paragraph{Assembleur}
+%\paragraph{Assembleur}
 
-Comme la plupart des outils d'analyse de code C, il est impossible de traiter
-l'assembleur en ligne qui peut se trouver entre deux instructions. Dans le cas
-de Linux, le code est fait pour être portable, et les parties dépendantes d'une
-certaine architecture (et donc le code assembleur) sont isolées explicitement.
-On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
-l'implantation est faite en assembleur, mais au sein de cette implantation on ne
-peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
-couverte par la sûreté du typage: après son exécution on ne peut plus rien
-garantir sur le programme.
+%Comme la plupart des outils d'analyse de code C, il est impossible de traiter
+%l'assembleur en ligne qui peut se trouver entre deux instructions. Dans le cas
+%de Linux, le code est fait pour être portable, et les parties dépendantes d'une
+%certaine architecture (et donc le code assembleur) sont isolées explicitement.
+%On peut alors si nécessaire ajouter une annotation de type sur une fonction dont
+%l'implantation est faite en assembleur, mais au sein de cette implantation on ne
+%peut bien sûr rien dire. De plus, le corps de cette fonction n'est pas
+%couverte par la sûreté du typage: après son exécution on ne peut plus rien
+%garantir sur le programme.
 
 %\paragraph{Analyse du noyau Linux}
 
@@ -307,33 +317,26 @@ garantir sur le programme.
 %KMS, et même à toutes les fonctions faisant partie des différentes interfaces
 %recevant un pointeur de l'espace utilisateur.
 
-\paragraph{Autres types abstraits}
-%TODO[S] ??
+%\paragraph{Autres types abstraits}
 
-Notre approche est basée sur le fait de rendre abstrait un type de C et
-d'y interdire certaines opérations: ici, on marque un certain type de pointeur
-comme «utilisateur» et on interdit l'opérateur \texttt{*} dessus.
+%Notre approche est basée sur le fait de rendre abstrait un type de C et
+%d'y interdire certaines opérations: ici, on marque un certain type de pointeur
+%comme «utilisateur» et on interdit l'opérateur \texttt{*} dessus.
 
-Le langage C n'ayant pas de types abstraits, on ne peut pas séparer la
-représentation d'un type (par exemple: entier signé de 32 bits) des opérations
-qui y sont attachées. La seule abstraction possible est lorsqu'on manipule une
-structure par pointeur. Il n'est alors pas nécessaire de connaître sa définition
-totale. L'idiome est alors de placer uniquement une déclaration en avance
-(\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner la définition
-complète dans l'implantation (\texttt{.c}). Cette technique de \emph{pointeurs
-opaques} n'est pas applicable aux autres types.
+%Le langage C n'ayant pas de types abstraits, on ne peut pas séparer la
+%représentation d'un type (par exemple: entier signé de 32 bits) des opérations
+%qui y sont attachées. La seule abstraction possible est lorsqu'on manipule une
+%structure par pointeur. Il n'est alors pas nécessaire de connaître sa définition
+%totale. L'idiome est alors de placer uniquement une déclaration en avance
+%(\texttt{struct s;}) dans l'en-tête (\texttt{.h}) et de renseigner la définition
+%complète dans l'implantation (\texttt{.c}). Cette technique de \emph{pointeurs
+%opaques} n'est pas applicable aux autres types.
 
-Dans de nombreuses interfaces, on emploie des types entiers qui servent
-d'étiquettes. Par exemple, les descripteurs de fichiers renvoyés par la fonction
-\verb!open()! et passés au fonctions \verb!read()! et \verb!write()! ont
-le type \texttt{int}. Le langage autorise donc par exemple de multiplier entre
-eux deux descripteurs de fichiers, ce qui ne correspond pas à une opération
-concrète.
+%Dans de nombreuses interfaces, on emploie des types entiers qui servent
+%d'étiquettes. Par exemple, les descripteurs de fichiers renvoyés par la fonction
+%\verb!open()! et passés au fonctions \verb!read()! et \verb!write()! ont
+%le type \texttt{int}.
 
-On peut aussi distinguer plusieurs types abstraits entre eux. Par exemple, si on
-manipule des images, on peut éviter de nombreuses erreurs de programmation en
-définissant un type «indice de ligne» et un type «indice de colonne»
-incompatibles entre eux.
 
 % TODO il serait pas mal de citer les membres du jury dans ta biblio
 % Jouvelot  > the type and effect discipline?
@@ -341,10 +344,8 @@ incompatibles entre eux.
 % Levillain > NPK?
 % Chailloux > DAOC?
 
-% TODO[S] et d'autres classes de propriété de sécurité ? Plus fonctionnelles par
-% ex?
 
-\section{Conclusion}
+\section*{Conclusion}
 
 L'importance des logiciels grandit par deux effets:
 d'une part, ils sont présents dans de plus en plus d'appareils,
