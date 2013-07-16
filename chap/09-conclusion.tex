@@ -188,7 +188,7 @@ effet: en plus de donner un type à chaque expression, on calcule
 statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
 correspond à un ramasse-miette fait statiquement.
 
-% TODO attention, on peut finir avec une seule région (pire des cas)
+% attention, on peut finir avec une seule région (pire des cas)
 
 \paragraph{Flot de contrôle}
 
@@ -211,10 +211,9 @@ En plus de ces sauts locaux, le langage C contient une manière de sauvegarder u
 respectivement les constructions \texttt{setjmp} et \texttt{longjmp}. Elles sont
 très puissantes puisqu'elles permettent d'exprimer de nouvelles structures de
 contrôle. Il s'agit de formes légères de continuations où la pile reste commune.
-
 Cette fonctionnalité peut servir par exemple à implanter des exceptions, ou des
-coroutines. En pratique, il est rare de trouver ces fonctions dans du code noyau
-ou embarqué, donc ce manque n'a pas beaucoup d'impact.
+coroutines.
+
 
 Avec l'interprète du chapitre~\ref{cha:lang}, il n'est pas possible de donner
 une sémantique à ces constructions. Une des manières de faire est de modifier
@@ -225,8 +224,9 @@ monadique (ainsi qu'évoqué dans la conclusion de la partie~\ref{part:lang},
 page~\pageref{page:ccl-II-monad}) puis ajouter les continuations à la monade
 sous-jacente.
 
-% TODO il faut probablement indiquer ici pourquoi tu as préféré ne pas le faire
-% pour le noyau traité
+En pratique, il est rare de trouver ces constructions plus avancées dans du code
+noyau ou embarqué, donc ce manque n'a pas beaucoup d'impact. De plus, cela
+permet une présentation plus simple et accessible.
 
 \paragraph{Allocation dynamique}
 
@@ -340,9 +340,6 @@ régions~\cite{jfp92}.
 
 % TODO il serait pas mal de citer les membres du jury dans ta biblio
 % Jouvelot  > the type and effect discipline?
-% Blazy     >
-% Levillain > NPK?
-% Chailloux > DAOC?
 
 
 \section*{Conclusion}
