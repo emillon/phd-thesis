@@ -66,9 +66,8 @@ On ajoute à \langname{} la notion de valeur provenant de l'espace utilisateur.
 Pour marquer la séparation entre les deux espaces d'adressage, on ajoute une
 construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ désigne une
 variable classique (un pointeur noyau) et l'opérateur $\phx\vTainted$ permet de
-l'interpréter comme un pointeur vers l'espace utilisateur, contrairement à
-$\widehat{\&}\cdot$ qui crée des pointeurs vers l'espace noyau. En quelque
-sorte, on ne classifie pas les valeurs selon la variable pointée mais selon la
+l'interpréter comme un pointeur vers l'espace utilisateur.. En quelque sorte, on
+ne classifie pas les valeurs selon la variable pointée mais selon la
 construction du pointeur.
 
 Remarquons qu'on n'introduit pas de sous-typage: les pointeurs noyau ne peuvent
@@ -125,8 +124,8 @@ On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
 $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
-une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $φ$,
-$\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts: une un
+une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $\wphi{φ}$,
+$\eTaint{e}$ s'évalue en $\wphi{\vTainted{φ}$}. Cela correspond à 2 ajouts: une un
 nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
 Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
@@ -153,7 +152,7 @@ la figure~\ref{fig:qualif-changes}.
 \\
 \gramdef{Chemins}{φ}
   { … }{}
-  { \vTainted{φ} }{Valeur souillée}
+  { \vTainted{φ} }{Pointeur utilisateur}
   {END}
 \\
 \\
@@ -259,7 +258,7 @@ dynamique.
 naïvement le système de types avec la règle suivante:
 
 \begin{mathpar}
-  \irule{Taint-Ignore}
+  \irule{AddrOf-User-Ignore}
     { Γ ⊢ lv : t }
     { Γ ⊢ \eTaint{lv} : t~* }
 \end{mathpar}
@@ -304,7 +303,7 @@ conclusion n'est pas vraie:
       \begin{mathpar}
         \irule{Lv-Deref}
           {
-            \irule{Taint-Ignore}
+            \irule{AddrOf-User-Ignore}
               {
                 \irule{Lv-Deref}
                   {
@@ -347,7 +346,7 @@ conclusion n'est pas vraie:
 
 Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
-\textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
+\textsc{AddrOf-User-Ignore} n'est pas en adéquation avec les extensions présentées
 dans la section~\ref{sec:extensions-noyau}. Il faut donc raffiner les règles de
 typage pour interdire ce cas.
 
@@ -486,12 +485,13 @@ celui d'un opérateur.
 \subsection*{Typage sémantique}
 
 La définition du typage sémantique doit aussi être étendue au cas $φ =
-\vTainted{φ'}$.
+\vTainted{φ'}$. En essence, \textsc{S-UserPtr} énonce que traverser un
+constructeur $\phx\vTainted$ transforme un pointeur en pointeur utilisateur.
 
 \begin{mathpar}
-  \irule{S-Tainted}
-    { \semtyp{m}{          φ' }{τ} }
-    { \semtyp{m}{\vTainted{φ'}}{\ptrU{τ}} }
+  \irule{S-UserPtr}
+      { \semtyp{m}{\wphi{          φ }}{\ptrK{τ}} }
+      { \semtyp{m}{\wphi{\vTainted{φ}}}{\ptrU{τ}} }
 
   \irule{Comp-Ptr}
     { \tComp{τ}{t} }
