@@ -1,30 +1,38 @@
 % TODO chapeaux anx
 
-\begin{figure}
+On rappelle ici pour référence la syntaxe de \langname, ainsi que sa sémantique
+d'évaluation.
+
+\section*{Syntaxe des expressions}
+\vspace{-1em}
+
+\setlength{\FrameSep}{3pt}
+
+\begin{framed}
 \figstxdata{}
-\caption{Syntaxe des expressions}
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\section*{Syntaxe des instructions}
+
+\begin{framed}
 \figstxinstr{}
-\caption{Syntaxe des instructions}
-\end{figure}
+\end{framed}
 
-\begin{figure}[h]
+\section*{Syntaxe des opérateurs}
+
+\begin{framed}
 \figstxops{}
+\end{framed}
 
-\caption{Syntaxe des opérateurs}
-\end{figure}
+\section*{Contextes d'évaluation}
 
-\begin{figure}
-
+\begin{framed}
     \figctx{}
+\end{framed}
 
-\caption{Contextes d'évaluation}
-\end{figure}
+\section*{Règles d'évaluation des erreurs}
 
-\begin{figure}
-
+\begin{framed}
 \begin{mathpar}
     \ruleheader{$Ξ → Ω$}
 
@@ -37,10 +45,11 @@
     \semrule{Exp-Call-Err}
 \end{mathpar}
 
-\caption{Règles d'évaluation des erreurs}
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\section*{Règles d'évaluation des left-values et expressions }
+
+\begin{framed}
 
 \begin{mathpar}
     \ruleheader{$\mm{m}{e}{m'}{e'}$}
@@ -82,10 +91,12 @@
     \semrule{Exp-Call-Return}
 \end{mathpar}
 
-\caption{Règles d'évaluation des left-values et expressions }
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\newpage
+\section*{Règles d'évaluation des instructions, phrases et programmes}
+
+\begin{framed}
 
 \begin{mathpar}
     \ruleheader{$\mm{m}{i}{m}{i'}$}
@@ -125,10 +136,12 @@
     \semrule{Prog}
 \end{mathpar}
 
-\caption{Règles d'évaluation des instructions, phrases et programmes}
-\end{figure}
+\end{framed}
 
-\begin{figure}
+\newpage
+\section*{Règles d'évaluation des extensions noyau}
+
+\begin{framed}
 
 \begin{mathpar}
   \semrule{Expr-Tainted}
@@ -142,5 +155,4 @@
   \semrule{User-Put-Err}
 \end{mathpar}
 
-\caption{Règles d'évaluation des extensions noyau}
-\end{figure}
+\end{framed}
