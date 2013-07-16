@@ -202,19 +202,15 @@ réalisée par \ctonewspeak.
 
 Dans le noyau Linux, il est courant d'utiliser les sauts pour factoriser la
 libération de ressources à la fin d'une fonction. Il est d'ailleurs possible
-d'utiliser l'outil Coccinelle pour convertir du code vers ce
-style~\cite{lctes11}.
-% TODO pas clair
-On peut imaginer qu'il est possible de l'utiliser pour
-faire la conversion inverse.
+d'utiliser l'outil Coccinelle pour donne cette forme à du code utilisant un
+autre style de structures de contrôle~\cite{lctes11}. On peut imaginer qu'il est
+possible de l'utiliser pour faire la conversion inverse.
 
 En plus de ces sauts locaux, le langage C contient une manière de sauvegarder un
 état d'exécution et d'y sauter, même entre deux fonctions: ce sont
 respectivement les constructions \texttt{setjmp} et \texttt{longjmp}. Elles sont
-très puissantes puisqu'elles permettent d'exprimer n'importe quelle structure de
-contrôle, à la manière d'une continuation.
-
-% TODO attention pour une continuation il te faut la pile en plus
+très puissantes puisqu'elles permettent d'exprimer de nouvelles structures de
+contrôle. Il s'agit de formes légères de continuations où la pile reste commune.
 
 Cette fonctionnalité peut servir par exemple à implanter des exceptions, ou des
 coroutines. En pratique, il est rare de trouver ces fonctions dans du code noyau
