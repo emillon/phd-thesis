@@ -213,10 +213,11 @@ ici:
 
 Les accès à la mémoire sont en effet faits par le biais de la lentille $Φ$. Il
 suffit donc d'adapter sa définition (page~\pageref{subsec:acces-phi}) de
-celle-ci en rajoutant le cas:
+celle-ci en rajoutant les cas suivant:
 
 \begin{align*}
-Φ(\vTainted{φ}) &= \serr{sec}
+    \lensGet{Φ}{\vTainted{φ}}    &= \serr{sec} \\
+    \lensPut{Φ}{\vTainted{φ}}{v} &= \serr{sec}
 \end{align*}
 
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
@@ -329,9 +330,9 @@ conclusion n'est pas vraie:
             {
               \inferrule*
                 { }
-                {m[*\vTainted{x}] = \serr{sec}}
+                {m[\vTainted{x}]_Φ = \serr{sec}}
             }
-            { \mm{m}{* \eTaint {x}}{m}{\serr{sec}} } % TODO faux
+            { \mm{m}{* \eTaint {x}}{m}{\serr{sec}} }
           \\
           \irule{Eval-Err}
             { }
