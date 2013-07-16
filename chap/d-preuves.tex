@@ -383,12 +383,8 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 
     \item $i' = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
 
-    \item $\mm{m'}{i'}{m''}{i''}$. Par \textsc{Decl-Ctx} il vient
-        $\mm{m}{\iDecl{x}{v}{i'}}{m'''}{\iDecl{x}{v'}{i''}}$ où
-       $v' = m''[(|m''|, x)]_A$
-% TODO d'où vient A? expliciter
-       et
-       $m''' = m'' - x$.
+    \item $\mm{m'}{i'}{m''}{i''}$. On peut alors appliquer la règle
+          \textsc{Decl-Ctx}.
 
     \item $\msi{m'}{i'} → Ω$. On applique \textsc{Decl-Err}.
 
