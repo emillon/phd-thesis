@@ -320,7 +320,7 @@ la division, ou l'opérateur $\phxx\cLookup$).
 %\item $\msi{m}{lv} → Ω$.
 %\end{itemize}
 
-\subsection{Instructions}
+\subsection*{Instructions}
 
 \paragraph{\textsc{Pass}  :} %{{{
 Ce cas est immédiat.
@@ -425,7 +425,7 @@ Ce cas est direct: on applique la règle d'évaluation \textsc{While}.
 
 % }}}
 
-\subsection{Expressions}
+\subsection*{Expressions}
 
   \paragraph{\textsc{Cst-Int}:} % {{{
 $e$ est alors de la forme $n$, qui est une valeur.
@@ -622,7 +622,7 @@ fonctions se terminent par une instruction $\iReturn{\cdot}$
 
 %}}}
 
-\subsection{Left-values}
+\subsection*{Left-values}
 
 \paragraph{\textsc{Lv-Var}:}%{{{
 
@@ -796,7 +796,7 @@ car elle peut être appliquée en contexte d'expression, d'instructions ou de
 left-values. De même la règle \textsc{Trans} ne pose pas de problème, il suffit
 d'appliquer l'hypothèse de récurrence à ses prémisses.
 
-\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
+\subsection*{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
 \paragraph{\textsc{Phi-Deref}:} % {{{
 
@@ -819,7 +819,7 @@ lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
 
 % }}}
 
-\subsection{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
+\subsection*{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
 En appliquant le lemme~\ref{lemma:inv-ctx}, on obtient l'existence de $t'$ tel
@@ -832,13 +832,13 @@ Enfin, grâce au lemme~\ref{lemma:typ-ctx}, on sait que
 $Γ ⊢ \ctxSub{C}{lv'} : t$.
 % }}}
 
-\subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
+\subsection*{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
 Idem que dans le cas des left-values.
 % }}}
 
-\subsection{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}
+\subsection*{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}
 
 \paragraph{\textsc{Exp-Cst}:} % {{{
 
@@ -919,7 +919,7 @@ $v' = v$. Dans tous les cas on conclut car $m' ⊧ v' : τ$.
 
 % }}}
 
-\subsection{Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$}
+\subsection*{Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
 Idem que dans le cas des expressions.
