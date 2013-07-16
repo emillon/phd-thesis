@@ -188,9 +188,8 @@ Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 \begin{figure}[h]
 
 \tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
-\tikzstyle{lenspatB}=[fill=black!50]
-\tikzstyle{lenspatC}=[fill=black!20]
-% TODO couleur: est-ce possible d'avoir de la couleur qui passe en N&B?
+\tikzstyle{lenspatB}=[fill=blue!50]
+\tikzstyle{lenspatC}=[fill=red!20]
 
   \begin{align*}
   \lensGet{ℒ}{\lensNodeBig{lenspatA}{lenspatB}} &= \lensInner{lenspatB} \\
@@ -252,11 +251,13 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 
 \begin{figure}[h]
 
+% N&B
+%\tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
+%\tikzstyle{lenspatB}=[fill=black!50]
+%\tikzstyle{lenspatC}=[fill=black!20]
 \tikzstyle{lenspatA}=[fill=white,pattern=crosshatch dots]
-\tikzstyle{lenspatB}=[fill=black!50]
-\tikzstyle{lenspatC}=[fill=black!20]
-
-% TODO couleur: est-ce possible d'avoir de la couleur qui passe en N&B?
+\tikzstyle{lenspatB}=[fill=blue!50]
+\tikzstyle{lenspatC}=[fill=red!20]
 
   \begin{align*}
     \lensGet{Δ(b)}{\lensNodeBigIdx{lenspatA}{lenspatB}{lenspatB}{lenspatB}{lenspatB}} &= \lensInnerStar{lenspatB} \\
@@ -323,9 +324,15 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 
 \centering
 
-\tikzstyle{lensInnerBefore}=[fill=black!85]
-\tikzstyle{lensInnerAfter}=[fill=black!10]
-\tikzstyle{lensMid}=[fill=black!50]
+%N&B
+%\tikzstyle{lensInnerBefore}=[fill=black!85]
+%\tikzstyle{lensInnerAfter}=[fill=black!10]
+%\tikzstyle{lensMid}=[fill=black!50]
+%\tikzstyle{lensExt}=[fill=white,pattern=crosshatch dots]
+
+\tikzstyle{lensInnerBefore}=[fill=green!85]
+\tikzstyle{lensInnerAfter}=[fill=orange!30]
+\tikzstyle{lensMid}=[fill=blue!50]
 \tikzstyle{lensExt}=[fill=white,pattern=crosshatch dots]
 
 \shorthandoff{!}
@@ -336,7 +343,7 @@ On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
 ,smallnode/.style={draw,shape=circle,minimum size=8mm,lensMid}
 ,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
 ]
-% TODO couleur: est-ce possible d'avoir de la couleur qui passe en N&B?
+
 \node[bignode] (A) {};
 \node[right of=A,smallnode] (B) {};
 \node[right of=B,trinode,lensInnerAfter] (C) {};
