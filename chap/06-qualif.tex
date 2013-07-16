@@ -34,11 +34,16 @@ non.
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
 Tout d'abord, on définit une nouvelle erreur $\serr{taint}$, déclenchée
-lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le noyau est
-déréférencé (le cas que l'on cherche à éviter)\footnote{Il est important de
-noter que ce cas d'erreur est «virtuel», la distinction entre pointeur contrôlé
-par l'utilisateur et par le noyau n'étant normalement pas visible à
-l'exécution.}. % TODO la footnote tue
+lorsqu'un pointeur \linebreak contrôlé par l'utilisateur et pointant vers le noyau est
+déréférencé (le cas que l'on cherche à éviter). Il est important de noter que ce
+cas d'erreur est «virtuel», c'est-à-dire qu'on l'ajoute à la sémantique pour
+pouvoir le détecter facilement comme un cas d'erreur, mais dans une sémantique
+de plus bas niveau, l'erreur ne serait pas déclenchée, comme en C. D'un point de
+vue opérationnel, cela équivaut à ajouter un test dynamique à chaque
+déréférencement, ce qui est sûr mais se paye en performances. Ajouter ce cas
+d'erreur virtuel dans la sémantique d'évaluation permet de transformer un
+problème de sécurité (empêcher les fuites d'information) en problème de sûreté
+(empêcher les erreurs à l'exécution).
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
@@ -213,9 +218,9 @@ celle-ci en rajoutant le cas:
 
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
 \linebreak $\ctuF$. L'idée est que celles-ci testent dynamiquement la
-\emph{valeur} du paramètre contrôlé par l'utilisateur afin de vérifier que
-celui-ci pointe vers l'espace utilisateur (c'est-à-dire, qu'il est de la forme
-$\vTainted{φ}$).
+\emph{valeur} du paramètre \linebreak contrôlé par l'utilisateur afin de
+vérifier que celui-ci pointe vers l'espace utilisateur (c'est-à-dire, qu'il est
+de la forme $\vTainted{φ}$).
 
 Deux cas peuvent se produire. Soit la partie à vérifier a la forme
 $\vTainted{φ'}$, soit non (et dans ce cas $∄φ', φ = \vTainted{φ'}$). Dans le
@@ -359,7 +364,7 @@ des pointeurs.
 \subsection*{Pointeurs utilisateurs}
 
 Le changement clef est l'ajout de \emph{pointeurs utilisateur}. En plus des
-types pointeurs (noyau) $\ptrK{t}$, on ajoute des types pointeurs utilisateur
+types pointeurs habituels $\ptrK{t}$, on ajoute des types pointeurs utilisateur
 $\ptrU{t}$. La différence entre les deux représente \emph{qui} contrôle leur
 valeur (section~\ref{sec:secu-syscalls}).
 
@@ -511,8 +516,10 @@ permettent de remonter un jugement de typage.
 \end{lemma}
 
 \begin{proof}[Démonstration]
-Pour chaque forme syntaxique, seule une règle permet d'atteindre cette
-conclusion.
+Pour chaque forme syntaxique, on liste les règles qui ont comme conclusion ce
+un jugement de typage portant sur celle-ci. Comme aucune autre règle ne
+convient, on peut en déduire que c'est celle l'une de celles-ci qui a été
+appliquée, et donc qu'une des prémisses est vraie.
 \end{proof}
 
 \subsection*{Progrès et préservation}

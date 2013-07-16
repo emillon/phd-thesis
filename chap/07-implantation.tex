@@ -24,11 +24,11 @@ une seule manière de faire les choses. Par exemple, le flot de contrôle est
 restreint à la boucle infinie et au saut en avant («\emph{break}» généralisé).
 
 Enfin, lorsque certaines constructions sont ambigües, un choix est fait. Par
-exemple, l'évaluation des arguments d'une fonction est faite de manière
-explicite, les tailles des types sont indiqués à chaque déclaration de variable,
-etc. Sa sémantique d'exécution (ainsi qu'une partie des étapes de compilation
-depuis C) est décrites dans \cite{newspeak}. Sa syntaxe est donnée dans la
-figure~\ref{fig:stx-npk}.
+exemple, \linebreak l'évaluation des arguments d'une fonction est faite de
+manière explicite, les tailles des types sont indiqués à chaque déclaration de
+variable, etc. Sa sémantique d'exécution (ainsi qu'une partie des étapes de
+compilation depuis C) est décrites dans \cite{newspeak}. Sa syntaxe est donnée
+dans la figure~\ref{fig:stx-npk}.
 
 \begin{figure}%{{{
 
@@ -108,8 +108,8 @@ compilation de \newspeak{} vers ce langage.
 
 La première étape consiste à prétraiter les fichiers C source avec le logiciel
 \texttt{cpp}, comme pour une compilation normale. Cette étape interprète les
-directives comme \texttt{\#include}, \texttt{\#ifdef}, À cet étape, les
-commentaires sont aussi supprimés.
+directives de prétraitement comme \texttt{\#include}, \texttt{\#ifdef}, À cet
+étape, les commentaires sont aussi supprimés.
 
 Une fois cette passe effectuée, le résultats est un ensemble de fichiers C
 prétraités, c'est-à-dire des unités de compilation.
@@ -347,8 +347,8 @@ par des étiquettes de type \texttt{simple} (autrement dit de vraies
 représentations de types).
 
 Cette étape se fait de manière impérative: on peut créer de nouveaux types avec
-\texttt{new\_unknown} et unifier deux types
-avec \texttt{unify}. Leurs types sont:
+la fonction \texttt{new\_unknown} et unifier deux types avec la fonction
+\texttt{unify}. Leurs types sont:
 
 \begin{verbatim}
 val new_unknown : unit -> Types.simple
@@ -401,7 +401,7 @@ let infer_binop op (_, a) (_, b) =
 
 Pour prendre l'adresse d'une variable, la règle \textsc{AddrOf-Kernel}
 s'applique: on prend le type de la left-value et on construit un pointeur noyau
-à partir de lui:
+à partir de lui.
 
 \begin{verbatim}
 | T.AddrOf lv ->
@@ -409,6 +409,14 @@ s'applique: on prend le type de la left-value et on construit un pointeur noyau
     let ty = lval_type env lv in
     (T.AddrOf lv', Ptr (Kernel, ty))
 \end{verbatim}
+
+\label{page:qualifs-pas-qualifs}
+Notons que dans la représentation des types pointeurs, c'est une étiquette
+séparée qui tient compte de qui contrôle la valeur. Cela vient du fait qu'une
+première présentation de ce système de types utilisait des qualificateurs
+explicites (sur les pointeurs uniquement), avant de passer à deux types
+indépendants. Cette représentation a néanmoins l'avantage de permettre la
+factorisation de code, par exemple pour typer l'arithmétique de pointeurs.
 
 Enfin, pour déréférencer une expression, on unifie tout d'abord son type avec le
 type d'un pointeur noyau.
@@ -488,7 +496,7 @@ Ensuite, on génère les inconnues de type nécessaires pour appliquer cette rè
 et on indique les contraintes en appelant la fonction d'unification.
 
 Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
-incomplet mais permet de traiter des parties du noyau Linux comme on le verra
-dans le chapitre suivant.
+incomplet, mais il permet de traiter des parties du noyau Linux comme on le
+verra dans le chapitre suivant.
 
 % vim: spelllang=fr

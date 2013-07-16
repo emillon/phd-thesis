@@ -132,11 +132,12 @@ Cette zone contient le code du noyau, les piles noyau des processus, etc.
 
 Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas contenir
 d'instructions privilégiées, et donc ne peuvent pas accéder directement au
-matériel. Pour qu'ils puissent interagir avec le système (afficher une sortie,
-écrire sur le disque…) le mécanisme des appels système est nécessaire. Il s'agit
-d'une interface de haut niveau entre les \emph{rings} 3 et 0. Du point de vue du
-programmeur, il s'agit d'un ensemble de fonctions C «magiques» qui font appel
-au système d'exploitation pour effectuer des opérations.
+matériel. Pour que ces programmes puissent interagir avec le système (afficher
+une sortie, écrire sur le disque…) le mécanisme des appels système est
+nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 et
+0. Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
+«magiques» qui font appel au système d'exploitation pour effectuer des
+opérations.
 
 Voyons ce qui se passe derrière la magie apparente. Une explication plus
 détaillée est disponible dans la documentation fournie par Intel
@@ -157,7 +158,7 @@ logicielle est ensuite déclenchée (\verb!int 0x80!).
 le processeur est configuré --- tout dépend uniquement de l'état de certains
 registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
 Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
-prédéfini (\verb!arch/x86/kernel/entry_32.S!, \verb!ENTRY(system_call)!).
+prédéfini (dans \verb!arch/x86/kernel/entry_32.S!).
 
 \insertcode{entry-syscall.s}
 
@@ -238,28 +239,7 @@ une attention particulière.
 
 Le code suivant est présent dans le pilote KMS pour les GPU AMD Radeon:
 
-\begin{verbatim}
-/* from drivers/gpu/drm/radeon/radeon_kms.c */
-int radeon_info_ioctl(struct drm_device *dev,
-                      void *data,
-                      struct drm_file *filp) {
-	struct radeon_device *rdev =
-            dev->dev_private;
-	struct drm_radeon_info *info;
-	struct radeon_mode_info *minfo =
-            &rdev->mode_info;
-	uint32_t *value_ptr;
-	uint32_t value;
-	struct drm_crtc *crtc;
-	int i, found;
-
-	info = data;
-	value_ptr = (uint32_t *)
-            ((unsigned long)info->value);
-	value = *value_ptr;
-        [...]
-}
-\end{verbatim}
+\insertcode{kms-buggy.c}
 
 On peut voit que l'argument \texttt{data} est converti en un \texttt{struct
 drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
@@ -269,22 +249,12 @@ Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
 en espace noyau) du type suivant, dont les champs proviennent d'un appel
 utilisateur de \verb!ioctl()!.
 
-\begin{verbatim}
-/* from include/drm/radeon_drm.h */
-struct drm_radeon_info {
-  uint32_t    request;
-  uint32_t    pad;
-  uint64_t    value;
-};
-\end{verbatim}
+\insertcode{kms-info.c}
 
 Pour mettre ce problème en évidence, nous avons annoté la fonction
 \texttt{radeon\_info\_ioctl} de telle manière que son second paramètre soit un
-pointeur noyau vers une structure contenant un champ \qUser, \texttt{value}.
-Ceci est possible puisqu'avant la traduction, on efface les types présents dans
-le programme C. Ainsi, un pointeur ne peut pas être distingué d'un entier
-transtypé en un pointeur. Avec cette configuration, nous obtenons une erreur de
-type à la ligne 16.
+pointeur noyau vers une structure contenant un champ contrôlé par l'utilisateur,
+\texttt{value}.
 
 L'intégralité de ce code peut être trouvée en annexe~\ref{cha:code-noyau}.
 
@@ -313,31 +283,29 @@ de traduire le noyau linux en \langname{}.
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
 environnement initial (via la variable \texttt{exttbl} décrite en
 section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
-pointeurs souillés on ajoute un commentaire spécial \texttt{!npk userptr x}, qui
-unifie le type de \texttt{x} avec $\ptrU{t}$ où $t$ est une inconnue de type.
+pointeurs souillés on ajoute un commentaire spécial \texttt{!npk userptr\_fieldp
+x f}, qui indique que \texttt{x} est un pointeur vers une structure contenant un
+pointeur utilisateur dans le champ \texttt{f}. En fait, il unifie le type de
+\texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une inconnue de type.
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
 d'origine, \texttt{info->value} est transtypé en \texttt{unsigned long} puis en
 \texttt{uint32\_t *}. En \newspeak, cela correspond à des opérateurs
-\texttt{PtrToInt} et \texttt{IntToPtr} mais si on les autorise, on casse le
-typage puisqu'il est alors possible de transformer n'importe quel type en un
-autre. De plus, on modifie la définition de
-\texttt{struct drm\_radeon\_info} pour que son champ \texttt{value} ait pour
-type \texttt{uint32\_t *} plutôt que \texttt{uint64\_t}. En effet, dans ce cas
+\texttt{PtrToInt} \linebreak et \texttt{IntToPtr} mais si on les autorise, on
+casse le typage puisqu'il est alors possible de transformer n'importe quel type
+en un autre. De plus, on modifie la définition du type \texttt{struct
+drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
+\texttt{uint32\_t *} plutôt que \texttt{uint64\_t}. En effet, dans ce cas
 d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
 toute l'exécution.
 
 \begin{figure}
 \insertcode{ex-drm.c}
 
-\caption{Code du noyau minimisé et annoté}
+\caption{Cas d'étude minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
-
-% TODO et le code correct?
-
-% TODO c'est juste le champ value qui est user?
 
 En ce qui concerne les fonctions de manipulation de pointeurs fournies
 par le noyau (\texttt{get\_user}, \texttt{put\_user},
@@ -348,16 +316,32 @@ Enfin, on peut lancer l'inférence de type. Ainsi, sur l'exemple de la
 figure~\ref{fig:ex-drm}, on obtient la sortie suivante:
 
 \begin{Verbatim}
-05-drm.c:17#1 - Cannot unify qualifiers:
+05-drm.c:18#1 - Cannot unify qualifiers:
   Kernel
   User
 \end{Verbatim}
 
 Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
 type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
-unification a échoué.
+unification a échoué. Le message d'erreur fait apparaître des qualificateurs
+explicites: comme on l'explique page~\pageref{page:qualifs-pas-qualifs}, c'est
+un reste d'une première présentation basée sur les qualificateurs.
+Dans l'implantation, il est cependant agréable de manipuler ces étiquettes
+séparément des pointeurs auxquels elles sont attachées.
 
-% TODO c'est pas des qualifs
+La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
+celle-ci, l'inférence se fait sans erreur.
+
+% TODx le faire
+
+\begin{figure}
+
+    \insertcode{ex-drm-ok.c}
+
+    \caption{Cas d'étude minimisé et annoté -- version correcte}
+    \label{fig:ex-drm-ok}
+
+\end{figure}
 
 \section*{Conclusion}
 
@@ -367,21 +351,14 @@ difficulté est de traduire en \newspeak le code source écrit dans le dialecte
 GNU C.
 
 En partant d'un bug existant, on montre que la version originale du code
-(incluant une erreur de programmation) ne peut pas être typée.
+(incluant une erreur de programmation) ne peut pas être typée, alors que sur la
+version corrigée on peut inférer des types compatibles.
 
-% TODO et la version correcte?
-
-
-Le prototype décrit dans le chapitre~\ref{cha:implem} peut s'adapter à détecter
-des bugs dans le noyau Linux. Pour le moment, il nécessite du code annoté, mais
-la phase de compilation depuis le code GNU C que comporte le noyau peut déjà
-être compilée automatiquement en \newspeak, puis dans une représentation proche
-de \langname.
-
-
-
-% TODO peut être un peu short
-
-% TODO parler de ce qu'apporte cette expérimentation
+Le prototype décrit dans le chapitre~\ref{cha:implem} peut donc s'adapter à
+détecter des bugs dans le noyau Linux. Pour le moment, il nécessite du code
+annoté, mais des travaux sont en cours pour permettre de passer automatiquement
+des portions plus importantes du noyau Linux. Une partie importante du travail
+est déjà faite puisque la phase de compilation depuis le code source supporte
+maintenant le dialecte GNU C.
 
 % vim: spelllang=fr

@@ -1,3 +1,7 @@
+On présente ici les preuves de certains résultats établis dans le manuscrit: le
+caractère bien fondé de la composition de deux lentilles, et les théorèmes de
+sûreté du typage.
+
 \section{Composition de lentilles}
 
 \label{proof:compo-lens}
@@ -333,6 +337,7 @@ récurrence à $e$.
 \item $\mm{m}{e}{m'}{e'}$.
 Alors en appliquant \textsc{Ctx} avec
 $C = \iReturn{\ctxEmpty}$, on conclut que
+\linebreak
 $\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
 
 \item $\msi{m}{e} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
@@ -475,6 +480,7 @@ Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 
   \item $∃(e_1', m'), \mm{m}{e_1}{m'}{e'_1}$.
     En appliquant \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$, on obtient
+    \linebreak
     $\mm{m}{e_1~\opbin~e_2}{m'}{e'_1~\opbin~e_2}$, ou
     $\mm{m}{e}{m'}{e'_1~\opbin~e_2}$.
 
@@ -502,7 +508,7 @@ Alors $e = +~e_1$. En appliquant l'hypothèse d'induction sur $e_1$:
   \widehat{+}~v_1$, $\mm{m}{e}{m}{v}$.
 \item
   soit $∃ e'_1, m', \mm{m}{e_1}{m'}{e'_1}$. Alors en appliquant \textsc{Ctx}
-avec $C = +~\ctxEmpty$, on obtient $\mm{m}{e}{m'}{e'_1}$.
+avec $C = +~\ctxEmpty$, on obtient \linebreak $\mm{m}{e}{m'}{e'_1}$.
 \item
   soit $\msi{m}{e_1} → Ω$.
   De \textsc{Eval-Err} avec $C = +~\ctxEmpty$ il vient$\msi{m}{e} → Ω$.
@@ -904,24 +910,13 @@ Si on définit $m'' = \cPush{m}{a_1↦v_1, …, a_n↦v_n}$, alors par \textsc{M
 on obtient que $\mcomp{Γ'}{m''}$. Donc, par le lemme~\ref{lemma:repr}, il existe
 $τ$ tel que $m'' ⊧ v : τ$ où $\tComp{τ}{t}$.
 
-Il reste à montrer que $m' ⊧ v' : τ$. On distingue selon la forme de $v$.
+Il reste à montrer que $m' ⊧ v' : τ$.
 
-\begin{itemize}
-\item $v = \widehat{c}$ ou $v = \widehat{f}$:
-C'est établi car la dérivation n'utilise pas $m$.
+On distingue selon la forme de $v$. On applique un raisonnement similaire à
+celui de la preuve du lemme~\ref{lemma:mem-typ}: soit $v$ est une référence au
+cadre nettoyé, et dans ce cas $v' = \eNull$ et $τ$ est un type pointeur, soit
+$v' = v$. Dans tous les cas on conclut car $m' ⊧ v' : τ$.
 
-\item $v = \wphi{φ}$: alors $\semtypphi{m''}{φ}{τ}$ c'est-à-dire
-$\semtypphi{m''}{m[φ]_Φ}{τ}$. Si $\cHphi{φ} > m'$, alors $v' = \eNull$ (car $v'
-= \cV{|m|}{v}$) et on conclut. Si $\cHphi{φ} ≤ m'$, alors $m' ⊧ m'[φ]_Φ : τ$, donc
-$\semtypphi{m'}{φ}{τ}$ et $m' ⊧ \wphi{φ} : τ$.
-
-\item Structures et tableaux: on applique le raisonnement ci-dessus
-successivement.
-
-\end{itemize}
-
-C'est clair pour les valeurs de la forme
-$\widehat{c}$ ou $\widehat{f}$. Supposons que $v = \wphi{φ}$.
 % }}}
 
 \subsection{Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$}
@@ -938,8 +933,8 @@ D'après \textsc{Pass}, $Γ ⊢ \iPass$.
 \paragraph{\textsc{Decl-Pass}:}%{{{
 
 $Γ ⊢ \iPass$ est immédiat, et $\mcomp{Γ}{m'}$ est établi par \textsc{M-Decl}
-suivi de \textsc{M-DeclClean}. On a bien $x ∉ Γ$ car les déclarations de
-variable ne peuvent pas masquer de variables visibles existantes
+suivie de \linebreak \textsc{M-DeclClean}. On a bien $x ∉ Γ$ car les
+déclarations de variable ne peuvent pas masquer de variables visibles existantes
 (page~\pageref{page:decl-masquage}).
 
 %}}}
@@ -1001,11 +996,10 @@ que $∀ i ∈ [1;n], m_0 ⊧ v_i : τ_i$ avec $\tComp{τ_i}{t_i}$. En appliquan
 On peut alors appliquer l'hypothèse d'induction à $\mm{m_1}{i}{m_2}{i'}$: la
 conclusion est que $Γ' ⊢ i'$ et $\mcomp{Γ'}{m_2}$. Comme $Γ' ⊢ a_i : t_i$, on
 a $∀ i ∈ [1;n], Γ' ⊢ v'_i : t_i$. Donc on a bien
-$Γ ⊢ \eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n)$.
+$Γ ⊢ \eFun{a_1, …, a_n}{i'} (v'_1, …, v'_n) : t$.
 
 D'autre part, en appliquant \textsc{M-Pop}, on obtient que
 $\mcomp{Γ}{\cCleanup{m_3}}$.
-% TODO check avec le nouveau M-Pop
 
 %}}}
 
@@ -1107,6 +1101,7 @@ De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 \paragraph{\textsc{Expr-Tainted}:} % {{{
 
 On applique le lemme de représentation, qu'on a étend avec le cas
+\linebreak
 $\cRepr{t~@} = \cRepr{\cRepr{t}~@}$.
 
 % }}}

@@ -1263,8 +1263,6 @@ Alors l'un des cas suivants est vrai:
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
-% TODO sens de =: s'évalue en?
-% attention, énoncé du thm recopié dans les preuves
   \item $∃ (e', m'), \mm{m}{e}{m'}{e'}$
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
@@ -1517,17 +1515,23 @@ nous donne que $\mcomp{Γ'}{m''}$.
 
 \section*{Conclusion}
 
-Le langage \langname, ainsi que décrit dans le chapitre~\ref{cha:lang}, ne
-possède pas de garanties de sûreté. C'est-à-dire qu'on ne peut rien prédire sur
-l'exécution d'un programme. Par exemple, $\eFun{x}{\iPass} + 1$ est une
-expression correcte mais pour laquelle il n'y a pas de règle d'évaluation qui
-s'applique. En ajoutant un système de type, on s'assure que les termes peuvent
-être évalués, et que les valeurs produites sont en accord avec les types données
-aux différentes parties du programme. Cela permet surtout de s'assurer que les
-programmes ne peuvent provoquer une erreur d'exécution que dans certains cas
-particuliers, comme les division ou les accès aux tableaux.
+On ajoute un système de types statiques à \langname. Cela permet de calculer à
+la compilation la forme des valeurs produite par chaque expression. Pour ce
+faire on définit un ensemble de règles de typage (regroupées dans
+l'annexe~\ref{anx:typage}) à appliquer selon la forme de celle-ci.
 
-% TODO trop court
-% conclure d'abord sur le typage puis passer aux propriétés de sûreté
+Si on considère des programmes qui sont seulement syntaxiquement corrects, on ne
+ne peut rien prédire sur leur exécution. Par exemple, $\eFun{x}{\iPass} + 1$ est
+une expression correcte mais pour laquelle il n'y a pas de règle d'évaluation
+qui s'applique. En ajoutant un système de type, les propriétés de sûreté
+établies dans ce chapitre assurent que les termes peuvent être évalués, et que
+les valeurs produites sont en accord avec les types données aux différentes
+parties du programme. Cela permet surtout de s'assurer que les programmes ne
+peuvent provoquer une erreur d'exécution que dans certains cas particuliers,
+comme les division ou les accès aux tableaux.
+
+À l'issue de ce chapitre, on a donc un langage impératif sain pour bâtir de
+nouvelles analyses de typage, ce que nous allons faire dans le chapitre
+suivant.
 
 % vim: spelllang=fr

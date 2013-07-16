@@ -132,13 +132,12 @@ de typer ces opération est:
 \end{mathpar}
 
 Tout d'abord, cela pose problème car il est alors possible de créer une fonction
-qui convertit n'importe quel type pointeur en n'importe quel autre type
+pouvant convertir n'importe quel type pointeur en n'importe quel autre type
 pointeur:
 
-\begin{align*}
-  ⊢ &~ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} } \\
-  : &~ (\ptrK{t_a}) → \ptrK{t_b}
-\end{align*}
+\[
+  ⊢ ~ \eFun{p}{ \iReturn{(\textsc{Ptr})~(\tInt)~p} } : ~ (\ptrK{t_a}) → \ptrK{t_b}
+\]
 
 Si on crée une variable du type $t_a$, prend son adresse, la convertit à l'aide
 de cette fonction, puis déréférence le résultat, on obtient une valeur du type
@@ -158,7 +157,7 @@ problème en ajoutant la taille de chaque valeur avec elle.
 
 Mais cela fait s'éloigner du modèle mémoire de C, où le déréférencement porte
 sur une adresse mais également sur une taille (portée implicitement par le type
-du pointeur). D'ailleurs le langage \newspeak{} conserve cette distinction, que
+du pointeur). Le langage \newspeak{} conserve d'ailleurs cette distinction, que
 nous avons éliminée dans \langname. Il y a une incompatibilité entre ces deux
 approches : dans le cas de C (et de \newspeak), on laisse le programmeur gérer
 l'organisation de la mémoire alors qu'avec \langname ces choix sont faits par le
@@ -166,12 +165,13 @@ langage. En contrepartie, cela permet d'avoir d'assurer la sûreté du typage.
 
 \paragraph{Environnement d'exécution}
 
-La sémantique opérationnelle utilise un environnement d'exécution pour certains
-cas. Contrairement à C, les débordements de tampon et les déréférencements de
-pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une caractéristique
-cruciale de cette approche: en effet, si on suppose que les programmes que l'on
-analyse ne comportent pas de telles erreurs de programmation, on peut désactiver
-ces vérifications et le reste des propriétés est toujours valable.
+La sémantique opérationnelle utilise un environnement \linebreak d'exécution
+pour certains cas. Contrairement à C, les débordements de tampon et les
+déréférencements de pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une
+caractéristique cruciale de cette approche: en effet, si on suppose que les
+programmes que l'on analyse ne comportent pas de telles erreurs de
+programmation, on peut désactiver ces vérifications et le reste des propriétés
+est toujours valable.
 
 On repose sur l'environnement d'exécution à un endroit plus problématique. À la
 sortie de chaque portée (au retour d'une fonction et après la portée d'une
@@ -188,7 +188,7 @@ effet: en plus de donner un type à chaque expression, on calcule
 statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
 correspond à un ramasse-miette fait statiquement.
 
-% TODO attention, on peut finir avec une seule région (pire des cas)
+% attention, on peut finir avec une seule région (pire des cas)
 
 \paragraph{Flot de contrôle}
 
@@ -211,10 +211,9 @@ En plus de ces sauts locaux, le langage C contient une manière de sauvegarder u
 respectivement les constructions \texttt{setjmp} et \texttt{longjmp}. Elles sont
 très puissantes puisqu'elles permettent d'exprimer de nouvelles structures de
 contrôle. Il s'agit de formes légères de continuations où la pile reste commune.
-
 Cette fonctionnalité peut servir par exemple à implanter des exceptions, ou des
-coroutines. En pratique, il est rare de trouver ces fonctions dans du code noyau
-ou embarqué, donc ce manque n'a pas beaucoup d'impact.
+coroutines.
+
 
 Avec l'interprète du chapitre~\ref{cha:lang}, il n'est pas possible de donner
 une sémantique à ces constructions. Une des manières de faire est de modifier
@@ -225,8 +224,9 @@ monadique (ainsi qu'évoqué dans la conclusion de la partie~\ref{part:lang},
 page~\pageref{page:ccl-II-monad}) puis ajouter les continuations à la monade
 sous-jacente.
 
-% TODO il faut probablement indiquer ici pourquoi tu as préféré ne pas le faire
-% pour le noyau traité
+En pratique, il est rare de trouver ces constructions plus avancées dans du code
+noyau ou embarqué, donc ce manque n'a pas beaucoup d'impact. De plus, cela
+permet une présentation plus simple et accessible.
 
 \paragraph{Allocation dynamique}
 
@@ -263,11 +263,10 @@ En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
 entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
 entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
-accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
-analyse préalable comme~\cite{ifm10}. Il est aussi possible d'utiliser un système de
-régions~\cite{jfp92}.
-
-% TODO les expliquer
+accéder aux zones mémoires libérées. Il est aussi possible d'obtenir cette
+garantie avec une analyse préalable. Par exemple, il est possible ici encore
+d'utiliser une analyse basée sur les régions pour vérifier l'absence de
+pointeurs fous~\cite{ifm10}.
 
 %\paragraph{Types structures}
 
@@ -340,9 +339,6 @@ régions~\cite{jfp92}.
 
 % TODO il serait pas mal de citer les membres du jury dans ta biblio
 % Jouvelot  > the type and effect discipline?
-% Blazy     >
-% Levillain > NPK?
-% Chailloux > DAOC?
 
 
 \section*{Conclusion}
@@ -360,8 +356,8 @@ ou catastrophiques.
 Au cœur de la plupart de ces systèmes informatiques, se trouve la plupart du
 temps un noyau qui abstrait les détails du matériel pour fournir aux programmes
 des abstractions sûres, permettant de protéger les données sensibles contenues
-dans ce système. Si une simple erreur de programmation peut briser cette
-isolation, on voit pourquoi la vérification est si importante.
+dans ce système. Si une \linebreak simple erreur de programmation peut briser
+cette isolation, on voit pourquoi la vérification est si importante.
 
 Dans ce but, les systèmes de types sont des outils bien connus de programmeurs.
 Même dans les langages dits faiblement typés comme C, les compilateurs aident de
