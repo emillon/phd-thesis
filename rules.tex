@@ -455,9 +455,9 @@
               {\phstar{([~], [~])}{P}{m}}
               {\phprog{P}{m}}
     }
-    {Expr-Tainted}{ \irule{Expr-Tainted}
+    {Phi-User}{ \irule{Phi-User}
                       { }
-                      { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
+                      { \mm{m}{\eTaint{φ}}{m}{\wphi{(\vTainted{φ})}} }
     }
     {User-Get-OK}{ \irule{User-Get-OK}
                      { v  = m[φ_s]_Φ

@@ -1021,7 +1021,7 @@ règles de typage, il suffit de traiter les cas supplémentaires.
 Alors $e = \eTaint{lv}$. On applique l'hypothèse de récurrence à $lv$.
 
 \begin{itemize}
-\item $lv = φ$. Alors on peut appliquer \textsc{Expr-Tainted}.
+\item $lv = φ$. Alors on peut appliquer \textsc{Phi-User}.
 \item $\mm{m}{lv}{m'}{lv'}$. On conclut en utilisant \textsc{Ctx} avec $C =
 \eTaint{\ctxEmpty}$.
 \item $\msi{m}{lv} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
@@ -1098,8 +1098,9 @@ Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 
 De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 
-\paragraph{\textsc{Expr-Tainted}:} % {{{
+\paragraph{\textsc{Phi-User}:} % {{{
 
+% TODO
 On applique le lemme de représentation, qu'on a étend avec le cas
 \linebreak
 $\cRepr{t~@} = \cRepr{\cRepr{t}~@}$.

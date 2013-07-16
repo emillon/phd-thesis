@@ -193,8 +193,12 @@ En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
 règle suivante:
 
 \[
-  \semrule{Expr-Tainted}
+  \semrule{Phi-User}
 \]
+
+Dans $\wphi{(\vTainted{φ})}$, l'opérateur $\phx\wphi$ indique que la valeur
+créee est une référence mémoire. Cette référence mémoire, $\vTainted{φ}$, est
+contrôlée par l'utilisateur. C'est ce qu'indique le constructeur $\phx\vTainted$
 
 Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
 déclencher une erreur $\serr{sec}$ en cas de déréférencement d'un pointeur
