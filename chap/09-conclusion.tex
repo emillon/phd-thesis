@@ -263,11 +263,10 @@ En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
 entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
 entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
-accéder aux zones mémoires libérées. Encore une fois, on peut utiliser une
-analyse préalable comme~\cite{ifm10}. Il est aussi possible d'utiliser un système de
-régions~\cite{jfp92}.
-
-% TODO les expliquer
+accéder aux zones mémoires libérées. Il est aussi possible d'obtenir cette
+garantie avec une analyse préalable. Par exemple, il est possible ici encore
+d'utiliser une analyse basée sur les régions pour vérifier l'absence de
+pointeurs fous~\cite{ifm10}.
 
 %\paragraph{Types structures}
 
