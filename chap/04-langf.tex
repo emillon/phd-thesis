@@ -12,10 +12,6 @@ tailles. Les types composés correespondent à des zones de mémoire contigües,
 homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
 structures).
 
-% TODO du ne parles pas bcp des lentilles dans cette intro: tu peux indiquer
-% qu'une des difficultés est de représenterles chemins mémoire (accès et
-% modificateurs)
-
 Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
 c'est-à-dire des variables qui représentent directement une adresse en mémoire.
 Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
@@ -29,9 +25,19 @@ Le but ici est de définir \langname, un langage plus simple mais qui permettra
 de raisonner sur une certaine classe de programmes C.
 
 Tout d'abord, on commence par présenter les notations qui accompagneront le
-reste des chapitres. Cela inclut la notion de lentille, qui est
-utilisée pour définir les accès profonds à la mémoire (une sous-valeur d'une
-variable, par exemple).
+reste des chapitres. Cela inclut la notion de lentille, qui est utilisée pour
+définir les accès profonds à la mémoire. Cela permet de résoudre le problème de
+mettre à jour une sous-valeur (par exemple un champ de structure) d'une
+variable, par exemple. Les lentilles permettent de définir de manière
+déclarative que pour faire cette opération, il faut obtenir l'ancienne valeur de
+la variable, puis calculer une nouvelle valeur en remplaçant la sous-valeur la
+mémoire, avant de replacer cette nouvelle valeur à sa place en mémoire. En
+pratique, on définira deux lentilles: une qui relie un état mémoire à la valeur
+d'une variable, et une qui relie une valeur à une de ses sous-valeurs. Avec
+cette technique, on peut définir en une seule fois les opération de lecture et
+d'écriture de sous-valeurs imbriquées.
+
+% TODO schémas lentilles comme dans pres APR
 
 Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
 description de ses caractéristiques principales. En particulier, le modèle
