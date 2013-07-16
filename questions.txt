@@ -4,3 +4,5 @@ Listes chainées de Linux ? safety + typage
 ex?
 
 Possibilité d'utiliser coccinelle?
+
+Sparse?
