@@ -228,6 +228,8 @@ propriétés caractéristiques sur $ℒ_1$ et $ℒ_2$.
 \section{Progrès}
 \label{proof:progres}
 
+% TODO il faut les rappeller
+
 (théorème~\ref{thm:progres})
 
 \begin{proof}
@@ -330,17 +332,18 @@ Ici $i = \iDecl{x}{e}{i'}$. On commence par appliquer l'hypothèse de récurrenc
 à $e$.
 
 \begin{itemize}
-\item $e = v$. On applique alors l'hypothèse de récurrence à $i$ sous
+\item $e = v$. On applique alors l'hypothèse de récurrence à $i'$ sous
     $Γ' = \extendLocal{Γ}{x}{t}$ et avec $m' = \cExtend{m}{x}{v}$.
 
     \begin{itemize}
-    \item $i = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
+    \item $i' = \iPass$. Dans ce cas la règle \textsc{Decl-Pass} s'applique.
 
-    \item $i = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
+    \item $i' = \iReturn{v}$. Idem avec \textsc{Decl-Return}.
 
-    \item $\mm{m'}{i}{m''}{i'}$. Par \textsc{Decl-Ctx} il vient
-        $\mm{m}{\iDecl{x}{v}{i}}{m'''}{\iDecl{x}{v'}{i'}}$ où
+    \item $\mm{m'}{i'}{m''}{i''}$. Par \textsc{Decl-Ctx} il vient
+        $\mm{m}{\iDecl{x}{v}{i'}}{m'''}{\iDecl{x}{v'}{i''}}$ où
        $v' = m''[(|m''|, x)]_A$
+% TODO d'où vient A? expliciter
        et
        $m''' = m'' - x$.
 
@@ -702,6 +705,8 @@ $φ'[m]$), on a $e_1~\widehat{\opbin}~n = \serr{ptr}$. Donc d'après
 \section{Préservation}
 \label{proof:preservation}
 
+% TODO le rappeler aussi
+
 (théorème~\ref{thm:preservation})
 
 
@@ -1050,3 +1055,5 @@ Idem que dans le cas {\textsc{User-Put-OK}.
 \paragraph{\textsc{User-Put-Err}:} % {{{
 Idem que pour \textsc{User-Get-Err}.
 % }}}
+
+% vim: spelllang=fr

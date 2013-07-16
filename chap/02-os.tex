@@ -281,7 +281,7 @@ code du noyau, il est également fait en \ring{0}, et va pouvoir être réalisé
 sans erreur: l'écriture se fait et potentiellement une structure importante du
 noyau est écrasée.
 
-Un utilisateur malicieux peut donc utiliser cet appel système pour écrire à
+Un utilisateur malveillant peut donc utiliser cet appel système pour écrire à
 n'importe quelle adresse dans l'espace d'adressage du noyau. Ce problème vient
 du fait que l'appel système utilise les privilèges du noyau au lieu de celui qui
 contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused

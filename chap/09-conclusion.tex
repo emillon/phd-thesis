@@ -109,7 +109,7 @@ entier et un type pointeur.
 Le premier ne pose pas de problème: il est toujours possible de donner une
 sémantique à une conversion entre deux types numériques. Dans le cas éventuel ou
 une conversion n'est pas possible, on peut signaler une erreur à l'exécution (de
-la même nature qu'une divition par zéro).
+la même nature qu'une division par zéro).
 
 Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
 types pointeurs revient à convertir entre les types pointés.
@@ -170,8 +170,8 @@ La sémantique opérationnelle utilise un environnement d'exécution pour certai
 cas. Contrairement à C, les débordements de tampon et les déréférencements de
 pointeurs sont vérifiés dynamiquement. Mais ce n'est pas une caractéristique
 cruciale de cette approche: en effet, si on suppose que les programmes que l'on
-analyse sont corrects de ce point de vue, on peut désactiver ces vérifications
-et le reste des propriétés est toujours valable.
+analyse ne comportent pas de telles erreurs de programmation, on peut désactiver
+ces vérifications et le reste des propriétés est toujours valable.
 
 On repose sur l'environnement d'exécution à un endroit plus problématique. À la
 sortie de chaque portée (au retour d'une fonction et après la portée d'une
@@ -188,6 +188,8 @@ effet: en plus de donner un type à chaque expression, on calcule
 statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
 correspond à un ramasse-miette fait statiquement.
 
+% TODO attention, on peut finir avec une seule région (pire des cas)
+
 \paragraph{Flot de contrôle}
 
 Dans le langage C, en plus des boucles et de l'alternative, on peut sauter au
@@ -200,14 +202,19 @@ réalisée par \ctonewspeak.
 
 Dans le noyau Linux, il est courant d'utiliser les sauts pour factoriser la
 libération de ressources à la fin d'une fonction. Il est d'ailleurs possible
-d'utiliser l'outil Coccinelle pour convertir du code ce style~\cite{lctes11}. On
-peut imaginer qu'il est possible de l'utiliser pour faire la conversion inverse.
+d'utiliser l'outil Coccinelle pour convertir du code vers ce
+style~\cite{lctes11}.
+% TODO pas clair
+On peut imaginer qu'il est possible de l'utiliser pour
+faire la conversion inverse.
 
 En plus de ces sauts locaux, le langage C contient une manière de sauvegarder un
 état d'exécution et d'y sauter, même entre deux fonctions: ce sont
 respectivement les constructions \texttt{setjmp} et \texttt{longjmp}. Elles sont
 très puissantes puisqu'elles permettent d'exprimer n'importe quelle structure de
 contrôle, à la manière d'une continuation.
+
+% TODO attention pour une continuation il te faut la pile en plus
 
 Cette fonctionnalité peut servir par exemple à implanter des exceptions, ou des
 coroutines. En pratique, il est rare de trouver ces fonctions dans du code noyau
@@ -221,6 +228,9 @@ Pour faciliter ce changement, on peut tout d'abord passer à une sémantique
 monadique (ainsi qu'évoqué dans la conclusion de la partie~\ref{part:lang},
 page~\pageref{page:ccl-II-monad}) puis ajouter les continuations à la monade
 sous-jacente.
+
+% TODO il faut probablement indiquer ici pourquoi tu as préféré ne pas le faire
+% pour le noyau traité
 
 \paragraph{Allocation dynamique}
 
