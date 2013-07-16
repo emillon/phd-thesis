@@ -443,11 +443,10 @@ variable est placé puis retiré d'une structure de données, il conserve ce typ
 $t$. En particulier un pointeur utilisateur reste un pointeur utilisateur.
 
 Une seule règle consomme un pointeur et en retourne un. Elle concerne
-l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur:
-
-\begin{mathpar}
-  \disprule{Ptr-Arith-User}
-\end{mathpar}
+l'arithmétique des pointeurs. On ne l'étend pas aux pointeurs utilisateur, car
+pour effectuer de l'arithmérique, il faut observer la forme du pointeur
+sous-jacent. Si on veut laisser $\phx\vTainted$ opaque, il faut donc interdire
+l'arithmétique sur les pointeurs utilisateur.
 
 \subsection*{Utilisations de pointeurs}
 

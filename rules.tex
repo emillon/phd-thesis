@@ -264,13 +264,6 @@
                        { Γ ⊢ lv : t }
                        { Γ ⊢ \& lv : \ptrK{t} }
     }
-    {Ptr-Arith-User}{ \irule{Ptr-Arith-User}
-                         { \opbin ∈ \{ +_p, -_p \} \\
-                           Γ ⊢ e_1 : \ptrU{t} \\
-                           Γ ⊢ e_2 : \tInt \\
-                         }
-                         { Γ ⊢ e_1~\opbin~e_2 : \ptrU{t} }
-    }
     {END}
 }
 
