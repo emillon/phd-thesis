@@ -469,13 +469,14 @@ L'implantation du système de types sur le langage \newspeak est d'abord décrit
 à l'aide d'une variante de l'algorithme W de Damas et Milner.
 La manière de compiler depuis du code C est également présentée.
 Ensuite, on applique cette implantation à un cas d'étude concret. Il s'agit d'un
-bug ayant touché le noyau Linux. En lançant notre prototype, la version non
+bug ayant touché un pilote de carte graphique dans le noyau Linux.
+En manipulant incorrectement un pointeur dont la valeur est contrôlée par
+l'utilisateur, il crée un problème de sécurité car un utilisateur malveillant
+lire ou écrire dans l'espace mémoire réservé au noyau.
+En lançant notre prototype, la version non
 corrigée lève une erreur alors que dans la version corrigée, un type correct est
 inféré. On montre ainsi que le système de type capture précisément ce genre
 d'erreur de programmation.
-
-% TODO il faut peut être indiquer la classe de problèmes traités et son
-% expérimentation
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.
