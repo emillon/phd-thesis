@@ -323,7 +323,7 @@
 
 \def\serr#1{
   \switch{#1}
-    {taint}{Ω_{taint}}
+    {sec}{Ω_{sec}}
     {array}{Ω_{array}}
     {ptr}{Ω_{ptr}}
     {div}{Ω_{div}}
@@ -372,7 +372,7 @@
 \tikzset{>=latex}
 
 \def\partccl#1{
-  \clearpage~\thispagestyle{cleared}\cleartorecto
+  \cleartorecto
   \chapter*{Conclusion de la partie~\ref{#1}}
   \addcontentsline{toc}{chapter}{Conclusion de la partie~\ref{#1}}
 }

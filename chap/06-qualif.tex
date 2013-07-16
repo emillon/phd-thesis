@@ -33,15 +33,15 @@ non.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
-Tout d'abord, on définit une nouvelle erreur $\serr{taint}$, déclenchée
-lorsqu'un pointeur \linebreak contrôlé par l'utilisateur et pointant vers le noyau est
-déréférencé (le cas que l'on cherche à éviter). Il est important de noter que ce
-cas d'erreur est «virtuel», c'est-à-dire qu'on l'ajoute à la sémantique pour
-pouvoir le détecter facilement comme un cas d'erreur, mais dans une sémantique
-de plus bas niveau, l'erreur ne serait pas déclenchée, comme en C. D'un point de
-vue opérationnel, cela équivaut à ajouter un test dynamique à chaque
-déréférencement, ce qui est sûr mais se paye en performances. Ajouter ce cas
-d'erreur virtuel dans la sémantique d'évaluation permet de transformer un
+Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour «sécurité»),
+déclenchée lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le
+noyau est déréférencé (le cas que l'on cherche à éviter). Il est important de
+noter que ce cas d'erreur est «virtuel», c'est-à-dire qu'on l'ajoute à la
+sémantique pour pouvoir le détecter facilement comme un cas d'erreur, mais dans
+une sémantique de plus bas niveau, l'erreur ne serait pas déclenchée, comme en
+C. D'un point de vue opérationnel, cela équivaut à ajouter un test dynamique à
+chaque déréférencement, ce qui est sûr mais se paye en performances. Ajouter ce
+cas d'erreur virtuel dans la sémantique d'évaluation permet de transformer un
 problème de sécurité (empêcher les fuites d'information) en problème de sûreté
 (empêcher les erreurs à l'exécution).
 
@@ -66,9 +66,8 @@ On ajoute à \langname{} la notion de valeur provenant de l'espace utilisateur.
 Pour marquer la séparation entre les deux espaces d'adressage, on ajoute une
 construction $φ \gramisa \vTainted{φ'}$. Le chemin interne $φ'$ désigne une
 variable classique (un pointeur noyau) et l'opérateur $\phx\vTainted$ permet de
-l'interpréter comme un pointeur vers l'espace utilisateur, contrairement à
-$\widehat{\&}\cdot$ qui crée des pointeurs vers l'espace noyau. En quelque
-sorte, on ne classifie pas les valeurs selon la variable pointée mais selon la
+l'interpréter comme un pointeur vers l'espace utilisateur.. En quelque sorte, on
+ne classifie pas les valeurs selon la variable pointée mais selon la
 construction du pointeur.
 
 Remarquons qu'on n'introduit pas de sous-typage: les pointeurs noyau ne peuvent
@@ -76,7 +75,7 @@ Remarquons qu'on n'introduit pas de sous-typage: les pointeurs noyau ne peuvent
 qu'en tant que pointeurs utilisateurs.
 
 En plus du déréférencement par \texttt{*} (qui devra donc renvoyer
-$\serr{taint}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
+$\serr{sec}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
 utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et \linebreak
 $\ctuF$. Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen
@@ -125,10 +124,10 @@ On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
 $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
-une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $φ$,
-$\eTaint{e}$ s'évalue en $\vTainted{φ}$. Cela correspond à 2 ajouts: une un
-nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
-Enfin, on ajoute une nouvelle erreur $\serr{taint}$ à déclencher lorsqu'on
+une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $\wphi{φ}$,
+$\eTaint{e}$ s'évalue en $\wphi{\vTainted{φ}$}. Cela correspond à 2 ajouts: une un
+nouveau contexte d'évaluation $\eTaint{C}$ et une règle d'évaluation.
+Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
 la figure~\ref{fig:qualif-changes}.
 
@@ -153,13 +152,13 @@ la figure~\ref{fig:qualif-changes}.
 \\
 \gramdef{Chemins}{φ}
   { … }{}
-  { \vTainted{φ} }{Valeur souillée}
+  { \vTainted{φ} }{Pointeur utilisateur}
   {END}
 \\
 \\
 \gramdef{Erreurs}{Ω}
   { … }{}
-  { \serr{taint} }{Erreur de souillure}
+  { \serr{sec} }{Erreur de sécurité}
   {END}
 \end{align*}
 
@@ -193,11 +192,15 @@ En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
 règle suivante:
 
 \[
-  \semrule{Expr-Tainted}
+  \semrule{Phi-User}
 \]
 
+Dans $\wphi{(\vTainted{φ})}$, l'opérateur $\phx\wphi$ indique que la valeur
+créee est une référence mémoire. Cette référence mémoire, $\vTainted{φ}$, est
+contrôlée par l'utilisateur. C'est ce qu'indique le constructeur $\phx\vTainted$
+
 Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
-déclencher une erreur $\serr{taint}$ en cas de déréférencement d'un pointeur
+déclencher une erreur $\serr{sec}$ en cas de déréférencement d'un pointeur
 utilisateur. Les accès mémoire en lecture proviennent de la règle
 \textsc{Exp-Lv} et ceux en lecture, de la règle \textsc{Exp-Set}, rappellées
 ici:
@@ -210,10 +213,11 @@ ici:
 
 Les accès à la mémoire sont en effet faits par le biais de la lentille $Φ$. Il
 suffit donc d'adapter sa définition (page~\pageref{subsec:acces-phi}) de
-celle-ci en rajoutant le cas:
+celle-ci en rajoutant les cas suivant:
 
 \begin{align*}
-Φ(\vTainted{φ}) &= \serr{taint}
+    \lensGet{Φ}{\vTainted{φ}}    &= \serr{sec} \\
+    \lensPut{Φ}{\vTainted{φ}}{v} &= \serr{sec}
 \end{align*}
 
 Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
@@ -254,9 +258,8 @@ dynamique.
 Étant donné \langname{} augmenté de cette extension sémantique, on peut étendre
 naïvement le système de types avec la règle suivante:
 
-\label{page:rule-taint-ignore}
 \begin{mathpar}
-  \irule{Taint-Ignore}
+  \irule{AddrOf-User-Ignore}
     { Γ ⊢ lv : t }
     { Γ ⊢ \eTaint{lv} : t~* }
 \end{mathpar}
@@ -301,7 +304,7 @@ conclusion n'est pas vraie:
       \begin{mathpar}
         \irule{Lv-Deref}
           {
-            \irule{Taint-Ignore}
+            \irule{AddrOf-User-Ignore}
               {
                 \irule{Lv-Deref}
                   {
@@ -327,24 +330,24 @@ conclusion n'est pas vraie:
             {
               \inferrule*
                 { }
-                {m[*\vTainted{x}] = \serr{taint}}
+                {m[\vTainted{x}]_Φ = \serr{sec}}
             }
-            { \mm{m}{* \eTaint {x}}{m}{\serr{taint}} }
+            { \mm{m}{* \eTaint {x}}{m}{\serr{sec}} }
           \\
           \irule{Eval-Err}
             { }
             {
-              \msi{m}{\serr{taint}} → \serr{taint}
+              \msi{m}{\serr{sec}} → \serr{sec}
             }
         }
-        {\msi{m}{e} → \serr{taint}}
+        {\msi{m}{e} → \serr{sec}}
       \end{mathpar}
 
 \end{itemize}
 
 Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
-\textsc{Taint-Ignore} n'est pas en adéquation avec les extensions présentées
+\textsc{AddrOf-User-Ignore} n'est pas en adéquation avec les extensions présentées
 dans la section~\ref{sec:extensions-noyau}. Il faut donc raffiner les règles de
 typage pour interdire ce cas.
 
@@ -409,12 +412,12 @@ L'ensemble des notations est résumé dans le tableau suivant:
 \begin{center}
 \begin{tabular}{ccc}
 \toprule
-        & Noyau      & Utilisateur \\
+        & Noyau        & Utilisateur \\
 \midrule
-Syntaxe & $\&~x$     & $\eTaint{x}$ \\
-Valeur  & $\widehat{\&}~x$ & $\vTainted{x}$ \\
-Type    & $\ptrK{t}$ & $\ptrU{t}$ \\
-Accès   & $*~x$      & copy\_*\_user \\
+Syntaxe & $\&~x$       & $\eTaint{x}$ \\
+Valeur  & $\wphi{(x)}$ & $\wphi{\vTainted{(x)}}$ \\
+Type    & $\ptrK{t}$   & $\ptrU{t}$ \\
+Accès   & $*~x$        & copy\_*\_user \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -441,11 +444,10 @@ variable est placé puis retiré d'une structure de données, il conserve ce typ
 $t$. En particulier un pointeur utilisateur reste un pointeur utilisateur.
 
 Une seule règle consomme un pointeur et en retourne un. Elle concerne
-l'arithmétique des pointeurs. On l'étend aux pointeurs utilisateur:
-
-\begin{mathpar}
-  \disprule{Ptr-Arith-User}
-\end{mathpar}
+l'arithmétique des pointeurs. On ne l'étend pas aux pointeurs utilisateur, car
+pour effectuer de l'arithmérique, il faut observer la forme du pointeur
+sous-jacent. Si on veut laisser $\phx\vTainted$ opaque, il faut donc interdire
+l'arithmétique sur les pointeurs utilisateur.
 
 \subsection*{Utilisations de pointeurs}
 
@@ -463,7 +465,7 @@ compilation.
 L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 
 \[
-    \disprule{Taint}
+    \disprule{AddrOf-User}
 \]
 
 Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
@@ -483,12 +485,13 @@ celui d'un opérateur.
 \subsection*{Typage sémantique}
 
 La définition du typage sémantique doit aussi être étendue au cas $φ =
-\vTainted{φ'}$.
+\vTainted{φ'}$. En essence, \textsc{S-UserPtr} énonce que traverser un
+constructeur $\phx\vTainted$ transforme un pointeur en pointeur utilisateur.
 
 \begin{mathpar}
-  \irule{S-Tainted}
-    { \semtyp{m}{          φ' }{τ} }
-    { \semtyp{m}{\vTainted{φ'}}{\ptrU{τ}} }
+  \irule{S-UserPtr}
+      { \semtyp{m}{\wphi{          φ }}{\ptrK{τ}} }
+      { \semtyp{m}{\wphi{\vTainted{φ}}}{\ptrU{τ}} }
 
   \irule{Comp-Ptr}
     { \tComp{τ}{t} }
@@ -504,6 +507,9 @@ En plus des cas présentés dans le lemme~\ref{lemma:inversion}, les cas suivant
 permettent de remonter un jugement de typage.
 
 \begin{itemize}
+\item
+    Si $Γ ⊢ \eTaint{e} : t$, alors il existe $t'$ tel que
+    $t = t'~@$ et $Γ ⊢ e : t'$.
 \item
     Si $Γ ⊢ \uGet{e_d}{e_s} : t$, alors
     $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ φ_d : t~*$ et
@@ -552,7 +558,7 @@ chapitre.
 La preuve de ce théorème est en annexe~\ref{proof:preservation-qualif}.
 
 Ces extensions ne modifient pas les théorème de progrès et préservation sur les
-phrases (théorèmes~\label{thm:prog-phr} et~\label{thm:presa-phr}).
+phrases (théorèmes~\ref{thm:prog-phr} et~\ref{thm:presa-phr}).
 
 La sûreté du typage étant à nouveau établie, on a montré que l'ajout de types
 pointeurs utilisateur suffit pour avoir une adéquation entre les extensions de
@@ -570,7 +576,7 @@ l'espace utilisateur, qui sont utilisés pour l'implantation d'appels système
 Une première idée pour le typage de ces nouveaux pointeurs est de leur donner le
 même type que les pointeurs classiques. On a montré ensuite que ce typage naïf
 ne suffit pas: il permet en effet de faire fuiter de l'information, ce qu'on
-note par un cas d'erreur $\serr{taint}$. En termes de systèmes de types, cela
+note par un cas d'erreur $\serr{sec}$. En termes de systèmes de types, cela
 signifie que le théorème de progrès (théorème~\ref{thm:progres},
 page~\pageref{thm:progres}) n'est plus vérifié.
 
@@ -582,7 +588,5 @@ les pointeurs noyau peuvent être déréférencés. Pour accéder aux pointeurs
 utilisateur, il faut appeler les constructions $\ctuF$ et $\cfuF$ qui sont
 typées adéquatement et vérifient dynamiquement que les pointeurs dont la valeur
 est contrôlée par l'utilisateur pointent vers l'espace utilisateur.
-
-% TODO taint -> user ptet?
 
 % vim: spelllang=fr

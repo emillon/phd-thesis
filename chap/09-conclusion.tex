@@ -3,8 +3,6 @@ contributions réalisées. On fait ensuite un tour des aspects posant problème,
 traités de manière incomplète, en évoquant les travaux possibles pour enrichir
 l'expressivité de ce système.
 
-% TODO liens EADS
-
 \section{Contributions}
 
 Cette thèse comporte 4 contributions principales.
@@ -336,11 +334,6 @@ pointeurs fous~\cite{ifm10}.
 %\verb!open()! et passés au fonctions \verb!read()! et \verb!write()! ont
 %le type \texttt{int}.
 
-
-% TODO il serait pas mal de citer les membres du jury dans ta biblio
-% Jouvelot  > the type and effect discipline?
-
-
 \section*{Conclusion}
 
 L'importance des logiciels grandit par deux effets:
@@ -349,9 +342,9 @@ et d'autre part leur taille part, leur taille est de plus en plus importante.
 Entre les appareils dédiés au calcul, à la communication, au multimedia, et au
 transport, on est facilement exposé en une journée au fonctionnement de plus
 d'une dizaine de millions de lignes de code.
-Il est primordial de vérifier que tout ce code, ne peut pas être détourné de son
-utilisation initiale, les conséquences pouvant être selon le logiciel gênantes
-ou catastrophiques.
+Il donc primordial de vérifier que ces logiciels ne peuvent pas être détournés
+de leur utilisation prévue. Les conséquences peuvent en effet être
+catastrophiques dans un contexte avionique ou militaire.
 
 Au cœur de la plupart de ces systèmes informatiques, se trouve la plupart du
 temps un noyau qui abstrait les détails du matériel pour fournir aux programmes
@@ -367,10 +360,10 @@ selon le genre de valeurs qu'elles créent à l'exécution --- c'est la définit
 que donne Pierce d'un système de types~\cite[p.~1]{TAPL}.
 
 L'utilisation d'un système de types comme analyseur statique léger est donc
-séduisante. Pour des propriétés qui ne dépendent pas de la valeur des
-expressions, mais uniquement de leur forme, c'est d'ailleurs la solution la plus
-simple, puisque comme nous l'avons montré elle est simple à mettre en œuvre et
-efficace à exécuter.
+efficace. Pour des propriétés qui ne dépendent pas de la valeur des expressions,
+mais uniquement de leur forme, c'est d'ailleurs la solution la plus simple,
+puisque comme nous l'avons montré elle est simple à mettre en œuvre et rapide à
+exécuter.
 
 On peut se poser la question suivante: pourquoi a-t'on besoin d'une analyse
 statique dédiée, plutôt que de passer par le langage C lui-même? Le problème

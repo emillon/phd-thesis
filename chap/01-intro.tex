@@ -427,7 +427,11 @@ intermédiaire, Newspeak\cite{newspeak}, ainsi que des compilateurs permettant d
 traduire du code C et Ada vers celui-ci. L'analyseur statique Penjili, reposant
 sur ces outils, a été utilisé pour analyser des logiciels embarqués critiques de
 plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
-source.
+source. Tous ces outils sont écrits dans le langage OCaml~\cite{DAOC}.
+
+Les travaux présentés ici ont d'ailleurs été réalisés dans l'équipe de sécurité
+et sûreté logicielle d'EADS Innovation Works, dans le cadre d'une convention
+industrielle de formation par la recherche (CIFRE).
 
 Nous avons choisi de baser notre analyse sur Newspeak, dans le but de bénéficier
 de ces outils existants et dans la perspective de guider les analyses de valeur
@@ -462,20 +466,18 @@ pointeurs contrôlés par l'utilisateur à la sémantique et au système de type
 chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
 de sûreté de typage reliant la sémantique d'exécution aux types statiques.
 
-\paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale associée
-à ces travaux.
-L'implantation du système de types sur le langage \newspeak est d'abord décrite,
-à l'aide d'une variante de l'algorithme W de Damas et Milner.
-La manière de compiler depuis du code C est également présentée.
-Ensuite, on applique cette implantation à un cas d'étude concret. Il s'agit d'un
-bug ayant touché un pilote de carte graphique dans le noyau Linux.
+\paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
+associée à ces travaux. L'implantation du système de types sur le langage
+\newspeak est d'abord décrite, à l'aide d'une variante de l'algorithme W de
+Damas et Milner. La manière de compiler depuis du code C est également
+présentée. Ensuite, on applique cette implantation à un cas d'étude concret. Il
+s'agit d'un bug ayant touché un pilote de carte graphique dans le noyau Linux.
 En manipulant incorrectement un pointeur dont la valeur est contrôlée par
 l'utilisateur, il crée un problème de sécurité car un utilisateur malveillant
-lire ou écrire dans l'espace mémoire réservé au noyau.
-En lançant notre prototype, la version non
-corrigée lève une erreur alors que dans la version corrigée, un type correct est
-inféré. On montre ainsi que le système de type capture précisément ce genre
-d'erreur de programmation.
+lire ou écrire dans l'espace mémoire réservé au noyau. En lançant notre
+prototype, la version non corrigée lève une erreur alors que dans la version
+corrigée, un type correct est inféré. On montre ainsi que le système de type
+capture précisément ce genre d'erreur de programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.

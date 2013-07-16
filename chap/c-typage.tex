@@ -1,7 +1,7 @@
 On rappelle ici l'ensemble des règles de typage décrites dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 
-\section*{Règles de typage des constantes et left-values}
+\section{Règles de typage des constantes et left-values}
 
 \begin{framed}
 
@@ -29,7 +29,7 @@ chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 \end{framed}
 
 \newpage
-\section*{Règles de typage des opérateurs}
+\section{Règles de typage des opérateurs}
 \begin{framed}
 \begin{mathpar}
     \ruleheader{$Γ ⊢ \opun~e : t$}
@@ -67,7 +67,7 @@ chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 \end{framed}
 
 \newpage
-\section*{Règles de typage des expressions et instructions}
+\section{Règles de typage des expressions et instructions}
 \begin{framed}
 \begin{mathpar}
     \ruleheader{$Γ ⊢ e : t$}
@@ -110,7 +110,7 @@ chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 \end{framed}
 
 \newpage
-\section*{Règles de typage des valeurs}
+\section{Règles de typage des valeurs}
 \begin{framed}
   \hspace{-2.1em}
   \ruleheader{$\semtyp{m}{v}{τ}$}
@@ -135,19 +135,17 @@ chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 
 \end{framed}
 
-\section*{Règles de typage des extensions noyau}
+\section{Règles de typage des extensions noyau}
 \begin{framed}
 
 \begin{mathpar}
-  \disprule{Taint}
+  \disprule{AddrOf-User}
 
   \disprule{GetU}
 
   \disprule{PutU}
 
   \disprule{AddrOf-Kernel}
-
-  \disprule{Ptr-Arith-User}
 \end{mathpar}
 
 \end{framed}

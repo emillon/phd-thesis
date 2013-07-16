@@ -244,7 +244,7 @@
                { }
                {\semtyp{m}{\eFun{x_1, …, x_n}{i}}{\stFun{n}}}
     }
-    {Taint}{ \irule{Taint}
+    {AddrOf-User}{ \irule{AddrOf-User}
                  { Γ ⊢ lv : t }
                  { Γ ⊢ \eTaint{lv} : \ptrU{t} }
     }
@@ -263,13 +263,6 @@
     {AddrOf-Kernel}{ \irule{AddrOf-Kernel}
                        { Γ ⊢ lv : t }
                        { Γ ⊢ \& lv : \ptrK{t} }
-    }
-    {Ptr-Arith-User}{ \irule{Ptr-Arith-User}
-                         { \opbin ∈ \{ +_p, -_p \} \\
-                           Γ ⊢ e_1 : \ptrU{t} \\
-                           Γ ⊢ e_2 : \tInt \\
-                         }
-                         { Γ ⊢ e_1~\opbin~e_2 : \ptrU{t} }
     }
     {END}
 }
@@ -455,15 +448,15 @@
               {\phstar{([~], [~])}{P}{m}}
               {\phprog{P}{m}}
     }
-    {Expr-Tainted}{ \irule{Expr-Tainted}
+    {Phi-User}{ \irule{Phi-User}
                       { }
-                      { \mm{m}{\eTaint{φ}}{m}{\vTainted{φ}} }
+                      { \mm{m}{\eTaint{φ}}{m}{\wphi{(\vTainted{φ})}} }
     }
     {User-Get-OK}{ \irule{User-Get-OK}
                      { v  = m[φ_s]_Φ
                     \\ m' = m[φ_d ← v]_Φ
                      }
-                     { \mm{m}{\uGet{φ_d}{\vTainted{φ_s}}}
+                     { \mm{m}{\uGet{\wphi{φ_d}}{\wphi{(\vTainted{φ_s})}}}
                        {m'}{0}
                      }
     }
@@ -471,7 +464,7 @@
                       {
                         ∄~φ_s. φ = \vTainted{φ_s}
                       }
-                      { \mm{m}{\uGet{φ_d}{φ}}
+                      { \mm{m}{\uGet{\wphi{φ_d}}{\wphi{φ}}}
                            {m}{-1}
                       }
     }
@@ -479,7 +472,7 @@
                      { v = m[φ_s]_Φ
                     \\ m' = m[φ_d ← v]_Φ
                      }
-                     { \mm{m}{ \uPut{\vTainted{φ_d}}{φ_s} }
+                     { \mm{m}{ \uPut{\wphi{(\vTainted{φ_d})}}{\wphi{φ_s}} }
                          {m'}{0}
                      }
     }
@@ -487,7 +480,7 @@
                       {
                         ∄~φ_d. φ = \vTainted{φ_d}
                       }
-                      { \mm{m}{\uPut{φ}{φ_s}}
+                      { \mm{m}{\uPut{\wphi{φ}}{\wphi{φ_s}}}
                            {m}{-1}
                       }
     }
