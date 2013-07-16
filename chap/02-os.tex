@@ -284,7 +284,7 @@ noyau est écrasée.
 Un utilisateur malveillant peut donc utiliser cet appel système pour écrire à
 n'importe quelle adresse dans l'espace d'adressage du noyau. Ce problème vient
 du fait que l'appel système utilise les privilèges du noyau au lieu de celui qui
-contrôle la valeur des paramètres sensibles. Celà s'appelle le \emph{Confused
+contrôle la valeur des paramètres sensibles. Cela s'appelle le \emph{Confused
 Deputy Problem}\cite{hardy88confused}.
 
 La bonne solution est de tester dynamiquement la valeur du pointeur: s'il pointe
