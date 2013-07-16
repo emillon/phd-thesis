@@ -66,13 +66,12 @@ déterminer qui les contrôle (comme par exemple, un entier). Dans CQual, ceci
 permet de traiter de manière correcte le transtypage. Par exemple, si $e$ a pour
 type qualifié $\qUser~\tInt$, alors $(\tFloat~*)~e$ aura pour type qualifié
 $\qUser~\tFloat~*$, et déréférencer cette expression produira une erreur de
-typage. \langname, dans son état actuel, ne permet pas de traiter ce cas.
+typage. \langname, dans son état actuel, ne permet pas de traiter les
+conversions de type et ne permet donc pas de traiter ce cas.
 
-% TODO et donc c'est bien?
-
-Au contraire, nous ne modifions le système de types que là où cela est
-nécessaire, c'est-à-dire sur les types pointeurs. Cela permet de ne pas avoir à
-modifier en profondeur un système de types existant.
+Nous prenons au contraire, l'approche de ne modifier le système de types que là
+où cela est nécessaire, c'est-à-dire sur les types pointeurs. Cela permet de ne
+pas avoir à modifier en profondeur un système de types existant.
 
 Le modèle d'exécution est aussi très différent. CQual s'appuie sur un
 langage proche de ML: un noyau de lambda-calcul avec des références. Le système
@@ -92,11 +91,8 @@ pointeurs $\qKernel$.
 Notre approche, au contraire, n'utilise pas de sous-typage, mais consiste à
 définir un type abstrait $\ptrU{t}$ partageant certaines propriétés avec
 $\ptrK{t}$ (comme la taille et la représentation) mais incompatible avec
-certaines opérations. C'est à rapprocher du système de masquage par interface
-des langages ML, ou encore de la définition de types abstraits par le mot-clef
-\texttt{newtype} en Haskell.
-
-% TODO c'est une approche type abstrait!
+certaines opérations. C'est à rapprocher des types abstraits dans les langages
+comme OCaml et Haskell.
 
 Les perspectives de travaux futurs sont également très différentes. Dans le cas
 des pointeurs, même si le noyau Linux (et la plupart des systèmes
@@ -106,3 +102,5 @@ indépendants : par exemple, de la de la mémoire flash, de la RAM, ou une EEPRO
 de configuration. Ces différentes mémoires possèdent des adresses, et un
 pointeur est interprété comme faisant référence à une ou l'autre selon le code
 dont il est tiré.
+
+% vim: spelllang=fr
