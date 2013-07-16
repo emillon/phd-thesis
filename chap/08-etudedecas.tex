@@ -1,11 +1,3 @@
-Dans ce chapitre, on décrit un exemple de mise en œuvre du système de type
-décrit dans le chapitre~\ref{cha:qualifs} et implanté dans le
-chapitre~\ref{cha:implem}.
-
-% TODO court
-
-\section{Linux}
-
 Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
 d'exploitation développé depuis le début des années 90 et «figure de proue» du
 mouvement open-source. Au départ écrit par Linus Torvalds sur son ordinateur
@@ -18,11 +10,27 @@ Même si le noyau est monolithique (la majeure partie des traitements s'effectue
 au sein d'un même fichier objet), les sous-systèmes sont indépendants. C'est ce
 qui permet d'écrire des pilotes de périphériques et des modules.
 
+Ces pilotes manipulent des données provenant de l'utilisateur, notamment par
+pointeurs. Comme on l'a vu, cela peut poser des problèmes de sécurité si on
+déréférence ces pointeurs sans vérification.
+
+Dans ce chapitre, on met en œuvre sur le noyau Linux le système de types décrit
+dans le chapitre~\ref{cha:qualifs}, ou plus précisément l'outil \texttt{ptrtype}
+du chapitre~\ref{cha:implem}.
+
+Pour montrer le système de types capture cette propriété et que l'implantation
+est utilisable, on étudie le cas d'un bug qui a touché le noyau Linux. Dans une
+routine correspondant à un appel système, un pointeur utilisateur est
+déréférencé directement, pouvant provoquer une fuite d'informations
+confidentielles dans le noyau. Les détails sur ce bug peuvent être trouvés sur
+\url{https://bugs.freedesktop.org/show_bug.cgi?id=29340}.
+
 \section{GNU C}
 \label{sec:gnuc}
 
 Linux est écrit dans le langage C, mais pas sa version normalisée. Il utilise le
-dialecte GNU C qui est celui que supporte GCC.\@
+dialecte GNU C qui est celui que supporte GCC. Une première difficulté pour
+traiter le code du noyau est donc de le compiler.
 
 Pour traduire ce dialecte, il a été nécessaire d'adapter \texttt{c2newspeak}. La
 principale particularité est la notation \verb!__attribute__((...))! qui peut
