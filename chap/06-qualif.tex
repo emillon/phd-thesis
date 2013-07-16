@@ -254,7 +254,6 @@ dynamique.
 Étant donné \langname{} augmenté de cette extension sémantique, on peut étendre
 naïvement le système de types avec la règle suivante:
 
-\label{page:rule-taint-ignore}
 \begin{mathpar}
   \irule{Taint-Ignore}
     { Γ ⊢ lv : t }
@@ -463,7 +462,7 @@ compilation.
 L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 
 \[
-    \disprule{Taint}
+    \disprule{AddrOf-User}
 \]
 
 Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
@@ -582,7 +581,5 @@ les pointeurs noyau peuvent être déréférencés. Pour accéder aux pointeurs
 utilisateur, il faut appeler les constructions $\ctuF$ et $\cfuF$ qui sont
 typées adéquatement et vérifient dynamiquement que les pointeurs dont la valeur
 est contrôlée par l'utilisateur pointent vers l'espace utilisateur.
-
-% TODO taint -> user ptet?
 
 % vim: spelllang=fr
