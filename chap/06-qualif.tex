@@ -126,7 +126,7 @@ et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
 une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $\wphi{φ}$,
 $\eTaint{e}$ s'évalue en $\wphi{\vTainted{φ}$}. Cela correspond à 2 ajouts: une un
-nouveau contexte d'évaluation $\eTaint{\ctxEmpty}$ et une règle d'évaluation.
+nouveau contexte d'évaluation $\eTaint{C}$ et une règle d'évaluation.
 Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher lorsqu'on
 déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
 la figure~\ref{fig:qualif-changes}.
