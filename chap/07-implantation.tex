@@ -267,7 +267,7 @@ chaque accès. C'est à dire qu'on va par exemple inférer le type $\tStruct{ l:
 $\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient
 en sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$.
 Plus présisément, pour unifier deux types structure, on étudie les types de
-leurs champs. On commence par unifier les types des champs de même nom, et on on
+leurs champs. On commence par unifier les types des champs de même nom, et on
 ajoute à l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme
 de rangée présent dans les langages comme OCaml.
 
