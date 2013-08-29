@@ -1593,10 +1593,10 @@ relier un pas d'évaluation de $i$ à un pas d'évaluation de $\eFun{a}{i}
 n'est pas à considérer. En effet, l'empilement suivi du dépilement modifie la
 mémoire.
 
-On emploie donc une règle \textsc{Exp-Call-Ctx} qui relie un pas
-interne $\mm{m_1}{i}{m_2}{i'}$ à un pas externe. Si une fois l'instruction
-interne réduite d'un pas, on évalue les arguments en des valeurs $v'_i$. Ils
-correspondent aux nouvelles valeurs à passer à la fonction.
+On emploie donc une règle \textsc{Exp-Call-Ctx} qui relie un pas interne
+$\mm{m_1}{i}{m_2}{i'}$ à un pas externe. Une fois l'instruction interne réduite
+d'un pas, on évalue les arguments en des valeurs $v'_i$. Ils correspondent aux
+nouvelles valeurs à passer à la fonction.
 
 Les autres fonctions permettent de transférer le flot de contrôle: en retournant
 la même instruction pour une instruction terminale, ou en propageant une erreur.
