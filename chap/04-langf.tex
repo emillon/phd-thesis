@@ -1516,13 +1516,12 @@ tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}
-$\serr{ptr}$.
 \footnote{
 Cela est cohérent avec la norme C99:
     «If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
     »~\cite[6.5.6~§8]{AnsiC}}
-et l'opérateur $\widehat{\opbin}$ renvoie
+et l'opérateur $\widehat{\opbin}$ renvoie $\serr{ptr}$.
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
