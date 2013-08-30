@@ -52,7 +52,7 @@ dans la figure~\ref{fig:stx-npk}.
     {[i_i]}{Liste d'instructions}
     {END}
 \\ \\
-\gramdef{Left-value}{lv}
+\gramdef{Valeur gauche}{lv}
     {\npkstyle{Local} (x)}{Locale}
     {\npkstyle{Global} (x)}{Globale}
     {\npkstyle{Deref} (e, n)}{Déréférencement}
@@ -381,8 +381,8 @@ environnement, on type le bloc de portée de la déclaration.
 \end{figure}%}}}
 
 De même, pour typer un appel de fonction, on infère le type de ses arguments et
-left-values de retour. On obtient également le type de la fonction (à partir du
-type de la fonction présent dans l'environnement, ou du type du pointeur de
+valeurs gauches de retour. On obtient également le type de la fonction (à partir
+du type de la fonction présent dans l'environnement, ou du type du pointeur de
 fonction qui est déréférencé), et on unifie ces deux informations.
 
 On peut donner quelques autres exemples. Pour additionner deux flottants, on
@@ -400,8 +400,8 @@ let infer_binop op (_, a) (_, b) =
 \end{verbatim}
 
 Pour prendre l'adresse d'une variable, la règle \textsc{AddrOf-Kernel}
-s'applique: on prend le type de la left-value et on construit un pointeur noyau
-à partir de lui.
+s'applique: on prend le type de la valeur gauche et on construit un pointeur
+noyau à partir de lui.
 
 \begin{verbatim}
 | T.AddrOf lv ->

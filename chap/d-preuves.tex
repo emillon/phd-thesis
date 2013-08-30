@@ -273,7 +273,7 @@ Alors l'un des cas suivants est vrai:
 C'est-à-dire, soit:
 
 \begin{itemize}
-  \item l'entité (instruction, expression ou left-value) est complètement
+  \item l'entité (instruction, expression ou valeur gauche) est complètement
 évaluée.
   \item un pas d'évaluation est possible.
   \item une erreur de division, tableau ou pointeur se produit.
@@ -622,7 +622,7 @@ fonctions se terminent par une instruction $\iReturn{\cdot}$
 
 %}}}
 
-\subsection*{Left-values}
+\subsection*{Valeurs gauches}
 
 \paragraph{\textsc{Lv-Var}:}%{{{
 
@@ -792,9 +792,9 @@ On procède par induction sur la dérivation de $\mm{m}{\cdot}{m'}{\cdot}$.
 Plusieurs remarques sont à faire: d'une part, en ce qui concerne le typage de la
 mémoire, il suffit de montrer que $\mcomp{Γ}{m'}$ car cela implique que
 $\mcomp{Γ}{\cCleanup{m'}}$. D'autre part, la règle \textsc{Ctx} apparaît 3 fois
-car elle peut être appliquée en contexte d'expression, d'instructions ou de
-left-values. De même la règle \textsc{Trans} ne pose pas de problème, il suffit
-d'appliquer l'hypothèse de récurrence à ses prémisses.
+car elle peut être appliquée en contexte d'expression, d'instruction ou de
+valeur gauche. De même la règle \textsc{Trans} ne pose pas de problème, il
+suffit d'appliquer l'hypothèse de récurrence à ses prémisses.
 
 \subsection*{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
@@ -835,7 +835,7 @@ $Γ ⊢ \ctxSub{C}{lv'} : t$.
 \subsection*{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
 
 \paragraph{\textsc{Ctx}:} % {{{
-Idem que dans le cas des left-values.
+Idem que dans le cas des valeurs gauches.
 % }}}
 
 \subsection*{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}

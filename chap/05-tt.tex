@@ -233,17 +233,17 @@ Enfin, le littéral unité a le type $\tUnit$.
   \disprule{Cst-Unit}
 \end{mathpar}
 
-\subsection*{Left-values}
+\subsection*{Valeurs gauches}
 
 Rappelons que l'environnement de typage $Γ$ contient le type des variables
-accessibles du programme. Le cas où la left-value à typer est une variable est
+accessibles du programme. Le cas où la valeur gauche à typer est une variable est
 donc direct: il suffit de retrouver son type dans l'environnement.
 
 \begin{mathpar}
   \disprule{Lv-Var}
 \end{mathpar}
 
-Dans le cas d'un déréférencement, on commence par typer la left-value
+Dans le cas d'un déréférencement, on commence par typer la valeur gauche
 déréférencée. Si elle a un type pointeur, la valeur déréférencée est du type
 pointé.
 
@@ -251,8 +251,8 @@ pointé.
   \disprule{Lv-Deref}
 \end{mathpar}
 
-Pour une left-value indexée (l'accès à tableau), on s'assure que l'indice soit
-entier, et que la left-value a un type tableau: le type de l'élement est encore
+Pour une valeur gauche indexée (l'accès à tableau), on s'assure que l'indice soit
+entier, et que la valeur gauche a un type tableau: le type de l'élement est encore
 une fois le type de base du type tableau ($t$ pour $t[]$).
 
 \begin{mathpar}
@@ -346,14 +346,14 @@ L'arithmétique de pointeurs préserve le type des pointeurs.
 
 \subsection*{Autres expressions}
 
-Prendre l'adresse d'une left-value rend un type pointeur sur le type de
+Prendre l'adresse d'une valeur gauche rend un type pointeur sur le type de
 celle-ci.
 
 \begin{mathpar}
   \disprule{Addr}
 \end{mathpar}
 
-Pour typer une affectation, on vérifie que la left-value (à gauche) et
+Pour typer une affectation, on vérifie que la valeur gauche (à gauche) et
 l'expression (à droite) ont le même type. C'est alors le type résultat de
 l'expression d'affectation.
 
@@ -543,8 +543,8 @@ pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
 de déterminer statiquement. On le remplace donc par un cas plus simple où seul
 l'arité est conservée.
 
-Le cas des références (règle \textsc{S-Ptr}) utilise le typage des left-values,
-codéfini par:
+Le cas des références (règle \textsc{S-Ptr}) utilise le typage des valeurs
+gauches, codéfini par:
 
 \[
     \semtypphi{m}{φ}{τ}
@@ -892,7 +892,7 @@ $\ctxSub{C}{e}$, on commence par donner un type aux contextes $C$.
 
 On définit une relation de typage pour les contextes d'évaluation $C$. Elle
 permet de relier le type d'un sous-élément au type complet. Plusieurs cas se
-distinguent, selon la nature (instruction d'un côté, expression ou left-value de
+distinguent, selon la nature (instruction d'un côté, expression ou valeur gauche de
 l'autre) du «trou» et de l'élement complet.
 
 \begin{align*}
@@ -983,7 +983,7 @@ y remplace $x$ par une expression de type $t$.
 \label{lemma:inv-ctx}
 
 Partant d'une relation de typage d'une entité syntaxique (expression,
-instruction ou left-value) de la forme $\ctxSub{C}{x}$, on peut en déduire une
+instruction ou valeur gauche) de la forme $\ctxSub{C}{x}$, on peut en déduire une
 information de typage sur $C$ et $x$.
 
 \begin{center}
@@ -1219,7 +1219,7 @@ Donc $m'[φ']_Φ = m[φ']_Φ$ et on conclut grâce à l'hypothèse d'induction.
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 Contrairement aux langages où tout est expression, il faut traiter séparément
 les trois constructions principales de \langname : les expressions, les
-left-values et les instructions. Celles-ci sont mutuellement dépendantes de par
+valeurs gauches et les instructions. Celles-ci sont mutuellement dépendantes de par
 le graphe suivant.
 
 \begin{center}
@@ -1230,7 +1230,7 @@ le graphe suivant.
 
 \node[draw, right of=I] (E) {Expressions};
 
-\node[draw, right of=E] (L) {Left-values};
+\node[draw, right of=E] (L) {Valeurs gauches};
 
 \draw[->] (I) edge[bend left] node[auto] {Évaluation} (E);
 \draw[->] (E) edge[bend left] node[auto] {Abstraction} (I);
@@ -1280,7 +1280,7 @@ Alors l'un des cas suivants est vrai:
 C'est-à-dire, soit:
 
 \begin{itemize}
-  \item l'entité (instruction, expression ou left-value) est complètement
+  \item l'entité (instruction, expression ou valeur gauche) est complètement
 évaluée.
   \item un pas d'évaluation est possible.
   \item une erreur de division, tableau ou pointeur se produit.
