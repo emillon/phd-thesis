@@ -2,14 +2,14 @@ Communication,
 audiovisuel,
 transports,
 médecine:
-tout ces domaines se sont transformés dans les dernières décennies,
+tous ces domaines se sont transformés dans les dernières décennies,
 en particulier grâce à la révolution numérique.
 En effet le plus petit appareil électrique contient maintenant des composants
 matériels programmables.
 
 En 2013, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
 complexité les rapprochent des ordinateurs de bureau. Par exemple, le système
-d'exploitation Android de Google est basé sur le noyau Linux, destiné à la base
+d'exploitation Android de Google est fondé sur le noyau Linux, destiné à la base
 aux micro-ordinateurs.
 
 Le noyau d'un système d'exploitation est chargé de faire l'intermédiaire entre
@@ -26,7 +26,7 @@ volontairement ou involontairement détourner ce dernier et lui faire fuiter des
 informations confidentielles.
 
 Le problème est que comme tous les logiciels, les noyaux de système
-d'exploitation sont écrits par des humains, qui ne sont pas parfaits. Les
+d'exploitation sont écrits par des humains qui ne sont pas parfaits. Les
 activités de relecture et de débogage ont beau prendre la majeure partie du
 temps de développement, il est facile de laisser passer des défauts de
 programmation.
@@ -51,7 +51,7 @@ le typage statique, qui consiste à associer à chaque morceau de programme, une
 exemple, si $n$ est le nom d'une variable entière, alors $n + 2$ produira
 toujours une valeur entière.
 Cela permet de savoir si les programmes manipuleront des données incompatibles
-entre eux.
+entre elles.
 
 Pour en revenir aux noyaux de système d'exploitation, ceux-ci manipulent à la
 fois des données sensibles et des données provenant du monde extérieur, pour
@@ -89,8 +89,8 @@ les uns à la suite des autres; et chaque programme aura à sa disposition une
 partie de la mémoire principale, ou du disque dur.
 
 Si plusieurs programmes s'exécutent de manière concurrente sur le même matériel,
-il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de l'autre,
-ainsi que les deux n'utilisent pas la carte réseau en même temps. Ce sont des
+il faut s'assurer que l'un ne puisse pas écrire dans la mémoire de l'autre, et
+aussi que les deux n'utilisent pas la carte réseau en même temps. Ce sont des
 rôles du système d'exploitation.
 
 Ainsi, au lieu d'accéder directement au matériel via des instructions de bas
@@ -147,7 +147,7 @@ y sont présentes
 \footnote{
   Ici «supérieur» est synonyme de «plus privilégié». Dans l'implantation
   d'Intel présentée dans le chapitre~\ref{cha:os}, les niveaux sont numérotés de
-  0 à 3 où le niveau 0 est le plus privilégié.
+  0 à 3, où le niveau 0 est le plus privilégié.
 }.
 
 Par exemple, supposons qu'un programme utilisateur contienne l'instruction
@@ -189,10 +189,11 @@ réservés au mode le plus privilégié: par exemple les lectures ou écritures 
 des ports matériels, ou celles qui permettent de définir les niveaux de
 privilèges des différentes zones mémoire.
 
-Comme les programmes utilisateur ne pouvant pas accéder à ces instructions de
+Comme les programmes utilisateur ne peuvent pas accéder à ces instructions de
 bas niveau, ils sont très limités dans ce qu'ils peuvent faire. En utilisant
 seulement les seules instructions non privilégiées, on peut uniquement réaliser
-des calculs, sans réaliser d'opération visibles depuis l'extérieur du programme.
+des calculs, sans réaliser d'opérations visibles depuis l'extérieur du
+programme.
 
 Pour utiliser le matériel ou accéder à des abstractions de haut niveau (comme
 créer un nouveau processus), ils doivent donc passer par l'intermédiaire du
@@ -250,8 +251,8 @@ des buts est d'empêcher de manipuler des données incompatibles entre elles.
 
 En mémoire, les seules données qu'un ordinateur manipule sont des nombres. Selon
 les opérations effectuées, ils seront interprétés comme des entiers, des
-adresses mémoires, ou des caractères. Pourtant il est clair que certaines
-opérations n'ont pas de sens: par exemple, multiplier un nombre par une adresse,
+adresses mémoire, ou des caractères. Pourtant il est clair que certaines
+opérations n'ont pas de sens: par exemple, multiplier un nombre par une adresse
 ou déréférencer le résultat d'une division sont des comportements qu'on voudrait
 pouvoir empêcher.
 
@@ -266,7 +267,7 @@ pommes et des oranges». Le modèle qui permet cette classification est appelé
 Dans ce cas, chaque valeur manipulée par le programme est décorée d'une
 étiquette définissant comment interpréter la valeur en question. Les règles de
 typage sont alors réalisées à l'exécution. Par exemple, l'opérateur «$+$»
-vérifie que ces deux opérandes ont une étiquette «entier», et construit alors
+vérifie que ses deux opérandes ont une étiquette «entier», et construit alors
 une valeur obtenue en faisant l'addition des deux valeurs, avec une étiquette
 «entier». Par exemple, le langage Python~\link{python} utilise cette
 stratégie.
@@ -312,24 +313,23 @@ un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
 
-Une autre technique est de déterminer la fonction appelée non pas par le type
-de ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet
-d'associer le comportement aux données. On parle alors de polymorphisme objet.
-Dans ce cas, celui repose sur le sous-typage: si $A_1$ et $A_2$ sont des
-sous-types de $B$, on peut utiliser des valeurs de type $A_1$ ou $A_2$ là où une
-valeur de type $B$ est attendu. Dans ce cas, la fonction correspondante sera
-appelée.
+Une autre technique est de déterminer la fonction appelée non pas par le type de
+ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet d'associer
+le comportement aux données. On parle alors de polymorphisme objet. Dans ce cas,
+celui-ci repose sur le sous-typage: si $A_1$ et $A_2$ sont des sous-types de
+$B$, on peut utiliser des valeurs de type $A_1$ ou $A_2$ là où une valeur de
+type $B$ est attendue. Dans ce cas, la fonction correspondante sera appelée.
 
 La dernière possibilité est le polymorphisme paramétrique, qui consiste à
-utiliser le \linebreak même code quelque soit le type des arguments. Dans ce
+utiliser le \linebreak même code quel que soit le type des arguments. Dans ce
 cas, on utilise une seule fonction pour traiter une liste d'entiers ou une liste
 de flottants, par exemple. Au lieu d'associer à chaque fonction un type, dans
 certains cas on lui associe un type paramétré, instanciable en un type concret.
 Dans le cas des fonctions de traitement de liste, l'idée est que lorsqu'on ne
-touche pas aux éléments, alors le traitement est valable quelque soit leur type.
-Cette technique a été décrite en premier dans~\cite{Milner78}.
+touche pas aux éléments, alors le traitement est valable quel que soit leur
+type. Cette technique a été décrite en premier dans~\cite{Milner78}.
 
-Pour un tour d'horizon de différents systèmes types de statiques, avec en
+Pour un tour d'horizon de différents systèmes de types statiques, avec en
 particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
 
 \section{Langages}
@@ -344,7 +344,7 @@ programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
 machine: ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
 taille concrète. Son système de types, bien que statique (il peut y avoir des
-erreurs de typage à la compilation) est assez rudimentaire: toutes les formes
+erreurs de typage à la compilation), est assez rudimentaire: toutes les formes
 de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
@@ -364,7 +364,7 @@ quelques candidats langages qui peuvent servir ce rôle:
 \subsection*{Middle-ends}
 
 Les premiers candidats sont bien entendu les représentations intermédiaires
-utilisées dans les compilateurs C. Elles ont l'avantage d'accepter en plus du C
+utilisées dans les compilateurs C. Elles ont l'avantage d'accepter, en plus du C
 standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
 plupart des logiciels. En particulier, le noyau Linux repose fortement sur les
 extensions GNU.\@
@@ -379,8 +379,8 @@ compilateur écrit dans un dialecte de Lisp.
 \paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
 open-source puis sponsorisé par Apple. À la différence de GCC, sa base de code
 est écrite en C++. Il utilise une représentation intermédiaire qui peut être
-manipulée soit sous forme d'une structure de données C++, soit d'un fichier de
-code-octet compact, soit sous forme textuelle.
+manipulée sous forme d'une structure de données C++, d'un fichier de code-octet
+compact, ou textuelle.
 
 \paragraph{Cmm} est une représentation interne utilisée pour la génération de
 code lors de la compilation d'OCaml~\link{ocaml}, et disponible dans les sources
@@ -399,16 +399,15 @@ similaire à C-~-.
 
 Comme le problème de construire une représentation intermédiaire adaptée à une
 analyse statique n'est pas nouveau, plusieurs projets ont déjà essayé d'y
-apporter une solution. Puisque qu'ils sont développés en parallèle des
-compilateurs, le support des extensions est en général moins important dans ces
-langages.
+apporter une solution. Puisqu'ils sont développés en parallèle des compilateurs,
+le support des extensions est en général moins important dans ces langages.
 
 \paragraph{CIL}\cite{NeculaCil} \link{cil} est une représentation en
 OCaml d'un programme C, développée depuis 2002. Grâce à un mécanisme de
 greffons, elle permet de prototyper rapidement des analyses statiques de
 programmes.
 
-\paragraph{Compcert} est un projet qui vise à produire un compilateur certifié
+\paragraph{CompCert} est un projet qui vise à produire un compilateur certifié
 pour C. C'est-à-dire que les transformations sémantiques sont faites de manière
 prouvée. Il utilise de nombreux langages intermédiaires, dont CIL.\@ Pour le
 front-end, le langage se nomme Clight\cite{cfront}. Les passes de middle-end,
@@ -418,9 +417,9 @@ quant à elles, utilisent Cminor\cite{cminorSL}.
 
 Dans le monde de l'aéronautique, il est nécessaire de s'assurer que les
 logiciels embarqués critiques ne vont pas subir d'erreurs à l'exécution, dont
-les conséquences financières ou même humaines peuvent être tragiques.
+les conséquences financières et humaines peuvent être tragiques.
 
-Afin de vérifier leur absence, des outils basés sur l'interprétation abstraite
+Afin de vérifier leur absence, des outils fondés sur l'interprétation abstraite
 (section~\ref{sec:absint}) on été développés chez EADS Innovation Works dans le
 cadre du projet Penjili~\link{penjili}. On y trouve notamment un langage
 intermédiaire, Newspeak\cite{newspeak}, ainsi que des compilateurs permettant de
@@ -452,7 +451,7 @@ elle est applicable en pratique.
 \paragraph{Dans la partie~\ref{part:ctx},} on présente tout d'abord le
 fonctionnement général d'un système d'exploitation. On y introduit aussi les
 problèmes de manipulation de pointeurs contrôlés par l'utilisateur. Ceux-ci sont
-centraux puisqu'on désire les interdire. On fait ensuite un tour d'horizon des
+centraux puisqu'on désire les restreindre. On fait ensuite un tour d'horizon des
 techniques existantes permettant de traiter ce problème par analyse statique de
 code source.
 
@@ -474,10 +473,10 @@ présentée. Ensuite, on applique cette implantation à un cas d'étude concret.
 s'agit d'un bug ayant touché un pilote de carte graphique dans le noyau Linux.
 En manipulant incorrectement un pointeur dont la valeur est contrôlée par
 l'utilisateur, il crée un problème de sécurité car un utilisateur malveillant
-lire ou écrire dans l'espace mémoire réservé au noyau. En lançant notre
-prototype, la version non corrigée lève une erreur alors que dans la version
-corrigée, un type correct est inféré. On montre ainsi que le système de type
-capture précisément ce genre d'erreur de programmation.
+peut lire ou écrire dans l'espace mémoire réservé au noyau. En lançant notre
+prototype, l'analyse de la version non corrigée lève une erreur alors que dans
+la version corrigée, un type correct est inféré. On montre ainsi que le système
+de type capture précisément ce genre d'erreur de programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.

@@ -36,7 +36,7 @@ dans la figure~\ref{fig:stx-npk}.
 
 \begin{align*}
 \gramdef{Instruction}{s}
-    {\npkstyle{Set} (lv, e, st}{Affectation}
+    {\npkstyle{Set} (lv, e, st)}{Affectation}
     {\npkstyle{Copy} (lv, lv, n)}{Copie}
     {\npkstyle{Guard} (e)}{Garde}
     {\npkstyle{Decl} (var, t, blk)}{Déclaration}
@@ -52,7 +52,7 @@ dans la figure~\ref{fig:stx-npk}.
     {[i_i]}{Liste d'instructions}
     {END}
 \\ \\
-\gramdef{Left-value}{lv}
+\gramdef{Valeur gauche}{lv}
     {\npkstyle{Local} (x)}{Locale}
     {\npkstyle{Global} (x)}{Globale}
     {\npkstyle{Deref} (e, n)}{Déréférencement}
@@ -128,7 +128,7 @@ les types et les noms sont résolus, et le programme est annoté de manière à
 rendre les prochaines étapes indépendante du contexte. Par exemple, chaque
 déclaration de variable est adjointe d'une description complète du type.
 
-Lors de cette étape, le flôt de contrôle est également simplifié. C en effet
+Lors de cette étape, le flot de contrôle est également simplifié. C en effet
 propose de nombreuses constructions ambigües ou redondantes.
 
 Au contraire, Newspeak propose un nombre réduit de constructions. Rappelons que
@@ -160,7 +160,7 @@ aient un nom unique.
 
 Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
 décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
-simple. Puisqu'ils sont suffisament proches du lambda calcul simplement typé, on
+simple. Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on
 peut utiliser une variante de l'algorithme W de Damas et
 Milner~\cite{DamasMilner}.
 
@@ -232,7 +232,7 @@ unify (ta, tb):
 \caption{Algorithme d'unification}
 \label{fig:algo-unif}
 \end{figure}%}}}
-% TODx algorithmicx?
+% TODO algorithmicx?
 
 \begin{itemize}
 
@@ -267,7 +267,7 @@ chaque accès. C'est à dire qu'on va par exemple inférer le type $\tStruct{ l:
 $\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient
 en sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$.
 Plus présisément, pour unifier deux types structure, on étudie les types de
-leurs champs. On commence par unifier les types des champs de même nom, et on on
+leurs champs. On commence par unifier les types des champs de même nom, et on
 ajoute à l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme
 de rangée présent dans les langages comme OCaml.
 
@@ -381,8 +381,8 @@ environnement, on type le bloc de portée de la déclaration.
 \end{figure}%}}}
 
 De même, pour typer un appel de fonction, on infère le type de ses arguments et
-left-values de retour. On obtient également le type de la fonction (à partir du
-type de la fonction présent dans l'environnement, ou du type du pointeur de
+valeurs gauches de retour. On obtient également le type de la fonction (à partir
+du type de la fonction présent dans l'environnement, ou du type du pointeur de
 fonction qui est déréférencé), et on unifie ces deux informations.
 
 On peut donner quelques autres exemples. Pour additionner deux flottants, on
@@ -400,8 +400,8 @@ let infer_binop op (_, a) (_, b) =
 \end{verbatim}
 
 Pour prendre l'adresse d'une variable, la règle \textsc{AddrOf-Kernel}
-s'applique: on prend le type de la left-value et on construit un pointeur noyau
-à partir de lui.
+s'applique: on prend le type de la valeur gauche et on construit un pointeur
+noyau à partir de lui.
 
 \begin{verbatim}
 | T.AddrOf lv ->

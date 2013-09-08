@@ -8,7 +8,7 @@ donc naturellement de très bas niveau.
 
 Ses types de données sont établis pour représenter les mots mémoire manipulables
 par les processeurs : essentiellement des entiers et flottants de plusieurs
-tailles. Les types composés correespondent à des zones de mémoire contigües,
+tailles. Les types composés correspondent à des zones de mémoire contigües,
 homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
 structures).
 
@@ -408,15 +408,16 @@ que le pointeur \eNull qui correspond à une valeur par défaut pour les
 pointeurs, et la valeur unité \eUnit qui pourra être retournée par les fonctions
 travaillant par effets de bord uniquement.
 
-Les accès mémoire en lecture et écriture se font au travers de left-values:
-comme en C, elles tiennent leur nom du fait que ce sont ces valeurs qui sont à
-gauche du signe d'affectation. En plus des variables, on obtient une left-values
-en accédant par nom à un champ ou par indice à un élément d'une left-value, ou
-encore en appliquant l'opérateur \texttt{*} de déréférencement à une expression.
-Pour assister le typage, l'accès à un champ doit être décoré du type complet
-$S$, mais cette annotation est ignorée lors de l'évaluation. Les left-values
-correspondent aussi à l'unité d'adressage: c'est-à-dire que les pointeurs sont
-construits en prenant l'adresse d'une left-value avec l'opérateur \texttt{\&}.
+Les accès mémoire en lecture et écriture se font au travers de valeurs gauches
+(\emph{left values} ou \emph{lvalues}): comme en C, elles tiennent leur nom du
+fait que ce sont ces constructions qui sont à gauche du signe d'affectation. En plus
+des variables, on obtient une valeur gauche en accédant par nom à un champ ou par
+indice à un élément d'une valeur gauche, ou encore en appliquant l'opérateur
+\texttt{*} de déréférencement à une expression. Pour assister le typage, l'accès
+à un champ doit être décoré du type complet $S$, mais cette annotation est
+ignorée lors de l'évaluation. Les valeurs gauches correspondent aussi à l'unité
+d'adressage: c'est-à-dire que les pointeurs sont construits en prenant l'adresse
+d'une valeur gauche avec l'opérateur \texttt{\&}.
 
 Les fonctions sont des expressions comme les autres, contrairement à C où elles
 sont forcément déclarées globalement. Cela veut dire qu'on peut affecter une
@@ -496,12 +497,13 @@ des variables locales et se retrouvent dans le cadre correspondant.}.
 
 Les affectations peuvent avoir la forme $x ← e$ où $x$ est une variable et $e$
 est une expression, mais pas seulement. En effet, à gauche de $←$ on trouve en
-général non pas une variable mais une left-value. Pour représenter quelle partie
-de la mémoire doit être accédée par cette left-value, on introduit la notion de
-chemin $φ$. Un chemin est une left-value évaluée: les cas sont similaires, sauf
-que tous les indices sont évalués. Par exemple, $φ = (5, x).p$ représente le
-champ «$p$» de la variable $x$ dans le 5\ieme cadre de pile. C'est à ce moment
-qu'on évalue les déréférencements qui peuvent apparaître dans une left-value.
+général non pas une variable mais une valeur gauche (par définition). Pour
+représenter quelle partie de la mémoire doit être accédée par cette valeur
+gauche, on introduit la notion de chemin $φ$. Un chemin est une valeur gauche
+évaluée: les cas sont similaires, sauf que tous les indices sont évalués. Par
+exemple, $φ = (5, x).p$ représente le champ «$p$» de la variable $x$ dans le
+5\ieme cadre de pile. C'est à ce moment qu'on évalue les déréférencements qui
+peuvent apparaître dans une valeur gauche.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumé sur la
 figure~\ref{fig:interp-val}):
@@ -527,7 +529,7 @@ type sera noté \tUnit.
 \item
 
 $\widehat{\&}~φ$: une référence mémoire. Ce chemin correspond à un pointeur sur
-une left-value. Par exemple, l'expression $\&x$ s'évalue en $\widehat{\&}~φ =
+une valeur gauche. Par exemple, l'expression $\&x$ s'évalue en $\widehat{\&}~φ =
 \widehat{\&}~(5, x)$ si $x$ désigne lexicalement une variable dans le 5\ieme
 cadre de pile.
 
@@ -680,22 +682,22 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   une simple instruction, ce qui simplifie la présentation.
 
 \item
-  un couple $\msi{m}{lv}$ où $lv$ est une left-value et $m$ un état mémoire.
-  L'évaluation des left-values est décrite en section~\ref{sec:eval-lv}.
+  un couple $\msi{m}{lv}$ où $lv$ est une valeur gauche et $m$ un état mémoire.
+  L'évaluation des valeurs gauches est décrite en section~\ref{sec:eval-lv}.
 \item
   une erreur $Ω$. La propagation des erreurs est détaillée dans la
   section~\ref{sec:eval-errors}.
 \end{itemize}
 
-L'évaluation des expressions, left-values et instruction se fait à petits pas.
-C'est-à-dire qu'on simplifie d'étape en étape leur forme, jusqu'à arriver à un
-cas de base:
+L'évaluation des expressions, valeurs gauches et instructions se fait à petits
+pas. C'est-à-dire qu'on simplifie d'étape en étape leur forme, jusqu'à arriver à
+un cas de base:
 
 \begin{itemize}
 \item pour les expressions, une valeur $v$.
 \item pour les instructions, l'instruction $\iPass$ ou $\iReturn{v}$ où $v$ est
     une valeur.
-\item pour les left-values, un chemin $φ$.
+\item pour les valeurs gauches un chemin $φ$.
 \end{itemize}
 
 On considère en fait la clôture transitive de cette relation. Cela revient à
@@ -1036,7 +1038,7 @@ chapitre.
 \label{sec:mem-access}
 
 Le but de cette section est de définir rigoureusement les accès à la mémoire. À
-partir d'un état mémoire $m$ et d'une left-value $φ$, on veut pouvoir obtenir:
+partir d'un état mémoire $m$ et d'une valeur gauche $φ$, on veut pouvoir obtenir:
 
 \begin{itemize}
     \item la valeur accessible au chemin $φ$: $m[φ]_Φ$
@@ -1301,18 +1303,18 @@ Le deuxième est résolu par la règle d'inférence suivante.
 
 Enfin, le troisième revient à définit l'opérateur de substitution
 $\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer des
-substitution au niveau des left-values et des instructions, on définit aussi
+substitutions au niveau des valeurs gauches et des instructions, on définit aussi
 respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
 
 Notons que puisque $i \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer
-aux expressions et aux left-values: l'opération $\phxx\ctxSub$ est purement
+aux expressions et aux valeurs gauches l'opération $\phxx\ctxSub$ est purement
 syntaxique.
 
 Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
 fait apparaître exactement un «$C$». Chaque contexte est donc constitué
 d'exactement une occurrence de $\ctxEmpty$ (une dérivation de $C$ est toujours
 linéaire). L'opération de substitution consiste à remplacer ce trou:
-$\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou left-value)
+$\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou valeur gauche)
 obtenu en remplaçant l'unique $\ctxEmpty$ dans $C$ par $X$. Par exemple,
 $\ctxSub{\iDecl{x}{2+\ctxEmpty}}{5} = \iDecl{x}{2+5}$
 
@@ -1345,7 +1347,7 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
 
-\section{Left-values}
+\section{Valeurs gauches}
 \label{sec:eval-lv}
 
 
@@ -1358,7 +1360,7 @@ ou une variable globale?
 \end{mathpar}
 
 Les règles portant sur le déréférencement et l'accès à un champ de structure
-sont similaires: on commence par évaluer la left-value sur laquelle porte ce
+sont similaires: on commence par évaluer la valeur gauche sur laquelle porte ce
 modificateur, et on place le même modificateur sur le chemin résultant. Dans le
 cas des champs de structure, l'annotation de structure $S$ n'est pas prise
 en compte pour l'évaluation: elle servira uniquement au typage.
@@ -1368,7 +1370,7 @@ en compte pour l'évaluation: elle servira uniquement au typage.
 \end{mathpar}
 
 Enfin, pour évaluer un chemin dans un tableau, on commence par procéder comme
-précédemment, c'est-à-dire en évaluant la left-value sur laquelle porte
+précédemment, c'est-à-dire en évaluant la valeur gauche sur laquelle porte
 l'opération d'indexation. Puis on évalue l'expression d'indice en une valeur qui
 permet de construire le chemin résultant.
 
@@ -1376,9 +1378,9 @@ permet de construire le chemin résultant.
   \semrule{Phi-Array}
 \end{mathpar}
 
-Notons qu'en procédant ainsi, on évalue les left-values de gauche à droite:
-dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier, puis
-$e_2$, puis $e_3$.
+Notons qu'en procédant ainsi, on évalue les valeurs gauches en allant de gauche
+à droite: dans l'expression $x[e_1][e_2][e_3]$, $e_1$ est évalué en premier,
+puis $e_2$, puis $e_3$.
 
 La règle portant sur le déréférencement est particulière. On peut penser que la
 bonne définition de $φ$ consiste à se calquer sur la définition de $lv$, en
@@ -1387,7 +1389,7 @@ indices de tableau, et à ajouter une règle qui transforme $*φ$ en
 $\widehat{*}φ$.
 
 Cela ne fonctionne pas, car alors les déréférencements sont évalués trop tard:
-au moment de l'affectation dans la left-value plutôt qu'à sa définition. La
+au moment de l'affectation dans la valeur gauche plutôt qu'à sa définition. La
 figure~\ref{fig:lazy-deref} illustre ce problème.
 
 %{{{
@@ -1398,14 +1400,14 @@ Decl x  = & s0 in
 Decl p = & ((*x).f) in
 /* (a) */
 x <- & s1
-/* (a) */
+/* (b) */
 \end{SaveVerbatim}
 
 \begin{figure}[h]
 
 \hspace{1cm}\BUseVerbatim{LeLazy}
 
-\caption{Évaluation stricte ou paresseuse des left-values}
+\caption{Évaluation stricte ou paresseuse des valeurs gauches}
 \label{fig:lazy-deref}
 \end{figure}%}}}
 
@@ -1459,7 +1461,7 @@ Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
     \draw[->] (a4) -- (b4);
   \end{tikzpicture}
 
-  \caption{Évaluation des left-values.}
+  \caption{Évaluation des valeurs gauches}
 \label{fig:eval-lv}
 \end{figure}%}}}
 
@@ -1481,7 +1483,7 @@ De même, une fonction est déjà évaluée:
   \semrule{Exp-Fun}
 \end{mathpar}
 
-Pour lire le contenu d'un emplacement mémoire (left-value), il faut tout d'abord
+Pour lire le contenu d'un emplacement mémoire (valeur gauche), il faut tout d'abord
 l'évaluer en un chemin.
 
 \begin{mathpar}
@@ -1516,13 +1518,12 @@ tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}
-$\serr{ptr}$.
 \footnote{
 Cela est cohérent avec la norme C99:
     «If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
     »~\cite[6.5.6~§8]{AnsiC}}
-et l'opérateur $\widehat{\opbin}$ renvoie
+et l'opérateur $\widehat{\opbin}$ renvoie $\serr{ptr}$.
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
@@ -1531,8 +1532,8 @@ l'état mémoire courant.
   \semrule{Exp-AddrOf}
 \end{mathpar}
 
-L'affectation se déroule 3 étapes: d'abord, l'expression est évaluée en une
-valeur $v$. Ensuite, la left-value est évaluée en un chemin $φ$. Enfin, un
+L'affectation se déroule en 3 étapes: d'abord, l'expression est évaluée en une
+valeur $v$. Ensuite, la valeur gauche est évaluée en un chemin $φ$. Enfin, un
 nouvel état mémoire est construit, où la valeur accessible par $φ$ est remplacée
 par $v$. Comme dans le langage C, l'expression d'affectation produit une valeur,
 qui est celle qui a été affectée.
@@ -1594,10 +1595,10 @@ relier un pas d'évaluation de $i$ à un pas d'évaluation de $\eFun{a}{i}
 n'est pas à considérer. En effet, l'empilement suivi du dépilement modifie la
 mémoire.
 
-On emploie donc une règle \textsc{Exp-Call-Ctx} qui relie un pas
-interne $\mm{m_1}{i}{m_2}{i'}$ à un pas externe. Si une fois l'instruction
-interne réduite d'un pas, on évalue les arguments en des valeurs $v'_i$. Ils
-correspondent aux nouvelles valeurs à passer à la fonction.
+On emploie donc une règle \textsc{Exp-Call-Ctx} qui relie un pas interne
+$\mm{m_1}{i}{m_2}{i'}$ à un pas externe. Une fois l'instruction interne réduite
+d'un pas, on évalue les arguments en des valeurs $v'_i$. Ils correspondent aux
+nouvelles valeurs à passer à la fonction.
 
 Les autres fonctions permettent de transférer le flot de contrôle: en retournant
 la même instruction pour une instruction terminale, ou en propageant une erreur.
@@ -1743,7 +1744,7 @@ les unes à la suite des autres.
 On vient de définir un langage impératif, \langname. Le but est que celui-ci
 serve de support à des analyses statiques, notamment de montrer une propriété de
 sécurité sur les pointeurs. Pour le moment, on a seulement défini ce que sont
-les programmes (leur syntaxe) et comment ils s'exécutent (leur sémantique). Ces
+les programmes (leur syntaxe) et comment ils s'exécutent (leur sémantique). Sur
 ces deux points, on note que nous sommes restés suffisamment proches de C, tout
 en utilisant pour la mémoire un modèle plus structuré qu'une simple suite
 d'octets.
@@ -1760,7 +1761,7 @@ formé syntaxiquement. Pour la grande majorité des programmes bien formés (à 
 syntaxe correcte), l'évaluation s'arrêtera soit par une erreur, soit parce
 qu'aucune règle d'évaluation ne peut s'appliquer. Dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}, nous allons donc définir un
-système de types qui permettre de rejeter ces programmes se comportant mal à
+système de types qui permet de rejeter ces programmes se comportant mal à
 l'exécution.
 
 % vim: spelllang=fr
