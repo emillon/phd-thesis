@@ -2,7 +2,7 @@ Le système d'exploitation est le programme qui permet à un système informatiq
 d'exécuter d'autres programmes. Son rôle est donc capital et ses responsabilités
 multiples. Dans ce chapitre, nous allons voir à quoi il sert, et comment il peut
 être implanté. Pour ce faire, nous présentons ici de quoi est constitué un
-sustème Intel 32 bits et ce dont on se sert pour y implanter un système
+système Intel 32 bits et ce dont on se sert pour y implanter un système
 d'exploitation.
 
 \section{Architecture physique}
@@ -19,14 +19,14 @@ cycle :
 
 \begin{itemize}
 \item
-  charger depuis la mémoire la prochaine instruction
+  charger depuis la mémoire la prochaine instruction;
 \item
   \emph{(optionnel)} charger depuis la mémoire les données référencées
-  par l'instruction
+  par l'instruction;
 \item
-  effectuer l'instruction
+  effectuer l'instruction;
 \item
-  \emph{(optionnel)} stocker en la mémoire les données modifiées
+  \emph{(optionnel)} stocker en la mémoire les données modifiées.
 \end{itemize}
 
 Les instructions sont constituées d'un mnémonique (indicant quelle opération
@@ -87,8 +87,8 @@ $0xB8000$ permet d'écrire des caractères à l'écran. L'autre système princip
 est l'utilisation des ports d'entrée/sortie. Cela correspond à des instructions
 spéciales \texttt{in \%ax, port} et \texttt{out port, \%ax} où \texttt{port}
 est un numéro qui correspond à un périphérique particulier. Par exemple, en
-écrivant dans le port $0x60$ on peut contrôler l'état des indicateurs lumineux
-du clavier PS/2.
+écrivant dans le port $0x60$, on peut contrôler l'état des indicateurs
+lumineux du clavier PS/2.
 
 \section{Tâches et niveaux de privilèges}
 \label{sec:taches}
@@ -204,7 +204,7 @@ utilisateur.
 
 Il est donc nécessaire d'appeller une routine du noyau depuis le code
 utilisateur. C'est le but des appels système. Cela consiste à coupler une
-fonction du \ring{3} à une fonction du \ring{0}: en appellant la fonction non
+fonction du \ring{3} à une fonction du \ring{0}: en appelant la fonction non
 privilégiée, le flot d'exécution se retrouve dans le noyau avec les bons
 privilèges.
 
@@ -213,7 +213,7 @@ cela consisterait à faire un saut vers une zone plus privilégiée. Il y a
 plusieurs manières d'implanter ce mécanisme. Nous décrivons ici la technique
 historique à l'aide d'interruptions.
 
-Le processeur peut répondre à des interruptions, qui sont des évenements
+Le processeur peut répondre à des interruptions, qui sont des événements
 extérieurs. Cela permet d'écrire du code asynchrone. Par exemple, une fois qu'un
 long transfert mémoire est terminé, une interruption est reçue. D'autres
 interruptions dites logicielles peuvent arriver lorsqu'une erreur se produit.
@@ -221,15 +221,15 @@ Par exemple, diviser par zéro provoque l'interruption 0, et tenter d'exécuter
 une instruction privilégiée provoque l'interruption 14. On peut aussi provoquer
 une interruption par une instruction \asminstr{int} dédiée.
 
-Une table globale définit, pour chaque numéro d'interruption : quelle est la
-routine à appeller pour la traiter, avec quel niveau de privilège, ainsi que le
+Une table globale définit, pour chaque numéro d'interruption, quelle est la
+routine à appeler pour la traiter, avec quel niveau de privilège, ainsi que le
 niveau de privilège requis pour pouvoir déclencher celle-ci avec l'instruction
 \asminstr{int}.
 
 Il est donc possible de créer une interruption purement logicielle (on utilise
-en général le numéro 128 soit \hexa{80}), déclenchable en \ring{3} et traitée en
-\ring{0}. Les registres sont préservés, donc on peut les utiliser pour passer un
-numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
+en général le numéro 128, soit \hexa{80}), déclenchable en \ring{3} et traitée
+en \ring{0}. Les registres sont préservés, donc on peut les utiliser pour passer
+un numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
 \texttt{open()}) et leurs arguments.
 
 \section{Le \emph{Confused Deputy Problem}}
@@ -248,9 +248,9 @@ donc trouver la bonne granularité.
 Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
 sein de certains types d'appels système.
 
-Il y a deux grands types d'appels systèmes: d'une part, ceux qui renvoient un
-simple nombre, comme \texttt{getpid} qui renvoie le numéro du processus
-appelant.
+Il y a deux grands types d'appels systèmes. D'une part on trouve ceux qui
+renvoient un simple nombre, comme \texttt{getpid} qui renvoie le numéro du
+processus appelant.
 
 \insertcode{appel-syscall-getpid.c}
 
