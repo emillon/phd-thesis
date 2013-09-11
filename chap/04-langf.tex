@@ -827,6 +827,8 @@ l'appelant, il faudra supprimer ce cadre de pile.
       \cPush{(s, g)}{c} = (c::s, g)
   \]
 
+%TODO[PJ]: quid en cas de redéfinition?
+
   On définit aussi l'extension du dernier cadre de pile, qui sert aux
   déclarations de variables locales (figure~\ref{fig:stackops-extend}):
 
@@ -836,6 +838,8 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   L'opération inverse de $\phxxx\cExtend$ sera simplement notée «$-$» : $m - x$,
   par exemple.
+
+%TODO[PJ]: quid si x n'est pas défini?
 
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
@@ -963,7 +967,7 @@ $p$ la valeur $(1, x)$. Puis en arrivant dans $g$, le déréférencement de $p$ 
 modifier $x$ qui va avoir la valeur $1$. $x$, variable flottante, contient donc
 un entier.
 Dans la ligne marquée \texttt{(*)}, on réalise donc l'addition
-d'un entier (contenu dans $x$ malgré son type et d'un flottant). Cette opération
+d'un entier (contenu dans $x$ malgré son type) et d'un flottant. Cette opération
 est bien typée mais provoquera une erreur $\serr{typ}$ à l'exécution.
 
 Pour empêcher cela, on instrumente donc le retour de la fonction
@@ -978,7 +982,7 @@ f = Fun () {
 }
 
 g = Fun (p) {
-    Decl x=0.0 in
+    Decl x = 0.0 in
     *p = 1;
     x <- x + 2.0; // (*)
 }
@@ -1026,11 +1030,11 @@ des états mémoire ou des valeurs en enlevant tout un niveau de pile ou seuleme
 une variable:
 
 \begin{mathpar}
-\cCleanup{m} =  \cP{λφ: \cHphi{φ} > |m|)}{m}
+\cCleanup{m} =  \cP{λφ: \cHphi{φ} > |m|}{m}
 
 \cCleanVar{m}{a}  = \cP{λφ: φ = a}{m}
 
-\cV{p}{v}    = \cVP{λφ: \cHphi{φ} > |m|)}{v}
+\cV{p}{v}    = \cVP{λφ: \cHphi{φ} > |m|}{v}
 
 \cVV{v}{a}        = \cVP{λφ: φ = a}{v}
 \end{mathpar}
@@ -1049,6 +1053,8 @@ partir d'un état mémoire $m$ et d'une valeur gauche $φ$, on veut pouvoir obte
     \item l'état mémoire obtenu en remplaçant celle-ci par une nouvelle valeur $v'$ :
             $m[φ ← v']_Φ$
 \end{itemize}
+
+%TODO[PJ] dire que c'est global et ne plus le noter
 
 Pour définir cette lentille indexée $Φ$, on commence par définir des lentilles
 élémentaires, et on les compose pour pouvoir définir des lentilles entre
@@ -1070,8 +1076,8 @@ La lentille $T$, quant à elle, permet d'accéder au $n$\ieme élement d'un
 tableau. De ce point de vue, elle est similaire à $I$ mais en travaillant sur
 les valeurs.
 
-Enfin, on définit $Φ$ pour accèder à n'importe quelle sous-valeur d'une variable
-dans la mémoire. Cela utilise $A$, $F$ et $T$ précedemment définis.
+Enfin, on définit $Φ$ pour accéder à n'importe quelle sous-valeur d'une variable
+dans la mémoire. Cela utilise $A$, $F$ et $T$ précédemment définis.
 
 La figure~\ref{fig:dep-lens} résume ces dépendances.
  Les lignes pleines indiquent quelles sont les
@@ -1120,9 +1126,9 @@ T(0)     &: \eArray{\circled{1}, 2, 3, 5} \\
 \subsection*{Accès à une liste par indice : $I$}
 
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
-permettant d'accéder aux éléments d'une liste par leur indice.
-On rappelle que les listes sont des suites finies, définies
-page~\pageref{page:def-listes}.
+permettant d'accéder aux éléments d'une liste par leur indice. On rappelle que
+les listes sont des suites finies, définies page~\pageref{page:def-listes}. En
+outre, I n'est définie que pour $n ∈ [1 ;|l|]$.
 
 \begin{align*}
     l{[n]}_I     &= l_n \mbox{ si } n ∈ [1; |l|] \\
@@ -1130,8 +1136,6 @@ page~\pageref{page:def-listes}.
            \mbox{ où } & l'_n = x \\
                        & ∀ i ≠ n, l'_i = l_i
 \end{align*}
-
-I n'est définie que pour $n ∈ [1 ;|l|]$.
 
 \subsection*{Accès à une liste d'associations : $L$}
 
@@ -1215,6 +1219,7 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
 
   \begin{align*}
     \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_F &= v_i \mbox{ si } ∃i∈[1;n], l=l_i\\
+    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_F     &= \serr{field} \mbox{ sinon} \\
     \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_F &=
         \eStruct{ l_1 : v_1 \\
            &\quad ; … \\
@@ -1223,7 +1228,6 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
            &\quad ; l_{p+1} : v_{p+1} \\
            &\quad ; … \\
            &\quad ; l_n : v_n } \mbox{ si } ∃p ∈ [1;n], l = l_p \\
-    \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l]}_F     &= \serr{field} \mbox{ sinon} \\
     \eStruct{ l_1 : v_1; … ; l_n : v_n }{[l ← v]}_F &= \serr{field} \mbox{ sinon}
   \end{align*}
 
@@ -1284,9 +1288,9 @@ $C = 1+\ctxEmpty$.
 Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires:
 
 \begin{itemize}
-\item comment découper une expression selon un contexte
-\item comment appliquer une règle d'évaluation sous un contexte
-\item comment regrouper une expression et un contexte
+\item comment découper une expression selon un contexte;
+\item comment appliquer une règle d'évaluation sous un contexte;
+\item comment regrouper une expression et un contexte.
 \end{itemize}
 
 \begin{figure}
@@ -1299,35 +1303,20 @@ Pour pouvoir raisonner en termes de contextes, 3 points sont nécessaires:
 Le premier point consiste à définir les contextes eux-mêmes
 (figure~\ref{fig:eval-ctx}).
 
-Le deuxième est résolu par la règle d'inférence suivante.
-
-\begin{mathpar}
-  \semrule{Ctx}
-\end{mathpar}
-
-Enfin, le troisième revient à définit l'opérateur de substitution
-$\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer des
-substitutions au niveau des valeurs gauches et des instructions, on définit aussi
-respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
-
-Notons que puisque $i \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer
-aux expressions et aux valeurs gauches l'opération $\phxx\ctxSub$ est purement
-syntaxique.
-
-Dans la définition de l'ensemble des contextes, chaque cas hormis le cas de base
-fait apparaître exactement un «$C$». Chaque contexte est donc constitué
-d'exactement une occurrence de $\ctxEmpty$ (une dérivation de $C$ est toujours
-linéaire). L'opération de substitution consiste à remplacer ce trou:
-$\ctxSub{C}{X}$ est l'objet syntaxique (instruction, expression ou valeur gauche)
-obtenu en remplaçant l'unique $\ctxEmpty$ dans $C$ par $X$. Par exemple,
-$\ctxSub{\iDecl{x}{2+\ctxEmpty}}{5} = \iDecl{x}{2+5}$
+Dans cette définition, chaque cas hormis le cas de base fait apparaître
+exactement un «$C$». Chaque contexte est donc constitué d'exactement une
+occurrence de $\ctxEmpty$ (une dérivation de $C$ est toujours linéaire).
+L'opération de substitution consiste à remplacer ce trou: $\ctxSub{C}{X}$ est
+l'objet syntaxique (instruction, expression ou valeur gauche) obtenu en
+remplaçant l'unique $\ctxEmpty$ dans $C$ par $X$. Par exemple,
+$\ctxSub{\iDecl{x}{2+\ctxEmpty}{\iPass}}{5}$ est $\iDecl{x}{2+5}{\iPass}$
 
 À titre d'illustration, décomposons l'évaluation de $e_1~\opbin~e_2$ en $v =
 v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 
 \begin{enumerate}
 \item
-  on commence par évaluer, l'expression $e_1$ en une valeur $v_1$. Le nouvel
+  on commence par évaluer l'expression $e_1$ en une valeur $v_1$. Le nouvel
   état mémoire est noté $m'$. Soit donc $\mm{m}{e_1}{m'}{v_1}$.
 \item
   En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
@@ -1343,13 +1332,28 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \item
   En combinant les résultats de 2.\ et 4.\ on en déduit que
   $\mm{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
-\item D'après la règle~\textsc{Exp-Binop},
+\item D'après la règle~\textsc{Exp-Binop}, %TODO[PJ] ref règle
   $ \mm{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5.\ et 6., on a par combinaison
   $\mm{m}{e_1~\opbin~e_2}{m''}{v}$
   en posant
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
+
+Le deuxième point sera résolu par la règle d'inférence suivante.
+
+\begin{mathpar}
+  \semrule{Ctx}
+\end{mathpar}
+
+Enfin, le troisième revient à définit l'opérateur de substitution
+$\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer des
+substitutions au niveau des valeurs gauches et des instructions, on définit aussi
+respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
+
+Notons que puisque $i \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer
+aux expressions et aux valeurs gauches l'opération $\phxx\ctxSub$ est purement
+syntaxique.
 
 \section{Valeurs gauches}
 \label{sec:eval-lv}
