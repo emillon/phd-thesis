@@ -1,7 +1,7 @@
 Dans ce chapitre, nous enrichissons le langage défini dans le
 chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
-programmes bien formés, comme celui de la figure~\ref{fig:progwf:good} des
-programmes mal formés comme celui de la figure~\ref{fig:progwf:bad}.
+programmes bien formés, comme celui de la figure~\ref{fig:progwf:good}, des
+programmes mal formés, comme celui de la figure~\ref{fig:progwf:bad}.
 
 \begin{SaveVerbatim}[]{VerbProgGood}
 f = Fun() {
@@ -42,9 +42,9 @@ f = Fun() {
 
 \end{figure}
 
-Le but d'un tel système de types est de rejeter les programmes pour lesquels ont
+Le but d'un tel système de types est de rejeter les programmes pour lesquels on
 peut facilement déterminer qu'ils sont faux, c'est-à-dire dont on peut prouver
-qu'il provoqueraient des erreurs à l'exécution dues à une incompatibilité entre
+qu'ils provoqueraient des erreurs à l'exécution dues à une incompatibilité entre
 valeurs. En ajoutant cette étape, on restreint la classe d'erreurs qui
 pourraient bloquer la sémantique.
 
@@ -68,11 +68,12 @@ rend l'inférence indécidable. En pratique, dans l'implantation décrite dans l
 chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
 (\emph{row polymorphism}) présent dans OCaml pour unifier deux types structures
 partiellement connus.
+%TODO[PJ] ref?
 
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
 de la figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la
-valeur $0$, c'est donc un entier. Cela signifie que dans tout le programme,
+valeur $0$; c'est donc un entier. Cela signifie que dans tout le programme,
 toutes les instances de cette variable
 \footnote{Deux variables peuvent avoir le même nom dans deux fonctions
   différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
