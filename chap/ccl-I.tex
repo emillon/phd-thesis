@@ -2,9 +2,9 @@
 Nous avons montré que l'écriture de noyaux de systèmes d'exploitation nécessite
 de manipuler des données provenant d'une zone non sûre, l'espace utilisateur.
 Parmi ces données, il arrive de récupérer des pointeurs qui servent à passer des
-données par référence à l'appellant, dans certains appels systèmes. Si on
+données par référence à l'appelant, dans certains appels systèmes. Si on
 déréférence ces pointeurs sans vérifier qu'ils pointent bien vers une zone
-mémoire également contrôlée par l'appellant, on risque de lire ou d'écrire dans
+mémoire également contrôlée par l'appelant, on risque de lire ou d'écrire dans
 des zones mémoires réservées au noyau seul.
 
 Nous proposons une technique de typage pour détecter ces cas dangereux. Pour ce
@@ -22,8 +22,8 @@ utilisateur interagissant avec le programme via un appel système. Ces pointeurs
 ont un type distinct des pointeurs habituels.
 
 Cela revient à introduire une séparation entre le type des données et sa
-représentation : c'est-à-dire définir un type abstrait. Les pointeurs
-utilisateur sont en fait des pointeurs classiques déguisés, pour lesquels ont
+représentation, c'est-à-dire définir un type abstrait. Les pointeurs
+utilisateur sont en fait des pointeurs classiques déguisés, pour lesquels on
 interdit l'opérateur de déréférencement.
 
 Cette technique est en fait générique : on peut également l'appliquer à certains
@@ -61,13 +61,13 @@ sous le nom de \emph{pointeurs opaques}, n'est pas applicable aux autres types.
 
 En ajoutant une couche de typage, on interdit ces opérations à la compilation.
 Cela permet deux choses : pour le code déjà écrit, de détecter et corriger les
-manipulations dangereuses ; et pour le nouveau code, de s'assurer qu'il est
+manipulations dangereuses ; et, pour le nouveau code, de s'assurer qu'il est
 correct. Par exemple, si on écrit un programme de manipulation d'images, on peut
 éviter de nombreuses erreurs de programmation en définissant un type «indice de
 ligne» et un type «indice de colonne» incompatibles entre eux.
 
 Le but de cette thèse est donc de définir un langage intermédiaire proche de C,
-mais bien typable, et de l'adjoindre d'un système de types tel que les
+mais bien typable, et de lui adjoindre un système de types tel que les
 programmes bien typés manipulent les pointeurs utilisateur sans causer de
 problèmes de sécurité.
 
