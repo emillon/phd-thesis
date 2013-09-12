@@ -341,7 +341,7 @@
                           }
                      }
     {Exp-Call-Ctx}{ \irule{Exp-Call-Ctx}
-                        { m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}
+                        { m_1 = \cPush{m_0}{((a_1 ↦ v_1), …, (a_n ↦ v_n))}
                        \\ \mm{m_1}{i}{m_2}{i'}
                        \\ ∀ i ∈ [1;n], v'_i = m_2[(|m_2|, a_i)]_A
                        \\ m_3 = \cPop{m_2}
@@ -351,7 +351,7 @@
                         }
                   }
     {Exp-Call-Err}{ \irule{Exp-Call-Err}
-                     { m' = \cPush{m}{(a_1 ↦ v_1, …, a_n ↦ v_n)}
+                     { m' = \cPush{m}{((a_1 ↦ v_1), …, (a_n ↦ v_n))}
                     \\ \msi{m'}{i} → Ω
                      }
                      { \msi{m}{\eFun{a_1, …, a_n}{i} (v_1, …, v_n) } → Ω }

@@ -11,7 +11,7 @@ permettant de catégoriser l'ensemble des erreurs à l'exécution possibles.
 
 Le chapitre~\ref{cha:qualifs} commence par étendre notre langage avec une
 nouvelle classe d'erreurs à l'exécution, modélisant les accès à la mémoire
-utilisateur catégorisé comme dangereux dans le chapitre~\ref{cha:os}. Une
+utilisateur catégorisés comme dangereux dans le chapitre~\ref{cha:os}. Une
 extension au système de types du chapitre~\ref{cha:typbase} est ensuite établie,
 et on prouve que les programmes ainsi typés ne peuvent pas atteindre ces cas
 d'erreur.
@@ -36,6 +36,6 @@ L'introduction des types simples enlève la possibilité de rencontrer le premie
 cas. Il reste en revanche toujours possible de rencontrer des erreurs mémoire
 (ainsi que des divisions par zéro). En présence d'extensions permettant de
 manipuler des pointeurs utilisateurs, une extension naïve du système de types
-introduit des erreurs de sécurité, qui sont empêchées par l'ajout de règles de
-typage supplémentaires.
+n'empêche pas la présence d'erreurs de sécurité, qui sont évitées par l'ajout de
+règles de typage supplémentaires.
 }
