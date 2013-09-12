@@ -1402,8 +1402,8 @@ figure~\ref{fig:lazy-deref} illustre ce problème.
 
 %{{{
 \begin{SaveVerbatim}[]{LeLazy}
-Decl s0 = { .f = 0 } in
-Decl s1 = { .f = 1 } in
+Decl s0 = { .f : 0 } in
+Decl s1 = { .f : 1 } in
 Decl x  = & s0 in
 Decl p = & ((*x).f) in
 /* (a) */
@@ -1435,11 +1435,11 @@ $\widehat{\&}~(((1,s0).f)$ et donc
 \texttt{(a)}
 et en
 \texttt{(b)}.
-Les règles d'évaluation sont donc les suivantes. Dans le cas où la valeur
-référencée n'a pas la forme $m[φ']_Φ$, aucune règle ne peut s'appliquer (comme
-lorsqu'on cherche à réduire l'addition d'une fonction et d'un entier, par
-exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on montrera que la
-première est toujours évitée dans les programmes typés
+
+Dans le cas où la valeur référencée n'a pas la forme $m[φ']_Φ$, aucune règle ne
+peut s'appliquer (comme lorsqu'on cherche à réduire l'addition d'une fonction et
+d'un entier, par exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on
+montrera que ce cas est toujours évité dans les programmes typés
 (théorème~\ref{thm:progres}).
 
 \begin{mathpar}
@@ -1498,13 +1498,15 @@ l'évaluer en un chemin.
   \semrule{Exp-Lv}
 \end{mathpar}
 
-Pour évaluer une expression constituée d'un opérateur, on évalue une expression,
-puis l'autre (l'ordre d'évaluation, est encore imposé: de gauche à droite). À
-chaque opérateur $\opbin$, correspond un opérateur sémantique $\widehat{\opbin}$
-qui agit sur les valeurs. Par exemple, l'opérateur $\widehat{+}$ est l'addition
-classique entre entiers.
-Comme précisé dans la section~\ref{sec:sem-ops}, la division par zéro via $/$,
-$\%$ ou $\floatop{/}$ provoque l'erreur $\serr{div}$.
+Pour évaluer une expression constituée d'un opérateur, on évalue une
+sous-expression, puis l'autre (l'ordre d'évaluation, est encore imposé: de
+gauche à droite). À chaque opérateur $\opbin$, correspond un opérateur
+sémantique $\widehat{\opbin}$ qui agit sur les valeurs. Par exemple, l'opérateur
+$\widehat{+}$ est l'addition classique entre entiers. Comme précisé dans la
+section~\ref{sec:sem-ops}, la division par zéro via $/$, $\%$ ou $\floatop{/}$
+provoque l'erreur $\serr{div}$.
+
+%TODO[PJ]: noter que la taille finie des ints n'est pas prise en compte
 
 \begin{mathpar}
   \semrule{Exp-UnOp}
@@ -1523,10 +1525,11 @@ tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
   \widehat{\&}~φ[n]~-_p~i & = \widehat{\&}~φ[n-i] \\
 \end{align*}
 
+%TODO[PJ] et si n-i < 0 ou dépasse?
+
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
-\label{page:def-arith-ptr-error}
-\footnote{
+\label{page:def-arith-ptr-error}\footnote{
 Cela est cohérent avec la norme C99:
     «If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
@@ -1540,7 +1543,7 @@ l'état mémoire courant.
   \semrule{Exp-AddrOf}
 \end{mathpar}
 
-L'affectation se déroule en 3 étapes: d'abord, l'expression est évaluée en une
+L'affectation se déroule en 3 étapes. D'abord, l'expression est évaluée en une
 valeur $v$. Ensuite, la valeur gauche est évaluée en un chemin $φ$. Enfin, un
 nouvel état mémoire est construit, où la valeur accessible par $φ$ est remplacée
 par $v$. Comme dans le langage C, l'expression d'affectation produit une valeur,
@@ -1599,7 +1602,7 @@ respectives. Puisque les contextes d'évaluation sont de la forme $ [ v_1 ; … 
 
 L'appel de fonction est traité de la manière suivante. On ne peut pas facilement
 relier un pas d'évaluation de $i$ à un pas d'évaluation de $\eFun{a}{i}
-(v_1,…,v_n)$, donc un contexte $C \gramisa \eFun{a}{\ctxEmpty} (v_1,…,v_n)$
+(v_1,…,v_n)$, et donc un contexte $C \gramisa \eFun{a}{\ctxEmpty} (v_1,…,v_n)$
 n'est pas à considérer. En effet, l'empilement suivi du dépilement modifie la
 mémoire.
 
@@ -1664,6 +1667,9 @@ en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 
 Enfin, si une erreur se produit elle est propagée.
 
+% TODO[PJ] le cleanvarV comment ça marche avec les decl de structures
+% recursives?
+
 \begin{mathpar}
  \semrule{Decl-Pass}
 
@@ -1727,8 +1733,8 @@ Donc l'évaluation d'une phrase $p$ fait passer d'un état mémoire $m$
 
 L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeler
-$\textrm{main}()$. La déclaration d'une variable globale (avec un initialiseur),
-quant à elle consiste à évaluer cet initialiseur et à étendre l'état mémoire
+\texttt{main()}. La déclaration d'une variable globale (avec un initialiseur),
+quant à elle, consiste à évaluer cet initialiseur et à étendre l'état mémoire
 avec ce couple (variable, valeur). On suppose que les variables globales ont
 toutes des noms différents. Notons que ces évaluations se font à grands pas.
 
@@ -1750,14 +1756,14 @@ les unes à la suite des autres.
 \section*{Conclusion}
 
 On vient de définir un langage impératif, \langname. Le but est que celui-ci
-serve de support à des analyses statiques, notamment de montrer une propriété de
-sécurité sur les pointeurs. Pour le moment, on a seulement défini ce que sont
-les programmes (leur syntaxe) et comment ils s'exécutent (leur sémantique). Sur
-ces deux points, on note que nous sommes restés suffisamment proches de C, tout
-en utilisant pour la mémoire un modèle plus structuré qu'une simple suite
-d'octets.
-Les définitions de la syntaxe ainsi que de la sémantique sont rappelés dans
-l'annexe~\ref{anx:eval}.
+serve de support à des analyses statiques, afin notamment de montrer une
+propriété de sécurité sur les pointeurs. Pour le moment, on a seulement défini
+ce que sont les programmes (leur syntaxe) et comment ils s'exécutent (leur
+sémantique). Sur ces deux points, on note que nous sommes restés suffisamment
+proches de C, tout en utilisant pour la mémoire un modèle plus structuré qu'une
+simple suite d'octets. Les définitions de la syntaxe ainsi que de la sémantique
+sont rappelés dans l'annexe~\ref{anx:eval}.
+%TODO[PJ] B1 à B7
 
 Afin de manipuler les états mémoire dans la sémantique d'évaluation, nous avons
 utilisé le concept des lentilles, qui permettent de chaîner des accesseurs entre
