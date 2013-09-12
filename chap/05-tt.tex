@@ -73,17 +73,15 @@ partiellement connus.
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
 de la figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la
-valeur $0$; c'est donc un entier. Cela signifie que dans tout le programme,
-toutes les instances de cette variable
-\footnote{Deux variables peuvent avoir le même nom dans deux fonctions
-  différentes, par exemple. Dans ce cas il n'y a aucune contrainte particulière
-  entre ces deux variables. L'analyse de typage se fait toujours dans un
-  contexte précis.
-}
-porteront ce type. La première instruction est l'affectation de la constante $1$
-(entière) à $x$ dont on sait qu'elle porte des valeurs entières, ce qui est donc
-correct. Le fait de rencontrer $\iReturn{x}$ permet de conclure que le type de
-la fonction est $(~) → \tInt$.
+valeur $0$; c'est donc un entier. Cela signifie que, dans tout le programme,
+toutes les instances de cette variable\footnote{Deux variables peuvent avoir le
+même nom dans deux fonctions différentes, par exemple. Dans ce cas il n'y a
+aucune contrainte particulière entre ces deux variables. L'analyse de typage se
+fait toujours dans un contexte précis. } porteront ce type. La première
+instruction est l'affectation de la constante $1$ (entière) à $x$ dont on sait
+qu'elle porte des valeurs entières, ce qui est donc correct. Le fait de
+rencontrer $\iReturn{x}$ permet de conclure que le type de la fonction est $(~)
+→ \tInt$.
 
 Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
 début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
@@ -97,7 +95,7 @@ Dans ce chapitre, on commence par poser les notations qui vont servir à défini
 la relation de typage. Ensuite, on explique les différentes règles de typage sur
 les composantes de \langname: expressions, instructions et phrases. Enfin, dans
 le reste du chapitre on établit des propriétés qui sont respectées par les
-programmes bien typées. On conclut par les théorèmes de progrès et de
+programmes bien typés. On conclut par les théorèmes de progrès et de
 préservation qui établissent la sûreté du typage.
 
 \section{Environnements et notations}
@@ -133,6 +131,8 @@ polymorphisme.
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
+%TODO[PJ]: ce serait plus logique de la forme (Γ_L, Γ_G), comme...?
+
 \label{page:gamma-split}
 Plus précisément, un environnement $Γ$ est composé de deux listes de couples (variable,
 type): une pour les variables locales, et une pour les variables
@@ -165,7 +165,7 @@ x:t ∈ Γ &\eqdef ∃i ∈ [1;n], γ_i = (x, t) ∨ ∃i ∈ [1;m], η_i = (x, 
 \end{align*}
 
 Le type des fonctions semble faire apparaître un n-uplet $(t_1, …, t_n)$ mais ce
-n'est qu'une notation: il n'y a pas de n-uplets de première classe, ils sont
+n'est qu'une notation: il n'y a pas de n-uplets de première classe; ils sont
 toujours présents dans un type fonctionnel.
 
 Le typage correspond à la définition des trois jugements suivants. Les deux
@@ -196,13 +196,12 @@ l'instruction $i$ est bien typée:
 qui composent un programme altèrent l'environnement de typage. Par exemple, la
 déclaration d'une variable globale ajoute une valeur dans l'environnement.
 
-On note
+On note de la manière suivante le fait que le typage de la phrase $p$ transforme
+l'environnement $Γ$ en $Γ'$:
 
   \[
     \typh{Γ}{p}{Γ'}
   \]
-
-si le typage de la phrase $p$ transforme l'environnement $Γ$ en $Γ'$.
 
 On étend cette notation aux suites de phrases, ce qui définit le typage d'un
 programme, ce que l'on note $⊢ P$.
@@ -293,7 +292,7 @@ De même sur \tFloat.
 Les opérateurs de comparaison peuvent s'appliquer à deux opérandes qui sont d'un
 type qui supporte l'égalité. Ceci est représenté par un jugement
 $\textsc{Eq}(t)$ qui est vrai pour les types $\tInt$, $\tFloat$ et pointeurs,
-ainsi que les types composés si les types de leurs composantes
+ainsi que les types composés si les types de leurs composantes le supportent
 (figure~\ref{fig:jugement-eq}). Les opérateurs $=$ et $≠$ renvoient alors un
 \tInt:
 
@@ -498,6 +497,8 @@ des globales de cette nouvelle association.
   \end{mathpar}
 
   \caption{Typage des phrases et programmes}
+%TODO[PJ] Pas de récursion?
+%TODO[PJ] même pas d'I/O?
 \label{fig:typ-ph}
 
 \end{figure}
@@ -516,7 +517,7 @@ bien typés. Il est traditionnel de rappeler l'adage de Robin Milner:
 \end{quote}
 
 \emph{To go wrong} reste bien sûr à définir! Cette sûreté du typage repose sur
-les deux théorèmes:
+deux théorèmes:
 
 \begin{itemize}
 \item progrès:
@@ -541,8 +542,14 @@ Ces types de valeurs ne sont pas exactement les mêmes que les types statiques.
 Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes, mais
 pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
-de déterminer statiquement. On le remplace donc par un cas plus simple où seul
+de déterminer à l'exécution. On le remplace donc par un cas plus simple où seul
 l'arité est conservée.
+
+\paragraph{Remarque}
+
+Le fait d'effacer les types à l'exécution est un choix permettant d'alléger les
+valeurs en mémoire. Il serait aussi possible de conserver les types complets à
+l'exécution, afin de permettre une introspection dynamique des valeurs.
 
 Le cas des références (règle \textsc{S-Ptr}) utilise le typage des valeurs
 gauches, codéfini par:
@@ -552,6 +559,9 @@ gauches, codéfini par:
     \eqdef
     \semtyp{m}{m[φ]_Φ}{τ}
 \]
+
+% TODO[PJ] quid des structures récursives?
+% TODO[PJ] À quoi sert Φ?
 
 Les règles de définition du typage des valeurs sont données dans la
 figure~\ref{fig:types-semantiques}.
@@ -689,7 +699,12 @@ l'exécution, et le second le type statique.
 
 %\end{definition}
 
-On définit enfin la notion d'état mémoire bien typé. Cela se fait par induction
+On définit enfin la notion d'état mémoire bien typé. On dit qu'un état mémoire
+$m$ est bien typé sous un environnement $Γ$, ce que l'on note $\mcomp{Γ}{m}$, si
+le types des valeurs à l'exécution présent dans $m$ est ``compatible'' avec 
+les types présents dans $Γ$.
+
+Cela se fait par induction
 sur la forme de $Γ$ et $m$. Fonctionnellement, cela implique que les accès
 à la mémoire retournent des valeurs en accord avec le type statique
 (lemme~\ref{lemma:mem-typ}). Les règles définissant cette relation sont données
@@ -719,13 +734,13 @@ dans la figure~\ref{fig:comp-mem}.
            \\ …
            \\ m ⊧ v_n : τ_n \\ \tComp{τ_n}{t_n}
             }
-            { \mcomp{Γ'}{\cPush{m}{(x_1↦v_1,…,x_n↦v_n)}}
+            { \mcomp{Γ'}{\cPush{m}{((x_1↦v_1),…,(x_n↦v_n))}}
             }
 
         \irule{M-Pop}
             { Γ = (Γ_G, Γ_L)
            \\ \mcomp{Γ}{m}
-           \\ m' = \cPush{m}{x_1↦v_1, …, x_n↦v_n}
+           \\ m' = \cPush{m}{((x_1↦v_1), …, (x_n↦v_n))}
            \\ \mcomp{(Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])}{m'}
            %\\ m' ⊧ v_1 : τ_1 \\ \tComp{τ_1}{t_1}
            %\\ …
@@ -976,8 +991,8 @@ Il suffit alors d'instancier le $i$ correspondant dans la prémisse de la règle
 \paragraph{\textsc{T-Ctx-EE} et \textsc{T-Ctx-EI}:}
 
 Ce cas repose sur un lemme de substitution admis ici. Si une construction est
-bien typée sous $\extendLocal{Γ}{x}{t}$, alors reste bien typée sous $Γ$ si l'on
-y remplace $x$ par une expression de type $t$.
+bien typée sous $\extendLocal{Γ}{x}{t}$, alors elle reste bien typée sous $Γ$ si
+l'on y remplace $x$ par une expression de type $t$.
 \end{proof}
 
 \begin{lemma}[Inversion du typage sous un contexte]
@@ -1007,6 +1022,15 @@ $\tyctx{Γ}{C}{}{}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+%TODO [PJ] Faux?
+% C = Decl x = 0 in
+%     Decl y = . in
+%     Pass
+%
+% [] ⊢ C((x))
+% mais
+% ∄ t' / [] ⊢ x : t'
 
 \end{lemma}
 
@@ -1071,11 +1095,14 @@ On procède par induction sur la forme de $v$.
 
 \paragraph{$\widehat{\&}~(x)$:} Idem.
 
+%TODO[PJ] ce n'est pas une simple induction structurelle?
+
 \paragraph{$\widehat{\&}~(n, x)$:}
 D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
-$m ⊧ v : τ$ est \textsc{S-Ptr}, donc $m[(n, x)]_Φ$ est une valeur.
+$m ⊧ v : τ$ est \textsc{S-Ptr}, et donc $m[(n, x)]_Φ$ est une valeur.
 D'après la définition de $φ$, $n ≤ |m|$.
 
+%TODO[PJ] où Φ est il défini?
 \paragraph{$\widehat{\&}~φ.l$:} %
 On procède par induction sur $v' = \widehat{\&}~φ$.
 Comme $\cH{\widehat{\&}~φ} ≤ |m|$ et
@@ -1109,6 +1136,10 @@ Soit $\cVar{φ}$ la variable qui apparaît dans $φ$:
 Alors, si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$ est soit une variable
 globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale $(|m|, x)$ du plus
 haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
+
+%TODO[PJ]: pas clair: variable ou adresse?
+% Var(φ) → Adr(φ)
+% ça sert à quoi?
 \end{lemma}
 
 \begin{proof}[Démonstration (esquisse)]
@@ -1118,7 +1149,7 @@ On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
 \begin{lemma}[Accès à une mémoire bien typée]
 \label{lemma:mem-typ}
 
-Si $\mcomp{Γ}{m}$, et $Γ ⊢ φ : t$, alors
+Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors
 $m[φ]_Φ$ est une valeur $v$ et
 $m ⊧ v : τ$
 où
@@ -1156,12 +1187,16 @@ Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈
 
 Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
 
+%TODO m'[Var(φ)] = v et non m'[φ] ?
+
 Dans les autres cas, $m'[φ]_Φ = m[φ]_Φ$, ce qui nous permet de conclure grâce à
 l'hypothèse d'induction.
 
 % }}}
 \paragraph{\textsc{M-Decl}:} % {{{
 On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
+%TODO[PJ] (x) ?
+%(E) -> non, la locale
 locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les prémisses
 nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ = m[φ]$ et on
 applique l'hypothèse d'induction.
@@ -1169,7 +1204,9 @@ applique l'hypothèse d'induction.
 \paragraph{\textsc{M-DeclClean}:} % {{{
 
 On suppose que $Γ ⊢ φ : t'$. Alors $\extendLocal{Γ}{x}{t} ⊢ φ : t'$ par
-affaiblissement. On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
+affaiblissement.
+%TODO[PJ]: sauf si φ utilise déjà x?
+On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
 $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$.
 Si $v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
 l'opération $\phxx\cCleanVar$. Le type $τ'$ étant un type pointeur par le
@@ -1180,7 +1217,7 @@ Dans les autres cas $m[φ]_Φ = m'[φ]_Φ$ ce qui termine ce cas.
 \paragraph{\textsc{M-Push}:} % {{{
 
 On procède d'une manière similaire. $φ$ peut faire référence soit à un des
-$x_i$, auquel cas la valeur $v_i$ convient ; soit à une variable globale, auquel
+$x_i$, auquel cas la valeur $v_i$ convient, soit à une variable globale, auquel
 cas on applique l'hypothèse de récurrence.
 
 % }}}
@@ -1191,7 +1228,9 @@ produisent selon la forme de $\cVar{φ}$.
 
 Si $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où $Γ' = (Γ_G,
 [x_1:t_1, …, x_n:t_n, \vRet:t])$. On applique alors l'hypothèse de récurrence
-sur $Γ ⊧ m'$: il vient que $m'[φ]_Φ = v$ où $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$.
+sur $Γ ⊧ m'$:
+%TODO[PJ] ?
+il vient que $m'[φ]_Φ = v$ où $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$.
 Comme $\cH{v} ≤ |m'|$ (lemme~\ref{lemma:hauteur-chem}), deux cas peuvent se
 produire. Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a bien la
 compatibilité mémoire (l'argument est similaire au cas \textsc{Decl-Clean}).
@@ -1234,9 +1273,9 @@ le graphe suivant.
 \node[draw, right of=E] (L) {Valeurs gauches};
 
 \draw[->] (I) edge[bend left] node[auto] {Évaluation} (E);
-\draw[->] (E) edge[bend left] node[auto] {Abstraction} (I);
+\draw[->] (E) edge[bend left] node[auto] {Abstraction} (I); %TODO[PJ] ?
 \draw[->] (E) edge[bend left] node[auto] {Accès mémoire} (L);
-\draw[->] (L) edge[bend left] node[auto] {Indices} (E);
+\draw[->] (L) edge[bend left] node[auto] {Indices} (E); %TODO[PJ] ?
 
 \end{tikzpicture}
 \end{center}
@@ -1257,10 +1296,10 @@ Alors l'un des cas suivants est vrai:
 \jolibreak
 
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivant est vrai:
+  Alors l'un des cas suivants est vrai: 
 
 \begin{itemize}
-  \item $∃ v ≠ Ω, e = v$
+  \item $∃ v ≠ Ω, e = v$ %TODO[PJ] ce sont des domaines différents!
   \item $∃ (e', m'), \mm{m}{e}{m'}{e'}$
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
@@ -1290,6 +1329,7 @@ C'est-à-dire, soit:
 La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
 
 \begin{lemma}[Représentabilité]
+% TODO[PJ] cette définition serait mieux en 5.7
 \label{lemma:repr}
 
 On définit un opérateur de représentation d'un type statique à l'exécution:
@@ -1333,9 +1373,10 @@ On procède par induction sur la forme de $t$.
     \begin{itemize}
         \item $v = \widehat{\&}~φ$:
 
-            Par inversion, $Γ ⊢ φ : t'$
+            Par inversion, $Γ ⊢ φ : t'$.
+% TODO[PJ] lemme?
 
-            Puisque $\mcomp{Γ}{m}$ et $Φ ⊢ φ : t'$, on obtient par le
+            Puisque $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t'$, on obtient par le
             lemme~\ref{lemma:mem-typ} que
             $m[φ]_Φ$ est une valeur telle que
             $m ⊧ m[φ]_Φ : τ'$ où $\tComp{τ'}{t'}$.
@@ -1360,7 +1401,7 @@ On procède par induction sur la forme de $t$.
 
     Soient $τ' = \cRepr{t'}$ et $τ = τ'~[]$.
 
-    Alors par induction $∀i, m ⊧ v_i : τ'$ et $\tComp{τ}{t}$.
+    Alors par induction $∀i, m ⊧ v_i : τ'$ et $\tComp{τ'}{t'}$.
     De la première propriété il vient (via \textsc{S-Array})
     $m ⊧ v : τ$, et de la seconde (via \textsc{Comp-Array})
     $\tComp{τ}{t}$.
@@ -1388,6 +1429,9 @@ On procède par induction sur la forme de $t$.
 
 \end{itemize}
 \end{proof}%}}}
+
+%TODO[PJ] normalement on prouve progrès et préservation en même temps pour faire
+% l'induction via un unique théorème ?
 
 % attention il est recopié dans d-preuves
 
@@ -1521,14 +1565,14 @@ faire on définit un ensemble de règles de typage (regroupées dans
 l'annexe~\ref{anx:typage}) à appliquer selon la forme de celle-ci.
 
 Si on considère des programmes qui sont seulement syntaxiquement corrects, on ne
-ne peut rien prédire sur leur exécution. Par exemple, $\eFun{x}{\iPass} + 1$ est
+peut rien prédire sur leur exécution. Par exemple, $\eFun{x}{\iPass} + 1$ est
 une expression correcte mais pour laquelle il n'y a pas de règle d'évaluation
 qui s'applique. En ajoutant un système de type, les propriétés de sûreté
 établies dans ce chapitre assurent que les termes peuvent être évalués, et que
-les valeurs produites sont en accord avec les types données aux différentes
+les valeurs produites sont en accord avec les types donnés aux différentes
 parties du programme. Cela permet surtout de s'assurer que les programmes ne
 peuvent provoquer une erreur d'exécution que dans certains cas particuliers,
-comme les division ou les accès aux tableaux.
+comme les divisions ou les accès aux tableaux.
 
 À l'issue de ce chapitre, on a donc un langage impératif sain pour bâtir de
 nouvelles analyses de typage, ce que nous allons faire dans le chapitre
