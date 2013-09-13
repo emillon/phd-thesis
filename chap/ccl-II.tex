@@ -12,9 +12,9 @@ uniquement sur les briques du calcul, et la composition fait le reste). La
 seconde solution est d'employer une sémantique monadique. Les transisitions sont
 alors encodées comme des actions monadiques qui représentent les modifications
 de la mémoire. Un des avantages de cette solution est qu'elle est très
-extensible. Par exemple, la propagation des erreurs, ou l'ajout de continuations
+extensible. Par exemple, la propagation des erreurs ou l'ajout de continuations
 (c'est-à-dire le support des fonctions \texttt{setjmp} et \texttt{longjmp})
-peuvent facilement être exprimées dans un formalisme monadique. Nous avons
+peuvent facilement être exprimés dans un formalisme monadique. Nous avons
 préféré une présentation classique qui reste plus accessible, et suffisante
 compte tenu de la simplicité des constructions à interpréter dans le langage.
 
@@ -30,14 +30,14 @@ d'évaluation ne modifier pas le typage.
 Une particularité de \langname est que son état mémoire est structuré, avec une
 pile de variables locales explicite. On retrouve donc cette distinction dans le
 typage: les variables globales et les variable locales sont séparées dans les
-environnement de typage $Γ$ (page~\pageref{page:gamma-split}).
+environnements de typage $Γ$ (page~\pageref{page:gamma-split}).
 
 Enfin, on étend dans le chapitre~\ref{cha:qualifs} le langage pour exprimer la
 notion de pointeurs utilisateur. Cela permet d'écrire des fonctions qui se
 comportent comme des appels système. On commence par montrer qu'une extension
 naïve du système de types ne suffit pas, car le théorème de progrès est alors
 invalidé. On ajoute donc un type dédié aux pointeurs utilisateur. Les valeurs de
-ce type sont créées explicitement et passés aux appels système. La règle de
+ce type sont créées explicitement et passées aux appels système. La règle de
 typage du déréférencement est restreinte aux pointeurs noyau, ce qui permet de
 ré-établir les théorèmes de progrès et préservation.
 
@@ -69,7 +69,7 @@ $\qUser~\tFloat~*$, et déréférencer cette expression produira une erreur de
 typage. \langname, dans son état actuel, ne permet pas de traiter les
 conversions de type et ne permet donc pas de traiter ce cas.
 
-Nous prenons au contraire, l'approche de ne modifier le système de types que là
+Nous prenons, au contraire, l'approche de ne modifier le système de types que là
 où cela est nécessaire, c'est-à-dire sur les types pointeurs. Cela permet de ne
 pas avoir à modifier en profondeur un système de types existant.
 
@@ -84,7 +84,7 @@ manuelle de la mémoire.
 
 Une autre différence fondamentale est que le système de types de CQual fait
 intervenir une relation de sous-typage. Le cas particulier du problème de
-déréférencement des pointeurs utilisateurs peut être traité dans ce cadre en
+déréférencement des pointeurs utilisateur peut être traité dans ce cadre en
 posant $\qKernel \preceq \qUser$ pour restreindre certaines opérations aux
 pointeurs $\qKernel$.
 
@@ -94,13 +94,15 @@ $\ptrK{t}$ (comme la taille et la représentation) mais incompatible avec
 certaines opérations. C'est à rapprocher des types abstraits dans les langages
 comme OCaml et Haskell.
 
+% TODO[PJ]: "très diff" ↓ Applicables à CQual, pourtant?
+
 Les perspectives de travaux futurs sont également très différentes. Dans le cas
 des pointeurs, même si le noyau Linux (et la plupart des systèmes
 d'exploitation) ne comportent que deux espaces d'adressage, il est commun dans
 les systèmes embarqués de manipuler des pointeurs provenant d'espaces mémoire
-indépendants : par exemple, de la de la mémoire flash, de la RAM, ou une EEPROM
-de configuration. Ces différentes mémoires possèdent des adresses, et un
-pointeur est interprété comme faisant référence à une ou l'autre selon le code
-dont il est tiré.
+indépendants : par exemple, de la mémoire flash, de la RAM, ou une EEPROM de
+configuration. Ces différentes mémoires possèdent des adresses, et un pointeur
+est interprété comme faisant référence à une ou l'autre selon le code dont il
+est tiré.
 
 % vim: spelllang=fr
