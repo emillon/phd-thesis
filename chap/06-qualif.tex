@@ -10,19 +10,19 @@ déréférencement sûr qui vérifie à l'exécution que l'invariant suivant est
 respecté:
 
 \begin{quote}
-Les pointeurs dont la valeur est contrôlée par l'utilisateur, pointent vers
+Les pointeurs dont la valeur est contrôlée par l'utilisateur pointent vers
 l'espace utilisateur.
 \end{quote}
 
 La terminologie mérite d'être détaillée:
 
-Un pointeur contrôlé par l'utilisateur, ou \emph{pointeur utilisateur}, est
+Un pointeur contrôlé par l'utilisateur, ou \emph{pointeur utilisateur}, est une
 référence mémoire dont la valeur est modifiable par le code utilisateur (opposé
 au code noyau, que nous analysons ici). Ceci correspond à des données provenant
 de l'extérieur du système vérifié. C'est une propriété statique, qui peut être
 déterminée à la compilation à partir de considérations syntaxiques. Par exemple,
-l'adresse d'une variable locale est toujours considérée comme étant contrôlée
-par le noyau.
+l'adresse d'une variable locale au sein de code noyau est toujours considérée
+comme étant contrôlée par le noyau.
 
 Un pointeur pointant vers l'espace utilisateur fait référence à une variable
 allouée en espace utilisateur. Cela veut dire qu'y accéder ne risque pas de
@@ -108,14 +108,14 @@ cas contraire, la copie n'est pas faite).
 \label{fig:ex-sys-getver}
 \end{figure}
 
-On peut remarquer que contrairement aux fonctions présentes dans le noyau Linux,
-les fonctions $\cfuF$ et $\ctuF$ n'ont pas de paramètre indiquant la taille à
-copier. Cela est dû au fait que le modèle mémoire de \langname{} est plus haut
-niveau. L'information de taille est déjà présente dans chaque valeur.
+On peut remarquer que, contrairement aux fonctions présentes dans le noyau
+Linux, les fonctions $\cfuF$ et $\ctuF$ n'ont pas de paramètre indiquant la
+taille à copier. Cela est dû au fait que le modèle mémoire de \langname{} est de
+plus haut niveau. L'information de taille est déjà présente dans chaque valeur.
 
 Une autre remarque à faire est qu'il n'y a pas de manière de copier des données
 de l'espace utilisateur vers l'espace utilisateur. Il est nécessaire de passer
-par l'espace noyau. La raison est que puisqu'il faut réaliser deux tests
+par l'espace noyau. La raison est que, puisqu'il faut réaliser deux tests
 dynamiques, les erreurs peuvent arriver à ces deux endroits. Plutôt que de
 proposer un opérateur qui réalise cette copie, on laisse le programmeur faire
 les deux copies manuellement.
@@ -124,7 +124,7 @@ On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
 $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
-une construction syntaxique $\eTaint{e}$ telle que si $e$ s'évalue en $\wphi{φ}$,
+une construction syntaxique $\eTaint{e}$ telle que, si $e$ s'évalue en $\wphi{φ}$,
 $\eTaint{e}$ s'évalue en $\wphi{\vTainted{φ}$}. Cela correspond à 2 ajouts: un
 nouveau contexte d'évaluation $\eTaint{C}$ et une règle d'évaluation.
 Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher lorsqu'on
@@ -137,6 +137,8 @@ la figure~\ref{fig:qualif-changes}.
 \gramdef{Expressions}{e}
   { … }{}
   { \eTaint{lv} }{Adresse utilisateur}
+  { \uGet{e_d}{e_s} }{Lecture depuis l'espace utilisateur}
+  { \uPut{e_d}{e_s} }{Écriture vers l'espace utilisateur}
   {END}
 \\
 \\
@@ -171,10 +173,11 @@ chapitre~\ref{cha:lang})}
 
 En résumé, on a deux constructions pour créer des pointeurs à partir d'une
 valeur gauche: $\&~\cdot$ crée un pointeur noyau, et $\eTaint{\cdot}$ crée un
-pointeur utilisateur. Seul la première est fait pour être utilisé dans le code à
-analyser. La seconde sert uniquement à modéliser les points d'entrée du noyau.
-Par exemple, la fonction $\mathrm{sys\_getver}$ de la
-figure~\ref{fig:ex-sys-getver} peut être appelée de la manière suivante:
+pointeur utilisateur. Seule la première est faite pour être utilisée dans le
+code à analyser. La seconde sert uniquement à modéliser les points d'entrée du
+noyau. Par exemple, la fonction $\mathrm{sys\_getver}$ de la
+figure~\ref{fig:ex-sys-getver} peut être appelée par un utilisateur de la
+manière suivante:
 
 {
 \setlength{\parindent}{1cm}
@@ -196,7 +199,7 @@ règle suivante:
 \]
 
 Dans $\wphi{(\vTainted{φ})}$, l'opérateur $\phx\wphi$ indique que la valeur
-créee est une référence mémoire. Cette référence mémoire, $\vTainted{φ}$, est
+créée est une référence mémoire. Cette référence mémoire, $\vTainted{φ}$, est
 contrôlée par l'utilisateur. C'est ce qu'indique le constructeur $\phx\vTainted$
 
 Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
@@ -226,6 +229,8 @@ Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
 vérifier que celui-ci pointe vers l'espace utilisateur (c'est-à-dire, qu'il est
 de la forme $\vTainted{φ}$).
 
+%TODO[PJ]: pourrait être des nop suivant la sémantique statique
+
 Deux cas peuvent se produire. Soit la partie à vérifier a la forme
 $\vTainted{φ'}$, soit non (et dans ce cas $∄φ', φ = \vTainted{φ'}$). Dans le
 premier cas (règles \textsc{User-*-OK}), alors la copie est faite et l'opération
@@ -245,9 +250,11 @@ noyau Linux: en cas de succès elles renvoient $0$, et en cas d'erreur
   \semrule{User-Put-Err}
 \end{mathpar}
 
+%TODO[PJ] copy* ne sont pas des fonctions mais des éléments de syntaxe
+
 Ces règles sont à appliquer en priorité de la règle d'appel de fonction
 classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
-celles ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
+celles-ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
 par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
 $\vTainted{φ}$. L'opération en «boîte noire» de ces deux fonctions permet
 d'assurer que l'accès à l'espace utilisateur est toujours couplé à un test
@@ -371,6 +378,8 @@ types pointeurs habituels $\ptrK{t}$, on ajoute des types pointeurs utilisateur
 $\ptrU{t}$. La différence entre les deux représente \emph{qui} contrôle leur
 valeur (section~\ref{sec:secu-syscalls}).
 
+%TODO[PJ] il serait plus logique d'avoir des t♢
+
 Les différences sont les suivantes (figure~\ref{fig:qualif-changes-typ}):
 
 \begin{figure}[b]%{{{
@@ -468,11 +477,11 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
     \disprule{AddrOf-User}
 \]
 
-Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est
-à remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
+Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est à
+remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
 type en $(t_1, t_2) → t$, car il faudrait un type polymorphe pour pouvoir les
-appliquer n'importe quel type de pointeurs. Leur typage est donc plus proche de
-celui d'un opérateur.
+appliquer à n'importe quel type de pointeurs. Leur typage est donc plus proche
+de celui d'un opérateur.
 
 \begin{mathpar}
     \disprule{GetU}
@@ -512,19 +521,19 @@ permettent de remonter un jugement de typage.
     $t = t'~@$ et $Γ ⊢ e : t'$.
 \item
     Si $Γ ⊢ \uGet{e_d}{e_s} : t$, alors
-    $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ φ_d : t~*$ et
-    $Γ ⊢ φ_s : t~@$.
+    $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ e_d : t~*$ et
+    $Γ ⊢ e_s : t~@$.
 \item
     Si $Γ ⊢ \uPut{e_d}{e_s} : t$, alors
-    $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ φ_d : t~@$ et
-    $Γ ⊢ φ_s : t~*$.
+    $t = \tInt$ et il existe $t'$ tel que $Γ ⊢ e_d : t~@$ et
+    $Γ ⊢ e_s : t~*$.
 \end{itemize}
 \end{lemma}
 
 \begin{proof}[Démonstration]
-Pour chaque forme syntaxique, on liste les règles qui ont comme conclusion ce
+Pour chaque forme syntaxique, on liste les règles qui ont comme conclusion
 un jugement de typage portant sur celle-ci. Comme aucune autre règle ne
-convient, on peut en déduire que c'est celle l'une de celles-ci qui a été
+convient, on peut en déduire que c'est l'une de celles-ci qui a été
 appliquée, et donc qu'une des prémisses est vraie.
 \end{proof}
 
@@ -568,7 +577,7 @@ de type de la section~\ref{sec:extension-types}.
 \section*{Conclusion}
 
 En partant de \langname tel que décrit dans les chapitres~\ref{cha:lang}
-et~\ref{cha:typbase}, on décrit une extension de sa syntaxe et de sémantique.
+et~\ref{cha:typbase}, on décrit une extension de sa syntaxe et de sa sémantique.
 Cela permet d'exprimer les pointeurs vers
 l'espace utilisateur, qui sont utilisés pour l'implantation d'appels système
 (chapitre~\ref{cha:os}).
@@ -585,7 +594,7 @@ pointeurs noyau: les premiers sont explicitement construits par un ensemble de
 sources bien déterminé, et les autres sont créés par exemple en prenant
 l'adresse d'une variable. La règle de typage \textsc{Lv-Deref} assure que seuls
 les pointeurs noyau peuvent être déréférencés. Pour accéder aux pointeurs
-utilisateur, il faut appeler les constructions $\ctuF$ et $\cfuF$ qui sont
+utilisateur, il faut appeler les constructions $\ctuF$ et $\cfuF$, qui sont
 typées adéquatement et vérifient dynamiquement que les pointeurs dont la valeur
 est contrôlée par l'utilisateur pointent vers l'espace utilisateur.
 

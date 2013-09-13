@@ -25,7 +25,7 @@ vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent pas
 volontairement ou involontairement détourner ce dernier et lui faire fuiter des
 informations confidentielles.
 
-Le problème est que comme tous les logiciels, les noyaux de système
+Le problème est que, comme tous les logiciels, les noyaux de système
 d'exploitation sont écrits par des humains qui ne sont pas parfaits. Les
 activités de relecture et de débogage ont beau prendre la majeure partie du
 temps de développement, il est facile de laisser passer des défauts de
@@ -46,7 +46,7 @@ l'exécuter et de refuser de lancer les programmes qui contiennent certaines
 constructions dangereuses. C'est l'analyse statique de programmes.
 
 Une des techniques d'analyse statique les plus répandues et les plus simples est
-le typage statique, qui consiste à associer à chaque morceau de programme, une
+le typage statique, qui consiste à associer, à chaque morceau de programme, une
 étiquette décrivant quel genre de valeur sera produite par son évaluation. Par
 exemple, si $n$ est le nom d'une variable entière, alors $n + 2$ produira
 toujours une valeur entière.
@@ -118,13 +118,13 @@ depuis un périphérique amovible), ne sont pas effectuées en extension de la m
 manière. C'est pourquoi le système d'exploitation fournit les notions de
 fichier, lecteur, etc: le programmeur n'a plus qu'à utiliser des commandes de
 haut niveau («monter un lecteur», «ouvrir un fichier», «lire dans un
-fichier») et selon le type de lecteur, le système d'exploitation effectuera les
+fichier») et, selon le type de lecteur, le système d'exploitation effectuera les
 actions appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et le
 matériel, et en particulier est responsable de la gestion de la mémoire, des
 périphériques et des processus. Les détails d'implantation ne sont pas présentés
-à l'utilisateur; à la place il manipule des abstractions, comme la notion de
+à l'utilisateur; à la place, il manipule des abstractions, comme la notion de
 fichier. Pour une explication détaillée du concept de système d'exploitation
 ainsi que des cas d'étude, on pourra se référer à~\cite{tanenbaum}.
 
@@ -158,7 +158,7 @@ de protection mémoire n'est déclenchée.
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
 par un \Square), une erreur se produit et l'exécution s'arrête. Par exemple,
-l'avant-dernière ligne indique que si un programme tente de lire une variable du
+l'avant-dernière ligne indique que, si un programme tente de lire une variable du
 noyau, celui-ci sera arrêté par une exception.
 
 \begin{center}
@@ -251,7 +251,7 @@ des buts est d'empêcher de manipuler des données incompatibles entre elles.
 
 En mémoire, les seules données qu'un ordinateur manipule sont des nombres. Selon
 les opérations effectuées, ils seront interprétés comme des entiers, des
-adresses mémoire, ou des caractères. Pourtant il est clair que certaines
+adresses mémoire ou des caractères. Pourtant il est clair que certaines
 opérations n'ont pas de sens: par exemple, multiplier un nombre par une adresse
 ou déréférencer le résultat d'une division sont des comportements qu'on voudrait
 pouvoir empêcher.
@@ -281,7 +281,7 @@ ensemble de contrats peut être vérifié statiquement par le compilateur, à l'
 d'un système de types statique.
 
 Par exemple, on peut dire que l'opérateur «$+$» a pour type $(\tInt, \tInt) →
-\tInt$. Cela veut dire que si on lui passe deux entiers ($\tInt$ \tInt), alors
+\tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$ \tInt), alors
 la valeur obtenue est également un entier.
 
 \paragraph{Typage fort ou faible}
@@ -390,7 +390,7 @@ directement de traducteur permettant de compiler C vers Cmm.
 
 \paragraph{C-~-}\cite{spjcmm} \link{cmm}, dont le nom est inspiré du précédent,
 est un projet qui visait à unifier les langages intermédiaires utilisés par les
-compilateurs. L'idée est que si un front-end peut émettre du C-~- (sous forme de
+compilateurs. L'idée est que, si un front-end peut émettre du C-~- (sous forme de
 texte), il est possible d'obtenir du code machine efficace. Le compilateur
 Haskell GHC, par exemple, utilise une représentation intermédiaire très
 similaire à C-~-.
@@ -474,7 +474,7 @@ s'agit d'un bug ayant touché un pilote de carte graphique dans le noyau Linux.
 En manipulant incorrectement un pointeur dont la valeur est contrôlée par
 l'utilisateur, il crée un problème de sécurité car un utilisateur malveillant
 peut lire ou écrire dans l'espace mémoire réservé au noyau. En lançant notre
-prototype, l'analyse de la version non corrigée lève une erreur alors que dans
+prototype, l'analyse de la version non corrigée lève une erreur alors que, dans
 la version corrigée, un type correct est inféré. On montre ainsi que le système
 de type capture précisément ce genre d'erreur de programmation.
 

@@ -882,7 +882,7 @@ $-1$ sinon.
 
 
 Les opérations $\mathrm{Extend}$ et $\mathrm{Pop}$ ne sont définies que pour une
-pile non vide. Néanmoins cela ne pose pas de problème, puisque lors de
+pile non vide. Néanmoins cela ne pose pas de problème, puisque, lors de
 l'exécution, la pile n'est vide que lors de l'évaluation d'expressions dans les
 phrases de programme. À cet endroit, seules des expressions peuvent apparaître,
 et leur évaluation ne manipule jamais la pile avec ces opérations.
@@ -1277,7 +1277,7 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
 \section{Contextes d'évaluation}
 
 L'évaluation des expressions repose sur la notion de contextes d'évaluation.
-L'idée est que si on peut évaluer une expression, alors on peut évaluer une
+L'idée est que, si on peut évaluer une expression, alors on peut évaluer une
 expression qui contient celle-ci.
 
 Par exemple, supposons que $\mm{m}{f(3)}{m}{2}$. Alors on peut ajouter la
@@ -1619,7 +1619,7 @@ $\phx\cCleanup$ et $\phxx\cV$.
 
 \label{page:return-fonction}
 On suppose deux choses sur chaque fonction: d'une part, les noms de ses
-arguments sont deux à deux différents, et d'autre part, son corps se termine par
+arguments sont deux à deux différents et, d'autre part, son corps se termine par
 une instruction $\iReturn{\cdot}$. Cela veut dire que la dernière instruction
 doit être soit de cette forme, soit par exemple une alternative dans laquelle
 les deux branches se terminent par un $\iReturn{\cdot}$. C'est une propriété qui
@@ -1714,7 +1714,7 @@ transition est faite vers cet état d'erreur.
 Cela est aussi vrai d'une sous-expression ou sous-instruction: si l'évaluation
 de $e_1$ provoque une erreur, l'évaluation de $e_1 + e_2$ également. La notion
 de sous-expression ou sous instruction est définie en fonction des contextes
-$C$. Notons que dans \textsc{Eval-Err}, $\ctxSub{C}{e}$ peut être une expression
+$C$. Notons que, dans \textsc{Eval-Err}, $\ctxSub{C}{e}$ peut être une expression
 ou une instruction.
 
 \begin{mathpar}

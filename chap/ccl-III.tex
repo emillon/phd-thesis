@@ -25,10 +25,10 @@ différent de celui de \langname (ainsi que décrit dans le
 chapitre~\ref{cha:lang}). \newspeak est en effet prévu pour implanter des
 analyses précises de valeur reposant sur l'interprétation abstraite, et
 nécessite donc un modèle mémoire de plus bas niveau (où on peut créer des
-valeurs à partir d'une suite d'octets, par exemple). Il est aussi à noter que
-bien que l'évaluation de \langname ait été décrite ici, c'est principalement
-dans le but de démontrer des propriétés sémantiques: l'interprète n'a pas été
-implanté.
+valeurs à partir d'une suite d'octets, par exemple). Il est aussi à noter que,
+bien que l'évaluation de \langname ait été décrite dans la
+partie~\ref{part:lang}, c'est principalement dans le but de démontrer des
+propriétés sémantiques: l'interprète n'a pas été implanté.
 
 Le prototype d'implantation peut évoluer dans deux directions: d'une part, en
 continuant à s'appuyer sur \newspeak, on peut réaliser des pré-analyses de
@@ -41,6 +41,8 @@ l'environnement d'exécution en enlevant l'opération de nettoyage mémoire
 $\phx\cCleanup$. Le système de types peut également être enrichi, pour ajouter
 par exemple du polymorphisme. Le chapitre~\ref{cha:conclusion} présente quelques
 unes de ces extensions possibles.
+
+%TODO[PJ]: référence sur les régions ↑
 
 L'expérimentation, quant à elle, est pour le moment limitée, mais on peut
 l'étendre à des domaines de plus en plus importants dans le noyau Linux. Tout
