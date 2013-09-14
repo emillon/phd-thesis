@@ -1,3 +1,32 @@
+Dans le langage C, les types de données décrivent uniquement l'agencement en
+mémoire des valeurs. Elles n'ont pas de portée plus sémantique permettant
+d'exprimer ce qu'elles représentent. Par exemple, dans un programme manipulant
+des dates, on sera amené à manipuler des numéros de mois et d'années,
+représentés par des types entiers. Le langage C permet de définir des nouveaux
+types:
+
+\begin{verbatim}
+typedef int month_t;
+typedef int year_t;
+\end{verbatim}
+
+Cependant, rien ne distingue le nouveau type de l'ancien. Il ne s'agit que d'une
+aide à la documentation. Dans cet exemple, \texttt{month\_t} et \texttt{year\_t}
+sont tous les deux des nouveaux noms pour le type `int`, donc ils sont en fait
+compatibles. Le compilateur ne peut donc pas détecter qu'on utilise un numéro de
+mois là où un numéro d'année était attendu (ou \emph{vice versa}).
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+Cet idiome est commun en C. On manipule notamment certaines données abstraites
+par des clés entières, et un \texttt{typedef} particulier permet de désigne
+celles-ci. Par exemple sous Linux, les numéros de processus sont des indices
+dans la table de processus interne au noyau, et on y accède par une valeur de
+type \texttt{pid\_t}. De même, les utilisateurs sont représentés par un nombre
+entier du type \texttt{uid\_t}.
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
 \def\tBits{\textsc{Bits}\xspace}
 
 Par exemple, en ouvrant un fichier on précise le mode du fichier (lecture,
@@ -12,7 +41,7 @@ possible pour les modes.
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
-Les fonctions suivantes permettent d'ouvrir un fichier sous UNIX.
+Les fonctions suivantes permettent d'ouvrir un fichier sous Unix.
 
 \begin{verbatim}
 int open(const char *pathname, int flags);
