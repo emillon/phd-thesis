@@ -1,3 +1,6 @@
+\def\tBits{\textsc{Bits}\xspace}
+\def\tChar{\textsc{Char}\xspace}
+
 Dans le langage C, les types de données décrivent uniquement l'agencement en
 mémoire des valeurs. Elles n'ont pas de portée plus sémantique permettant
 d'exprimer ce qu'elles représentent. Par exemple, dans un programme manipulant
@@ -26,8 +29,6 @@ type \texttt{pid\_t}. De même, les utilisateurs sont représentés par un nombr
 entier du type \texttt{uid\_t}.
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
-
-\def\tBits{\textsc{Bits}\xspace}
 
 Par exemple, en ouvrant un fichier on précise le mode du fichier (lecture,
 écriture ou les deux) par les bits 1 et 2, s'il faut créer le fichier ou non
@@ -74,23 +75,64 @@ données, mais les opérations comme $+$ ou $/$ n'ont pas de sens sur ces valeur
 On décrit ici une technique de typage pour détecter et interdire ces mauvaises
 utilisations.
 
-\section{Ajouts}
+\section{Portée}
 
-On étend les types avec un type \tBits.
+On propose une version ``bien typée'' de la fonction \texttt{open}. Plus
+précisément, on donne à ses deuxième et troisième argument (respectivement
+\texttt{flags} et \texttt{mode}) le nouveau type \tBits qui correspond aux
+entiers utilisés comme bitmasks. Le type de retour n'est pas modifié (il reste
+\tInt), mais on décrit comment il est possible de faire cette adaptation.
+
+\section{Modifications}
+
+On ajoute un type \tBits. Il faut aussi ajouter un type \tChar apparaissant dans
+les chaînes de caractères. On ne spécifie pas plus ce dernier mais on suppose
+qu'il existe des littéraux de chaînes qui retournent un pointeur vers le premier
+élément d'un tableaux de caractères.
 
 \begin{align*}
 \gramdef{Type}{t}
   { … }{}
+  { \tChar }{Caractère}
   { \tBits }{Entier utilisé comme \emph{bitmask}}
   {END}
 \end{align*}
 
 Au niveau des valeurs, les entiers sont représentés par des valeurs entières
-classiques $\widehat{n}$. C'est pourquoi on ajoute la règle suivante de
-compatibilité entre le type de valeurs \tInt et le type statique \tBits.
+classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau type
+sémantique, mais on ajoute la règle suivante de compatibilité entre le type de
+valeurs \tInt et le type statique \tBits.
 
 \[
   \irule{Comp-Bits}
     { }
     { \tComp{\tInt}{\tBits} }
 \]
+
+On change le type des ``constructeurs'':
+
+\begin{align*}
+    [] ⊢ \texttt{O\_RDONLY} : \tBits \\
+    [] ⊢ \texttt{O\_RDWR}   : \tBits \\
+    [] ⊢ \texttt{O\_APPEND} : \tBits
+\end{align*}
+
+Et celui des ``consommateurs'':
+
+\[
+    [] ⊢ \texttt{open} : (\tChar~*, \tBits) → \tInt
+\]
+
+\begin{center}\rule{3in}{0.4pt}\end{center}
+
+\[
+    \irule{Coerce}
+        { Γ ⊢ e : t
+       \\ \tComp{τ}{t}
+       \\ \tComp{τ}{t'}
+        }
+        { Γ ⊢ (e \angle t') : t'
+        }
+\]
+
+% TODO comment adapter FD
