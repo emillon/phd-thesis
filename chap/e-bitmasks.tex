@@ -119,7 +119,23 @@ Et celui des ``consommateurs'':
     [] ⊢ \texttt{open} : (\tChar~*, \tBits) → \tInt
 \]
 
-\begin{center}\rule{3in}{0.4pt}\end{center}
+On veut que les opérations bit à bit puissent s'appliquer aux bitmasks. On
+ajoute donc par exemple cette règle pour le ``ou'':
+
+\[
+    \irule{Or-Bits}
+        { Γ ⊢ e_1 : \tBits
+       \\ Γ ⊢ e_2 : \tBits
+       }{ Γ ⊢ e_1 | e_2 : \tBits
+       }
+\]
+
+Cette règle pose problème pour l'inférence, car partant d'une expression de la
+forme $e_1 | e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
+\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
+inférer de type pour la fonction $\eFun{x, y}{\iReturn{x|y}}$.
+
+\clearpage
 
 \subsection*{Transtypage}
 
