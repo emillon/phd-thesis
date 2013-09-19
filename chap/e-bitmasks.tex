@@ -123,36 +123,14 @@ Pour que les opérations bit à bit puissent s'appliquer aux bitmasks,
 on ajoute ces règles:
 
 \begin{mathpar}
-    \irule{Or-Bits}
-        { Γ ⊢ e_1 : \tBits
-       \\ Γ ⊢ e_2 : \tBits
-       }{ Γ ⊢ e_1~|~e_2 : \tBits
-       }
-
-    \irule{And-Bits}
-        { Γ ⊢ e_1 : \tBits
-       \\ Γ ⊢ e_2 : \tBits
-       }{ Γ ⊢ e_1~\&~e_2 : \tBits
-       }
-
-    \irule{Xor-Bits}
-        { Γ ⊢ e_1 : \tBits
-       \\ Γ ⊢ e_2 : \tBits
-       }{ Γ ⊢ e_1~\opxor~e_2 : \tBits
-       }
-\end{mathpar}
-%TODO ajouter le not bit à bit ici + dans les autres chap
-
-\jolibreak % TODO choisir
-
-\begin{mathpar}
     \irule{Op-Bits}
-        { \opbin ∈ \{ |, \&, \opxor \}
+        { \opbin ∈ \{~|~, ~\&~, ~\opxor~ \}
        \\ Γ ⊢ e_1 : \tBits
        \\ Γ ⊢ e_2 : \tBits
        }{ Γ ⊢ e_1~\opbin~e_2 : \tBits
        }
 \end{mathpar}
+%TODO ajouter le not bit à bit ici + dans les autres chap
 
 Cette règle pose problème pour l'inférence, car partant d'une expression de la
 forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
