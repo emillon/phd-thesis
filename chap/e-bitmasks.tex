@@ -119,29 +119,57 @@ Et celui des ``consommateurs'':
     [] ⊢ \texttt{open} : (\tChar~*, \tBits) → \tInt
 \]
 
-On veut que les opérations bit à bit puissent s'appliquer aux bitmasks. On
-ajoute donc par exemple cette règle pour le ``ou'':
+Pour que les opérations bit à bit puissent s'appliquer aux bitmasks,
+on ajoute ces règles:
 
-\[
+\begin{mathpar}
     \irule{Or-Bits}
         { Γ ⊢ e_1 : \tBits
        \\ Γ ⊢ e_2 : \tBits
-       }{ Γ ⊢ e_1 | e_2 : \tBits
+       }{ Γ ⊢ e_1~|~e_2 : \tBits
        }
-\]
+
+    \irule{And-Bits}
+        { Γ ⊢ e_1 : \tBits
+       \\ Γ ⊢ e_2 : \tBits
+       }{ Γ ⊢ e_1~\&~e_2 : \tBits
+       }
+
+    \irule{Xor-Bits}
+        { Γ ⊢ e_1 : \tBits
+       \\ Γ ⊢ e_2 : \tBits
+       }{ Γ ⊢ e_1~\opxor~e_2 : \tBits
+       }
+\end{mathpar}
+%TODO ajouter le not bit à bit ici + dans les autres chap
+
+\jolibreak % TODO choisir
+
+\begin{mathpar}
+    \irule{Op-Bits}
+        { \opun ∈ \{ |, \&, \opxor \}
+       \\ Γ ⊢ e_1 : \tBits
+       \\ Γ ⊢ e_2 : \tBits
+       }{ Γ ⊢ e_1~\opbin~e_2 : \tBits
+       }
+\end{mathpar}
 
 Cette règle pose problème pour l'inférence, car partant d'une expression de la
-forme $e_1 | e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
-\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
-inférer de type pour la fonction suivante:
+forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
+\tInt ou celle sur \tBits.
+
+Concrètement, cela veut dire qu'on ne peut pas inférer de type pour la fonction
+suivante:
 
 \[
-    \eFun{x, y}{\iReturn{x|y}}
+    \eFun{x, y}{\iReturn{x~|~y}}
 \]
 
-Plusieurs solutions sont possibles.
+En revanche, si on annote le type de $x$ ou de $y$, le reste peut être inféré.
 
-\paragraph{Polymorphisme limité}
+\clearpage
+
+\paragraph{Polymorphisme restreint}
 
 Aussi appelé \emph{bounded polymorphism}, il permet de contraindre les variables
 de type généralisées. Cela permet de donner à la fonction précédente un type
@@ -161,7 +189,7 @@ désavantages:
 \begin{itemize}
     \item la présentation du système de types est alourdie;
     \item l'inférence est plus complexe;
-    \item si on autorise le polymorphisme non limité (en donnant par exemple à
+    \item si on autorise le polymorphisme non restreint (en donnant par exemple à
         la fonction identité le type $∀a. (a) → a$), il faut
         à l'exécution
         représenter les données
