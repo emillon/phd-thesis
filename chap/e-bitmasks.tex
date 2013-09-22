@@ -129,21 +129,19 @@ on ajoute ces règles:
        \\ Γ ⊢ e_2 : \tBits
        }{ Γ ⊢ e_1~\opbin~e_2 : \tBits
        }
+
+    \irule{Not-Bits}
+        { Γ ⊢ e : \tBits }
+        { Γ ⊢ \sim e : \tBits }
 \end{mathpar}
-%TODO ajouter le not bit à bit ici + dans les autres chap
+
+\paragraph{Remarque}
 
 Cette règle pose problème pour l'inférence, car partant d'une expression de la
 forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
-\tInt ou celle sur \tBits.
-
-Concrètement, cela veut dire qu'on ne peut pas inférer de type pour la fonction
-suivante:
-
-\[
-    \eFun{x, y}{\iReturn{x~|~y}}
-\]
-
-En revanche, si on annote le type de $x$ ou de $y$, le reste peut être inféré.
+\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
+inférer de type pour la fonction $\eFun{x, y}{\iReturn{x~|~y}}$. En revanche, si
+on annote le type de $x$ ou de $y$, le reste peut être inféré.
 
 \clearpage
 
