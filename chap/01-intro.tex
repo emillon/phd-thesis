@@ -415,19 +415,153 @@ quant à elles, utilisent Cminor\cite{cminorSL}.
 
 \section{Le projet Penjili}
 
+Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
+plus importante :  comme en témoigne la figure~\ref{fig:airbusloc}, l'évolution
+est exponentielle. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
+retrouver face à grands impacts économiques, voire risquer des vies humaines. On
+comprend bien que les phases de vérification et de certification sont au coeur
+du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
+vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
+vol avait été vérifié plus efficacement \cite{Ariane501}.
+
+Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
+approches duales sont nécessaires. La première consiste à mettre le logiciel
+dans des situations concrètes et à vérifier que la sortie correspond au résultat
+attendu : c'est la technique des tests.  Les tests \og boîte noire
+\fg~consistent à tester en ayant à disposition uniquement les spécifications des
+modules à plusieurs échelles . L'application est découpée en "boîtes" à
+plusieurs échelles (par exemple : logiciel, module, classe, méthode). Au
+contraire, les tests dits \og boîte blanche \fg~sont écrits en ayant à
+disposition l'implémentation. Cela permet par exemple de s'assurer que chaque
+chemin d'exécution est emprunté. Cette manière de procéder est similaire à la
+preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
+mais pas que le programme est correct.
+
+L'approche des méthodes formelles, au contraire, permet de s'assurer de
+l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
+interprétation abstraite permet d'étudier les relations exposées entre les
+variables afin d'en déduire les domaines dans lesquels elles évoluent. En
+s'assurant que ceux-ci sont "sûrs", on prouve l'absence d'erreurs de manière
+automatisée.
+
+L'analyse statique par interprétation abstraite se place à un niveau comparable
+à celui des tests unitaires et fonctionnels, c'est-à-dire très près du code. Le
+but est en particulier d'éliminer les erreurs au niveau du langage :
+
+\begin{itemize}
+    \item division par zéro
+    \item déréférencement d'un pointeur en dehors d'une zone allouée (y compris
+        \texttt{NULL})
+    \item débordement arithmétique sur les entiers
+    \item indice de tableau en dehors de l'intervalle autorisé
+    \item exception non rattrapée
+\end{itemize}
+
+En pratique, dans l'embarqué les règles de codage limitent les constructions
+posant problème. Par exemple, les exceptions, l'allocation dynamique
+(\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les fonctions
+récursives \footnote{Dans ce cas, on remarquera que la taille de la pile est
+bornée.}.
+
+L'idée derrière les méthodes d'analyse statique est la suivante : au lieu de
+considérer que les variables possèdent une valeur, on utilise un domaine
+abstrait qui permet de voir les variables comme possédant un ensemble de
+valeurs possibles.
+
+\begin{figure}
+\centering
+
+\begin{tikzpicture}[scale=0.7]
+\clip  (-1,-1) rectangle (12,12);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\foreach \xsh in {0, 180}
+\foreach \ysh in {0, 180}
+\path [xshift=\xsh,yshift=\ysh,fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (précise)
+\foreach \ysh in {0,180}
+\draw [yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+             -- (2,3) -- (3,3)
+             -- (3,1) -- cycle;
+
+% Approximation (imprécise)
+\foreach \ysh in {0,180}
+\draw [xshift=180,yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+              -- (4,5)
+             -- (4,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\foreach \xsh in {0, 180}
+\draw [xshift=\xsh,yshift=180,fill=green!20,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+% Comportement réel (avec erreurs)
+\foreach \xsh in {0, 180}
+\draw [xshift=\xsh,fill=green!20,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)};
+
+% Ensemble sûr (redraw)
+\foreach \xsh in {0, 180}
+\foreach \ysh in {0, 180}
+\draw [xshift=\xsh,yshift=\ysh]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+\end{tikzpicture}
+\caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
+des états effectifs du programme, en vert, est surapproximé par l'ensemble en
+bleu.}
+\label{fig:staticanalysis}
+\end{figure}
+
+Le domaine ``sûr'' a une forme assez simple compte tenu des erreurs considérées:
+c'est un produit d'ensembles simples, comme des intervalles. L'ensemble des
+comportements réels du programme est au contraire d'une forme plus complexe
+\footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas calculable.}.
+
+En calculant une approximation de ce dernier, de forme plus simple, on peut
+tester plus facilement que les comportements de sont dans la zone sûre : le fait
+que l'analyse soit \emph{sound}, c'est à dire que l'approximation ne manque
+aucun comportement, permet de prouver l'absence d'erreurs.
+
+La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
+valeurs dangereuses est représentée par un ensemble hachuré, l'ensemble des
+comportements réels du programme est en vert, et l'approximation en bleu.
+
+Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
+en bas puis de gauche à droite :
+
+\begin{itemize}
+  \item on a prouvé, à la compilation, que le programme ne pourra pas comporter
+  d'erreurs à l'exécution.
+  \item l'analyseur doit émettre une (fausse) alarme. Il y a donc un manque de
+  précision.
+  \item l'approximation n'est pas \emph{sound}. Par construction, on évite ce
+  cas.
+  \item on signale un comportement erron\'e.
+\end{itemize}
+
+Toute la difficulté est donc de construire une surapproximation correcte mais
+conservant une précision suffisante.
+
+\jolibreak
+
 % TODO check date Penjili
-% TODO citer sur Ariane 501
 
-Le projet Penjili a été commencé à EADS Innovation Works en 2005. Il s'agit de
-vérifier que les logiciels critiques embarqués ne provoqueront pas d'erreur à
-l'exécution: débordement de tableau ou d'entier, déréférencement de pointeur
-nul, division par zéro.
-
-Ces erreurs peuvent avoir des conséquences dramatiques. Lors du vol inaugural
-d'Ariane 5, un débordement d'entier a ainsi causé la destruction du lanceur.
-
-Les mêmes problématiques interviennent bien sûr dans l'aéronautique, où la vie
-des passagers dépend de cette sûreté à l'exécution.
+Le projet Penjili~\cite{AllamigeonHymansSSTIC07}, commencé à EADS Innovation
+Works en 2005, a pour but de fournir un analyseur statique de logiciel système
+embarqué critique utilisant l'interprétation abstraite pour prouver l'absence
+d'erreurs à l'exécution.
 
 \subsection*{La solution retenue: \langname{}}
 
