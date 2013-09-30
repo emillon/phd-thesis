@@ -413,6 +413,22 @@ prouvée. Il utilise de nombreux langages intermédiaires, dont CIL.\@ Pour le
 front-end, le langage se nomme Clight\cite{cfront}. Les passes de middle-end,
 quant à elles, utilisent Cminor\cite{cminorSL}.
 
+\section{Le projet Penjili}
+
+% TODO check date Penjili
+% TODO citer sur Ariane 501
+
+Le projet Penjili a été commencé à EADS Innovation Works en 2005. Il s'agit de
+vérifier que les logiciels critiques embarqués ne provoqueront pas d'erreur à
+l'exécution: débordement de tableau ou d'entier, déréférencement de pointeur
+nul, division par zéro.
+
+Ces erreurs peuvent avoir des conséquences dramatiques. Lors du vol inaugural
+d'Ariane 5, un débordement d'entier a ainsi causé la destruction du lanceur.
+
+Les mêmes problématiques interviennent bien sûr dans l'aéronautique, où la vie
+des passagers dépend de cette sûreté à l'exécution.
+
 \subsection*{La solution retenue: \langname{}}
 
 Dans le monde de l'aéronautique, il est nécessaire de s'assurer que les
