@@ -416,8 +416,7 @@ quant à elles, utilisent Cminor\cite{cminorSL}.
 \section{Le projet Penjili}
 
 Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
-plus importante :  comme en témoigne la figure~\ref{fig:airbusloc}, l'évolution
-est exponentielle. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
+plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
 retrouver face à grands impacts économiques, voire risquer des vies humaines. On
 comprend bien que les phases de vérification et de certification sont au coeur
 du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
@@ -427,15 +426,15 @@ vol avait été vérifié plus efficacement \cite{Ariane501}.
 Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
 approches duales sont nécessaires. La première consiste à mettre le logiciel
 dans des situations concrètes et à vérifier que la sortie correspond au résultat
-attendu : c'est la technique des tests.  Les tests \og boîte noire
-\fg~consistent à tester en ayant à disposition uniquement les spécifications des
-modules à plusieurs échelles . L'application est découpée en "boîtes" à
-plusieurs échelles (par exemple : logiciel, module, classe, méthode). Au
-contraire, les tests dits \og boîte blanche \fg~sont écrits en ayant à
-disposition l'implémentation. Cela permet par exemple de s'assurer que chaque
-chemin d'exécution est emprunté. Cette manière de procéder est similaire à la
-preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
-mais pas que le programme est correct.
+attendu : c'est la technique des tests.  Les tests ``boîte noire '' consistent à
+tester en ayant à disposition uniquement les spécifications des modules à
+plusieurs échelles . L'application est découpée en "boîtes" à plusieurs échelles
+(par exemple : logiciel, module, classe, méthode). Au contraire, les tests dits
+``boîte blanche'' sont écrits en ayant à disposition l'implémentation. Cela
+permet par exemple de s'assurer que chaque chemin d'exécution est emprunté.
+Cette manière de procéder est similaire à la preuve par neuf enseignée aux
+enfants : il est possible de prouver l'erreur, mais pas que le programme est
+correct.
 
 L'approche des méthodes formelles, au contraire, permet de s'assurer de
 l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
