@@ -121,7 +121,7 @@ Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessible
 dans l'arbre de syntaxe abstrait des passes suivantes.
 
-À ce niveau, les fichiers sont passés à l'outil \texttt{c2newspeak} qui les
+À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
 plupart des extensions GNU C sont acceptés en plus du C ANSI. Dans cette étape,
 les types et les noms sont résolus, et le programme est annoté de manière à
@@ -149,7 +149,7 @@ donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
 n'est faite entre l'accès à un champ et l'accès à un l'élément d'un tableau
 (tous deux sont traduits par un décalage numérique depuis le début de la zone
 mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
-structures internes de \texttt{c2newspeak}, où les informations nécessaires sont
+structures internes de \ctonewspeak, où les informations nécessaires sont
 encore présentes.
 
 Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
@@ -279,11 +279,10 @@ programme \newspeak (ou un fichier C), et réalise l'inférence de types. En
 sortie, il affiche soit le programme complètement annoté, soit une erreur.
 
 Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compilé
-vers \newspeak grâce à l'utilitaire \texttt{c2newspeak}. Ensuite, les autres
-passes travaillent sur une représentation intermédiaire proche de \newspeak, mais
-où des étiquettes de type supplémentaires sont ajoutées. Ce type de
-représentation intermédiaire (polymorphe en le type des étiquettes) est
-\texttt{'a Tyspeak.t}.
+vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
+travaillent sur une représentation intermédiaire proche de \newspeak, mais où
+des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
+intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}.
 
 Le reste de l'outil est résumé dans la fonction
 \texttt{process\_npk} (figure~\ref{fig:implem-process}):
