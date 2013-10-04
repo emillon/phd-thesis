@@ -18,12 +18,12 @@ Dans ce chapitre, on met en œuvre sur le noyau Linux le système de types décr
 dans le chapitre~\ref{cha:qualifs}, ou plus précisément l'outil \texttt{ptrtype}
 du chapitre~\ref{cha:implem}.
 
-Pour montrer le système de types capture cette propriété et que l'implantation
-est utilisable, on étudie le cas d'un bug qui a touché le noyau Linux. Dans une
-routine correspondant à un appel système, un pointeur utilisateur est
-déréférencé directement, pouvant provoquer une fuite d'informations
-confidentielles dans le noyau. Les détails sur ce bug peuvent être trouvés sur
-\url{https://bugs.freedesktop.org/show_bug.cgi?id=29340}.
+Pour montrer que le système de types capture cette propriété et que
+l'implantation est utilisable, on étudie le cas d'un bug qui a touché le noyau
+Linux. Dans une routine correspondant à un appel système, un pointeur
+utilisateur est déréférencé directement, pouvant provoquer une fuite
+d'informations confidentielles dans le noyau. Les détails sur ce bug peuvent
+être trouvés sur \url{https://bugs.freedesktop.org/show_bug.cgi?id=29340}.
 
 On commence par décrire les difficultés rencontrées pour analyser le code du
 noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système dans
@@ -49,7 +49,7 @@ celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement avec
 
 Une autre fonctionnalité est le concept d'instruction-expression:
 \texttt{(\{bloc\})} est une expression, dont la valeur est celle de la dernière
-expression évaluée lors de \texttt{i}.
+expression évaluée lors de \texttt{bloc}.
 
 Les attributs, quant à eux, rentrent dans trois catégories:
 
@@ -80,10 +80,10 @@ de configuration plus important.
 
 Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
 le noyau Linux. Une description plus détaillée pourra être trouvée dans
-\cite{UnderstandingTheLinuxKernel}, ou pour le cas de la mémoire virtuelle,
+\cite{UnderstandingTheLinuxKernel}, ou, pour le cas de la mémoire virtuelle,
 \cite{LinuxVMM}.
 
-Deux rings sont utilisés: en \ring{0}, le code noyau et en \ring{3}, le code
+Deux rings sont utilisés: en \ring{0}, le code noyau et, en \ring{3}, le code
 utilisateur.
 
 Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
@@ -92,8 +92,8 @@ interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
 des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
-doit donc avoir deux piles: une pile «utilisateur» qui sert pour
-l'application elle-même, et une pile «noyau» qui sert aux appels système.
+doit donc avoir deux piles: une pile «utilisateur», qui sert pour
+l'application elle-même, et une pile «noyau», qui sert aux appels système.
 
 \begin{figure} % fig:memmap {{{
 \centering
@@ -109,10 +109,11 @@ réservée au mode privilégié.}
 % }}}
 
 Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
-mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun un
-ensemble de tables de pages et une valeur de \crtrois{} associée (ce mécanisme a
-été abordé page~\pageref{page:mem-virt}). Au moment de changer le processus en
-cours, l'ordonnanceur charge donc le \crtrois{} du nouveau processus.
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun
+gère un ensemble de tables de pages et une valeur de \crtrois{} associée (ce
+mécanisme a été abordé page~\pageref{page:mem-virt}). Au moment de changer le
+processus en cours, l'ordonnanceur charge donc le \crtrois{} du nouveau
+processus.
 
 Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
 \texttt{0xc0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
@@ -163,7 +164,7 @@ prédéfini (dans \verb!arch/x86/kernel/entry_32.S!).
 \insertcode{entry-syscall.s}
 
 L'exécution reprend donc en \ring{0}, avec dans \esp{} le pointeur de pile noyau
-du processus. Les valeurs des registres ont été préservées, la macro
+du processus. Les valeurs des registres ont été préservées; la macro
 \texttt{SAVE\_ALL} les place sur la pile. Ensuite, à l'étiquette
 \texttt{syscall\_call}, le numéro d'appel système (toujours dans \eax) sert
 d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
@@ -205,7 +206,7 @@ Si le déréférencement est fait sans vérification, un utilisateur mal intenti
 peut forger un pointeur vers le noyau (en déterminant des adresses valides dans
 l'espace noyau entre \texttt{0xc0000000} et \texttt{0xffffffff}). En provoquant
 une lecture sur ce pointeur, des informations confidentielles peuvent fuiter ;
-et en forçant une écriture, il est possible d'augmenter ses privilèges, par
+et, en forçant une écriture, il est possible d'augmenter ses privilèges, par
 exemple en devenant super-utilisateur (\emph{root}). En pratique, il n'est pas
 toujours possible d'accéder à la mémoire. La mémoire utilisateur peut par
 exemple avoir été placée en zone d'échange sur le disque, ou \emph{swap}. À ce
@@ -241,7 +242,7 @@ Le code suivant est présent dans le pilote KMS pour les GPU AMD Radeon:
 
 \insertcode{kms-buggy.c}
 
-On peut voit que l'argument \texttt{data} est converti en un \texttt{struct
+On peut voir que l'argument \texttt{data} est converti en un \texttt{struct
 drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
 \texttt{value}, et finalement ce pointeur est déréferencé.
 
@@ -271,19 +272,19 @@ L'intégralité de ce code peut être trouvée en annexe~\ref{cha:code-noyau}.
 
 La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 \texttt{d8ab3557} (figure~\ref{fig:linux-patch}) (\texttt{DRM\_COPY\_FROM\_USER}
-étant une simple macro pout \texttt{copy\_from\_user}). Dans ce cas, on
+étant une simple macro pour \texttt{copy\_from\_user}). Dans ce cas, on
 n'obtient pas d'erreur de typage.
 
 \section{Procédure expérimentale}
 \label{sec:demo-unif}
 
 Pour utiliser notre système de types, plusieurs étapes sont nécessaires en plus
-de traduire le noyau linux en \langname{}.
+de traduire le noyau Linux en \langname{}.
 
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
 environnement initial (via la variable \texttt{exttbl} décrite en
 section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
-pointeurs utilisateur on ajoute un commentaire spécial \texttt{!npk
+pointeurs utilisateur, on ajoute un commentaire spécial \texttt{!npk
 userptr\_fieldp x f}, qui indique que \texttt{x} est un pointeur vers une
 structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
 il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
@@ -293,7 +294,7 @@ Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
 d'origine, \texttt{info->value} est transtypé en \texttt{unsigned long} puis en
 \texttt{uint32\_t *}. En \newspeak, cela correspond à des opérateurs
-\texttt{PtrToInt} \linebreak et \texttt{IntToPtr} mais si on les autorise, on
+\texttt{PtrToInt} \linebreak et \texttt{IntToPtr} mais, si on les autorise, on
 casse le typage puisqu'il est alors possible de transformer n'importe quel type
 en un autre. De plus, on modifie la définition du type \texttt{struct
 drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
