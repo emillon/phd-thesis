@@ -218,6 +218,46 @@ désavantages:
 % TODO comment adapter FD
 \clearpage
 
+% - !E1 & E2
+% + !(E1 & E2)
+
+% + !(E1 & E2)
+% x: bits
+% y: bits
+% x & y: bits
+
+% ----------------------------------------------
+% ! : s'applique à bits ou int mais retourne int
+% ----------------------------------------------
+
+\begin{mathpar}
+    \irule{Not-BitsInt}
+        { t ∈ \{ \tBits, \tInt \}
+       \\ Γ ⊢ e : t
+        }
+        { Γ ⊢~!~e : \tInt }
+\end{mathpar}
+
+\begin{mathpar}
+    \irule{BitsInt}
+        { Γ ⊢ e : \tBits }
+        { Γ ⊢ e : \tInt }
+\end{mathpar}
+
+\begin{mathpar}
+    \irule{Not-BitsInt}
+        {
+            \irule{Op-Bits}
+                { Γ ⊢ x : \tBits
+               \\ Γ ⊢ y : \tBits
+                }
+                {Γ ⊢ x \& y : \tBits}
+        }
+        {Γ ⊢~!~(x \& y) : \tInt}
+\end{mathpar}
+
+\clearpage
+
 \section{Analyse de provenance de pointeurs}
 
 Jusqu'ici \langname{} est un langage impératif généraliste, ne prenant pas en
