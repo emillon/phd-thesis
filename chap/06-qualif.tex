@@ -1,4 +1,224 @@
-% 8 pages: c'est un peu court pour la partie originale de la thèse
+Dans ce chapitre, nous présentons deux extensions du système de types décrit
+dans le chapitre~\ref{cha:typbase}. Celles-ci permettent de capturer deux
+classes d'erreurs de programmation concernant les entiers et les pointeurs. Plus
+précisément, la première permet de distinguer plusieurs utilisations de types
+entiers, selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de
+bits; la seconde, dans le contexte de systèmes d'exploitation, introduit une
+différence entre les pointeurs dont la valeur est contrôlée par l'utilisateur et
+les autres.
+
+\section{Analyse de bitmasks}
+
+\def\tBits{\textsc{Bits}\xspace}
+\def\tChar{\textsc{Char}\xspace}
+
+Dans le langage C, les types de données décrivent uniquement l'agencement en
+mémoire des valeurs. Elles n'ont pas de portée plus sémantique permettant
+d'exprimer ce qu'elles représentent. Par exemple, dans un programme manipulant
+des dates, on sera amené à manipuler des numéros de mois et d'années,
+représentés par des types entiers. Le langage C permet de définir des nouveaux
+types:
+
+\begin{verbatim}
+typedef int month_t;
+typedef int year_t;
+\end{verbatim}
+
+Cependant, rien ne distingue le nouveau type de l'ancien. Il ne s'agit que d'une
+aide à la documentation. Dans cet exemple, \texttt{month\_t} et \texttt{year\_t}
+sont tous les deux des nouveaux noms pour le type `int`, donc ils sont en fait
+compatibles. Le compilateur ne peut donc pas détecter qu'on utilise un numéro de
+mois là où un numéro d'année était attendu (ou \emph{vice versa}).
+
+Cet idiome est commun en C. On manipule notamment certaines données abstraites
+par des clés entières, et un \texttt{typedef} particulier permet de désigne
+celles-ci. Par exemple sous Linux, les numéros de processus sont des indices
+dans la table de processus interne au noyau, et on y accède par une valeur de
+type \texttt{pid\_t}. De même, les utilisateurs sont représentés par un nombre
+entier du type \texttt{uid\_t}.
+
+Un autre idiome est répandu: l'utilisation d'entiers comme représentation d'un
+ensemble de booléens. En effet, un nombre $a = \sum_{i=0}^{N-1} a_i 2^i$ peut
+s'interpréter comme l'ensemble de ses bits égaux à 1: $\{ i ∈ [0;N-1] / a_i = 1
+\}$. Un entier de 32 bits peut par exemple représenter une combinaison de 32
+options indépendantes.
+
+C'est de cette manière que fonctionne l'interface qui permet d'ouvrir un fichier
+sous Unix (figure~\ref{fig:unix-open}).
+
+\begin{figure}
+    \insertcode{unix-open.c}
+    \caption{Interface permettant d'ouvrir un fichier sous Unix}
+    \label{fig:unix-open}
+\end{figure}
+
+Le paramètre \texttt{flags} est un entier qui encode les options liées à
+l'ouverture du fichier. On précise son mode (lecture, écriture ou les deux) par
+les bits 1 et 2, s'il faut créer le fichier ou non s'il n'existe pas par le bit
+7, si dans ce cas il doit être effacé par le bit 8, etc. On obtient le paramètre
+complet en réalisant un «ou» bit à bit entre des constantes.
+
+Le paramètre \texttt{mode} (en fait un \emph{unsigned int}) encode de la même
+manière les permissions que doit avoir le fichier créé, le cas échéant.
+
+Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
+correspond à un indice numérique dans une table interne au processus. Par
+exemple, $0$ désigne son entrée standard, $1$ sa sortie standard, et $2$ son
+flux d'erreur standard.
+
+On identifie donc au moins trois utilisations du type \texttt{int}:
+
+\begin{itemize}
+    \item entier: c'est l'utilisation classique pour représenter des valeurs
+        numériques. Toutes les opérations sont possibles.
+    \item bitmask: on utilise un entier comme ensemble de bits. Seules les
+        opérations bit à bit ont du sens.
+    \item Entier opaque: on utilise un entier de manière purement abstraite.
+        C'est l'exemple des descripteurs de fichier.
+\end{itemize}
+
+Ces utilisations du type n'ont rien à voir ; il faudrait donc empêcher
+d'utiliser un descripteur de fichier comme un mode, et vice-versa. De même,
+aucun opérateur n'a de sens sur les descripteurs de fichier, mais l'opérateur
+\texttt{\textbar{}} du «ou» bit à bit doit rester possible pour les modes.
+
+On décrit ici une technique de typage pour détecter et interdire ces mauvaises
+utilisations. Plus précisément, On propose une version ``bien typée'' de la
+fonction \texttt{open}. Plus précisément, on donne à ses deuxième et troisième
+argument (respectivement \texttt{flags} et \texttt{mode}) le nouveau type \tBits
+qui correspond aux entiers utilisés comme bitmasks. Le type de retour n'est pas
+modifié (il reste \tInt), mais on décrit comment il est possible de faire cette
+adaptation.
+
+\subsection{Modifications}
+
+On ajoute un type \tBits. Il faut aussi ajouter un type \tChar apparaissant dans
+les chaînes de caractères. On ne spécifie pas plus ce dernier mais on suppose
+qu'il existe des littéraux de chaînes qui retournent un pointeur vers le premier
+élément d'un tableaux de caractères.
+
+\begin{align*}
+\gramdef{Type}{t}
+  { … }{}
+  { \tChar }{Caractère}
+  { \tBits }{Entier utilisé comme \emph{bitmask}}
+  {END}
+\end{align*}
+
+Au niveau des valeurs, les entiers sont représentés par des valeurs entières
+classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau type
+sémantique, mais on ajoute la règle suivante de compatibilité entre le type de
+valeurs \tInt et le type statique \tBits.
+
+\[
+  \irule{Comp-Bits}
+    { }
+    { \tComp{\tInt}{\tBits} }
+\]
+
+On change le type des ``constructeurs'':
+
+\begin{align*}
+    [] ⊢ \texttt{O\_RDONLY} : \tBits \\
+    [] ⊢ \texttt{O\_RDWR}   : \tBits \\
+    [] ⊢ \texttt{O\_APPEND} : \tBits
+\end{align*}
+
+Et celui des ``consommateurs'':
+
+\[
+    [] ⊢ \texttt{open} : (\tChar~*, \tBits) → \tInt
+\]
+
+Pour que les opérations bit à bit puissent s'appliquer aux bitmasks,
+on ajoute ces règles:
+
+\begin{mathpar}
+    \irule{Op-Bits}
+        { \opbin ∈ \{~|~, ~\&~, ~\opxor~ \}
+       \\ Γ ⊢ e_1 : \tBits
+       \\ Γ ⊢ e_2 : \tBits
+       }{ Γ ⊢ e_1~\opbin~e_2 : \tBits
+       }
+
+    \irule{Not-Bits}
+        { Γ ⊢ e : \tBits }
+        { Γ ⊢ \sim e : \tBits }
+\end{mathpar}
+
+\paragraph{Remarque}
+
+Cette règle pose problème pour l'inférence, car partant d'une expression de la
+forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
+\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
+inférer de type pour la fonction $\eFun{x, y}{\iReturn{x~|~y}}$. En revanche, si
+on annote le type de $x$ ou de $y$, le reste peut être inféré.
+
+\clearpage
+
+\paragraph{Polymorphisme restreint}
+
+Aussi appelé \emph{bounded polymorphism}, il permet de contraindre les variables
+de type généralisées. Cela permet de donner à la fonction précédente un type
+comme:
+
+\[
+    ∀a. (a ∈ \{ \tInt, \tBits \}) ⇒ (a, a) → a
+\]
+
+Cela implique de modifier le système de type pour associer aux expression non
+pas des types, mais des schémas de type (incluant des variables quantifiées). On
+généralise les variables de certaines déclarations (les globales, par exemple),
+et à l'utilisation il faut instancier les schémas, c'est-à-dire substituer aux
+variables quantifiées des paramètres concrets. Ceci présente plusieurs
+désavantages:
+
+\begin{itemize}
+    \item la présentation du système de types est alourdie;
+    \item l'inférence est plus complexe;
+    \item si on autorise le polymorphisme non restreint (en donnant par exemple
+        à la fonction identité le type $∀a. (a) → a$), il faut à l'exécution
+        représenter les données de manière uniforme, ce qui revient à changer
+        la sémantique du langage.
+\end{itemize}
+
+\clearpage
+
+\subsubsection*{Transtypage}
+
+\begin{align*}
+\gramdef{Expression}{e}
+  { … }{}
+  {e \angle t}{Transtypage}
+  {END}
+\\
+\\
+\gramdef{Contexte d'évaluation}{C}
+  { … }{}
+  { C \angle t}{ }
+  {END}
+\end{align*}
+
+\begin{mathpar}
+    \irule{E-Coerce}
+        { }
+        {
+            \mms{(v \angle t)}{v}
+        }
+
+    \irule{T-Coerce}
+        { Γ ⊢ e : t
+       \\ \tComp{τ}{t}
+       \\ \tComp{τ}{t'}
+        }
+        { Γ ⊢ (e \angle t') : t'
+        }
+\end{mathpar}
+
+% TODO comment adapter FD
+\clearpage
+
+\section{Analyse de provenance de pointeurs}
 
 Jusqu'ici \langname{} est un langage impératif généraliste, ne prenant pas en
 compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
@@ -59,7 +279,7 @@ par l'opérateur \texttt{*}, on modifie également le typage de celui-ci.
 Enfin, une fois ces modifications faites, on prouve que les propriétés de
 progrès et de préservation sont rétablies.
 
-\section{Extensions noyau pour \langname}
+\subsection{Extensions noyau pour \langname}
 \label{sec:extensions-noyau}
 
 On ajoute à \langname{} la notion de valeur provenant de l'espace utilisateur.
@@ -189,7 +409,7 @@ manière suivante:
 \end{align*}
 }
 
-\section{Extensions sémantiques}
+\subsection{Extensions sémantiques}
 
 En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
 règle suivante:
@@ -260,7 +480,7 @@ $\vTainted{φ}$. L'opération en «boîte noire» de ces deux fonctions permet
 d'assurer que l'accès à l'espace utilisateur est toujours couplé à un test
 dynamique.
 
-\section{Insuffisance des types simples}
+\subsection{Insuffisance des types simples}
 
 Étant donné \langname{} augmenté de cette extension sémantique, on peut étendre
 naïvement le système de types avec la règle suivante:
@@ -358,7 +578,7 @@ le système de types naïvement étendu par une règle comme
 dans la section~\ref{sec:extensions-noyau}. Il faut donc raffiner les règles de
 typage pour interdire ce cas.
 
-\section{Extensions du système de types}
+\subsection{Extensions du système de types}
 \label{sec:extension-types}
 
 On présente ici un système de types plus expressif permettant de capturer les
@@ -371,7 +591,7 @@ $\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en ajoutant
 d'autres. Naturellement, la plupart des différences porteront sur le traitement
 des pointeurs.
 
-\subsection*{Pointeurs utilisateurs}
+\subsubsection*{Pointeurs utilisateurs}
 
 Le changement clef est l'ajout de \emph{pointeurs utilisateur}. En plus des
 types pointeurs habituels $\ptrK{t}$, on ajoute des types pointeurs utilisateur
@@ -434,7 +654,7 @@ Accès   & $*~x$        & copy\_*\_user \\
 Puisqu'on s'intéresse à la provenance des pointeurs, détaillons les règles qui
 créent, manipulent et utilisent des pointeurs.
 
-\subsection*{Sources de pointeurs}
+\subsubsection*{Sources de pointeurs}
 
 La source principale de pointeurs est l'opérateur $\&$ qui prend l'adresse d'une
 variable. Celle-ci est bien entendue contrôlée par le noyau (dans le sens où son
@@ -445,7 +665,7 @@ noyau:
   \disprule{AddrOf-Kernel}
 \end{mathpar}
 
-\subsection*{Manipulations de pointeurs}
+\subsubsection*{Manipulations de pointeurs}
 
 L'avantage du typage est que celui-ci suit le flot de données: si à un endroit
 une valeur de type $t$ est affectée à une variable, que le contenu de cette
@@ -458,7 +678,7 @@ pour effectuer de l'arithmérique, il faut observer la forme du pointeur
 sous-jacent. Si on veut laisser $\phx\vTainted$ opaque, il faut donc interdire
 l'arithmétique sur les pointeurs utilisateur.
 
-\subsection*{Utilisations de pointeurs}
+\subsubsection*{Utilisations de pointeurs}
 
 La principale restriction est que seuls les pointeurs noyau peuvent être
 déréférencés de manière sûre. La règle capitale est donc la suivante (déjà
@@ -489,9 +709,9 @@ de celui d'un opérateur.
     \disprule{PutU}
 \end{mathpar}
 
-\section{Sûreté du typage}
+\subsection{Sûreté du typage}
 
-\subsection*{Typage sémantique}
+\subsubsection*{Typage sémantique}
 
 La définition du typage sémantique doit aussi être étendue au cas $φ =
 \vTainted{φ'}$. En essence, \textsc{S-UserPtr} énonce que traverser un
@@ -507,7 +727,7 @@ constructeur $\phx\vTainted$ transforme un pointeur en pointeur utilisateur.
     { \tComp{\ptrU{τ}}{\ptrU{t}} }
 \end{mathpar}
 
-\subsection*{Propriétés du typage}
+\subsubsection*{Propriétés du typage}
 
 \begin{lemma}[Inversion du typage]
 \label{lemma:inv-qualif}
@@ -537,7 +757,7 @@ convient, on peut en déduire que c'est l'une de celles-ci qui a été
 appliquée, et donc qu'une des prémisses est vraie.
 \end{proof}
 
-\subsection*{Progrès et préservation}
+\subsubsection*{Progrès et préservation}
 
 La propriété que nous cherchons à prouver est que le déréférencement d'un
 pointeur dont la valeur est contrôlée par l'utilisateur ne peut se faire qu'à
@@ -574,7 +794,7 @@ pointeurs utilisateur suffit pour avoir une adéquation entre les extensions de
 sémantique de la section~\ref{sec:extensions-noyau} et les extensions du système
 de type de la section~\ref{sec:extension-types}.
 
-\section*{Conclusion}
+\subsection*{Conclusion}
 
 En partant de \langname tel que décrit dans les chapitres~\ref{cha:lang}
 et~\ref{cha:typbase}, on décrit une extension de sa syntaxe et de sa sémantique.
