@@ -272,15 +272,8 @@ qui consiste à écrire $!~x \& y$ au lieu de $!~(x \& y)$.
 
 En effet, la première expression est équivalente à $(!~x) \& y$. Comme $!~x$
 vaut $0$ ou $1$, l'expression resultante vaut $y \& 1$ si $x = 0$, ou $0$ sinon.
-Il s'agit probablement d'une erreur de programmation.
-
-L'alternative $!~(x \& y)$ a plus de sens: elle vaut $0$ si $x$ et $y$ ont un
-bit en commun, $1$ sinon.
-
-On se propose donc de vérifier que la première n'est pas bien typée alors que la
-seconde l'est.
-
-% TODO
+Il s'agit probablement d'une erreur de programmation. L'alternative $!~(x \& y)$
+a plus de sens: elle vaut $0$ si $x$ et $y$ ont un bit en commun, $1$ sinon.
 
 \begin{figure}
 \begin{mathpar}
@@ -305,7 +298,12 @@ seconde l'est.
 \label{fig:notxy-ok}
 \end{figure}
 
-En revanche la seconde est bien typée (figure~\ref{fig:notxy-ok}).
+On se propose donc de vérifier que la première n'est pas bien typée alors que la
+seconde l'est. Dans les deux cas suivants on se placer dans un environnement $Γ$
+comportant deux variables globales $x$ et $y$ de type $\tBits$. Alors $(!~x) \&
+y$ n'est pas bien typée. En effet, $Γ ⊢~!~x : \tInt$ et la seule règle qui
+s'applique à l'opérateur $\&$ ne peut pas s'appliquer. En revanche la seconde
+est bien typée (figure~\ref{fig:notxy-ok}).
 
 \clearpage
 
