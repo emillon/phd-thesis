@@ -218,6 +218,44 @@ désavantages:
 % TODO comment adapter FD
 \clearpage
 
+Les différents types d'entier correspondent à du sous-typage. La méthode
+classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
+
+\begin{mathpar}
+    \irule{Sub}
+        { Γ ⊢ e : s
+       \\ s ⊆ t
+        }
+        { Γ ⊢ e : t }
+
+    \textrm{\emph{(Règle non retenue)}}
+\end{mathpar}
+
+Au contraire, on ajoute seulement la règle suivante. Elle permet d'utiliser une
+expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
+
+\begin{mathpar}
+    \irule{Sub-BitsInt}
+        { Γ ⊢ e : \tBits }
+        { Γ ⊢ e : \tInt }
+\end{mathpar}
+
+Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$.
+
+\subsection{Exemple: $!x \& y$}
+
+Les nombreux opérateurs de C (repris en \langname) posent plusieurs problèmes:
+
+\begin{itemize}
+\item il sont nombreux et il est facile de confondre $\&\&$ avec $\&$, ou
+      $!$ avec $\sim$;
+\item il y a un opérateur "ou exclusif" bit à bit ($\opxor$) mais pas
+      d'équivalent logique.
+\item la priorité des opérateurs semble parfois arbitraire. Par exemple, les
+      opérateurs de décalage sont plus prioritaires que les additions, donc
+      $x \ll 2 + 1$ est interprété comme $(x \ll 2) + 1$.
+\end{itemize}
+
 % - !E1 & E2
 % + !(E1 & E2)
 
@@ -229,20 +267,6 @@ désavantages:
 % ----------------------------------------------
 % ! : s'applique à bits ou int mais retourne int
 % ----------------------------------------------
-
-\begin{mathpar}
-    \irule{Not-BitsInt}
-        { t ∈ \{ \tBits, \tInt \}
-       \\ Γ ⊢ e : t
-        }
-        { Γ ⊢~!~e : \tInt }
-\end{mathpar}
-
-\begin{mathpar}
-    \irule{BitsInt}
-        { Γ ⊢ e : \tBits }
-        { Γ ⊢ e : \tInt }
-\end{mathpar}
 
 \begin{mathpar}
     \irule{Not-BitsInt}
