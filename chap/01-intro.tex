@@ -413,6 +413,161 @@ prouvée. Il utilise de nombreux langages intermédiaires, dont CIL.\@ Pour le
 front-end, le langage se nomme Clight\cite{cfront}. Les passes de middle-end,
 quant à elles, utilisent Cminor\cite{cminorSL}.
 
+\section{Le projet Penjili}
+
+Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
+plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
+retrouver face à grands impacts économiques, voire risquer des vies humaines. On
+comprend bien que les phases de vérification et de certification sont au coeur
+du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
+vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
+vol avait été vérifié plus efficacement \cite{Ariane501}.
+
+Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
+approches duales sont nécessaires. La première consiste à mettre le logiciel
+dans des situations concrètes et à vérifier que la sortie correspond au résultat
+attendu : c'est la technique des tests.  Les tests ``boîte noire '' consistent à
+tester en ayant à disposition uniquement les spécifications des modules à
+plusieurs échelles . L'application est découpée en "boîtes" à plusieurs échelles
+(par exemple : logiciel, module, classe, méthode). Au contraire, les tests dits
+``boîte blanche'' sont écrits en ayant à disposition l'implémentation. Cela
+permet par exemple de s'assurer que chaque chemin d'exécution est emprunté.
+Cette manière de procéder est similaire à la preuve par neuf enseignée aux
+enfants : il est possible de prouver l'erreur, mais pas que le programme est
+correct.
+
+L'approche des méthodes formelles, au contraire, permet de s'assurer de
+l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
+interprétation abstraite permet d'étudier les relations exposées entre les
+variables afin d'en déduire les domaines dans lesquels elles évoluent. En
+s'assurant que ceux-ci sont "sûrs", on prouve l'absence d'erreurs de manière
+automatisée.
+
+L'analyse statique par interprétation abstraite se place à un niveau comparable
+à celui des tests unitaires et fonctionnels, c'est-à-dire très près du code. Le
+but est en particulier d'éliminer les erreurs au niveau du langage :
+
+\begin{itemize}
+    \item division par zéro
+    \item déréférencement d'un pointeur en dehors d'une zone allouée (y compris
+        \texttt{NULL})
+    \item débordement arithmétique sur les entiers
+    \item indice de tableau en dehors de l'intervalle autorisé
+    \item exception non rattrapée
+\end{itemize}
+
+En pratique, dans l'embarqué les règles de codage limitent les constructions
+posant problème. Par exemple, les exceptions, l'allocation dynamique
+(\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les fonctions
+récursives \footnote{Dans ce cas, on remarquera que la taille de la pile est
+bornée.}.
+
+L'idée derrière les méthodes d'analyse statique est la suivante : au lieu de
+considérer que les variables possèdent une valeur, on utilise un domaine
+abstrait qui permet de voir les variables comme possédant un ensemble de
+valeurs possibles.
+
+\begin{figure}
+\centering
+
+\begin{tikzpicture}[scale=0.7]
+\clip  (-1,-1) rectangle (12,12);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\foreach \xsh in {0, 180}
+\foreach \ysh in {0, 180}
+\path [xshift=\xsh,yshift=\ysh,fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (précise)
+\foreach \ysh in {0,180}
+\draw [yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+             -- (2,3) -- (3,3)
+             -- (3,1) -- cycle;
+
+% Approximation (imprécise)
+\foreach \ysh in {0,180}
+\draw [xshift=180,yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+              -- (4,5)
+             -- (4,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\foreach \xsh in {0, 180}
+\draw [xshift=\xsh,yshift=180,fill=green!20,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+% Comportement réel (avec erreurs)
+\foreach \xsh in {0, 180}
+\draw [xshift=\xsh,fill=green!20,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)};
+
+% Ensemble sûr (redraw)
+\foreach \xsh in {0, 180}
+\foreach \ysh in {0, 180}
+\draw [xshift=\xsh,yshift=\ysh]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+\end{tikzpicture}
+\caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
+des états effectifs du programme, en vert, est surapproximé par l'ensemble en
+bleu.}
+\label{fig:staticanalysis}
+\end{figure}
+
+Le domaine ``sûr'' a une forme assez simple compte tenu des erreurs considérées:
+c'est un produit d'ensembles simples, comme des intervalles. L'ensemble des
+comportements réels du programme est au contraire d'une forme plus complexe
+\footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas calculable.}.
+
+En calculant une approximation de ce dernier, de forme plus simple, on peut
+tester plus facilement que les comportements de sont dans la zone sûre : le fait
+que l'analyse soit \emph{sound}, c'est à dire que l'approximation ne manque
+aucun comportement, permet de prouver l'absence d'erreurs.
+
+La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
+valeurs dangereuses est représentée par un ensemble hachuré, l'ensemble des
+comportements réels du programme est en vert, et l'approximation en bleu.
+
+Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
+en bas puis de gauche à droite :
+
+\begin{itemize}
+  \item on a prouvé, à la compilation, que le programme ne pourra pas comporter
+  d'erreurs à l'exécution.
+  \item l'analyseur doit émettre une (fausse) alarme. Il y a donc un manque de
+  précision.
+  \item l'approximation n'est pas \emph{sound}. Par construction, on évite ce
+  cas.
+  \item on signale un comportement erron\'e.
+\end{itemize}
+
+Toute la difficulté est donc de construire une surapproximation correcte mais
+conservant une précision suffisante.
+
+\jolibreak
+
+% TODO check date Penjili
+
+Le projet Penjili~\cite{AllamigeonHymansSSTIC07}, commencé à EADS Innovation
+Works en 2005, a pour but de fournir un analyseur statique de logiciel système
+embarqué critique utilisant l'interprétation abstraite pour prouver l'absence
+d'erreurs à l'exécution.
+
+Il a été employé pour vérifier la sûreté de plusieurs logiciels aéronautiques.
+
+\jolibreak
+
+Cependant, 
+
 \subsection*{La solution retenue: \langname{}}
 
 Dans le monde de l'aéronautique, il est nécessaire de s'assurer que les
@@ -422,7 +577,7 @@ les conséquences financières et humaines peuvent être tragiques.
 Afin de vérifier leur absence, des outils fondés sur l'interprétation abstraite
 (section~\ref{sec:absint}) on été développés chez EADS Innovation Works dans le
 cadre du projet Penjili~\link{penjili}. On y trouve notamment un langage
-intermédiaire, Newspeak\cite{newspeak}, ainsi que des compilateurs permettant de
+intermédiaire, \newspeak~\cite{newspeak}, ainsi que des compilateurs permettant de
 traduire du code C et Ada vers celui-ci. L'analyseur statique Penjili, reposant
 sur ces outils, a été utilisé pour analyser des logiciels embarqués critiques de
 plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
@@ -432,13 +587,13 @@ Les travaux présentés ici ont d'ailleurs été réalisés dans l'équipe de s�
 et sûreté logicielle d'EADS Innovation Works, dans le cadre d'une convention
 industrielle de formation par la recherche (CIFRE).
 
-Nous avons choisi de baser notre analyse sur Newspeak, dans le but de bénéficier
+Nous avons choisi de baser notre analyse sur \newspeak, dans le but de bénéficier
 de ces outils existants et dans la perspective de guider les analyses de valeur
 par des information de typage.
 
-Plus précisément, nous utilisons un langage nommé \langname, inspiré de Newspeak
+Plus précisément, nous utilisons un langage nommé \langname, inspiré de \newspeak
 mais avec un modèle mémoire de plus haut niveau permettant de garantir la sûreté
-des programmes bien typés. L'implantation quant à elle se fait sur Newspeak.
+des programmes bien typés. L'implantation quant à elle se fait sur \newspeak.
 
 \section{Plan de la thèse}
 

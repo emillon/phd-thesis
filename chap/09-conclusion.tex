@@ -40,10 +40,10 @@ ou masque de bits.
 \paragraph{Un prototype d'analyseur statique}
 
 Les analyses de typage ici décrites ont été implantées sous forme d'un prototype
-d'analyseur statique distribué avec le langage Newspeak.
+d'analyseur statique distribué avec le langage \newspeak.
 D'une part, cela permet de vérifier la propriété d'isolation des appels système
 sur du code C existant, et d'autre part cela fournit une base saine pour
-implanter d'autres analyses de typage sur le langage Newspeak.
+implanter d'autres analyses de typage sur le langage \newspeak.
 D'autre part, ce prototype a été utilisé pour confirmer l'existence d'un bug
 dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
 vérifier du code de production à l'aide de techniques de typage.
@@ -67,7 +67,7 @@ pas du tout aux problématiques de sémantique entière: les débordements,
 dénormalisations, etc, sont supposés ne pas arriver.
 
 Il est possible d'étendre le système de types de \langname{} pour ajouter tous
-ces nouveaux types. La traduction depuis Newspeak insère déjà des opérateurs de
+ces nouveaux types. La traduction depuis \newspeak insère déjà des opérateurs de
 transtypage pour lesquels il est facile de donner une sémantique (pouvant lever
 une erreur en cas de débordement, comme en Ada) et un typage. Les littéraux
 numériques peuvent poser problème, puisqu'ils deviennent alors polymorphes. Une
@@ -117,7 +117,7 @@ des données fondamentalement différentes. Le même problème se pose d'ailleur
 on cherche à convertir une fonction en entier ou en pointeur, même si les
 raisons valables pour faire cela sont moins nombreuses.
 Si on s'en tient aux conversions entre entiers et pointeurs, une manière naïve
-de typer ces opération est:
+de typer ces opérations est:
 
 \begin{mathpar}
 \irule{PtrInt-Bad}

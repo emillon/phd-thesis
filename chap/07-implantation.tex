@@ -9,10 +9,10 @@ dans le langage OCaml~\cite{DAOC}.
 Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
 license libre, la \emph{GNU Lesser General Public License}.
 
-\section{Newspeak}
+\section{\newspeak}
 \label{sec:npk}
 
-Newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
+\newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
 statiques, contrairement à des langages conçus pour les programmeurs comme C.
 Plusieurs points en font un langage pratique à utiliser. Tout d'abord, il est
 suffisamment expressif pour compiler tout C, y compris de nombreuses extensions
@@ -88,7 +88,7 @@ dans la figure~\ref{fig:stx-npk}.
     { \npkstyle{FunPtr}}{ Pointeur sur fonction}
     {END}
 \end{align*}
-\caption{Syntaxe simplifiée de Newspeak}
+\caption{Syntaxe simplifiée de \newspeak}
 \label{fig:stx-npk}
 \end{figure}%}}}
 
@@ -98,7 +98,7 @@ dans la figure~\ref{fig:stx-npk}.
 \begin{figure}
   \centering
   \input{fig/compil-pipeline.tex}
-  \caption{Compilation depuis Newspeak}
+  \caption{Compilation depuis \newspeak}
 \label{fig:compil-npk}
 \end{figure}
 
@@ -121,8 +121,8 @@ Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessible
 dans l'arbre de syntaxe abstrait des passes suivantes.
 
-À ce niveau, les fichiers sont passés à l'outil \texttt{c2newspeak} qui les
-traduit vers Newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
+À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
+traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
 plupart des extensions GNU C sont acceptés en plus du C ANSI. Dans cette étape,
 les types et les noms sont résolus, et le programme est annoté de manière à
 rendre les prochaines étapes indépendante du contexte. Par exemple, chaque
@@ -131,25 +131,25 @@ déclaration de variable est adjointe d'une description complète du type.
 Lors de cette étape, le flot de contrôle est également simplifié. C en effet
 propose de nombreuses constructions ambigües ou redondantes.
 
-Au contraire, Newspeak propose un nombre réduit de constructions. Rappelons que
+Au contraire, \newspeak propose un nombre réduit de constructions. Rappelons que
 le but de ce langage est de faciliter l'analyse statique: des constructions
 orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
 code lors de l'implantation d'un analyseur.
 
 Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
-\emph{do/while} et une boucle for, Newspeak fournit une unique boucle
+\emph{do/while} et une boucle for, \newspeak fournit une unique boucle
 \npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
 est toujours un saut vers l'avant (similaire à un «\emph{break}» généralisé).
 Par conséquence, notre implantation gère les sauts, alors que dans \langname,
 cette construction n'est pas possible (figure~\ref{fig:stx}, page
 \pageref{fig:stx}).
 
-Newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
+\newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
 n'est faite entre l'accès à un champ et l'accès à un l'élément d'un tableau
 (tous deux sont traduits par un décalage numérique depuis le début de la zone
 mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
-structures internes de \texttt{c2newspeak}, où les informations nécessaires sont
+structures internes de \ctonewspeak, où les informations nécessaires sont
 encore présentes.
 
 Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
@@ -275,15 +275,14 @@ de rangée présent dans les langages comme OCaml.
 \label{sec:ptrtype-archi}
 
 Cette analyse est implantée dans un outil du nom de \ptrtype{}. Il lit un
-programme Newspeak (ou un fichier C), et réalise l'inférence de types. En
+programme \newspeak (ou un fichier C), et réalise l'inférence de types. En
 sortie, il affiche soit le programme complètement annoté, soit une erreur.
 
 Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compilé
-vers Newspeak grâce à l'utilitaire \texttt{c2newspeak}. Ensuite, les autres
-passes travaillent sur une représentation intermédiaire proche de Newspeak, mais
-où des étiquettes de type supplémentaires sont ajoutées. Ce type de
-représentation intermédiaire (polymorphe en le type des étiquettes) est
-\texttt{'a Tyspeak.t}.
+vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
+travaillent sur une représentation intermédiaire proche de \newspeak, mais où
+des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
+intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}.
 
 Le reste de l'outil est résumé dans la fonction
 \texttt{process\_npk} (figure~\ref{fig:implem-process}):
@@ -455,7 +454,7 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 }
 \end{verbatim}
 
-L'opérateur \texttt{coerce[a,b]} est un artefact de Newspeak, destiné à détecter
+L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à détecter
 les débordements d'entiers lors d'une analyse de valeurs par interprétation
 abstraite. Dans le cas de notre analyse, les valeurs ne sont pas pertinentes et
 cet opérateur peut être vu que comme un «plus» unaire typé $(\tInt) → \tInt$.
