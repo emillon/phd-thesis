@@ -146,77 +146,7 @@ on ajoute ces règles:
         { Γ ⊢ \sim e : \tBits }
 \end{mathpar}
 
-\paragraph{Remarque}
-
-Cette règle pose problème pour l'inférence, car partant d'une expression de la
-forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
-\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
-inférer de type pour la fonction $\eFun{x, y}{\iReturn{x~|~y}}$. En revanche, si
-on annote le type de $x$ ou de $y$, le reste peut être inféré.
-
-\clearpage
-
-\paragraph{Polymorphisme restreint}
-
-Aussi appelé \emph{bounded polymorphism}, il permet de contraindre les variables
-de type généralisées. Cela permet de donner à la fonction précédente un type
-comme:
-
-\[
-    ∀a. (a ∈ \{ \tInt, \tBits \}) ⇒ (a, a) → a
-\]
-
-Cela implique de modifier le système de type pour associer aux expression non
-pas des types, mais des schémas de type (incluant des variables quantifiées). On
-généralise les variables de certaines déclarations (les globales, par exemple),
-et à l'utilisation il faut instancier les schémas, c'est-à-dire substituer aux
-variables quantifiées des paramètres concrets. Ceci présente plusieurs
-désavantages:
-
-\begin{itemize}
-    \item la présentation du système de types est alourdie;
-    \item l'inférence est plus complexe;
-    \item si on autorise le polymorphisme non restreint (en donnant par exemple
-        à la fonction identité le type $∀a. (a) → a$), il faut à l'exécution
-        représenter les données de manière uniforme, ce qui revient à changer
-        la sémantique du langage.
-\end{itemize}
-
-\clearpage
-
-\subsubsection*{Transtypage}
-
-\begin{align*}
-\gramdef{Expression}{e}
-  { … }{}
-  {e \angle t}{Transtypage}
-  {END}
-\\
-\\
-\gramdef{Contexte d'évaluation}{C}
-  { … }{}
-  { C \angle t}{ }
-  {END}
-\end{align*}
-
-\begin{mathpar}
-    \irule{E-Coerce}
-        { }
-        {
-            \mms{(v \angle t)}{v}
-        }
-
-    \irule{T-Coerce}
-        { Γ ⊢ e : t
-       \\ \tComp{τ}{t}
-       \\ \tComp{τ}{t'}
-        }
-        { Γ ⊢ (e \angle t') : t'
-        }
-\end{mathpar}
-
-% TODO comment adapter FD
-\clearpage
+Celles-ci se substituent aux règles s'appliquant à $\tInt$.
 
 Les différents types d'entier correspondent à du sous-typage. La méthode
 classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
@@ -305,6 +235,76 @@ y$ n'est pas bien typée. En effet, $Γ ⊢~!~x : \tInt$ et la seule règle qui
 s'applique à l'opérateur $\&$ ne peut pas s'appliquer. En revanche la seconde
 est bien typée (figure~\ref{fig:notxy-ok}).
 
+\clearpage
+
+\paragraph{Remarque}
+
+Cette règle pose problème pour l'inférence, car partant d'une expression de la
+forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
+\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
+inférer de type pour la fonction $\eFun{x, y}{\iReturn{x~|~y}}$. En revanche, si
+on annote le type de $x$ ou de $y$, le reste peut être inféré.
+
+\paragraph{Polymorphisme restreint}
+
+Aussi appelé \emph{bounded polymorphism}, il permet de contraindre les variables
+de type généralisées. Cela permet de donner à la fonction précédente un type
+comme:
+
+\[
+    ∀a. (a ∈ \{ \tInt, \tBits \}) ⇒ (a, a) → a
+\]
+
+Cela implique de modifier le système de type pour associer aux expression non
+pas des types, mais des schémas de type (incluant des variables quantifiées). On
+généralise les variables de certaines déclarations (les globales, par exemple),
+et à l'utilisation il faut instancier les schémas, c'est-à-dire substituer aux
+variables quantifiées des paramètres concrets. Ceci présente plusieurs
+désavantages:
+
+\begin{itemize}
+    \item la présentation du système de types est alourdie;
+    \item l'inférence est plus complexe;
+    \item si on autorise le polymorphisme non restreint (en donnant par exemple
+        à la fonction identité le type $∀a. (a) → a$), il faut à l'exécution
+        représenter les données de manière uniforme, ce qui revient à changer
+        la sémantique du langage.
+\end{itemize}
+
+\clearpage
+
+\subsubsection*{Transtypage}
+
+\begin{align*}
+\gramdef{Expression}{e}
+  { … }{}
+  {e \angle t}{Transtypage}
+  {END}
+\\
+\\
+\gramdef{Contexte d'évaluation}{C}
+  { … }{}
+  { C \angle t}{ }
+  {END}
+\end{align*}
+
+\begin{mathpar}
+    \irule{E-Coerce}
+        { }
+        {
+            \mms{(v \angle t)}{v}
+        }
+
+    \irule{T-Coerce}
+        { Γ ⊢ e : t
+       \\ \tComp{τ}{t}
+       \\ \tComp{τ}{t'}
+        }
+        { Γ ⊢ (e \angle t') : t'
+        }
+\end{mathpar}
+
+% TODO comment adapter FD
 \clearpage
 
 \section{Analyse de provenance de pointeurs}
