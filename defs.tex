@@ -428,3 +428,16 @@
 
 \newcommand*\circled[1]{\tikz[baseline=(char.base)]{
             \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+\def\badrulewarn#1{
+\begin{center}
+    \begin{tabular}{lr}
+        \begin{minipage}{5cm}
+            \[ #1
+            \]
+        \end{minipage}
+        &
+        \emph{(Règle non retenue)}
+    \end{tabular}
+\end{center}
+}

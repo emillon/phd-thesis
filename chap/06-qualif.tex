@@ -162,26 +162,13 @@ numéro 7). On veut donc exprimer que ``un \tBits est un \tInt''. Cette relation
 entre différents types d'entier correspond à du sous-typage. La méthode
 classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
 
-\def\camarchepas#1{
-\begin{center}
-    \begin{tabular}{lr}
-        \begin{minipage}{5cm}
-            \[ #1
-            \]
-        \end{minipage}
-        &
-        \emph{(Règle non retenue)}
-    \end{tabular}
-\end{center}
+\badrulewarn{
+    \irule{Sub}
+    { Γ ⊢ e : s
+        \\ s ⊆ t
+    }
+    { Γ ⊢ e : t }
 }
-
-\camarchepas{
-                \irule{Sub}
-                { Γ ⊢ e : s
-                    \\ s ⊆ t
-                }
-                { Γ ⊢ e : t }
-            }
 
 Au contraire, on ajoute seulement la règle suivante. Elle permet d'utiliser une
 expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
