@@ -119,15 +119,20 @@ raisons valables pour faire cela sont moins nombreuses.
 Si on s'en tient aux conversions entre entiers et pointeurs, une manière naïve
 de typer ces opérations est:
 
-\begin{mathpar}
+\badrulewarnwrap{
+\badrulewarnline{
 \irule{PtrInt-Bad}
   { Γ ⊢ e : \ptrK{t}}
   { Γ ⊢ (\tInt)~e : \tInt }
-
+}
+\\
+\\
+\badrulewarnline{
 \irule{IntPtr-Bad}
   { Γ ⊢ e : \tInt }
   { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
-\end{mathpar}
+}
+}
 
 Tout d'abord, cela pose problème car il est alors possible de créer une fonction
 pouvant convertir n'importe quel type pointeur en n'importe quel autre type

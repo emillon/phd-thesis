@@ -429,15 +429,22 @@
 \newcommand*\circled[1]{\tikz[baseline=(char.base)]{
             \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
 
-\def\badrulewarn#1{
+\def\badrulewarnline#1{
+    $ #1 $
+    &
+    \emph{(Règle non retenue)}
+}
+
+\def\badrulewarnwrap#1{
 \begin{center}
-    \begin{tabular}{lr}
-        \begin{minipage}{5cm}
-            \[ #1
-            \]
-        \end{minipage}
-        &
-        \emph{(Règle non retenue)}
+    \begin{tabular}{m{5cm}m{5cm}}
+        #1
     \end{tabular}
 \end{center}
+}
+
+\def\badrulewarn#1{
+    \badrulewarnwrap{
+        \badrulewarnline{#1}
+    }
 }
