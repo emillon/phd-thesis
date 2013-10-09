@@ -73,7 +73,7 @@ On identifie donc au moins trois utilisations du type \texttt{int}:
         numériques. Toutes les opérations sont possibles.
     \item bitmask: on utilise un entier comme ensemble de bits. Seules les
         opérations bit à bit ont du sens.
-    \item Entier opaque: on utilise un entier de manière purement abstraite.
+    \item entier opaque: on utilise un entier de manière purement abstraite.
         C'est l'exemple des descripteurs de fichier.
 \end{itemize}
 
@@ -92,10 +92,7 @@ adaptation.
 
 \subsection{Modifications}
 
-On ajoute un type \tBits. Il faut aussi ajouter un type \tChar apparaissant dans
-les chaînes de caractères. On ne spécifie pas plus ce dernier mais on suppose
-qu'il existe des littéraux de chaînes qui retournent un pointeur vers le premier
-élément d'un tableaux de caractères.
+\begin{figure}
 
 \begin{align*}
 \gramdef{Type}{t}
@@ -105,33 +102,46 @@ qu'il existe des littéraux de chaînes qui retournent un pointeur vers le premi
   {END}
 \end{align*}
 
-Au niveau des valeurs, les entiers sont représentés par des valeurs entières
-classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau type
-sémantique, mais on ajoute la règle suivante de compatibilité entre le type de
-valeurs \tInt et le type statique \tBits.
-
 \[
   \irule{Comp-Bits}
     { }
     { \tComp{\tInt}{\tBits} }
 \]
 
-On change le type des «constructeurs»:
+\caption{Ajouts liés aux entiers utilisés comme bitmasks}
+
+\label{fig:ajouts-bitmasks}
+
+\end{figure}
+
+\begin{figure}
 
 \begin{align*}
-    [] ⊢ \texttt{O\_RDONLY} : \tBits \\
-    [] ⊢ \texttt{O\_RDWR}   : \tBits \\
-    [] ⊢ \texttt{O\_APPEND} : \tBits
+    [~] ⊢ \texttt{O\_RDONLY} &: \tBits \\
+    [~] ⊢ \texttt{O\_RDWR}   &: \tBits \\
+    [~] ⊢ \texttt{O\_APPEND} &: \tBits \\
+    \\
+    [~] ⊢ \texttt{open} &: (\tChar~*, \tBits) → \tInt
 \end{align*}
 
-Et celui des «consommateurs»:
+\caption{Nouvelles valeurs liées aux bitmasks}
+\label{fig:bitmasks-types}
 
-\[
-    [] ⊢ \texttt{open} : (\tChar~*, \tBits) → \tInt
-\]
+\end{figure}
 
-Pour que les opérations bit à bit puissent s'appliquer aux bitmasks,
-on ajoute ces règles:
+On ajoute un type \tBits. Il faut aussi ajouter un type \tChar apparaissant dans
+les chaînes de caractères. On ne spécifie pas plus ce dernier mais on suppose
+qu'il existe des littéraux de chaînes qui retournent un pointeur vers le premier
+élément d'un tableaux de caractères. Au niveau des valeurs, les entiers sont
+représentés par des valeurs entières classiques $\widehat{n}$. En particulier,
+on n'ajoute pas de nouveau type sémantique, mais on ajoute la règle suivante de
+compatibilité entre le type de valeurs \tInt et le type statique \tBits
+(figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
+«constructeurs» (\texttt{O\_*}) et du consommateur \texttt{open}
+(figure~\ref{fig:bitmasks-types}).
+
+Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on remplace
+aux règles s'appliquant à $\tInt$ les règles suivantes.
 
 \begin{mathpar}
     \irule{Op-Bits}
@@ -146,22 +156,32 @@ on ajoute ces règles:
         { Γ ⊢ \sim e : \tBits }
 \end{mathpar}
 
-Celles-ci se substituent aux règles s'appliquant à $\tInt$.
-
-Les différents types d'entier correspondent à du sous-typage. La méthode
+Il reste à permettre d'utiliser les bitmasks dans les contextes où on attend un
+entier. Par exemple, pour écrire $\iIf{x~\&~\hexa{80}}{…}{…}$ (test du bit
+numéro 7). On veut donc exprimer que ``un \tBits est un \tInt''. Cette relation
+entre différents types d'entier correspond à du sous-typage. La méthode
 classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
 
-\begin{mathpar}
-    \irule{Sub}
-        { Γ ⊢ e : s
-       \\ s ⊆ t
-        }
-        { Γ ⊢ e : t }
+\def\camarchepas#1{
+\begin{center}
+    \begin{tabular}{lr}
+        \begin{minipage}{5cm}
+            \[ #1
+            \]
+        \end{minipage}
+        &
+        \emph{(Règle non retenue)}
+    \end{tabular}
+\end{center}
+}
 
-        \raisebox{\baselineskip}{
-            \textrm{\emph{(Règle non retenue)}}
-        }
-\end{mathpar}
+\camarchepas{
+                \irule{Sub}
+                { Γ ⊢ e : s
+                    \\ s ⊆ t
+                }
+                { Γ ⊢ e : t }
+            }
 
 Au contraire, on ajoute seulement la règle suivante. Elle permet d'utiliser une
 expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
@@ -180,7 +200,7 @@ Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$.
 % ! : s'applique à bits ou int mais retourne int
 % ----------------------------------------------
 
-\subsection{Exemple: $!~x \& y$}
+\subsection{Exemple: $!~x~\&~y$}
 
 % - !E1 & E2
 % + !(E1 & E2)
@@ -198,11 +218,11 @@ Les nombreux opérateurs de C (repris en \langname) posent plusieurs problèmes:
 \end{itemize}
 
 Le premier et le dernier point permettent d'expliquer une erreur courante: celle
-qui consiste à écrire $!~x \& y$ au lieu de $!~(x \& y)$.
+qui consiste à écrire $!~x~\&~y$ au lieu de $!~(x~\&~y)$.
 
-En effet, la première expression est équivalente à $(!~x) \& y$. Comme $!~x$
-vaut $0$ ou $1$, l'expression resultante vaut $y \& 1$ si $x = 0$, ou $0$ sinon.
-Il s'agit probablement d'une erreur de programmation. L'alternative $!~(x \& y)$
+En effet, la première expression est équivalente à $(!~x)~\&~y$. Comme $!~x$
+vaut $0$ ou $1$, l'expression resultante vaut $y~\&~1$ si $x = 0$, ou $0$ sinon.
+Il s'agit probablement d'une erreur de programmation. L'alternative $!~(x~\&~y)$
 a plus de sens: elle vaut $0$ si $x$ et $y$ ont un bit en commun, $1$ sinon.
 
 \begin{figure}
@@ -217,14 +237,14 @@ a plus de sens: elle vaut $0$ si $x$ et $y$ ont un bit en commun, $1$ sinon.
                         { Γ ⊢ x : \tBits
                        \\ Γ ⊢ y : \tBits
                         }
-                        {Γ ⊢ x \& y : \tBits}
+                        {Γ ⊢ x~\&~y : \tBits}
                 }
-                {Γ ⊢ x \& y : \tInt}
+                {Γ ⊢ x~\&~y : \tInt}
         }
-        {Γ ⊢~!~(x \& y) : \tInt}
+        {Γ ⊢~!~(x~\&~y) : \tInt}
 \end{mathpar}
 
-\caption{Dérivation montrant que $!~(x \& y)$ est bien typée}
+\caption{Dérivation montrant que $!~(x~\&~y)$ est bien typée}
 \label{fig:notxy-ok}
 \end{figure}
 
