@@ -135,7 +135,7 @@ entières classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau
 type sémantique, mais on ajoute une règle de compatibilité entre le type de
 valeurs \tInt et le type statique \tBits (figure~\ref{fig:ajouts-bitmasks}). Par
 ailleurs, on change le type des «constructeurs» (\texttt{O\_*}) et du
-consommateur \texttt{open} (figure~\ref{fig:bitmasks-types}).
+«consommateur» \texttt{open} (figure~\ref{fig:bitmasks-types}).
 
 Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on remplace
 aux règles s'appliquant à $\tInt$ les règles suivantes.
@@ -155,7 +155,7 @@ aux règles s'appliquant à $\tInt$ les règles suivantes.
 
 Il reste à permettre d'utiliser les bitmasks dans les contextes où on attend un
 entier. Par exemple, pour écrire $\iIf{x~\&~\hexa{80}}{…}{…}$ (test du bit
-numéro 7). On veut donc exprimer que ``un \tBits est un \tInt''. Cette relation
+numéro 7). On veut donc exprimer que «un \tBits est un \tInt». Cette relation
 entre différents types d'entier correspond à du sous-typage. La méthode
 classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
 
@@ -168,7 +168,12 @@ classique consiste à introduire une relation explicite $⊆$ et la règle suiva
 }
 
 Au contraire, on ajoute seulement la règle suivante. Elle permet d'utiliser une
-expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
+expression de type $\tBits$ là où une expression de type $\tInt$ est attendue
+\footnote{
+    Cela modifie légèrement l'implantation de l'inférence de types. Le type
+    d'une expression utilisée comme opérande de l'opérateur $+$ n'est donc pas
+    \emph{a priori} de type \tInt, mais \tBits ou \tInt.
+}.
 
 \begin{mathpar}
     \irule{Sub-BitsInt}
