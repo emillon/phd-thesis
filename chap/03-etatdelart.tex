@@ -442,20 +442,23 @@ pour lesquels le langage n'apporte aucune garantie (il faut d'ailleurs
 encapsuler chaque utilisation dans un bloc marqué explicitement
 \texttt{unsafe}). Ils sont équivalents aux pointeurs de C.
 
-Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
-peut pas les appliquer pour étudier la correction de logiciels existants. Dans
-cette perspective, le langage CCured~\cite{ccured-toplas} a pour but d'ajouter
-un système de types forts à C (y compris pour des programmes existants). Dans
-les cas où il n'est pas possible de prouver que le programme s'exécutera
-correctement, des vérifications à l'exécution sont ajoutées. Cependant, cela
-nécessite une instrumentation dynamique qui se paye en performances.
-
 Le systèmes de types de ces projets apportent dans le langage différents types
 de pointeurs. Cela permet de manipuler finement la mémoire, à la manière des
 \emph{smart pointers} de C++. De cette approche on retient surtout l'analyse de
 régions de Rust qui permet de manipuler de manière sûre les adresses des
 variables locales, et les pointeurs lourds de Cyclone qui apportent une sûreté à
 l'arithmétique de pointeurs, au prix d'un test dynamique.
+
+Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
+peut pas les appliquer pour étudier la correction de logiciels existants. Dans
+cette perspective, le langage CCured~\cite{ccured-toplas} a pour but d'ajouter
+un système de types forts à C (y compris pour des programmes existants). Dans
+les cas où il n'est pas possible de prouver que le programme s'exécutera
+correctement, des vérifications à l'exécution sont ajoutées. Cependant, cela
+nécessite une instrumentation dynamique qui se paye en performances. Le
+compilateur Fail-Safe C~\cite{oiwa09} utilise une approche similaire permettant
+de garantir la sûreté d'exécution des programmes C tout en respectant la
+totalité de la norme C89.
 
 \section{Logique de Hoare}
 
