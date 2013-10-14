@@ -553,6 +553,33 @@ en bas puis de gauche à droite :
 Toute la difficulté est donc de construire une surapproximation correcte mais
 conservant une précision suffisante.
 
+Pour construire cette surapproximation, on peut employer divers outil. Par
+exemple, un entier pourra être représenté par sa valeur minimale et sa valeur
+maximale (domaine abstrait des intervalles), et un pointeur sur un tableau peut
+être représenté par un ensemble de variables associé à un décalage
+(\emph{offset}) par rapport au début de la zone mémoire (domaine des pointeurs
+sur tableaux).
+
+\begin{figure}
+\insertcode{strlen.c}
+\caption{Implantation de la fonction \texttt{strlen}}
+\label{fig:strlen}
+\end{figure}
+
+Il est aussi important de repérer les relations qui peuvent exister entre les
+variables. Par exemple, dans la figure~\ref{fig:strlen}, les variables
+\texttt{p} et \texttt{i} sont liées dans la boucle: le décalage du pointeur
+\texttt{p} est égal à la somme du décalage de \texttt{str} et de \texttt{i}.
+
+Repérer ces relations est avantageux car il peut permettre de n'activer que les
+domaines abstraits nécessaires. Mais cela peut être coûteux, surtout lorsque le
+programme comporte un grand nombre de variables.
+
+Il est possible d'ajouter des annotations afin de guider l'analyse dans ce sens,
+mais une préanalyse syntaxique peut permettre d'automatiser ce processus. En
+particulier, l'analyse par typage permet d'inférer les relations qui existent
+entre les différentes expressions présentes dans un programme.
+
 \jolibreak
 
 % TODO check date Penjili
@@ -560,13 +587,8 @@ conservant une précision suffisante.
 Le projet Penjili~\cite{AllamigeonHymansSSTIC07}, commencé à EADS Innovation
 Works en 2005, a pour but de fournir un analyseur statique de logiciel système
 embarqué critique utilisant l'interprétation abstraite pour prouver l'absence
-d'erreurs à l'exécution.
-
-Il a été employé pour vérifier la sûreté de plusieurs logiciels aéronautiques.
-
-\jolibreak
-
-Cependant, 
+d'erreurs à l'exécution. Il a été employé pour vérifier la sûreté de plusieurs
+logiciels aéronautiques.
 
 \subsection*{La solution retenue: \langname{}}
 
