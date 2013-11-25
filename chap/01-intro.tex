@@ -462,10 +462,9 @@ posant problème. Par exemple, les exceptions, l'allocation dynamique
 récursives \footnote{Dans ce cas, on remarquera que la taille de la pile est
 bornée.}.
 
-L'idée derrière les méthodes d'analyse statique est la suivante : au lieu de
-considérer que les variables possèdent une valeur, on utilise un domaine
-abstrait qui permet de voir les variables comme possédant un ensemble de
-valeurs possibles.
+L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
+que les variables possèdent une valeur, on utilise un domaine abstrait qui
+permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
 \begin{figure}
 \centering
@@ -589,6 +588,26 @@ Works en 2005, a pour but de fournir un analyseur statique de logiciel système
 embarqué critique utilisant l'interprétation abstraite pour prouver l'absence
 d'erreurs à l'exécution. Il a été employé pour vérifier la sûreté de plusieurs
 logiciels aéronautiques.
+
+\section{De l'avionique à l'informatique d'entreprise}
+
+Vérifier la sûreté des logiciels avioniques est critique, mais cela présente
+l'avantage que ceux-ci sont développés avec ces difficultés à l'esprit. Il est
+plus simple de construire un système sécurisé en connaissant toutes les
+contraintes d'abord, plutôt que de vérifier \emph{a posteriori} qu'un système
+existant peut répondre à ces contraintes de sûreté.
+
+Néanmoins cette conception de ces logiciels est très coûteuse. Pour des
+composants moins critiques, il peut donc être intéressant de considérer des
+logiciels ou bibliothèques existantes, en particulier dans le monde de
+l'\emph{open source}.
+
+Ces logiciels sont plus difficiles à analyser car ils sont écrits sans
+contraintes particulières. Non seulement toutes les constructions du langage
+sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
+allocation dynamique, récursion, accès au système de fichiers, etc), mais des
+extensions non standard peuvent être utilisées. Par exemple, le compilateur GCC
+ajoute des extensions pour personaliser finement le code émis.
 
 \subsection*{La solution retenue: \langname{}}
 
