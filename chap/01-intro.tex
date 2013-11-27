@@ -78,7 +78,7 @@ pouvaient être utilisées.
 
 Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à une personne
 d'interagir avec le système. Dans la seconde moitié des années 1960, sont
-apparus les premiers systèmes «à temps partagé», permettant à plusieurs
+apparus les premiers systèmes \enquote{à temps partagé}, permettant à plusieurs
 utilisateurs de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
@@ -117,9 +117,9 @@ Ces deux opérations, bien qu'elles aient la même intention (copier de la mémo
 depuis un périphérique amovible), ne sont pas effectuées en extension de la même
 manière. C'est pourquoi le système d'exploitation fournit les notions de
 fichier, lecteur, etc: le programmeur n'a plus qu'à utiliser des commandes de
-haut niveau («monter un lecteur», «ouvrir un fichier», «lire dans un
-fichier») et, selon le type de lecteur, le système d'exploitation effectuera les
-actions appropriées.
+haut niveau (\enquote{monter un lecteur}, \enquote{ouvrir un fichier},
+\enquote{lire dans un fichier}) et, selon le type de lecteur, le système
+d'exploitation effectuera les actions appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et le
 matériel, et en particulier est responsable de la gestion de la mémoire, des
@@ -145,15 +145,15 @@ instruction est alors possible si et seulement si le niveau de privilège du
 processeur est supérieur à celui de l'instruction et des opérandes mémoires qui
 y sont présentes
 \footnote{
-  Ici «supérieur» est synonyme de «plus privilégié». Dans l'implantation
+  Ici \enquote{supérieur} est synonyme de \enquote{plus privilégié}. Dans l'implantation
   d'Intel présentée dans le chapitre~\ref{cha:os}, les niveaux sont numérotés de
   0 à 3, où le niveau 0 est le plus privilégié.
 }.
 
 Par exemple, supposons qu'un programme utilisateur contienne l'instruction
-«déplacer le contenu du registre \eax{} vers l'adresse mémoire \texttt{a}», où
-\texttt{a} fait partie de l'espace mémoire de l'utilisateur. Alors aucune erreur
-de protection mémoire n'est déclenchée.
+\enquote{déplacer le contenu du registre \eax{} vers l'adresse mémoire
+\texttt{a}}, où \texttt{a} fait partie de l'espace mémoire de l'utilisateur.
+Alors aucune erreur de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
@@ -239,9 +239,10 @@ déréférencement direct des pointeurs dont la valeur peut être contrôlée pa
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celui-ci a bien les mêmes privilèges que l'appelant.
 
-Il est facile d'oublier d'ajouter cette vérification, puisque le cas «normal»
-fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
-fréquemment et pourquoi il est aussi capital de les détecter avant l'exécution.
+Il est facile d'oublier d'ajouter cette vérification, puisque le cas
+\enquote{normal} fonctionne. Avec ce genre d'exemple on voit comment les bugs
+peuvent arriver si fréquemment et pourquoi il est aussi capital de les détecter
+avant l'exécution.
 
 \section{Systèmes de types}
 \label{sec:types-intro}
@@ -257,30 +258,31 @@ ou déréférencer le résultat d'une division sont des comportements qu'on voud
 pouvoir empêcher.
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
-opérations possibles selon la classe d'un objet: en somme, «ne pas ajouter des
-pommes et des oranges». Le modèle qui permet cette classification est appelé
-\emph{système de types} et est en général constitué d'un ensemble de
-\emph{règles de typage}, comme «un entier plus un entier égale un entier».
+opérations possibles selon la classe d'un objet: en somme, \enquote{ne pas
+ajouter des pommes et des oranges}. Le modèle qui permet cette classification
+est appelé \emph{système de types} et est en général constitué d'un ensemble de
+\emph{règles de typage}, comme \enquote{un entier plus un entier égale un
+entier}.
 
 \paragraph{Typage dynamique}
 
 Dans ce cas, chaque valeur manipulée par le programme est décorée d'une
 étiquette définissant comment interpréter la valeur en question. Les règles de
-typage sont alors réalisées à l'exécution. Par exemple, l'opérateur «$+$»
-vérifie que ses deux opérandes ont une étiquette «entier», et construit alors
-une valeur obtenue en faisant l'addition des deux valeurs, avec une étiquette
-«entier». Par exemple, le langage Python~\link{python} utilise cette
-stratégie.
+typage sont alors réalisées à l'exécution. Par exemple, l'opérateur
+\enquote{$+$} vérifie que ses deux opérandes ont une étiquette \enquote{entier},
+et construit alors une valeur obtenue en faisant l'addition des deux valeurs,
+avec une étiquette \enquote{entier}. Par exemple, le langage
+Python~\link{python} utilise cette stratégie.
 
 \paragraph{Typage statique}
 
 Dans ce cas on fait les vérifications à la compilation. Pour vérifier ceci, on
-donne à chaque fonction un contrat comme «si deux entiers sont passés, et que
-la fonction renvoie une valeur, alors cette valeur sera un entier». Cet
+donne à chaque fonction un contrat comme \enquote{si deux entiers sont passés,
+et que la fonction renvoie une valeur, alors cette valeur sera un entier}. Cet
 ensemble de contrats peut être vérifié statiquement par le compilateur, à l'aide
 d'un système de types statique.
 
-Par exemple, on peut dire que l'opérateur «$+$» a pour type $(\tInt, \tInt) →
+Par exemple, on peut dire que l'opérateur \enquote{$+$} a pour type $(\tInt, \tInt) →
 \tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$ \tInt), alors
 la valeur obtenue est également un entier.
 
@@ -351,22 +353,22 @@ vol avait été vérifié plus efficacement \cite{Ariane501}.
 Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
 approches duales sont nécessaires. La première consiste à mettre le logiciel
 dans des situations concrètes et à vérifier que la sortie correspond au résultat
-attendu : c'est la technique des tests.  Les tests «boîte noire» consistent à
-tester en ayant à disposition uniquement les spécifications des modules à
-plusieurs échelles. L'application est découpée en \enquote{boîtes} à plusieurs échelles
-(par exemple : logiciel, module, classe, méthode). Au contraire, les tests dits
-«boîte blanche» sont écrits en ayant à disposition l'implémentation. Cela
-permet par exemple de s'assurer que chaque chemin d'exécution est emprunté.
-Cette manière de procéder est similaire à la preuve par neuf enseignée aux
-enfants : il est possible de prouver l'erreur, mais pas que le programme est
-correct.
+attendu : c'est la technique des tests.  Les tests \enquote{boîte noire}
+consistent à tester en ayant à disposition uniquement les spécifications des
+modules à plusieurs échelles. L'application est découpée en \enquote{boîtes} à
+plusieurs échelles (par exemple : logiciel, module, classe, méthode). Au
+contraire, les tests dits \enquote{boîte blanche} sont écrits en ayant à
+disposition l'implémentation. Cela permet par exemple de s'assurer que chaque
+chemin d'exécution est emprunté. Cette manière de procéder est similaire à la
+preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
+mais pas que le programme est correct.
 
 L'approche des méthodes formelles, au contraire, permet de s'assurer de
 l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
 interprétation abstraite permet d'étudier les relations exposées entre les
 variables afin d'en déduire les domaines dans lesquels elles évoluent. En
-s'assurant que ceux-ci sont «sûrs», on prouve l'absence d'erreurs de manière
-automatisée.
+s'assurant que ceux-ci sont \enquote{sûrs}, on prouve l'absence d'erreurs de
+manière automatisée.
 
 L'analyse statique par interprétation abstraite se place à un niveau comparable
 à celui des tests unitaires et fonctionnels, c'est-à-dire très près du code. Le
@@ -440,10 +442,11 @@ bleu.}
 \label{fig:staticanalysis}
 \end{figure}
 
-Le domaine «sûr» a une forme assez simple compte tenu des erreurs considérées:
-c'est un produit d'ensembles simples, comme des intervalles. L'ensemble des
-comportements réels du programme est au contraire d'une forme plus complexe
-\footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas calculable.}.
+Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
+considérées: c'est un produit d'ensembles simples, comme des intervalles.
+L'ensemble des comportements réels du programme est au contraire d'une forme
+plus complexe \footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas
+calculable.}.
 
 En calculant une approximation de ce dernier, de forme plus simple, on peut
 tester plus facilement que les comportements de sont dans la zone sûre : le fait
@@ -594,8 +597,8 @@ pas toujours bien spécifiée et/ou documentée.
 Le système Unix, développé à partir de 1969, a tout d'abord été développé en
 assembleur sur un mini-ordinateur PDP-7, puis a été porté sur d'autres
 architectures matérielles. Pour aider ce portage, il a été nécessaire de créer
-un «assembleur portable», le langage C~\cite{KandR,AnsiC}. Son but est de
-fournir des abstractions au dessus du langage d'assemblage. Les structures de
+un \enquote{assembleur portable}, le langage C~\cite{KandR,AnsiC}. Son but est
+de fournir des abstractions au dessus du langage d'assemblage. Les structures de
 contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
 programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
