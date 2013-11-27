@@ -606,8 +606,70 @@ Ces logiciels sont plus difficiles à analyser car ils sont écrits sans
 contraintes particulières. Non seulement toutes les constructions du langage
 sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
 allocation dynamique, récursion, accès au système de fichiers, etc), mais des
-extensions non standard peuvent être utilisées. Par exemple, le compilateur GCC
-ajoute des extensions pour personaliser finement le code émis.
+extensions non standard peuvent être utilisées.
+
+\begin{figure}%{{{
+    \centering
+    \begin{minipage}{0.4\textwidth}
+    \insertcode{packed1.c}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+    \begin{tikzpicture}
+        [ base/.style={draw, rectangle, minimum height=5mm, minimum width=5mm}
+        , faded/.style={fill=black!20}
+        , padding/.style={base, faded}
+        , data/.style={base}
+        , bold/.style={line width=1.5pt}
+        ]
+        \node[data]                        at (  0, 0) {\texttt{a}};
+        \node[padding, minimum width=15mm] at (  1, 0) { };
+        \node[data,    minimum width=20mm] at (2.75, 0) {\texttt{b}};
+        \node[data,    minimum width=10mm] at (4.25, 0) {\texttt{c}};
+        \node[padding, minimum width=10mm] at (5.25, 0) { };
+        \draw[bold] (-0.25, -0.25) -- ++(0, 0.5);
+        \draw[bold] (1.75, -0.25) -- ++(0, 0.5);
+        \draw[bold] (3.75, -0.25) -- ++(0, 0.5);
+        \draw[bold] (5.75, -0.25) -- ++(0, 0.5);
+    \end{tikzpicture}
+    \end{minipage}
+
+    \vspace{5mm}
+
+    \begin{minipage}{0.4\textwidth}
+    \insertcode{packed2.c}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+    \begin{tikzpicture}
+        [ base/.style={draw, rectangle, minimum height=5mm, minimum width=5mm}
+        , data/.style={base}
+        ]
+        \node[data]                        at (   0, 0) {\texttt{a}};
+        \node[data,    minimum width=20mm] at (1.25, 0) {\texttt{b}};
+        \node[data,    minimum width=10mm] at (2.75, 0) {\texttt{c}};
+    \end{tikzpicture}
+    \end{minipage}
+
+    \caption{Utilisation de l'attribut non-standard \texttt{packed}}
+    \label{fig:packed}
+\end{figure}%}}}
+
+Par exemple, la figure~\ref{fig:packed} démontre l'influence de l'attribut
+\texttt{packed} (supporté par GCC) la sur compilation d'une structure. Sans
+celui-ci, les champs sont alignés de manière à faciliter les accès à la mémoire,
+par exemple en faisant démarrer les adresses de chaque quand sur un multiple de
+4 octets (en gras). Cela nécessite d'introduire des octets de \emph{padding} (en
+gris) qui ne sont pas utilisés. La taille totale de cette structure est donc de
+12 octets.
+
+Au contraire, l'utilisation de \texttt{packed} supprime totalement le
+\emph{padding} et permet de diminuer alors la taille de la structure à 7 octets
+seulement. Puisque \texttt{b} et \texttt{c} ne sont pas alignés, leur accès sera
+fait de manière moins efficace.
+
+De manière générale, les compilateurs permettent, via le biais d'extensions
+comme \texttt{packed}, de personaliser finement le code émis grâce à des
+extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
+pas toujours bien spécifiée et/ou documentée.
 
 \subsection*{La solution retenue: \langname{}}
 
