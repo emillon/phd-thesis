@@ -108,7 +108,7 @@ L'idée est d'associer à chaque ensemble concret de valeurs, une représentatio
 abstraite. Sur celle-ci, on peut définir des opérations indépendantes de la
 valeur exacte des données, mais préservant l'abstraction
 (figure~\ref{fig:dom-sig}). Par exemple, les règles comme
-«$-$» $×$ «$-$» $=$ «$+$»
+\enquote{$-$} $×$ \enquote{$-$} $=$ \enquote{$+$}
 définissent le domaine abstrait des signes. Les domaines ont une structure de
 treillis, c'est-à-dire qu'ils possèdent les notions d'ordre partiel et d'union
 de valeurs. En calculant les extrêmes limites d'une variable, on obtient le
@@ -256,7 +256,7 @@ Airbus ou CGS~\cite{cgs} à la NASA par exemple.
 
 Cependant, ces analyses sont difficiles à mettre en œuvre. Avec des domaines
 abstraits classiques comme ceux présentés ci-dessus, les premières analyses
-peuvent remonter un nombre prohibitif de fausses alarmes. Pour «aider»
+peuvent remonter un nombre prohibitif de fausses alarmes. Pour \enquote{aider}
 l'analyse, il faut soit annoter le code soit développer des domaines abstraits
 \emph{ad hoc} au programme à analyser.
 
@@ -274,7 +274,7 @@ finement les valeurs d'un programme. Par exemple, le système
 Saturn~\cite{paste07}, conçu pour analyser du code système écrit en C, utilise
 des clauses logiques et un solveur SAT pour manipuler des invariants sur la
 mémoire. En particulier il traite le problème des pointeurs utilisateur en
-utilisant une analyse de forme «pointe-sur»~\cite{oakland08}. Comme
+utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Comme
 l'interprétation abstraite, le but de cette analyse est d'être très précis, au
 détriment d'un temps de calcul important dans certains cas.
 
@@ -399,16 +399,16 @@ Une autre approche est de concevoir un langage à la fois bas niveau et sûr,
 permettant d'exprimer des programmes proches de la machine tout en interdisant
 les constructions dangereuses.
 
-Le langage Cyclone~\cite{cyclone-safety} est conçu comme un C «sûr». Afin
-d'apporter plus de sûreté au modèle mémoire de C, des tests dynamiques sont
+Le langage Cyclone~\cite{cyclone-safety} est conçu comme un C \enquote{sûr}.
+Afin d'apporter plus de sûreté au modèle mémoire de C, des tests dynamiques sont
 ajoutés, par exemple aux endroits ou des conversions implicites peuvent poser
 problème. Le langage se distingue par le fait qu'il possède plusieurs types de
-pointeurs: des pointeurs classiques (\texttt{int *}), des pointeurs «jamais
-nuls» (\texttt{int @}; un test à l'exécution est alors inséré), et des
-«pointeurs lourds» (\verb!int ?!; qui contiennent des informations sur la zone
-mémoire pointée). L'arithmétique des pointeurs n'est autorisée que sur ces
-derniers, rendant impossibles les débordements de tableaux (ceux-ci étant
-détectés au pire à l'exécution). Le problème des pointeurs fous
+pointeurs: des pointeurs classiques (\texttt{int *}), des pointeurs
+\enquote{jamais nuls} (\texttt{int @}; un test à l'exécution est alors inséré),
+et des \enquote{pointeurs lourds} (\verb!int ?!; qui contiennent des
+informations sur la zone mémoire pointée). L'arithmétique des pointeurs n'est
+autorisée que sur ces derniers, rendant impossibles les débordements de tableaux
+(ceux-ci étant détectés au pire à l'exécution). Le problème des pointeurs fous
 \footnote{
     Les pointeurs fous, encore appelés pointeurs fantômes ou \emph{dangling
     pointers}, correspondent à une zone mémoire invalide ou expirée. Il y a deux
@@ -517,14 +517,14 @@ de bas niveau~\cite{mc-hoare-logic}.
 
 \section{Assistants de preuve}
 
-Avec un système de types classique, le fait qu'un terme (au sens «expression» ou
-«instruction») soit bien typé amène quelques propriétés sur son exécution. Par
-exemple, le fait que seulement un ensemble réduit d'erreurs puisse arriver
-(comme la division par zéro).
+Avec un système de types classique, le fait qu'un terme (au sens
+\enquote{expression} ou \enquote{instruction}) soit bien typé amène quelques
+propriétés sur son exécution. Par exemple, le fait que seulement un ensemble
+réduit d'erreurs puisse arriver (comme la division par zéro).
 
 En enrichissant le langage des types, on peut augmenter l'expressivité du
-typage. Par exemple, on peut former des types «entier pair», «vecteur de $n$
-entiers», ou encore «liste triée d'entiers».
+typage. Par exemple, on peut former des types \enquote{entier pair},
+\enquote{vecteur de $n$ entiers}, ou encore \enquote{liste triée d'entiers}.
 
 Habituellement, les termes peuvent dépendre d'autres termes (par composition) ou
 de types (par des annotations). Les types peuvent également dépendre d'autres
@@ -537,8 +537,8 @@ Agda~\cite{agdatutorial} ou Isabelle~\cite{isabelletutorial}.
 
 Dans un langage classique, la plupart des types sont habitables, c'est à dire
 qu'il existe des termes ayant ces types. En revanche, avec les types dépendants
-ce n'est pas toujours vrai: par exemple «vecteur de $-1$ entiers» n'a pas
-d'habitants. Ainsi, pouvoir construire un terme d'un type donné est une
+ce n'est pas toujours vrai: par exemple \enquote{vecteur de $-1$ entiers} n'a
+pas d'habitants. Ainsi, pouvoir construire un terme d'un type donné est une
 information en soi.
 
 On peut voir ce phénomène sous un autre angle: les termes sont à leur type ce
