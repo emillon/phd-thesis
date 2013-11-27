@@ -3,8 +3,8 @@ nommé \langname, sur lequel s'appuieront les analyses de typage des
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 
 Le langage C~\cite{KandR} est un langage impératif, conçu pour être un
-«assembleur portable». Ses types de données et les opérations associées sont
-donc naturellement de très bas niveau.
+\enquote{assembleur portable}. Ses types de données et les opérations associées
+sont donc naturellement de très bas niveau.
 
 Ses types de données sont établis pour représenter les mots mémoire manipulables
 par les processeurs : essentiellement des entiers et flottants de plusieurs
@@ -15,8 +15,9 @@ structures).
 Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
 c'est-à-dire des variables qui représentent directement une adresse en mémoire.
 Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
-stocké à cette adresse) ou «non typés». Dans ce dernier cas, ils ont en fait
-le type \texttt{void *} qui est compatible avec n'importe quel type pointeur.
+stocké à cette adresse) ou \enquote{non typés}. Dans ce dernier cas, ils ont en
+fait le type \texttt{void *} qui est compatible avec n'importe quel type
+pointeur.
 
 Son système de types rudimentaire ne permet pas d'avoir beaucoup de garanties
 sur la sûreté du programme. En effet, aucune vérification n'est effectuée en
@@ -273,7 +274,7 @@ Un exemple est illustré dans la figure~\ref{fig:lens-idx-ex}.
 \label{fig:lens-idx-ex}
 \end{figure}
 
-\begin{example}[Lentille «$n$\ieme élément d'un tuple»]
+\begin{example}[Lentille \enquote{$n$\ieme élément d'un tuple}]
 
 Soient $n ∈ ℕ$, et $n$ ensembles $E_1, …, E_n$.
 
@@ -317,7 +318,7 @@ suivante: en remplaçant l'élément d'indice $3$ par $1$.
         (a, \mathrm{get}_{ℒ_1} r), r) \\
   \end{align*}
 
-On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ («$ℒ_1$ flèche $ℒ_2$»).
+  On notera alors $ℒ = ℒ_1 \ggg ℒ_2$ (\enquote{$ℒ_1$ flèche $ℒ_2$}).
 
 \end{definition}
 
@@ -456,13 +457,13 @@ pour valeur initiale $v$.
 L'alternative et la conditionnelle sont classiques; en revanche, on ne fournit
 qu'un seul type de boucle et pas de saut (instruction \texttt{goto}).
 
-Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}. Ils correspondent
-à ceux du langage C. La différence principale est que les opérations sur les
+Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}. Ils correspondent à
+ceux du langage C. La différence principale est que les opérations sur les
 entiers, flottants et pointeurs sont annotés avec le type de données sur lequel
-ils travaillent. Par exemple «$+$» désigne l'addition sur les entiers et «$+.$»
-l'addition sur les flottants. Les opérations de test d'égalité, en revanche,
-sont possibles pour les types numériques, les pointeurs, ainsi que les
-types composés de types comparables.
+ils travaillent. Par exemple \enquote{$+$} désigne l'addition sur les entiers et
+\enquote{$+.$} l'addition sur les flottants. Les opérations de test d'égalité,
+en revanche, sont possibles pour les types numériques, les pointeurs, ainsi que
+les types composés de types comparables.
 
 \begin{figure}[h]%{{{
 
@@ -504,9 +505,9 @@ général non pas une variable mais une valeur gauche (par définition). Pour
 représenter quelle partie de la mémoire doit être accédée par cette valeur
 gauche, on introduit la notion de chemin $φ$. Un chemin est une valeur gauche
 évaluée: les cas sont similaires, sauf que tous les indices sont évalués. Par
-exemple, $φ = (5, x).p$ représente le champ «$p$» de la variable $x$ dans le
-5\ieme cadre de pile. C'est à ce moment qu'on évalue les déréférencements qui
-peuvent apparaître dans une valeur gauche.
+exemple, $φ = (5, x).p$ représente le champ \enquote{$p$} de la variable $x$
+dans le 5\ieme cadre de pile. C'est à ce moment qu'on évalue les
+déréférencements qui peuvent apparaître dans une valeur gauche.
 
 Les valeurs, quant à elles, peuvent avoir les formes suivantes (résumées sur la
 figure~\ref{fig:interp-val}):
@@ -525,9 +526,9 @@ Les flottants sont les flottants IEEE 754 de 32 bits~\cite{ieee754}.
 
 Il n'y a pas de distinction entre procédures et fonctions; toutes les fonctions
 doivent renvoyer une valeur. Celles qui ne retournent pas de valeur
-«intéressante» renvoient alors une valeur d'un type à un seul élément noté
-\eUnit\footnote{Cette notation évoque un $n$-uplet à 0 composante.}, et donc le
-type sera noté \tUnit.
+\enquote{intéressante} renvoient alors une valeur d'un type à un seul élément
+noté \eUnit\footnote{Cette notation évoque un $n$-uplet à 0 composante.}, et
+donc le type sera noté \tUnit.
 
 \item
 
@@ -565,7 +566,7 @@ fonctions locales sont possibles, il n'est pas possible d'accéder aux variables
 de la portée entourante depuis la fonction intérieure (il n'y a pas de
 fermetures). Contrairement à C, les fonctions ne sont pas des cas spéciaux. Par
 exemple, les fonctions globales sont simplement des variables globales de type
-fonctionnel, et «les pointeurs sur fonction» de C sont remplacés par des
+fonctionnel, et les \enquote{pointeurs sur fonction} de C sont remplacés par des
 variables de type fonction.
 
 \item $Ω$: une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
@@ -726,7 +727,7 @@ Un certain nombre d'opérations est possible sur les valeurs
   L'opérateur $\%$ correspond au modulo (reste de la division euclidienne).
   En cas de division par zéro, l'erreur $\serr{div}$ est levée.
 \item
-  les versions «pointées»
+  les versions \enquote{pointées}
   $\floatop{+}$,
   $\floatop{-}$,
   $\floatop{×}$
@@ -836,8 +837,8 @@ l'appelant, il faudra supprimer ce cadre de pile.
     \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
 
-  L'opération inverse de $\phxxx\cExtend$ sera simplement notée «$-$» : $m - x$,
-  par exemple.
+  L'opération inverse de $\phxxx\cExtend$ sera simplement notée \enquote{$-$} :
+  $m - x$, par exemple.
 
 %TODO[PJ]: quid si x n'est pas défini?
 
@@ -1079,12 +1080,11 @@ les valeurs.
 Enfin, on définit $Φ$ pour accéder à n'importe quelle sous-valeur d'une variable
 dans la mémoire. Cela utilise $A$, $F$ et $T$ précédemment définis.
 
-La figure~\ref{fig:dep-lens} résume ces dépendances.
- Les lignes pleines indiquent quelles sont les
-définitions utilisées, et les pointillés relient les lentilles similaires. À
-droite, on donne un exemple des lentilles de base. La valeur entourée correspond
-au «curseur» de la lentille, c'est-à-dire la valeur qui peut être renvoyée ou
-mise à jour.
+La figure~\ref{fig:dep-lens} résume ces dépendances. Les lignes pleines
+indiquent quelles sont les définitions utilisées, et les pointillés relient les
+lentilles similaires. À droite, on donne un exemple des lentilles de base. La
+valeur entourée correspond au \enquote{curseur} de la lentille, c'est-à-dire la
+valeur qui peut être renvoyée ou mise à jour.
 
 \begin{figure}[h]
 \centering
@@ -1304,7 +1304,7 @@ Le premier point consiste à définir les contextes eux-mêmes
 (figure~\ref{fig:eval-ctx}).
 
 Dans cette définition, chaque cas hormis le cas de base fait apparaître
-exactement un «$C$». Chaque contexte est donc constitué d'exactement une
+exactement un \enquote{$C$}. Chaque contexte est donc constitué d'exactement une
 occurrence de $\ctxEmpty$ (une dérivation de $C$ est toujours linéaire).
 L'opération de substitution consiste à remplacer ce trou: $\ctxSub{C}{X}$ est
 l'objet syntaxique (instruction, expression ou valeur gauche) obtenu en
@@ -1531,9 +1531,9 @@ Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}\footnote{
 Cela est cohérent avec la norme C99:
-    «If the pointer operand points to an element of an array object, and the
+\enquote{If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
-    »~\cite[6.5.6~§8]{AnsiC}}
+    }~\cite[6.5.6~§8]{AnsiC}}
 et l'opérateur $\widehat{\opbin}$ renvoie $\serr{ptr}$.
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
@@ -1683,8 +1683,9 @@ Enfin, si une erreur se produit elle est propagée.
 Pour traiter l'alternative, on a besoin de 2 règles. Elles commencent de la même
 manière, en évaluant la condition. Si le résultat est 0 (et seulement dans ce
 cas), c'est la règle \textsc{If-False} qui est appliquée et l'instruction
-revient à évaluer la branche «\emph{else}». Dans les autres cas, c'est la règle
-\textsc{If-True} qui s'applique et la branche «\emph{then}» qui est prise.
+revient à évaluer la branche \enquote{\emph{else}}. Dans les autres cas, c'est
+la règle \textsc{If-True} qui s'applique et la branche \enquote{\emph{then}} qui
+est prise.
 
 \begin{mathpar}
   \semrule{If-False}
