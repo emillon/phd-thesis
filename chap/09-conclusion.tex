@@ -73,8 +73,8 @@ une erreur en cas de débordement, comme en Ada) et un typage. Les littéraux
 numériques peuvent poser problème, puisqu'ils deviennent alors polymorphes. Une
 solution peut être de leur donner le plus grand type entier et d'insérer un
 opérateur de transtypage à chaque littéral. Haskell utilise une solution
-similaire: les littéraux entier ont le type de précision arbitraire
-\texttt{Integer} et est converti dans le bon type en appelant la fonction
+similaire: les littéraux entiers ont le type de précision arbitraire
+\texttt{Integer} et sont convertis dans le bon type en appelant la fonction
 \texttt{fromInteger} du type synthétisé à partir de l'environnement.
 
 \paragraph{Transtypage et unions}
@@ -85,9 +85,9 @@ en C:\@ les unions, les conversions de types (explicites ou implicites) et le
 \emph{type punning} (défini ci-dessous). Les deux premières sont équivalentes.
 Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
 type $t_2$ par l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alors
-un «trou» dans le système de types. Cette fonction devrait en effet être typée
-$(t_1) → t_2$, autrement dit le type «maudit» $α → β$ de \texttt{Obj.magic} en
-OCaml ou \texttt{unsafeCoerce} en Haskell.
+un \enquote{trou} dans le système de types. Cette fonction devrait en effet être
+typée $(t_1) → t_2$, autrement dit le type \enquote{maudit} $α → β$ de
+\texttt{Obj.magic} en OCaml ou \texttt{unsafeCoerce} en Haskell.
 
 Le \emph{type punning} consiste à modifier directement la suite de bits de
 certaines données pour la manipuler d'une manière efficace. Par exemple, il est
@@ -119,15 +119,20 @@ raisons valables pour faire cela sont moins nombreuses.
 Si on s'en tient aux conversions entre entiers et pointeurs, une manière naïve
 de typer ces opérations est:
 
-\begin{mathpar}
+\badrulewarnwrap{
+\badrulewarnline{
 \irule{PtrInt-Bad}
   { Γ ⊢ e : \ptrK{t}}
   { Γ ⊢ (\tInt)~e : \tInt }
-
+}
+\\
+\\
+\badrulewarnline{
 \irule{IntPtr-Bad}
   { Γ ⊢ e : \tInt }
   { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
-\end{mathpar}
+}
+}
 
 Tout d'abord, cela pose problème car il est alors possible de créer une fonction
 pouvant convertir n'importe quel type pointeur en n'importe quel autre type
@@ -316,9 +321,9 @@ pointeurs fous~\cite{ifm10}.
 
 %\paragraph{Autres types abstraits}
 
-%Notre approche est basée sur le fait de rendre abstrait un type de C et
-%d'y interdire certaines opérations: ici, on marque un certain type de pointeur
-%comme «utilisateur» et on interdit l'opérateur \texttt{*} dessus.
+%Notre approche est basée sur le fait de rendre abstrait un type de C et d'y
+%interdire certaines opérations: ici, on marque un certain type de pointeur
+%comme \enquote{utilisateur} et on interdit l'opérateur \texttt{*} dessus.
 
 %Le langage C n'ayant pas de types abstraits, on ne peut pas séparer la
 %représentation d'un type (par exemple: entier signé de 32 bits) des opérations

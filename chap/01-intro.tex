@@ -78,7 +78,7 @@ pouvaient être utilisées.
 
 Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à une personne
 d'interagir avec le système. Dans la seconde moitié des années 1960, sont
-apparus les premiers systèmes «à temps partagé», permettant à plusieurs
+apparus les premiers systèmes \enquote{à temps partagé}, permettant à plusieurs
 utilisateurs de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
@@ -117,9 +117,9 @@ Ces deux opérations, bien qu'elles aient la même intention (copier de la mémo
 depuis un périphérique amovible), ne sont pas effectuées en extension de la même
 manière. C'est pourquoi le système d'exploitation fournit les notions de
 fichier, lecteur, etc: le programmeur n'a plus qu'à utiliser des commandes de
-haut niveau («monter un lecteur», «ouvrir un fichier», «lire dans un
-fichier») et, selon le type de lecteur, le système d'exploitation effectuera les
-actions appropriées.
+haut niveau (\enquote{monter un lecteur}, \enquote{ouvrir un fichier},
+\enquote{lire dans un fichier}) et, selon le type de lecteur, le système
+d'exploitation effectuera les actions appropriées.
 
 En résumé, un système d'exploitation est l'intermédiaire entre le logiciel et le
 matériel, et en particulier est responsable de la gestion de la mémoire, des
@@ -145,15 +145,15 @@ instruction est alors possible si et seulement si le niveau de privilège du
 processeur est supérieur à celui de l'instruction et des opérandes mémoires qui
 y sont présentes
 \footnote{
-  Ici «supérieur» est synonyme de «plus privilégié». Dans l'implantation
+  Ici \enquote{supérieur} est synonyme de \enquote{plus privilégié}. Dans l'implantation
   d'Intel présentée dans le chapitre~\ref{cha:os}, les niveaux sont numérotés de
   0 à 3, où le niveau 0 est le plus privilégié.
 }.
 
 Par exemple, supposons qu'un programme utilisateur contienne l'instruction
-«déplacer le contenu du registre \eax{} vers l'adresse mémoire \texttt{a}», où
-\texttt{a} fait partie de l'espace mémoire de l'utilisateur. Alors aucune erreur
-de protection mémoire n'est déclenchée.
+\enquote{déplacer le contenu du registre \eax{} vers l'adresse mémoire
+\texttt{a}}, où \texttt{a} fait partie de l'espace mémoire de l'utilisateur.
+Alors aucune erreur de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
 possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
@@ -239,9 +239,10 @@ déréférencement direct des pointeurs dont la valeur peut être contrôlée pa
 l'utilisateur. Dans le cas du passage par adresse d'un argument, il aurait fallu
 vérifier à l'exécution que celui-ci a bien les mêmes privilèges que l'appelant.
 
-Il est facile d'oublier d'ajouter cette vérification, puisque le cas «normal»
-fonctionne. Avec ce genre d'exemple on voit comment les bugs peuvent arriver si
-fréquemment et pourquoi il est aussi capital de les détecter avant l'exécution.
+Il est facile d'oublier d'ajouter cette vérification, puisque le cas
+\enquote{normal} fonctionne. Avec ce genre d'exemple on voit comment les bugs
+peuvent arriver si fréquemment et pourquoi il est aussi capital de les détecter
+avant l'exécution.
 
 \section{Systèmes de types}
 \label{sec:types-intro}
@@ -257,30 +258,31 @@ ou déréférencer le résultat d'une division sont des comportements qu'on voud
 pouvoir empêcher.
 
 En un mot, le but du typage est de classifier les objets et de restreindre les
-opérations possibles selon la classe d'un objet: en somme, «ne pas ajouter des
-pommes et des oranges». Le modèle qui permet cette classification est appelé
-\emph{système de types} et est en général constitué d'un ensemble de
-\emph{règles de typage}, comme «un entier plus un entier égale un entier».
+opérations possibles selon la classe d'un objet: en somme, \enquote{ne pas
+ajouter des pommes et des oranges}. Le modèle qui permet cette classification
+est appelé \emph{système de types} et est en général constitué d'un ensemble de
+\emph{règles de typage}, comme \enquote{un entier plus un entier égale un
+entier}.
 
 \paragraph{Typage dynamique}
 
 Dans ce cas, chaque valeur manipulée par le programme est décorée d'une
 étiquette définissant comment interpréter la valeur en question. Les règles de
-typage sont alors réalisées à l'exécution. Par exemple, l'opérateur «$+$»
-vérifie que ses deux opérandes ont une étiquette «entier», et construit alors
-une valeur obtenue en faisant l'addition des deux valeurs, avec une étiquette
-«entier». Par exemple, le langage Python~\link{python} utilise cette
-stratégie.
+typage sont alors réalisées à l'exécution. Par exemple, l'opérateur
+\enquote{$+$} vérifie que ses deux opérandes ont une étiquette \enquote{entier},
+et construit alors une valeur obtenue en faisant l'addition des deux valeurs,
+avec une étiquette \enquote{entier}. Par exemple, le langage
+Python~\link{python} utilise cette stratégie.
 
 \paragraph{Typage statique}
 
 Dans ce cas on fait les vérifications à la compilation. Pour vérifier ceci, on
-donne à chaque fonction un contrat comme «si deux entiers sont passés, et que
-la fonction renvoie une valeur, alors cette valeur sera un entier». Cet
+donne à chaque fonction un contrat comme \enquote{si deux entiers sont passés,
+et que la fonction renvoie une valeur, alors cette valeur sera un entier}. Cet
 ensemble de contrats peut être vérifié statiquement par le compilateur, à l'aide
 d'un système de types statique.
 
-Par exemple, on peut dire que l'opérateur «$+$» a pour type $(\tInt, \tInt) →
+Par exemple, on peut dire que l'opérateur \enquote{$+$} a pour type $(\tInt, \tInt) →
 \tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$ \tInt), alors
 la valeur obtenue est également un entier.
 
@@ -332,13 +334,283 @@ type. Cette technique a été décrite en premier dans~\cite{Milner78}.
 Pour un tour d'horizon de différents systèmes de types statiques, avec en
 particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
 
+\section{Le projet Penjili}
+
+En face de ce problème théorique et technique, il faut mettre en perspective les
+problématiques industrielles liées à celui-ci. Les travaux présentés ici ont en
+effet été réalisés dans l'équipe de sécurité et sûreté logicielle d'EADS
+Innovation Works, dans le cadre d'une convention industrielle de formation par
+la recherche (CIFRE).
+
+Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
+plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
+retrouver face à grands impacts économiques, voire risquer des vies humaines. On
+comprend bien que les phases de vérification et de certification sont au coeur
+du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
+vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
+vol avait été vérifié plus efficacement \cite{Ariane501}.
+
+Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
+approches duales sont nécessaires. La première consiste à mettre le logiciel
+dans des situations concrètes et à vérifier que la sortie correspond au résultat
+attendu : c'est la technique des tests.  Les tests \enquote{boîte noire}
+consistent à tester en ayant à disposition uniquement les spécifications des
+modules à plusieurs échelles. L'application est découpée en \enquote{boîtes} à
+plusieurs échelles (par exemple : logiciel, module, classe, méthode). Au
+contraire, les tests dits \enquote{boîte blanche} sont écrits en ayant à
+disposition l'implémentation. Cela permet par exemple de s'assurer que chaque
+chemin d'exécution est emprunté. Cette manière de procéder est similaire à la
+preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
+mais pas que le programme est correct.
+
+L'approche des méthodes formelles, au contraire, permet de s'assurer de
+l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
+interprétation abstraite permet d'étudier les relations exposées entre les
+variables afin d'en déduire les domaines dans lesquels elles évoluent. En
+s'assurant que ceux-ci sont \enquote{sûrs}, on prouve l'absence d'erreurs de
+manière automatisée.
+
+L'analyse statique par interprétation abstraite se place à un niveau comparable
+à celui des tests unitaires et fonctionnels, c'est-à-dire très près du code. Le
+but est en particulier d'éliminer les erreurs au niveau du langage : division
+par zéro, déréférencement d'un pointeur nul ou invalide, débordement
+arithmétique sur les entiers, débordement de tableau, etc.
+
+En pratique, dans l'embarqué les règles de codage limitent les constructions
+posant problème. Par exemple, les exceptions, l'allocation dynamique
+(\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les fonctions
+récursives \footnote{Dans ce cas, on remarquera que la taille de la pile est
+bornée.}.
+
+L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
+que les variables possèdent une valeur, on utilise un domaine abstrait qui
+permet de voir les variables comme possédant un ensemble de valeurs possibles.
+
+\begin{figure}
+\centering
+
+\begin{tikzpicture}[scale=0.7]
+\clip  (-1,-1) rectangle (12,12);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\foreach \xsh in {0, 180}
+\foreach \ysh in {0, 180}
+\path [xshift=\xsh,yshift=\ysh,fill=white]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+% Approximation (précise)
+\foreach \ysh in {0,180}
+\draw [yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+             -- (2,3) -- (3,3)
+             -- (3,1) -- cycle;
+
+% Approximation (imprécise)
+\foreach \ysh in {0,180}
+\draw [xshift=180,yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+              -- (4,5)
+             -- (4,1) -- cycle;
+
+% Comportement réel (sans erreurs)
+\foreach \xsh in {0, 180}
+\draw [xshift=\xsh,yshift=180,fill=green!20,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
+
+% Comportement réel (avec erreurs)
+\foreach \xsh in {0, 180}
+\draw [xshift=\xsh,fill=green!20,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)};
+
+% Ensemble sûr (redraw)
+\foreach \xsh in {0, 180}
+\foreach \ysh in {0, 180}
+\draw [xshift=\xsh,yshift=\ysh]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+
+\end{tikzpicture}
+\caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
+des états effectifs du programme, en vert, est surapproximé par l'ensemble en
+bleu.}
+\label{fig:staticanalysis}
+\end{figure}
+
+Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
+considérées: c'est un produit d'ensembles simples, comme des intervalles.
+L'ensemble des comportements réels du programme est au contraire d'une forme
+plus complexe \footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas
+calculable.}.
+
+En calculant une approximation de ce dernier, de forme plus simple, on peut
+tester plus facilement que les comportements de sont dans la zone sûre : le fait
+que l'analyse soit \emph{sound}, c'est à dire que l'approximation ne manque
+aucun comportement, permet de prouver l'absence d'erreurs.
+
+La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
+valeurs dangereuses est représentée par un ensemble hachuré, l'ensemble des
+comportements réels du programme est en vert, et l'approximation en bleu.
+
+Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
+en bas puis de gauche à droite :
+
+\begin{itemize}
+  \item on a prouvé, à la compilation, que le programme ne pourra pas comporter
+  d'erreurs à l'exécution.
+  \item l'analyseur doit émettre une (fausse) alarme. Il y a donc un manque de
+  précision.
+  \item l'approximation n'est pas \emph{sound}. Par construction, on évite ce
+  cas.
+  \item on signale un comportement erron\'e.
+\end{itemize}
+
+Toute la difficulté est donc de construire une surapproximation correcte mais
+conservant une précision suffisante.
+
+Pour construire cette surapproximation, on peut employer divers outils. Par
+exemple, un entier pourra être représenté par sa valeur minimale et sa valeur
+maximale (domaine abstrait des intervalles), et un pointeur sur un tableau peut
+être représenté par un ensemble de variables associé à un décalage
+(\emph{offset}) par rapport au début de la zone mémoire (domaine des pointeurs
+sur tableaux).
+
+\begin{figure}
+\insertcode{strlen.c}
+\caption{Implantation de la fonction \texttt{strlen}}
+\label{fig:strlen}
+\end{figure}
+
+Il est aussi important de repérer les relations qui peuvent exister entre les
+variables. Par exemple, dans la figure~\ref{fig:strlen}, les variables
+\texttt{p} et \texttt{i} sont liées dans la boucle: le décalage du pointeur
+\texttt{p} est égal à la somme du décalage de \texttt{str} et de \texttt{i}.
+
+Repérer ces relations est avantageux car il peut permettre de n'activer que les
+domaines abstraits nécessaires. Mais cela peut être coûteux, surtout lorsque le
+programme comporte un grand nombre de variables.
+
+Il est possible d'ajouter des annotations afin de guider l'analyse dans ce sens,
+mais une préanalyse syntaxique peut permettre d'automatiser ce processus. En
+particulier, l'analyse par typage permet d'inférer les relations qui existent
+entre les différentes expressions présentes dans un programme.
+
+% TODO check date Penjili
+
+Le projet Penjili~\cite{AllamigeonHymansSSTIC07}, commencé à EADS Innovation
+Works en 2005, a pour but de fournir un analyseur statique de logiciel système
+embarqué critique utilisant l'interprétation abstraite pour prouver l'absence
+d'erreurs à l'exécution. Il a été employé pour vérifier la sûreté de plusieurs
+logiciels aéronautiques.
+
+\section{De l'avionique à l'informatique d'entreprise}
+
+Vérifier la sûreté des logiciels avioniques est critique, mais cela présente
+l'avantage que ceux-ci sont développés avec ces difficultés à l'esprit. Il est
+plus simple de construire un système sécurisé en connaissant toutes les
+contraintes d'abord, plutôt que de vérifier \emph{a posteriori} qu'un système
+existant peut répondre à ces contraintes de sûreté.
+
+Néanmoins cette conception de ces logiciels est très coûteuse. Pour des
+composants moins critiques, il peut donc être intéressant de considérer des
+logiciels ou bibliothèques existantes, en particulier dans le monde de
+l'\emph{open source}.
+
+Ces logiciels sont plus difficiles à analyser car ils sont écrits sans
+contraintes particulières. Non seulement toutes les constructions du langage
+sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
+allocation dynamique, récursion, accès au système de fichiers, etc), mais des
+extensions non standard peuvent être utilisées.
+
+\begin{figure}%{{{
+    \centering
+    \begin{minipage}{0.4\textwidth}
+    \insertcode{packed1.c}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+    \begin{tikzpicture}
+        [ base/.style={draw, rectangle, minimum height=5mm, minimum width=5mm}
+        , faded/.style={fill=black!20}
+        , padding/.style={base, faded}
+        , data/.style={base}
+        , bold/.style={line width=1.5pt}
+        ]
+        \node[data]                        at (  0, 0) {\texttt{a}};
+        \node[padding, minimum width=15mm] at (  1, 0) { };
+        \node[data,    minimum width=20mm] at (2.75, 0) {\texttt{b}};
+        \node[data,    minimum width=10mm] at (4.25, 0) {\texttt{c}};
+        \node[padding, minimum width=10mm] at (5.25, 0) { };
+        \draw[bold] (-0.25, -0.25) -- ++(0, 0.5);
+        \draw[bold] (1.75, -0.25) -- ++(0, 0.5);
+        \draw[bold] (3.75, -0.25) -- ++(0, 0.5);
+        \draw[bold] (5.75, -0.25) -- ++(0, 0.5);
+    \end{tikzpicture}
+    \end{minipage}
+
+    \vspace{5mm}
+
+    \begin{minipage}{0.4\textwidth}
+    \insertcode{packed2.c}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+    \begin{tikzpicture}
+        [ base/.style={draw, rectangle, minimum height=5mm, minimum width=5mm}
+        , data/.style={base}
+        ]
+        \node[data]                        at (   0, 0) {\texttt{a}};
+        \node[data,    minimum width=20mm] at (1.25, 0) {\texttt{b}};
+        \node[data,    minimum width=10mm] at (2.75, 0) {\texttt{c}};
+    \end{tikzpicture}
+    \end{minipage}
+
+    \caption{Utilisation de l'attribut non-standard \texttt{packed}}
+    \label{fig:packed}
+\end{figure}%}}}
+
+Par exemple, la figure~\ref{fig:packed} démontre l'influence de l'attribut
+\texttt{packed} (supporté par GCC) la sur compilation d'une structure. Sans
+celui-ci, les champs sont alignés de manière à faciliter les accès à la mémoire,
+par exemple en faisant démarrer les adresses de chaque quand sur un multiple de
+4 octets (en gras). Cela nécessite d'introduire des octets de \emph{padding} (en
+gris) qui ne sont pas utilisés. La taille totale de cette structure est donc de
+12 octets.
+
+Au contraire, l'utilisation de \texttt{packed} supprime totalement le
+\emph{padding} et permet de diminuer alors la taille de la structure à 7 octets
+seulement. Puisque \texttt{b} et \texttt{c} ne sont pas alignés, leur accès sera
+fait de manière moins efficace.
+
+De manière générale, les compilateurs permettent, via le biais d'extensions
+comme \texttt{packed}, de personaliser finement le code émis grâce à des
+extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
+pas toujours bien spécifiée et/ou documentée.
+
+TODO:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  problèmes liés à la compilation (instrumentation de Makefile)
+\item
+  programmes non autosuffisants (headers, fonctions de bibliothèque)
+\item
+  sémantique de l'OS (accès aux fichiers)
+\item
+  threads / multiprocessus
+\end{itemize}
+
 \section{Langages}
 
 Le système Unix, développé à partir de 1969, a tout d'abord été développé en
 assembleur sur un mini-ordinateur PDP-7, puis a été porté sur d'autres
 architectures matérielles. Pour aider ce portage, il a été nécessaire de créer
-un «assembleur portable», le langage C~\cite{KandR,AnsiC}. Son but est de
-fournir des abstractions au dessus du langage d'assemblage. Les structures de
+un \enquote{assembleur portable}, le langage C~\cite{KandR,AnsiC}. Son but est
+de fournir des abstractions au dessus du langage d'assemblage. Les structures de
 contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
 programmation structurée, c'est-à-dire en limitant l'utilisation de
 l'instruction \texttt{goto}. Les types de données sont également abstraits de la
@@ -413,161 +685,6 @@ prouvée. Il utilise de nombreux langages intermédiaires, dont CIL.\@ Pour le
 front-end, le langage se nomme Clight\cite{cfront}. Les passes de middle-end,
 quant à elles, utilisent Cminor\cite{cminorSL}.
 
-\section{Le projet Penjili}
-
-Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
-plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
-retrouver face à grands impacts économiques, voire risquer des vies humaines. On
-comprend bien que les phases de vérification et de certification sont au coeur
-du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
-vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
-vol avait été vérifié plus efficacement \cite{Ariane501}.
-
-Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
-approches duales sont nécessaires. La première consiste à mettre le logiciel
-dans des situations concrètes et à vérifier que la sortie correspond au résultat
-attendu : c'est la technique des tests.  Les tests ``boîte noire '' consistent à
-tester en ayant à disposition uniquement les spécifications des modules à
-plusieurs échelles . L'application est découpée en "boîtes" à plusieurs échelles
-(par exemple : logiciel, module, classe, méthode). Au contraire, les tests dits
-``boîte blanche'' sont écrits en ayant à disposition l'implémentation. Cela
-permet par exemple de s'assurer que chaque chemin d'exécution est emprunté.
-Cette manière de procéder est similaire à la preuve par neuf enseignée aux
-enfants : il est possible de prouver l'erreur, mais pas que le programme est
-correct.
-
-L'approche des méthodes formelles, au contraire, permet de s'assurer de
-l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
-interprétation abstraite permet d'étudier les relations exposées entre les
-variables afin d'en déduire les domaines dans lesquels elles évoluent. En
-s'assurant que ceux-ci sont "sûrs", on prouve l'absence d'erreurs de manière
-automatisée.
-
-L'analyse statique par interprétation abstraite se place à un niveau comparable
-à celui des tests unitaires et fonctionnels, c'est-à-dire très près du code. Le
-but est en particulier d'éliminer les erreurs au niveau du langage :
-
-\begin{itemize}
-    \item division par zéro
-    \item déréférencement d'un pointeur en dehors d'une zone allouée (y compris
-        \texttt{NULL})
-    \item débordement arithmétique sur les entiers
-    \item indice de tableau en dehors de l'intervalle autorisé
-    \item exception non rattrapée
-\end{itemize}
-
-En pratique, dans l'embarqué les règles de codage limitent les constructions
-posant problème. Par exemple, les exceptions, l'allocation dynamique
-(\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les fonctions
-récursives \footnote{Dans ce cas, on remarquera que la taille de la pile est
-bornée.}.
-
-L'idée derrière les méthodes d'analyse statique est la suivante : au lieu de
-considérer que les variables possèdent une valeur, on utilise un domaine
-abstrait qui permet de voir les variables comme possédant un ensemble de
-valeurs possibles.
-
-\begin{figure}
-\centering
-
-\begin{tikzpicture}[scale=0.7]
-\clip  (-1,-1) rectangle (12,12);
-
-% Hachures
-\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
-
-% Ensemble sûr
-\foreach \xsh in {0, 180}
-\foreach \ysh in {0, 180}
-\path [xshift=\xsh,yshift=\ysh,fill=white]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-
-% Approximation (précise)
-\foreach \ysh in {0,180}
-\draw [yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
-                (1,1) -- (1,2)
-             -- (2,3) -- (3,3)
-             -- (3,1) -- cycle;
-
-% Approximation (imprécise)
-\foreach \ysh in {0,180}
-\draw [xshift=180,yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
-                (1,1) -- (1,2)
-              -- (4,5)
-             -- (4,1) -- cycle;
-
-% Comportement réel (sans erreurs)
-\foreach \xsh in {0, 180}
-\draw [xshift=\xsh,yshift=180,fill=green!20,scale=0.8] plot[smooth cycle]
-      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-
-% Comportement réel (avec erreurs)
-\foreach \xsh in {0, 180}
-\draw [xshift=\xsh,fill=green!20,scale=0.8] plot[smooth cycle]
-      coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)};
-
-% Ensemble sûr (redraw)
-\foreach \xsh in {0, 180}
-\foreach \ysh in {0, 180}
-\draw [xshift=\xsh,yshift=\ysh]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
-
-\end{tikzpicture}
-\caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
-des états effectifs du programme, en vert, est surapproximé par l'ensemble en
-bleu.}
-\label{fig:staticanalysis}
-\end{figure}
-
-Le domaine ``sûr'' a une forme assez simple compte tenu des erreurs considérées:
-c'est un produit d'ensembles simples, comme des intervalles. L'ensemble des
-comportements réels du programme est au contraire d'une forme plus complexe
-\footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas calculable.}.
-
-En calculant une approximation de ce dernier, de forme plus simple, on peut
-tester plus facilement que les comportements de sont dans la zone sûre : le fait
-que l'analyse soit \emph{sound}, c'est à dire que l'approximation ne manque
-aucun comportement, permet de prouver l'absence d'erreurs.
-
-La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
-valeurs dangereuses est représentée par un ensemble hachuré, l'ensemble des
-comportements réels du programme est en vert, et l'approximation en bleu.
-
-Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
-en bas puis de gauche à droite :
-
-\begin{itemize}
-  \item on a prouvé, à la compilation, que le programme ne pourra pas comporter
-  d'erreurs à l'exécution.
-  \item l'analyseur doit émettre une (fausse) alarme. Il y a donc un manque de
-  précision.
-  \item l'approximation n'est pas \emph{sound}. Par construction, on évite ce
-  cas.
-  \item on signale un comportement erron\'e.
-\end{itemize}
-
-Toute la difficulté est donc de construire une surapproximation correcte mais
-conservant une précision suffisante.
-
-\jolibreak
-
-% TODO check date Penjili
-
-Le projet Penjili~\cite{AllamigeonHymansSSTIC07}, commencé à EADS Innovation
-Works en 2005, a pour but de fournir un analyseur statique de logiciel système
-embarqué critique utilisant l'interprétation abstraite pour prouver l'absence
-d'erreurs à l'exécution.
-
-Il a été employé pour vérifier la sûreté de plusieurs logiciels aéronautiques.
-
-\jolibreak
-
-Cependant, 
-
 \subsection*{La solution retenue: \langname{}}
 
 Dans le monde de l'aéronautique, il est nécessaire de s'assurer que les
@@ -582,10 +699,6 @@ traduire du code C et Ada vers celui-ci. L'analyseur statique Penjili, reposant
 sur ces outils, a été utilisé pour analyser des logiciels embarqués critiques de
 plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
 source. Tous ces outils sont écrits dans le langage OCaml~\cite{DAOC}.
-
-Les travaux présentés ici ont d'ailleurs été réalisés dans l'équipe de sécurité
-et sûreté logicielle d'EADS Innovation Works, dans le cadre d'une convention
-industrielle de formation par la recherche (CIFRE).
 
 Nous avons choisi de baser notre analyse sur \newspeak, dans le but de bénéficier
 de ces outils existants et dans la perspective de guider les analyses de valeur

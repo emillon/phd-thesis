@@ -1,11 +1,11 @@
-Dans ce chapitre, nous présentons deux extensions du système de types décrit
-dans le chapitre~\ref{cha:typbase}. Celles-ci permettent de capturer deux
-classes d'erreurs de programmation concernant les entiers et les pointeurs. Plus
-précisément, la première permet de distinguer plusieurs utilisations de types
-entiers, selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de
-bits; la seconde, dans le contexte de systèmes d'exploitation, introduit une
-différence entre les pointeurs dont la valeur est contrôlée par l'utilisateur et
-les autres.
+Nous présentons ici deux extensions du système de types décrit dans le
+chapitre~\ref{cha:typbase}. Celles-ci permettent de capturer deux classes
+d'erreurs de programmation concernant respectivement les entiers et les
+pointeurs. Plus précisément, la première permet de distinguer plusieurs
+utilisations de types entiers, selon s'ils sont utilisés comme entiers
+arithmétiques ou ensemble de bits; la seconde, dans le contexte de systèmes
+d'exploitation, introduit une différence entre les pointeurs dont la valeur est
+contrôlée par l'utilisateur et les autres.
 
 \section{Analyse de bitmasks}
 
@@ -14,8 +14,8 @@ les autres.
 
 Dans le langage C, les types de données décrivent uniquement l'agencement en
 mémoire des valeurs. Elles n'ont pas de portée plus sémantique permettant
-d'exprimer ce qu'elles représentent. Par exemple, dans un programme manipulant
-des dates, on sera amené à manipuler des numéros de mois et d'années,
+d'exprimer ce que celles-ci représentent. Par exemple, dans un programme
+manipulant des dates, on sera amené à manipuler des numéros de mois et d'années,
 représentés par des types entiers. Le langage C permet de définir des nouveaux
 types:
 
@@ -26,12 +26,12 @@ typedef int year_t;
 
 Cependant, rien ne distingue le nouveau type de l'ancien. Il ne s'agit que d'une
 aide à la documentation. Dans cet exemple, \texttt{month\_t} et \texttt{year\_t}
-sont tous les deux des nouveaux noms pour le type `int`, donc ils sont en fait
-compatibles. Le compilateur ne peut donc pas détecter qu'on utilise un numéro de
-mois là où un numéro d'année était attendu (ou \emph{vice versa}).
+sont tous les deux des nouveaux noms pour le type \texttt{int}, donc ils sont en
+fait compatibles. Le compilateur ne peut donc pas détecter qu'on utilise un
+numéro de mois là où un numéro d'année était attendu (ou \emph{vice versa}).
 
 Cet idiome est commun en C. On manipule notamment certaines données abstraites
-par des clés entières, et un \texttt{typedef} particulier permet de désigne
+par des clés entières, et un \texttt{typedef} particulier permet de désigner
 celles-ci. Par exemple sous Linux, les numéros de processus sont des indices
 dans la table de processus interne au noyau, et on y accède par une valeur de
 type \texttt{pid\_t}. De même, les utilisateurs sont représentés par un nombre
@@ -43,23 +43,21 @@ s'interpréter comme l'ensemble de ses bits égaux à 1: $\{ i ∈ [0;N-1] / a_i
 \}$. Un entier de 32 bits peut par exemple représenter une combinaison de 32
 options indépendantes.
 
-C'est de cette manière que fonctionne l'interface qui permet d'ouvrir un fichier
-sous Unix (figure~\ref{fig:unix-open}).
-
 \begin{figure}
     \insertcode{unix-open.c}
     \caption{Interface permettant d'ouvrir un fichier sous Unix}
     \label{fig:unix-open}
 \end{figure}
 
-Le paramètre \texttt{flags} est un entier qui encode les options liées à
-l'ouverture du fichier. On précise son mode (lecture, écriture ou les deux) par
-les bits 1 et 2, s'il faut créer le fichier ou non s'il n'existe pas par le bit
-7, si dans ce cas il doit être effacé par le bit 8, etc. On obtient le paramètre
-complet en réalisant un «ou» bit à bit entre des constantes.
-
-Le paramètre \texttt{mode} (en fait un \emph{unsigned int}) encode de la même
-manière les permissions que doit avoir le fichier créé, le cas échéant.
+C'est de cette manière que fonctionne l'interface qui permet d'ouvrir un fichier
+sous Unix (figure~\ref{fig:unix-open}). Le paramètre \texttt{flags} est un
+entier qui encode les options liées à l'ouverture du fichier. On précise son
+mode (lecture, écriture ou les deux) par les bits 1 et 2, s'il faut créer le
+fichier ou non s'il n'existe pas par le bit 7, si dans ce cas il doit être
+effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un
+\enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} (en fait
+un \emph{unsigned int}) encode de la même manière les permissions que doit avoir
+le fichier créé, le cas échéant.
 
 Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
 correspond à un indice numérique dans une table interne au processus. Par
@@ -73,29 +71,27 @@ On identifie donc au moins trois utilisations du type \texttt{int}:
         numériques. Toutes les opérations sont possibles.
     \item bitmask: on utilise un entier comme ensemble de bits. Seules les
         opérations bit à bit ont du sens.
-    \item Entier opaque: on utilise un entier de manière purement abstraite.
+    \item entier opaque: on utilise un entier de manière purement abstraite.
         C'est l'exemple des descripteurs de fichier.
 \end{itemize}
 
 Ces utilisations du type n'ont rien à voir ; il faudrait donc empêcher
 d'utiliser un descripteur de fichier comme un mode, et vice-versa. De même,
 aucun opérateur n'a de sens sur les descripteurs de fichier, mais l'opérateur
-\texttt{\textbar{}} du «ou» bit à bit doit rester possible pour les modes.
+\texttt{\textbar{}} du \enquote{ou} bit à bit doit rester possible pour les
+modes.
 
 On décrit ici une technique de typage pour détecter et interdire ces mauvaises
-utilisations. Plus précisément, On propose une version «bien typée» de la
-fonction \texttt{open}. Plus précisément, on donne à ses deuxième et troisième
-argument (respectivement \texttt{flags} et \texttt{mode}) le nouveau type \tBits
-qui correspond aux entiers utilisés comme bitmasks. Le type de retour n'est pas
-modifié (il reste \tInt), mais on décrit comment il est possible de faire cette
-adaptation.
+utilisations en proposant une version \enquote{bien typée} de la fonction
+\texttt{open}. Plus précisément, on donne à ses deuxième et troisième arguments
+(respectivement \texttt{flags} et \texttt{mode}) le nouveau type \tBits qui
+correspond aux entiers utilisés comme bitmasks. Le type de retour n'est pas
+modifié (il reste \tInt), mais on décrit comment il est possible de rendre ce
+type opaque.
 
 \subsection{Modifications}
 
-On ajoute un type \tBits. Il faut aussi ajouter un type \tChar apparaissant dans
-les chaînes de caractères. On ne spécifie pas plus ce dernier mais on suppose
-qu'il existe des littéraux de chaînes qui retournent un pointeur vers le premier
-élément d'un tableaux de caractères.
+\begin{figure}
 
 \begin{align*}
 \gramdef{Type}{t}
@@ -105,33 +101,46 @@ qu'il existe des littéraux de chaînes qui retournent un pointeur vers le premi
   {END}
 \end{align*}
 
-Au niveau des valeurs, les entiers sont représentés par des valeurs entières
-classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau type
-sémantique, mais on ajoute la règle suivante de compatibilité entre le type de
-valeurs \tInt et le type statique \tBits.
-
 \[
   \irule{Comp-Bits}
     { }
     { \tComp{\tInt}{\tBits} }
 \]
 
-On change le type des «constructeurs»:
+\caption{Ajouts liés aux entiers utilisés comme bitmasks}
+
+\label{fig:ajouts-bitmasks}
+
+\end{figure}
+
+\begin{figure}
 
 \begin{align*}
-    [] ⊢ \texttt{O\_RDONLY} : \tBits \\
-    [] ⊢ \texttt{O\_RDWR}   : \tBits \\
-    [] ⊢ \texttt{O\_APPEND} : \tBits
+    [~] ⊢ \texttt{O\_RDONLY} &: \tBits \\
+    [~] ⊢ \texttt{O\_RDWR}   &: \tBits \\
+    [~] ⊢ \texttt{O\_APPEND} &: \tBits \\
+    \\
+    [~] ⊢ \texttt{open} &: (\tChar~*, \tBits) → \tInt
 \end{align*}
 
-Et celui des «consommateurs»:
+\caption{Nouvelles valeurs liées aux bitmasks}
+\label{fig:bitmasks-types}
 
-\[
-    [] ⊢ \texttt{open} : (\tChar~*, \tBits) → \tInt
-\]
+\end{figure}
 
-Pour que les opérations bit à bit puissent s'appliquer aux bitmasks,
-on ajoute ces règles:
+On commence par ajouter deux types: d'une part \tBits bien sûr, mais également
+\tChar qui apparaît dans les chaînes de caractères. On ne spécifie pas plus ce
+dernier mais on suppose qu'il existe des littéraux de chaînes qui retournent un
+pointeur vers le premier élément d'un tableaux de caractères. Au niveau des
+valeurs, les entiers utilisés comme bitmasks sont représentés par des valeurs
+entières classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau
+type sémantique, mais on ajoute une règle de compatibilité entre le type de
+valeurs \tInt et le type statique \tBits (figure~\ref{fig:ajouts-bitmasks}). Par
+ailleurs, on change le type des \enquote{constructeurs} (\texttt{O\_*}) et du
+\enquote{consommateur} \texttt{open} (figure~\ref{fig:bitmasks-types}).
+
+Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on remplace
+aux règles s'appliquant à $\tInt$ les règles suivantes.
 
 \begin{mathpar}
     \irule{Op-Bits}
@@ -146,95 +155,27 @@ on ajoute ces règles:
         { Γ ⊢ \sim e : \tBits }
 \end{mathpar}
 
-\paragraph{Remarque}
-
-Cette règle pose problème pour l'inférence, car partant d'une expression de la
-forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
-\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
-inférer de type pour la fonction $\eFun{x, y}{\iReturn{x~|~y}}$. En revanche, si
-on annote le type de $x$ ou de $y$, le reste peut être inféré.
-
-\clearpage
-
-\paragraph{Polymorphisme restreint}
-
-Aussi appelé \emph{bounded polymorphism}, il permet de contraindre les variables
-de type généralisées. Cela permet de donner à la fonction précédente un type
-comme:
-
-\[
-    ∀a. (a ∈ \{ \tInt, \tBits \}) ⇒ (a, a) → a
-\]
-
-Cela implique de modifier le système de type pour associer aux expression non
-pas des types, mais des schémas de type (incluant des variables quantifiées). On
-généralise les variables de certaines déclarations (les globales, par exemple),
-et à l'utilisation il faut instancier les schémas, c'est-à-dire substituer aux
-variables quantifiées des paramètres concrets. Ceci présente plusieurs
-désavantages:
-
-\begin{itemize}
-    \item la présentation du système de types est alourdie;
-    \item l'inférence est plus complexe;
-    \item si on autorise le polymorphisme non restreint (en donnant par exemple
-        à la fonction identité le type $∀a. (a) → a$), il faut à l'exécution
-        représenter les données de manière uniforme, ce qui revient à changer
-        la sémantique du langage.
-\end{itemize}
-
-\clearpage
-
-\subsubsection*{Transtypage}
-
-\begin{align*}
-\gramdef{Expression}{e}
-  { … }{}
-  {e \angle t}{Transtypage}
-  {END}
-\\
-\\
-\gramdef{Contexte d'évaluation}{C}
-  { … }{}
-  { C \angle t}{ }
-  {END}
-\end{align*}
-
-\begin{mathpar}
-    \irule{E-Coerce}
-        { }
-        {
-            \mms{(v \angle t)}{v}
-        }
-
-    \irule{T-Coerce}
-        { Γ ⊢ e : t
-       \\ \tComp{τ}{t}
-       \\ \tComp{τ}{t'}
-        }
-        { Γ ⊢ (e \angle t') : t'
-        }
-\end{mathpar}
-
-% TODO comment adapter FD
-\clearpage
-
-Les différents types d'entier correspondent à du sous-typage. La méthode
+Il reste à permettre d'utiliser les bitmasks dans les contextes où on attend un
+entier. Par exemple, pour écrire $\iIf{x~\&~\hexa{80}}{…}{…}$ (test du bit
+numéro 7). On veut donc exprimer que \enquote{un \tBits est un \tInt}. Cette
+relation entre différents types d'entier correspond à du sous-typage. La méthode
 classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
 
-\begin{mathpar}
+\badrulewarn{
     \irule{Sub}
-        { Γ ⊢ e : s
-       \\ s ⊆ t
-        }
-        { Γ ⊢ e : t }
-
-        \raisebox{\baselineskip}{
-            \textrm{\emph{(Règle non retenue)}}
-        }
-\end{mathpar}
+    { Γ ⊢ e : s
+        \\ s ⊆ t
+    }
+    { Γ ⊢ e : t }
+}
 
 Au contraire, on ajoute seulement la règle suivante. Elle permet d'utiliser une
-expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
+expression de type $\tBits$ là où une expression de type $\tInt$ est attendue
+\footnote{
+    Cela modifie légèrement l'implantation de l'inférence de types. Le type
+    d'une expression utilisée comme opérande de l'opérateur $+$ n'est donc pas
+    \emph{a priori} de type \tInt, mais \tBits ou \tInt.
+}.
 
 \begin{mathpar}
     \irule{Sub-BitsInt}
@@ -250,7 +191,7 @@ Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$.
 % ! : s'applique à bits ou int mais retourne int
 % ----------------------------------------------
 
-\subsection{Exemple: $!~x \& y$}
+\subsection{Exemple: $!~x~\&~y$}
 
 % - !E1 & E2
 % + !(E1 & E2)
@@ -260,7 +201,7 @@ Les nombreux opérateurs de C (repris en \langname) posent plusieurs problèmes:
 \begin{itemize}
 \item il sont nombreux et il est facile de confondre $\&\&$ avec $\&$, ou
       $!$ avec $\sim$;
-\item il y a un opérateur «ou exclusif» bit à bit ($\opxor$) mais pas
+\item il y a un opérateur \enquote{ou exclusif} bit à bit ($\opxor$) mais pas
       d'équivalent logique;
 \item la priorité des opérateurs semble parfois arbitraire. Par exemple, les
       opérateurs de décalage sont plus prioritaires que les additions, donc
@@ -268,19 +209,12 @@ Les nombreux opérateurs de C (repris en \langname) posent plusieurs problèmes:
 \end{itemize}
 
 Le premier et le dernier point permettent d'expliquer une erreur courante: celle
-qui consiste à écrire $!~x \& y$ au lieu de $!~(x \& y)$.
+qui consiste à écrire $!~x~\&~y$ au lieu de $!~(x~\&~y)$.
 
-En effet, la première expression est équivalente à $(!~x) \& y$. Comme $!~x$
-vaut $0$ ou $1$, l'expression resultante vaut $y \& 1$ si $x = 0$, ou $0$ sinon.
-Il s'agit probablement d'une erreur de programmation.
-
-L'alternative $!~(x \& y)$ a plus de sens: elle vaut $0$ si $x$ et $y$ ont un
-bit en commun, $1$ sinon.
-
-On se propose donc de vérifier que la première n'est pas bien typée alors que la
-seconde l'est.
-
-% TODO
+En effet, la première expression est équivalente à $(!~x)~\&~y$. Comme $!~x$
+vaut $0$ ou $1$, l'expression resultante vaut $y~\&~1$ si $x = 0$, ou $0$ sinon.
+Il s'agit probablement d'une erreur de programmation. L'alternative $!~(x~\&~y)$
+a plus de sens: elle vaut $0$ si $x$ et $y$ ont un bit en commun, $1$ sinon.
 
 \begin{figure}
 \begin{mathpar}
@@ -294,20 +228,100 @@ seconde l'est.
                         { Γ ⊢ x : \tBits
                        \\ Γ ⊢ y : \tBits
                         }
-                        {Γ ⊢ x \& y : \tBits}
+                        {Γ ⊢ x~\&~y : \tBits}
                 }
-                {Γ ⊢ x \& y : \tInt}
+                {Γ ⊢ x~\&~y : \tInt}
         }
-        {Γ ⊢~!~(x \& y) : \tInt}
+        {Γ ⊢~!~(x~\&~y) : \tInt}
 \end{mathpar}
 
-\caption{Dérivation montrant que $!~(x \& y)$ est bien typée}
+\caption{Dérivation montrant que $!~(x~\&~y)$ est bien typée}
 \label{fig:notxy-ok}
 \end{figure}
 
-En revanche la seconde est bien typée (figure~\ref{fig:notxy-ok}).
+On se propose donc de vérifier que la première n'est pas bien typée alors que la
+seconde l'est. Dans les deux cas suivants on se placer dans un environnement $Γ$
+comportant deux variables globales $x$ et $y$ de type $\tBits$. Alors $(!~x) \&
+y$ n'est pas bien typée. En effet, $Γ ⊢~!~x : \tInt$ et la seule règle qui
+s'applique à l'opérateur $\&$ ne peut pas s'appliquer. En revanche la seconde
+est bien typée (figure~\ref{fig:notxy-ok}).
 
-\clearpage
+%{{{
+
+%\paragraph{Remarque}
+
+%Cette règle pose problème pour l'inférence, car partant d'une expression de la
+%forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
+%\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
+%inférer de type pour la fonction $\eFun{x, y}{\iReturn{x~|~y}}$. En revanche, si
+%on annote le type de $x$ ou de $y$, le reste peut être inféré.
+
+%\paragraph{Polymorphisme restreint}
+
+%Aussi appelé \emph{bounded polymorphism}, il permet de contraindre les variables
+%de type généralisées. Cela permet de donner à la fonction précédente un type
+%comme:
+
+%\[
+    %∀a. (a ∈ \{ \tInt, \tBits \}) ⇒ (a, a) → a
+%\]
+
+%Cela implique de modifier le système de type pour associer aux expression non
+%pas des types, mais des schémas de type (incluant des variables quantifiées). On
+%généralise les variables de certaines déclarations (les globales, par exemple),
+%et à l'utilisation il faut instancier les schémas, c'est-à-dire substituer aux
+%variables quantifiées des paramètres concrets. Ceci présente plusieurs
+%désavantages:
+
+%\begin{itemize}
+    %\item la présentation du système de types est alourdie;
+    %\item l'inférence est plus complexe;
+    %\item si on autorise le polymorphisme non restreint (en donnant par exemple
+        %à la fonction identité le type $∀a. (a) → a$), il faut à l'exécution
+        %représenter les données de manière uniforme, ce qui revient à changer
+        %la sémantique du langage.
+%\end{itemize}
+
+%\clearpage
+
+%\subsubsection*{Transtypage}
+
+%\begin{align*}
+%\gramdef{Expression}{e}
+  %{ … }{}
+  %{e \angle t}{Transtypage}
+  %{END}
+%\\
+%\\
+%\gramdef{Contexte d'évaluation}{C}
+  %{ … }{}
+  %{ C \angle t}{ }
+  %{END}
+%\end{align*}
+
+%\begin{mathpar}
+    %\irule{E-Coerce}
+        %{ }
+        %{
+            %\mms{(v \angle t)}{v}
+        %}
+
+    %\irule{T-Coerce}
+        %{ Γ ⊢ e : t
+       %\\ \tComp{τ}{t}
+       %\\ \tComp{τ}{t'}
+        %}
+        %{ Γ ⊢ (e \angle t') : t'
+        %}
+%\end{mathpar}
+
+%% TODO comment adapter FD
+
+%}}}
+
+% TODO Ne marche pas:
+%if (!(getuid() & geteuid() == 0)) {
+%https://www.securecoding.cert.org/confluence/display/seccode/EXP17-C.+Do+not+perform+bitwise+operations+in+conditional+expressions
 
 \section{Analyse de provenance de pointeurs}
 
@@ -344,17 +358,17 @@ non.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
-Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour «sécurité»),
-déclenchée lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le
-noyau est déréférencé (le cas que l'on cherche à éviter). Il est important de
-noter que ce cas d'erreur est «virtuel», c'est-à-dire qu'on l'ajoute à la
-sémantique pour pouvoir le détecter facilement comme un cas d'erreur, mais dans
-une sémantique de plus bas niveau, l'erreur ne serait pas déclenchée, comme en
-C. D'un point de vue opérationnel, cela équivaut à ajouter un test dynamique à
-chaque déréférencement, ce qui est sûr mais se paye en performances. Ajouter ce
-cas d'erreur virtuel dans la sémantique d'évaluation permet de transformer un
-problème de sécurité (empêcher les fuites d'information) en problème de sûreté
-(empêcher les erreurs à l'exécution).
+Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour
+\enquote{sécurité}), déclenchée lorsqu'un pointeur contrôlé par l'utilisateur et
+pointant vers le noyau est déréférencé (le cas que l'on cherche à éviter). Il
+est important de noter que ce cas d'erreur est \enquote{virtuel}, c'est-à-dire
+qu'on l'ajoute à la sémantique pour pouvoir le détecter facilement comme un cas
+d'erreur, mais dans une sémantique de plus bas niveau, l'erreur ne serait pas
+déclenchée, comme en C. D'un point de vue opérationnel, cela équivaut à ajouter
+un test dynamique à chaque déréférencement, ce qui est sûr mais se paye en
+performances. Ajouter ce cas d'erreur virtuel dans la sémantique d'évaluation
+permet de transformer un problème de sécurité (empêcher les fuites
+d'information) en problème de sûreté (empêcher les erreurs à l'exécution).
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
@@ -567,9 +581,9 @@ Ces règles sont à appliquer en priorité de la règle d'appel de fonction
 classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
 celles-ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
 par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
-$\vTainted{φ}$. L'opération en «boîte noire» de ces deux fonctions permet
-d'assurer que l'accès à l'espace utilisateur est toujours couplé à un test
-dynamique.
+$\vTainted{φ}$. L'opération en \enquote{boîte noire} de ces deux fonctions
+permet d'assurer que l'accès à l'espace utilisateur est toujours couplé à un
+test dynamique.
 
 \subsection{Insuffisance des types simples}
 
@@ -716,14 +730,14 @@ figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
 
 \begin{itemize}
 
-\item Les types «$\ptrK{t}$» s'appliquent aux pointeurs contrôlés par le
+\item Les types \enquote{$\ptrK{t}$} s'appliquent aux pointeurs contrôlés par le
 noyau. Par exemple, prendre l'adresse d'un objet de la pile noyau donne un
 pointeur noyau.
 
-\item Les types «$\ptrU{t}$», quant à eux, s'appliquent aux pointeurs qui
-proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
-d'interfaces particulières, comme les appels système ou les paramètres passés
-aux implantations de la fonction \texttt{ioctl}.
+\item Les types \enquote{$\ptrU{t}$}, quant à eux, s'appliquent aux pointeurs
+qui proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
+d'interfaces particulières, comme les appels système ou les paramètres
+passés aux implantations de la fonction \texttt{ioctl}.
 
 \end{itemize}
 
@@ -788,11 +802,11 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
     \disprule{AddrOf-User}
 \]
 
-Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est à
-remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
-type en $(t_1, t_2) → t$, car il faudrait un type polymorphe pour pouvoir les
-appliquer à n'importe quel type de pointeurs. Leur typage est donc plus proche
-de celui d'un opérateur.
+Les \enquote{fonctions} $\cfuF$ et $\ctuF$ sont typées de la manière suivante.
+Il est à remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont
+pas un type en $(t_1, t_2) → t$, car il faudrait un type polymorphe pour pouvoir
+les appliquer à n'importe quel type de pointeurs. Leur typage est donc plus
+proche de celui d'un opérateur.
 
 \begin{mathpar}
     \disprule{GetU}
