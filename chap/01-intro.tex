@@ -500,8 +500,6 @@ mais une préanalyse syntaxique peut permettre d'automatiser ce processus. En
 particulier, l'analyse par typage permet d'inférer les relations qui existent
 entre les différentes expressions présentes dans un programme.
 
-\jolibreak
-
 % TODO check date Penjili
 
 Le projet Penjili~\cite{AllamigeonHymansSSTIC07}, commencé à EADS Innovation
@@ -591,6 +589,20 @@ De manière générale, les compilateurs permettent, via le biais d'extensions
 comme \texttt{packed}, de personaliser finement le code émis grâce à des
 extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
 pas toujours bien spécifiée et/ou documentée.
+
+TODO:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  problèmes liés à la compilation (instrumentation de Makefile)
+\item
+  programmes non autosuffisants (headers, fonctions de bibliothèque)
+\item
+  sémantique de l'OS (accès aux fichiers)
+\item
+  threads / multiprocessus
+\end{itemize}
 
 \section{Langages}
 
