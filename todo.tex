@@ -66,11 +66,11 @@ système. Un appelant malveillant peut se servir de cette fonction pour lire la
 mémoire du noyau à travers le message d'erreur.
 
 Le problème est modélisé de la façon suivante : on associe à chaque variable
-\texttt{x} un type de données \texttt{t}, ce que l'on note \texttt{x:t}. En
-plus des types présents dans le langage C, on ajoute une distinction
-supplémentaire pour les pointeurs. D'une part, les pointeurs «noyau» (de type
+\texttt{x} un type de données \texttt{t}, ce que l'on note \texttt{x:t}. En plus
+des types présents dans le langage C, on ajoute une distinction supplémentaire
+pour les pointeurs. D'une part, les pointeurs \enquote{noyau} (de type
 \texttt{t~*}) sont créés en prenant l'adresse d'un objet présent dans le code
-source. D'autre part, les pointeurs «utilisateurs» (leur type est noté
+source. D'autre part, les pointeurs \enquote{utilisateurs} (leur type est noté
 \texttt{t user*}) proviennent des interfaces avec l'espace utilisateur.
 
 Il est sûr de déréférencer un pointeur noyau, mais pas un pointeur
@@ -110,8 +110,8 @@ aurait pas d'erreur de typage car cette fonction peut accepter les arguments
 
 Le principe de cette technique (associer des types aux valeurs puis restreindre
 les opérations sur certains types) peut être repris. Par exemple, si on définit
-un type «numéro de bloc» comme étant un nouvel alias de \texttt{int}, on peut
-considérer que multiplier deux telles valeurs est une erreur.%}}}
+un type \enquote{numéro de bloc} comme étant un nouvel alias de \texttt{int}, on
+peut considérer que multiplier deux telles valeurs est une erreur.%}}}
 
 % Sarah 9/5
 
