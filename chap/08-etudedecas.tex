@@ -1,10 +1,12 @@
 Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
-d'exploitation développé depuis le début des années 90 et «figure de proue» du
-mouvement open-source. Au départ écrit par Linus Torvalds sur son ordinateur
-personnel, il a au fil des années été porté sur de nombreuses architectures et
-s'est enrichi de nombreux pilotes de périphériques. Dans la version 3.9.8
-(2013), son code source comporte 11.2 millions de lignes de code (en grande
-majorité du C) dont 57\% de pilotes.
+d'exploitation développé depuis le début des années 90 et \enquote{figure de
+proue} du mouvement open-source. Au départ écrit par Linus Torvalds sur son
+ordinateur personnel, il a au fil des années été porté sur de nombreuses
+architectures et s'est enrichi de nombreux pilotes de périphériques. Dans la
+version 3.9.8 (2013), son code source comporte 11.2 millions de lignes de code
+(en grande majorité du C) dont 57\% de pilotes.
+
+% TODO %s/open source/open-source/
 
 Même si le noyau est monolithique (la majeure partie des traitements s'effectue
 au sein d'un même fichier objet), les sous-systèmes sont indépendants. C'est ce
@@ -55,7 +57,7 @@ Les attributs, quant à eux, rentrent dans trois catégories:
 
 \begin{itemize}
   \item les annotations de compilation; par exemple, \texttt{used} désactive
-    l'avertissement «cette variable n'est pas utilisée».
+  l'avertissement \enquote{cette variable n'est pas utilisée}.
 
   \item les optimisations; par exemple, les objets marqués \texttt{hot} sont
     groupés de telle manière qu'ils se retrouvent en cache ensemble.
@@ -92,8 +94,9 @@ interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
 des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
-doit donc avoir deux piles: une pile «utilisateur», qui sert pour
-l'application elle-même, et une pile «noyau», qui sert aux appels système.
+doit donc avoir deux piles: une pile \enquote{utilisateur}, qui sert pour
+l'application elle-même, et une pile \enquote{noyau}, qui sert aux appels
+système.
 
 \begin{figure} % fig:memmap {{{
 \centering
@@ -137,7 +140,7 @@ matériel. Pour que ces programmes puissent interagir avec le système (afficher
 une sortie, écrire sur le disque…) le mécanisme des appels système est
 nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 et
 0. Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
-«magiques» qui font appel au système d'exploitation pour effectuer des
+\enquote{magiques} qui font appel au système d'exploitation pour effectuer des
 opérations.
 
 Voyons ce qui se passe derrière la magie apparente. Une explication plus
@@ -173,9 +176,9 @@ d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
 \paragraph{Dans l'implantation de l'appel système}
 
 Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
-fonction «classique», la convention d'appel \emph{cdecl} est respectée. La
-fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc être
-écrite en C.
+fonction \enquote{classique}, la convention d'appel \emph{cdecl} est respectée.
+La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
+être écrite en C.
 
 On trouve cette fonction dans \texttt{kernel/timer.c}:
 
