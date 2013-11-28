@@ -318,8 +318,11 @@ ainsi que les types composés si les types de leurs composantes le supportent
 \label{fig:jugement-eq}
 \end{figure}
 
-Les opérateurs unaires «$+$» et «$-$» appliquent aux entiers, et leurs
-équivalents «$\floatop{+}$» et «$\floatop{-}$» aux flottants.
+Les opérateurs unaires \enquote{$+$} et \enquote{$-$} appliquent aux entiers, et
+leurs équivalents \enquote{$\floatop{+}$} et \enquote{$\floatop{-}$} aux
+flottants.
+
+% TODO Plus unop viré non ?
 
 \begin{mathpar}
 \disprule{Unop-Plus-Int}
@@ -701,8 +704,8 @@ l'exécution, et le second le type statique.
 
 On définit enfin la notion d'état mémoire bien typé. On dit qu'un état mémoire
 $m$ est bien typé sous un environnement $Γ$, ce que l'on note $\mcomp{Γ}{m}$, si
-le types des valeurs à l'exécution présent dans $m$ est «compatible» avec les
-types présents dans $Γ$.
+le types des valeurs à l'exécution présent dans $m$ est \enquote{compatible}
+avec les types présents dans $Γ$.
 
 Cela se fait par induction
 sur la forme de $Γ$ et $m$. Fonctionnellement, cela implique que les accès
@@ -908,8 +911,8 @@ $\ctxSub{C}{e}$, on commence par donner un type aux contextes $C$.
 
 On définit une relation de typage pour les contextes d'évaluation $C$. Elle
 permet de relier le type d'un sous-élément au type complet. Plusieurs cas se
-distinguent, selon la nature (instruction d'un côté, expression ou valeur gauche de
-l'autre) du «trou» et de l'élement complet.
+distinguent, selon la nature (instruction d'un côté, expression ou valeur gauche
+de l'autre) du \enquote{trou} et de l'élement complet.
 
 \begin{align*}
 & \tyctx{Γ}{C}{t_i}{t_e} \\
@@ -952,8 +955,8 @@ Par exemple, on peut avoir:
 \begin{lemma}[Typage sous un contexte]
 \label{lemma:typ-ctx}
 
-Partant d'un jugement de typage de $C$ et de son «trou», on peut en déduire un
-jugement de typage sur la totalité.
+Partant d'un jugement de typage de $C$ et de son \enquote{trou}, on peut en
+déduire un jugement de typage sur la totalité.
 
 \begin{center}
 \begin{tabular}{ll@{\hspace{1.5cm}}l}
@@ -1482,7 +1485,7 @@ grand pas d'exécution.
 
 La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 
-Cela prouve qu'aucun terme ne reste «bloqué» parce qu'aucune règle ne
+Cela prouve qu'aucun terme ne reste \enquote{bloqué} parce qu'aucune règle ne
 s'applique, et que la sémantique respecte le typage. En quelque sorte, les types
 sont un contrat entre les expressions et les fonctions: si leur évaluation
 converge, alors une valeur du type inféré sera produite.
