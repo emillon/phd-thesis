@@ -8,8 +8,9 @@ sécurité que nous cherchons à détecter.
 
 \section{But}
 
-Le langage C ne fournit pas directement de type "chaîne de caractère". C'est au
-programmeur de les gérer via des pointeurs sur caractère (\texttt{char *}).
+Le langage C ne fournit pas directement de type \enquote{chaîne de caractères}.
+C'est au programmeur de les gérer via des pointeurs sur caractère (\texttt{char
+*}).
 
 En théorie le programmeur est libre de choisir une représentation : des chaînes
 préfixées par la longueur, une structure contenant la taille et un pointeur vers
@@ -54,8 +55,8 @@ nul.
 
 Dans certaines bases de code (la plus célèbre étant celle de Microsoft), une
 convention syntaxique est utilisée : les pointeurs vers des chaînes terminées
-par 0 ont un nom qui commence par \texttt{sz}, comme \texttt{"szTitle"}. C'est
-pourquoi nous appellerons ce qualificateur de type \texttt{sz}.
+par 0 ont un nom qui commence par \texttt{sz}, comme \enquote{\texttt{szTitle}}.
+C'est pourquoi nous appellerons ce qualificateur de type \texttt{sz}.
 
 \section{Approche}
 
