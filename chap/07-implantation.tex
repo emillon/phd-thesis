@@ -21,7 +21,8 @@ automatiques depuis C et Ada existent (section~\ref{sec:compil}).
 
 Ensuite, ses instructions sont orthogonales et minimales: il existe en général
 une seule manière de faire les choses. Par exemple, le flot de contrôle est
-restreint à la boucle infinie et au saut en avant («\emph{break}» généralisé).
+restreint à la boucle infinie et au saut en avant (\enquote{\emph{break}}
+généralisé).
 
 Enfin, lorsque certaines constructions sont ambigües, un choix est fait. Par
 exemple, \linebreak l'évaluation des arguments d'une fonction est faite de
@@ -139,9 +140,9 @@ code lors de l'implantation d'un analyseur.
 Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle for, \newspeak fournit une unique boucle
 \npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
-est toujours un saut vers l'avant (similaire à un «\emph{break}» généralisé).
-Par conséquence, notre implantation gère les sauts, alors que dans \langname,
-cette construction n'est pas possible (figure~\ref{fig:stx}, page
+est toujours un saut vers l'avant (similaire à un \enquote{\emph{break}}
+généralisé). Par conséquence, notre implantation gère les sauts, alors que dans
+\langname, cette construction n'est pas possible (figure~\ref{fig:stx}, page
 \pageref{fig:stx}).
 
 \newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
@@ -295,16 +296,15 @@ Le reste de l'outil est résumé dans la fonction
 
 \begin{itemize}
 
-\item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!,
-  on ajoute des étiquettes «vides» (toutes égales à \verb!() : unit!).
+\item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!, on
+ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
 
 \item L'ensemble des fonctions du programme est trié topologiquement selon la
-  relation~$\preceq$ définie par $f \preceq g \eqdef \textrm{«} g
-  \textrm{ apparaît dans la définition de } f \textrm{»}$. Cela est fait en
-  construisant une représentation de $\preceq$ sous forme de graphe, puis en
-  faisant un parcours en largeur de celui-ci. Pour le moment, les fonctions
-  récursives et mutellement récursives ne sont pas supportées dans
-  l'implantation.
+    relation~$\preceq$ définie par $f \preceq g \eqdef \enquote{g \textrm{
+    apparaît dans la définition de } f}$. Cela est fait en construisant une
+    représentation de $\preceq$ sous forme de graphe, puis en faisant un
+    parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
+    mutellement récursives ne sont pas supportées dans l'implantation.
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial. Celle-ci permettent par exemple
@@ -329,7 +329,7 @@ La fonction appellée dans par le reste du code, appellée \texttt{unify}, peut
 retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
 types à unifier est mise dans une liste d'attente qui sera unifiée après le
 parcours du programme. Le but est d'instrumenter l'inférence de types afin de
-pouvoir en faire une exécution «pas à pas».
+pouvoir en faire une exécution \enquote{pas à pas}.
 
 \begin{figure}
 
@@ -454,10 +454,11 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 }
 \end{verbatim}
 
-L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à détecter
-les débordements d'entiers lors d'une analyse de valeurs par interprétation
-abstraite. Dans le cas de notre analyse, les valeurs ne sont pas pertinentes et
-cet opérateur peut être vu que comme un «plus» unaire typé $(\tInt) → \tInt$.
+L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à
+détecter les débordements d'entiers lors d'une analyse de valeurs par
+interprétation abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
+pertinentes et cet opérateur peut être vu que comme un \enquote{plus} unaire
+typé $(\tInt) → \tInt$.
 
 Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
