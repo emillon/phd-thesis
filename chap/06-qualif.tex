@@ -54,10 +54,10 @@ sous Unix (figure~\ref{fig:unix-open}). Le paramètre \texttt{flags} est un
 entier qui encode les options liées à l'ouverture du fichier. On précise son
 mode (lecture, écriture ou les deux) par les bits 1 et 2, s'il faut créer le
 fichier ou non s'il n'existe pas par le bit 7, si dans ce cas il doit être
-effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un «ou»
-bit à bit entre des constantes. Le paramètre \texttt{mode} (en fait un
-\emph{unsigned int}) encode de la même manière les permissions que doit avoir le
-fichier créé, le cas échéant.
+effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un
+\enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} (en fait
+un \emph{unsigned int}) encode de la même manière les permissions que doit avoir
+le fichier créé, le cas échéant.
 
 Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
 correspond à un indice numérique dans une table interne au processus. Par
@@ -78,14 +78,16 @@ On identifie donc au moins trois utilisations du type \texttt{int}:
 Ces utilisations du type n'ont rien à voir ; il faudrait donc empêcher
 d'utiliser un descripteur de fichier comme un mode, et vice-versa. De même,
 aucun opérateur n'a de sens sur les descripteurs de fichier, mais l'opérateur
-\texttt{\textbar{}} du «ou» bit à bit doit rester possible pour les modes.
+\texttt{\textbar{}} du \enquote{ou} bit à bit doit rester possible pour les
+modes.
 
 On décrit ici une technique de typage pour détecter et interdire ces mauvaises
-utilisations en proposant une version «bien typée» de la fonction \texttt{open}.
-Plus précisément, on donne à ses deuxième et troisième arguments (respectivement
-\texttt{flags} et \texttt{mode}) le nouveau type \tBits qui correspond aux
-entiers utilisés comme bitmasks. Le type de retour n'est pas modifié (il reste
-\tInt), mais on décrit comment il est possible de rendre ce type opaque.
+utilisations en proposant une version \enquote{bien typée} de la fonction
+\texttt{open}. Plus précisément, on donne à ses deuxième et troisième arguments
+(respectivement \texttt{flags} et \texttt{mode}) le nouveau type \tBits qui
+correspond aux entiers utilisés comme bitmasks. Le type de retour n'est pas
+modifié (il reste \tInt), mais on décrit comment il est possible de rendre ce
+type opaque.
 
 \subsection{Modifications}
 
@@ -134,8 +136,8 @@ valeurs, les entiers utilisés comme bitmasks sont représentés par des valeurs
 entières classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau
 type sémantique, mais on ajoute une règle de compatibilité entre le type de
 valeurs \tInt et le type statique \tBits (figure~\ref{fig:ajouts-bitmasks}). Par
-ailleurs, on change le type des «constructeurs» (\texttt{O\_*}) et du
-«consommateur» \texttt{open} (figure~\ref{fig:bitmasks-types}).
+ailleurs, on change le type des \enquote{constructeurs} (\texttt{O\_*}) et du
+\enquote{consommateur} \texttt{open} (figure~\ref{fig:bitmasks-types}).
 
 Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on remplace
 aux règles s'appliquant à $\tInt$ les règles suivantes.
@@ -155,8 +157,8 @@ aux règles s'appliquant à $\tInt$ les règles suivantes.
 
 Il reste à permettre d'utiliser les bitmasks dans les contextes où on attend un
 entier. Par exemple, pour écrire $\iIf{x~\&~\hexa{80}}{…}{…}$ (test du bit
-numéro 7). On veut donc exprimer que «un \tBits est un \tInt». Cette relation
-entre différents types d'entier correspond à du sous-typage. La méthode
+numéro 7). On veut donc exprimer que \enquote{un \tBits est un \tInt}. Cette
+relation entre différents types d'entier correspond à du sous-typage. La méthode
 classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
 
 \badrulewarn{
@@ -199,7 +201,7 @@ Les nombreux opérateurs de C (repris en \langname) posent plusieurs problèmes:
 \begin{itemize}
 \item il sont nombreux et il est facile de confondre $\&\&$ avec $\&$, ou
       $!$ avec $\sim$;
-\item il y a un opérateur «ou exclusif» bit à bit ($\opxor$) mais pas
+\item il y a un opérateur \enquote{ou exclusif} bit à bit ($\opxor$) mais pas
       d'équivalent logique;
 \item la priorité des opérateurs semble parfois arbitraire. Par exemple, les
       opérateurs de décalage sont plus prioritaires que les additions, donc
@@ -356,17 +358,17 @@ non.
 
 Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
 
-Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour «sécurité»),
-déclenchée lorsqu'un pointeur contrôlé par l'utilisateur et pointant vers le
-noyau est déréférencé (le cas que l'on cherche à éviter). Il est important de
-noter que ce cas d'erreur est «virtuel», c'est-à-dire qu'on l'ajoute à la
-sémantique pour pouvoir le détecter facilement comme un cas d'erreur, mais dans
-une sémantique de plus bas niveau, l'erreur ne serait pas déclenchée, comme en
-C. D'un point de vue opérationnel, cela équivaut à ajouter un test dynamique à
-chaque déréférencement, ce qui est sûr mais se paye en performances. Ajouter ce
-cas d'erreur virtuel dans la sémantique d'évaluation permet de transformer un
-problème de sécurité (empêcher les fuites d'information) en problème de sûreté
-(empêcher les erreurs à l'exécution).
+Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour
+\enquote{sécurité}), déclenchée lorsqu'un pointeur contrôlé par l'utilisateur et
+pointant vers le noyau est déréférencé (le cas que l'on cherche à éviter). Il
+est important de noter que ce cas d'erreur est \enquote{virtuel}, c'est-à-dire
+qu'on l'ajoute à la sémantique pour pouvoir le détecter facilement comme un cas
+d'erreur, mais dans une sémantique de plus bas niveau, l'erreur ne serait pas
+déclenchée, comme en C. D'un point de vue opérationnel, cela équivaut à ajouter
+un test dynamique à chaque déréférencement, ce qui est sûr mais se paye en
+performances. Ajouter ce cas d'erreur virtuel dans la sémantique d'évaluation
+permet de transformer un problème de sécurité (empêcher les fuites
+d'information) en problème de sûreté (empêcher les erreurs à l'exécution).
 
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
@@ -579,9 +581,9 @@ Ces règles sont à appliquer en priorité de la règle d'appel de fonction
 classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
 celles-ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
 par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
-$\vTainted{φ}$. L'opération en «boîte noire» de ces deux fonctions permet
-d'assurer que l'accès à l'espace utilisateur est toujours couplé à un test
-dynamique.
+$\vTainted{φ}$. L'opération en \enquote{boîte noire} de ces deux fonctions
+permet d'assurer que l'accès à l'espace utilisateur est toujours couplé à un
+test dynamique.
 
 \subsection{Insuffisance des types simples}
 
@@ -728,14 +730,14 @@ figures~\ref{fig:les-types} et~\ref{fig:types-semantiques})}
 
 \begin{itemize}
 
-\item Les types «$\ptrK{t}$» s'appliquent aux pointeurs contrôlés par le
+\item Les types \enquote{$\ptrK{t}$} s'appliquent aux pointeurs contrôlés par le
 noyau. Par exemple, prendre l'adresse d'un objet de la pile noyau donne un
 pointeur noyau.
 
-\item Les types «$\ptrU{t}$», quant à eux, s'appliquent aux pointeurs qui
-proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
-d'interfaces particulières, comme les appels système ou les paramètres passés
-aux implantations de la fonction \texttt{ioctl}.
+\item Les types \enquote{$\ptrU{t}$}, quant à eux, s'appliquent aux pointeurs
+qui proviennent de l'espace utilisateur. Ces pointeurs proviennent toujours
+d'interfaces particulières, comme les appels système ou les paramètres
+passés aux implantations de la fonction \texttt{ioctl}.
 
 \end{itemize}
 
@@ -800,11 +802,11 @@ L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
     \disprule{AddrOf-User}
 \]
 
-Les «fonctions» $\cfuF$ et $\ctuF$ sont typées de la manière suivante. Il est à
-remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont pas un
-type en $(t_1, t_2) → t$, car il faudrait un type polymorphe pour pouvoir les
-appliquer à n'importe quel type de pointeurs. Leur typage est donc plus proche
-de celui d'un opérateur.
+Les \enquote{fonctions} $\cfuF$ et $\ctuF$ sont typées de la manière suivante.
+Il est à remarquer que ce ne sont pas vraiment des fonctions et qu'elles n'ont
+pas un type en $(t_1, t_2) → t$, car il faudrait un type polymorphe pour pouvoir
+les appliquer à n'importe quel type de pointeurs. Leur typage est donc plus
+proche de celui d'un opérateur.
 
 \begin{mathpar}
     \disprule{GetU}
