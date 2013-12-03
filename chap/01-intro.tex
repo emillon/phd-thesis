@@ -527,6 +527,48 @@ sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
 allocation dynamique, récursion, accès au système de fichiers, etc), mais des
 extensions non standard peuvent être utilisées.
 
+\paragraph{Problèmes liés à la compilation}
+
+\begin{figure}%{{{
+    \centering
+    \insertcode{bcopy.c}
+
+    \caption{Utilisation d'alternatives lors de la compilation}
+    \label{fig:bcopy}
+\end{figure}%}}}
+
+La compilation d'un programme est la suite d'opérations qui permet d'engendrer
+un fichier exécutable à partir de l'ensemble du code source de celui-ci.
+Habituellement cela se fait selon la suite d'opérations suivantes. Tout d'abord,
+l'environnement de compilation est détecté. Cela permet d'ajuster certaines
+variables de configuration. Par exemple, si le code source utilise la fonction
+\texttt{memmove} et que celle-ci n'est pas disponible dans l'environnement de
+compilation, il est possible d'utiliser \texttt{bcopy} à la place
+(figure~\ref{fig:bcopy}).
+
+Ensuite, peut venir une étape de génération de code source. Cela arrive dans le
+cas ou certaines données calculables statiquement doivent être disponible à
+l'exécution, ou dans le cas d'utilisation d'outils comme \texttt{lex} et
+\texttt{yacc} qui permettent d'engendrer des analyseurs lexicaux et syntaxiques.
+
+Puis vient l'étape de compilation en elle-même. Chaque fichier source est
+prétraité à l'aide de \texttt{cpp}, puis est compilé (en général via
+\texttt{gcc}) en code-objet (fichier d'extension \texttt{.o}).
+
+Enfin, la phase d'édition de liens permet de grouper ces fichiers en un
+exécutable. Des références vers les bibliothèques dynamiques nécessaires sont
+placées dans cet exécutable, et seront résolues au lancement de celui-ci.
+
+  %problèmes liés à la compilation (instrumentation de Makefile)
+
+\paragraph{Programmes non autosuffisants}
+
+% TODO
+% (headers, fonctions de bibliothèque)
+  %problèmes liés à la compilation (instrumentation de Makefile)
+
+\paragraph{Extensions du langage}
+
 \begin{figure}%{{{
     \centering
     \begin{minipage}{0.4\textwidth}
@@ -590,19 +632,15 @@ comme \texttt{packed}, de personaliser finement le code émis grâce à des
 extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
 pas toujours bien spécifiée et/ou documentée.
 
-TODO:
+\paragraph{Sémantique de l'OS}
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  problèmes liés à la compilation (instrumentation de Makefile)
-\item
-  programmes non autosuffisants (headers, fonctions de bibliothèque)
-\item
-  sémantique de l'OS (accès aux fichiers)
-\item
-  threads / multiprocessus
-\end{itemize}
+% TODO
+%(accès aux fichiers)
+
+\paragraph{Concurrence et parallélisme}
+
+% TODO
+% Threads / multiprocessus
 
 \section{Langages}
 
