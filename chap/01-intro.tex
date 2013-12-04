@@ -282,9 +282,10 @@ et que la fonction renvoie une valeur, alors cette valeur sera un entier}. Cet
 ensemble de contrats peut être vérifié statiquement par le compilateur, à l'aide
 d'un système de types statique.
 
-Par exemple, on peut dire que l'opérateur \enquote{$+$} a pour type $(\tInt, \tInt) →
-\tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$ \tInt), alors
-la valeur obtenue est également un entier.
+Par exemple, on peut dire que l'opérateur \enquote{$+$} a pour type $(\tInt,
+\tInt) → \tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$
+\tInt), alors la valeur obtenue est également un entier. \emph{A contrario}, si
+autre chose qu'un entier est passé à cet opérateur, le programme ne compile pas.
 
 \paragraph{Typage fort ou faible}
 
@@ -379,13 +380,13 @@ arithmétique sur les entiers, débordement de tableau, etc.
 En pratique, dans l'embarqué les règles de codage limitent les constructions
 posant problème. Par exemple, les exceptions, l'allocation dynamique
 (\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les fonctions
-récursives \footnote{Dans ce cas, on remarquera que la taille de la pile est
-bornée.}.
+récursives.
 
 L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
 que les variables possèdent une valeur, on utilise un domaine abstrait qui
 permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
+% TODO couleurs N&B (reprendre couleurs lentilles) + noms dans texte
 \begin{figure}
 \centering
 
@@ -445,16 +446,15 @@ bleu.}
 Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
 considérées: c'est un produit d'ensembles simples, comme des intervalles.
 L'ensemble des comportements réels du programme est au contraire d'une forme
-plus complexe \footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas
-calculable.}.
+plus complexe.
 
 En calculant une approximation de ce dernier, de forme plus simple, on peut
 tester plus facilement que les comportements de sont dans la zone sûre : le fait
-que l'analyse soit \emph{sound}, c'est à dire que l'approximation ne manque
+que l'analyse soit \emph{sound}, c'est-à-dire que l'approximation ne manque
 aucun comportement, permet de prouver l'absence d'erreurs.
 
 La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
-valeurs dangereuses est représentée par un ensemble hachuré, l'ensemble des
+valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
 comportements réels du programme est en vert, et l'approximation en bleu.
 
 Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
@@ -665,12 +665,17 @@ erreurs de typage à la compilation), est assez rudimentaire: toutes les formes
 de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
-C. Le noyau du système Mac OSX d'Apple est également un dérivé d'Unix, et est
+C. Le noyau du système Mac OS X d'Apple est également un dérivé d'Unix, et est
 donc aussi écrit dans ce langage.
 
 Néanmoins ce langage n'est pas facile à analyser, car il est conçu pour être
 facilement écrit par des programmeurs humains. Certaines constructions sont
-ambigües, et de nombreux comportements sont implicites.
+ambigües\footnote{
+    Selon qu'il existe un type nommé \texttt{a}, l'expression \texttt{(a)-(b)}
+    sera interprétée comme le transtypage de \texttt{-(b)} dans le type
+    \texttt{a}, ou la soustraction des deux expressions \texttt{(a)} et
+    \texttt{(b)}.
+}, et de nombreux comportements sont implicites.
 
 Si on veut analyser des programmes, il est plus pratique de travailler sur une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
@@ -745,9 +750,14 @@ sur ces outils, a été utilisé pour analyser des logiciels embarqués critique
 plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
 source. Tous ces outils sont écrits dans le langage OCaml~\cite{DAOC}.
 
+% TODO n'y a t-il pas des parties en open source?
+
 Nous avons choisi de baser notre analyse sur \newspeak, dans le but de bénéficier
 de ces outils existants et dans la perspective de guider les analyses de valeur
 par des information de typage.
+
+% TODO y reviens tu ensuite?
+% si oui indique que ce choix sera discuté dans telle partie
 
 Plus précisément, nous utilisons un langage nommé \langname, inspiré de \newspeak
 mais avec un modèle mémoire de plus haut niveau permettant de garantir la sûreté
@@ -793,5 +803,7 @@ de type capture précisément ce genre d'erreur de programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.
+
+%TODO ne faut il pas indiquer le 2è exemple?
 
 % vim: spelllang=fr
