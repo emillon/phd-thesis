@@ -559,13 +559,24 @@ Enfin, la phase d'édition de liens permet de grouper ces fichiers en un
 exécutable. Des références vers les bibliothèques dynamiques nécessaires sont
 placées dans cet exécutable, et seront résolues au lancement de celui-ci.
 
-  %problèmes liés à la compilation (instrumentation de Makefile)
+Pour analyser le code source, le plus simple est de se \enquote{brancher} à ce
+système de compilation, par exemple en créant une commande nommée \texttt{gcc}
+qui transmet le code source à l'analyseur statique. Il est à remarquer que les
+fichiers sont alors vus un par un, ce qui n'est pas compatible avec toutes les
+analyses.
 
 \paragraph{Programmes non autosuffisants}
 
-% TODO
-% (headers, fonctions de bibliothèque)
-  %problèmes liés à la compilation (instrumentation de Makefile)
+La grande majorité des programmes ne se suffisent pas à eux-mêmes. En effet, ils
+interagissent presque toujours avec leur environnement ou appellent des
+fonctions de bibliothèque comme la fonction \texttt{bcopy} mentionnée plus tôt.
+
+Cela veut dire qu'un fichier en cours d'analyse peut contenir des appels à des
+fonctions inconnues. Non seulement on n'a pas accès à leur code source, mais en
+plus on ne connaît pas \emph{a priori} leur spécification. Une solution peut
+être de prévoir un traitement particulier pour celles-ci (par exemple en leur
+attribuant un type prédéfini), mais leur sémantique d'exécution peut être
+complexe à exprimer car elles peuvent interagir avec le monde extérieur.
 
 \paragraph{Extensions du langage}
 
