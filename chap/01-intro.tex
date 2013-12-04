@@ -282,9 +282,10 @@ et que la fonction renvoie une valeur, alors cette valeur sera un entier}. Cet
 ensemble de contrats peut être vérifié statiquement par le compilateur, à l'aide
 d'un système de types statique.
 
-Par exemple, on peut dire que l'opérateur \enquote{$+$} a pour type $(\tInt, \tInt) →
-\tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$ \tInt), alors
-la valeur obtenue est également un entier.
+Par exemple, on peut dire que l'opérateur \enquote{$+$} a pour type $(\tInt,
+\tInt) → \tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$
+\tInt), alors la valeur obtenue est également un entier. \emph{A contrario}, si
+autre chose qu'un entier est passé à cet opérateur, le programme ne compile pas.
 
 \paragraph{Typage fort ou faible}
 
@@ -379,13 +380,13 @@ arithmétique sur les entiers, débordement de tableau, etc.
 En pratique, dans l'embarqué les règles de codage limitent les constructions
 posant problème. Par exemple, les exceptions, l'allocation dynamique
 (\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les fonctions
-récursives \footnote{Dans ce cas, on remarquera que la taille de la pile est
-bornée.}.
+récursives.
 
 L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
 que les variables possèdent une valeur, on utilise un domaine abstrait qui
 permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
+% TODO couleurs N&B (reprendre couleurs lentilles) + noms dans texte
 \begin{figure}
 \centering
 
@@ -445,16 +446,15 @@ bleu.}
 Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
 considérées: c'est un produit d'ensembles simples, comme des intervalles.
 L'ensemble des comportements réels du programme est au contraire d'une forme
-plus complexe \footnote{D'ailleurs, en vertu du théorème de Rice, il n'est pas
-calculable.}.
+plus complexe.
 
 En calculant une approximation de ce dernier, de forme plus simple, on peut
 tester plus facilement que les comportements de sont dans la zone sûre : le fait
-que l'analyse soit \emph{sound}, c'est à dire que l'approximation ne manque
+que l'analyse soit \emph{sound}, c'est-à-dire que l'approximation ne manque
 aucun comportement, permet de prouver l'absence d'erreurs.
 
 La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
-valeurs dangereuses est représentée par un ensemble hachuré, l'ensemble des
+valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
 comportements réels du programme est en vert, et l'approximation en bleu.
 
 Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
@@ -527,6 +527,65 @@ sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
 allocation dynamique, récursion, accès au système de fichiers, etc), mais des
 extensions non standard peuvent être utilisées.
 
+\paragraph{Problèmes liés à la compilation}
+
+\begin{figure}%{{{
+    \centering
+    \insertcode{bcopy.c}
+
+    \caption{Utilisation d'alternatives lors de la compilation}
+    \label{fig:bcopy}
+\end{figure}%}}}
+
+La compilation d'un programme est la suite d'opérations qui permet d'engendrer
+un fichier exécutable à partir de l'ensemble du code source de celui-ci.
+Habituellement cela se fait selon la suite d'opérations suivantes. Tout d'abord,
+l'environnement de compilation est détecté. Cela permet d'ajuster certaines
+variables de configuration. Par exemple, si le code source utilise la fonction
+\texttt{memmove} et que celle-ci n'est pas disponible dans l'environnement de
+compilation, il est possible d'utiliser \texttt{bcopy} à la place
+(figure~\ref{fig:bcopy}).
+
+Ensuite, peut venir une étape de génération de code source. Cela arrive dans le
+cas ou certaines données calculables statiquement doivent être disponible à
+l'exécution, ou dans le cas d'utilisation d'outils comme \texttt{lex} et
+\texttt{yacc} qui permettent d'engendrer des analyseurs lexicaux et syntaxiques.
+
+Puis vient l'étape de compilation en elle-même. Chaque fichier source est
+prétraité à l'aide de \texttt{cpp}, puis est compilé (en général via
+\texttt{gcc}) en code-objet (fichier d'extension \texttt{.o}).
+
+Enfin, la phase d'édition de liens permet de grouper ces fichiers en un
+exécutable. Des références vers les bibliothèques dynamiques nécessaires sont
+placées dans cet exécutable, et seront résolues au lancement de celui-ci.
+
+Pour analyser le code source, le plus simple est de se \enquote{brancher} à ce
+système de compilation, par exemple en créant une commande nommée \texttt{gcc}
+qui transmet le code source à l'analyseur statique. Il est à remarquer que les
+fichiers sont alors vus un par un, ce qui n'est pas compatible avec toutes les
+analyses.
+
+\paragraph{Programmes non autosuffisants}
+
+La grande majorité des programmes ne se suffisent pas à eux-mêmes. En effet, ils
+interagissent presque toujours avec leur environnement ou appellent des
+fonctions de bibliothèque comme la fonction \texttt{bcopy} mentionnée plus tôt.
+
+Cela veut dire qu'un fichier en cours d'analyse peut contenir des appels à des
+fonctions inconnues. Non seulement on n'a pas accès à leur code source, mais en
+plus on ne connaît pas \emph{a priori} leur spécification. Une solution peut
+être de prévoir un traitement particulier pour celles-ci (par exemple en leur
+attribuant un type prédéfini), mais leur sémantique d'exécution peut être
+complexe à exprimer car elles peuvent interagir avec le monde extérieur.
+
+Certaines interagissent directement avec le système d'exploitation, comme les
+fonctions d'ouverture ou d'écriture dans un fichier. D'autres modifient
+totalement la sémantique du programme. Par exemple \texttt{pthread\_create(\&t,
+NULL, f, NULL)} lance l'exécution de \texttt{f(NULL)} tout en continuant
+l'exécution de la fonction en cours (concurrence).
+
+\paragraph{Extensions du langage}
+
 \begin{figure}%{{{
     \centering
     \begin{minipage}{0.4\textwidth}
@@ -590,20 +649,6 @@ comme \texttt{packed}, de personaliser finement le code émis grâce à des
 extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
 pas toujours bien spécifiée et/ou documentée.
 
-TODO:
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  problèmes liés à la compilation (instrumentation de Makefile)
-\item
-  programmes non autosuffisants (headers, fonctions de bibliothèque)
-\item
-  sémantique de l'OS (accès aux fichiers)
-\item
-  threads / multiprocessus
-\end{itemize}
-
 \section{Langages}
 
 Le système Unix, développé à partir de 1969, a tout d'abord été développé en
@@ -620,12 +665,17 @@ erreurs de typage à la compilation), est assez rudimentaire: toutes les formes
 de transtypage sont acceptées, certaines conversions sont insérées
 automatiquement par le compilateur, et la plupart des abstractions fournies par
 le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
-C. Le noyau du système Mac OSX d'Apple est également un dérivé d'Unix, et est
+C. Le noyau du système Mac OS X d'Apple est également un dérivé d'Unix, et est
 donc aussi écrit dans ce langage.
 
 Néanmoins ce langage n'est pas facile à analyser, car il est conçu pour être
 facilement écrit par des programmeurs humains. Certaines constructions sont
-ambigües, et de nombreux comportements sont implicites.
+ambigües\footnote{
+    Selon qu'il existe un type nommé \texttt{a}, l'expression \texttt{(a)-(b)}
+    sera interprétée comme le transtypage de \texttt{-(b)} dans le type
+    \texttt{a}, ou la soustraction des deux expressions \texttt{(a)} et
+    \texttt{(b)}.
+}, et de nombreux comportements sont implicites.
 
 Si on veut analyser des programmes, il est plus pratique de travailler sur une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
@@ -700,9 +750,14 @@ sur ces outils, a été utilisé pour analyser des logiciels embarqués critique
 plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
 source. Tous ces outils sont écrits dans le langage OCaml~\cite{DAOC}.
 
+% TODO n'y a t-il pas des parties en open source?
+
 Nous avons choisi de baser notre analyse sur \newspeak, dans le but de bénéficier
 de ces outils existants et dans la perspective de guider les analyses de valeur
 par des information de typage.
+
+% TODO y reviens tu ensuite?
+% si oui indique que ce choix sera discuté dans telle partie
 
 Plus précisément, nous utilisons un langage nommé \langname, inspiré de \newspeak
 mais avec un modèle mémoire de plus haut niveau permettant de garantir la sûreté
@@ -748,5 +803,7 @@ de type capture précisément ce genre d'erreur de programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.
+
+%TODO ne faut il pas indiquer le 2è exemple?
 
 % vim: spelllang=fr
