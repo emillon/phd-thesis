@@ -578,6 +578,12 @@ plus on ne connaît pas \emph{a priori} leur spécification. Une solution peut
 attribuant un type prédéfini), mais leur sémantique d'exécution peut être
 complexe à exprimer car elles peuvent interagir avec le monde extérieur.
 
+Certaines interagissent directement avec le système d'exploitation, comme les
+fonctions d'ouverture ou d'écriture dans un fichier. D'autres modifient
+totalement la sémantique du programme. Par exemple \texttt{pthread\_create(\&t,
+NULL, f, NULL)} lance l'exécution de \texttt{f(NULL)} tout en continuant
+l'exécution de la fonction en cours (concurrence).
+
 \paragraph{Extensions du langage}
 
 \begin{figure}%{{{
@@ -642,16 +648,6 @@ De manière générale, les compilateurs permettent, via le biais d'extensions
 comme \texttt{packed}, de personaliser finement le code émis grâce à des
 extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
 pas toujours bien spécifiée et/ou documentée.
-
-\paragraph{Sémantique de l'OS}
-
-% TODO
-%(accès aux fichiers)
-
-\paragraph{Concurrence et parallélisme}
-
-% TODO
-% Threads / multiprocessus
 
 \section{Langages}
 
