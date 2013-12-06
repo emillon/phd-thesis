@@ -778,12 +778,13 @@ centraux puisqu'on désire les restreindre. On fait ensuite un tour d'horizon de
 techniques existantes permettant de traiter ce problème par analyse statique de
 code source.
 
-\paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution:
-\langname{}, un langage impératif. Sa syntaxe y est d'abord décrite, puis sa
-sémantique ainsi qu'un système de types statiques. À ce niveau on a un bon
-support pour décrire des analyses statiques sur un langage impératif. On étend
-ensuite le système de types pour capturer les problèmes d'adressage mémoire
-présents dans les systèmes d'exploitation. Pour ce faire, on ajoute des
+\paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution: le langage
+\langname{}. Sa syntaxe y est d'abord décrite, puis sa sémantique ainsi qu'un
+système de types statiques. À ce niveau on a un bon support pour décrire des
+analyses statiques sur un langage impératif. On propose alors deux extensions
+indépendantes au système de types. La première consiste à bien typer les entiers
+utilisés comme \emph{bitmasks}. La seconde capture les problèmes d'adressage
+mémoire présents dans les systèmes d'exploitation. Pour ce faire, on ajoute des
 pointeurs contrôlés par l'utilisateur à la sémantique et au système de types. À
 chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
 de sûreté de typage reliant la sémantique d'exécution aux types statiques.
@@ -803,7 +804,5 @@ de type capture précisément ce genre d'erreur de programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.
-
-%TODO ne faut il pas indiquer le 2è exemple?
 
 % vim: spelllang=fr
