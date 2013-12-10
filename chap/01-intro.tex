@@ -665,6 +665,9 @@ totalement la sémantique du programme. Par exemple \texttt{pthread\_create(\&t,
 NULL, f, NULL)} lance l'exécution de \texttt{f(NULL)} tout en continuant
 l'exécution de la fonction en cours (concurrence).
 
+% TODO est-ce la sémantique qui est changée ? dans ton exemple il peut y avoir
+% la perte du déterminisme mais c'est dans le modèle de calcul
+
 \paragraph{Extensions du langage}
 
 \begin{figure}%{{{
@@ -713,9 +716,9 @@ l'exécution de la fonction en cours (concurrence).
 \end{figure}%}}}
 
 Par exemple, la figure~\ref{fig:packed} démontre l'influence de l'attribut
-\texttt{packed} (supporté par GCC) la sur compilation d'une structure. Sans
+\texttt{packed} (supporté par GCC) sur la compilation d'une structure. Sans
 celui-ci, les champs sont alignés de manière à faciliter les accès à la mémoire,
-par exemple en faisant démarrer les adresses de chaque quand sur un multiple de
+par exemple en faisant démarrer les adresses de chaque champ sur un multiple de
 4 octets (en gras). Cela nécessite d'introduire des octets de \emph{padding} (en
 gris) qui ne sont pas utilisés. La taille totale de cette structure est donc de
 12 octets.
@@ -730,7 +733,11 @@ comme \texttt{packed}, de personaliser finement le code émis grâce à des
 extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
 pas toujours bien spécifiée et/ou documentée.
 
+% TODO d'autres constructions
+
 \section{Notre solution}
+
+% TODO n'est-ce pas un peu court?
 
 Nous proposons d'utiliser \newspeak pour analyser des propriétés de sécurité par
 typage sur du code non avionique. Cela est pertinent pour les raisons suivantes.
@@ -743,6 +750,8 @@ D'autre part, réaliser des analyses syntaxiques sur \newspeak peut permettre de
 guider en amont des analyses de valeurs plus précises (par exemple en
 choisissant des domaines abstraits particuliers). Le typage de \newspeak est une
 première étape dans cette direction.
+
+% TODO inspiré ou bien construit au dessus ? quid des traducteurs?
 
 Pour la formalisation, nous utilisons un langage nommé \langname, inspiré de
 \newspeak mais avec un modèle mémoire de plus haut niveau permettant de garantir
@@ -774,6 +783,8 @@ mémoire présents dans les systèmes d'exploitation. Pour ce faire, on ajoute d
 pointeurs contrôlés par l'utilisateur à la sémantique et au système de types. À
 chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
 de sûreté de typage reliant la sémantique d'exécution aux types statiques.
+
+% TODO ici c'est plus précis
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage
