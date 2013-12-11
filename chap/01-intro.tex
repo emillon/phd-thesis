@@ -581,13 +581,35 @@ entre les différentes expressions présentes dans un programme.
 
 Dans ce sens, des outils fondés sur l'interprétation abstraite ont été
 développés chez EADS Innovation Works dans le cadre du projet
-Penjili~\cite{AllamigeonHymansSSTIC07}. On y trouve notamment un langage
-intermédiaire, \newspeak~\cite{newspeak}, ainsi que des compilateurs permettant
-de traduire du code C et Ada vers celui-ci. Ces outils sont disponibles sous
-license libre sur~\link{penjili}. L'analyseur statique Penjili, reposant sur ces
-outils, a été utilisé pour analyser des logiciels embarqués critiques de
-plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
-source. Tous ces outils sont écrits dans le langage OCaml~\cite{DAOC}.
+Penjili~\cite{AllamigeonHymansSSTIC07}.
+
+Les analyses statiques ne manipulent pas directement du code C, mais un langage
+intermédiaire appelé \newspeak~\cite{newspeak}. Celui-ci est suffisamment
+expressif pour compiler la plupart des programmes C, y compris de nombreuses
+extensions GNU utilisées dans le noyau Linux (section~\ref{sec:gnuc}), et des
+traducteurs automatiques depuis C et Ada existent (section~\ref{sec:compil}).
+
+Ensuite, ses instructions sont orthogonales et minimales: il existe en général
+une seule manière de faire les choses. Par exemple, le flot de contrôle est
+restreint à la boucle infinie et au saut en avant (\enquote{\emph{break}}
+généralisé).
+
+Enfin, lorsque certaines constructions sont ambigües, un choix est fait. Par
+exemple, l'évaluation des arguments d'une fonction est faite de
+manière explicite, les tailles des types sont indiqués à chaque déclaration de
+variable, etc.
+
+Séparer le langage intermédiaire de la phase d'analyse permet de beaucoup
+simplifier l'analyseur statique. D'une part, les constructions redondantes comme
+les différents types de boucles ne sont traitées qu'une fois. D'autre part,
+lorsque le langage source est étendu (en supportant une nouvelle extension de C
+par exemple), l'analyseur n'a pas besoin d'être modifié.
+
+Ces outils sont disponibles sous license libre sur~\link{penjili}. L'analyseur
+statique Penjili, reposant sur ces outils, a été utilisé pour analyser des
+logiciels embarqués critiques de plusieurs millions de lignes de code. Ce
+dernier n'est pour le moment pas open source. Tous ces outils sont écrits dans
+le langage OCaml~\cite{DAOC}.
 
 \section{De l'avionique à l'informatique d'entreprise}
 
@@ -758,7 +780,7 @@ Pour la formalisation, nous utilisons un langage nommé \langname, inspiré de
 la sûreté des programmes bien typés. L'implantation quant à elle est faite sur
 \newspeak et est redistribuée avec celui-ci.
 
-\section{Plan de la thèse}
+\subsection*{Plan de la thèse}
 
 Cette thèse est organisée en trois parties. La première décrit le contexte de
 ces travaux, ainsi que les solutions existantes. La deuxième expose notre

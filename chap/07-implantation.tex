@@ -9,27 +9,14 @@ dans le langage OCaml~\cite{DAOC}.
 Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
 license libre, la \emph{GNU Lesser General Public License}.
 
-\section{\newspeak}
-\label{sec:npk}
+\section{\newspeak et chaîne de compilation}
+\label{sec:compil}
 
 \newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
-statiques, contrairement à des langages conçus pour les programmeurs comme C.
-Plusieurs points en font un langage pratique à utiliser. Tout d'abord, il est
-suffisamment expressif pour compiler tout C, y compris de nombreuses extensions
-GNU utilisées dans le noyau Linux (section~\ref{sec:gnuc}), et des traducteurs
-automatiques depuis C et Ada existent (section~\ref{sec:compil}).
-
-Ensuite, ses instructions sont orthogonales et minimales: il existe en général
-une seule manière de faire les choses. Par exemple, le flot de contrôle est
-restreint à la boucle infinie et au saut en avant (\enquote{\emph{break}}
-généralisé).
-
-Enfin, lorsque certaines constructions sont ambigües, un choix est fait. Par
-exemple, \linebreak l'évaluation des arguments d'une fonction est faite de
-manière explicite, les tailles des types sont indiqués à chaque déclaration de
-variable, etc. Sa sémantique d'exécution (ainsi qu'une partie des étapes de
-compilation depuis C) est décrites dans \cite{newspeak}. Sa syntaxe est donnée
-dans la figure~\ref{fig:stx-npk}.
+statiques, contrairement à des langages conçus pour les programmeurs comme C. Sa
+sémantique d'exécution (ainsi qu'une partie des étapes de compilation depuis C)
+est décrites dans \cite{newspeak}. Sa syntaxe est donnée dans la
+figure~\ref{fig:stx-npk}.
 
 \begin{figure}%{{{
 
@@ -92,9 +79,6 @@ dans la figure~\ref{fig:stx-npk}.
 \caption{Syntaxe simplifiée de \newspeak}
 \label{fig:stx-npk}
 \end{figure}%}}}
-
-\section{Chaîne de compilation}
-\label{sec:compil}
 
 \begin{figure}
   \centering
