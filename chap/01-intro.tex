@@ -336,6 +336,7 @@ Pour un tour d'horizon de différents systèmes de types statiques, avec en
 particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
 
 \section{Langages}
+\label{sec:lang-int}
 
 Le système Unix, développé à partir de 1969, a tout d'abord été développé en
 assembleur sur un mini-ordinateur PDP-7, puis a été porté sur d'autres
@@ -577,11 +578,6 @@ sur tableaux).
 %domaines abstraits nécessaires. Mais cela peut être coûteux, surtout lorsque le
 %programme comporte un grand nombre de variables.
 
-Il est possible d'ajouter des annotations afin de guider l'analyse dans ce sens,
-mais une préanalyse syntaxique peut permettre d'automatiser ce processus. En
-particulier, l'analyse par typage permet d'inférer les relations qui existent
-entre les différentes expressions présentes dans un programme.
-
 Dans ce sens, des outils fondés sur l'interprétation abstraite ont été
 développés chez EADS Innovation Works dans le cadre du projet
 Penjili~\cite{AllamigeonHymansSSTIC07}.
@@ -758,8 +754,12 @@ manière subtile et pas toujours bien spécifiée et/ou documentée.
 
 \section{Notre solution}
 
-Nous proposons d'utiliser \newspeak pour analyser des propriétés de sécurité par
-typage sur du code non avionique. Cela est pertinent pour les raisons suivantes.
+Le but de ce travail est de définir et implanter des analyses statiques légères
+sur le langage C. Il est possible de réaliser celles-ci, soit directement dur ce
+langage, soit en utilisant un des langages intermédiaires mentionnés dans la
+section~\ref{sec:lang-int}. Nous proposons d'utiliser \newspeak pour analyser
+des propriétés de sécurité par typage sur du code non avionique. Cela est
+pertinent pour les raisons suivantes.
 
 D'une part, les types permettent de modéliser l'environnement d'exécution d'un
 programme (ici, les paramètres d'appels système) avec un grain assez grand. Être
