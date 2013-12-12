@@ -472,9 +472,12 @@ L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
 que les variables possèdent une valeur, on utilise un domaine abstrait qui
 permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
-% TODO couleurs N&B (reprendre couleurs lentilles) + noms dans texte
 \begin{figure}
 \centering
+
+\tikzstyle{patA}=[fill=white]
+\tikzstyle{patB}=[fill=black!30]
+\tikzstyle{patC}=[fill=white,pattern=crosshatch dots]
 
 \begin{tikzpicture}[scale=0.7]
 \clip  (-1,-1) rectangle (12,12);
@@ -485,33 +488,33 @@ permet de voir les variables comme possédant un ensemble de valeurs possibles.
 % Ensemble sûr
 \foreach \xsh in {0, 180}
 \foreach \ysh in {0, 180}
-\path [xshift=\xsh,yshift=\ysh,fill=white]
+\path [xshift=\xsh,yshift=\ysh,patA]
                  (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
 
 % Approximation (précise)
 \foreach \ysh in {0,180}
-\draw [yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+\draw [yshift=\ysh,patB,scale around={1.3:(3,3)}]
                 (1,1) -- (1,2)
              -- (2,3) -- (3,3)
              -- (3,1) -- cycle;
 
 % Approximation (imprécise)
 \foreach \ysh in {0,180}
-\draw [xshift=180,yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+\draw [xshift=180,yshift=\ysh,patB,scale around={1.3:(3,3)}]
                 (1,1) -- (1,2)
               -- (4,5)
              -- (4,1) -- cycle;
 
 % Comportement réel (sans erreurs)
 \foreach \xsh in {0, 180}
-\draw [xshift=\xsh,yshift=180,fill=green!20,scale=0.8] plot[smooth cycle]
+\draw [xshift=\xsh,yshift=180,patC,scale=0.8] plot[smooth cycle]
       coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
 
 % Comportement réel (avec erreurs)
 \foreach \xsh in {0, 180}
-\draw [xshift=\xsh,fill=green!20,scale=0.8] plot[smooth cycle]
+\draw [xshift=\xsh,patC,scale=0.8] plot[smooth cycle]
       coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)};
 
 % Ensemble sûr (redraw)
@@ -524,8 +527,8 @@ permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
 \end{tikzpicture}
 \caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
-des états effectifs du programme, en vert, est surapproximé par l'ensemble en
-bleu.}
+des états effectifs du programme, noté par des points, est surapproximé par
+l'ensemble en gris.}
 \label{fig:staticanalysis}
 \end{figure}
 
@@ -541,16 +544,16 @@ aucun comportement, permet de prouver l'absence d'erreurs.
 
 La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
 valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
-comportements réels du programme est en vert, et l'approximation en bleu.
-Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
-en bas puis de gauche à droite. Dans le premier on a prouvé, à la compilation,
-que le programme ne pourra pas comporter d'erreurs à l'exécution. Dans le
-deuxième, l'approximation recouvre les cas dangereux: on émet une alarme par
-manque de précision. Dans la troisième l'approximation n'est pas \emph{sound}
-(par construction, on évite ce cas). Enfin, dans la quatrième, on émet une
-alarme à raison car il existe des comportements erronés. Toute la difficulté est
-donc de construire une surapproximation correcte mais conservant une précision
-suffisante.
+comportements réels du programme est noté par des points, et l'approximation en
+gris. Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de
+haut en bas puis de gauche à droite. Dans le premier on a prouvé, à la
+compilation, que le programme ne pourra pas comporter d'erreurs à l'exécution.
+Dans le deuxième, l'approximation recouvre les cas dangereux: on émet une alarme
+par manque de précision. Dans la troisième l'approximation n'est pas
+\emph{sound} (par construction, on évite ce cas). Enfin, dans la quatrième, on
+émet une alarme à raison car il existe des comportements erronés. Toute la
+difficulté est donc de construire une surapproximation correcte mais conservant
+une précision suffisante.
 
 Pour construire cette surapproximation, on peut employer divers outils. Par
 exemple, un entier pourra être représenté par sa valeur minimale et sa valeur
@@ -683,12 +686,10 @@ complexe à exprimer car elles peuvent interagir avec le monde extérieur.
 
 Certaines interagissent directement avec le système d'exploitation, comme les
 fonctions d'ouverture ou d'écriture dans un fichier. D'autres modifient
-totalement la sémantique du programme. Par exemple \texttt{pthread\_create(\&t,
-NULL, f, NULL)} lance l'exécution de \texttt{f(NULL)} tout en continuant
-l'exécution de la fonction en cours (concurrence).
-
-% TODO est-ce la sémantique qui est changée ? dans ton exemple il peut y avoir
-% la perte du déterminisme mais c'est dans le modèle de calcul
+totalement le mode d'exécution du programme. Par exemple
+\texttt{pthread\_create(\&t, NULL, f, NULL)} lance l'exécution de
+\texttt{f(NULL)} tout en continuant l'exécution de la fonction en cours
+(concurrence).
 
 \paragraph{Extensions du langage}
 
@@ -752,14 +753,10 @@ fait de manière moins efficace.
 
 De manière générale, les compilateurs permettent, via le biais d'extensions
 comme \texttt{packed}, de personaliser finement le code émis grâce à des
-extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
-pas toujours bien spécifiée et/ou documentée.
-
-% TODO d'autres constructions
+extensions. Elles changent parfois le mode d'exécution des programmes d'une
+manière subtile et pas toujours bien spécifiée et/ou documentée.
 
 \section{Notre solution}
-
-% TODO n'est-ce pas un peu court?
 
 Nous proposons d'utiliser \newspeak pour analyser des propriétés de sécurité par
 typage sur du code non avionique. Cela est pertinent pour les raisons suivantes.
@@ -773,12 +770,11 @@ guider en amont des analyses de valeurs plus précises (par exemple en
 choisissant des domaines abstraits particuliers). Le typage de \newspeak est une
 première étape dans cette direction.
 
-% TODO inspiré ou bien construit au dessus ? quid des traducteurs?
-
 Pour la formalisation, nous utilisons un langage nommé \langname, inspiré de
 \newspeak mais avec un modèle mémoire de plus haut niveau permettant de garantir
 la sûreté des programmes bien typés. L'implantation quant à elle est faite sur
-\newspeak et est redistribuée avec celui-ci.
+\newspeak (ce qui permet grâce à un traducteur de traiter des programmes écrits
+en C) et est redistribuée avec celui-ci.
 
 \subsection*{Plan de la thèse}
 
@@ -805,8 +801,6 @@ mémoire présents dans les systèmes d'exploitation. Pour ce faire, on ajoute d
 pointeurs contrôlés par l'utilisateur à la sémantique et au système de types. À
 chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
 de sûreté de typage reliant la sémantique d'exécution aux types statiques.
-
-% TODO ici c'est plus précis
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage
