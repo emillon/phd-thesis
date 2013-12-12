@@ -433,7 +433,7 @@ la recherche (CIFRE).
 Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
 plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
 retrouver face à grands impacts économiques, voire risquer des vies humaines. On
-comprend bien que les phases de vérification et de certification sont au coeur
+comprend bien que les phases de vérification et de certification sont au cœur
 du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
 vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
 vol avait été vérifié plus efficacement \cite{Ariane501}.
@@ -767,16 +767,29 @@ plus fin est difficile et nécessite de modéliser l'environnement.
 
 D'autre part, réaliser des analyses syntaxiques sur \newspeak peut permettre de
 guider en amont des analyses de valeurs plus précises (par exemple en
-choisissant des domaines abstraits particuliers). Le typage de \newspeak est une
-première étape dans cette direction.
+choisissant des domaines abstraits particuliers). Le typage de \newspeak est un
+premier pas dans cette direction.
 
-Pour la formalisation, nous utilisons un langage nommé \langname, inspiré de
-\newspeak mais avec un modèle mémoire de plus haut niveau permettant de garantir
-la sûreté des programmes bien typés. L'implantation quant à elle est faite sur
-\newspeak (ce qui permet grâce à un traducteur de traiter des programmes écrits
-en C) et est redistribuée avec celui-ci.
+\section{Contributions}
 
-\subsection*{Plan de la thèse}
+Une première étape est de définir des restrictions sur le langage source. En
+effet, le langage C comme \newspeak permettent des conversions non sûres entre
+données, ce qui limite l'intérêt du typage. Cela revient à définir un langage
+impératif avec un modèle mémoire de plus haut niveau, que l'on nomme \langname.
+
+Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
+sur l'exécution des programmes. On profite du caractère structuré des états
+mémoire pour exprimer cette sémantique en terme de lentilles bidirectionnelles,
+permettant de décrire la modification en profondeur de la mémoire.
+
+Les prochaines contributions constituent le cœur de notre travail. Il s'agit
+d'un système de types sûrs pour \langname, ainsi que deux extensions validant
+l'approche typage pour résoudre notre problème de base, qui est la vérification
+des accès aux pointeurs utilisateur. Notre formalisation est accompagnée d'un
+prototype basé sur \newspeak, ce qui permet de de traiter des programmes écrits
+en C comme le noyau Linux.
+
+\section{Plan de la thèse}
 
 Cette thèse est organisée en trois parties. La première décrit le contexte de
 ces travaux, ainsi que les solutions existantes. La deuxième expose notre
