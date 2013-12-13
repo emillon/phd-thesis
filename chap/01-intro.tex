@@ -335,6 +335,93 @@ type. Cette technique a été décrite en premier dans~\cite{Milner78}.
 Pour un tour d'horizon de différents systèmes de types statiques, avec en
 particulier du polymorphisme, on pourra se référer à~\cite{TAPL}.
 
+\section{Langages}
+\label{sec:lang-int}
+
+Le système Unix, développé à partir de 1969, a tout d'abord été développé en
+assembleur sur un mini-ordinateur PDP-7, puis a été porté sur d'autres
+architectures matérielles. Pour aider ce portage, il a été nécessaire de créer
+un \enquote{assembleur portable}, le langage C~\cite{KandR,AnsiC}. Son but est
+de fournir des abstractions au dessus du langage d'assemblage. Les structures de
+contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
+programmation structurée, c'est-à-dire en limitant l'utilisation de
+l'instruction \texttt{goto}. Les types de données sont également abstraits de la
+machine: ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
+taille concrète. Son système de types, bien que statique (il peut y avoir des
+erreurs de typage à la compilation), est assez rudimentaire: toutes les formes
+de transtypage sont acceptées, certaines conversions sont insérées
+automatiquement par le compilateur, et la plupart des abstractions fournies par
+le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
+C. Le noyau du système Mac OS X d'Apple est également un dérivé d'Unix, et est
+donc aussi écrit dans ce langage.
+
+Néanmoins ce langage n'est pas facile à analyser, car il est conçu pour être
+facilement écrit par des programmeurs humains. Certaines constructions sont
+ambigües\footnote{
+    Selon qu'il existe un type nommé \texttt{a}, l'expression \texttt{(a)-(b)}
+    sera interprétée comme le transtypage de \texttt{-(b)} dans le type
+    \texttt{a}, ou la soustraction des deux expressions \texttt{(a)} et
+    \texttt{(b)}.
+}, et de nombreux comportements sont implicites.
+
+Si on veut analyser des programmes, il est plus pratique de travailler sur une
+représentation intermédiaire plus simple afin d'avoir moins de traitements
+dupliqués. Dans ce cas on ajoute une phase préliminaire à l'analyse, qui
+consiste à convertir le code à étudier vers cette représentation. On présente
+quelques candidats langages qui peuvent servir ce rôle:
+
+\subsection*{Middle-ends}
+
+Les premiers candidats sont bien entendu les représentations intermédiaires
+utilisées dans les compilateurs C. Elles ont l'avantage d'accepter, en plus du C
+standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
+plupart des logiciels. En particulier, le noyau Linux repose fortement sur les
+extensions GNU.\@
+
+\paragraph{GCC} utilise une représentation interne nommée
+GIMPLE~\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C,
+reposant sur de nombreuses macros afin de cacher les détails d'implantation
+interne pouvant varier entre deux versions. Cette représentation étant réputée
+difficile à manipuler, le projet MELT~\cite{gcc-melt} permet de générer un
+greffon de compilateur écrit dans un dialecte de Lisp.
+
+\paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
+open-source puis sponsorisé par Apple. À la différence de GCC, sa base de code
+est écrite en C++. Il utilise une représentation intermédiaire qui peut être
+manipulée sous forme d'une structure de données C++, d'un fichier de code-octet
+compact, ou textuelle.
+
+\paragraph{Cmm} est une représentation interne utilisée pour la génération de
+code lors de la compilation d'OCaml~\link{ocaml}, et disponible dans les sources
+du compilateur (il s'agit donc d'une structure de données OCaml). Ce langage a
+l'avantage d'être très restreint, mais malheureusement il n'existe pas
+directement de traducteur permettant de compiler C vers Cmm.
+
+\paragraph{C-~-}\cite{spjcmm} \link{cmm}, dont le nom est inspiré du précédent,
+est un projet qui visait à unifier les langages intermédiaires utilisés par les
+compilateurs. L'idée est que, si un front-end peut émettre du C-~- (sous forme de
+texte), il est possible d'obtenir du code machine efficace. Le compilateur
+Haskell GHC, par exemple, utilise une représentation intermédiaire très
+similaire à C-~-.
+
+\subsection*{Langages intermédiaires ad hoc}
+
+Comme le problème de construire une représentation intermédiaire adaptée à une
+analyse statique n'est pas nouveau, plusieurs projets ont déjà essayé d'y
+apporter une solution. Puisqu'ils sont développés en parallèle des compilateurs,
+le support des extensions est en général moins important dans ces langages.
+
+\paragraph{CIL}\cite{NeculaCil} \link{cil} est une représentation en
+OCaml d'un programme C, développée depuis 2002. Grâce à un mécanisme de
+greffons, elle permet de prototyper rapidement des analyses statiques de
+programmes.
+
+\paragraph{CompCert} est un projet qui vise à produire un compilateur certifié
+pour C. C'est-à-dire que les transformations sémantiques sont faites de manière
+prouvée. Il utilise de nombreux langages intermédiaires, dont Compcert C,
+Clight~\cite{cfront} et Cminor~\cite{cminorSL} qui est utilisé pour les passes
+de middle-end.
+
 \section{Le projet Penjili}
 
 En face de ce problème théorique et technique, il faut mettre en perspective les
@@ -346,7 +433,7 @@ la recherche (CIFRE).
 Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
 plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
 retrouver face à grands impacts économiques, voire risquer des vies humaines. On
-comprend bien que les phases de vérification et de certification sont au coeur
+comprend bien que les phases de vérification et de certification sont au cœur
 du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
 vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
 vol avait été vérifié plus efficacement \cite{Ariane501}.
@@ -386,9 +473,12 @@ L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
 que les variables possèdent une valeur, on utilise un domaine abstrait qui
 permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
-% TODO couleurs N&B (reprendre couleurs lentilles) + noms dans texte
 \begin{figure}
 \centering
+
+\tikzstyle{patA}=[fill=white]
+\tikzstyle{patB}=[fill=black!30]
+\tikzstyle{patC}=[fill=white,pattern=crosshatch dots]
 
 \begin{tikzpicture}[scale=0.7]
 \clip  (-1,-1) rectangle (12,12);
@@ -399,33 +489,33 @@ permet de voir les variables comme possédant un ensemble de valeurs possibles.
 % Ensemble sûr
 \foreach \xsh in {0, 180}
 \foreach \ysh in {0, 180}
-\path [xshift=\xsh,yshift=\ysh,fill=white]
+\path [xshift=\xsh,yshift=\ysh,patA]
                  (0, 0) -- ++(0, 2)
             -- ++(1, 2) -- ++(3,-1)
             -- ++(1,-3) --    cycle;
 
 % Approximation (précise)
 \foreach \ysh in {0,180}
-\draw [yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+\draw [yshift=\ysh,patB,scale around={1.3:(3,3)}]
                 (1,1) -- (1,2)
              -- (2,3) -- (3,3)
              -- (3,1) -- cycle;
 
 % Approximation (imprécise)
 \foreach \ysh in {0,180}
-\draw [xshift=180,yshift=\ysh,fill=blue!20,scale around={1.3:(3,3)}]
+\draw [xshift=180,yshift=\ysh,patB,scale around={1.3:(3,3)}]
                 (1,1) -- (1,2)
               -- (4,5)
              -- (4,1) -- cycle;
 
 % Comportement réel (sans erreurs)
 \foreach \xsh in {0, 180}
-\draw [xshift=\xsh,yshift=180,fill=green!20,scale=0.8] plot[smooth cycle]
+\draw [xshift=\xsh,yshift=180,patC,scale=0.8] plot[smooth cycle]
       coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
 
 % Comportement réel (avec erreurs)
 \foreach \xsh in {0, 180}
-\draw [xshift=\xsh,fill=green!20,scale=0.8] plot[smooth cycle]
+\draw [xshift=\xsh,patC,scale=0.8] plot[smooth cycle]
       coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)};
 
 % Ensemble sûr (redraw)
@@ -438,8 +528,8 @@ permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
 \end{tikzpicture}
 \caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
-des états effectifs du programme, en vert, est surapproximé par l'ensemble en
-bleu.}
+des états effectifs du programme, noté par des points, est surapproximé par
+l'ensemble en gris.}
 \label{fig:staticanalysis}
 \end{figure}
 
@@ -455,23 +545,16 @@ aucun comportement, permet de prouver l'absence d'erreurs.
 
 La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
 valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
-comportements réels du programme est en vert, et l'approximation en bleu.
-
-Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de haut
-en bas puis de gauche à droite :
-
-\begin{itemize}
-  \item on a prouvé, à la compilation, que le programme ne pourra pas comporter
-  d'erreurs à l'exécution.
-  \item l'analyseur doit émettre une (fausse) alarme. Il y a donc un manque de
-  précision.
-  \item l'approximation n'est pas \emph{sound}. Par construction, on évite ce
-  cas.
-  \item on signale un comportement erron\'e.
-\end{itemize}
-
-Toute la difficulté est donc de construire une surapproximation correcte mais
-conservant une précision suffisante.
+comportements réels du programme est noté par des points, et l'approximation en
+gris. Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de
+haut en bas puis de gauche à droite. Dans le premier on a prouvé, à la
+compilation, que le programme ne pourra pas comporter d'erreurs à l'exécution.
+Dans le deuxième, l'approximation recouvre les cas dangereux: on émet une alarme
+par manque de précision. Dans la troisième l'approximation n'est pas
+\emph{sound} (par construction, on évite ce cas). Enfin, dans la quatrième, on
+émet une alarme à raison car il existe des comportements erronés. Toute la
+difficulté est donc de construire une surapproximation correcte mais conservant
+une précision suffisante.
 
 Pour construire cette surapproximation, on peut employer divers outils. Par
 exemple, un entier pourra être représenté par sa valeur minimale et sa valeur
@@ -480,33 +563,52 @@ maximale (domaine abstrait des intervalles), et un pointeur sur un tableau peut
 (\emph{offset}) par rapport au début de la zone mémoire (domaine des pointeurs
 sur tableaux).
 
-\begin{figure}
-\insertcode{strlen.c}
-\caption{Implantation de la fonction \texttt{strlen}}
-\label{fig:strlen}
-\end{figure}
+%\begin{figure}
+%\insertcode{strlen.c}
+%\caption{Implantation de la fonction \texttt{strlen}}
+%\label{fig:strlen}
+%\end{figure}
 
-Il est aussi important de repérer les relations qui peuvent exister entre les
-variables. Par exemple, dans la figure~\ref{fig:strlen}, les variables
-\texttt{p} et \texttt{i} sont liées dans la boucle: le décalage du pointeur
-\texttt{p} est égal à la somme du décalage de \texttt{str} et de \texttt{i}.
+%Il est aussi important de repérer les relations qui peuvent exister entre les
+%variables. Par exemple, dans la figure~\ref{fig:strlen}, les variables
+%\texttt{p} et \texttt{i} sont liées dans la boucle: le décalage du pointeur
+%\texttt{p} est égal à la somme du décalage de \texttt{str} et de \texttt{i}.
 
-Repérer ces relations est avantageux car il peut permettre de n'activer que les
-domaines abstraits nécessaires. Mais cela peut être coûteux, surtout lorsque le
-programme comporte un grand nombre de variables.
+%Repérer ces relations est avantageux car il peut permettre de n'activer que les
+%domaines abstraits nécessaires. Mais cela peut être coûteux, surtout lorsque le
+%programme comporte un grand nombre de variables.
 
-Il est possible d'ajouter des annotations afin de guider l'analyse dans ce sens,
-mais une préanalyse syntaxique peut permettre d'automatiser ce processus. En
-particulier, l'analyse par typage permet d'inférer les relations qui existent
-entre les différentes expressions présentes dans un programme.
+Dans ce sens, des outils fondés sur l'interprétation abstraite ont été
+développés chez EADS Innovation Works dans le cadre du projet
+Penjili~\cite{AllamigeonHymansSSTIC07}.
 
-% TODO check date Penjili
+Les analyses statiques ne manipulent pas directement du code C, mais un langage
+intermédiaire appelé \newspeak~\cite{newspeak}. Celui-ci est suffisamment
+expressif pour compiler la plupart des programmes C, y compris de nombreuses
+extensions GNU utilisées dans le noyau Linux (section~\ref{sec:gnuc}), et des
+traducteurs automatiques depuis C et Ada existent (section~\ref{sec:compil}).
 
-Le projet Penjili~\cite{AllamigeonHymansSSTIC07}, commencé à EADS Innovation
-Works en 2005, a pour but de fournir un analyseur statique de logiciel système
-embarqué critique utilisant l'interprétation abstraite pour prouver l'absence
-d'erreurs à l'exécution. Il a été employé pour vérifier la sûreté de plusieurs
-logiciels aéronautiques.
+Ensuite, ses instructions sont orthogonales et minimales: il existe en général
+une seule manière de faire les choses. Par exemple, le flot de contrôle est
+restreint à la boucle infinie et au saut en avant (\enquote{\emph{break}}
+généralisé).
+
+Enfin, lorsque certaines constructions sont ambigües, un choix est fait. Par
+exemple, l'évaluation des arguments d'une fonction est faite de manière
+explicite, les tailles des types sont indiquées à chaque déclaration de
+variable, etc.
+
+Séparer le langage intermédiaire de la phase d'analyse permet de beaucoup
+simplifier l'analyseur statique. D'une part, les constructions redondantes comme
+les différents types de boucles ne sont traitées qu'une fois. D'autre part,
+lorsque le langage source est étendu (en supportant une nouvelle extension de C
+par exemple), l'analyseur n'a pas besoin d'être modifié.
+
+Ces outils sont disponibles sous license libre sur~\link{penjili}. L'analyseur
+statique Penjili, reposant sur ces outils, a été utilisé pour analyser des
+logiciels embarqués critiques de plusieurs millions de lignes de code. Ce
+dernier n'est pour le moment pas open source. Tous ces outils sont écrits dans
+le langage OCaml~\cite{DAOC}.
 
 \section{De l'avionique à l'informatique d'entreprise}
 
@@ -524,46 +626,46 @@ l'\emph{open source}.
 Ces logiciels sont plus difficiles à analyser car ils sont écrits sans
 contraintes particulières. Non seulement toutes les constructions du langage
 sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
-allocation dynamique, récursion, accès au système de fichiers, etc), mais des
-extensions non standard peuvent être utilisées.
+allocation dynamique, récursion, accès au système de fichiers, etc), mais aussi
+des extensions non standard peuvent être utilisées.
 
-\paragraph{Problèmes liés à la compilation}
+%\paragraph{Problèmes liés à la compilation}
 
-\begin{figure}%{{{
-    \centering
-    \insertcode{bcopy.c}
+%\begin{figure}%{{{
+    %\centering
+    %\insertcode{bcopy.c}
 
-    \caption{Utilisation d'alternatives lors de la compilation}
-    \label{fig:bcopy}
-\end{figure}%}}}
+    %\caption{Utilisation d'alternatives lors de la compilation}
+    %\label{fig:bcopy}
+%\end{figure}%}}}
 
-La compilation d'un programme est la suite d'opérations qui permet d'engendrer
-un fichier exécutable à partir de l'ensemble du code source de celui-ci.
-Habituellement cela se fait selon la suite d'opérations suivantes. Tout d'abord,
-l'environnement de compilation est détecté. Cela permet d'ajuster certaines
-variables de configuration. Par exemple, si le code source utilise la fonction
-\texttt{memmove} et que celle-ci n'est pas disponible dans l'environnement de
-compilation, il est possible d'utiliser \texttt{bcopy} à la place
-(figure~\ref{fig:bcopy}).
+%La compilation d'un programme est la suite d'opérations qui permet d'engendrer
+%un fichier exécutable à partir de l'ensemble du code source de celui-ci.
+%Habituellement cela se fait selon la suite d'opérations suivantes. Tout d'abord,
+%l'environnement de compilation est détecté. Cela permet d'ajuster certaines
+%variables de configuration. Par exemple, si le code source utilise la fonction
+%\texttt{memmove} et que celle-ci n'est pas disponible dans l'environnement de
+%compilation, il est possible d'utiliser \texttt{bcopy} à la place
+%(figure~\ref{fig:bcopy}).
 
-Ensuite, peut venir une étape de génération de code source. Cela arrive dans le
-cas ou certaines données calculables statiquement doivent être disponible à
-l'exécution, ou dans le cas d'utilisation d'outils comme \texttt{lex} et
-\texttt{yacc} qui permettent d'engendrer des analyseurs lexicaux et syntaxiques.
+%Ensuite, peut venir une étape de génération de code source. Cela arrive dans le
+%cas ou certaines données calculables statiquement doivent être disponible à
+%l'exécution, ou dans le cas d'utilisation d'outils comme \texttt{lex} et
+%\texttt{yacc} qui permettent d'engendrer des analyseurs lexicaux et syntaxiques.
 
-Puis vient l'étape de compilation en elle-même. Chaque fichier source est
-prétraité à l'aide de \texttt{cpp}, puis est compilé (en général via
-\texttt{gcc}) en code-objet (fichier d'extension \texttt{.o}).
+%Puis vient l'étape de compilation en elle-même. Chaque fichier source est
+%prétraité à l'aide de \texttt{cpp}, puis est compilé (en général via
+%\texttt{gcc}) en code-objet (fichier d'extension \texttt{.o}).
 
-Enfin, la phase d'édition de liens permet de grouper ces fichiers en un
-exécutable. Des références vers les bibliothèques dynamiques nécessaires sont
-placées dans cet exécutable, et seront résolues au lancement de celui-ci.
+%Enfin, la phase d'édition de liens permet de grouper ces fichiers en un
+%exécutable. Des références vers les bibliothèques dynamiques nécessaires sont
+%placées dans cet exécutable, et seront résolues au lancement de celui-ci.
 
-Pour analyser le code source, le plus simple est de se \enquote{brancher} à ce
-système de compilation, par exemple en créant une commande nommée \texttt{gcc}
-qui transmet le code source à l'analyseur statique. Il est à remarquer que les
-fichiers sont alors vus un par un, ce qui n'est pas compatible avec toutes les
-analyses.
+%Pour analyser le code source, le plus simple est de se \enquote{brancher} à ce
+%système de compilation, par exemple en créant une commande nommée \texttt{gcc}
+%qui transmet le code source à l'analyseur statique. Il est à remarquer que les
+%fichiers sont alors vus un par un, ce qui n'est pas compatible avec toutes les
+%analyses.
 
 \paragraph{Programmes non autosuffisants}
 
@@ -580,9 +682,10 @@ complexe à exprimer car elles peuvent interagir avec le monde extérieur.
 
 Certaines interagissent directement avec le système d'exploitation, comme les
 fonctions d'ouverture ou d'écriture dans un fichier. D'autres modifient
-totalement la sémantique du programme. Par exemple \texttt{pthread\_create(\&t,
-NULL, f, NULL)} lance l'exécution de \texttt{f(NULL)} tout en continuant
-l'exécution de la fonction en cours (concurrence).
+totalement le mode d'exécution du programme. Par exemple
+\texttt{pthread\_create(\&t, NULL, f, NULL)} lance l'exécution de
+\texttt{f(NULL)} tout en continuant l'exécution de la fonction en cours
+(concurrence).
 
 \paragraph{Extensions du langage}
 
@@ -632,9 +735,9 @@ l'exécution de la fonction en cours (concurrence).
 \end{figure}%}}}
 
 Par exemple, la figure~\ref{fig:packed} démontre l'influence de l'attribut
-\texttt{packed} (supporté par GCC) la sur compilation d'une structure. Sans
+\texttt{packed} (supporté par GCC) sur la compilation d'une structure. Sans
 celui-ci, les champs sont alignés de manière à faciliter les accès à la mémoire,
-par exemple en faisant démarrer les adresses de chaque quand sur un multiple de
+par exemple en faisant démarrer les adresses de chaque champ sur un multiple de
 4 octets (en gras). Cela nécessite d'introduire des octets de \emph{padding} (en
 gris) qui ne sont pas utilisés. La taille totale de cette structure est donc de
 12 octets.
@@ -646,130 +749,71 @@ fait de manière moins efficace.
 
 De manière générale, les compilateurs permettent, via le biais d'extensions
 comme \texttt{packed}, de personaliser finement le code émis grâce à des
-extensions. Celles-ci changent parfois la sémantique d'une manière subtile et
-pas toujours bien spécifiée et/ou documentée.
+extensions. Elles changent parfois le mode d'exécution des programmes d'une
+manière subtile et pas toujours bien spécifiée et/ou documentée.
 
-\section{Langages}
+\section{Objectifs et contributions de la thèse}
 
-Le système Unix, développé à partir de 1969, a tout d'abord été développé en
-assembleur sur un mini-ordinateur PDP-7, puis a été porté sur d'autres
-architectures matérielles. Pour aider ce portage, il a été nécessaire de créer
-un \enquote{assembleur portable}, le langage C~\cite{KandR,AnsiC}. Son but est
-de fournir des abstractions au dessus du langage d'assemblage. Les structures de
-contrôle (\texttt{if}, \texttt{while}, \texttt{for}) permettent d'utiliser la
-programmation structurée, c'est-à-dire en limitant l'utilisation de
-l'instruction \texttt{goto}. Les types de données sont également abstraits de la
-machine: ainsi, \texttt{int} désigne un entier machine, indépendamment de sa
-taille concrète. Son système de types, bien que statique (il peut y avoir des
-erreurs de typage à la compilation), est assez rudimentaire: toutes les formes
-de transtypage sont acceptées, certaines conversions sont insérées
-automatiquement par le compilateur, et la plupart des abstractions fournies par
-le langage sont perméables. Le noyau Linux est écrit dans un dialecte du langage
-C. Le noyau du système Mac OS X d'Apple est également un dérivé d'Unix, et est
-donc aussi écrit dans ce langage.
+Le but de ce travail est de définir et implanter des analyses statiques
+\enquote{légères}sur le langage C, c'est-à-dire plus simples que les analyses de
+valeurs par interprétation abstraite. Il est possible de réaliser celles-ci,
+soit directement sur C, soit en utilisant un des langages intermédiaires
+mentionnés dans la section~\ref{sec:lang-int}. Nous proposons d'utiliser
+\newspeak pour analyser des propriétés de sécurité par typage sur du code non
+avionique. Cela est pertinent pour les raisons suivantes:
 
-Néanmoins ce langage n'est pas facile à analyser, car il est conçu pour être
-facilement écrit par des programmeurs humains. Certaines constructions sont
-ambigües\footnote{
-    Selon qu'il existe un type nommé \texttt{a}, l'expression \texttt{(a)-(b)}
-    sera interprétée comme le transtypage de \texttt{-(b)} dans le type
-    \texttt{a}, ou la soustraction des deux expressions \texttt{(a)} et
-    \texttt{(b)}.
-}, et de nombreux comportements sont implicites.
+\begin{itemize}
 
-Si on veut analyser des programmes, il est plus pratique de travailler sur une
-représentation intermédiaire plus simple afin d'avoir moins de traitements
-dupliqués. Dans ce cas on ajoute une phase préliminaire à l'analyse, qui
-consiste à convertir le code à étudier vers cette représentation. On présente
-quelques candidats langages qui peuvent servir ce rôle:
+\item
+Les types permettent de modéliser l'environnement d'exécution d'un
+programme (ici, les paramètres d'appels système) avec un grain assez grand. Être
+plus fin est difficile et nécessite de modéliser l'environnement.
 
-\subsection*{Middle-ends}
+\item
+Réaliser des analyses syntaxiques sur \newspeak peut permettre de guider en
+amont des analyses de valeurs plus précises (par exemple en choisissant des
+domaines abstraits particuliers). Le typage de \newspeak est un premier pas dans
+cette direction.
 
-Les premiers candidats sont bien entendu les représentations intermédiaires
-utilisées dans les compilateurs C. Elles ont l'avantage d'accepter, en plus du C
-standard, les diverses extensions (GNU, Microsoft, Plan9) utilisées par la
-plupart des logiciels. En particulier, le noyau Linux repose fortement sur les
-extensions GNU.\@
+\end{itemize}
 
-\paragraph{GCC} utilise une représentation interne nommée
-GIMPLE\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C, reposant
-sur de nombreuses macros afin de cacher les détails d'implantation interne
-pouvant varier entre deux versions. Cette représentation étant réputée difficile
-à manipuler, le projet MELT\cite{gcc-melt} permet de générer un greffon de
-compilateur écrit dans un dialecte de Lisp.
+Nos contributions sont les suivantes:
 
-\paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
-open-source puis sponsorisé par Apple. À la différence de GCC, sa base de code
-est écrite en C++. Il utilise une représentation intermédiaire qui peut être
-manipulée sous forme d'une structure de données C++, d'un fichier de code-octet
-compact, ou textuelle.
+\begin{itemize}
 
-\paragraph{Cmm} est une représentation interne utilisée pour la génération de
-code lors de la compilation d'OCaml~\link{ocaml}, et disponible dans les sources
-du compilateur (il s'agit donc d'une structure de données OCaml). Ce langage a
-l'avantage d'être très restreint, mais malheureusement il n'existe pas
-directement de traducteur permettant de compiler C vers Cmm.
+\item
+Une première étape est de définir des restrictions sur le langage source. En
+effet, le langage C comme \newspeak permettent des conversions non sûres entre
+données, ce qui limite l'intérêt du typage. Cela revient à définir un
+langage impératif avec un modèle mémoire de plus haut niveau, que l'on nomme
+\langname.
 
-\paragraph{C-~-}\cite{spjcmm} \link{cmm}, dont le nom est inspiré du précédent,
-est un projet qui visait à unifier les langages intermédiaires utilisés par les
-compilateurs. L'idée est que, si un front-end peut émettre du C-~- (sous forme de
-texte), il est possible d'obtenir du code machine efficace. Le compilateur
-Haskell GHC, par exemple, utilise une représentation intermédiaire très
-similaire à C-~-.
+\item
+Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
+sur l'exécution des programmes. On profite du caractère structuré des états
+mémoire pour exprimer cette sémantique en terme de lentilles
+bidirectionnelles, permettant de décrire la modification en profondeur de la
+mémoire.
 
-\subsection*{Langages intermédiaires ad hoc}
+\item
+Au cœur de notre travail se trouve un système de types sûrs pour \langname,
+ainsi que deux extensions validant l'approche typage pour résoudre notre
+problème de base, qui est la vérification des accès aux pointeurs utilisateur.
 
-Comme le problème de construire une représentation intermédiaire adaptée à une
-analyse statique n'est pas nouveau, plusieurs projets ont déjà essayé d'y
-apporter une solution. Puisqu'ils sont développés en parallèle des compilateurs,
-le support des extensions est en général moins important dans ces langages.
+\item
+Notre formalisation est accompagnée d'un prototype basé sur \newspeak, ce qui
+permet de de traiter des programmes écrits en C comme le noyau Linux. Ce
+logiciel est disponible sous une license libre.
 
-\paragraph{CIL}\cite{NeculaCil} \link{cil} est une représentation en
-OCaml d'un programme C, développée depuis 2002. Grâce à un mécanisme de
-greffons, elle permet de prototyper rapidement des analyses statiques de
-programmes.
-
-\paragraph{CompCert} est un projet qui vise à produire un compilateur certifié
-pour C. C'est-à-dire que les transformations sémantiques sont faites de manière
-prouvée. Il utilise de nombreux langages intermédiaires, dont CIL.\@ Pour le
-front-end, le langage se nomme Clight\cite{cfront}. Les passes de middle-end,
-quant à elles, utilisent Cminor\cite{cminorSL}.
-
-\subsection*{La solution retenue: \langname{}}
-
-Dans le monde de l'aéronautique, il est nécessaire de s'assurer que les
-logiciels embarqués critiques ne vont pas subir d'erreurs à l'exécution, dont
-les conséquences financières et humaines peuvent être tragiques.
-
-Afin de vérifier leur absence, des outils fondés sur l'interprétation abstraite
-(section~\ref{sec:absint}) on été développés chez EADS Innovation Works dans le
-cadre du projet Penjili~\link{penjili}. On y trouve notamment un langage
-intermédiaire, \newspeak~\cite{newspeak}, ainsi que des compilateurs permettant de
-traduire du code C et Ada vers celui-ci. L'analyseur statique Penjili, reposant
-sur ces outils, a été utilisé pour analyser des logiciels embarqués critiques de
-plusieurs millions de lignes de code. Ce dernier n'est pour le moment pas open
-source. Tous ces outils sont écrits dans le langage OCaml~\cite{DAOC}.
-
-% TODO n'y a t-il pas des parties en open source?
-
-Nous avons choisi de baser notre analyse sur \newspeak, dans le but de bénéficier
-de ces outils existants et dans la perspective de guider les analyses de valeur
-par des information de typage.
-
-% TODO y reviens tu ensuite?
-% si oui indique que ce choix sera discuté dans telle partie
-
-Plus précisément, nous utilisons un langage nommé \langname, inspiré de \newspeak
-mais avec un modèle mémoire de plus haut niveau permettant de garantir la sûreté
-des programmes bien typés. L'implantation quant à elle se fait sur \newspeak.
+\end{itemize}
 
 \section{Plan de la thèse}
 
-Cette thèse est organisée en trois parties. La première sert à décrire le
-contexte de ces travaux, ainsi que les solutions existantes. La deuxième expose
-notre solution, \langname, d'un point de vue théorique. La troisième rend compte
-de la démarche expérimentale: comment la solution a été implantée et en quoi
-elle est applicable en pratique.
+Cette thèse est organisée en trois parties. La première décrit le contexte de
+ces travaux, ainsi que les solutions existantes. La deuxième expose notre
+solution, \langname, d'un point de vue théorique. La troisième rend compte de la
+démarche expérimentale: comment la solution a été implantée et en quoi elle est
+applicable en pratique.
 
 \paragraph{Dans la partie~\ref{part:ctx},} on présente tout d'abord le
 fonctionnement général d'un système d'exploitation. On y introduit aussi les
@@ -778,12 +822,13 @@ centraux puisqu'on désire les restreindre. On fait ensuite un tour d'horizon de
 techniques existantes permettant de traiter ce problème par analyse statique de
 code source.
 
-\paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution:
-\langname{}, un langage impératif. Sa syntaxe y est d'abord décrite, puis sa
-sémantique ainsi qu'un système de types statiques. À ce niveau on a un bon
-support pour décrire des analyses statiques sur un langage impératif. On étend
-ensuite le système de types pour capturer les problèmes d'adressage mémoire
-présents dans les systèmes d'exploitation. Pour ce faire, on ajoute des
+\paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution: le langage
+\langname{}. Sa syntaxe y est d'abord décrite, puis sa sémantique ainsi qu'un
+système de types statiques. À ce niveau on a un bon support pour décrire des
+analyses statiques sur un langage impératif. On propose alors deux extensions
+indépendantes au système de types. La première consiste à bien typer les entiers
+utilisés comme \emph{bitmasks}. La seconde capture les problèmes d'adressage
+mémoire présents dans les systèmes d'exploitation. Pour ce faire, on ajoute des
 pointeurs contrôlés par l'utilisateur à la sémantique et au système de types. À
 chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
 de sûreté de typage reliant la sémantique d'exécution aux types statiques.
@@ -803,7 +848,5 @@ de type capture précisément ce genre d'erreur de programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.
-
-%TODO ne faut il pas indiquer le 2è exemple?
 
 % vim: spelllang=fr
