@@ -752,42 +752,58 @@ comme \texttt{packed}, de personaliser finement le code émis grâce à des
 extensions. Elles changent parfois le mode d'exécution des programmes d'une
 manière subtile et pas toujours bien spécifiée et/ou documentée.
 
-\section{Objectifs de cette thèse}
+\section{Objectifs et contributions de la thèse}
 
-Le but de ce travail est de définir et implanter des analyses statiques légères
-sur le langage C. Il est possible de réaliser celles-ci, soit directement dur ce
-langage, soit en utilisant un des langages intermédiaires mentionnés dans la
-section~\ref{sec:lang-int}. Nous proposons d'utiliser \newspeak pour analyser
-des propriétés de sécurité par typage sur du code non avionique. Cela est
-pertinent pour les raisons suivantes.
+Le but de ce travail est de définir et implanter des analyses statiques
+\enquote{légères}sur le langage C, c'est-à-dire plus simples que les analyses de
+valeurs par interprétation abstraite. Il est possible de réaliser celles-ci,
+soit directement sur C, soit en utilisant un des langages intermédiaires
+mentionnés dans la section~\ref{sec:lang-int}. Nous proposons d'utiliser
+\newspeak pour analyser des propriétés de sécurité par typage sur du code non
+avionique. Cela est pertinent pour les raisons suivantes:
 
-D'une part, les types permettent de modéliser l'environnement d'exécution d'un
+\begin{itemize}
+
+\item
+Les types permettent de modéliser l'environnement d'exécution d'un
 programme (ici, les paramètres d'appels système) avec un grain assez grand. Être
 plus fin est difficile et nécessite de modéliser l'environnement.
 
-D'autre part, réaliser des analyses syntaxiques sur \newspeak peut permettre de
-guider en amont des analyses de valeurs plus précises (par exemple en
-choisissant des domaines abstraits particuliers). Le typage de \newspeak est un
-premier pas dans cette direction.
+\item
+Réaliser des analyses syntaxiques sur \newspeak peut permettre de guider en
+amont des analyses de valeurs plus précises (par exemple en choisissant des
+domaines abstraits particuliers). Le typage de \newspeak est un premier pas dans
+cette direction.
 
-\section{Contributions}
+\end{itemize}
 
+Nos contributions sont les suivantes:
+
+\begin{itemize}
+
+\item
 Une première étape est de définir des restrictions sur le langage source. En
 effet, le langage C comme \newspeak permettent des conversions non sûres entre
-données, ce qui limite l'intérêt du typage. Cela revient à définir un langage
-impératif avec un modèle mémoire de plus haut niveau, que l'on nomme \langname.
+données, ce qui limite l'intérêt du typage. Cela revient à définir un
+langage impératif avec un modèle mémoire de plus haut niveau, que l'on nomme
+\langname.
 
+\item
 Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
 sur l'exécution des programmes. On profite du caractère structuré des états
-mémoire pour exprimer cette sémantique en terme de lentilles bidirectionnelles,
-permettant de décrire la modification en profondeur de la mémoire.
+mémoire pour exprimer cette sémantique en terme de lentilles
+bidirectionnelles, permettant de décrire la modification en profondeur de la
+mémoire.
 
+\item
 Les prochaines contributions constituent le cœur de notre travail. Il s'agit
-d'un système de types sûrs pour \langname, ainsi que deux extensions validant
-l'approche typage pour résoudre notre problème de base, qui est la vérification
-des accès aux pointeurs utilisateur. Notre formalisation est accompagnée d'un
-prototype basé sur \newspeak, ce qui permet de de traiter des programmes écrits
-en C comme le noyau Linux.
+d'un système de types sûrs pour \langname, ainsi que deux extensions
+validant l'approche typage pour résoudre notre problème de base, qui est la
+vérification des accès aux pointeurs utilisateur. Notre formalisation est
+accompagnée d'un prototype basé sur \newspeak, ce qui permet de de
+traiter des programmes écrits en C comme le noyau Linux.
+
+\end{itemize}
 
 \section{Plan de la thèse}
 
