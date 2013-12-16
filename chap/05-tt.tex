@@ -66,9 +66,8 @@ prétraitement, par exemple) le type complet de la structure à chaque accès d'
 champ. Cela alourdit la présentation, mais permet d'éviter le sous-typage qui
 rend l'inférence indécidable. En pratique, dans l'implantation décrite dans le
 chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
-(\emph{row polymorphism}) présent dans OCaml pour unifier deux types structures
-partiellement connus.
-%TODO[PJ] ref?
+(\emph{row polymorphism})~\cite{ocamlObjects} présent dans OCaml pour unifier
+deux types structures partiellement connus.
 
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
