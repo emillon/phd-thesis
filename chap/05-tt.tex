@@ -130,8 +130,6 @@ polymorphisme.
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
-%TODO[PJ]: ce serait plus logique de la forme (Γ_L, Γ_G), comme...?
-
 \label{page:gamma-split}
 Plus précisément, un environnement $Γ$ est composé de deux listes de couples (variable,
 type): une pour les variables locales, et une pour les variables
@@ -1095,13 +1093,10 @@ On procède par induction sur la forme de $v$.
 
 \paragraph{$\widehat{f}$:} Idem.
 
-\paragraph{$\widehat{\&}~(x)$:} Idem.
-
-%TODO[PJ] ce n'est pas une simple induction structurelle?
-
-\paragraph{$\widehat{\&}~(n, x)$:}
-D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
-$m ⊧ v : τ$ est \textsc{S-Ptr}, et donc $m[(n, x)]_Φ$ est une valeur.
+\paragraph{$\widehat{\&}~a$:} On distingue selon la forme de $a$. Si $a = (x)$,
+c'est immédiat. Si $a = (n, x)$, alors d'après la forme de $v$, la dernière
+règle appliquée dans la dérivation de $m ⊧ v : τ$ est \textsc{S-Ptr}, et donc
+$m[(n, x)]_Φ$ est une valeur.
 D'après la définition de $φ$, $n ≤ |m|$.
 
 %TODO[PJ] où Φ est il défini?
