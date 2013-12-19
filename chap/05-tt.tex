@@ -1253,27 +1253,15 @@ Donc $m'[φ']_Φ = m[φ']_Φ$ et on conclut grâce à l'hypothèse d'induction.
 
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 Contrairement aux langages où tout est expression, il faut traiter séparément
-les trois constructions principales de \langname : les expressions, les
-valeurs gauches et les instructions. Celles-ci sont mutuellement dépendantes de par
-le graphe suivant.
+les trois constructions principales de \langname : les expressions, les valeurs
+gauches et les instructions. Celles-ci sont mutuellement dépendantes car:
 
-\begin{center}
-\begin{tikzpicture}
-[node distance=5cm]
-
-\node[draw] (I) {Instructions};
-
-\node[draw, right of=I] (E) {Expressions};
-
-\node[draw, right of=E] (L) {Valeurs gauches};
-
-\draw[->] (I) edge[bend left] node[auto] {Évaluation} (E);
-\draw[->] (E) edge[bend left] node[auto] {Abstraction} (I); %TODO[PJ] ?
-\draw[->] (E) edge[bend left] node[auto] {Accès mémoire} (L);
-\draw[->] (L) edge[bend left] node[auto] {Indices} (E); %TODO[PJ] ?
-
-\end{tikzpicture}
-\end{center}
+\begin{itemize}
+\item la définition d'une fonction par un bloc est une expression;
+\item une expression est un cas particulier d'instruction;
+\item une valeur gauche peut convenir une expression en indice de tableau;
+\item une valeur gauche est un cas particulier d'expression.
+\end{itemize}
 
 \begin{theorem}[Progrès]
 \label{thm:progres}
