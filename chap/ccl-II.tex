@@ -95,8 +95,6 @@ $\ptrK{t}$ (comme la taille et la représentation) mais incompatible avec
 certaines opérations. C'est à rapprocher des types abstraits dans les langages
 comme OCaml et Haskell.
 
-% TODO[PJ]: "très diff" ↓ Applicables à CQual, pourtant?
-
 Les perspectives de travaux futurs sont également très différentes. Dans le cas
 des pointeurs, même si le noyau Linux (et la plupart des systèmes
 d'exploitation) ne comportent que deux espaces d'adressage, il est commun dans
@@ -104,6 +102,8 @@ les systèmes embarqués de manipuler des pointeurs provenant d'espaces mémoire
 indépendants : par exemple, de la mémoire flash, de la RAM, ou une EEPROM de
 configuration. Ces différentes mémoires possèdent des adresses, et un pointeur
 est interprété comme faisant référence à une ou l'autre selon le code dont il
-est tiré.
+est tiré. Lorsqu'il y a plus de deux espaces mémoire, il devient impossible
+d'encoder cette propriété dans un qualificateur, qui n'a que deux valeurs
+possibles.
 
 % vim: spelllang=fr

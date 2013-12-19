@@ -66,9 +66,8 @@ prétraitement, par exemple) le type complet de la structure à chaque accès d'
 champ. Cela alourdit la présentation, mais permet d'éviter le sous-typage qui
 rend l'inférence indécidable. En pratique, dans l'implantation décrite dans le
 chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
-(\emph{row polymorphism}) présent dans OCaml pour unifier deux types structures
-partiellement connus.
-%TODO[PJ] ref?
+(\emph{row polymorphism})~\cite{ocamlObjects} présent dans OCaml pour unifier
+deux types structures partiellement connus.
 
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
@@ -130,8 +129,6 @@ polymorphisme.
 
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
-
-%TODO[PJ]: ce serait plus logique de la forme (Γ_L, Γ_G), comme...?
 
 \label{page:gamma-split}
 Plus précisément, un environnement $Γ$ est composé de deux listes de couples (variable,
@@ -321,8 +318,6 @@ ainsi que les types composés si les types de leurs composantes le supportent
 Les opérateurs unaires \enquote{$+$} et \enquote{$-$} appliquent aux entiers, et
 leurs équivalents \enquote{$\floatop{+}$} et \enquote{$\floatop{-}$} aux
 flottants.
-
-% TODO Plus unop viré non ?
 
 \begin{mathpar}
 \disprule{Unop-Plus-Int}
@@ -563,11 +558,10 @@ gauches, codéfini par:
     \semtyp{m}{m[φ]_Φ}{τ}
 \]
 
-% TODO[PJ] quid des structures récursives?
-% TODO[PJ] À quoi sert Φ?
-
 Les règles de définition du typage des valeurs sont données dans la
 figure~\ref{fig:types-semantiques}.
+On rappelle que $Φ$ est la lentille indexée définie
+page~\pageref{subsec:acces-phi}.
 
 \begin{figure}[h]%{{{
 \begin{align*}
@@ -1096,13 +1090,10 @@ On procède par induction sur la forme de $v$.
 
 \paragraph{$\widehat{f}$:} Idem.
 
-\paragraph{$\widehat{\&}~(x)$:} Idem.
-
-%TODO[PJ] ce n'est pas une simple induction structurelle?
-
-\paragraph{$\widehat{\&}~(n, x)$:}
-D'après la forme de $v$, la dernière règle appliquée dans la dérivation de
-$m ⊧ v : τ$ est \textsc{S-Ptr}, et donc $m[(n, x)]_Φ$ est une valeur.
+\paragraph{$\widehat{\&}~a$:} On distingue selon la forme de $a$. Si $a = (x)$,
+c'est immédiat. Si $a = (n, x)$, alors d'après la forme de $v$, la dernière
+règle appliquée dans la dérivation de $m ⊧ v : τ$ est \textsc{S-Ptr}, et donc
+$m[(n, x)]_Φ$ est une valeur.
 D'après la définition de $φ$, $n ≤ |m|$.
 
 %TODO[PJ] où Φ est il défini?
@@ -1190,8 +1181,6 @@ Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈
 
 Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
 
-%TODO m'[Var(φ)] = v et non m'[φ] ?
-
 Dans les autres cas, $m'[φ]_Φ = m[φ]_Φ$, ce qui nous permet de conclure grâce à
 l'hypothèse d'induction.
 
@@ -1261,27 +1250,15 @@ Donc $m'[φ']_Φ = m[φ']_Φ$ et on conclut grâce à l'hypothèse d'induction.
 
 Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 Contrairement aux langages où tout est expression, il faut traiter séparément
-les trois constructions principales de \langname : les expressions, les
-valeurs gauches et les instructions. Celles-ci sont mutuellement dépendantes de par
-le graphe suivant.
+les trois constructions principales de \langname : les expressions, les valeurs
+gauches et les instructions. Celles-ci sont mutuellement dépendantes car:
 
-\begin{center}
-\begin{tikzpicture}
-[node distance=5cm]
-
-\node[draw] (I) {Instructions};
-
-\node[draw, right of=I] (E) {Expressions};
-
-\node[draw, right of=E] (L) {Valeurs gauches};
-
-\draw[->] (I) edge[bend left] node[auto] {Évaluation} (E);
-\draw[->] (E) edge[bend left] node[auto] {Abstraction} (I); %TODO[PJ] ?
-\draw[->] (E) edge[bend left] node[auto] {Accès mémoire} (L);
-\draw[->] (L) edge[bend left] node[auto] {Indices} (E); %TODO[PJ] ?
-
-\end{tikzpicture}
-\end{center}
+\begin{itemize}
+\item la définition d'une fonction par un bloc est une expression;
+\item une expression est un cas particulier d'instruction;
+\item une valeur gauche peut convenir une expression en indice de tableau;
+\item une valeur gauche est un cas particulier d'expression.
+\end{itemize}
 
 \begin{theorem}[Progrès]
 \label{thm:progres}
