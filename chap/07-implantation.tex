@@ -173,51 +173,96 @@ Cet algorithme (figure~\ref{fig:algo-unif}) prend un chemin différent selon la
 forme des deux types d'entrée:
 
 \begin{figure}[h]%{{{
-\begin{Verbatim}
-unify (ta, tb):
-    match (ta, tb) with
-        Var na, Var nb ->
-            if na == nb then
-                Return []
-            else
-                Return [(na, tb)]
 
-        Var na, tb ->
-            if occurs(na, tb) then
-                erreur
-            else
-                Return [(na, tb)]
+% {{{
+% http://tex.stackexchange.com/questions/53357/switch-cases-in-algorithmic
+% New definitions
+\algnewcommand\algorithmicmatch{\textbf{match}}
+\algnewcommand\algorithmiccase{\textbf{case}}
+\algnewcommand\algorithmicwith{\textbf{with}}
+\algnewcommand\algorithmicto{\textbf{to}}
+\algnewcommand\ErrorCul{\textbf{erreur}}
+\algnewcommand\Error{\State \ErrorCul}
+\algnewcommand\algorithmicnil{[~]}
+\algnewcommand\Var[1]{\textsc{Var}~{#1}}
+% New "environments"
+\algdef{SE}[MATCH]{Match}{EndMatch}[1]
+    {\algorithmicmatch\ (#1)\ \algorithmicwith}
+    {\algorithmicend\ \algorithmicswitch}%
+\algdef{SE}[CASE]{Case}{EndCase}[1]
+    {\ #1\ $⇒$}
+    {\algorithmicend\ \algorithmiccase}%
+\algtext*{EndMatch}%
+\algtext*{EndCase}%
 
-        ta, Var nb ->
-            Return unify(tb, ta)
+\algrenewcommand\algorithmicindent{3em}
+%}}}
 
-        Int, Int -> Return []
+\begin{algorithmic}[1]
+    \Function{unify}{$t_a, t_b$}
+    \Match{$t_a, t_b$}
+        \Case{$\Var{n_a}, \Var{n_b}$}
+            \If{$n_a = n_b$}
+                \State \Return{\algorithmicnil}
+            \Else
+                \State \Return{$[(n_a, t_b)]$}
+            \EndIf
+        \EndCase
 
-        Float, Float -> Return []
+        \Case{$\Var{n_a}, t_b$}
+            \If{\Call{occurs}{$n_a, t_b$}}
+                \Error
+            \EndIf
+            \State \Return{$[(n_a, t_b)]$}
+        \EndCase
 
-        Array a, Array b -> Return (unify (a, b))
+        \Case{$t_a, \Var{n_b}$}
+            \Return{\Call{unify}{$t_b, t_a$}}
+        \EndCase
 
-        Ptr a, Ptr b -> Return (unify (a, b))
+        \Case{$\tInt, \tInt$}
+            \Return{\algorithmicnil}
+        \EndCase
 
-        UserPtr a, UserPtr b -> Return (unify (a, b))
+        \Case{$\tFloat, \tFloat$}
+            \Return{\algorithmicnil}
+        \EndCase
 
-        Fun (la, ra), Fun (lb, rb) ->
-            r = unify (ra, rb)
-            n = length(la)
-            if length(lb) != n then
-                erreur
-            for i = 0 to n-1 do
-                r += unify (la[i], lb[i])
-            Return r
+        \Case{$a[~], b[~]$}
+            \Return{\Call{unify}{$a, b$}}
+        \EndCase
 
-        _ -> erreur
+        \Case{$\ptrK{a}, \ptrK{b}$}
+            \Return{\Call{unify}{$a, b$}}
+        \EndCase
 
-\end{Verbatim}
+        \Case{$\ptrU{a}, \ptrU{b}$}
+            \Return{\Call{unify}{$a, b$}}
+        \EndCase
+
+        \Case{$(l_a) → r_a, (l_b) → r_b$}
+            \State $r \gets$ \Call{unify}{$ra, rb$}
+            \State $n \gets$ \Call{length}{$l_a$}
+            \If {\Call{length}{$l_b$} $≠ n$}
+                \Error
+            \EndIf
+            \For{$i = 0$ \algorithmicto{} $n-1$}
+                \State $r \gets r$ \Call{unify}{$l_a[i], l_b[i]$}
+            \EndFor
+            \State \Return{r}
+        \EndCase
+
+        \Case{$\_$}
+            \ErrorCul
+        \EndCase
+
+    \EndMatch
+    \EndFunction
+\end{algorithmic}
 
 \caption{Algorithme d'unification}
 \label{fig:algo-unif}
 \end{figure}%}}}
-% TODO algorithmicx?
 
 \begin{itemize}
 
