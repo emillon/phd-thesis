@@ -519,6 +519,7 @@ $\widehat{c}$: une constante. La notation circonflexe permet de distinguer
 les constructions syntaxique des constructions sémantiques. Par exemple, à la
 syntaxe $3$ correspond la valeur $\widehat{3}$.
 
+\label{page:entiers-bits}
 Les valeurs entières sont les entiers signés sur 32 bits, c'est-à-dire entre
 $-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire: on
 aurait pu choisir des nombres à 64 bits, par exemple.
@@ -779,7 +780,7 @@ Un certain nombre d'opérations est possible sur les valeurs
 \item
   les opérateurs arithmétiques unaires $+$, $-$, $\floatop{+}$ et $\floatop{-}$
   sont équivalents par définition à l'opération binaire correspondante.
-  Par exemple $\widehat{-}4 \eqdef 0\widehat{-}4$.
+  Par exemple $-4 \eqdef 0-4$.
 
 \item
   $\sim$ inverse tous les bits de son opérande.
@@ -828,8 +829,6 @@ l'appelant, il faudra supprimer ce cadre de pile.
       \cPush{(s, g)}{c} = (c::s, g)
   \]
 
-%TODO[PJ]: quid en cas de redéfinition?
-
   On définit aussi l'extension du dernier cadre de pile, qui sert aux
   déclarations de variables locales (figure~\ref{fig:stackops-extend}):
 
@@ -839,8 +838,6 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   L'opération inverse de $\phxxx\cExtend$ sera simplement notée \enquote{$-$} :
   $m - x$, par exemple.
-
-%TODO[PJ]: quid si x n'est pas défini?
 
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
@@ -1043,6 +1040,23 @@ une variable:
 Ces 4 fonctions seront utilisées dans plusieurs règles dans la suite de ce
 chapitre.
 
+\paragraph{Remarques}
+
+Ces opérations ne sont pas toujours bien définies. Par exemple, $\phxxx\cExtend$
+ne peut pas s'appliquer à une pile vide, et $m - x$ n'est défini que si une
+variable $x$ existe au sommet de la pile de $m$. Ce caractère partiel ne pose
+pas de problème de par la structure des règles qui vont utiliser ces
+constructions. Par exemple, à chaque empilement correspond exactement un
+dépilement. De plus, les phrases d'un programme ne peuvent pas faire intervenir
+de déclaration de variable (une instruction est forcément dans une fonction),
+donc $\phxxx\cExtend$ réussit toujours.
+
+Un autre problème se pose si deux variables ont le même nom dans un cadre. Elles
+ne peuvent pas être distinguées. On interdit donc ce cas en demandant aux
+programmes d'être bien formés: au sein d'une fonction, les paramètres ainsi que
+l'ensemble des locales déclarées doivent être de noms différents. En pratique,
+une phase préalable d'$α$-conversion peut renommer les variables problématiques.
+
 \section{Accesseurs}
 \label{sec:mem-access}
 
@@ -1054,8 +1068,6 @@ partir d'un état mémoire $m$ et d'une valeur gauche $φ$, on veut pouvoir obte
     \item l'état mémoire obtenu en remplaçant celle-ci par une nouvelle valeur $v'$ :
             $m[φ ← v']_Φ$
 \end{itemize}
-
-%TODO[PJ] dire que c'est global et ne plus le noter
 
 Pour définir cette lentille indexée $Φ$, on commence par définir des lentilles
 élémentaires, et on les compose pour pouvoir définir des lentilles entre
@@ -1122,6 +1134,12 @@ T(0)     &: \eArray{\circled{1}, 2, 3, 5} \\
 \label{fig:dep-lens}
 
 \end{figure}
+
+\paragraph{Remarque}
+
+Dans toute la suite, on emploiera la notation $m[φ]_Φ$. Il est important de
+remarquer que $m$ désigne un état particulier et $φ$ un chemin particulier, mais
+que $Φ$ est la lentille indexée globale définie page~\pageref{subsec:acces-phi}.
 
 \subsection*{Accès à une liste par indice : $I$}
 
@@ -1232,6 +1250,7 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
   \end{align*}
 
 \subsection*{Accès par indice de tableau : $T$}
+\label{subsec:lens-array}
 
   On définit de même un accesseur ${[\cdot]}_T$ pour les accès par indice à des
   valeurs tableaux. Néanmoins le paramètre indice est toujours un entier et pas
@@ -1332,7 +1351,8 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \item
   En combinant les résultats de 2.\ et 4.\ on en déduit que
   $\mm{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
-\item D'après la règle~\textsc{Exp-Binop}, %TODO[PJ] ref règle
+\item D'après la règle~\textsc{Exp-Binop}
+    (page~\pageref{rule:exp-binop}),
   $ \mm{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5.\ et 6., on a par combinaison
   $\mm{m}{e_1~\opbin~e_2}{m''}{v}$
@@ -1502,12 +1522,12 @@ Pour évaluer une expression constituée d'un opérateur, on évalue une
 sous-expression, puis l'autre (l'ordre d'évaluation, est encore imposé: de
 gauche à droite). À chaque opérateur $\opbin$, correspond un opérateur
 sémantique $\widehat{\opbin}$ qui agit sur les valeurs. Par exemple, l'opérateur
-$\widehat{+}$ est l'addition classique entre entiers. Comme précisé dans la
+$\widehat{+}$ est l'addition entre entiers machine
+(page~\pageref{page:entiers-bits}). Comme précisé dans la
 section~\ref{sec:sem-ops}, la division par zéro via $/$, $\%$ ou $\floatop{/}$
 provoque l'erreur $\serr{div}$.
 
-%TODO[PJ]: noter que la taille finie des ints n'est pas prise en compte
-
+\label{rule:exp-binop}
 \begin{mathpar}
   \semrule{Exp-UnOp}
 
@@ -1525,8 +1545,6 @@ tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
   \widehat{\&}~φ[n]~-_p~i & = \widehat{\&}~φ[n-i] \\
 \end{align*}
 
-%TODO[PJ] et si n-i < 0 ou dépasse?
-
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}\footnote{
@@ -1535,6 +1553,10 @@ Cela est cohérent avec la norme C99:
     array is large enough, […] ; otherwise, the behavior is undefined.
     }~\cite[6.5.6~§8]{AnsiC}}
 et l'opérateur $\widehat{\opbin}$ renvoie $\serr{ptr}$.
+
+Si l'indice calculé ($n+i$ ou $n-i$) sort de l'espace alloué, alors l'erreur
+sera faite au moment de l'accès: la lentille $T$ renverra $\serr{array}$
+(page~\pageref{subsec:lens-array}).
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
@@ -1667,9 +1689,6 @@ en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 
 Enfin, si une erreur se produit elle est propagée.
 
-% TODO[PJ] le cleanvarV comment ça marche avec les decl de structures
-% recursives?
-
 \begin{mathpar}
  \semrule{Decl-Pass}
 
@@ -1763,8 +1782,8 @@ ce que sont les programmes (leur syntaxe) et comment ils s'exécutent (leur
 sémantique). Sur ces deux points, on note que nous sommes restés suffisamment
 proches de C, tout en utilisant pour la mémoire un modèle plus structuré qu'une
 simple suite d'octets. Les définitions de la syntaxe ainsi que de la sémantique
-sont rappelées dans l'annexe~\ref{anx:eval}.
-%TODO[PJ] B1 à B7
+sont rappelées dans l'annexe~\ref{anx:eval} (sections~\ref{sec:anx-sem-start}
+à~\ref{sec:anx-sem-end}).
 
 Afin de manipuler les états mémoire dans la sémantique d'évaluation, nous avons
 utilisé le concept des lentilles, qui permettent de chaîner des accesseurs entre
