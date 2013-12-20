@@ -519,6 +519,7 @@ $\widehat{c}$: une constante. La notation circonflexe permet de distinguer
 les constructions syntaxique des constructions sémantiques. Par exemple, à la
 syntaxe $3$ correspond la valeur $\widehat{3}$.
 
+\label{page:entiers-bits}
 Les valeurs entières sont les entiers signés sur 32 bits, c'est-à-dire entre
 $-2^{31}$ à $2^{31}-1$. Mais ce choix est arbitraire: on
 aurait pu choisir des nombres à 64 bits, par exemple.
@@ -1521,11 +1522,10 @@ Pour évaluer une expression constituée d'un opérateur, on évalue une
 sous-expression, puis l'autre (l'ordre d'évaluation, est encore imposé: de
 gauche à droite). À chaque opérateur $\opbin$, correspond un opérateur
 sémantique $\widehat{\opbin}$ qui agit sur les valeurs. Par exemple, l'opérateur
-$\widehat{+}$ est l'addition classique entre entiers. Comme précisé dans la
+$\widehat{+}$ est l'addition entre entiers machine
+(page~\pageref{page:entiers-bits}). Comme précisé dans la
 section~\ref{sec:sem-ops}, la division par zéro via $/$, $\%$ ou $\floatop{/}$
 provoque l'erreur $\serr{div}$.
-
-%TODO[PJ]: noter que la taille finie des ints n'est pas prise en compte
 
 \label{rule:exp-binop}
 \begin{mathpar}
