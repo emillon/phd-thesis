@@ -828,8 +828,6 @@ l'appelant, il faudra supprimer ce cadre de pile.
       \cPush{(s, g)}{c} = (c::s, g)
   \]
 
-%TODO[PJ]: quid en cas de redéfinition?
-
   On définit aussi l'extension du dernier cadre de pile, qui sert aux
   déclarations de variables locales (figure~\ref{fig:stackops-extend}):
 
@@ -839,8 +837,6 @@ l'appelant, il faudra supprimer ce cadre de pile.
 
   L'opération inverse de $\phxxx\cExtend$ sera simplement notée \enquote{$-$} :
   $m - x$, par exemple.
-
-%TODO[PJ]: quid si x n'est pas défini?
 
   De même on définit le dépilement (figure~\ref{fig:stackops-pop}):
 
@@ -1042,6 +1038,23 @@ une variable:
 
 Ces 4 fonctions seront utilisées dans plusieurs règles dans la suite de ce
 chapitre.
+
+\paragraph{Remarques}
+
+Ces opérations ne sont pas toujours bien définies. Par exemple, $\phxxx\cExtend$
+ne peut pas s'appliquer à une pile vide, et $m - x$ n'est défini que si une
+variable $x$ existe au sommet de la pile de $m$. Ce caractère partiel ne pose
+pas de problème de par la structure des règles qui vont utiliser ces
+constructions. Par exemple, à chaque empilement correspond exactement un
+dépilement. De plus, les phrases d'un programme ne peuvent pas faire intervenir
+de déclaration de variable (une instruction est forcément dans une fonction),
+donc $\phxxx\cExtend$ réussit toujours.
+
+Un autre problème se pose si deux variables ont le même nom dans un cadre. Elles
+ne peuvent pas être distinguées. On interdit donc ce cas en demandant aux
+programmes d'être bien formés: au sein d'une fonction, les paramètres ainsi que
+l'ensemble des locales déclarées doivent être de noms différents. En pratique,
+une phase préalable d'$α$-conversion peut renommer les variables problématiques.
 
 \section{Accesseurs}
 \label{sec:mem-access}
