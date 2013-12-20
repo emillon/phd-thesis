@@ -1118,7 +1118,7 @@ Idem.
 \begin{lemma}[Accès à des variables bien typées]
 \label{lemma:var-typ}
 
-Soit $\cVar{φ}$ la variable qui apparaît dans $φ$:
+Soit $\cVar{φ}$ l'adresse de la variable qui apparaît dans $φ$:
 
 \begin{align*}
     \cVar{a}    &= a \\
@@ -1129,10 +1129,6 @@ Soit $\cVar{φ}$ la variable qui apparaît dans $φ$:
 Alors, si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$ est soit une variable
 globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale $(|m|, x)$ du plus
 haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
-
-%TODO[PJ]: pas clair: variable ou adresse?
-% Var(φ) → Adr(φ)
-% ça sert à quoi?
 \end{lemma}
 
 \begin{proof}[Démonstration (esquisse)]
@@ -1185,12 +1181,10 @@ l'hypothèse d'induction.
 
 % }}}
 \paragraph{\textsc{M-Decl}:} % {{{
-On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
-%TODO[PJ] (x) ?
-%(E) -> non, la locale
-locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les prémisses
-nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ = m[φ]$ et on
-applique l'hypothèse d'induction.
+On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit la locale $x$, soit une autre
+variable locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les
+prémisses nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ =
+m[φ]$ et on applique l'hypothèse d'induction.
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{
 
@@ -1227,8 +1221,8 @@ produire. Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a bien la
 compatibilité mémoire (l'argument est similaire au cas \textsc{Decl-Clean}).
 Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
 
-Si $\cVar{φ} = (|m''|, x)$, on procède de la mème manière sauf qu'on invoque alors
-le cas d'induction sur $\mcomp{Γ}{m}$.
+Si $\cVar{φ} = (|m''|, x)$, on procède de la mème manière sauf qu'on invoque
+alors le cas d'induction sur $\mcomp{Γ}{m}$.
 
 % }}}
 \paragraph{\textsc{M-Write}:} % {{{
