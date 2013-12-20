@@ -294,12 +294,12 @@ n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directeme
 au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
 chaque accès. C'est à dire qu'on va par exemple inférer le type $\tStruct{ l:
 \tInt ; … }$ où $…$ désigne l'ensemble des champs inconnus. En unifiant
-$\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient
-en sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$.
-Plus présisément, pour unifier deux types structure, on étudie les types de
-leurs champs. On commence par unifier les types des champs de même nom, et on
-ajoute à l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme
-de rangée présent dans les langages comme OCaml.
+$\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient en
+sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$. Plus
+présisément, pour unifier deux types structure, on étudie les types de leurs
+champs. On commence par unifier les types des champs de même nom, et on ajoute à
+l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme de
+rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
 
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
