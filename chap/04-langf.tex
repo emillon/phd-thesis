@@ -1236,6 +1236,7 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
   \end{align*}
 
 \subsection*{Accès par indice de tableau : $T$}
+\label{subsec:lens-array}
 
   On définit de même un accesseur ${[\cdot]}_T$ pour les accès par indice à des
   valeurs tableaux. Néanmoins le paramètre indice est toujours un entier et pas
@@ -1531,8 +1532,6 @@ tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
   \widehat{\&}~φ[n]~-_p~i & = \widehat{\&}~φ[n-i] \\
 \end{align*}
 
-%TODO[PJ] et si n-i < 0 ou dépasse?
-
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
 \label{page:def-arith-ptr-error}\footnote{
@@ -1541,6 +1540,10 @@ Cela est cohérent avec la norme C99:
     array is large enough, […] ; otherwise, the behavior is undefined.
     }~\cite[6.5.6~§8]{AnsiC}}
 et l'opérateur $\widehat{\opbin}$ renvoie $\serr{ptr}$.
+
+Si l'indice calculé ($n+i$ ou $n-i$) sort de l'espace alloué, alors l'erreur
+sera faite au moment de l'accès: la lentille $T$ renverra $\serr{array}$
+(page~\pageref{subsec:lens-array}).
 
 Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
 l'état mémoire courant.
