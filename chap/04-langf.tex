@@ -1336,7 +1336,8 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
 \item
   En combinant les résultats de 2.\ et 4.\ on en déduit que
   $\mm{m}{e_1~\opbin~e_2}{m''}{v_1\opbin~v_2}$.
-\item D'après la règle~\textsc{Exp-Binop}, %TODO[PJ] ref règle
+\item D'après la règle~\textsc{Exp-Binop}
+    (page~\pageref{rule:exp-binop}),
   $ \mm{m''}{v_1\opbin~v_2}{m''}{v_1~\widehat{\opbin}~v_2}$
 \item D'après 5.\ et 6., on a par combinaison
   $\mm{m}{e_1~\opbin~e_2}{m''}{v}$
@@ -1512,6 +1513,7 @@ provoque l'erreur $\serr{div}$.
 
 %TODO[PJ]: noter que la taille finie des ints n'est pas prise en compte
 
+\label{rule:exp-binop}
 \begin{mathpar}
   \semrule{Exp-UnOp}
 
