@@ -790,12 +790,12 @@ Alors:
 \begin{proof}
 
 On procède par induction sur la dérivation de $\mm{m}{\cdot}{m'}{\cdot}$.
-Plusieurs remarques sont à faire: d'une part, en ce qui concerne le typage de la
+Plusieurs remarques sont à faire: d'abord, en ce qui concerne le typage de la
 mémoire, il suffit de montrer que $\mcomp{Γ}{m'}$ car cela implique que
-$\mcomp{Γ}{\cCleanup{m'}}$. D'autre part, la règle \textsc{Ctx} apparaît 3 fois
+$\mcomp{Γ}{\cCleanup{m'}}$. Ensuite, la règle \textsc{Ctx} est traitée à part,
 car elle peut être appliquée en contexte d'expression, d'instruction ou de
-valeur gauche. De même la règle \textsc{Trans} ne pose pas de problème, il
-suffit d'appliquer l'hypothèse de récurrence à ses prémisses.
+valeur gauche. Enfin la règle \textsc{Trans} ne pose pas de problème, il suffit
+d'appliquer l'hypothèse de récurrence à ses prémisses.
 
 \subsection*{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
@@ -818,41 +818,6 @@ montrer la compatibilité de $m'$.
 Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
 lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
 
-% }}}
-
-\subsection*{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{lv'}$}
-
-\paragraph{\textsc{Ctx}:} % {{{
-\emph{(esquisse)}
-% TODO
-
-Ce cas repose sur un lemme d'inversion des termes typés sous un contexte
-(admis).
-
-Puisque $Γ ⊢ \ctxSub{C}{lv} : t$, il existe $Γ'$ et $t'$ tels que:
-
-\begin{itemize}
-    \item $Γ' ⊢ lv : t'$;
-    \item Quelque soit $lv'$,
-        si
-        $Γ' ⊢ lv' : t'$,
-        alors
-        $Γ ⊢ \ctxSub{C}{lv'} : t$.
-\end{itemize}
-
-On applique l'hypothèse de récurrence à la prémisse de \textsc{Ctx},
-c'est-à-dire $\mm{m}{lv}{m'}{lv'}$. Il vient que $Γ' ⊢ lv' : t'$ et
-$\mcomp{Γ'}{\cCleanup{m'}}$. D'après le précédent lemme d'inversion on en déduit
-que $Γ ⊢ \ctxSub{C}{lv'} : t$.
-
-On admet que $\mcomp{Γ}{\cCleanup{m'}}$.
-
-% }}}
-
-\subsection*{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{e'}$}
-
-\paragraph{\textsc{Ctx}:} % {{{
-Idem que dans le cas des valeurs gauches.
 % }}}
 
 \subsection*{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}
@@ -938,9 +903,6 @@ $v' = v$. Dans tous les cas on conclut car $m' ⊧ v' : τ$.
 
 \subsection*{Cas $Γ ⊢ i$ et $\mm{m}{i}{m'}{i'}$}
 
-\paragraph{\textsc{Ctx}:} % {{{
-Idem que dans le cas des expressions.
-% }}}
 \paragraph{\textsc{Seq}:}%{{{
 D'après le lemme d'inversion, $Γ ⊢ i$.
 %}}}
@@ -1019,6 +981,47 @@ D'autre part, en appliquant \textsc{M-Pop}, on obtient que
 $\mcomp{Γ}{\cCleanup{m_3}}$.
 
 %}}}
+
+\subsection*{À propos de la règle \textsc{Ctx}}
+
+L'application de la règle \textsc{Ctx} nécessite une explication particulière.
+En effet, ce cas repose sur un lemme d'inversion des constructions typées sous
+un contexte, qui est admis ici.
+
+Par exemple, traitons le cas où le contexte $C$ est tel que son \enquote{trou}
+soit une valeur gauche $lv$ et $\ctxSub{C}{lv}$ est une instruction (les autres
+cas sont similaires). La règle appliquée est alors de la forme:
+
+\[
+    \irule{Ctx}
+         { \mm{m}{lv}{m'}{lv'} }
+         { \mm{m}{\ctxSub{C}{lv}}{m'}{\ctxSub{C}{lv'}} }
+\]
+
+Si $Γ ⊢ \ctxSub{C}{lv}$, on admet qu'il existe $Γ'$ et $t$ tels que:
+
+\begin{itemize}
+    \item $Γ' ⊢ lv : t$;
+    \item Quelque soit $lv'$,
+        si
+        $Γ' ⊢ lv' : t$,
+        alors
+        $Γ ⊢ \ctxSub{C}{lv'}$.
+\end{itemize}
+
+Par exemple, pour $C = \ctxEmpty{}[2] = 1$, $Γ' = Γ$ et $t = \tInt[~]$
+conviennent.
+Pour $C = \iDecl{x}{0}{\ctxEmpty = 3.0}$, on prendra
+$Γ' = \extendLocal{Γ}{x}{\tInt} $ et $t = \tFloat$.
+Le fait de passer \enquote{sous} une déclaration ajoute une variable locale à
+$Γ$, et ainsi l'ensemble des variables de $Γ'$ contient celui de $Γ$.
+
+Pour prouver la préservation dans ce cas, on commence par appliquer l'hypothèse
+de récurrence à la prémisse de \textsc{Ctx}, c'est-à-dire $\mm{m}{lv}{m'}{lv'}$.
+Il vient que $Γ' ⊢ lv' : t$ et $\mcomp{Γ'}{\cCleanup{m'}}$.
+
+D'après le précédent lemme d'inversion on en déduit que $Γ ⊢ \ctxSub{C}{lv'}$.
+De plus $Γ'$ contient plus de variables que $Γ$ donc $\mcomp{Γ}{\cCleanup{m'}}$.
 
 \end{proof}
 
