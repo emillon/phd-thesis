@@ -413,18 +413,12 @@
 \def\cCleanVar#1#2{\mathrm{CleanVar}(#1, #2)}
 \def\cVV#1#2{\mathrm{CleanVarV}(#1, #2)}
 
-\def\tyctx#1#2#3#4{%
-    \ifstrempty{#3#4}% both empty?
-        {#1 ⊢ #2}%
-        {#1 ⊢ #2 : #3 ⇒ #4}%
-}
-
 \def\wphi#1{\widehat{\&}~#1}
 
 \def\extendLocal#1#2#3{#1, \mathrm{local}~#2:#3}
 \def\extendGlobal#1#2#3{#1, \mathrm{global}~#2:#3}
 
-\def\cVar#1{\mathrm{Var}(#1)}
+\def\cVar#1{\mathrm{Adr}(#1)}
 
 \newcommand*\circled[1]{\tikz[baseline=(char.base)]{
             \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}

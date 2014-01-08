@@ -898,143 +898,6 @@ Pour chaque forme de jugement de typage, on liste les règles qui peuvent amener
 à cette conclusion.
 \end{proof}
 
-Afin de pouvoir inverser la relation de typage pour les expressions de la forme
-$\ctxSub{C}{e}$, on commence par donner un type aux contextes $C$.
-
-\begin{definition}[Typage des contextes d'évaluation]
-
-On définit une relation de typage pour les contextes d'évaluation $C$. Elle
-permet de relier le type d'un sous-élément au type complet. Plusieurs cas se
-distinguent, selon la nature (instruction d'un côté, expression ou valeur gauche
-de l'autre) du \enquote{trou} et de l'élement complet.
-
-\begin{align*}
-& \tyctx{Γ}{C}{t_i}{t_e} \\
-& \tyctx{Γ}{C}{}{t_e} \\
-& \tyctx{Γ}{C}{t_i}{} \\
-& \tyctx{Γ}{C}{}{}
-\end{align*}
-
-Ces cas sont définis par les règles suivantes:
-
-\begin{mathpar}
-\irule{T-Ctx-EE}
-    {\extendLocal{Γ}{x}{t_i} ⊢ \ctxSub{C}{x} : t_e}
-    {\tyctx{Γ}{C}{t_i}{t_e}}
-
-\irule{T-Ctx-IE}
-    { ∀i. Γ ⊢ i ⇒ Γ ⊢ \ctxSub{C}{i} : t_e }
-    { \tyctx{Γ}{C}{}{t_e} }
-\\
-\irule{T-Ctx-EI}
-    { \extendLocal{Γ}{x}{t_i} ⊢ \ctxSub{C}{x} }
-    { \tyctx{Γ}{C}{t_i}{} }
-
-\irule{T-Ctx-II}
-    { ∀i. Γ ⊢ i ⇒ Γ ⊢ \ctxSub{C}{i} }
-    { \tyctx{Γ}{C}{}{} }
-\end{mathpar}
-
-\end{definition}
-
-Par exemple, on peut avoir:
-
-\begin{itemize}
-\item $\tyctx{Γ}{1+\ctxEmpty}{\tInt}{\tInt}$
-\item $\tyctx{Γ}{\iReturn{\ctxEmpty}}{\tInt}{}$
-\item $\tyctx{Γ}{\eFun{x}{\ctxEmpty}}{}{(\tInt) → \tInt}$
-\item $\tyctx{Γ}{\ctxEmpty;x ← 2}{}{}$
-\end{itemize}
-
-\begin{lemma}[Typage sous un contexte]
-\label{lemma:typ-ctx}
-
-Partant d'un jugement de typage de $C$ et de son \enquote{trou}, on peut en
-déduire un jugement de typage sur la totalité.
-
-\begin{center}
-\begin{tabular}{ll@{\hspace{1.5cm}}l}
-\toprule
-Sous-élément & Contexte & Conclusion \\
-\midrule
-$Γ ⊢ e : t_i$ &
-$\tyctx{Γ}{C}{t_i}{t_e}$ &
-$Γ ⊢ \ctxSub{C}{e} : t_e$ \\
-$Γ ⊢ i$ &
-$\tyctx{Γ}{C}{}{t_e}$ &
-$Γ ⊢ \ctxSub{C}{e} : t_e$ \\
-$Γ ⊢ e : t_i$ &
-$\tyctx{Γ}{C}{t_i}{}$ &
-$Γ ⊢ \ctxSub{C}{e}$ \\
-$Γ ⊢ i$ &
-$\tyctx{Γ}{C}{}{}$ &
-$Γ ⊢ \ctxSub{C}{i}$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\end{lemma}
-
-\begin{proof}[Démonstration (esquisse)]
-Pour chaque cas, on procède en deux parties. D'une part, le jugement de typage
-du contexte ne peut venir que d'une règle, ce qui permet d'inverser celui-ci.
-La suite est différente selon les cas.
-
-\paragraph{\textsc{T-Ctx-IE} et \textsc{T-Ctx-II}:}
-
-Il suffit alors d'instancier le $i$ correspondant dans la prémisse de la règle
-($∀i, Γ ⊢ i ⇒ …$).
-
-\paragraph{\textsc{T-Ctx-EE} et \textsc{T-Ctx-EI}:}
-
-Ce cas repose sur un lemme de substitution admis ici. Si une construction est
-bien typée sous $\extendLocal{Γ}{x}{t}$, alors elle reste bien typée sous $Γ$ si
-l'on y remplace $x$ par une expression de type $t$.
-\end{proof}
-
-\begin{lemma}[Inversion du typage sous un contexte]
-\label{lemma:inv-ctx}
-
-Partant d'une relation de typage d'une entité syntaxique (expression,
-instruction ou valeur gauche) de la forme $\ctxSub{C}{x}$, on peut en déduire une
-information de typage sur $C$ et $x$.
-
-\begin{center}
-\begin{tabular}{l@{\hspace{1.5cm}}ll}
-\toprule
-Hypothèse & \multicolumn{2}{l}{Conclusion: $∃ t',$ …} \\
-\midrule
-$Γ ⊢ \ctxSub{C}{e} : t$ &
-$Γ ⊢ e : t'$ &
-$\tyctx{Γ}{C}{t'}{t}$ \\
-$Γ ⊢ \ctxSub{C}{i} : t$ &
-$Γ ⊢ i$ &
-$\tyctx{Γ}{C}{}{t}$ \\
-$Γ ⊢ \ctxSub{C}{e}$ &
-$Γ ⊢ e : t'$ &
-$\tyctx{Γ}{C}{t'}{}$ \\
-$Γ ⊢ \ctxSub{C}{i}$ &
-$Γ ⊢ i$ &
-$\tyctx{Γ}{C}{}{}$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-%TODO [PJ] Faux?
-% C = Decl x = 0 in
-%     Decl y = . in
-%     Pass
-%
-% [] ⊢ C((x))
-% mais
-% ∄ t' / [] ⊢ x : t'
-
-\end{lemma}
-
-\begin{proof}[Démonstration (esquisse)]
-On procède par induction sur la forme de $C$.
-\end{proof}
-
 Il est aussi possible de réaliser l'opération inverse: à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
 possible pour les valeurs, pas pour n'importe quelle expression (par exemple
@@ -1096,7 +959,6 @@ règle appliquée dans la dérivation de $m ⊧ v : τ$ est \textsc{S-Ptr}, et d
 $m[(n, x)]_Φ$ est une valeur.
 D'après la définition de $φ$, $n ≤ |m|$.
 
-%TODO[PJ] où Φ est il défini?
 \paragraph{$\widehat{\&}~φ.l$:} %
 On procède par induction sur $v' = \widehat{\&}~φ$.
 Comme $\cH{\widehat{\&}~φ} ≤ |m|$ et
@@ -1119,7 +981,7 @@ Idem.
 \begin{lemma}[Accès à des variables bien typées]
 \label{lemma:var-typ}
 
-Soit $\cVar{φ}$ la variable qui apparaît dans $φ$:
+Soit $\cVar{φ}$ l'adresse de la variable qui apparaît dans $φ$:
 
 \begin{align*}
     \cVar{a}    &= a \\
@@ -1130,10 +992,6 @@ Soit $\cVar{φ}$ la variable qui apparaît dans $φ$:
 Alors, si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors $\cVar{φ}$ est soit une variable
 globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale $(|m|, x)$ du plus
 haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
-
-%TODO[PJ]: pas clair: variable ou adresse?
-% Var(φ) → Adr(φ)
-% ça sert à quoi?
 \end{lemma}
 
 \begin{proof}[Démonstration (esquisse)]
@@ -1186,12 +1044,10 @@ l'hypothèse d'induction.
 
 % }}}
 \paragraph{\textsc{M-Decl}:} % {{{
-On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit $x$, soit une autre variable
-%TODO[PJ] (x) ?
-%(E) -> non, la locale
-locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les prémisses
-nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ = m[φ]$ et on
-applique l'hypothèse d'induction.
+On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit la locale $x$, soit une autre
+variable locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les
+prémisses nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ =
+m[φ]$ et on applique l'hypothèse d'induction.
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{
 
@@ -1228,8 +1084,8 @@ produire. Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a bien la
 compatibilité mémoire (l'argument est similaire au cas \textsc{Decl-Clean}).
 Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
 
-Si $\cVar{φ} = (|m''|, x)$, on procède de la mème manière sauf qu'on invoque alors
-le cas d'induction sur $\mcomp{Γ}{m}$.
+Si $\cVar{φ} = (|m''|, x)$, on procède de la mème manière sauf qu'on invoque
+alors le cas d'induction sur $\mcomp{Γ}{m}$.
 
 % }}}
 \paragraph{\textsc{M-Write}:} % {{{
