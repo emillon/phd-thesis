@@ -364,4 +364,30 @@ des portions plus importantes du noyau Linux. Une partie importante du travail
 est déjà faite puisque la phase de compilation depuis le code source supporte
 maintenant le dialecte GNU C.
 
+% TODO
+\clearpage
+
+\section{Implantation de \texttt{ptrace} sur architecture Blackfin}
+
+Un deuxième exemple se trouve dans l'implantation de l'appel système
+\texttt{ptrace} pour l'architecture Blackfin, toujours dans le noyau Linux. Cet
+appel système permet à un processus d'accéder à la mémoire et de contrôler
+l'exécution d'un autre processus, par exemple à des fins de débogage.
+
+L'implantation de cette fonction est, comme beaucoup d'appels système de bas
+niveau, dépendante de l'architecture sur laquelle s'exécute le noyau Linux. Le
+cas qui nous intéresse concerne l'architecture Blackfin, spécialisée dans le
+traitement du signal, mais comme nous l'avons déjà précisé le problème est le
+même que sur un système Intel.
+
+\begin{figure}
+    \insertcode{blackfin-ptrace.c}
+    \caption{Implantation de \texttt{ptrace} sur architecture Blackfin}
+    \label{fig:ptrace-blackfin}
+\end{figure}
+
+Dans d'anciennes version de Linux (jusque 2.6.28), cette fonction appelle
+\texttt{memcpy} au lieu de \texttt{copy\_from\_user} pour lire dans la mémoire
+du processus.
+
 % vim: spelllang=fr
