@@ -215,7 +215,7 @@ moment là, l'erreur provoquera tout de même un déni de service. Plus de déta
 sur ce mécanisme, et le fonctionnement de la mémoire virtuelle dans Linux,
 peuvent être trouvés dans~\cite{userspaceaccess}.
 
-\section{Exemple de bug}
+\section{Premier exemple de bug : pilote Radeon KMS}
 
 On décrit le cas d'un pilote vidéo qui contenait un bug de pointeur utilisateur.
 Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340.
@@ -275,6 +275,52 @@ La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 \texttt{d8ab3557} (figure~\ref{fig:linux-patch}) (\texttt{DRM\_COPY\_FROM\_USER}
 étant une simple macro pour \texttt{copy\_from\_user}). Dans ce cas, on
 n'obtient pas d'erreur de typage.
+
+\section{Second exemple : \texttt{ptrace} sur architecture Blackfin}
+
+Un deuxième exemple se trouve dans l'implantation de l'appel système
+\texttt{ptrace} pour l'architecture Blackfin, toujours dans le noyau Linux. Cet
+appel système permet à un processus d'accéder à la mémoire et de contrôler
+l'exécution d'un autre processus, par exemple à des fins de débogage.
+
+L'implantation de cette fonction est, comme beaucoup d'appels système de bas
+niveau, dépendante de l'architecture sur laquelle s'exécute le noyau Linux. Le
+cas qui nous intéresse concerne l'architecture Blackfin, spécialisée dans le
+traitement du signal, mais comme nous l'avons déjà précisé le problème est le
+même que sur un système Intel.
+
+\begin{figure}
+    \insertcode{blackfin-ptrace.c}
+    \caption{Implantation de \texttt{ptrace} sur architecture Blackfin}
+    \label{fig:ptrace-blackfin}
+\end{figure}
+
+Dans d'anciennes versions de Linux (jusque 2.6.28 -- ce bug a été corrigé dans
+le \emph{commit} \texttt{7786ce}), cette fonction appelle \texttt{memcpy} au
+lieu de \texttt{copy\_from\_user} pour lire dans la mémoire du processus: en
+théorie, si un utilisateur passe un pointeur noyau à la fonction
+\texttt{ptrace}, il pourra lire des données du noyau.
+
+En pratique, la copie se fait sous un test forçant \texttt{addr} à être entre
+\texttt{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}, c'est-à-dire en espace
+utilisateur. Cela enlève le potentiel problème de fuite de données, mais cela
+reste un problème de sécurité car il est possible de provoquer des fautes
+mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espace
+utilisateur n'est pas chargé en mémoire.
+
+est facile de voir comment repérer le bug: l'argument \texttt{addr} (typé
+\textttdestiné à la base aux void *}) provenanespace utilisateur, est passé à \texttt{memcpy}. En annotant correctement les
+
+Le-mini.diff est chargé de faire l'intermédiaire entre le matériel (processeur,
+mémoire, périphériques, …) et les applications exécutées sur celui-ci (par
+exemple un navigateur internet, une calculatrice ou un carnet d'adresses).
+
+    \caption{Patch résolvant le problème dans le cas de \texttt{ptrace}}
+    \label{fig:blackfin-patch}
+\end{figure}
+
+% TODO
+
 
 \section{Procédure expérimentale}
 \label{sec:demo-unif}
@@ -360,7 +406,7 @@ version corrigée on peut inférer des types compatibles.
 Le prototype décrit dans le chapitre~\ref{cha:implem} peut donc s'adapter à
 détecter des bugs dans le noyau Linux. Pour le moment, il nécessite du code
 annoté, mais des travaux sont en cours pour permettre de passer automatiquement
-des portions plus importantes du noyau Linux. Une partie importante du travail
+dntes portions plus importantes du noyau Linux. Une partie importante du travail
 est déjà faite puisque la phase de compilation depuis le code source supporte
 maintenant le dialecte GNU C.
 
