@@ -308,19 +308,18 @@ reste un problème de sécurité car il est possible de provoquer des fautes
 mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espace
 utilisateur n'est pas chargé en mémoire.
 
-est facile de voir comment repérer le bug: l'argument \texttt{addr} (typé
-\textttdestiné à la base aux void *}) provenanespace utilisateur, est passé à \texttt{memcpy}. En annotant correctement les
+Il est facile de voir comment repérer le bug: l'argument \texttt{addr} (typé
+\texttt{long} mais en réalité un \texttt{void *}) provenant directement de
+l'espace utilisateur, est passé à \texttt{memcpy}. En annotant correctement les
+types, on peut donc détecter ce bug.
 
-Le-mini.diff est chargé de faire l'intermédiaire entre le matériel (processeur,
-mémoire, périphériques, …) et les applications exécutées sur celui-ci (par
-exemple un navigateur internet, une calculatrice ou un carnet d'adresses).
-
-    \caption{Patch résolvant le problème dans le cas de \texttt{ptrace}}
-    \label{fig:blackfin-patch}
+\begin{figure}
+        \insertcode{blackfin-mini.diff}
+        \caption{Patch résolvant le problème dans le cas de \texttt{ptrace}}
+        \label{fig:blackfin-patch}
 \end{figure}
 
 % TODO
-
 
 \section{Procédure expérimentale}
 \label{sec:demo-unif}
