@@ -1,0 +1,36 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+commit 7786ce823b1c9a3de01a63857e3451890cb4e81c
+Author: Jie Zhang \PYZlt{}jie.zhang@analog.com\PYZgt{}
+Date:   Thu Mar 5 18:50:26 2009 +0800
+
+Blackfin arch: fix bug \PYZhy{} gdb signull case make trunk kernel panic frequently
+
+Use copy\PYZus{}to\PYZus{}user\PYZus{}page and copy\PYZus{}from\PYZus{}user\PYZus{}page instead of
+memcpy. copy\PYZus{}to\PYZus{}user\PYZus{}page does cache flush when necessary.
+
+Signed\PYZhy{}off\PYZhy{}by: Jie Zhang \PYZlt{}jie.zhang@analog.com\PYZgt{}
+Signed\PYZhy{}off\PYZhy{}by: Bryan Wu \PYZlt{}cooloney@kernel.org\PYZgt{}
+
+\PY{g+gh}{diff \PYZhy{}\PYZhy{}git a/arch/blackfin/kernel/ptrace.c b/arch/blackfin/kernel/ptrace.c}
+\PY{g+gh}{index 594e325..d76618d 100644}
+\PY{g+gd}{\PYZhy{}\PYZhy{}\PYZhy{} a/arch/blackfin/kernel/ptrace.c}
+\PY{g+gi}{+++ b/arch/blackfin/kernel/ptrace.c}
+\PY{g+gu}{@@ \PYZhy{}240,7 +241,7 @@}
+ 
+ \PYZcb{} else if (addr \PYZgt{}= FIXED\PYZus{}CODE\PYZus{}START
+     \PYZam{}\PYZam{} addr + sizeof(tmp) \PYZlt{}= FIXED\PYZus{}CODE\PYZus{}END) \PYZob{}
+\PY{g+gd}{\PYZhy{}	memcpy(\PYZam{}tmp, (const void *)(addr), sizeof(tmp));}
+\PY{g+gi}{+	copy\PYZus{}from\PYZus{}user\PYZus{}page(0, 0, 0, \PYZam{}tmp, (const void *)addr, sizeof(tmp));}
+ 	copied = sizeof(tmp);
+ 
+ \PYZcb{} else
+\PY{g+gu}{@@ \PYZhy{}320,7 +321,7 @@}
+ 
+ \PYZcb{} else if (addr \PYZgt{}= FIXED\PYZus{}CODE\PYZus{}START
+     \PYZam{}\PYZam{} addr + sizeof(data) \PYZlt{}= FIXED\PYZus{}CODE\PYZus{}END) \PYZob{}
+\PY{g+gd}{\PYZhy{}	memcpy((void *)(addr), \PYZam{}data, sizeof(data));}
+\PY{g+gi}{+	copy\PYZus{}to\PYZus{}user\PYZus{}page(0, 0, 0, (void *)addr, \PYZam{}data, sizeof(data));}
+ 	copied = sizeof(data);
+ 
+ \PYZcb{} else
+\end{Verbatim}
