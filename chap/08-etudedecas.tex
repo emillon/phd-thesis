@@ -309,8 +309,8 @@ mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espac
 utilisateur n'est pas chargé en mémoire.
 
 Il est facile de voir comment repérer le bug: l'argument \texttt{addr} (typé
-\texttt{long} mais en réalité un \texttt{void *}) provenant directement de
-l'espace utilisateur, est passé à \texttt{memcpy}. En annotant correctement les
+\texttt{long} mais en réalité un \texttt{void *} provenant directement de
+l'espace utilisateur) est passé à \texttt{memcpy}. En annotant correctement les
 types, on peut donc détecter ce bug.
 
 \begin{figure}
