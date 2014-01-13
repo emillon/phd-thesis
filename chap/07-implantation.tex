@@ -12,10 +12,12 @@ license libre, la \emph{GNU Lesser General Public License}.
 \section{\newspeak et chaîne de compilation}
 \label{sec:compil}
 
+% TODO[PJ] Pourquoi ne pas avoir analysé Newspeak?
+
 \newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
 statiques, contrairement à des langages conçus pour les programmeurs comme C. Sa
 sémantique d'exécution (ainsi qu'une partie des étapes de compilation depuis C)
-est décrites dans \cite{newspeak}. Sa syntaxe est donnée dans la
+est décrite dans \cite{newspeak}. Sa syntaxe est donnée dans la
 figure~\ref{fig:stx-npk}.
 
 \begin{figure}%{{{
@@ -93,49 +95,50 @@ compilation de \newspeak{} vers ce langage.
 
 La première étape consiste à prétraiter les fichiers C source avec le logiciel
 \texttt{cpp}, comme pour une compilation normale. Cette étape interprète les
-directives de prétraitement comme \texttt{\#include}, \texttt{\#ifdef}, À cet
+directives de prétraitement comme \texttt{\#include}, \texttt{\#ifdef}. À cet
 étape, les commentaires sont aussi supprimés.
 
-Une fois cette passe effectuée, le résultats est un ensemble de fichiers C
-prétraités, c'est-à-dire des unités de compilation.
+Une fois cette passe effectuée, le résultat est un ensemble de fichiers C
+prétraités; c'est-à-dire des unités de compilation.
 
 Puisque la directive \texttt{\#include} est textuelle, ces fichiers sont très
 grands et donnent lieu à beaucoup de duplication dans les passes suivantes.
 
 Sur cette représentation (du C prétraité), il est possible d'ajouter des
-annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessible
+annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
 dans l'arbre de syntaxe abstrait des passes suivantes.
 
 À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
-plupart des extensions GNU C sont acceptés en plus du C ANSI. Dans cette étape,
+plupart des extensions GNU C sont acceptées en plus du C ANSI. Dans cette étape,
 les types et les noms sont résolus, et le programme est annoté de manière à
 rendre les prochaines étapes indépendante du contexte. Par exemple, chaque
 déclaration de variable est adjointe d'une description complète du type.
 
 Lors de cette étape, le flot de contrôle est également simplifié. C en effet
-propose de nombreuses constructions ambigües ou redondantes.
+propose de nombreuses constructions redondantes ou ambigües
+(comme \texttt{i = i++}).
 
 Au contraire, \newspeak propose un nombre réduit de constructions. Rappelons que
 le but de ce langage est de faciliter l'analyse statique: des constructions
-orthogonales permettent donc d'éviter la duplication de règles sémantique, ou de
-code lors de l'implantation d'un analyseur.
+orthogonales permettent donc d'éviter la duplication de règles sémantiques, ou
+de code, lors de l'implantation d'un analyseur.
 
 Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
-\emph{do/while} et une boucle for, \newspeak fournit une unique boucle
-\npkWhile{}. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto}, qui
-est toujours un saut vers l'avant (similaire à un \enquote{\emph{break}}
-généralisé). Par conséquence, notre implantation gère les sauts, alors que dans
+\emph{do/while} et une boucle \emph{for}, \newspeak fournit une unique boucle
+\phx\npkWhile. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto},
+qui est toujours un saut vers l'avant (similaire à un \enquote{\emph{break}}
+généralisé). Par conséquence, notre implantation gère les sauts, alors que, dans
 \langname, cette construction n'est pas possible (figure~\ref{fig:stx}, page
 \pageref{fig:stx}).
 
 \newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
-n'est faite entre l'accès à un champ et l'accès à un l'élément d'un tableau
-(tous deux sont traduits par un décalage numérique depuis le début de la zone
+n'est faite entre l'accès à un champ et l'accès à un élément d'un tableau (tous
+deux sont traduits par un décalage numérique depuis le début de la zone
 mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
-structures internes de \ctonewspeak, où les informations nécessaires sont
-encore présentes.
+structures internes de \ctonewspeak, où les informations nécessaires sont encore
+présentes.
 
 Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
 principalement à s'assurer que les hypothèses faites par les différentes unités
@@ -278,6 +281,8 @@ Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
 pas présent dans le type à affecter. C'est le but de la fonction
 \texttt{occurs(n, t)} qui calcule si \texttt{Var n} apparaît dans \texttt{t}.
 
+%TODO[PJ] quid des structures récursives?
+
 \item si les deux types sont des types de base (comme $\tInt$ ou $\tFloat$)
 égaux, on ne fait rien.
 
@@ -301,6 +306,8 @@ champs. On commence par unifier les types des champs de même nom, et on ajoute 
 l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme de
 rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
 
+% TODO[PJ] unification algébrique?
+
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
@@ -313,6 +320,8 @@ vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
 travaillent sur une représentation intermédiaire proche de \newspeak, mais où
 des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
 intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}.
+
+% TODO[PJ] ? encore un autre langage
 
 Le reste de l'outil est résumé dans la fonction
 \texttt{process\_npk} (figure~\ref{fig:implem-process}):
@@ -335,9 +344,11 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
     parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
     mutellement récursives ne sont pas supportées dans l'implantation.
 
+    %TODO[PJ] Clairement! (rapport aux recursives)
+
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
-  qui permet de créer un environnement initial. Celle-ci permettent par exemple
-  de forcer le type d'une fonction inconnue.
+  qui permet de créer un environnement initial. Celles-ci permettent par exemple
+  de spécifier le type d'une fonction inconnue.
 
 \item Les types de chaque fonction sont inférés, par le biais de la fonction
   suivante:
@@ -354,7 +365,7 @@ val infer : Newspeak.fid list
 
 \end{itemize}
 
-La fonction appellée dans par le reste du code, appellée \texttt{unify}, peut
+La fonction appellée par le reste du code, appellée \texttt{unify}, peut
 retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
 types à unifier est mise dans une liste d'attente qui sera unifiée après le
 parcours du programme. Le but est d'instrumenter l'inférence de types afin de
@@ -378,6 +389,10 @@ Cette étape se fait de manière impérative: on peut créer de nouveaux types a
 la fonction \texttt{new\_unknown} et unifier deux types avec la fonction
 \texttt{unify}. Leurs types sont:
 
+% TODO[PJ] pourquoi impérative ? c'est plus facile à prouver en fonctionnel
+
+% TODO choisir si on présente l'algo en fonctionnel ou imp
+
 \begin{verbatim}
 val new_unknown : unit -> Types.simple
 val unify : Types.simple -> Types.simple -> unit
@@ -388,14 +403,14 @@ définies portant sur chaque type de fragment: \texttt{infer\_fdec} pour les
 déclarations de fonction, \texttt{infer\_exp} pour les expressions,
 \texttt{infer\_stmtkind} pour les instructions, etc. Grâce au
 lemme~\ref{lemma:inversion}, on sait quelle règle appliquer en fonction de
-l'expression ou instruction considérée. Notons que même si le programme
+l'expression ou instruction considérée. Notons que, même si le programme
 \newspeak est décoré d'informations de types (celles qui existent dans le
 programme C), elles ne sont pas utilisées.
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
 \texttt{unify}. Par exemple, pour typer une déclaration
 (figure~\ref{fig:implem-unif-stmt}), on crée un nouveau type \texttt{t0}. On
-étend l'environnement courant avec cette nouvelle association et sous ce nouvel
+étend l'environnement courant avec cette nouvelle association et, sous ce nouvel
 environnement, on type le bloc de portée de la déclaration.
 
 \begin{figure}[h] %{{{
@@ -439,7 +454,7 @@ noyau à partir de lui.
 \end{verbatim}
 
 \label{page:qualifs-pas-qualifs}
-Notons que dans la représentation des types pointeurs, c'est une étiquette
+Notons que, dans la représentation des types pointeurs, c'est une étiquette
 séparée qui tient compte de qui contrôle la valeur. Cela vient du fait qu'une
 première présentation de ce système de types utilisait des qualificateurs
 explicites (sur les pointeurs uniquement), avant de passer à deux types
@@ -493,6 +508,8 @@ Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
 \section{Performance}
 
+% TODO [PJ] C'est flou ! complexité asymptotique ?
+
 Sur les exemples testés nous n'avons pas noté de délai d'exécution notable. Cela
 est dû au fait que l'algorithme d'inférence est assez efficace: son temps
 d'exécution dépend essentiellement de la taille des types du programme, et pour
@@ -518,7 +535,7 @@ langage \newspeak développé par EADS. Cela permet de réutiliser les phases de
 compilation déjà implantées, et d'exprimer les règles de typage sur un langage
 suffisament simple.
 
-On utilise un algorithme par unification, qui donne une forme simple
+On utilise un algorithme par unification, qui donne une forme simple au
 programme d'inférence. Pour chaque expression ou instruction à typer, on
 détermine grâce au lemme~\ref{lemma:inversion} quelle règle il faut appliquer.
 Ensuite, on génère les inconnues de type nécessaires pour appliquer cette règle
