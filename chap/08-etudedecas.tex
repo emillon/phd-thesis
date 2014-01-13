@@ -295,11 +295,11 @@ même que sur un système Intel.
     \label{fig:ptrace-blackfin}
 \end{figure}
 
-Dans d'anciennes versions de Linux (jusque 2.6.28 -- ce bug a été corrigé dans
-le \emph{commit} \texttt{7786ce}), cette fonction appelle \texttt{memcpy} au
-lieu de \texttt{copy\_from\_user} pour lire dans la mémoire du processus: en
-théorie, si un utilisateur passe un pointeur noyau à la fonction
-\texttt{ptrace}, il pourra lire des données du noyau.
+Dans d'anciennes versions de Linux (jusque 2.6.28 --- ce bug a été corrigé dans
+le \emph{commit} \texttt{7786ce}, figure~\ref{fig:blackfin-patch}), cette
+fonction appelle \texttt{memcpy} au lieu de \texttt{copy\_from\_user} pour lire
+dans la mémoire du processus: en théorie, si un utilisateur passe un pointeur
+noyau à la fonction \texttt{ptrace}, il pourra lire des données du noyau.
 
 En pratique, la copie se fait sous un test forçant \texttt{addr} à être entre
 \texttt{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}, c'est-à-dire en espace
