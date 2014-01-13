@@ -292,7 +292,7 @@ Le traitement des types structures est géré dans l'implantation d'une manière
 différente de la présentation du chapitre~\ref{cha:lang}. C'est pourquoi elle
 n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directement
 au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
-chaque accès. C'est à dire qu'on va par exemple inférer le type $\tStruct{ l:
+chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
 \tInt ; … }$ où $…$ désigne l'ensemble des champs inconnus. En unifiant
 $\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient en
 sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$. Plus

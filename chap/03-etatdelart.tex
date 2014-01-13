@@ -28,27 +28,28 @@ Les techniques dynamiques sont néanmoins les plus répandues, puisqu'elles sont
 plus simples à mettre en œuvre et permettent de trouver des erreurs pendant le
 processus de développement. De plus, on peut considérer qu'un programme avec une
 forte couverture par les tests a de grandes chances d'être correct pour toutes
-les entrées. Par exemple dans l'avionique civile, le processus de développement
+les entrées. Par exemple, dans l'avionique civile, le processus de développement
 demande d'être très rigoureux pour les tests fonctionnels et structurels afin de
 détecter le code ou les branchements non atteints.
 
 Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
 uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
---- car il est impossible d'étudier l'ensemble complet de tous les comportements
-possibles. Par exemple, si un bug se présente lors d'une interaction entre deux
-composants qui n'a pas été testée, il passera inaperçu. Pour cette raison, la
-plupart des analyses présentées ici sont statiques.
+--- car il est souvent impossible d'étudier l'ensemble complet de tous les
+comportements possibles. Par exemple, si un bug se présente lors d'une
+interaction entre deux composants qui n'a pas été testée, il passera inaperçu
+durant la phase de tests. Pour cette raison, la plupart des analyses présentées
+ici sont statiques.
 
 \paragraph{Cohérence et complétude}
 
 Le but d'une analyse statique est de catégoriser les programmes selon s'ils
 satisfont ou non un ensemble de propriétés fixées à l'avance. Malheureusement,
 cela n'est que rarement possible car l'ensemble des valeurs possibles lors de
-l'exécution d'un programme n'est pas un ensemble calculable (théorème de
-Rice~\cite{rice}). Autrement dit, il ne peut exister une procédure de décision
-prenant un programme et le déclarant correct ou incorrect. Un résultat similaire
-est qu'on ne peut pas écrire une procédure qui détermine si un programme
-arbitraire boucle indéfiniment ou pas (le problème de l'arrêt).
+l'exécution d'un programme quelconque n'est pas un ensemble calculable (théorème
+de Rice~\cite{rice}). Autrement dit, il ne peut exister une procédure de
+décision prenant un programme et le déclarant correct ou incorrect. Un résultat
+similaire est qu'on ne peut pas écrire une procédure qui détermine si un
+programme arbitraire boucle indéfiniment ou pas (le problème de l'arrêt).
 
 Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
 trompant jamais. Toute technique statique va donc de se retrouver dans au moins
@@ -104,15 +105,15 @@ simuler statiquement tous les comportements d'un programme
 de variation des variables pour s'assurer qu'aucun débordement de tableau n'est
 possible~\cite{AllamigeonHymansSSTIC07}.
 
-L'idée est d'associer à chaque ensemble concret de valeurs, une représentation
+L'idée est d'associer à chaque ensemble concret de valeurs une représentation
 abstraite. Sur celle-ci, on peut définir des opérations indépendantes de la
 valeur exacte des données, mais préservant l'abstraction
 (figure~\ref{fig:dom-sig}). Par exemple, les règles comme
 \enquote{$-$} $×$ \enquote{$-$} $=$ \enquote{$+$}
-définissent le domaine abstrait des signes. Les domaines ont une structure de
-treillis, c'est-à-dire qu'ils possèdent les notions d'ordre partiel et d'union
-de valeurs. En calculant les extrêmes limites d'une variable, on obtient le
-domaine des intervalles.
+définissent le domaine abstrait des signes arithmétiques. Les domaines ont une
+structure de treillis, c'est-à-dire qu'ils possèdent les notions d'ordre partiel
+et d'union de valeurs. En calculant les extrêmes limites d'une variable, on
+obtient le domaine des intervalles.
 
 \begin{figure}[h]%{{{
 \centering
@@ -149,12 +150,14 @@ abstraits (figure~\ref{fig:dom-cartesien}).
 Des domaines abstraits plus précis permettent de retenir celles-ci. Pour ce
 faire, il faut modéliser l'ensemble des valeurs des variables comme un tout.
 Parmi les domaines relationnels courants on peut citer: le domaine des
-polyèdres, permettant de retenir tous les invariants affines entre fonctions
+polyèdres, permettant de retenir tous les invariants affines entre variables
 (figure~\ref{fig:dom-poly}); le domaine des zones, permettant de représenter
 des relations affines de la forme $v_i - v_j \le c$ (figure~\ref{fig:dom-zones})
 ; ou encore le domaine des octogones qui est un compromis entre les polyèdres et
 les zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 (figure~\ref{fig:dom-octo}).
+
+% TODO [PJ] mettre des réfs
 
 \begin{figure}[b]%{{{
 
@@ -293,8 +296,8 @@ cas dynamique) pour vérifier des propriétés écrites par le programmeur.
 Les systèmes de types les plus simples expriment des contrats esssentiellement
 liés à la sûreté d'exécution, pour ne pas utiliser des valeurs de types
 incompatibles entre eux. Mais il est possible d'étendre le langage avec des
-annotations plus riches: par exemple en vérifiant statiquement que des listes ne
-sont pas vides~\cite{lightweight-static-capabilities}, ou dans le domaine de la
+annotations plus riches, par exemple en vérifiant statiquement que des listes ne
+sont pas vides~\cite{lightweight-static-capabilities} ou, dans le domaine de la
 sécurité, d'empêcher des fuites d'information~\cite{LZ06a}.
 
 \paragraph{Qualificateurs de types}
@@ -327,7 +330,7 @@ données dont la valeur ne change pas au cours de l'exécution; \texttt{dynamic}
 celles qui ne peuvent pas être connues à la compilation; et \texttt{nonzero}
 celles qui ne peuvent jamais être nulles. Le cube sur lequel se trouvent les
 qualificateurs correspond à une relation d'ordre, du plus spécifique (en bas) au
-plus général (en haut).
+plus général (en haut). ø correspond à un ensemble vide de qualificateurs.
 
 \begin{figure}
 \centering
@@ -351,7 +354,7 @@ plus général (en haut).
 \label{fig:cqual-treillis}
 \end{figure}
 
-Cette relation d'ordre $\preceq$ entre qualificateurs, induit une relation de
+Cette relation d'ordre $\preceq$ entre qualificateurs induit une relation de
 sous-typage $\sqsubseteq$ entre les types qualifiés: si $q \preceq q'$, alors
 $t~q \sqsubseteq t~q'$.
 
@@ -389,7 +392,7 @@ la correction du programme (par rapport aux propriétés capturées par le syst�
 de types).
 
 Le typage statique peut également être implanté de manière efficace. Même si
-l'inférence, peut dans certains cas atteindre une complexité considérable, la
+l'inférence peut, dans certains cas, atteindre une complexité considérable, la
 plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
 linéaire en la taille du programme considéré.
 
@@ -401,7 +404,7 @@ les constructions dangereuses.
 
 Le langage Cyclone~\cite{cyclone-safety} est conçu comme un C \enquote{sûr}.
 Afin d'apporter plus de sûreté au modèle mémoire de C, des tests dynamiques sont
-ajoutés, par exemple aux endroits ou des conversions implicites peuvent poser
+ajoutés, par exemple aux endroits où des conversions implicites peuvent poser
 problème. Le langage se distingue par le fait qu'il possède plusieurs types de
 pointeurs: des pointeurs classiques (\texttt{int *}), des pointeurs
 \enquote{jamais nuls} (\texttt{int @}; un test à l'exécution est alors inséré),
@@ -413,9 +416,9 @@ autorisée que sur ces derniers, rendant impossibles les débordements de tablea
     Les pointeurs fous, encore appelés pointeurs fantômes ou \emph{dangling
     pointers}, correspondent à une zone mémoire invalide ou expirée. Il y a deux
     sources principales de pointeurs fous: les variables de type pointeur non
-    initialisés, et les pointeurs vers des objets dont la mémoire a été libérée.
+    initialisées, et les pointeurs vers des objets dont la mémoire a été libérée.
     C'est par exemple ce qui arrive aux adresses de variables locales une fois
-    que la fonction dans laquelle ils ont été définies retourne.
+    que la fonction dans laquelle elles ont été définies retourne.
 }
 est résolu en utilisant un système de régions~\cite{cyclone-regions}, inspiré
 des travaux de Jouvelot, Talpin et \linebreak
@@ -435,7 +438,7 @@ l'est. Les \emph{borrowed pointers} (notés \texttt{\&int}) correspondent aux
 pointeurs obtenus en prenant l'adresse d'un objet, ou d'un champ d'un objet. Une
 analyse statique faite lors de la compilation s'assure que la durée de vie de
 ces pointeurs est plus courte que l'objet pointé, afin d'éviter les pointeurs
-fous. Cette analyse est également basée sur les régions. Une fonction qui
+fous. Cette analyse est également fondée sur les régions. Une fonction qui
 retourne l'adresse d'une variable locale sera donc rejetée par le compilateur.
 Enfin, le dernier type est celui des \emph{raw pointers} (notés \texttt{*int}),
 pour lesquels le langage n'apporte aucune garantie (il faut d'ailleurs
@@ -446,8 +449,8 @@ Le systèmes de types de ces projets apportent dans le langage différents types
 de pointeurs. Cela permet de manipuler finement la mémoire, à la manière des
 \emph{smart pointers} de C++. De cette approche on retient surtout l'analyse de
 régions de Rust qui permet de manipuler de manière sûre les adresses des
-variables locales, et les pointeurs lourds de Cyclone qui apportent une sûreté à
-l'arithmétique de pointeurs, au prix d'un test dynamique.
+variables locales, et les pointeurs lourds de Cyclone, qui apportent une sûreté
+à l'arithmétique de pointeurs, au prix d'un test dynamique.
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
 peut pas les appliquer pour étudier la correction de logiciels existants. Dans
@@ -469,7 +472,7 @@ Hoare~\cite{hoare}.
 Elle consiste à écrire les invariants qui sont maintenus à un point donné du
 programme. Ces propositions sont écrites dans une logique $\mathcal{L}$. Chaque
 instruction $i$ est annotée d'une pré-condition $P$ et d'une post-condition $Q$,
-ce que l'on note $\hoare{P}{i}{Q}$. Cela signifie que si $P$ est vérifiée et que
+ce que l'on note $\hoare{P}{i}{Q}$. Cela signifie que, si $P$ est vérifiée et que
 l'exécution de $i$ se termine, alors $Q$ sera vérifiée.
 
 En plus des règles de $\mathcal{L}$, des règles d'inférence traduisent la
@@ -488,9 +491,9 @@ Les pré-conditions peuvent être renforcées et les post-conditions relâchées
 
 \begin{mathpar}
   \irule{Hoare-Consequence}
-    { ⊢_{\mathcal{L}} P  ⇒ P' \\
+    { ⊢_{\mathcal{L}} P' ⇒ P \\
       \hoare{P}{i}{Q} \\
-      ⊢_{\mathcal{L}} Q' ⇒ Q
+      ⊢_{\mathcal{L}} Q  ⇒ Q'
     }
     { \hoare{P'}{i}{Q'} }
 \end{mathpar}
@@ -519,7 +522,7 @@ de bas niveau~\cite{mc-hoare-logic}.
 
 Avec un système de types classique, le fait qu'un terme (au sens
 \enquote{expression} ou \enquote{instruction}) soit bien typé amène quelques
-propriétés sur son exécution. Par exemple, le fait que seulement un ensemble
+propriétés sur son exécution, par exemple, le fait que seulement un ensemble
 réduit d'erreurs puisse arriver (comme la division par zéro).
 
 En enrichissant le langage des types, on peut augmenter l'expressivité du
@@ -535,7 +538,7 @@ vecteurs de $n$ entiers. C'est pourquoi on parle de types dépendants. Parmi les
 langages proposant ces types on peut citer Coq~\cite{coqmanual},
 Agda~\cite{agdatutorial} ou Isabelle~\cite{isabelletutorial}.
 
-Dans un langage classique, la plupart des types sont habitables, c'est à dire
+Dans un langage classique, la plupart des types sont habitables, c'est-à-dire
 qu'il existe des termes ayant ces types. En revanche, avec les types dépendants
 ce n'est pas toujours vrai: par exemple \enquote{vecteur de $-1$ entiers} n'a
 pas d'habitants. Ainsi, pouvoir construire un terme d'un type donné est une
@@ -558,26 +561,29 @@ indécidable.
 
 Il existe de nombreuses techniques pour vérifier du code système ou embarqué. Il
 y a divers choix à faire entre l'expressivité, l'intégration de tests
-dynamiques, ou la facilité de mise en œuvre.
+dynamiques ou la facilité de mise en œuvre.
 
 Pour résoudre le problèmes des pointeurs utilisateurs dans les noyaux, le typage
 statique est une solution assez pragmatique, puisqu'elle peut s'appliquer à des
 programmes existants, et est efficace à utiliser. Son expressivité limitée nous
 empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
-les programmes système. C'est pourquoi dans notre solution, \langname, nous
+les programmes systèmes. C'est pourquoi dans notre solution, \langname, nous
 approchons la sûreté de la manière suivante:
 
-Tout d'abord, on utilise le typage pour manipuler les données de manière
-compatible: les types des opérations et fonctions sont vérifiés à la
-compilation.
+\begin{itemize}
+\item Tout d'abord, on utilise le typage pour manipuler les données de manière
+      compatible: les types des opérations et fonctions sont vérifiés à la
+      compilation.
 
-Ensuite, les accès aux tableaux et aux pointeurs sont vérifiés dynamiquement.
-Dans le cas où une erreur est déclenchée, l'exécution s'arrête plutôt que de
-corrompre la mémoire. La pile est également nettoyée à chaque retour de fonction
-afin d'éviter les pointeurs fous.
+\item Ensuite, les accès aux tableaux et aux pointeurs sont vérifiés
+      dynamiquement. Dans le cas où une erreur est déclenchée, l'exécution
+      s'arrête plutôt que de corrompre la mémoire. La pile est également
+      nettoyée à chaque retour de fonction afin d'éviter les pointeurs fous.
 
-Enfin, les pointeurs provenant de l'espace utilisateur sont repérés statiquement
-afin que leur déréférencement se fasse au sein de fonctions sûres. Cela permet
-de préserver l'isolation entre le noyau et l'espace utilisateur.
+\item Enfin, les pointeurs provenant de l'espace utilisateur sont repérés
+      statiquement afin que leur déréférencement se fasse au sein de fonctions
+      sûres. Cela permet de préserver l'isolation entre le noyau et l'espace
+      utilisateur.
+\end{itemize}
 
 % vim: spelllang=fr
