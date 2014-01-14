@@ -554,8 +554,6 @@ Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
 vérifier que celui-ci pointe vers l'espace utilisateur (c'est-à-dire, qu'il est
 de la forme $\vTainted{φ}$).
 
-%TODO[PJ]: pourrait être des nop suivant la sémantique statique
-
 Deux cas peuvent se produire. Soit la partie à vérifier a la forme
 $\vTainted{φ'}$, soit non (et dans ce cas $∄φ', φ = \vTainted{φ'}$). Dans le
 premier cas (règles \textsc{User-*-OK}), alors la copie est faite et l'opération
@@ -575,12 +573,10 @@ noyau Linux: en cas de succès elles renvoient $0$, et en cas d'erreur
   \semrule{User-Put-Err}
 \end{mathpar}
 
-%TODO[PJ] copy* ne sont pas des fonctions mais des éléments de syntaxe
-
 Ces règles sont à appliquer en priorité de la règle d'appel de fonction
-classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
-celles-ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
-par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
+classique, puisqu'il s'agit d'élements de syntaxe différents. En effet ces
+\enquote{fonctions} ne sont pas implantables directement en \langname, puisqu'il
+n'y a pas par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
 $\vTainted{φ}$. L'opération en \enquote{boîte noire} de ces deux fonctions
 permet d'assurer que l'accès à l'espace utilisateur est toujours couplé à un
 test dynamique.
