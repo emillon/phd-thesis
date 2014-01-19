@@ -278,20 +278,12 @@ n'obtient pas d'erreur de typage.
 
 \section{Second exemple : \texttt{ptrace} sur architecture Blackfin}
 
-Un deuxième exemple se trouve dans l'implantation de l'appel système
-\texttt{ptrace} pour l'architecture Blackfin, toujours dans le noyau Linux. Cet
+Le noyau Linux peut s'exécuter sur l'architecture Blackfin, qui est spécialisée
+dans le traitement du signal. Le problème de sécurité auquel nous nous
+intéressons peut également s'y produire. Un deuxième exemple se trouve dans
+l'implantation de l'appel système \texttt{ptrace} pour cette architecture. Cet
 appel système permet à un processus d'accéder à la mémoire et de contrôler
 l'exécution d'un autre processus, par exemple à des fins de débogage.
-
-% TODO dis un mot sur l'archi
-
-L'implantation de cette fonction est, comme beaucoup d'appels système de bas
-niveau, dépendante de l'architecture sur laquelle s'exécute le noyau Linux. Le
-cas qui nous intéresse concerne l'architecture Blackfin, spécialisée dans le
-traitement du signal, mais comme nous l'avons déjà précisé le problème est le
-même que sur un système Intel.
-
-% TODO hum ok
 
 % TODO toujours la même remarque: pourquoi la figure est en haut de page et non
 % pas là où tu la cites?
