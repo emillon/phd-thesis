@@ -241,7 +241,10 @@ une attention particulière.
 
 Le code suivant est présent dans le pilote KMS pour les GPU AMD Radeon:
 
+\begin{figure}[h]
 \insertcode{kms-buggy.c}
+\caption{Code de la fonction \texttt{radeon\_info\_ioctl}}
+\end{figure}
 
 On peut voir que l'argument \texttt{data} est converti en un \texttt{struct
 drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
@@ -251,7 +254,10 @@ Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
 en espace noyau) du type suivant, dont les champs proviennent d'un appel
 utilisateur de \verb!ioctl()!.
 
+\begin{figure}[h]
 \insertcode{kms-info.c}
+\caption{Définition de \texttt{struct drm\_radeon\_info}}
+\end{figure}
 
 Pour mettre ce problème en évidence, nous avons annoté la fonction
 \texttt{radeon\_info\_ioctl} de telle manière que son second paramètre soit un
