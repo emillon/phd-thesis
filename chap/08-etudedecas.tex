@@ -285,14 +285,29 @@ n'obtient pas d'erreur de typage.
 \section{Second exemple : \texttt{ptrace} sur architecture Blackfin}
 
 Le noyau Linux peut s'exécuter sur l'architecture Blackfin, qui est spécialisée
-dans le traitement du signal. Le problème de sécurité auquel nous nous
-intéressons peut également s'y produire. Un deuxième exemple se trouve dans
-l'implantation de l'appel système \texttt{ptrace} pour cette architecture. Cet
-appel système permet à un processus d'accéder à la mémoire et de contrôler
-l'exécution d'un autre processus, par exemple à des fins de débogage.
+dans le traitement du signal. Le problème de manipulation des pointeurs
+utilisateur auquel nous nous intéressons peut également s'y produire.
 
-% TODO toujours la même remarque: pourquoi la figure est en haut de page et non
-% pas là où tu la cites?
+En particulier nous nous intéressons à l'appel système \texttt{ptrace}. Il
+permet à un processus d'accéder à la mémoire et de contrôler l'exécution d'un
+autre processus, par exemple à des fins de débogage. Par exemple,
+\texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} renvoie la valeur du mot mémoire à
+l'adresse \texttt{addr} dans l'espace d'adressage du processus \texttt{p}.
+
+Comme pour la plupart des appels système, l'implantation de \texttt{ptrace} est
+dépendante de l'architecture. Le deuxième exemple que nous présentons est celle
+qui concerne les processeurs Blackfin.
+
+Dans d'anciennes versions de Linux (jusque 2.6.28 --- ce bug a été corrigé dans
+le \emph{commit} \texttt{7786ce}, figure~\ref{fig:blackfin-patch}), cette
+fonction appelle \texttt{memcpy} au lieu de \texttt{copy\_from\_user} pour lire
+dans la mémoire du processus. En théorie, si un utilisateur passe un pointeur
+noyau à la fonction \texttt{ptrace}, il pourra lire des données du noyau.
+L'appel \texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement
+de lire les variables du processus \texttt{p} si \texttt{addr} est une
+adresse dans l'espace utilisateur (ce qui est le comportement attendu), mais
+aussi de lire dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug
+de sécurité).
 
 \begin{figure}
     \insertcode{blackfin-ptrace.c}
@@ -300,11 +315,34 @@ l'exécution d'un autre processus, par exemple à des fins de débogage.
     \label{fig:ptrace-blackfin}
 \end{figure}
 
-Dans d'anciennes versions de Linux (jusque 2.6.28 --- ce bug a été corrigé dans
-le \emph{commit} \texttt{7786ce}, figure~\ref{fig:blackfin-patch}), cette
-fonction appelle \texttt{memcpy} au lieu de \texttt{copy\_from\_user} pour lire
-dans la mémoire du processus: en théorie, si un utilisateur passe un pointeur
-noyau à la fonction \texttt{ptrace}, il pourra lire des données du noyau.
+% TODO à préciser
+
+% TODO quoter le code qui appelle arch_ptrace avec la bonne task_struct
+
+On peut repérer ce bug par simple relecture pour commencer. On commence par
+remarquer que l'argument \texttt{addr}, malgré son type \texttt{long}, est en
+réalité un \texttt{void *} provenant directement de l'espace utilisateur. C'est
+en effet le même argument \texttt{addr} de l'appel système \texttt{ptrace}.
+Cet argument correspond à l'adresse à lire dans l'espace mémoire du processus.
+Comme il est passé à \texttt{memcpy}, aucune vérification n'est faite avant la
+copie. La valeur pointée par \texttt{addr} sera copiée, même si elle est en
+espace noyau.
+
+En annotant correctement les types, on peut donc détecter ce bug: le type
+correct de \texttt{addr} est \ptrU{\tInt}, et celui de \texttt{memcpy} est
+$(\ptrK{\tInt}, \ptrK{\tInt}, \tInt)$. Il est donc impossible de lui passer cet
+argument.
+
+% TODO polymorphisme
+% TODO argument sizeof
+
+\begin{figure}
+        \insertcode{blackfin-mini.diff}
+        \caption{Patch résolvant le problème dans le cas de \texttt{ptrace}}
+        \label{fig:blackfin-patch}
+\end{figure}
+
+\paragraph{Remarque}
 
 % TODO c'est un point intéressant ↓
 
@@ -314,19 +352,6 @@ utilisateur. Cela enlève le potentiel problème de fuite de données, mais cela
 reste un problème de sécurité car il est possible de provoquer des fautes
 mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espace
 utilisateur n'est pas chargé en mémoire.
-
-% TODO à préciser
-
-Il est facile de voir comment repérer le bug: l'argument \texttt{addr} (typé
-\texttt{long} mais en réalité un \texttt{void *} provenant directement de
-l'espace utilisateur) est passé à \texttt{memcpy}. En annotant correctement les
-types, on peut donc détecter ce bug.
-
-\begin{figure}
-        \insertcode{blackfin-mini.diff}
-        \caption{Patch résolvant le problème dans le cas de \texttt{ptrace}}
-        \label{fig:blackfin-patch}
-\end{figure}
 
 % TODO développe la fin et en particulier le problème de sécurité
 
