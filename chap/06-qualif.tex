@@ -1,16 +1,16 @@
 Nous présentons ici deux extensions du système de types décrit dans le
-chapitre~\ref{cha:typbase}. Celles-ci permettent de capturer deux classes
-d'erreurs de programmation concernant respectivement les entiers et les
-pointeurs. Plus précisément, la première permet de distinguer plusieurs
-utilisations de types entiers, selon s'ils sont utilisés comme entiers
-arithmétiques ou ensemble de bits; la seconde, dans le contexte de systèmes
+chapitre~\ref{cha:typbase}. On commence par un exemple introductif, permettant
+distinguer plusieurs utilisations de types entiers, selon s'ils sont utilisés
+comme entiers arithmétiques ou ensemble de bits. Cela permet de détecter une
+erreur de programmation classique qui consiste à mélanger les opérateurs
+logiques et bit à bit.
+
+Ensuite, on étend de manière indépendante le système de types, cette fois au
+niveau des pointeurs. Plus précisément, dans le contexte de systèmes
 d'exploitation, introduit une différence entre les pointeurs dont la valeur est
 contrôlée par l'utilisateur et les autres.
 
-\section{Analyse de bitmasks}
-
-\def\tBits{\textsc{Bits}\xspace}
-\def\tChar{\textsc{Char}\xspace}
+\section{Exemple préliminaire: les entiers utilisés comme bitmasks}
 
 Dans le langage C, les types de données décrivent uniquement l'agencement en
 mémoire des valeurs. Elles n'ont pas de portée plus sémantique permettant
