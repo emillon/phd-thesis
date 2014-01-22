@@ -317,8 +317,6 @@ dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
 
 % TODO à préciser
 
-% TODO quoter le code qui appelle arch_ptrace avec la bonne task_struct
-
 On peut repérer ce bug par simple relecture pour commencer. On commence par
 remarquer que l'argument \texttt{addr}, malgré son type \texttt{long}, est en
 réalité un \texttt{void *} provenant directement de l'espace utilisateur. C'est
