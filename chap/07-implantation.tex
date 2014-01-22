@@ -315,9 +315,8 @@ Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compil�
 vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
 travaillent sur une représentation intermédiaire proche de \newspeak, mais où
 des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
-intermédiaire (polymorphe en le type des étiquettes) est \texttt{'a Tyspeak.t}.
-
-% TODO[PJ] ? encore un autre langage
+intermédiaire est noté \texttt{'a Tyspeak.t}, où \texttt{'a} est le type des
+étiquettes. Mais ce n'est qu'un type différent: il s'agit bien de \newspeak.
 
 Le reste de l'outil est résumé dans la fonction
 \texttt{process\_npk} (figure~\ref{fig:implem-process}):
@@ -339,8 +338,6 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
     représentation de $\preceq$ sous forme de graphe, puis en faisant un
     parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
     mutellement récursives ne sont pas supportées dans l'implantation.
-
-    %TODO[PJ] Clairement! (rapport aux recursives)
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial. Celles-ci permettent par exemple
