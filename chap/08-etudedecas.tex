@@ -299,15 +299,15 @@ dépendante de l'architecture. Le deuxième exemple que nous présentons est cel
 qui concerne les processeurs Blackfin, figure~\ref{fig:ptrace-blackfin}.
 
 Dans d'anciennes versions de Linux (jusque 2.6.28 --- ce bug a été corrigé dans
-le \emph{commit} \texttt{7786ce}, figure~\ref{fig:blackfin-patch}), cette
-fonction appelle \texttt{memcpy} au lieu de \texttt{copy\_from\_user} pour lire
-dans la mémoire du processus. En théorie, si un utilisateur passe un pointeur
-noyau à la fonction \texttt{ptrace}, il pourra lire des données du noyau.
-L'appel \texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement
-de lire les variables du processus \texttt{p} si \texttt{addr} est une
-adresse dans l'espace utilisateur (ce qui est le comportement attendu), mais
-aussi de lire dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug
-de sécurité).
+le \emph{commit} \texttt{7786ce} en remplaçant l'appel à \texttt{memcpy} par un
+appel à \texttt{copy\_from\_user\_page}), cette fonction appelle \texttt{memcpy}
+au lieu de \texttt{copy\_from\_user} pour lire dans la mémoire du processus. En
+théorie, si un utilisateur passe un pointeur noyau à la fonction
+\texttt{ptrace}, il pourra lire des données du noyau. L'appel
+\texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
+les variables du processus \texttt{p} si \texttt{addr} est une adresse dans
+l'espace utilisateur (ce qui est le comportement attendu), mais aussi de lire
+dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
 
 \begin{figure}
     \insertcode{blackfin-ptrace.c}
@@ -335,12 +335,6 @@ lui passer cet argument.
 
 % TODO polymorphisme
 % TODO argument sizeof
-
-\begin{figure}
-        \insertcode{blackfin-mini.diff}
-        \caption{Patch résolvant le problème dans le cas de \texttt{ptrace}}
-        \label{fig:blackfin-patch}
-\end{figure}
 
 \paragraph{Remarque}
 
