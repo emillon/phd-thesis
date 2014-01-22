@@ -330,8 +330,8 @@ espace noyau.
 
 En annotant correctement les types, on peut donc détecter ce bug: le type
 correct de \texttt{addr} est \ptrU{\tInt}, et celui de \texttt{memcpy} est
-$(\ptrK{\tInt}, \ptrK{\tInt}, \tInt)$. Il est donc impossible de lui passer cet
-argument.
+$(\ptrK{\tInt}, \ptrK{\tInt}, \tInt) → \ptrK{\tInt}$. Il est donc impossible de
+lui passer cet argument.
 
 % TODO polymorphisme
 % TODO argument sizeof
