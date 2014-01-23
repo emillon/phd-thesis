@@ -1,9 +1,13 @@
+% TODO[E] enrichir le chapeau!!!
+
 Nous présentons ici deux extensions du système de types décrit dans le
 chapitre~\ref{cha:typbase}. On commence par un exemple introductif, permettant
 distinguer plusieurs utilisations de types entiers, selon s'ils sont utilisés
 comme entiers arithmétiques ou ensemble de bits. Cela permet de détecter une
 erreur de programmation classique qui consiste à mélanger les opérateurs
 logiques et bit à bit.
+
+% TODO[E] indique déjà que ce sera sur deux exemples réels
 
 Ensuite, on étend de manière indépendante le système de types, cette fois au
 niveau des pointeurs. Plus précisément, dans le contexte de systèmes
@@ -13,8 +17,8 @@ contrôlée par l'utilisateur et les autres.
 \section{Exemple préliminaire: les entiers utilisés comme bitmasks}
 
 Dans le langage C, les types de données décrivent uniquement l'agencement en
-mémoire des valeurs. Elles n'ont pas de portée plus sémantique permettant
-d'exprimer ce que celles-ci représentent. Par exemple, dans un programme
+mémoire des valeurs. Ils n'ont pas de signification plus sémantique permettant
+d'exprimer ce que les données représentent. Par exemple, dans un programme
 manipulant des dates, on sera amené à manipuler des numéros de mois et d'années,
 représentés par des types entiers. Le langage C permet de définir des nouveaux
 types:
@@ -91,7 +95,22 @@ type opaque.
 
 \subsection{Modifications}
 
-\begin{figure}
+% TODO[E] Qui se termine par un \0? (le litt)
+
+On commence par ajouter deux types: d'une part \tBits bien sûr, mais également
+\tChar qui apparaît dans les chaînes de caractères. On ne spécifie pas plus ce
+dernier mais on suppose qu'il existe des littéraux de chaînes qui retournent un
+pointeur vers le premier élément d'un tableaux de caractères. Au niveau des
+valeurs, les entiers utilisés comme bitmasks sont représentés par des valeurs
+entières classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau
+type sémantique, mais on ajoute une règle de compatibilité entre le type de
+valeurs \tInt et le type statique \tBits (cela signifie qu'une valeur de type
+\tBits est représentée par un \tInt en mémoire,
+figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
+\enquote{constructeurs} (\texttt{O\_*}) et du \enquote{consommateur}
+\texttt{open} (figure~\ref{fig:bitmasks-types}).
+
+\begin{figure}[h]
 
 \begin{align*}
 \gramdef{Type}{t}
@@ -113,7 +132,7 @@ type opaque.
 
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
 
 \begin{align*}
     [~] ⊢ \texttt{O\_RDONLY} &: \tBits \\
@@ -127,17 +146,6 @@ type opaque.
 \label{fig:bitmasks-types}
 
 \end{figure}
-
-On commence par ajouter deux types: d'une part \tBits bien sûr, mais également
-\tChar qui apparaît dans les chaînes de caractères. On ne spécifie pas plus ce
-dernier mais on suppose qu'il existe des littéraux de chaînes qui retournent un
-pointeur vers le premier élément d'un tableaux de caractères. Au niveau des
-valeurs, les entiers utilisés comme bitmasks sont représentés par des valeurs
-entières classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau
-type sémantique, mais on ajoute une règle de compatibilité entre le type de
-valeurs \tInt et le type statique \tBits (figure~\ref{fig:ajouts-bitmasks}). Par
-ailleurs, on change le type des \enquote{constructeurs} (\texttt{O\_*}) et du
-\enquote{consommateur} \texttt{open} (figure~\ref{fig:bitmasks-types}).
 
 Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on remplace
 aux règles s'appliquant à $\tInt$ les règles suivantes.
@@ -158,24 +166,17 @@ aux règles s'appliquant à $\tInt$ les règles suivantes.
 Il reste à permettre d'utiliser les bitmasks dans les contextes où on attend un
 entier. Par exemple, pour écrire $\iIf{x~\&~\hexa{80}}{…}{…}$ (test du bit
 numéro 7). On veut donc exprimer que \enquote{un \tBits est un \tInt}. Cette
-relation entre différents types d'entier correspond à du sous-typage. La méthode
-classique consiste à introduire une relation explicite $⊆$ et la règle suivante.
+relation entre différents types d'entier correspond à un cas particulier de sous-typage.
 
-\badrulewarn{
-    \irule{Sub}
-    { Γ ⊢ e : s
-        \\ s ⊆ t
-    }
-    { Γ ⊢ e : t }
-}
-
-Au contraire, on ajoute seulement la règle suivante. Elle permet d'utiliser une
-expression de type $\tBits$ là où une expression de type $\tInt$ est attendue
+On ajoute la règle suivante. Elle permet d'utiliser une expression de type
+$\tBits$ là où une expression de type $\tInt$ est attendue
 \footnote{
     Cela modifie légèrement l'implantation de l'inférence de types. Le type
     d'une expression utilisée comme opérande de l'opérateur $+$ n'est donc pas
     \emph{a priori} de type \tInt, mais \tBits ou \tInt.
 }.
+% TODO[E] cela veut dire qu'on peut additionner un \tBits et un \tInt pour obtenir
+% un \tInt ?
 
 \begin{mathpar}
     \irule{Sub-BitsInt}
@@ -183,7 +184,12 @@ expression de type $\tBits$ là où une expression de type $\tInt$ est attendue
         { Γ ⊢ e : \tInt }
 \end{mathpar}
 
-Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$.
+Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$. On rappelle que
+la règle permettant de typer $!$ est inchangée et reste :
+
+\[
+    \disprule{Unop-Not}
+\]
 
 % Alternative
 %
@@ -212,12 +218,12 @@ Le premier et le dernier point permettent d'expliquer une erreur courante: celle
 qui consiste à écrire $!~x~\&~y$ au lieu de $!~(x~\&~y)$.
 
 En effet, la première expression est équivalente à $(!~x)~\&~y$. Comme $!~x$
-vaut $0$ ou $1$, l'expression resultante vaut $y~\&~1$ si $x = 0$, ou $0$ sinon.
+vaut $0$ ou $1$, l'expression résultante vaut $y~\&~1$ si $x = 0$, ou $0$ sinon.
 Il s'agit probablement d'une erreur de programmation. L'alternative $!~(x~\&~y)$
 a plus de sens: elle vaut $0$ si $x$ et $y$ ont un bit en commun, $1$ sinon.
 
-On vérifier enfin que la première n'est pas bien typée alors que la
-seconde l'est. Dans les deux cas suivants on se place dans un environnement $Γ$
+On vérifie enfin que la première n'est pas bien typée alors que la seconde
+l'est. Dans les deux cas suivants on se place dans un environnement $Γ$
 comportant deux variables globales $x$ et $y$ de type $\tBits$. Alors $(!~x) \&
 y$ n'est pas bien typée. En effet, $Γ ⊢~!~x : \tInt$ et la seule règle qui
 s'applique à l'opérateur $\&$ ne peut pas s'appliquer. En revanche la seconde
@@ -248,8 +254,8 @@ est bien typée (figure~\ref{fig:notxy-ok}).
 
 Cela conclut cet exemple préliminaire, qui permet de voir en quoi \langname est
 adapté à des analyses de typage légères. Puisque le typage est sûr, on en déduit
-que les valeurs d'un certain type ne peuvent être crées que par un certain
-nombre de sources. Par exemple ici les bitmasks ne proviennent que de
+que les valeurs d'un certain type ne peuvent être créées que par un certain
+nombre de constructeurs. Par exemple ici les bitmasks ne proviennent que de
 combinaisons de constantes. C'est précisément cette idée de détection de source
 qui est au cœur de l'analyse suivante.
 
