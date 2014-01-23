@@ -1,16 +1,16 @@
 Nous présentons ici deux extensions du système de types décrit dans le
-chapitre~\ref{cha:typbase}. Celles-ci permettent de capturer deux classes
-d'erreurs de programmation concernant respectivement les entiers et les
-pointeurs. Plus précisément, la première permet de distinguer plusieurs
-utilisations de types entiers, selon s'ils sont utilisés comme entiers
-arithmétiques ou ensemble de bits; la seconde, dans le contexte de systèmes
+chapitre~\ref{cha:typbase}. On commence par un exemple introductif, permettant
+distinguer plusieurs utilisations de types entiers, selon s'ils sont utilisés
+comme entiers arithmétiques ou ensemble de bits. Cela permet de détecter une
+erreur de programmation classique qui consiste à mélanger les opérateurs
+logiques et bit à bit.
+
+Ensuite, on étend de manière indépendante le système de types, cette fois au
+niveau des pointeurs. Plus précisément, dans le contexte de systèmes
 d'exploitation, introduit une différence entre les pointeurs dont la valeur est
 contrôlée par l'utilisateur et les autres.
 
-\section{Analyse de bitmasks}
-
-\def\tBits{\textsc{Bits}\xspace}
-\def\tChar{\textsc{Char}\xspace}
+\section{Exemple préliminaire: les entiers utilisés comme bitmasks}
 
 Dans le langage C, les types de données décrivent uniquement l'agencement en
 mémoire des valeurs. Elles n'ont pas de portée plus sémantique permettant
@@ -216,7 +216,14 @@ vaut $0$ ou $1$, l'expression resultante vaut $y~\&~1$ si $x = 0$, ou $0$ sinon.
 Il s'agit probablement d'une erreur de programmation. L'alternative $!~(x~\&~y)$
 a plus de sens: elle vaut $0$ si $x$ et $y$ ont un bit en commun, $1$ sinon.
 
-\begin{figure}
+On vérifier enfin que la première n'est pas bien typée alors que la
+seconde l'est. Dans les deux cas suivants on se place dans un environnement $Γ$
+comportant deux variables globales $x$ et $y$ de type $\tBits$. Alors $(!~x) \&
+y$ n'est pas bien typée. En effet, $Γ ⊢~!~x : \tInt$ et la seule règle qui
+s'applique à l'opérateur $\&$ ne peut pas s'appliquer. En revanche la seconde
+est bien typée (figure~\ref{fig:notxy-ok}).
+
+\begin{figure}[h]
 \begin{mathpar}
     Γ = ([x ↦ \tBits, y ↦ \tBits], [~])
 
@@ -239,89 +246,12 @@ a plus de sens: elle vaut $0$ si $x$ et $y$ ont un bit en commun, $1$ sinon.
 \label{fig:notxy-ok}
 \end{figure}
 
-On se propose donc de vérifier que la première n'est pas bien typée alors que la
-seconde l'est. Dans les deux cas suivants on se placer dans un environnement $Γ$
-comportant deux variables globales $x$ et $y$ de type $\tBits$. Alors $(!~x) \&
-y$ n'est pas bien typée. En effet, $Γ ⊢~!~x : \tInt$ et la seule règle qui
-s'applique à l'opérateur $\&$ ne peut pas s'appliquer. En revanche la seconde
-est bien typée (figure~\ref{fig:notxy-ok}).
-
-%{{{
-
-%\paragraph{Remarque}
-
-%Cette règle pose problème pour l'inférence, car partant d'une expression de la
-%forme $e_1~|~e_2$ on ne sait pas quelle règle appliquer: celle qui porte sur
-%\tInt ou celle sur \tBits. Concrètement, cela veut dire qu'on ne peut pas
-%inférer de type pour la fonction $\eFun{x, y}{\iReturn{x~|~y}}$. En revanche, si
-%on annote le type de $x$ ou de $y$, le reste peut être inféré.
-
-%\paragraph{Polymorphisme restreint}
-
-%Aussi appelé \emph{bounded polymorphism}, il permet de contraindre les variables
-%de type généralisées. Cela permet de donner à la fonction précédente un type
-%comme:
-
-%\[
-    %∀a. (a ∈ \{ \tInt, \tBits \}) ⇒ (a, a) → a
-%\]
-
-%Cela implique de modifier le système de type pour associer aux expression non
-%pas des types, mais des schémas de type (incluant des variables quantifiées). On
-%généralise les variables de certaines déclarations (les globales, par exemple),
-%et à l'utilisation il faut instancier les schémas, c'est-à-dire substituer aux
-%variables quantifiées des paramètres concrets. Ceci présente plusieurs
-%désavantages:
-
-%\begin{itemize}
-    %\item la présentation du système de types est alourdie;
-    %\item l'inférence est plus complexe;
-    %\item si on autorise le polymorphisme non restreint (en donnant par exemple
-        %à la fonction identité le type $∀a. (a) → a$), il faut à l'exécution
-        %représenter les données de manière uniforme, ce qui revient à changer
-        %la sémantique du langage.
-%\end{itemize}
-
-%\clearpage
-
-%\subsubsection*{Transtypage}
-
-%\begin{align*}
-%\gramdef{Expression}{e}
-  %{ … }{}
-  %{e \angle t}{Transtypage}
-  %{END}
-%\\
-%\\
-%\gramdef{Contexte d'évaluation}{C}
-  %{ … }{}
-  %{ C \angle t}{ }
-  %{END}
-%\end{align*}
-
-%\begin{mathpar}
-    %\irule{E-Coerce}
-        %{ }
-        %{
-            %\mms{(v \angle t)}{v}
-        %}
-
-    %\irule{T-Coerce}
-        %{ Γ ⊢ e : t
-       %\\ \tComp{τ}{t}
-       %\\ \tComp{τ}{t'}
-        %}
-        %{ Γ ⊢ (e \angle t') : t'
-        %}
-%\end{mathpar}
-
-%% TODO comment adapter FD
-
-%}}}
-
-% TODO Ne marche pas:
-%if (!(getuid() & geteuid() == 0)) {
-%https://www.securecoding.cert.org/confluence/display/seccode/EXP17-C.+Do+not+perform+bitwise+operations+in+conditional+expressions
+Cela conclut cet exemple préliminaire, qui permet de voir en quoi \langname est
+adapté à des analyses de typage légères. Puisque le typage est sûr, on en déduit
+que les valeurs d'un certain type ne peuvent être crées que par un certain
+nombre de sources. Par exemple ici les bitmasks ne proviennent que de
+combinaisons de constantes. C'est précisément cette idée de détection de source
+qui est au cœur de l'analyse suivante.
 
 \section{Analyse de provenance de pointeurs}
 
@@ -554,8 +484,6 @@ Enfin, il est nécessaire de donner une sémantique aux fonctions $\cfuF$ et
 vérifier que celui-ci pointe vers l'espace utilisateur (c'est-à-dire, qu'il est
 de la forme $\vTainted{φ}$).
 
-%TODO[PJ]: pourrait être des nop suivant la sémantique statique
-
 Deux cas peuvent se produire. Soit la partie à vérifier a la forme
 $\vTainted{φ'}$, soit non (et dans ce cas $∄φ', φ = \vTainted{φ'}$). Dans le
 premier cas (règles \textsc{User-*-OK}), alors la copie est faite et l'opération
@@ -575,12 +503,10 @@ noyau Linux: en cas de succès elles renvoient $0$, et en cas d'erreur
   \semrule{User-Put-Err}
 \end{mathpar}
 
-%TODO[PJ] copy* ne sont pas des fonctions mais des éléments de syntaxe
-
 Ces règles sont à appliquer en priorité de la règle d'appel de fonction
-classique, puisque ces fonctions n'ont pas de corps en tant que tel. En effet
-celles-ci ne sont pas implantables directement en \langname, puisqu'il n'y a pas
-par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
+classique, puisqu'il s'agit d'élements de syntaxe différents. En effet ces
+\enquote{fonctions} ne sont pas implantables directement en \langname, puisqu'il
+n'y a pas par exemple d'opérateur permettant d'extraire $φ$ depuis une valeur
 $\vTainted{φ}$. L'opération en \enquote{boîte noire} de ces deux fonctions
 permet d'assurer que l'accès à l'espace utilisateur est toujours couplé à un
 test dynamique.

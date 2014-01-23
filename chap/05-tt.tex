@@ -495,8 +495,6 @@ des globales de cette nouvelle association.
   \end{mathpar}
 
   \caption{Typage des phrases et programmes}
-%TODO[PJ] Pas de récursion?
-%TODO[PJ] même pas d'I/O?
 \label{fig:typ-ph}
 
 \end{figure}
@@ -755,6 +753,7 @@ dans la figure~\ref{fig:comp-mem}.
 
         \irule{M-DeclClean}
             { \mcomp{\extendLocal{Γ}{x}{t}}{m}
+           \\ x ∉ Γ
             }
             { \mcomp{Γ}{\cCleanVar{m - x}{x}} }
 
@@ -934,6 +933,106 @@ On fait comme pour le lemme d'inversion: Pour chaque forme syntaxique, on fait
 l'inventaire des règles pouvant arriver à cette dérivation.
 \end{proof}
 
+\begin{lemma}[Représentabilité]
+\label{lemma:repr}
+
+On définit un opérateur de représentation d'un type statique à l'exécution:
+
+    \begin{align*}
+        \cRepr{ \tInt   } &= \tInt   \\
+        \cRepr{ \tFloat } &= \tFloat \\
+        \cRepr{ \tUnit  } &= \tUnit  \\
+        \cRepr{ t'*      } &= \cRepr{t'}* \\
+        \cRepr{ t'[]     } &= \cRepr{t'}[] \\
+        \cRepr{ \tStruct{ l_1 : t_1; … ; l_n : t_n } }
+        &= \tStruct{ l_1 : \cRepr{t_1}; … ; l_n : \cRepr{t_n} }\\
+        \cRepr{ (t_1, …, t_n) \rightarrow t } &= \stFun{n}
+    \end{align*}
+
+Supposons que $Γ ⊢ v : t$ et $\mcomp{Γ}{m}$.
+On pose $τ = \cRepr{t}$.
+Alors $m ⊧ v : τ$ et $\tComp{τ}{t}$.
+
+\end{lemma}
+
+\begin{proof}%{{{
+
+On procède par induction sur la forme de $t$.
+
+\begin{itemize}
+\item $\tInt$:
+    D'après le lemme des formes canoniques, $v = n$.
+    On conclut avec \textsc{S-Int} et \textsc{Comp-Ground}.
+
+\item $\tFloat$:
+    Idem avec $v = d$ et \textsc{S-Float}.
+
+\item $\tUnit$:
+    Idem avec $v = \eUnit$ et \textsc{S-Unit}.
+
+\item $t = t'*$:
+    Soient $τ' = \cRepr{t'}$ et $τ = τ'~*$.
+    D'après le lemme des formes canoniques, deux cas sont possibles:
+
+    \begin{itemize}
+        \item $v = \widehat{\&}~φ$:
+
+            Par inversion (lemme~\ref{lemma:inversion}), $Γ ⊢ φ : t'$.
+
+            Puisque $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t'$, on obtient par le
+            lemme~\ref{lemma:mem-typ} que
+            $m[φ]_Φ$ est une valeur telle que
+            $m ⊧ m[φ]_Φ : τ'$ où $\tComp{τ'}{t'}$.
+            D'après \textsc{S-Ptr}, $m ⊧ \widehat{\&}~φ : τ$.
+
+            De plus par \textsc{Comp-Ptr}
+            $\tComp{τ}{t}$.
+
+        \item $v = \eNull$:
+
+            Par induction, $\tComp{τ'}{t'}$. Alors par \textsc{Comp-Ptr},
+            $\tComp{τ~*}{t~*}$.
+
+            En outre, grâce à \textsc{S-Null}, on obtient $m ⊧ \eNull: τ~*$.
+
+    \end{itemize}
+
+\item $t = t'[]$:
+    Par le lemme des formes canoniques,
+    $v = \widehat{\eArray{v_1,…,v_n}}$.
+    Par inversion on obtient que $∀i, Γ ⊢ v_i : t'$.
+
+    Soient $τ' = \cRepr{t'}$ et $τ = τ'~[]$.
+
+    Alors par induction $∀i, m ⊧ v_i : τ'$ et $\tComp{τ'}{t'}$.
+    De la première propriété il vient (via \textsc{S-Array})
+    $m ⊧ v : τ$, et de la seconde (via \textsc{Comp-Array})
+    $\tComp{τ}{t}$.
+
+\item $\tStruct{ l_1 : t_1; … ; l_n : t_n }$:
+    Par le lemme des formes canoniques,
+    $v = \widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$.
+    Et par inversion, $∀i, Γ ⊢ v_i : t_i$.
+
+    Soient $τ_i = \cRepr{t_i}$ et
+    $τ = \tStruct{ l_1 : τ_1; … ; l_n : τ_n }$.
+
+    Alors par induction, $∀i, m ⊧ v_i : τ_i$ et $\tComp{τ_i}{t_i}$.
+
+    On déduit de \textsc{S-Struct} que $m ⊧ v : τ$, et de
+    \textsc{Comp-Struct} que $\tComp{τ}{t}$.
+
+\item $t = (t_1, …, t_n) \rightarrow t'$:
+    Par formes canoniques, on a
+    $v = \widehat{\eFun{a_1,…,a_n}{i}}$.
+
+    Soit $τ = \stFun{n}$: par \textsc{S-Fun} on obtient que
+    $m ⊧ v : τ$. On conclut d'autre part que $\tComp{τ}{t}$
+    grâce à \textsc{Comp-Fun}.
+
+\end{itemize}
+\end{proof}%}}}
+
 \begin{lemma}[Hauteur des chemins typés]
 \label{lemma:hauteur-chem}
 
@@ -1052,14 +1151,12 @@ m[φ]$ et on applique l'hypothèse d'induction.
 \paragraph{\textsc{M-DeclClean}:} % {{{
 
 On suppose que $Γ ⊢ φ : t'$. Alors $\extendLocal{Γ}{x}{t} ⊢ φ : t'$ par
-affaiblissement.
-%TODO[PJ]: sauf si φ utilise déjà x?
-On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
-$m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$.
-Si $v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
+affaiblissement. On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
+$m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$. Si
+$v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
 l'opération $\phxx\cCleanVar$. Le type $τ'$ étant un type pointeur par le
-lemme~\ref{lemma:canon}, on peut conclure.
-Dans les autres cas $m[φ]_Φ = m'[φ]_Φ$ ce qui termine ce cas.
+lemme~\ref{lemma:canon}, on peut conclure. Dans les autres cas $m[φ]_Φ =
+m'[φ]_Φ$ ce qui termine ce cas.
 
 % }}}
 \paragraph{\textsc{M-Push}:} % {{{
@@ -1135,7 +1232,7 @@ Alors l'un des cas suivants est vrai:
   Alors l'un des cas suivants est vrai: 
 
 \begin{itemize}
-  \item $∃ v ≠ Ω, e = v$ %TODO[PJ] ce sont des domaines différents!
+  \item $∃ v ≠ Ω, e = v$
   \item $∃ (e', m'), \mm{m}{e}{m'}{e'}$
   \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
 \end{itemize}
@@ -1163,111 +1260,6 @@ C'est-à-dire, soit:
 \end{itemize}
 
 La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
-
-\begin{lemma}[Représentabilité]
-% TODO[PJ] cette définition serait mieux en 5.7
-\label{lemma:repr}
-
-On définit un opérateur de représentation d'un type statique à l'exécution:
-
-    \begin{align*}
-        \cRepr{ \tInt   } &= \tInt   \\
-        \cRepr{ \tFloat } &= \tFloat \\
-        \cRepr{ \tUnit  } &= \tUnit  \\
-        \cRepr{ t'*      } &= \cRepr{t'}* \\
-        \cRepr{ t'[]     } &= \cRepr{t'}[] \\
-        \cRepr{ \tStruct{ l_1 : t_1; … ; l_n : t_n } }
-        &= \tStruct{ l_1 : \cRepr{t_1}; … ; l_n : \cRepr{t_n} }\\
-        \cRepr{ (t_1, …, t_n) \rightarrow t } &= \stFun{n}
-    \end{align*}
-
-Supposons que $Γ ⊢ v : t$ et $\mcomp{Γ}{m}$.
-On pose $τ = \cRepr{t}$.
-Alors $m ⊧ v : τ$ et $\tComp{τ}{t}$.
-
-\end{lemma}
-
-\begin{proof}%{{{
-
-On procède par induction sur la forme de $t$.
-
-\begin{itemize}
-\item $\tInt$:
-    D'après le lemme des formes canoniques, $v = n$.
-    On conclut avec \textsc{S-Int} et \textsc{Comp-Ground}.
-
-\item $\tFloat$:
-    Idem avec $v = d$ et \textsc{S-Float}.
-
-\item $\tUnit$:
-    Idem avec $v = \eUnit$ et \textsc{S-Unit}.
-
-\item $t = t'*$:
-    Soient $τ' = \cRepr{t'}$ et $τ = τ'~*$.
-    D'après le lemme des formes canoniques, deux cas sont possibles:
-
-    \begin{itemize}
-        \item $v = \widehat{\&}~φ$:
-
-            Par inversion, $Γ ⊢ φ : t'$.
-% TODO[PJ] lemme?
-
-            Puisque $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t'$, on obtient par le
-            lemme~\ref{lemma:mem-typ} que
-            $m[φ]_Φ$ est une valeur telle que
-            $m ⊧ m[φ]_Φ : τ'$ où $\tComp{τ'}{t'}$.
-            D'après \textsc{S-Ptr}, $m ⊧ \widehat{\&}~φ : τ$.
-
-            De plus par \textsc{Comp-Ptr}
-            $\tComp{τ}{t}$.
-
-        \item $v = \eNull$:
-
-            Par induction, $\tComp{τ'}{t'}$. Alors par \textsc{Comp-Ptr},
-            $\tComp{τ~*}{t~*}$.
-
-            En outre, grâce à \textsc{S-Null}, on obtient $m ⊧ \eNull: τ~*$.
-
-    \end{itemize}
-
-\item $t = t'[]$:
-    Par le lemme des formes canoniques,
-    $v = \widehat{\eArray{v_1,…,v_n}}$.
-    Par inversion on obtient que $∀i, Γ ⊢ v_i : t'$.
-
-    Soient $τ' = \cRepr{t'}$ et $τ = τ'~[]$.
-
-    Alors par induction $∀i, m ⊧ v_i : τ'$ et $\tComp{τ'}{t'}$.
-    De la première propriété il vient (via \textsc{S-Array})
-    $m ⊧ v : τ$, et de la seconde (via \textsc{Comp-Array})
-    $\tComp{τ}{t}$.
-
-\item $\tStruct{ l_1 : t_1; … ; l_n : t_n }$:
-    Par le lemme des formes canoniques,
-    $v = \widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$.
-    Et par inversion, $∀i, Γ ⊢ v_i : t_i$.
-
-    Soient $τ_i = \cRepr{t_i}$ et
-    $τ = \tStruct{ l_1 : τ_1; … ; l_n : τ_n }$.
-
-    Alors par induction, $∀i, m ⊧ v_i : τ_i$ et $\tComp{τ_i}{t_i}$.
-
-    On déduit de \textsc{S-Struct} que $m ⊧ v : τ$, et de
-    \textsc{Comp-Struct} que $\tComp{τ}{t}$.
-
-\item $t = (t_1, …, t_n) \rightarrow t'$:
-    Par formes canoniques, on a
-    $v = \widehat{\eFun{a_1,…,a_n}{i}}$.
-
-    Soit $τ = \stFun{n}$: par \textsc{S-Fun} on obtient que
-    $m ⊧ v : τ$. On conclut d'autre part que $\tComp{τ}{t}$
-    grâce à \textsc{Comp-Fun}.
-
-\end{itemize}
-\end{proof}%}}}
-
-%TODO[PJ] normalement on prouve progrès et préservation en même temps pour faire
-% l'induction via un unique théorème ?
 
 % attention il est recopié dans d-preuves
 
