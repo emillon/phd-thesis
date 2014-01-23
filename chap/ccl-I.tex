@@ -2,7 +2,7 @@
 Nous avons montré que l'écriture de noyaux de systèmes d'exploitation nécessite
 de manipuler des données provenant d'une zone non sûre, l'espace utilisateur.
 Parmi ces données, il arrive de récupérer des pointeurs qui servent à passer des
-données par référence à l'appelant, dans certains appels systèmes. Si on
+données par référence à l'appelant, dans certains appels système. Si on
 déréférence ces pointeurs sans vérifier qu'ils pointent bien vers une zone
 mémoire également contrôlée par l'appelant, on risque de lire ou d'écrire dans
 des zones mémoires réservées au noyau seul.

@@ -235,7 +235,7 @@ un numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
 \section{Le \emph{Confused Deputy Problem}}
 \label{sec:secu-syscalls}
 
-On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
+On a vu que les appels système permettent aux programmes utilisateur d'accéder
 au services du noyau. Ils forment donc une interface particulièrement sensible aux
 problèmes de sécurité.
 
@@ -248,7 +248,7 @@ donc trouver la bonne granularité.
 Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
 sein de certains types d'appels système.
 
-Il y a deux grands types d'appels systèmes. D'une part on trouve ceux qui
+Il y a deux grands types d'appels système. D'une part on trouve ceux qui
 renvoient un simple nombre, comme \texttt{getpid} qui renvoie le numéro du
 processus appelant.
 
@@ -258,7 +258,7 @@ Ici, pas de difficulté particulière: la communication entre le \ring{0} et le
 \ring{3} est faite uniquement à travers les registres, comme décrit dans la
 section~\ref{sec:impl-syscall}.
 
-Mais la plupart des appels systèmes communiquent de l'information de manière
+Mais la plupart des appels système communiquent de l'information de manière
 indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
 espace d'adressage et passe un pointeur à l'appel système. Ce mécanisme est
 utilisé par exemple par la fonction \texttt{gettimeofday}

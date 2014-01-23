@@ -6,7 +6,7 @@ l'algorithme W de Damas et Milner pour réaliser l'inférence de types.
 
 Ensuite, le but du chapitre~\ref{cha:etudedecas} est d'appliquer notre analyse
 (à l'aide de ce prototype) sur le noyau Linux. Après avoir décrit le
-fonctionnement des appels systèmes sur ce noyau, on présente un bug qui a touché
+fonctionnement des appels système sur ce noyau, on présente un bug qui a touché
 un pilote de carte graphique. Il est la manifestation d'un problème de pointeur
 utilisateur mal déréférencé dans le noyau, ainsi que décrit dans le
 chapitre~\ref{cha:os}. En lançant notre analyse sur le code présentant un
@@ -53,7 +53,7 @@ appliquer cette analyse.
 
 De manière générale, toutes les interfaces du noyau manipulant des pointeurs
 utilisateur gagnent à être analysées. Outre les implantations des \emph{ioctls}
-dans chaque pilote et les appels systèmes, les systèmes de fichiers manipulent
+dans chaque pilote et les appels système, les systèmes de fichiers manipulent
 aussi de tels pointeurs via leurs opération de lecture et d'écriture.
 
 % vim: spelllang=fr

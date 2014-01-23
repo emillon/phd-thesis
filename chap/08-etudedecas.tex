@@ -75,7 +75,7 @@ donc fallu faire un choix; nous avons choisi la configuration par défaut. Pour
 analyser des morceaux plus importants du noyau, il faudrait définir un fichier
 de configuration plus important.
 
-\section{Appels systèmes sous Linux}
+\section{Appels système sous Linux}
 \label{sec:linux-sys}
 
 Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
@@ -91,7 +91,7 @@ existe: elles s'exécutent l'une après l'autre, le changement s'effectuant sur
 interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
-des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
+des appels système, qui sont des fonctions exécutées par le noyau. Chaque tâche
 doit donc avoir deux piles: une pile \enquote{utilisateur}, qui sert pour
 l'application elle-même, et une pile \enquote{noyau}, qui sert aux appels
 système.
@@ -163,11 +163,9 @@ Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
 prédéfini (dans \verb!arch/x86/kernel/entry_32.S!,
 figure~\ref{fig:entry-syscall})
 
-% TODO uniformiser "appels systèmes" / "appels système"
-
 \begin{figure}[h]
     \insertcode{entry-syscall.s}
-    \caption{Point d'entrée des appels systèmes}
+    \caption{Point d'entrée des appels système}
     \label{fig:entry-syscall}
 \end{figure}
 
