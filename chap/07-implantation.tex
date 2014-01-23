@@ -12,12 +12,24 @@ license libre, la \emph{GNU Lesser General Public License}.
 
 \subsection*{Pourquoi \newspeak et pas \langname?}
 
-% TODO
+On peut se demander pourquoi analyser du code \newspeak et non \langname. Une
+première raison est que de nombreux outils existent déjà autour du langage
+\newspeak, notamment un compilateur depuis C et un analyseur statique par
+interprétation abstraite. Le but de cette thèse est de permettre des analyses de
+typage sur C, donc \newspeak est un bon support grâce à l'existence du
+traducteur.
+
+Mais le modèle mémoire de \newspeak est très bas niveau. En effet il colle
+finement à celui de C, où des constructions comme les unions empêchent la sûreté
+du typage. Définir \langname a précisement pour but de définir un langage
+inspiré de C mais sur lequel le typage peut être sûr.
+
+Pour l'implantation sur \newspeak, on s'inspire donc des règles de typage sur
+\langname, en considérant qu'il serait possible d'avoir une traduction fidèle
+des programmes qui n'utilisent que des constructions sûres.
 
 \section{\newspeak et chaîne de compilation}
 \label{sec:compil}
-
-% TODO[PJ] Pourquoi ne pas avoir analysé Newspeak?
 
 \newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
 statiques, contrairement à des langages conçus pour les programmeurs comme C. Sa
@@ -94,9 +106,10 @@ figure~\ref{fig:stx-npk}.
 \label{fig:compil-npk}
 \end{figure}
 
-La compilation vers C est faite en trois étapes (figure~\ref{fig:compil-npk}):
-prétraitement du code source, compilation de C prétraité vers \newspeak{}, puis
-compilation de \newspeak{} vers ce langage.
+La compilation depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
+prétraitement du code source, compilation de C prétraité vers des objets
+\newspeak{}, puis liaison de ces différentes unités de compilation. Il est aussi
+possible de compiler directement du code Ada vers un objet \newspeak{}.
 
 La première étape consiste à prétraiter les fichiers C source avec le logiciel
 \texttt{cpp}, comme pour une compilation normale. Cette étape interprète les
