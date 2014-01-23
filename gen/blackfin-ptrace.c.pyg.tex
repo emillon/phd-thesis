@@ -1,29 +1,40 @@
 \begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+cm}{/* kernel/ptrace.c */}
+\PY{n}{SYSCALL\PYZus{}DEFINE4}\PY{p}{(}\PY{n}{ptrace}\PY{p}{,} \PY{k+kt}{long}\PY{p}{,} \PY{n}{request}\PY{p}{,} \PY{k+kt}{long}\PY{p}{,} \PY{n}{pid}\PY{p}{,} \PY{k+kt}{unsigned} \PY{k+kt}{long}\PY{p}{,} \PY{n}{addr}\PY{p}{,}
+		\PY{k+kt}{unsigned} \PY{k+kt}{long}\PY{p}{,} \PY{n}{data}\PY{p}{)}
+\PY{p}{\PYZob{}}
+	\PY{k}{struct} \PY{n}{task\PYZus{}struct} \PY{o}{*}\PY{n}{child} \PY{o}{=} \PY{n}{ptrace\PYZus{}get\PYZus{}task\PYZus{}struct}\PY{p}{(}\PY{n}{pid}\PY{p}{)}\PY{p}{;}
+        \PY{c+cm}{/* ... */}
+	\PY{k+kt}{long} \PY{n}{ret} \PY{o}{=} \PY{n}{arch\PYZus{}ptrace}\PY{p}{(}\PY{n}{child}\PY{p}{,} \PY{n}{request}\PY{p}{,} \PY{n}{addr}\PY{p}{,} \PY{n}{data}\PY{p}{)}\PY{p}{;}
+        \PY{c+cm}{/* ... */}
+	\PY{k}{return} \PY{n}{ret}\PY{p}{;}
+\PY{p}{\PYZcb{}}
+
 \PY{c+cm}{/* arch/blackfin/kernel/ptrace.c */}
-\PY{k+kt}{long} \PY{n+nf}{arch\PYZus{}ptrace}\PY{p}{(}\PY{k}{struct} \PY{n}{task\PYZus{}struct} \PY{o}{*}\PY{n}{child}\PY{p}{,} \PY{k+kt}{long} \PY{n}{request}\PY{p}{,}
+\PY{k+kt}{long} \PY{n}{arch\PYZus{}ptrace}\PY{p}{(}\PY{k}{struct} \PY{n}{task\PYZus{}struct} \PY{o}{*}\PY{n}{child}\PY{p}{,} \PY{k+kt}{long} \PY{n}{request}\PY{p}{,}
                  \PY{k+kt}{long} \PY{n}{addr}\PY{p}{,} \PY{k+kt}{long} \PY{n}{data}\PY{p}{)}
 \PY{p}{\PYZob{}}
 	\PY{k+kt}{int} \PY{n}{ret}\PY{p}{;}
 	\PY{k+kt}{unsigned} \PY{k+kt}{long} \PY{n}{\PYZus{}\PYZus{}user} \PY{o}{*}\PY{n}{datap} \PY{o}{=} \PY{p}{(}\PY{k+kt}{unsigned} \PY{k+kt}{long} \PY{n}{\PYZus{}\PYZus{}user} \PY{o}{*}\PY{p}{)}\PY{n}{data}\PY{p}{;}
 
 	\PY{k}{switch} \PY{p}{(}\PY{n}{request}\PY{p}{)} \PY{p}{\PYZob{}}
-        \PY{c+cm}{/*...*/}
+        \PY{c+cm}{/* ... */}
 	\PY{k}{case} \PY{n}{PTRACE\PYZus{}PEEKTEXT}: \PY{p}{\PYZob{}}
 		\PY{k+kt}{unsigned} \PY{k+kt}{long} \PY{n}{tmp} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{;}
 		\PY{k+kt}{int} \PY{n}{copied}\PY{p}{;}
 
 		\PY{n}{ret} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{n}{EIO}\PY{p}{;}
 
-                \PY{c+cm}{/*...*/}
+                \PY{c+cm}{/* ... */}
                 \PY{k}{if} \PY{p}{(}\PY{n}{addr} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{FIXED\PYZus{}CODE\PYZus{}START}
 		    \PY{o}{\PYZam{}}\PY{o}{\PYZam{}} \PY{n}{addr} \PY{o}{+} \PY{k}{sizeof}\PY{p}{(}\PY{n}{tmp}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{FIXED\PYZus{}CODE\PYZus{}END}\PY{p}{)} \PY{p}{\PYZob{}}
 			\PY{n}{memcpy}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{tmp}\PY{p}{,} \PY{p}{(}\PY{k}{const} \PY{k+kt}{void} \PY{o}{*}\PY{p}{)}\PY{p}{(}\PY{n}{addr}\PY{p}{)}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{tmp}\PY{p}{)}\PY{p}{)}\PY{p}{;}
 			\PY{n}{copied} \PY{o}{=} \PY{k}{sizeof}\PY{p}{(}\PY{n}{tmp}\PY{p}{)}\PY{p}{;}
 		\PY{p}{\PYZcb{}}
-                \PY{c+cm}{/*...*/}
+                \PY{c+cm}{/* ... */}
 		\PY{n}{ret} \PY{o}{=} \PY{n}{put\PYZus{}user}\PY{p}{(}\PY{n}{tmp}\PY{p}{,} \PY{n}{datap}\PY{p}{)}\PY{p}{;}
 		\PY{k}{break}\PY{p}{;}
-        \PY{c+cm}{/*...*/}
+        \PY{c+cm}{/* ... */}
 	\PY{p}{\PYZcb{}}
 
 	\PY{k}{return} \PY{n}{ret}\PY{p}{;}
