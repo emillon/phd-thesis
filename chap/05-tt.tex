@@ -753,6 +753,7 @@ dans la figure~\ref{fig:comp-mem}.
 
         \irule{M-DeclClean}
             { \mcomp{\extendLocal{Γ}{x}{t}}{m}
+           \\ x ∉ Γ
             }
             { \mcomp{Γ}{\cCleanVar{m - x}{x}} }
 
@@ -1150,14 +1151,12 @@ m[φ]$ et on applique l'hypothèse d'induction.
 \paragraph{\textsc{M-DeclClean}:} % {{{
 
 On suppose que $Γ ⊢ φ : t'$. Alors $\extendLocal{Γ}{x}{t} ⊢ φ : t'$ par
-affaiblissement.
-%TODO[PJ]: sauf si φ utilise déjà x?
-On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
-$m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$.
-Si $v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
+affaiblissement. On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
+$m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$. Si
+$v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
 l'opération $\phxx\cCleanVar$. Le type $τ'$ étant un type pointeur par le
-lemme~\ref{lemma:canon}, on peut conclure.
-Dans les autres cas $m[φ]_Φ = m'[φ]_Φ$ ce qui termine ce cas.
+lemme~\ref{lemma:canon}, on peut conclure. Dans les autres cas $m[φ]_Φ =
+m'[φ]_Φ$ ce qui termine ce cas.
 
 % }}}
 \paragraph{\textsc{M-Push}:} % {{{
