@@ -160,9 +160,16 @@ logicielle est ensuite déclenchée (\verb!int 0x80!).
 le processeur est configuré --- tout dépend uniquement de l'état de certains
 registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
 Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
-prédéfini (dans \verb!arch/x86/kernel/entry_32.S!).
+prédéfini (dans \verb!arch/x86/kernel/entry_32.S!,
+figure~\ref{fig:entry-syscall})
 
-\insertcode{entry-syscall.s}
+% TODO uniformiser "appels systèmes" / "appels système"
+
+\begin{figure}[h]
+    \insertcode{entry-syscall.s}
+    \caption{Point d'entrée des appels systèmes}
+    \label{fig:entry-syscall}
+\end{figure}
 
 L'exécution reprend donc en \ring{0}, avec dans \esp{} le pointeur de pile noyau
 du processus. Les valeurs des registres ont été préservées; la macro
@@ -176,13 +183,16 @@ d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
 Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
 fonction \enquote{classique}, la convention d'appel \emph{cdecl} est respectée.
 La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
-être écrite en C.
+être écrite en C. On la trouve dans \texttt{kernel/timer.c}
+(figure~\ref{fig:syscall-def}).
 
-On trouve cette fonction dans \texttt{kernel/timer.c}:
+\begin{figure}[h]
+    \insertcode{syscall-definition.c}
+    \caption{Fonction de définition d'un appel système}
+    \label{fig:syscall-def}
+\end{figure}
 
-\insertcode{syscall-definition.c}
-
-La macro \texttt{SYSCALL_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
+La macro \texttt{SYSCALL\_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
 définit entre autres des points d'entrée pour les fonctionnalités de débogage du
 noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
 conformément à la convention \emph{cdecl}.
@@ -239,11 +249,13 @@ Les fonctions implantant un \emph{ioctl} sont donc vulnérables à la
 même classe d'attaques que les appels système, et donc doivent être écrits avec
 une attention particulière.
 
-Le code suivant est présent dans le pilote KMS pour les GPU AMD Radeon:
+Le code de la figure~\ref{fig:kms-buggy} est présent dans le pilote KMS pour les
+GPU AMD Radeon.
 
 \begin{figure}[h]
 \insertcode{kms-buggy.c}
 \caption{Code de la fonction \texttt{radeon\_info\_ioctl}}
+\label{fig:kms-buggy}
 \end{figure}
 
 On peut voir que l'argument \texttt{data} est converti en un \texttt{struct
@@ -251,12 +263,13 @@ drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
 \texttt{value}, et finalement ce pointeur est déréferencé.
 
 Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
-en espace noyau) du type suivant, dont les champs proviennent d'un appel
-utilisateur de \verb!ioctl()!.
+en espace noyau) du type donné dans la figure~\ref{fig:kms-info}, dont les
+champs proviennent d'un appel utilisateur de \verb!ioctl()!.
 
 \begin{figure}[h]
 \insertcode{kms-info.c}
 \caption{Définition de \texttt{struct drm\_radeon\_info}}
+\label{fig:kms-info}
 \end{figure}
 
 Pour mettre ce problème en évidence, nous avons annoté la fonction
