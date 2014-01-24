@@ -1,15 +1,21 @@
-% TODO[E] enrichir le chapeau!!!
-% le chapeau du chapitre 6 pourrait être (un peu) plus riche sur les
-% exemples réels.
+% TODO
 
-Nous présentons ici deux extensions du système de types décrit dans le
-chapitre~\ref{cha:typbase}. On commence par un exemple introductif, permettant
-distinguer plusieurs utilisations de types entiers, selon s'ils sont utilisés
-comme entiers arithmétiques ou ensemble de bits. Cela permet de détecter une
-erreur de programmation classique qui consiste à mélanger les opérateurs
-logiques et bit à bit.
+Nous venons de définir un système de types sûrs dans le
+chapitre~\ref{cha:typbase}. Cela permet de mettre en relation les types des
+expressions avec les valeurs qui leur seront associées. On peut voir cela comme
+une forme d'analyse de flot: si peu de constructions permettent de créer des
+valeurs d'un type $t$, alors toutes les valeurs de type $t$ proviennent de ces
+\enquote{sources}.
 
-% TODO[E] indique déjà que ce sera sur deux exemples réels
+On se propose ici d'enrichir le système de types de plusieurs extensions
+permettant d'explorer cette idée, en ajoutant du \enquote{sens} dans les types
+de données des programmes. Ces extensions permettront de détecter des erreurs de
+programmation communes, appuyées sur des exemples réels.
+
+On commence par un exemple introductif permettant distinguer plusieurs
+utilisations de types entiers, selon s'ils sont utilisés comme entiers
+arithmétiques ou ensemble de bits. Cela permet de détecter une erreur qui
+consiste à mélanger les opérateurs logiques et bit à bit.
 
 Ensuite, on étend de manière indépendante le système de types, cette fois au
 niveau des pointeurs. Plus précisément, dans le contexte de systèmes
