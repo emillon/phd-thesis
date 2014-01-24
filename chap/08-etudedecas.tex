@@ -310,13 +310,14 @@ dépendante de l'architecture. Le deuxième exemple que nous présentons concern
 l'implantation de celle-ci pour les processeurs Blackfin,
 figure~\ref{fig:ptrace-blackfin}.
 
-Dans d'anciennes versions de Linux\footnote{jusque 2.6.28 --- ce bug a été
-corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
+Dans d'anciennes versions de Linux\footnote{Jusqu'à la version 2.6.28 --- ce bug
+a été corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
 \texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
-appelle \texttt{memcpy} au lieu de \texttt{copy\_from\_user} pour lire dans la
-mémoire du processus. En théorie, si un utilisateur passe un pointeur noyau à la
+appelle \texttt{memcpy} au lieu de \nolinkurl{copy\_from\_user} pour lire dans
+la mémoire du processus. La ligne problématique est préfixée par \texttt{/*
+=\textgreater{} */}. En théorie, si un utilisateur passe un pointeur noyau à la
 fonction \texttt{ptrace}, il pourra lire des données du noyau. L'appel
-\texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
+\texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
 les variables du processus \texttt{p} si \texttt{addr} est une adresse dans
 l'espace utilisateur (ce qui est le comportement attendu), mais aussi de lire
 dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
@@ -326,9 +327,6 @@ dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
     \caption{Implantation de \texttt{ptrace} sur architecture Blackfin}
     \label{fig:ptrace-blackfin}
 \end{figure}
-
-% TODO mets en valeur la partie du code qui pose problème
-% TODO la figure est-elle citée?
 
 % TODO à préciser
 
@@ -356,9 +354,9 @@ lui passer cet argument.
 % TODO attention tu sautes 2 pages pour la suite du texte
 
 En pratique, la copie se fait sous un test forçant \texttt{addr} à être entre
-\texttt{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}, c'est-à-dire en espace
-utilisateur. Cela enlève le potentiel problème de fuite de données, mais cela
-reste un problème de sécurité car il est possible de provoquer des fautes
+\nolinkurl{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}, c'est-à-dire en
+espace utilisateur. Cela enlève le potentiel problème de fuite de données, mais
+cela reste un problème de sécurité car il est possible de provoquer des fautes
 mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espace
 utilisateur n'est pas chargé en mémoire.
 
