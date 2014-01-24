@@ -1,4 +1,6 @@
 % TODO[E] enrichir le chapeau!!!
+% le chapeau du chapitre 6 pourrait être (un peu) plus riche sur les
+% exemples réels.
 
 Nous présentons ici deux extensions du système de types décrit dans le
 chapitre~\ref{cha:typbase}. On commence par un exemple introductif, permettant
@@ -60,8 +62,8 @@ mode (lecture, écriture ou les deux) par les bits 1 et 2, s'il faut créer le
 fichier ou non s'il n'existe pas par le bit 7, si dans ce cas il doit être
 effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un
 \enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} (en fait
-un \texttt{unsigned int}) encode de la même manière les permissions que doit avoir
-le fichier créé, le cas échéant.
+un \texttt{unsigned int}) encode de la même manière les permissions que doit
+avoir le fichier créé, le cas échéant.
 
 Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
 correspond à un indice numérique dans une table interne au processus. Par
