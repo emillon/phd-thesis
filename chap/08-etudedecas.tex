@@ -391,14 +391,21 @@ drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
 d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
 toute l'exécution.
 
-\begin{figure}
+\begin{figure}[p]
 \insertcode{ex-drm.c}
 
 \caption{Cas d'étude minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
 
-% TODO quel est le rapport (position)
+\begin{figure}[p]
+
+    \insertcode{ex-drm-ok.c}
+
+    \caption{Cas d'étude minimisé et annoté -- version correcte}
+    \label{fig:ex-drm-ok}
+
+\end{figure}
 
 En ce qui concerne les fonctions de manipulation de pointeurs fournies
 par le noyau (\texttt{get\_user}, \texttt{put\_user},
@@ -426,15 +433,6 @@ La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
 
 % TODO le faire
-
-\begin{figure}
-
-    \insertcode{ex-drm-ok.c}
-
-    \caption{Cas d'étude minimisé et annoté -- version correcte}
-    \label{fig:ex-drm-ok}
-
-\end{figure}
 
 \section*{Conclusion}
 
