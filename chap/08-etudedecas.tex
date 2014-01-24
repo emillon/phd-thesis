@@ -301,20 +301,21 @@ utilisateur auquel nous nous intéressons peut également s'y produire.
 
 En particulier nous nous intéressons à l'appel système \texttt{ptrace}. Il
 permet à un processus d'accéder à la mémoire et de contrôler l'exécution d'un
-autre processus, par exemple à des fins de débogage. Par exemple,
+autre processus, par exemple à des fins de débogage. Ainsi,
 \texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} renvoie la valeur du mot mémoire à
 l'adresse \texttt{addr} dans l'espace d'adressage du processus \texttt{p}.
 
-Comme pour la plupart des appels système, l'implantation de \texttt{ptrace} est
-dépendante de l'architecture. Le deuxième exemple que nous présentons est celle
-qui concerne les processeurs Blackfin, figure~\ref{fig:ptrace-blackfin}.
+Comme pour la plupart des appels système, la fonction \texttt{ptrace} est
+dépendante de l'architecture. Le deuxième exemple que nous présentons concerne
+l'implantation de celle-ci pour les processeurs Blackfin,
+figure~\ref{fig:ptrace-blackfin}.
 
-Dans d'anciennes versions de Linux (jusque 2.6.28 --- ce bug a été corrigé dans
-le \emph{commit} \texttt{7786ce} en remplaçant l'appel à \texttt{memcpy} par un
-appel à \texttt{copy\_from\_user\_page}), cette fonction appelle \texttt{memcpy}
-au lieu de \texttt{copy\_from\_user} pour lire dans la mémoire du processus. En
-théorie, si un utilisateur passe un pointeur noyau à la fonction
-\texttt{ptrace}, il pourra lire des données du noyau. L'appel
+Dans d'anciennes versions de Linux\footnote{jusque 2.6.28 --- ce bug a été
+corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
+\texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
+appelle \texttt{memcpy} au lieu de \texttt{copy\_from\_user} pour lire dans la
+mémoire du processus. En théorie, si un utilisateur passe un pointeur noyau à la
+fonction \texttt{ptrace}, il pourra lire des données du noyau. L'appel
 \texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
 les variables du processus \texttt{p} si \texttt{addr} est une adresse dans
 l'espace utilisateur (ce qui est le comportement attendu), mais aussi de lire
@@ -325,6 +326,9 @@ dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
     \caption{Implantation de \texttt{ptrace} sur architecture Blackfin}
     \label{fig:ptrace-blackfin}
 \end{figure}
+
+% TODO mets en valeur la partie du code qui pose problème
+% TODO la figure est-elle citée?
 
 % TODO à préciser
 
@@ -349,12 +353,16 @@ lui passer cet argument.
 
 % TODO c'est un point intéressant ↓
 
+% TODO attention tu sautes 2 pages pour la suite du texte
+
 En pratique, la copie se fait sous un test forçant \texttt{addr} à être entre
 \texttt{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}, c'est-à-dire en espace
 utilisateur. Cela enlève le potentiel problème de fuite de données, mais cela
 reste un problème de sécurité car il est possible de provoquer des fautes
 mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espace
 utilisateur n'est pas chargé en mémoire.
+
+% TODO ?? clarifie et développe
 
 % TODO développe la fin et en particulier le problème de sécurité
 
@@ -391,6 +399,8 @@ toute l'exécution.
 \caption{Cas d'étude minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
+
+% TODO quel est le rapport (position)
 
 En ce qui concerne les fonctions de manipulation de pointeurs fournies
 par le noyau (\texttt{get\_user}, \texttt{put\_user},
