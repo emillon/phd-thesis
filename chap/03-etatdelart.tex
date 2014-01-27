@@ -84,10 +84,9 @@ permet parfois de trouver un grand nombre de vulnérabilités~\cite{SpenderGrep}
 
 On peut continuer cette approche en recherchant des motifs mais en étant
 sensible à la syntaxe et au flot de contrôle du programme. Cette notion de
-\emph{semantic grep} est présente dans l'outil Coccinelle
-\cite{coccinelle09,coccinelle11}: on peut définir des
-\emph{patches sémantiques} pour détecter ou modifier des constructions
-particulières.
+\emph{semantic grep} est présente dans l'outil
+Coccinelle~\cite{coccinelle09,coccinelle11}: on peut définir des \emph{patches
+sémantiques} pour détecter ou modifier des constructions particulières.
 
 Ces techniques sont utiles parce qu'elles permettent de plonger rapidement dans
 le code, en identifiant par exemple des appels à des fonctions dangereuses. En
@@ -100,10 +99,10 @@ vérifier manuellement la sortie de ces analyses.
 \label{sec:absint}
 
 L'interprétation abstraite est une technique d'analyse générique qui permet de
-simuler statiquement tous les comportements d'un programme
-\cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer les bornes
-de variation des variables pour s'assurer qu'aucun débordement de tableau n'est
-possible~\cite{AllamigeonHymansSSTIC07}.
+simuler statiquement tous les comportements d'un
+programme~\cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer
+les bornes de variation des variables pour s'assurer qu'aucun débordement de
+tableau n'est possible~\cite{AllamigeonHymansSSTIC07}.
 
 L'idée est d'associer à chaque ensemble concret de valeurs une représentation
 abstraite. Sur celle-ci, on peut définir des opérations indépendantes de la
