@@ -103,17 +103,19 @@ type opaque.
 
 \subsection{Modifications}
 
-% TODO[E] Qui se termine par un \0? (le litt)
-
 On commence par ajouter deux types: d'une part \tBits bien sûr, mais également
 \tChar qui apparaît dans les chaînes de caractères. On ne spécifie pas plus ce
 dernier mais on suppose qu'il existe des littéraux de chaînes qui retournent un
-pointeur vers le premier élément d'un tableaux de caractères. Au niveau des
-valeurs, les entiers utilisés comme bitmasks sont représentés par des valeurs
-entières classiques $\widehat{n}$. En particulier, on n'ajoute pas de nouveau
-type sémantique, mais on ajoute une règle de compatibilité entre le type de
-valeurs \tInt et le type statique \tBits (cela signifie qu'une valeur de type
-\tBits est représentée par un \tInt en mémoire,
+pointeur vers le premier élément d'un tableaux de caractères. Pour rester
+compatible avec C, on suppose qu'un caractère nul \texttt{'\textbackslash{}0'}
+est inséré à la fin de la chaîne. On ajoute ces chaînes uniquement dans le but
+de pouvoir représenter les noms de fichiers.
+
+Au niveau des valeurs, les entiers utilisés comme bitmasks sont représentés par
+des valeurs entières classiques $\widehat{n}$. En particulier, on n'ajoute pas
+de nouveau type sémantique, mais on ajoute une règle de compatibilité entre le
+type de valeurs \tInt et le type statique \tBits (cela signifie qu'une valeur de
+type \tBits est représentée par un \tInt en mémoire,
 figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
 \enquote{constructeurs} (\texttt{O\_*}) et du \enquote{consommateur}
 \texttt{open} (figure~\ref{fig:bitmasks-types}).
