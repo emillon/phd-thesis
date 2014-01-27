@@ -525,24 +525,30 @@ Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
 \section{Performance}
 
-% TODO [PJ] C'est flou ! complexité asymptotique ?
+Comme le problème de l'inférence de types par l'algorithme W est complet pour
+DEXPTIME~\cite{mairson}, on peut s'attendre à une complexité exponentielle en la
+taille du programme. Cependant, lorsqu'on borne la \enquote{taille} $d$ des
+types, celle-ci devient quasi-linéaire~\cite{rta03} ($O(n α(n) + dn)$ où $α$ est
+l'inverse de la fonction d'Ackermann).
 
-Sur les exemples testés nous n'avons pas noté de délai d'exécution notable. Cela
-est dû au fait que l'algorithme d'inférence est assez efficace: son temps
-d'exécution dépend essentiellement de la taille des types du programme, et pour
-du code C ils sont en général très simples.
+Dans notre cas, on utilise une variante de l'algorithme W pour un langage
+particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
+fonctions imbriquées, et les types des valeurs globales sont écrites par le
+programmeur, ce qui permet de borner $d$. En effet, sur les exemples testés nous
+n'avons pas noté de délai d'exécution notable.
 
-La compilation de C vers \newspeak peut être plus coûteuse, notamment lorsque
-le fichier d'entrée est de taille importante. Le temps de traitement est plus
-long que celui d'un compilateur comme GCC ou \texttt{clang}, mais reste
-raisonnable. \ctonewspeak a été utilisé pour compiler des projets de l'ordre du
-million de lignes de code source prétraité, et son exécution ne prenait pas plus
-de quelques minutes.
+En revanche, la compilation de C vers \newspeak peut être plus coûteuse,
+notamment lorsque le fichier d'entrée est de taille importante. Le temps de
+traitement est plus long que celui d'un compilateur comme GCC ou \texttt{clang},
+mais reste de l'ordre de quelques secondes. \ctonewspeak a été utilisé pour
+compiler des projets de l'ordre du million de lignes de code source prétraité,
+et son exécution ne prenait pas plus de quelques minutes.
 
 Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres
 optimisations sont certainement possibles, mais la performance n'est pas
-bloquante pour le moment: on ne compile en général qu'une seule fois le code à
-analyser.
+bloquante pour le moment: une fois que le code est compilé, on peut réutiliser
+le fichier objet \newspeak pour d'autres analyses. La compilation est donc
+relativement rare.
 
 \section*{Conclusion}
 
