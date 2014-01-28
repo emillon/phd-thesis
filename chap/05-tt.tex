@@ -1173,18 +1173,25 @@ cas on applique l'hypothèse de récurrence.
 On part de $\mcomp{Γ}{m''}$ où $m'' = \cCleanup{\cPop{m'}}$. Deux cas se
 produisent selon la forme de $\cVar{φ}$.
 
-Si $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où $Γ' = (Γ_G,
-[x_1:t_1, …, x_n:t_n, \vRet:t])$. On applique alors l'hypothèse de récurrence
-sur $Γ ⊧ m'$:
-%TODO[PJ] ?
-il vient que $m'[φ]_Φ = v$ où $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$.
-Comme $\cH{v} ≤ |m'|$ (lemme~\ref{lemma:hauteur-chem}), deux cas peuvent se
-produire. Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a bien la
-compatibilité mémoire (l'argument est similaire au cas \textsc{Decl-Clean}).
-Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
+\begin{itemize}
 
-Si $\cVar{φ} = (|m''|, x)$, on procède de la mème manière sauf qu'on invoque
-alors le cas d'induction sur $\mcomp{Γ}{m}$.
+\item Soit $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où $Γ' =
+    (Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])$. On applique alors l'hypothèse de
+    récurrence en partant du jugement $Γ ⊧ m'$: il vient que $m'[φ]_Φ = v$ où $m
+    ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. Comme $\cH{v} ≤ |m'|$
+    (lemme~\ref{lemma:hauteur-chem}), deux cas peuvent se produire:
+
+\begin{itemize}
+\item Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a bien la
+    compatibilité mémoire (l'argument est similaire au cas \textsc{Decl-Clean}).
+
+\item Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
+\end{itemize}
+
+\item
+Soit $\cVar{φ} = (|m''|, x)$. On procède alors de la mème manière sauf qu'on
+invoque alors le cas d'induction sur $\mcomp{Γ}{m}$.
+\end{itemize}
 
 % }}}
 \paragraph{\textsc{M-Write}:} % {{{
