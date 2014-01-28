@@ -1135,12 +1135,6 @@ T(0)     &: \eArray{\circled{1}, 2, 3, 5} \\
 
 \end{figure}
 
-\paragraph{Remarque}
-
-Dans toute la suite, on emploiera la notation $m[φ]_Φ$. Il est important de
-remarquer que $m$ désigne un état particulier et $φ$ un chemin particulier, mais
-que $Φ$ est la lentille indexée globale définie page~\pageref{subsec:acces-phi}.
-
 \subsection*{Accès à une liste par indice : $I$}
 
 On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
@@ -1292,6 +1286,13 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     m{[\eNull    ]}_Φ &= \serr{ptr} \\
     m{[\eNull ← v]}_Φ &= \serr{ptr}
   \end{align*}
+
+\paragraph{Remarque}
+
+Dans toute la suite, lorsque ce n'est pas ambigü, on emploiera la notation
+$m[φ]$ pour désigner $m[φ]_Φ$. Il est important de remarquer que $m$ désigne un
+état particulier et $φ$ un chemin particulier, mais que $Φ$ est la lentille
+indexée globale définie page~\pageref{subsec:acces-phi}.
 
 \section{Contextes d'évaluation}
 
@@ -1456,7 +1457,7 @@ $\widehat{\&}~(((1,s0).f)$ et donc
 et en
 \texttt{(b)}.
 
-Dans le cas où la valeur référencée n'a pas la forme $m[φ']_Φ$, aucune règle ne
+Dans le cas où la valeur référencée n'a pas la forme $m[φ']$, aucune règle ne
 peut s'appliquer (comme lorsqu'on cherche à réduire l'addition d'une fonction et
 d'un entier, par exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on
 montrera que ce cas est toujours évité dans les programmes typés

@@ -837,7 +837,7 @@ qui convient.
 \paragraph{\textsc{Exp-Lv}:} % {{{
 
 Puisque $Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$, on a d'après le
-lemme~\ref{lemma:mem-typ}: $m ⊧ v : τ$ où $v = m[φ]_Φ$ avec $\tComp{τ}{t}$.
+lemme~\ref{lemma:mem-typ}: $m ⊧ v : τ$ où $v = m[φ]$ avec $\tComp{τ}{t}$.
 
 % }}}
 \paragraph{\textsc{Exp-UnOp}:} % {{{
@@ -859,7 +859,7 @@ On peut appliquer le lemme~\ref{lemma:repr}, qui nous donne un $τ$ qui convient
 \paragraph{\textsc{Exp-Set}:} % {{{
 
 Deux propriétés sont à prouver. D'une part, $Γ ⊢ v : t$, et d'autre part,
-$\mcomp{Γ}{m'}$ où $m' = m[φ←v]_Φ$.
+$\mcomp{Γ}{m'}$ où $m' = m[φ←v]$.
 Tout d'abord, le lemme d'inversion appliqué à $Γ ⊢ φ ← v : t$ nous donne que
 $Γ ⊢ φ : t$ et $Γ ⊢ v : t$.
 Ensuite, comme $Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$, on peut appliquer le

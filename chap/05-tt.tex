@@ -1,5 +1,3 @@
-% TODO global mettre _Φ implicite
-
 Dans ce chapitre, nous enrichissons le langage défini dans le
 chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
 programmes bien formés, comme celui de la figure~\ref{fig:progwf:good}, des
@@ -555,7 +553,7 @@ gauches, codéfini par:
 \[
     \semtypphi{m}{φ}{τ}
     \eqdef
-    \semtyp{m}{m[φ]_Φ}{τ}
+    \semtyp{m}{m[φ]}{τ}
 \]
 
 Les règles de définition du typage des valeurs sont données dans la
@@ -764,7 +762,7 @@ dans la figure~\ref{fig:comp-mem}.
            \\ Γ ⊢ φ : t
            \\ m ⊧ v : τ
            \\ \tComp{τ}{t}
-           \\ m' = m[φ ← v]_Φ
+           \\ m' = m[φ ← v]
             }
             {
               \mcomp{Γ}{m'}
@@ -983,8 +981,8 @@ On procède par induction sur la forme de $t$.
 
             Puisque $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t'$, on obtient par le
             lemme~\ref{lemma:mem-typ} que
-            $m[φ]_Φ$ est une valeur telle que
-            $m ⊧ m[φ]_Φ : τ'$ où $\tComp{τ'}{t'}$.
+            $m[φ]$ est une valeur telle que
+            $m ⊧ m[φ] : τ'$ où $\tComp{τ'}{t'}$.
             D'après \textsc{S-Ptr}, $m ⊧ \widehat{\&}~φ : τ$.
 
             De plus par \textsc{Comp-Ptr}
@@ -1057,7 +1055,7 @@ On procède par induction sur la forme de $v$.
 \paragraph{$\widehat{\&}~a$:} On distingue selon la forme de $a$. Si $a = (x)$,
 c'est immédiat. Si $a = (n, x)$, alors d'après la forme de $v$, la dernière
 règle appliquée dans la dérivation de $m ⊧ v : τ$ est \textsc{S-Ptr}, et donc
-$m[(n, x)]_Φ$ est une valeur.
+$m[(n, x)]$ est une valeur.
 D'après la définition de $φ$, $n ≤ |m|$.
 
 \paragraph{$\widehat{\&}~φ.l$:} %
@@ -1103,7 +1101,7 @@ On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
 \label{lemma:mem-typ}
 
 Si $\mcomp{Γ}{m}$ et $Γ ⊢ φ : t$, alors
-$m[φ]_Φ$ est une valeur $v$ et
+$m[φ]$ est une valeur $v$ et
 $m ⊧ v : τ$
 où
 $\tComp{τ}{t}$.
@@ -1138,27 +1136,27 @@ Soient $φ$ tel que $\extendGlobal{Γ}{x}{t'} ⊢ φ : t$ et $m' = (s, ((x↦v):
 Alors la variable référencée par $φ$ est soit $(x)$, soit $(y)$ avec $y ∈
 \cDom{Γ_G}$, soit $(|m|, y)$ avec $y ∈ \cDom{Γ_L}$.
 
-Dans le premier cas, $m'[φ]_Φ = v$, ce qui permet de conclure.
+Dans le premier cas, $m'[φ] = v$, ce qui permet de conclure.
 
-Dans les autres cas, $m'[φ]_Φ = m[φ]_Φ$, ce qui nous permet de conclure grâce à
+Dans les autres cas, $m'[φ] = m[φ]$, ce qui nous permet de conclure grâce à
 l'hypothèse d'induction.
 
 % }}}
 \paragraph{\textsc{M-Decl}:} % {{{
 On part de $Γ ⊢ φ : t'$. Alors $\cVar{φ}$ est soit la locale $x$, soit une autre
-variable locale, soit une globale. Dans le premier cas, $m'[φ]_Φ = v$ et les
-prémisses nous permettent de conclure. Dans tous les autres cas, $m'[φ]_Φ =
+variable locale, soit une globale. Dans le premier cas, $m'[φ] = v$ et les
+prémisses nous permettent de conclure. Dans tous les autres cas, $m'[φ] =
 m[φ]$ et on applique l'hypothèse d'induction.
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{
 
 On suppose que $Γ ⊢ φ : t'$. Alors $\extendLocal{Γ}{x}{t} ⊢ φ : t'$ par
-affaiblissement. On peut donc appliquer l'hypothèse d'induction: $m[φ]_Φ = v$ où
+affaiblissement. On peut donc appliquer l'hypothèse d'induction: $m[φ] = v$ où
 $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$. Si
-$v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ]_Φ = \eNull$ par
+$v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ] = \eNull$ par
 l'opération $\phxx\cCleanVar$. Le type $τ'$ étant un type pointeur par le
-lemme~\ref{lemma:canon}, on peut conclure. Dans les autres cas $m[φ]_Φ =
-m'[φ]_Φ$ ce qui termine ce cas.
+lemme~\ref{lemma:canon}, on peut conclure. Dans les autres cas $m[φ] = m'[φ]$ ce
+qui termine ce cas.
 
 % }}}
 \paragraph{\textsc{M-Push}:} % {{{
@@ -1177,15 +1175,15 @@ produisent selon la forme de $\cVar{φ}$.
 
 \item Soit $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où $Γ' =
     (Γ_G, [x_1:t_1, …, x_n:t_n, \vRet:t])$. On applique alors l'hypothèse de
-    récurrence en partant du jugement $Γ ⊧ m'$: il vient que $m'[φ]_Φ = v$ où $m
+    récurrence en partant du jugement $Γ ⊧ m'$: il vient que $m'[φ] = v$ où $m
     ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. Comme $\cH{v} ≤ |m'|$
     (lemme~\ref{lemma:hauteur-chem}), deux cas peuvent se produire:
 
 \begin{itemize}
-\item Si $\cH{v} = |m'|$, alors $m''[φ]_Φ = \eNull$ et on a bien la
+\item Si $\cH{v} = |m'|$, alors $m''[φ] = \eNull$ et on a bien la
     compatibilité mémoire (l'argument est similaire au cas \textsc{Decl-Clean}).
 
-\item Sinon, $m''[φ]_Φ = m'[φ]_Φ$ et on conclut directement.
+\item Sinon, $m''[φ] = m'[φ]$ et on conclut directement.
 \end{itemize}
 
 \item
@@ -1195,15 +1193,15 @@ invoque alors le cas d'induction sur $\mcomp{Γ}{m}$.
 
 % }}}
 \paragraph{\textsc{M-Write}:} % {{{
-On part de $\mcomp{Γ}{m'}$ où $m' = m[φ ← v]_Φ$, et on suppose que
+On part de $\mcomp{Γ}{m'}$ où $m' = m[φ ← v]$, et on suppose que
 $Γ ⊢ φ' : t'$.
 
 Si $φ = φ'$: alors il suffit d'appliquer \textsc{GetPut} à la lentille $Φ$:
-$m[φ ← m[φ]_Φ]_Φ = m$, ce qui donne directement la conclusion.
+$m[φ ← m[φ]] = m$, ce qui donne directement la conclusion.
 
 Si $φ ≠ φ'$:
 $Γ ⊢ φ' : t'$ donc $\cVar{φ'}$ est soit une locale soit une globale de $m'$.
-Donc $m'[φ']_Φ = m[φ']_Φ$ et on conclut grâce à l'hypothèse d'induction.
+Donc $m'[φ'] = m[φ']$ et on conclut grâce à l'hypothèse d'induction.
 % }}}
 \end{proof}
 
