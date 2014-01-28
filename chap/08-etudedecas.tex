@@ -342,9 +342,10 @@ espace noyau.
 En annotant correctement les types, on peut donc détecter ce bug: le type
 correct de \texttt{addr} est \ptrU{\tInt}, et celui de \texttt{memcpy} est
 $(\ptrK{\tInt}, \ptrK{\tInt}, \tInt) → \ptrK{\tInt}$. Il est donc impossible de
-lui passer cet argument.
-
-% TODO polymorphisme
+lui passer cet argument. Remarquons que le type de \texttt{memcpy} en C utilise
+des pointeurs de type \texttt{void *}. Pour les traiter correctement on pourrait
+utiliser du polymorphisme, mais dans ce cas précis utiliser le type \ptrK{\tInt}
+est suffisant.
 
 \paragraph{Remarque}
 
