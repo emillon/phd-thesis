@@ -401,11 +401,13 @@ L'inférence de types consiste à remplacer les étiquettes de type \texttt{unit
 par des étiquettes de type \texttt{simple} (autrement dit de vraies
 représentations de types).
 
-Cette étape se fait de manière impérative: on peut créer de nouveaux types avec
-la fonction \texttt{new\_unknown} et unifier deux types avec la fonction
-\texttt{unify}. Leurs types sont:
-
-% TODO[PJ] pourquoi impérative ? c'est plus facile à prouver en fonctionnel
+Cette étape se fait de manière impérative. Cela permet de ne pas avoir à
+réaliser de substitutions explicites. À la place, on repose sur le partage et
+les références, qui représentent les inconnues de type. Lorsque celles-ci sont
+résolues, il suffit de muter une seule fois la référence, et le partage fait que
+ce changement sera visible partout. Plus précisément, on peut créer de nouveaux
+types avec la fonction \texttt{new\_unknown} et unifier deux types avec la
+fonction \texttt{unify}. Leurs types sont:
 
 % TODO choisir si on présente l'algo en fonctionnel ou imp
 
