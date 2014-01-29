@@ -328,8 +328,6 @@ dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
     \label{fig:ptrace-blackfin}
 \end{figure}
 
-% TODO à préciser
-
 On peut repérer ce bug par simple relecture pour commencer. On commence par
 remarquer que l'argument \texttt{addr}, malgré son type \texttt{long}, est en
 réalité un \texttt{void *} provenant directement de l'espace utilisateur. C'est
