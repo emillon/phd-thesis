@@ -267,13 +267,13 @@ forme des deux types d'entrée:
         \EndCase
 
         \Case{$(l_a) → r_a, (l_b) → r_b$}
-            \State $r \gets$ \Call{unify}{$ra, rb$}
+            \State $r \gets$ \Call{unify}{$r_a, r_b$}
             \State $n \gets$ \Call{length}{$l_a$}
             \If {\Call{length}{$l_b$} $≠ n$}
                 \Error
             \EndIf
             \For{$i = 0$ \algorithmicto{} $n-1$}
-                \State $r \gets r$ \Call{unify}{$l_a[i], l_b[i]$}
+            \State $r \gets r~∪$ \Call{unify}{$l_a[i], l_b[i]$}
             \EndFor
             \State \Return{r}
         \EndCase
@@ -408,8 +408,6 @@ résolues, il suffit de muter une seule fois la référence, et le partage fait 
 ce changement sera visible partout. Plus précisément, on peut créer de nouveaux
 types avec la fonction \texttt{new\_unknown} et unifier deux types avec la
 fonction \texttt{unify}. Leurs types sont:
-
-% TODO choisir si on présente l'algo en fonctionnel ou imp
 
 \begin{verbatim}
 val new_unknown : unit -> Types.simple
