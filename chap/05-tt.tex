@@ -54,7 +54,7 @@ pointeur $\eNull$ a pour type $t~*$. Mais cela ne pose pas de complications, car
 il n'y a pas d'étape de généralisation de $t$. Cela indique seulement que
 $\eNull$ est compatible avec n'importe quel type pointeur. L'autre cas concerne
 les tests d'égalité, qu'on veut pouvoir faire sur les valeurs de types scalaires
-et tous les types qui sont composés de ces types (on veut par exemple éviter de
+et récursivement sur tous les types composés (on veut par exemple éviter de
 tester l'égalité de deux fonctions). Là encore, cela ne pose pas de problème,
 puisqu'on peut statiquement savoir si un type a cette propriété ou pas.
 
@@ -85,10 +85,10 @@ rencontrer $\iReturn{x}$ permet de conclure que le type de la fonction est $(~)
 Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
 début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
 entières). Or cet opérateur prend un argument d'un type pointeur de la forme
-$t*$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout $t$
-($\tInt$, $\tFloat$ ou même $t'*$: le déréférencement d'un pointeur sur pointeur
-donne un pointeur), mais le type de $x$, $\tInt$, n'est pas de cette forme. Ce
-programme est donc mal typé.
+$\ptrK{t}$ et renvoie alors une valeur de type $t$. Ceci est valable pour tout
+$t$ ($\tInt$, $\tFloat$ ou même $\ptrK{t'}$: le déréférencement d'un pointeur
+sur pointeur donne un pointeur), mais le type de $x$, $\tInt$, n'est pas de
+cette forme. Ce programme est donc mal typé.
 
 Dans ce chapitre, on commence par poser les notations qui vont servir à définir
 la relation de typage. Ensuite, on explique les différentes règles de typage sur
@@ -111,13 +111,13 @@ polymorphisme.
       { \tFloat                     }{Flottant}
       { \tUnit                      }{Unité}
       { t*                          }{Pointeur}
-      { t[]                         }{Tableau}
+      { t~[]                        }{Tableau}
       { S                           }{Structure}
       { (t_1, …, t_n) \rightarrow t }{Fonction}
       {END} \\
   \\
   \gramdef{Structure}{S}
-      { \tStruct{ l_1 : t_1; … ; l_n : t_n } }{Structure simple}
+      { \tStruct{ l_1 : t_1; … ; l_n : t_n } }{}
       {END} \\
   \end{align*}
 
@@ -131,14 +131,11 @@ Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
 
 \label{page:gamma-split}
-Plus précisément, un environnement $Γ$ est composé de deux listes de couples (variable,
-type): une pour les variables locales, et une pour les variables
-globales
-\footnote{
-    Cette distinction est nécessaire pour les définition de fonction: on
-    remplace la liste des variables locales, mais on conserve le type des
-    variables globales.
-}
+Plus précisément, un environnement $Γ$ est composé de deux listes de couples
+(variable, type): une pour les variables locales, et une pour les variables
+globales. Cette distinction est nécessaire pour les définitions de fonctions: on
+remplace la liste des variables locales, mais on conserve le type des variables
+globales.
 
 Si $Γ = (Γ_G, Γ_L) = ({(γ_i)}_{i∈[1;n]}, {(η_i)}_{i∈[1;m]})$,
 avec $γ_i = (g_i, t_i)$ et $η_i = (l_i, u_i)$,
@@ -250,7 +247,7 @@ pointé.
 
 Pour une valeur gauche indexée (l'accès à tableau), on s'assure que l'indice soit
 entier, et que la valeur gauche a un type tableau: le type de l'élement est encore
-une fois le type de base du type tableau ($t$ pour $t[]$).
+une fois le type de base du type tableau.
 
 \begin{mathpar}
   \disprule{Lv-Index}
@@ -399,7 +396,8 @@ typée dans ce même contexte.
 \end{mathpar}
 
 Une déclaration de variable est bien typée si son bloc interne est bien typé
-quand on ajoute à l'environnement la variable avec le type de son initialiseur.
+quand on ajoute à l'environnement la variable avec le type de sa valeur
+initiale.
 
 \begin{mathpar}
   \disprule{Decl}
@@ -496,6 +494,7 @@ des globales de cette nouvelle association.
 
   \caption{Typage des phrases et programmes}
 \label{fig:typ-ph}
+% TODO remplacer [] / [~] par cNil ?
 
 \end{figure}
 
@@ -908,7 +907,9 @@ $Γ = x:t$).
 
   Il est possible de déterminer la forme syntaxique d'une valeur étant donné son
   type, comme décrit dans le tableau suivant. Par exemple, d'après la première
-  ligne, si $Γ ⊢ v : \tInt$, alors $∃ n, v = n$.
+  ligne, si $Γ ⊢ v : \tInt$, alors $v$ est de la forme $\widehat{n}$ (cf.
+  figure~\ref{fig:interp-val}, page~\pageref{fig:interp-val} pour la définition
+  des valeurs).
 
   \begin{center}
   \begin{tabular}{cc}
@@ -1063,10 +1064,10 @@ On procède par induction sur $v' = \widehat{\&}~φ$.
 Comme $\cH{\widehat{\&}~φ} ≤ |m|$ et
 $\cH{\widehat{\&}~φ.l} = \cH{\widehat{\&}~φ}$,
 on en déduit que
-$\cH{\widehat{\&}~φ.l} ≤ |m|$
+$\cH{\widehat{\&}~φ.l} ≤ |m|$.
 
 \paragraph{$\widehat{\&}~φ[n]$:}
-Idem
+Idem.
 
 \paragraph{$\widehat{\eStruct{l_1:v_1;…;l_n:v_n}}$:}
 Par induction, $∀i ∈ [1;n], \cH{v_i} ≤ |m|$. Donc il en est de même pour leur
@@ -1317,7 +1318,7 @@ grand pas d'exécution.
 
 La preuve de ce théorème se trouve en annexe~\ref{proof:preservation}.
 
-Cela prouve qu'aucun terme ne reste \enquote{bloqué} parce qu'aucune règle ne
+Cela établit qu'aucun terme ne reste \enquote{bloqué} parce qu'aucune règle ne
 s'applique, et que la sémantique respecte le typage. En quelque sorte, les types
 sont un contrat entre les expressions et les fonctions: si leur évaluation
 converge, alors une valeur du type inféré sera produite.
@@ -1394,15 +1395,15 @@ nous donne que $\mcomp{Γ'}{m''}$.
 
 \section*{Conclusion}
 
-On ajoute un système de types statiques à \langname. Cela permet de calculer à
-la compilation la forme des valeurs produite par chaque expression. Pour ce
-faire on définit un ensemble de règles de typage (regroupées dans
+En ajoutant un système de types statiques à \langname, on peut calculer à la
+compilation la forme des valeurs produite par chaque expression. Pour ce faire,
+on a défini un ensemble de règles de typage (regroupées dans
 l'annexe~\ref{anx:typage}) à appliquer selon la forme de celle-ci.
 
 Si on considère des programmes qui sont seulement syntaxiquement corrects, on ne
 peut rien prédire sur leur exécution. Par exemple, $\eFun{x}{\iPass} + 1$ est
 une expression correcte mais pour laquelle il n'y a pas de règle d'évaluation
-qui s'applique. En ajoutant un système de type, les propriétés de sûreté
+qui s'applique. En ajoutant un système de types, les propriétés de sûreté
 établies dans ce chapitre assurent que les termes peuvent être évalués, et que
 les valeurs produites sont en accord avec les types donnés aux différentes
 parties du programme. Cela permet surtout de s'assurer que les programmes ne
