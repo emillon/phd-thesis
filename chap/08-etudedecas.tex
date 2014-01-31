@@ -117,7 +117,7 @@ processus en cours, l'ordonnanceur charge donc le \crtrois{} du nouveau
 processus.
 
 Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
-\texttt{0xc0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
+\hexa{c0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
 
 \begin{itemize}
 \item le code du programme
@@ -213,7 +213,7 @@ routine de traitement d'appel système.
 
 Si le déréférencement est fait sans vérification, un utilisateur mal intentionné
 peut forger un pointeur vers le noyau (en déterminant des adresses valides dans
-l'espace noyau entre \texttt{0xc0000000} et \texttt{0xffffffff}). En provoquant
+l'espace noyau entre \hexa{c0000000} et \hexa{ffffffff}). En provoquant
 une lecture sur ce pointeur, des informations confidentielles peuvent fuiter ;
 et, en forçant une écriture, il est possible d'augmenter ses privilèges, par
 exemple en devenant super-utilisateur (\emph{root}). En pratique, il n'est pas
