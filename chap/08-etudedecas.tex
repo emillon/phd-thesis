@@ -1,17 +1,21 @@
+% TODO titre
+
 Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
 d'exploitation développé depuis le début des années 90 et \enquote{figure de
 proue} du mouvement \emph{open-source}. Au départ écrit par Linus Torvalds sur
-son ordinateur personnel, il a au fil des années été porté sur de nombreuses
+son ordinateur personnel, il a été porté au fil des années sur de nombreuses
 architectures et s'est enrichi de nombreux pilotes de périphériques. Dans la
 version 3.9.8 (2013), son code source comporte 11.2 millions de lignes de code
 (en grande majorité du C) dont 57\% de pilotes.
+
+% TODO màj ↑
 
 Même si le noyau est monolithique (la majeure partie des traitements s'effectue
 au sein d'un même fichier objet), les sous-systèmes sont indépendants. C'est ce
 qui permet d'écrire des pilotes de périphériques et des modules.
 
 Ces pilotes manipulent des données provenant de l'utilisateur, notamment par
-pointeurs. Comme on l'a vu, cela peut poser des problèmes de sécurité si on
+pointeur. Comme on l'a vu, cela peut poser des problèmes de sécurité si on
 déréférence ces pointeurs sans vérification.
 
 Dans ce chapitre, on met en œuvre sur le noyau Linux le système de types décrit
@@ -25,6 +29,8 @@ utilisateur est déréférencé directement, pouvant provoquer une fuite
 d'informations confidentielles dans le noyau. Les détails sur ce bug peuvent
 être trouvés sur \url{https://bugs.freedesktop.org/show_bug.cgi?id=29340}.
 
+% TODO 2è bug
+
 On commence par décrire les difficultés rencontrées pour analyser le code du
 noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système dans
 ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin le bug
@@ -33,9 +39,9 @@ ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin le bug
 \section{GNU C}
 \label{sec:gnuc}
 
-Linux est écrit dans le langage C, mais pas sa version normalisée. Il utilise le
-dialecte GNU C qui est celui que supporte GCC. Une première difficulté pour
-traiter le code du noyau est donc de le compiler.
+Linux est écrit dans le langage C, mais pas dans la version qui correspond à la
+norme. Il utilise le dialecte GNU C qui est celui que supporte GCC. Une première
+difficulté pour traiter le code du noyau est donc de le compiler.
 
 Pour traduire ce dialecte, il a été nécessaire d'adapter \ctonewspeak. La
 principale particularité est la notation \verb!__attribute__((...))! qui peut
@@ -43,9 +49,9 @@ décorer les déclarations de fonctions, de variables ou de types. De nouvelles
 fonctionnalités sont aussi présentes.
 
 Par exemple, il est possible de manipuler des étiquettes de première classe: si
-\texttt{lbl:} est présent avant une instruction, on peut capturer l'adresse de
-celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement avec
-\texttt{goto *p}.
+\enquote{\texttt{lbl:}} est présent avant une instruction, on peut capturer
+l'adresse de celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement
+avec \texttt{goto *p}.
 
 Une autre fonctionnalité est le concept d'instruction-expression:
 \texttt{(\{bloc\})} est une expression, dont la valeur est celle de la dernière
@@ -67,6 +73,8 @@ Les attributs, quant à eux, rentrent dans trois catégories:
 Dans notre cas, toutes ces annotations peuvent être ignorées.
 
 \section{Configuration}
+
+% TODO nécessite une section?
 
 Pour que le code noyau soit compilable, il est nécessaire de définir certaines
 macros. En particulier, le système de configuration de Linux utilise des macros
@@ -118,14 +126,11 @@ processus.
 
 Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
 \hexa{c0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
-
-\begin{itemize}
-\item le code du programme
-\item les données du programme (variables globales)
-\item la pile utilisateur
-\item le tas (mémoire allouée par \texttt{malloc} et fonctions similaires)
-\item les bibliothèques partagées
-\end{itemize}
+le code du programme,
+les données du programme (variables globales),
+la pile utilisateur,
+le tas (mémoire allouée par \texttt{malloc} et fonctions similaires), ou encore
+les bibliothèques partagées.
 
 Au dessus de \texttt{PAGE\_OFFSET}, se trouve la mémoire réservée au noyau.
 Cette zone contient le code du noyau, les piles noyau des processus, etc.
@@ -223,6 +228,8 @@ moment là, l'erreur provoquera tout de même un déni de service. Plus de déta
 sur ce mécanisme, et le fonctionnement de la mémoire virtuelle dans Linux,
 peuvent être trouvés dans~\cite{userspaceaccess}.
 
+% TODO déni: à ref dans l'exemple 2
+
 \section{Premier exemple de bug : pilote Radeon KMS}
 
 On décrit le cas d'un pilote vidéo qui contenait un bug de pointeur utilisateur.
@@ -232,10 +239,7 @@ Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
 \emph{Kernel Mode Setting} (KMS).
 
 Pour configurer un périphérique, l'utilisateur communique avec le pilote noyau
-avec le mécanisme d'\emph{ioctls}\footnote{
-  Ce nom vient de la fonction \verb!ioctl()! pour
-  \emph{Input/Output Control}.
-}.
+avec le mécanisme d'\emph{ioctls} (pour \emph{Input/Output Control}).
 Ils sont similaires à des appels système, mais spécifiques à un périphérique
 particulier. Le transfert de contrôle est similaire à ce qui a été décrit dans
 la section précédente: les applications utilisateurs appellent la fonction
@@ -422,6 +426,8 @@ explicites: comme on l'explique page~\pageref{page:qualifs-pas-qualifs}, c'est
 un reste d'une première présentation basée sur les qualificateurs.
 Dans l'implantation, il est cependant agréable de manipuler ces étiquettes
 séparément des pointeurs auxquels elles sont attachées.
+
+% TODO idem sur #2
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
