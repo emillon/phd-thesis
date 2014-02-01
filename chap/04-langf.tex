@@ -131,15 +131,13 @@ ne peut pas mettre à jour partiellement les valeurs composées comme des
 enregistrements (\emph{records}). Pour simuler cette opération, on a en général
 une opération qui permet de définir un nouvel enregistrement dans lequel seul un
 champ a été mis à jour. C'est ce qui se passe avec le langage
-Haskell~\link{haskell}: \texttt{r \{ x = 5 \}} représente une valeur
-enregistrement égale à \texttt{r} sur tous les champs, sauf pour le champ
-\texttt{x} où elle vaut \texttt{5}. Utiliser des lentilles revient à ajouter
-dans le langage la notion de champ en tant que valeur de première classe. Elles
-ont l'avantage de pouvoir se composer, c'est-à-dire que si on a un champ nommé
-$x$ qui contient un champ nommé $y$, alors on peut modifier le champ du champ
-automatiquement.
+Haskell~\cite{rwh}: \texttt{r \{ x = 5 \}} représente une valeur enregistrement
+égale à \texttt{r} sur tous les champs, sauf pour le champ \texttt{x} où elle
+vaut \texttt{5}. Utiliser des lentilles revient à ajouter dans le langage la
+notion de champ en tant que valeur de première classe. Elles ont l'avantage de
+pouvoir se composer, c'est-à-dire que si on a un champ nommé $x$ qui contient un
+champ nommé $y$, alors on peut modifier le champ du champ automatiquement.
 
-% TODO link RWH plutôt ↑
 % TODO lentilles = Pierce ? ↓
 
 Dans ce cadre, les lentilles ont été popularisées par Van
