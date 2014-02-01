@@ -1,8 +1,9 @@
-Après avoir décrit notre solution dans la partie~\ref{part:lang}, nous avons
-présenté ici notre démarche expérimentale. Dans le chapitre~\ref{cha:implem},
-nous avons détaillé l'implantation de notre prototype. Pour ce faire, nous avons
-ajouté des étiquettes de type au langage \newspeak et appliqué une variante de
-l'algorithme W de Damas et Milner pour réaliser l'inférence de types.
+Après avoir décrit notre solution théorique dans la partie~\ref{part:lang}, nous
+avons présenté ici notre démarche expérimentale. Dans le
+chapitre~\ref{cha:implem}, nous avons détaillé l'implantation de notre
+prototype. Pour ce faire, nous avons ajouté des étiquettes de type au langage
+\newspeak et adapté l'algorithme W de Damas et Milner pour réaliser l'inférence
+de types.
 
 Ensuite, le but du chapitre~\ref{cha:etudedecas} est d'appliquer notre analyse
 (à l'aide de ce prototype) sur le noyau Linux. Après avoir décrit le
@@ -19,6 +20,8 @@ représentations intermédiaires. Le fait d'avoir un langage avec peu de
 constructions permet de ne pas avoir à exprimer plusieurs fois la même règle
 (par exemple, une fois sur la boucle \emph{for} et une autre sur la boucle
 \emph{while}).
+
+% TODO ↓ à ref depuis le début de c8
 
 Un des inconvénients est que le modèle mémoire utilisé par \newspeak est assez
 différent de celui de \langname (ainsi que décrit dans le
@@ -51,9 +54,11 @@ d'autres modules exposent une interface similaire, à commencer par les autres
 pilotes de cartes graphiques. Ceux-ci sont également un terrain sur lequel
 appliquer cette analyse.
 
+% TODO ↑ + 2è?
+
 De manière générale, toutes les interfaces du noyau manipulant des pointeurs
 utilisateur gagnent à être analysées. Outre les implantations des \emph{ioctls}
 dans chaque pilote et les appels système, les systèmes de fichiers manipulent
-aussi de tels pointeurs via leurs opération de lecture et d'écriture.
+aussi de tels pointeurs via leurs opérations de lecture et d'écriture.
 
 % vim: spelllang=fr
