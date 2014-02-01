@@ -706,10 +706,10 @@ créent, manipulent et utilisent des pointeurs.
 La source principale de pointeurs est l'opérateur $\&$ qui prend l'adresse d'une
 variable. Celle-ci est bien entendue contrôlée par le noyau (dans le sens où son
 déréférencement est toujours sûr). Cette construction crée donc des pointeurs
-noyau:
+noyau, et on maintient la règle suivante:
 
 \begin{mathpar}
-  \disprule{Addr-Kernel} % TODO inchangé non?
+  \disprule{Addr}
 \end{mathpar}
 
 \subsubsection*{Manipulations de pointeurs}
