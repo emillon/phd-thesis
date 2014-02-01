@@ -2,23 +2,23 @@
 
 Nous venons de définir un système de types sûrs dans le
 chapitre~\ref{cha:typbase}. Cela permet de mettre en relation les types des
-expressions avec les valeurs qui leur seront associées. On peut voir cela comme
-une forme d'analyse de flot: si peu de constructions permettent de créer des
-valeurs d'un type $t$, alors toutes les valeurs de type $t$ proviennent de ces
+expressions avec les valeurs qui leur seront associées. Cela permet une forme
+d'analyse de flot: si peu de constructions permettent de créer des valeurs d'un
+type $t$, alors toutes les valeurs de type $t$ proviennent de ces
 \enquote{sources}.
 
 On se propose ici d'enrichir le système de types de plusieurs extensions
-permettant d'explorer cette idée, en ajoutant du \enquote{sens} dans les types
-de données des programmes. Ces extensions permettront de détecter des erreurs de
-programmation communes, appuyées sur des exemples réels.
+permettant d'explorer cette idée, en ajoutant de la \enquote{signification} dans
+les types de données des programmes. Ces extensions permettront de détecter des
+erreurs de programmation communes, appuyées sur des exemples réels.
 
-On commence par un exemple introductif permettant distinguer plusieurs
-utilisations de types entiers, selon s'ils sont utilisés comme entiers
-arithmétiques ou ensemble de bits. Cela permet de détecter une erreur qui
-consiste à mélanger les opérateurs logiques et bit à bit.
+On commence par un exemple permettant distinguer plusieurs utilisations de types
+entiers, selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de
+bits. Cela permet de détecter une erreur courante qui consiste à mélanger les
+opérateurs logiques et bit à bit.
 
 Ensuite, on étend de manière indépendante le système de types, cette fois au
-niveau des pointeurs. Plus précisément, dans le contexte de systèmes
+niveau des pointeurs. Plus précisément, dans le contexte des systèmes
 d'exploitation, introduit une différence entre les pointeurs dont la valeur est
 contrôlée par l'utilisateur et les autres.
 
@@ -52,8 +52,8 @@ entier du type \texttt{uid\_t}.
 Un autre idiome est répandu: l'utilisation d'entiers comme représentation d'un
 ensemble de booléens. En effet, un nombre $a = \sum_{i=0}^{N-1} a_i 2^i$ peut
 s'interpréter comme l'ensemble de ses bits égaux à 1: $\{ i ∈ [0;N-1] / a_i = 1
-\}$. Un entier de 32 bits peut par exemple représenter une combinaison de 32
-options indépendantes.
+\}$. Un entier de 32 bits peut donc représenter une combinaison de 32 options
+indépendantes.
 
 \begin{figure}
     \insertcode{unix-open.c}
@@ -67,9 +67,9 @@ entier qui encode les options liées à l'ouverture du fichier. On précise son
 mode (lecture, écriture ou les deux) par les bits 1 et 2, s'il faut créer le
 fichier ou non s'il n'existe pas par le bit 7, si dans ce cas il doit être
 effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un
-\enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} (en fait
-un \texttt{unsigned int}) encode de la même manière les permissions que doit
-avoir le fichier créé, le cas échéant.
+\enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} encode
+de la même manière les permissions que doit avoir le fichier créé, le cas
+échéant (\texttt{mode\_t} désigne en fait \texttt{unsigned int}).
 
 Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
 correspond à un indice numérique dans une table interne au processus. Par
@@ -274,7 +274,7 @@ qui est au cœur de l'analyse suivante.
 Jusqu'ici \langname{} est un langage impératif généraliste, ne prenant pas en
 compte les spécificités de l'adressage utilisé dans les systèmes d'exploitation.
 
-Dans ce chapitre, on commence par l'étendre en ajoutant des constructions
+Dans cette section, on commence par l'étendre en ajoutant des constructions
 modélisant les variables présentes dans l'espace utilisateur (cf.
 chapitre~\ref{cha:os}). Pour accéder à celles-ci, on ajoute un opérateur de
 déréférencement sûr qui vérifie à l'exécution que l'invariant suivant est
@@ -302,15 +302,16 @@ confidentielles ou en déjouant son intégrité. Cette propriété est dynamique
 pointeur utilisateur peut \emph{a priori} pointer vers l'espace utilisateur, ou
 non.
 
-Pour prouver que cette approche est bien fondée, on procède en plusieurs étapes.
+Pour prouver que l'invariant précédent est bien respecté, on procède en
+plusieurs étapes.
 
 Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour
 \enquote{sécurité}), déclenchée lorsqu'un pointeur contrôlé par l'utilisateur et
 pointant vers le noyau est déréférencé (le cas que l'on cherche à éviter). Il
 est important de noter que ce cas d'erreur est \enquote{virtuel}, c'est-à-dire
 qu'on l'ajoute à la sémantique pour pouvoir le détecter facilement comme un cas
-d'erreur, mais dans une sémantique de plus bas niveau, l'erreur ne serait pas
-déclenchée, comme en C. D'un point de vue opérationnel, cela équivaut à ajouter
+d'erreur, mais dans une sémantique de plus bas niveau, comme en C, l'erreur ne
+serait pas déclenchée. D'un point de vue opérationnel, cela équivaut à ajouter
 un test dynamique à chaque déréférencement, ce qui est sûr mais se paye en
 performances. Ajouter ce cas d'erreur virtuel dans la sémantique d'évaluation
 permet de transformer un problème de sécurité (empêcher les fuites
@@ -319,13 +320,14 @@ d'information) en problème de sûreté (empêcher les erreurs à l'exécution).
 Ensuite, on montre qu'avec cet ajout, si on étend naïvement le système de types
 en donnant le même type aux pointeurs contrôlés par l'utilisateur et le noyau,
 le théorème de progrès (\ref{thm:progres}) n'est plus valable. Cela signifie que
-le système de type classique présenté dans le chapitre~\ref{cha:typbase} ne
+le système de types classique présenté dans le chapitre~\ref{cha:typbase} ne
 suffit pas à capturer les propriétés de sécurité que nous voulons interdire.
 
 L'étape suivante est d'étendre, à son tour, le système de types de \langname{}
 en distinguant les types des pointeurs contrôlés par l'utilisateur des pointeurs
 contrôlés par le noyau. Puisqu'on veut interdire le déréférencement des premiers
-par l'opérateur \texttt{*}, on modifie également le typage de celui-ci.
+par l'opérateur \texttt{*}, on introduit les constructions $\cfuF$ et $\ctuF$
+qui réaliseront le déréférencement sûr de ces pointeurs.
 
 Enfin, une fois ces modifications faites, on prouve que les propriétés de
 progrès et de préservation sont rétablies.
@@ -395,12 +397,12 @@ On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
 $\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
-une construction syntaxique $\eTaint{e}$ telle que, si $e$ s'évalue en $\wphi{φ}$,
-$\eTaint{e}$ s'évalue en $\wphi{\vTainted{φ}$}. Cela correspond à 2 ajouts: un
-nouveau contexte d'évaluation $\eTaint{C}$ et une règle d'évaluation.
-Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher lorsqu'on
-déréférence directement un pointeur utilisateur. Ces étapes sont résumées dans
-la figure~\ref{fig:qualif-changes}.
+une construction syntaxique $\eTaint{e}$ telle que, si $e$ s'évalue en
+$\wphi{φ}$, $\eTaint{e}$ s'évalue en $\wphi{\vTainted{φ}$}. Cela demande 2
+autres ajouts: un nouveau contexte d'évaluation $\eTaint{C}$ et une règle
+d'évaluation. Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher
+lorsqu'on déréférence directement un pointeur utilisateur. Ces étapes sont
+résumées dans la figure~\ref{fig:qualif-changes}.
 
 \begin{figure}%{{{
 
@@ -656,7 +658,7 @@ Les différences sont les suivantes (figure~\ref{fig:qualif-changes-typ}):
   {END}
 \\
 \\
-\gramdef[2.5cm]{Type\\sémantique}{τ}
+\gramdef[2.5cm]{Type\\de valeur}{τ}
   { … }{}
   { \ptrU{τ} }{Pointeur utilisateur}
   {END}
@@ -707,7 +709,7 @@ déréférencement est toujours sûr). Cette construction crée donc des pointeu
 noyau:
 
 \begin{mathpar}
-  \disprule{AddrOf-Kernel}
+  \disprule{AddrOf-Kernel} % TODO inchangé non?
 \end{mathpar}
 
 \subsubsection*{Manipulations de pointeurs}
