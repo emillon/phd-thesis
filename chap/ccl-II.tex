@@ -1,6 +1,6 @@
 On vient de décrire en détail un langage impératif, \langname: tout d'abord sa
 syntaxe et sa sémantique d'évaluation dans le chapitre~\ref{cha:lang}. Une des
-particularités de cette sémantique est l'utilisation de lentilles pour modifier
+spécificités de cette sémantique est l'utilisation de lentilles pour modifier
 les valeurs composées en profondeur.
 
 \label{page:ccl-II-monad}
@@ -13,10 +13,11 @@ seconde solution est d'employer une sémantique monadique. Les transisitions son
 alors encodées comme des actions monadiques qui représentent les modifications
 de la mémoire. Un des avantages de cette solution est qu'elle est très
 extensible. Par exemple, la propagation des erreurs ou l'ajout de continuations
-(c'est-à-dire le support des fonctions \texttt{setjmp} et \texttt{longjmp})
-peuvent facilement être exprimés dans un formalisme monadique. Nous avons
-préféré une présentation classique qui reste plus accessible, et suffisante
-compte tenu de la simplicité des constructions à interpréter dans le langage.
+légères (c'est-à-dire le support des fonctions \texttt{setjmp} et
+\texttt{longjmp}) peuvent facilement être exprimés dans un formalisme monadique.
+Nous avons préféré une présentation classique qui reste plus accessible, et
+suffisante compte tenu de la simplicité des constructions à interpréter dans le
+langage.
 
 Ensuite, dans le chapitre~\ref{cha:typbase} nous avons ajouté un système de
 types à \langname. Le but est de restreindre le genre d'erreurs qui peuvent
@@ -32,9 +33,9 @@ pile de variables locales explicite. On retrouve donc cette distinction dans le
 typage: les variables globales et les variable locales sont séparées dans les
 environnements de typage $Γ$ (page~\pageref{page:gamma-split}).
 
-Enfin, on étend dans le chapitre~\ref{cha:qualifs} le langage pour exprimer la
-notion de pointeurs utilisateur. Cela permet d'écrire des fonctions qui se
-comportent comme des appels système. On commence par montrer qu'une extension
+Enfin, dans le chapitre~\ref{cha:qualifs}, on a étendu le langage pour exprimer
+la notion de pointeurs utilisateur. Cela permet d'écrire des fonctions qui se
+comportent comme des appels système. On a commencé par montrer qu'une extension
 naïve du système de types ne suffit pas, car le théorème de progrès est alors
 invalidé. On ajoute donc un type dédié aux pointeurs utilisateur. Les valeurs de
 ce type sont créées explicitement et passées aux appels système. La règle de
@@ -82,6 +83,8 @@ sous-typage structurel. En outre, leur approche repose sur une gestion
 automatique de la mémoire. De notre côté, nous nous appuyons sur un modèle
 mémoire plus proche de C, reposant sur une pile de variables, et une gestion
 manuelle de la mémoire.
+
+% TODO ↑ manuelle, sort of
 
 Une autre différence fondamentale est que le système de types de CQual fait
 intervenir une relation de sous-typage. Le cas particulier du problème de
