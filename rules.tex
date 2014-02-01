@@ -244,9 +244,9 @@
                { }
                {\semtyp{m}{\eFun{x_1, …, x_n}{i}}{\stFun{n}}}
     }
-    {AddrOf-User}{ \irule{AddrOf-User}
-                 { Γ ⊢ lv : t }
-                 { Γ ⊢ \eTaint{lv} : \ptrU{t} }
+    {Addr-User}{ \irule{Addr-User}
+               { Γ ⊢ lv : t }
+               { Γ ⊢ \eTaint{lv} : \ptrU{t} }
     }
     {GetU}{ \irule{GetU}
               { Γ ⊢ e_d : \ptrK{t}
@@ -260,9 +260,9 @@
               }
               { Γ ⊢ \uPut{e_d}{e_s} : \tInt }
     }
-    {AddrOf-Kernel}{ \irule{AddrOf-Kernel}
-                       { Γ ⊢ lv : t }
-                       { Γ ⊢ \& lv : \ptrK{t} }
+    {Addr-Kernel}{ \irule{Addr-Kernel}
+                     { Γ ⊢ lv : t }
+                     { Γ ⊢ \& lv : \ptrK{t} }
     }
     {END}
 }
@@ -311,9 +311,9 @@
                    { }
                    {\mms{v_1~\opbin~v_2}{v_1~\widehat{\opbin}~v_2}}
     }
-    {Exp-AddrOf}{ \irule{Exp-AddrOf}
-                    { }
-                    {\mm{m}{\&~φ}{m}{\widehat{\&}~φ}}
+    {Exp-Addr}{ \irule{Exp-Addr}
+                  { }
+                  {\mm{m}{\&~φ}{m}{\widehat{\&}~φ}}
     }
     {Exp-Set}{ \irule{Exp-Set}
                  { }

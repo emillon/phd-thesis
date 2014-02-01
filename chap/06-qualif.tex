@@ -535,7 +535,7 @@ test dynamique.
 naïvement le système de types avec la règle suivante:
 
 \begin{mathpar}
-  \irule{AddrOf-User-Ignore}
+  \irule{Addr-User-Ignore}
     { Γ ⊢ lv : t }
     { Γ ⊢ \eTaint{lv} : t~* }
 \end{mathpar}
@@ -580,7 +580,7 @@ conclusion n'est pas vraie:
       \begin{mathpar}
         \irule{Lv-Deref}
           {
-            \irule{AddrOf-User-Ignore}
+            \irule{Addr-User-Ignore}
               {
                 \irule{Lv-Deref}
                   {
@@ -623,7 +623,7 @@ conclusion n'est pas vraie:
 
 Cela montre que le typage n'apporte plus de garantie de sûreté sur l'exécution:
 le système de types naïvement étendu par une règle comme
-\textsc{AddrOf-User-Ignore} n'est pas en adéquation avec les extensions présentées
+\textsc{Addr-User-Ignore} n'est pas en adéquation avec les extensions présentées
 dans la section~\ref{sec:extensions-noyau}. Il faut donc raffiner les règles de
 typage pour interdire ce cas.
 
@@ -709,7 +709,7 @@ déréférencement est toujours sûr). Cette construction crée donc des pointeu
 noyau:
 
 \begin{mathpar}
-  \disprule{AddrOf-Kernel} % TODO inchangé non?
+  \disprule{Addr-Kernel} % TODO inchangé non?
 \end{mathpar}
 
 \subsubsection*{Manipulations de pointeurs}
@@ -741,7 +741,7 @@ compilation.
 L'opérateur $\eTaint{\cdot}$ transforme un pointeur selon la règle suivante:
 
 \[
-    \disprule{AddrOf-User}
+    \disprule{Addr-User}
 \]
 
 Les \enquote{fonctions} $\cfuF$ et $\ctuF$ sont typées de la manière suivante.
