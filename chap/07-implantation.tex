@@ -38,7 +38,7 @@ des programmes qui n'utilisent que des constructions sûres.
 
 \newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
 statiques, contrairement à des langages conçus pour les programmeurs comme C. Sa
-sémantique d'exécution (ainsi qu'une partie des étapes de compilation depuis C)
+sémantique d'exécution (ainsi qu'une partie des étapes de compilation)
 est décrite dans~\cite{newspeak}. Sa syntaxe est donnée dans la
 figure~\ref{fig:stx-npk}.
 
@@ -111,7 +111,7 @@ figure~\ref{fig:stx-npk}.
 \label{fig:compil-npk}
 \end{figure}
 
-La compilation depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
+La traduction depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
 prétraitement du code source, compilation de C prétraité vers des objets
 \newspeak{}, puis liaison de ces différentes unités de compilation. Il est aussi
 possible de compiler directement du code Ada vers un objet \newspeak{}.
@@ -167,7 +167,7 @@ Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
 principalement à s'assurer que les hypothèses faites par les différentes unités
 de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
 invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
-aient un nom unique.
+aient un nom globalement unique.
 
 Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
 décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
@@ -362,6 +362,8 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
     parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
     mutellement récursives ne sont pas supportées dans l'implantation.
 
+    % TODO virer "dans l'implantation" ?
+
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial. Celles-ci permettent par exemple
   de spécifier le type d'une fonction inconnue.
@@ -424,10 +426,11 @@ l'expression ou instruction considérée. Notons que, même si le programme
 programme C), elles ne sont pas utilisées.
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
-\texttt{unify}. Par exemple, pour typer une déclaration
-(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau type \texttt{t0}. On
-étend l'environnement courant avec cette nouvelle association et, sous ce nouvel
-environnement, on type le bloc de portée de la déclaration.
+\texttt{unify}. Par exemple, pour typer une déclaration (qui n'a pas de valeur
+initiale en \newspeak), on crée un nouveau type \texttt{t0}. On étend
+l'environnement courant avec cette nouvelle association et, sous ce nouvel
+environnement, on type le bloc de portée de la déclaration
+(figure~\ref{fig:implem-unif-stmt}).
 
 \begin{figure}[h] %{{{
 
@@ -498,6 +501,8 @@ int f(int *x) { return (*x + 1); }
 
 L'exécution de notre analyseur affiche un programme complètement annoté:
 
+% TODO pourquoi pas de Ptr(Kernel, Int) ?
+
 \begin{verbatim}
  % ptrtype example.c
 f : (Ptr (Int)) -> (Int)
@@ -517,8 +522,7 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à
 détecter les débordements d'entiers lors d'une analyse de valeurs par
 interprétation abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
-pertinentes et cet opérateur peut être vu que comme un \enquote{plus} unaire
-typé $(\tInt) → \tInt$.
+pertinentes et cet opérateur peut être vu que comme l'identité.
 
 Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
