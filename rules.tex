@@ -13,7 +13,7 @@
     }
     {Cst-Null}{ \irule{Cst-Null}
                   { }
-                  { Γ ⊢ \eNull : t*}
+                  { Γ ⊢ \eNull : \ptrK{t}}
     }
     {Cst-Unit}{ \irule{Cst-Unit}
                   { }
@@ -24,7 +24,7 @@
                 { Γ ⊢ x : t }
     }
     {Lv-Deref}{ \irule{Lv-Deref}
-                  { Γ ⊢ e : t* }
+                  { Γ ⊢ e : \ptrK{t} }
                   { Γ ⊢ *e : t }
     }
     {Lv-Index}{ \irule{Lv-Index}
@@ -61,7 +61,7 @@
     }
     {Eq-Ptr}{ \irule{Eq-Ptr}
                 { }
-                {\textsc{Eq}(t*)}
+                {\textsc{Eq}(\ptrK{t})}
     }
     {Eq-Array}{ \irule{Eq-Array}
                   {\textsc{Eq}(t)}
@@ -105,14 +105,14 @@
               }
     {Ptr-Arith}{ \irule{Ptr-Arith}
                    { \opbin ∈ \{ +_p, -_p \} \\
-                     Γ ⊢ e_1 : t* \\
+                     Γ ⊢ e_1 : \ptrK{t} \\
                      Γ ⊢ e_2 : \tInt \\
                    }
-                   { Γ ⊢ e_1~\opbin~e_2 : t* }
+                   { Γ ⊢ e_1~\opbin~e_2 : \ptrK{t} }
                }
     {Addr}{ \irule{Addr}
               { Γ ⊢ lv : t }
-              { Γ ⊢ \&lv : t* }
+              { Γ ⊢ \& lv : \ptrK{t} }
           }
     {Set}{ \irule{Set}
              { Γ ⊢ lv : t \\
