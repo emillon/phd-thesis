@@ -360,9 +360,7 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
     apparaît dans la définition de } f}$. Cela est fait en construisant une
     représentation de $\preceq$ sous forme de graphe, puis en faisant un
     parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
-    mutellement récursives ne sont pas supportées dans l'implantation.
-
-    % TODO virer "dans l'implantation" ?
+    mutellement récursives ne sont pas supportées.
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial. Celles-ci permettent par exemple
@@ -500,8 +498,6 @@ int f(int *x) { return (*x + 1); }
 \end{verbatim}
 
 L'exécution de notre analyseur affiche un programme complètement annoté:
-
-% TODO pourquoi pas de Ptr(Kernel, Int) ?
 
 \begin{verbatim}
  % ptrtype example.c
