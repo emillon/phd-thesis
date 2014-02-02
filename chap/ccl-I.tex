@@ -32,32 +32,23 @@ n'importe quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
 identificateurs pour lesquels les opérations usuelles comme l'addition n'ont pas
 de sens. Par exemple, sous Linux, l'opération d'ouverture de fichier renvoie un
 entier, dit \emph{descripteur de fichier}, qui identifie ce fichier pour ce
-processus. Il est passé à toutes les fonctions de lecture et d'écriture de
-fichiers.
+processus.
 Le langage autorise donc par exemple de multiplier entre
 eux deux descripteurs de fichiers, mais le résultat n'a pas de raison \emph{a
 priori} d'être un descripteur de fichier valide.
 
-
-%Un
-%autre idiome est d'utiliser des entiers comme des ensembles de bits (on parle de
-%\emph{bitmask}).
-%Un prototype d'analyse statique sur ces \emph{bitmasks} est
-%présenté en annexe~\ref{anx:bitmasks}.
-
 En n'offrant pas cette distinction, le langage C permet d'écrire du code qui
-peut s'exécuter mais dont la sémantique n'est, quelque part, pas bien fondée.
-Par exemple, en additionnant deux descripteurs de fichiers, ou en déréférençant
-un pointeur contrôlé par l'utilisateur. En effet, le système de types de C est
-trop primitif pour pouvoir garantir une véritable isolation entre deux types de
-même représentation : il n'y a pas de types abstraits. Certes, \texttt{typedef}
-permet d'introduire un nouveau nom pour un type, mais ce n'est qu'un raccourci
-syntaxique. Le compilateur ne peut en effet pas considérer un programme sans
-avoir la définition quasi-complète des types qui y apparaissent. La seule
-exception concerne les pointeurs sur structures : si on ne fait que les
-affecter, il n'est pas nécessaire de connaître la taille ni la disposition de la
-structure, donc la définition peut ne pas être visible. Cette technique, connue
-sous le nom de \emph{pointeurs opaques}, n'est pas applicable aux autres types.
+peut s'exécuter mais dont la sémantique n'est, quelque part, pas bien fondée. En
+effet, le système de types de C est trop primitif pour pouvoir garantir une
+véritable isolation entre deux types de même représentation : il n'y a pas de
+types abstraits. Certes, \texttt{typedef} permet d'introduire un nouveau nom
+pour un type, mais ce n'est qu'un raccourci syntaxique. Le compilateur ne peut
+en effet pas considérer un programme sans avoir la définition quasi-complète des
+types qui y apparaissent. La seule exception concerne les pointeurs sur
+structures : si on ne fait que les affecter, il n'est pas nécessaire de
+connaître la taille ni la disposition de la structure, donc la définition peut
+ne pas être visible. Cette technique, connue sous le nom de \emph{pointeurs
+opaques}, n'est pas applicable aux autres types.
 
 En ajoutant une couche de typage, on interdit ces opérations à la compilation.
 Cela permet deux choses : pour le code déjà écrit, de détecter et corriger les
@@ -70,7 +61,5 @@ Le but de cette thèse est donc de définir un langage intermédiaire proche de 
 mais bien typable, et de lui adjoindre un système de types tel que les
 programmes bien typés manipulent les pointeurs utilisateur sans causer de
 problèmes de sécurité.
-
-% TODO veuve
 
 % vim: spelllang=fr
