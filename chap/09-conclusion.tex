@@ -44,13 +44,11 @@ d'analyseur statique distribué avec le langage \newspeak.
 D'une part, cela permet de vérifier la propriété d'isolation des appels système
 sur du code C existant, et d'autre part cela fournit une base saine pour
 implanter d'autres analyses de typage sur le langage \newspeak.
-D'autre part, ce prototype a été utilisé pour confirmer l'existence d'un bug
+D'autre part, ce prototype a été utilisé pour confirmer l'existence de deux bugs
 dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
 vérifier du code de production à l'aide de techniques de typage.
 Des travaux d'expérimentation sont en cours afin d'analyser de plus grandes
 parties du noyau.
-
-% TODO ↑ + 2è
 
 \section{Différences avec C}
 
@@ -107,16 +105,12 @@ conversions entre types numériques, entre types pointeurs, ou entre un type
 entier et un type pointeur.
 
 Le premier ne pose pas de problème: il est toujours possible de donner une
-sémantique à une conversion entre deux types numériques. Dans le cas éventuel ou
-une conversion n'est pas possible, on peut signaler une erreur à l'exécution (de
-la même nature qu'une division par zéro).
-
-% TODO ↑ tjs possible / dans le cas
+sémantique à une conversion entre deux types numériques, quitte à détecter les
+cas où il faut signaler une erreur à l'exécution (comme en cas de débordement).
 
 Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
-types pointeurs revient à convertir entre les types pointés.
-
-% TODO et les UPTR?
+types pointeurs revient à convertir entre les types pointés (il faut bien
+sûr interdire les conversions entre pointeurs noyau et utilisateur).
 
 Le vrai problème provient des conversions entre entiers et pointeurs, qui sont
 des données fondamentalement différentes. Le même problème se pose d'ailleurs si
@@ -125,22 +119,15 @@ raisons valables pour faire cela sont moins nombreuses.
 Si on s'en tient aux conversions entre entiers et pointeurs, une manière naïve
 de typer ces opérations est:
 
-\badrulewarnwrap{
-\badrulewarnline{
+\begin{mathpar}
 \irule{PtrInt-Bad}
   { Γ ⊢ e : \ptrK{t}}
   { Γ ⊢ (\tInt)~e : \tInt }
-}
-\\
-\\
-\badrulewarnline{
+
 \irule{IntPtr-Bad}
   { Γ ⊢ e : \tInt }
   { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
-}
-}
-
-% TODO center
+\end{mathpar}
 
 Tout d'abord, cela pose problème car il est alors possible de créer une fonction
 pouvant convertir n'importe quel type pointeur en n'importe quel autre type
