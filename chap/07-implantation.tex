@@ -10,6 +10,8 @@ ces étapes sont implantées dans le langage OCaml~\cite{DAOC}.
 Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
 license libre, la \emph{GNU Lesser General Public License}.
 
+\added{Nouvelle subsection}
+
 \subsection*{Pourquoi \newspeak et pas \langname?}
 
 On peut se demander pourquoi analyser du code \newspeak et non \langname. Une
@@ -201,6 +203,8 @@ faire.
 Cet algorithme (décrit en pseudo-code ML en figure~\ref{fig:algo-unif}) prend un
 chemin différent selon la forme des deux types d'entrée:
 
+\changed{Passage en pseudocode}
+
 \begin{figure}%{{{
 
 % {{{
@@ -330,6 +334,8 @@ champs. On commence par unifier les types des champs de même nom, et on ajoute 
 l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme de
 rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
 
+\added{citation}
+
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
@@ -343,6 +349,8 @@ travaillent sur une représentation intermédiaire proche de \newspeak, mais où
 des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
 intermédiaire est noté \texttt{'a Tyspeak.t}, où \texttt{'a} est le type des
 étiquettes. Mais ce n'est qu'un type différent: il s'agit bien de \newspeak.
+
+\added{précision que c'est bien du newspeak}
 
 Le reste de l'outil est résumé dans la fonction
 \texttt{process\_npk} (figure~\ref{fig:implem-process}):
@@ -403,6 +411,8 @@ pouvoir en faire une exécution \enquote{pas à pas}.
 L'inférence de types consiste à remplacer les étiquettes de type \texttt{unit}
 par des étiquettes de type \texttt{simple} (autrement dit de vraies
 représentations de types).
+
+\added{cela permet...}
 
 Cette étape se fait de manière impérative. Cela permet de ne pas avoir à
 réaliser de substitutions explicites. À la place, on repose sur le partage et
@@ -526,6 +536,8 @@ pertinentes et cet opérateur peut être vu que comme l'identité.
 Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
 \section{Performance}
+
+\added{2 paragraphes sur la complexité théorique}
 
 Comme le problème de l'inférence de types par l'algorithme W est complet pour
 DEXPTIME~\cite{mairson}, on peut s'attendre à une complexité exponentielle en la
