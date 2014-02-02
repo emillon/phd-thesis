@@ -75,16 +75,13 @@ Nous prenons, au contraire, l'approche de ne modifier le système de types que l
 où cela est nécessaire, c'est-à-dire sur les types pointeurs. Cela permet de ne
 pas avoir à modifier en profondeur un système de types existant.
 
-Le modèle d'exécution est aussi très différent. CQual s'appuie sur un
-langage proche de ML: un noyau de lambda-calcul avec des références. Le système
-de types sous-jacent est proche de celui d'OCaml: du polymorphisme de premier
-ordre (avec la restriction habituelle de généralisation des références) et du
-sous-typage structurel. En outre, leur approche repose sur une gestion
-automatique de la mémoire. De notre côté, nous nous appuyons sur un modèle
-mémoire plus proche de C, reposant sur une pile de variables, et une gestion
-manuelle de la mémoire.
-
-% TODO ↑ manuelle, sort of
+Le modèle d'exécution est aussi très différent. CQual s'appuie sur un langage
+proche de ML: un noyau de lambda-calcul avec des références. Le système de types
+sous-jacent est proche de celui d'OCaml: du polymorphisme de premier ordre (avec
+la restriction habituelle de généralisation des références) et du sous-typage
+structurel. En outre, leur approche repose sur une gestion automatique de la
+mémoire. De notre côté, nous nous appuyons sur un modèle mémoire plus proche de
+C, reposant sur une pile de variables et des pointeurs manipulés à la main.
 
 Une autre différence fondamentale est que le système de types de CQual fait
 intervenir une relation de sous-typage. Le cas particulier du problème de
