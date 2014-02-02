@@ -25,16 +25,16 @@ du typage. Définir \langname a précisement pour but de définir un langage
 inspiré de C mais sur lequel le typage peut être sûr.
 
 Pour l'implantation sur \newspeak, on s'inspire donc des règles de typage sur
-\langname, en considérant qu'il serait possible d'avoir une traduction fidèle
-des programmes qui n'utilisent que des constructions sûres.
+\langname, mais cette approche n'est sûr que pour les programmes qui peuvent
+être fidèlement traduits.
 
-% TODO[E] quelque part, c'est une restriction?
-% Pas clair (pour moi)
-% Dis d'où à où !
-% à developper
+Par exemple, un programme dans lequel on fait de l'arithmétique de pointeurs
+entre champs de structures peut être traduit en \newspeak (et analysé par
+interprétation abstraite), mais on ne peut rien en tirer déduire du résultat
+d'une analyse par typage.
 
-On reviendra sur cette distinction dans la conclusion de la
-partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
+On reviendra sur cette distinction entre les deux niveaux de sémantique dans la
+conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
 
 \section{\newspeak et chaîne de compilation}
 \label{sec:compil}
