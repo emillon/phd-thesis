@@ -179,20 +179,18 @@ numéro 7). On veut donc exprimer que \enquote{un \tBits est un \tInt}. Cette
 relation entre différents types d'entier correspond à un cas particulier de sous-typage.
 
 On ajoute la règle suivante. Elle permet d'utiliser une expression de type
-$\tBits$ là où une expression de type $\tInt$ est attendue
-\footnote{
-    Cela modifie légèrement l'implantation de l'inférence de types. Le type
-    d'une expression utilisée comme opérande de l'opérateur $+$ n'est donc pas
-    \emph{a priori} de type \tInt, mais \tBits ou \tInt.
-}.
-% TODO[E] cela veut dire qu'on peut additionner un \tBits et un \tInt pour obtenir
-% un \tInt ?
+$\tBits$ là où une expression de type $\tInt$ est attendue.
 
 \begin{mathpar}
     \irule{Sub-BitsInt}
         { Γ ⊢ e : \tBits }
         { Γ ⊢ e : \tInt }
 \end{mathpar}
+
+Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
+expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
+priori} de type \tInt, mais \tBits ou \tInt. Cela implique aussi qu'on peut
+additionner un \tBits et un \tInt pour obtenir un \tInt.
 
 Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$. On rappelle que
 la règle permettant de typer $!$ est inchangée et reste :
