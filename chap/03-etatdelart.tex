@@ -457,9 +457,9 @@ un système de types forts à C (y compris pour des programmes existants). Dans
 les cas où il n'est pas possible de prouver que le programme s'exécutera
 correctement, des vérifications à l'exécution sont ajoutées. Cependant, cela
 nécessite une instrumentation dynamique qui se paye en performances. Le
-compilateur Fail-Safe C~\cite{oiwa09} utilise une approche similaire permettant
-de garantir la sûreté d'exécution des programmes C tout en respectant la
-totalité de la norme C89.
+compilateur Fail-Safe C~\cite{oiwa09} \added{FailsafeC} utilise une approche
+similaire permettant de garantir la sûreté d'exécution des programmes C tout en
+respectant la totalité de la norme C89.
 
 \section{Logique de Hoare}
 
@@ -486,6 +486,8 @@ sémantique du programme; par exemple la règle de composition est:
 \end{mathpar}
 
 Les pré-conditions peuvent être renforcées et les post-conditions relâchées:
+
+\changed{Les implications étaient dans le mauvais sens}
 
 \begin{mathpar}
   \irule{Hoare-Consequence}
@@ -568,6 +570,7 @@ empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
 les programmes systèmes. C'est pourquoi dans notre solution, \langname, nous
 approchons la sûreté de la manière suivante:
 
+\changed{Liste plutôt que paragraphes}
 \begin{itemize}
 \item Tout d'abord, on utilise le typage pour manipuler les données de manière
       compatible: les types des opérations et fonctions sont vérifiés à la
