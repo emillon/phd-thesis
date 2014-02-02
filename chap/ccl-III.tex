@@ -7,13 +7,13 @@ de types.
 
 Ensuite, le but du chapitre~\ref{cha:etudedecas} est d'appliquer notre analyse
 (à l'aide de ce prototype) sur le noyau Linux. Après avoir décrit le
-fonctionnement des appels système sur ce noyau, on présente un bug qui a touché
-un pilote de carte graphique. Il est la manifestation d'un problème de pointeur
-utilisateur mal déréférencé dans le noyau, ainsi que décrit dans le
-chapitre~\ref{cha:os}. En lançant notre analyse sur le code présentant un
-problème, l'erreur est détectée. Au contraire, en la lançant sur le code après
-application du correctif (\emph{commit} \texttt{ad8ab3557}), aucune erreur n'est
-trouvée.
+fonctionnement des appels système sur ce noyau, on présente deux bugs qui ont
+touché respectivement un pilote de carte graphique et l'implantation d'un appel
+système. Il sont la manifestation d'un problème de pointeur utilisateur mal
+déréférencé dans le noyau, ainsi que décrit dans le chapitre~\ref{cha:os}. En
+lançant notre analyse sur le code présentant un problème, l'erreur est détectée.
+Au contraire, en la lançant sur le code après application du correctif, aucune
+erreur n'est trouvée.
 
 En s'appuyant sur le langage \newspeak, on gagne beaucoup par rapport à d'autres
 représentations intermédiaires. Le fait d'avoir un langage avec peu de
@@ -47,14 +47,12 @@ quelques unes de ces extensions possibles.
 
 L'expérimentation, quant à elle, est pour le moment limitée, mais on peut
 l'étendre à des domaines de plus en plus importants dans le noyau Linux. Tout
-d'abord, ce même module définit d'autres fonctions implantant des \emph{ioctls}.
-Celles-ci reçoivent donc également des pointeurs utilisateur et sont
-susceptibles d'être vulnérables à ce genre d'erreurs de programmation. Ensuite,
-d'autres modules exposent une interface similaire, à commencer par les autres
-pilotes de cartes graphiques. Ceux-ci sont également un terrain sur lequel
-appliquer cette analyse.
-
-% TODO ↑ + 2è?
+d'abord, le module graphique définit d'autres fonctions implantant des
+\emph{ioctls}. Celles-ci reçoivent donc également des pointeurs utilisateur et
+sont susceptibles d'être vulnérables à ce genre d'erreurs de programmation.
+Ensuite, d'autres modules exposent une interface similaire, à commencer par les
+autres pilotes de cartes graphiques. Ceux-ci sont également un terrain sur
+lequel appliquer cette analyse.
 
 De manière générale, toutes les interfaces du noyau manipulant des pointeurs
 utilisateur gagnent à être analysées. Outre les implantations des \emph{ioctls}
