@@ -6,6 +6,8 @@ architectures et s'est enrichi de nombreux pilotes de périphériques. Dans la
 version 3.13.1 (2014), son code source comporte 12 millions de lignes de code
 (en grande majorité du C) dont 58\% de pilotes.
 
+\changed{màj des statistiques}
+
 Même si le noyau est monolithique (la majeure partie des traitements s'effectue
 au sein d'un même fichier objet), les sous-systèmes sont indépendants. C'est ce
 qui permet d'écrire des pilotes de périphériques et des modules.
@@ -122,6 +124,8 @@ les données du programme (variables globales),
 la pile utilisateur,
 le tas (mémoire allouée par \texttt{malloc} et fonctions similaires), ou encore
 les bibliothèques partagées.
+
+\changed{paragraphe plutôt que liste}
 
 Au dessus de \texttt{PAGE\_OFFSET}, se trouve la mémoire réservée au noyau.
 Cette zone contient le code du noyau, les piles noyau des processus, etc.
@@ -287,6 +291,7 @@ La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 étant une simple macro pour \texttt{copy\_from\_user}). Dans ce cas, on
 n'obtient pas d'erreur de typage.
 
+\added{Toute la section}
 \section{Second exemple : \texttt{ptrace} sur architecture Blackfin}
 
 Le noyau Linux peut s'exécuter sur l'architecture Blackfin, qui est spécialisée
