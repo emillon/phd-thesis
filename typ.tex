@@ -37,17 +37,18 @@
 
 % Part header
 \usepackage{adjustbox}
+\newlength{\currentparindent}
 \definecolor{lightgrey}{gray}{0.7}
 \def\partintro{}
 \renewcommand{\afterpartskip}{
 \ifdefempty{\partintro}{}{
 \vfil
 \noindent
+\setlength{\currentparindent}{\parindent}
 {%
 \setlength{\fboxsep}{20pt}%
 \adjustbox{minipage=\textwidth-2\fboxsep-2\fboxrule,cfbox=lightgrey,center}%
-          {\setlength{\parindent}{3em}%
-           \noindent%
+          {\setlength{\parindent}{\currentparindent}%
            \partintro}%
 }%
 }
