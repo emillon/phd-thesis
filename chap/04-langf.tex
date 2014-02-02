@@ -1369,20 +1369,13 @@ Le deuxième point sera résolu par la règle d'inférence suivante.
   \semrule{Ctx}
 \end{mathpar}
 
-Enfin, le troisième revient à définit l'opérateur de substitution
-$\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer des
-substitutions au niveau des valeurs gauches et des instructions, on définit aussi
-respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
-
-Notons que puisque $i \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer
-aux expressions et aux valeurs gauches l'opération $\phxx\ctxSub$ est purement
-syntaxique.
-
-% TODO gibberish ↑
+Enfin, le troisième revient à définir l'opérateur de substitution
+$\phxx{\ctxSub}$ présent dans la règle précédente. Notons que puisque $i
+\gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer aux expressions et aux
+valeurs gauches : l'opération $\phxx\ctxSub$ est purement syntaxique.
 
 \section{Valeurs gauches}
 \label{sec:eval-lv}
-
 
 Obtenir un chemin à partir d'un nom de variable revient à résoudre le nom de
 cette variable: est-elle accessible? Le nom désigne-t-il une variable locale
