@@ -341,17 +341,18 @@ est suffisant.
 
 \paragraph{Remarque}
 
-% TODO c'est un point intéressant ↓
-% ?? clarifie et développe
-% développe la fin et en particulier le problème de sécurité
+En pratique, le problème de sécurité n'est pas si important. En effet,
+la copie se fait sous un test forçant \texttt{addr} à être entre
+\nolinkurl{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}. Cette zone est
+incluse en espace utilisateur, cela empêche donc le problème de fuite de
+données.
 
-En pratique, la copie se fait sous un test forçant \texttt{addr} à être entre
-\nolinkurl{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}, c'est-à-dire en
-espace utilisateur. Cela enlève le potentiel problème de fuite de données, mais
-cela reste un problème de sécurité car il est possible de provoquer des fautes
-mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espace
-utilisateur n'est pas chargé en mémoire. Il s'agit alors d'un déni de service
-(section~\ref{sec:risques-dos}).
+Mais cela reste un problème de sécurité: contrairement à
+\texttt{copy\_from\_user}, la fonction \texttt{memcpy} ne vérifie pas que
+l'espace utilisateur est chargé en mémoire. Si ce n'est pas le cas, une faute
+mémoire sera provoquée dans le noyau. Il s'agit alors d'un déni de service
+(section~\ref{sec:risques-dos}), qui est tout de même un comportement à
+empêcher.
 
 \section{Procédure expérimentale}
 \label{sec:demo-unif}
