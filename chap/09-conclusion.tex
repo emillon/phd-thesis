@@ -104,9 +104,13 @@ Pour ces conversions de types, on distingue en fait plusieurs cas: les
 conversions entre types numériques, entre types pointeurs, ou entre un type
 entier et un type pointeur.
 
+\added{débordements}
+
 Le premier ne pose pas de problème: il est toujours possible de donner une
 sémantique à une conversion entre deux types numériques, quitte à détecter les
 cas où il faut signaler une erreur à l'exécution (comme en cas de débordement).
+
+\added{parenthèse user/kernel}
 
 Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
 types pointeurs revient à convertir entre les types pointés (il faut bien
@@ -262,9 +266,10 @@ entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
 entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
 accéder aux zones mémoires libérées, ni libérer deux fois la même zone mémoire.
-Il est aussi possible d'obtenir cette garantie avec une analyse préalable. Par
-exemple, il est possible ici encore d'utiliser une analyse basée sur les régions
-pour vérifier l'absence de pointeurs fous~\cite{ifm10}.
+\added{double free} Il est aussi possible d'obtenir cette garantie avec une
+analyse préalable. Par exemple, il est possible ici encore d'utiliser une
+analyse basée sur les régions pour vérifier l'absence de pointeurs
+fous~\cite{ifm10}.
 
 %\paragraph{Types structures}
 
