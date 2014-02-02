@@ -19,18 +19,15 @@ dans le chapitre~\ref{cha:qualifs}, ou plus précisément l'outil \texttt{ptrtyp
 du chapitre~\ref{cha:implem}.
 
 Pour montrer que le système de types capture cette propriété et que
-l'implantation est utilisable, on étudie le cas d'un bug qui a touché le noyau
-Linux. Dans une routine correspondant à un appel système, un pointeur
-utilisateur est déréférencé directement, pouvant provoquer une fuite
-d'informations confidentielles dans le noyau. Les détails sur ce bug peuvent
-être trouvés sur \url{https://bugs.freedesktop.org/show_bug.cgi?id=29340}.
-
-% TODO 2è bug
+l'implantation est utilisable, on étudie les cas de deux bugs qui ont touché le
+noyau Linux. À chaque fois, dans une routine correspondant à un appel système,
+un pointeur utilisateur est déréférencé directement, pouvant provoquer une fuite
+d'informations confidentielles dans le noyau.
 
 On commence par décrire les difficultés rencontrées pour analyser le code du
 noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système dans
-ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin le bug
-étudié, et comment l'adapter pour traiter le code en question.
+ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin les bugs
+étudié, et comment les adapter pour traiter le code en question.
 
 \section{GNU C}
 \label{sec:gnuc}
