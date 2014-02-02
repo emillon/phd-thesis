@@ -67,7 +67,7 @@ champ. Cela alourdit la présentation, mais permet d'éviter le sous-typage qui
 rend l'inférence indécidable. En pratique, dans l'implantation décrite dans le
 chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
 (\emph{row polymorphism})~\cite{ocamlObjects} présent dans OCaml pour unifier
-deux types structures partiellement connus.
+deux types structures partiellement connus. \added{référence}
 
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
@@ -102,6 +102,8 @@ préservation qui établissent la sûreté du typage.
 Les types associés aux expressions sont décrits dans la
 figure~\ref{fig:les-types}. Tous sont des types concrets: il n'y a pas de
 polymorphisme.
+
+\deleted{"Structure simple" à droite de S}
 
 \begin{figure}[h]
 
@@ -541,6 +543,8 @@ l'arité est conservée.
 
 \paragraph{Remarque}
 
+\added{Ce paragraphe}
+
 Le fait d'effacer les types à l'exécution est un choix permettant d'alléger les
 valeurs en mémoire. Il serait aussi possible de conserver les types complets à
 l'exécution, afin de permettre une introspection dynamique des valeurs.
@@ -557,7 +561,7 @@ gauches, codéfini par:
 Les règles de définition du typage des valeurs sont données dans la
 figure~\ref{fig:types-semantiques}.
 On rappelle que $Φ$ est la lentille indexée définie
-page~\pageref{subsec:acces-phi}.
+page~\pageref{subsec:acces-phi}. \added{On rappelle...}
 
 \begin{figure}[h]%{{{
 \begin{align*}
@@ -691,6 +695,8 @@ l'exécution, et le second le type statique.
 %\end{align*}
 
 %\end{definition}
+
+\added{On dit qu'un...}
 
 On définit enfin la notion d'état mémoire bien typé. On dit qu'un état mémoire
 $m$ est bien typé sous un environnement $Γ$, ce que l'on note $\mcomp{Γ}{m}$, si
@@ -895,6 +901,9 @@ Pour chaque forme de jugement de typage, on liste les règles qui peuvent amener
 à cette conclusion.
 \end{proof}
 
+\deleted{définition et lemmes (partiellement faux) sur le typage des contextes
+d'évaluation, remplacés par une discussion dans la preuve D.3}
+
 Il est aussi possible de réaliser l'opération inverse: à partir du type d'une
 valeur, on peut déterminer sa forme syntaxique. C'est bien sûr uniquement
 possible pour les valeurs, pas pour n'importe quelle expression (par exemple
@@ -909,6 +918,7 @@ $Γ = x:t$).
   ligne, si $Γ ⊢ v : \tInt$, alors $v$ est de la forme $\widehat{n}$ (cf.
   figure~\ref{fig:interp-val}, page~\pageref{fig:interp-val} pour la définition
   des valeurs).
+  \changed{Développement de $\exists n, v = n$}
 
   \begin{center}
   \begin{tabular}{cc}
@@ -932,6 +942,8 @@ $Γ = x:t$).
 On fait comme pour le lemme d'inversion: Pour chaque forme syntaxique, on fait
 l'inventaire des règles pouvant arriver à cette dérivation.
 \end{proof}
+
+\changed{Ce lemme était plus loin}
 
 \begin{lemma}[Représentabilité]
 \label{lemma:repr}
@@ -1052,6 +1064,9 @@ On procède par induction sur la forme de $v$.
 
 \paragraph{$\widehat{f}$:} Idem.
 
+\changed{2 cas sont fusionnés pour permettre une induction structurelle non
+profonde}
+
 \paragraph{$\widehat{\&}~a$:} On distingue selon la forme de $a$. Si $a = (x)$,
 c'est immédiat. Si $a = (n, x)$, alors d'après la forme de $v$, la dernière
 règle appliquée dans la dérivation de $m ⊧ v : τ$ est \textsc{S-Ptr}, et donc
@@ -1096,6 +1111,8 @@ haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
 \begin{proof}[Démonstration (esquisse)]
 On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
 \end{proof}
+
+\changed{Partout l'indice grand Phi a été supprimé}
 
 \begin{lemma}[Accès à une mémoire bien typée]
 \label{lemma:mem-typ}
@@ -1171,6 +1188,8 @@ cas on applique l'hypothèse de récurrence.
 On part de $\mcomp{Γ}{m''}$ où $m'' = \cCleanup{\cPop{m'}}$. Deux cas se
 produisent selon la forme de $\cVar{φ}$.
 
+\changed{Indentation des cas et sous-cas}
+
 \begin{itemize}
 
 \item Soit $\cVar{φ} = (x)$ avec $x ∈ \cDom{Γ_G}$, alors $Γ' ⊢ φ : t$ où $Γ' =
@@ -1212,6 +1231,8 @@ Ces lemmes étant établis, on énonce maintenant le théorème de progrès.
 Contrairement aux langages où tout est expression, il faut traiter séparément
 les trois constructions principales de \langname : les expressions, les valeurs
 gauches et les instructions. Celles-ci sont mutuellement dépendantes car:
+
+\changed{Remplacement d'un schéma par cette liste}
 
 \begin{itemize}
 \item la définition d'une fonction par un bloc est une expression;
