@@ -1,3 +1,6 @@
+\added {Toute la nouvelle intro jusqu'à la section
+    "Analyse de provenance de pointeurs"}
+
 Nous venons de définir un système de types sûrs dans le
 chapitre~\ref{cha:typbase}. Cela permet de mettre en relation les types des
 expressions avec les valeurs qui leur seront associées. Cela permet une forme
@@ -400,6 +403,8 @@ d'évaluation. Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher
 lorsqu'on déréférence directement un pointeur utilisateur. Ces étapes sont
 résumées dans la figure~\ref{fig:qualif-changes}.
 
+\added{Cas e ::= copy*}
+
 \begin{figure}%{{{
 
 \begin{align*}
@@ -704,6 +709,8 @@ variable. Celle-ci est bien entendue contrôlée par le noyau (dans le sens où 
 déréférencement est toujours sûr). Cette construction crée donc des pointeurs
 noyau, et on maintient la règle suivante:
 
+\changed{Cette règle n'est pas modifiée, contrairement à ce qui était dit}
+
 \begin{mathpar}
   \disprule{Addr}
 \end{mathpar}
@@ -771,6 +778,8 @@ constructeur $\phx\vTainted$ transforme un pointeur en pointeur utilisateur.
 \end{mathpar}
 
 \subsubsection*{Propriétés du typage}
+
+\changed{les phi sont changés en e}
 
 \begin{lemma}[Inversion du typage]
 \label{lemma:inv-qualif}
