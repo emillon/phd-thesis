@@ -1,24 +1,27 @@
-Après avoir décrit notre solution dans la partie~\ref{part:lang}, nous avons
-présenté ici notre démarche expérimentale. Dans le chapitre~\ref{cha:implem},
-nous avons détaillé l'implantation de notre prototype. Pour ce faire, nous avons
-ajouté des étiquettes de type au langage \newspeak et appliqué une variante de
-l'algorithme W de Damas et Milner pour réaliser l'inférence de types.
+Après avoir décrit notre solution théorique dans la partie~\ref{part:lang}, nous
+avons présenté ici notre démarche expérimentale. Dans le
+chapitre~\ref{cha:implem}, nous avons détaillé l'implantation de notre
+prototype. Pour ce faire, nous avons ajouté des étiquettes de type au langage
+\newspeak et adapté l'algorithme W de Damas et Milner pour réaliser l'inférence
+de types.
 
 Ensuite, le but du chapitre~\ref{cha:etudedecas} est d'appliquer notre analyse
 (à l'aide de ce prototype) sur le noyau Linux. Après avoir décrit le
-fonctionnement des appels systèmes sur ce noyau, on présente un bug qui a touché
-un pilote de carte graphique. Il est la manifestation d'un problème de pointeur
-utilisateur mal déréférencé dans le noyau, ainsi que décrit dans le
-chapitre~\ref{cha:os}. En lançant notre analyse sur le code présentant un
-problème, l'erreur est détectée. Au contraire, en la lançant sur le code après
-application du correctif (\emph{commit} \texttt{ad8ab3557}), aucune erreur n'est
-trouvée.
+fonctionnement des appels système sur ce noyau, on présente deux bugs qui ont
+touché respectivement un pilote de carte graphique et l'implantation d'un appel
+système. Il sont la manifestation d'un problème de pointeur utilisateur mal
+déréférencé dans le noyau, ainsi que décrit dans le chapitre~\ref{cha:os}. En
+lançant notre analyse sur le code présentant un problème, l'erreur est détectée.
+Au contraire, en la lançant sur le code après application du correctif, aucune
+erreur n'est trouvée.
 
 En s'appuyant sur le langage \newspeak, on gagne beaucoup par rapport à d'autres
 représentations intermédiaires. Le fait d'avoir un langage avec peu de
 constructions permet de ne pas avoir à exprimer plusieurs fois la même règle
 (par exemple, une fois sur la boucle \emph{for} et une autre sur la boucle
 \emph{while}).
+
+\label{page:ccl-npk-spk}.
 
 Un des inconvénients est que le modèle mémoire utilisé par \newspeak est assez
 différent de celui de \langname (ainsi que décrit dans le
@@ -44,16 +47,16 @@ quelques unes de ces extensions possibles.
 
 L'expérimentation, quant à elle, est pour le moment limitée, mais on peut
 l'étendre à des domaines de plus en plus importants dans le noyau Linux. Tout
-d'abord, ce même module définit d'autres fonctions implantant des \emph{ioctls}.
-Celles-ci reçoivent donc également des pointeurs utilisateur et sont
-susceptibles d'être vulnérables à ce genre d'erreurs de programmation. Ensuite,
-d'autres modules exposent une interface similaire, à commencer par les autres
-pilotes de cartes graphiques. Ceux-ci sont également un terrain sur lequel
-appliquer cette analyse.
+d'abord, le module graphique définit d'autres fonctions implantant des
+\emph{ioctls}. Celles-ci reçoivent donc également des pointeurs utilisateur et
+sont susceptibles d'être vulnérables à ce genre d'erreurs de programmation.
+Ensuite, d'autres modules exposent une interface similaire, à commencer par les
+autres pilotes de cartes graphiques. Ceux-ci sont également un terrain sur
+lequel appliquer cette analyse.
 
 De manière générale, toutes les interfaces du noyau manipulant des pointeurs
 utilisateur gagnent à être analysées. Outre les implantations des \emph{ioctls}
-dans chaque pilote et les appels systèmes, les systèmes de fichiers manipulent
-aussi de tels pointeurs via leurs opération de lecture et d'écriture.
+dans chaque pilote et les appels système, les systèmes de fichiers manipulent
+aussi de tels pointeurs via leurs opérations de lecture et d'écriture.
 
 % vim: spelllang=fr

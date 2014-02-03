@@ -101,8 +101,6 @@
 
 % Context substitution
 \def\ctxSub#1#2{#1\llparenthesis#2\rrparenthesis}
-\def\ctxSubL#1#2{\ctxSub{#1}{#2}_L}
-\def\ctxSubI#1#2{\ctxSub{#1}{#2}_I}
 
 % Qualifs
 \def\qKernel{\textsc{Kernel}\xspace}
@@ -379,7 +377,7 @@
   \addcontentsline{toc}{chapter}{Conclusion de la partie~\ref{#1}}
 }
 
-\def\hexa#1{0x#1}
+\def\hexa#1{\texttt{0x#1}}
 \def\floatop#1{#1.}
 
 \def\cLookup#1#2{\mathrm{Lookup} (#1, #2)}
@@ -394,8 +392,6 @@
 
 
 \def\cDom#1{\mathrm{dom}(#1)}
-
-\def\cVarname#1{\mathrm{Varname}(#1)}
 
 \def\cVisible#1{\mathrm{Visible}(#1)}
 
@@ -425,22 +421,4 @@
 \newcommand*\circled[1]{\tikz[baseline=(char.base)]{
             \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
 
-\def\badrulewarnline#1{
-    $ #1 $
-    &
-    \emph{(Règle non retenue)}
-}
-
-\def\badrulewarnwrap#1{
-\begin{center}
-    \begin{tabular}{m{5cm}m{5cm}}
-        #1
-    \end{tabular}
-\end{center}
-}
-
-\def\badrulewarn#1{
-    \badrulewarnwrap{
-        \badrulewarnline{#1}
-    }
-}
+\newcommand{\sList}[1]{#1^*}

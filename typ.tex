@@ -1,5 +1,18 @@
 \documentclass[a4paper,11pt]{memoir}
 
+% changemarks without draft mode {{{
+% https://tex.stackexchange.com/questions/33559/how-to-use-memoir-change-markers-without-the-draft-option
+\makeatletter
+\renewcommand{\v@rid}[2]{%
+  \@bsphack
+  \ifchangemarks
+     \marginpar[#1]{#2}%
+  \fi
+  \@esphack}
+\makeatother
+\changemarks
+% }}}
+
 \input{pkg.tex}
 \input{defs.tex}
 \input{urls.tex}
@@ -37,17 +50,18 @@
 
 % Part header
 \usepackage{adjustbox}
+\newlength{\currentparindent}
 \definecolor{lightgrey}{gray}{0.7}
 \def\partintro{}
 \renewcommand{\afterpartskip}{
 \ifdefempty{\partintro}{}{
 \vfil
 \noindent
+\setlength{\currentparindent}{\parindent}
 {%
 \setlength{\fboxsep}{20pt}%
 \adjustbox{minipage=\textwidth-2\fboxsep-2\fboxrule,cfbox=lightgrey,center}%
-          {\setlength{\parindent}{3em}%
-           \noindent%
+          {\setlength{\parindent}{\currentparindent}%
            \partintro}%
 }%
 }
@@ -176,7 +190,7 @@ just means pounding extra hard on the keyboard.
 \label{cha:implem}
 \input{chap/07-implantation.tex}
 
-\chapter{Étude de cas : un pilote de carte graphique}
+\chapter{Étude de cas : le noyau Linux}
 
 \label{cha:etudedecas}
 \input{chap/08-etudedecas.tex}
@@ -243,7 +257,7 @@ just means pounding extra hard on the keyboard.
 
 \input{abstract.tex}
 
-% TODO bib en français
+% TODx bib en français
 
 \end{document}
 

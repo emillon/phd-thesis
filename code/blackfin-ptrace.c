@@ -27,7 +27,7 @@ long arch_ptrace(struct task_struct *child, long request,
                 /* ... */
                 if (addr >= FIXED_CODE_START
 		    && addr + sizeof(tmp) <= FIXED_CODE_END) {
-			memcpy(&tmp, (const void *)(addr), sizeof(tmp));
+/* => */		memcpy(&tmp, (const void *)(addr), sizeof(tmp));
 			copied = sizeof(tmp);
 		}
                 /* ... */

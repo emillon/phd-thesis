@@ -1,17 +1,21 @@
+\changed{le titre était "étude de cas : un pilote de carte graphique"}
+
 Le noyau Linux, abordé dans le chapitre~\ref{cha:os}, est un noyau de système
 d'exploitation développé depuis le début des années 90 et \enquote{figure de
 proue} du mouvement \emph{open-source}. Au départ écrit par Linus Torvalds sur
-son ordinateur personnel, il a au fil des années été porté sur de nombreuses
+son ordinateur personnel, il a été porté au fil des années sur de nombreuses
 architectures et s'est enrichi de nombreux pilotes de périphériques. Dans la
-version 3.9.8 (2013), son code source comporte 11.2 millions de lignes de code
-(en grande majorité du C) dont 57\% de pilotes.
+version 3.13.1 (2014), son code source comporte 12 millions de lignes de code
+(en grande majorité du C) dont 58\% de pilotes.
+
+\changed{màj des statistiques}
 
 Même si le noyau est monolithique (la majeure partie des traitements s'effectue
 au sein d'un même fichier objet), les sous-systèmes sont indépendants. C'est ce
 qui permet d'écrire des pilotes de périphériques et des modules.
 
 Ces pilotes manipulent des données provenant de l'utilisateur, notamment par
-pointeurs. Comme on l'a vu, cela peut poser des problèmes de sécurité si on
+pointeur. Comme on l'a vu, cela peut poser des problèmes de sécurité si on
 déréférence ces pointeurs sans vérification.
 
 Dans ce chapitre, on met en œuvre sur le noyau Linux le système de types décrit
@@ -19,23 +23,22 @@ dans le chapitre~\ref{cha:qualifs}, ou plus précisément l'outil \texttt{ptrtyp
 du chapitre~\ref{cha:implem}.
 
 Pour montrer que le système de types capture cette propriété et que
-l'implantation est utilisable, on étudie le cas d'un bug qui a touché le noyau
-Linux. Dans une routine correspondant à un appel système, un pointeur
-utilisateur est déréférencé directement, pouvant provoquer une fuite
-d'informations confidentielles dans le noyau. Les détails sur ce bug peuvent
-être trouvés sur \url{https://bugs.freedesktop.org/show_bug.cgi?id=29340}.
+l'implantation est utilisable, on étudie les cas de deux bugs qui ont touché le
+noyau Linux. À chaque fois, dans une routine correspondant à un appel système,
+un pointeur utilisateur est déréférencé directement, pouvant provoquer une fuite
+d'informations confidentielles dans le noyau.
 
 On commence par décrire les difficultés rencontrées pour analyser le code du
 noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système dans
-ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin le bug
-étudié, et comment l'adapter pour traiter le code en question.
+ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin les bugs
+étudié, et comment les adapter pour traiter le code en question.
 
 \section{GNU C}
 \label{sec:gnuc}
 
-Linux est écrit dans le langage C, mais pas sa version normalisée. Il utilise le
-dialecte GNU C qui est celui que supporte GCC. Une première difficulté pour
-traiter le code du noyau est donc de le compiler.
+Linux est écrit dans le langage C, mais pas dans la version qui correspond à la
+norme. Il utilise le dialecte GNU C qui est celui que supporte GCC. Une première
+difficulté pour traiter le code du noyau est donc de le compiler.
 
 Pour traduire ce dialecte, il a été nécessaire d'adapter \ctonewspeak. La
 principale particularité est la notation \verb!__attribute__((...))! qui peut
@@ -43,9 +46,9 @@ décorer les déclarations de fonctions, de variables ou de types. De nouvelles
 fonctionnalités sont aussi présentes.
 
 Par exemple, il est possible de manipuler des étiquettes de première classe: si
-\texttt{lbl:} est présent avant une instruction, on peut capturer l'adresse de
-celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement avec
-\texttt{goto *p}.
+\enquote{\texttt{lbl:}} est présent avant une instruction, on peut capturer
+l'adresse de celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement
+avec \texttt{goto *p}.
 
 Une autre fonctionnalité est le concept d'instruction-expression:
 \texttt{(\{bloc\})} est une expression, dont la valeur est celle de la dernière
@@ -75,13 +78,13 @@ donc fallu faire un choix; nous avons choisi la configuration par défaut. Pour
 analyser des morceaux plus importants du noyau, il faudrait définir un fichier
 de configuration plus important.
 
-\section{Appels systèmes sous Linux}
+\section{Appels système sous Linux}
 \label{sec:linux-sys}
 
 Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
-le noyau Linux. Une description plus détaillée pourra être trouvée dans
-\cite{UnderstandingTheLinuxKernel}, ou, pour le cas de la mémoire virtuelle,
-\cite{LinuxVMM}.
+le noyau Linux. Une description plus détaillée pourra être trouvée
+dans~\cite{UnderstandingTheLinuxKernel}, ou, pour le cas de la mémoire
+virtuelle, dans~\cite{LinuxVMM}.
 
 Deux rings sont utilisés: en \ring{0}, le code noyau et, en \ring{3}, le code
 utilisateur.
@@ -91,7 +94,7 @@ existe: elles s'exécutent l'une après l'autre, le changement s'effectuant sur
 interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
-des appels systèmes, qui sont des fonctions exécutées par le noyau. Chaque tâche
+des appels système, qui sont des fonctions exécutées par le noyau. Chaque tâche
 doit donc avoir deux piles: une pile \enquote{utilisateur}, qui sert pour
 l'application elle-même, et une pile \enquote{noyau}, qui sert aux appels
 système.
@@ -117,15 +120,14 @@ processus en cours, l'ordonnanceur charge donc le \crtrois{} du nouveau
 processus.
 
 Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
-\texttt{0xc0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
+\hexa{c0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
+le code du programme,
+les données du programme (variables globales),
+la pile utilisateur,
+le tas (mémoire allouée par \texttt{malloc} et fonctions similaires), ou encore
+les bibliothèques partagées.
 
-\begin{itemize}
-\item le code du programme
-\item les données du programme (variables globales)
-\item la pile utilisateur
-\item le tas (mémoire allouée par \texttt{malloc} et fonctions similaires)
-\item les bibliothèques partagées
-\end{itemize}
+\changed{paragraphe plutôt que liste}
 
 Au dessus de \texttt{PAGE\_OFFSET}, se trouve la mémoire réservée au noyau.
 Cette zone contient le code du noyau, les piles noyau des processus, etc.
@@ -142,8 +144,8 @@ nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 e
 opérations.
 
 Voyons ce qui se passe derrière la magie apparente. Une explication plus
-détaillée est disponible dans la documentation fournie par Intel
-\cite{intelsys}.
+détaillée est disponible dans la documentation fournie par
+Intel~\cite{intelsys}.
 
 \paragraph{Dans la bibliothèque C}
 
@@ -160,9 +162,14 @@ logicielle est ensuite déclenchée (\verb!int 0x80!).
 le processeur est configuré --- tout dépend uniquement de l'état de certains
 registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
 Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
-prédéfini (dans \verb!arch/x86/kernel/entry_32.S!).
+prédéfini (dans \verb!arch/x86/kernel/entry_32.S!,
+figure~\ref{fig:entry-syscall})
 
-\insertcode{entry-syscall.s}
+\begin{figure}[h]
+    \insertcode{entry-syscall.s}
+    \caption{Point d'entrée des appels système}
+    \label{fig:entry-syscall}
+\end{figure}
 
 L'exécution reprend donc en \ring{0}, avec dans \esp{} le pointeur de pile noyau
 du processus. Les valeurs des registres ont été préservées; la macro
@@ -176,13 +183,16 @@ d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
 Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
 fonction \enquote{classique}, la convention d'appel \emph{cdecl} est respectée.
 La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
-être écrite en C.
+être écrite en C. On la trouve dans \texttt{kernel/timer.c}
+(figure~\ref{fig:syscall-def}).
 
-On trouve cette fonction dans \texttt{kernel/timer.c}:
+\begin{figure}[h]
+    \insertcode{syscall-definition.c}
+    \caption{Fonction de définition d'un appel système}
+    \label{fig:syscall-def}
+\end{figure}
 
-\insertcode{syscall-definition.c}
-
-La macro \texttt{SYSCALL_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
+La macro \texttt{SYSCALL\_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
 définit entre autres des points d'entrée pour les fonctionnalités de débogage du
 noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
 conformément à la convention \emph{cdecl}.
@@ -198,6 +208,7 @@ mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
 peut alors retourner au programme appelant.
 
 \section{Risques}
+\label{sec:risques-dos}
 
 Ainsi que décrit dans la section~\ref{sec:secu-syscalls}, cela peut poser un
 problème de manipuler des pointeurs contrôlés par l'utilisateur au sein d'une
@@ -205,7 +216,7 @@ routine de traitement d'appel système.
 
 Si le déréférencement est fait sans vérification, un utilisateur mal intentionné
 peut forger un pointeur vers le noyau (en déterminant des adresses valides dans
-l'espace noyau entre \texttt{0xc0000000} et \texttt{0xffffffff}). En provoquant
+l'espace noyau entre \hexa{c0000000} et \hexa{ffffffff}). En provoquant
 une lecture sur ce pointeur, des informations confidentielles peuvent fuiter ;
 et, en forçant une écriture, il est possible d'augmenter ses privilèges, par
 exemple en devenant super-utilisateur (\emph{root}). En pratique, il n'est pas
@@ -224,10 +235,7 @@ Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
 \emph{Kernel Mode Setting} (KMS).
 
 Pour configurer un périphérique, l'utilisateur communique avec le pilote noyau
-avec le mécanisme d'\emph{ioctls}\footnote{
-  Ce nom vient de la fonction \verb!ioctl()! pour
-  \emph{Input/Output Control}.
-}.
+avec le mécanisme d'\emph{ioctls} (pour \emph{Input/Output Control}).
 Ils sont similaires à des appels système, mais spécifiques à un périphérique
 particulier. Le transfert de contrôle est similaire à ce qui a été décrit dans
 la section précédente: les applications utilisateurs appellent la fonction
@@ -239,11 +247,13 @@ Les fonctions implantant un \emph{ioctl} sont donc vulnérables à la
 même classe d'attaques que les appels système, et donc doivent être écrits avec
 une attention particulière.
 
-Le code suivant est présent dans le pilote KMS pour les GPU AMD Radeon:
+Le code de la figure~\ref{fig:kms-buggy} est présent dans le pilote KMS pour les
+GPU AMD Radeon.
 
 \begin{figure}[h]
 \insertcode{kms-buggy.c}
 \caption{Code de la fonction \texttt{radeon\_info\_ioctl}}
+\label{fig:kms-buggy}
 \end{figure}
 
 On peut voir que l'argument \texttt{data} est converti en un \texttt{struct
@@ -251,12 +261,13 @@ drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
 \texttt{value}, et finalement ce pointeur est déréferencé.
 
 Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
-en espace noyau) du type suivant, dont les champs proviennent d'un appel
-utilisateur de \verb!ioctl()!.
+en espace noyau) du type donné dans la figure~\ref{fig:kms-info}, dont les
+champs proviennent d'un appel utilisateur de \verb!ioctl()!.
 
 \begin{figure}[h]
 \insertcode{kms-info.c}
 \caption{Définition de \texttt{struct drm\_radeon\_info}}
+\label{fig:kms-info}
 \end{figure}
 
 Pour mettre ce problème en évidence, nous avons annoté la fonction
@@ -282,6 +293,7 @@ La bonne manière de faire a été publiée avec le numéro de \emph{commit}
 étant une simple macro pour \texttt{copy\_from\_user}). Dans ce cas, on
 n'obtient pas d'erreur de typage.
 
+\added{Toute la section}
 \section{Second exemple : \texttt{ptrace} sur architecture Blackfin}
 
 Le noyau Linux peut s'exécuter sur l'architecture Blackfin, qui est spécialisée
@@ -290,21 +302,23 @@ utilisateur auquel nous nous intéressons peut également s'y produire.
 
 En particulier nous nous intéressons à l'appel système \texttt{ptrace}. Il
 permet à un processus d'accéder à la mémoire et de contrôler l'exécution d'un
-autre processus, par exemple à des fins de débogage. Par exemple,
+autre processus, par exemple à des fins de débogage. Ainsi,
 \texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} renvoie la valeur du mot mémoire à
 l'adresse \texttt{addr} dans l'espace d'adressage du processus \texttt{p}.
 
-Comme pour la plupart des appels système, l'implantation de \texttt{ptrace} est
-dépendante de l'architecture. Le deuxième exemple que nous présentons est celle
-qui concerne les processeurs Blackfin, figure~\ref{fig:ptrace-blackfin}.
+Comme pour la plupart des appels système, la fonction \texttt{ptrace} est
+dépendante de l'architecture. Le deuxième exemple que nous présentons concerne
+l'implantation de celle-ci pour les processeurs Blackfin,
+figure~\ref{fig:ptrace-blackfin}.
 
-Dans d'anciennes versions de Linux (jusque 2.6.28 --- ce bug a été corrigé dans
-le \emph{commit} \texttt{7786ce} en remplaçant l'appel à \texttt{memcpy} par un
-appel à \texttt{copy\_from\_user\_page}), cette fonction appelle \texttt{memcpy}
-au lieu de \texttt{copy\_from\_user} pour lire dans la mémoire du processus. En
-théorie, si un utilisateur passe un pointeur noyau à la fonction
-\texttt{ptrace}, il pourra lire des données du noyau. L'appel
-\texttt{ptrace(PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
+Dans d'anciennes versions de Linux\footnote{Jusqu'à la version 2.6.28 --- ce bug
+a été corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
+\texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
+appelle \texttt{memcpy} au lieu de \nolinkurl{copy\_from\_user} pour lire dans
+la mémoire du processus. La ligne problématique est préfixée par \texttt{/*
+=\textgreater{} */}. En théorie, si un utilisateur passe un pointeur noyau à la
+fonction \texttt{ptrace}, il pourra lire des données du noyau. L'appel
+\texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
 les variables du processus \texttt{p} si \texttt{addr} est une adresse dans
 l'espace utilisateur (ce qui est le comportement attendu), mais aussi de lire
 dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
@@ -314,8 +328,6 @@ dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
     \caption{Implantation de \texttt{ptrace} sur architecture Blackfin}
     \label{fig:ptrace-blackfin}
 \end{figure}
-
-% TODO à préciser
 
 On peut repérer ce bug par simple relecture pour commencer. On commence par
 remarquer que l'argument \texttt{addr}, malgré son type \texttt{long}, est en
@@ -329,23 +341,25 @@ espace noyau.
 En annotant correctement les types, on peut donc détecter ce bug: le type
 correct de \texttt{addr} est \ptrU{\tInt}, et celui de \texttt{memcpy} est
 $(\ptrK{\tInt}, \ptrK{\tInt}, \tInt) → \ptrK{\tInt}$. Il est donc impossible de
-lui passer cet argument.
-
-% TODO polymorphisme
-% TODO argument sizeof
+lui passer cet argument. Remarquons que le type de \texttt{memcpy} en C utilise
+des pointeurs de type \texttt{void *}. Pour les traiter correctement on pourrait
+utiliser du polymorphisme, mais dans ce cas précis utiliser le type \ptrK{\tInt}
+est suffisant.
 
 \paragraph{Remarque}
 
-% TODO c'est un point intéressant ↓
+En pratique, le problème de sécurité n'est pas si important. En effet,
+la copie se fait sous un test forçant \texttt{addr} à être entre
+\nolinkurl{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}. Cette zone est
+incluse en espace utilisateur, cela empêche donc le problème de fuite de
+données.
 
-En pratique, la copie se fait sous un test forçant \texttt{addr} à être entre
-\texttt{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}, c'est-à-dire en espace
-utilisateur. Cela enlève le potentiel problème de fuite de données, mais cela
-reste un problème de sécurité car il est possible de provoquer des fautes
-mémoire dans le noyau si la copie par \texttt{memcpy} se fait alors que l'espace
-utilisateur n'est pas chargé en mémoire.
-
-% TODO développe la fin et en particulier le problème de sécurité
+Mais cela reste un problème de sécurité: contrairement à
+\texttt{copy\_from\_user}, la fonction \texttt{memcpy} ne vérifie pas que
+l'espace utilisateur est chargé en mémoire. Si ce n'est pas le cas, une faute
+mémoire sera provoquée dans le noyau. Il s'agit alors d'un déni de service
+(section~\ref{sec:risques-dos}), qui est tout de même un comportement à
+empêcher.
 
 \section{Procédure expérimentale}
 \label{sec:demo-unif}
@@ -374,11 +388,20 @@ drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
 d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
 toute l'exécution.
 
-\begin{figure}
+\begin{figure}[p]
 \insertcode{ex-drm.c}
 
 \caption{Cas d'étude minimisé et annoté}
 \label{fig:ex-drm}
+\end{figure}
+
+\begin{figure}[p]
+
+    \insertcode{ex-drm-ok.c}
+
+    \caption{Cas d'étude minimisé et annoté -- version correcte}
+    \label{fig:ex-drm-ok}
+
 \end{figure}
 
 En ce qui concerne les fonctions de manipulation de pointeurs fournies
@@ -403,19 +426,12 @@ un reste d'une première présentation basée sur les qualificateurs.
 Dans l'implantation, il est cependant agréable de manipuler ces étiquettes
 séparément des pointeurs auxquels elles sont attachées.
 
+% TODO idem sur #2
+
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
 
 % TODO le faire
-
-\begin{figure}
-
-    \insertcode{ex-drm-ok.c}
-
-    \caption{Cas d'étude minimisé et annoté -- version correcte}
-    \label{fig:ex-drm-ok}
-
-\end{figure}
 
 \section*{Conclusion}
 

@@ -7,7 +7,7 @@ en particulier grâce à la révolution numérique.
 En effet le plus petit appareil électrique contient maintenant des composants
 matériels programmables.
 
-En 2013, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
+En 2014, on pense bien sûr aux téléphones portables dont la fonctionnalité et la
 complexité les rapprochent des ordinateurs de bureau. Par exemple, le système
 d'exploitation Android de Google est fondé sur le noyau Linux, destiné à la base
 aux micro-ordinateurs.
@@ -21,8 +21,8 @@ Il doit aussi garantir la sécurité de celles-ci: en tant qu'intermédiaire de
 confiance, le noyau a un certain nombre de responsabilités et est le seul à
 avoir accès à certaines informations sensibles. Il est capital de s'assurer
 qu'il est bien le seul à pouvoir y accéder. En particulier, il faut pouvoir
-vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent pas
-volontairement ou involontairement détourner ce dernier et lui faire fuiter des
+vérifier que les requêtes faites par l'utilisateur au noyau ne peuvent pas,
+volontairement ou involontairement, détourner ce dernier et lui faire fuiter des
 informations confidentielles.
 
 Le problème est que, comme tous les logiciels, les noyaux de système
@@ -55,7 +55,8 @@ entre elles.
 
 Pour en revenir aux noyaux de système d'exploitation, ceux-ci manipulent à la
 fois des données sensibles et des données provenant du monde extérieur, pour
-lesquelles on n'a aucune garantie. On veut pouvoir distinguer celles-ci.
+lesquelles on n'a aucune garantie. On veut pouvoir distinguer ces deux genres de
+données.
 
 Plus précisément, un des points cruciaux pour garantir l'isolation d'un noyau de
 système d'exploitation est de restreindre la manière dont sont traitées les
@@ -363,6 +364,7 @@ ambigües\footnote{
     \texttt{a}, ou la soustraction des deux expressions \texttt{(a)} et
     \texttt{(b)}.
 }, et de nombreux comportements sont implicites.
+\added{footnote}
 
 Si on veut analyser des programmes, il est plus pratique de travailler sur une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
@@ -411,10 +413,9 @@ analyse statique n'est pas nouveau, plusieurs projets ont déjà essayé d'y
 apporter une solution. Puisqu'ils sont développés en parallèle des compilateurs,
 le support des extensions est en général moins important dans ces langages.
 
-\paragraph{CIL}\cite{NeculaCil} \link{cil} est une représentation en
-OCaml d'un programme C, développée depuis 2002. Grâce à un mécanisme de
-greffons, elle permet de prototyper rapidement des analyses statiques de
-programmes.
+\paragraph{CIL}\cite{NeculaCil} est une représentation en OCaml d'un programme
+C, développée depuis 2002. Grâce à un mécanisme de greffons, elle permet de
+prototyper rapidement des analyses statiques de programmes.
 
 \paragraph{CompCert} est un projet qui vise à produire un compilateur certifié
 pour C. C'est-à-dire que les transformations sémantiques sont faites de manière
@@ -423,6 +424,7 @@ Clight~\cite{cfront} et Cminor~\cite{cminorSLfull} qui est utilisé pour les
 passes de middle-end.
 
 \section{Le projet Penjili}
+\added{toute la section}
 
 En face de ce problème théorique et technique, il faut mettre en perspective les
 problématiques industrielles liées à celui-ci. Les travaux présentés ici ont en
@@ -436,7 +438,7 @@ retrouver face à grands impacts économiques, voire risquer des vies humaines. 
 comprend bien que les phases de vérification et de certification sont au cœur
 du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
 vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
-vol avait été vérifié plus efficacement \cite{Ariane501}.
+vol avait été vérifié plus efficacement~\cite{Ariane501}.
 
 Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
 approches duales sont nécessaires. La première consiste à mettre le logiciel
@@ -611,6 +613,7 @@ dernier n'est pour le moment pas \emph{open-source}. Tous ces outils sont écrit
 dans le langage OCaml~\cite{DAOC}.
 
 \section{De l'avionique à l'informatique d'entreprise}
+\added{toute la section}
 
 Vérifier la sûreté des logiciels avioniques est critique, mais cela présente
 l'avantage que ceux-ci sont développés avec ces difficultés à l'esprit. Il est
@@ -619,15 +622,15 @@ contraintes d'abord, plutôt que de vérifier \emph{a posteriori} qu'un système
 existant peut répondre à ces contraintes de sûreté.
 
 Néanmoins cette conception de ces logiciels est très coûteuse. Pour des
-composants moins critiques, il peut donc être intéressant de considérer des
-logiciels ou bibliothèques existantes, en particulier dans le monde de
+composants qui sont moins critiques, il peut donc être intéressant de considérer
+des logiciels ou bibliothèques existantes, en particulier dans le monde de
 l'\emph{open-source}.
 
 Ces logiciels sont plus difficiles à analyser car ils sont écrits sans
 contraintes particulières. Non seulement toutes les constructions du langage
 sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
 allocation dynamique, récursion, accès au système de fichiers, etc), mais aussi
-des extensions non standard peuvent être utilisées.
+des extensions non standards peuvent être utilisées.
 
 %\paragraph{Problèmes liés à la compilation}
 
@@ -671,7 +674,7 @@ des extensions non standard peuvent être utilisées.
 
 La grande majorité des programmes ne se suffisent pas à eux-mêmes. En effet, ils
 interagissent presque toujours avec leur environnement ou appellent des
-fonctions de bibliothèque comme la fonction \texttt{bcopy} mentionnée plus tôt.
+fonctions de bibliothèque.
 
 Cela veut dire qu'un fichier en cours d'analyse peut contenir des appels à des
 fonctions inconnues. Non seulement on n'a pas accès à leur code source, mais en
@@ -685,7 +688,7 @@ fonctions d'ouverture ou d'écriture dans un fichier. D'autres modifient
 totalement le mode d'exécution du programme. Par exemple
 \texttt{pthread\_create(\&t, NULL, f, NULL)} lance l'exécution de
 \texttt{f(NULL)} tout en continuant l'exécution de la fonction en cours
-(concurrence).
+dans un fil d'exécution concurrent.
 
 \paragraph{Extensions du langage}
 
@@ -747,14 +750,14 @@ Au contraire, l'utilisation de \texttt{packed} supprime totalement le
 seulement. Puisque \texttt{b} et \texttt{c} ne sont pas alignés, leur accès sera
 fait de manière moins efficace.
 
-De manière générale, les compilateurs permettent, via le biais d'extensions
-comme \texttt{packed}, de personaliser finement le code émis grâce à des
-extensions. Elles changent parfois le mode d'exécution des programmes d'une
-manière subtile et pas toujours bien spécifiée et/ou documentée.
+De manière générale, les compilateurs permettent de personaliser finement le
+code émis grâce à des extensions. Elles changent parfois le mode d'exécution des
+programmes d'une manière subtile et pas toujours bien spécifiée ni documentée.
 
 \section{Objectifs et contributions de la thèse}
+\added{toute la section}
 
-Le but de ce travail est de définir et implanter des analyses statiques
+Le but de ce travail est de définir et d'implanter des analyses statiques
 \enquote{légères}sur le langage C, c'est-à-dire plus simples que les analyses de
 valeurs par interprétation abstraite. Il est possible de réaliser celles-ci,
 soit directement sur C, soit en utilisant un des langages intermédiaires
@@ -778,6 +781,8 @@ cette direction.
 \end{itemize}
 
 Nos contributions sont les suivantes:
+
+\changed{mention des bitmasks et de ptrace}
 
 \begin{itemize}
 
@@ -837,14 +842,15 @@ de sûreté de typage reliant la sémantique d'exécution aux types statiques.
 associée à ces travaux. L'implantation du système de types sur le langage
 \newspeak est d'abord décrite, à l'aide d'une variante de l'algorithme W de
 Damas et Milner. La manière de compiler depuis du code C est également
-présentée. Ensuite, on applique cette implantation à un cas d'étude concret. Il
-s'agit d'un bug ayant touché un pilote de carte graphique dans le noyau Linux.
-En manipulant incorrectement un pointeur dont la valeur est contrôlée par
-l'utilisateur, il crée un problème de sécurité car un utilisateur malveillant
-peut lire ou écrire dans l'espace mémoire réservé au noyau. En lançant notre
-prototype, l'analyse de la version non corrigée lève une erreur alors que, dans
-la version corrigée, un type correct est inféré. On montre ainsi que le système
-de type capture précisément ce genre d'erreur de programmation.
+présentée. Ensuite, on applique cette implantation à deux cas d'étude concrets
+dans le noyau Linux. L'un est un bug ayant touché un pilote de carte graphique,
+et l'autre un défaut dans l'implantation de la fonction \texttt{ptrace}. Dans
+chaque cas, un pointeur dont la valeur est contrôlée par l'utilisateur crée un
+problème de sécurité car un utilisateur malveillant peut lire ou écrire dans
+l'espace mémoire réservé au noyau. En lançant notre prototype, l'analyse de la
+version non corrigée lève une erreur alors que, dans la version corrigée, un
+type correct est inféré. On montre ainsi que le système de types capture
+précisément ce genre d'erreur de programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.

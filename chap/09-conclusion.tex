@@ -1,4 +1,4 @@
-On fait ici un bilan des travaux présentés, en commençant par un bilan des
+On fait ici un résumé des travaux présentés, en commençant par un bilan des
 contributions réalisées. On fait ensuite un tour des aspects posant problème, ou
 traités de manière incomplète, en évoquant les travaux possibles pour enrichir
 l'expressivité de ce système.
@@ -20,10 +20,10 @@ sûr.
 Une des particularités de ce langage impératif est qu'il utilise un état mémoire
 structuré, modélisant les cadres de piles présents dans le langage. Pour décrire
 la sémantique des accès mémoire, nous utilisons le concept de lentilles issues
-de la programmation fonctionnelle et des systèmes de base de données. Cela
+de la programmation fonctionnelle et des systèmes de bases de données. Cela
 permet de définir de manière déclarative la modification en profondeur de
-valeurs dans la mémoire, sans avoir à distinguer le cas de la lecture et celui
-de l'écriture.
+valeurs dans la mémoire, sans avoir à dupliquer le cas de la lecture et celui de
+l'écriture.
 
 \paragraph{Un système de types abstraits}
 
@@ -44,11 +44,11 @@ d'analyseur statique distribué avec le langage \newspeak.
 D'une part, cela permet de vérifier la propriété d'isolation des appels système
 sur du code C existant, et d'autre part cela fournit une base saine pour
 implanter d'autres analyses de typage sur le langage \newspeak.
-D'autre part, ce prototype a été utilisé pour confirmer l'existence d'un bug
+D'autre part, ce prototype a été utilisé pour confirmer l'existence de deux bugs
 dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
 vérifier du code de production à l'aide de techniques de typage.
 Des travaux d'expérimentation sont en cours afin d'analyser de plus grandes
-partie du noyau.
+parties du noyau.
 
 \section{Différences avec C}
 
@@ -104,13 +104,17 @@ Pour ces conversions de types, on distingue en fait plusieurs cas: les
 conversions entre types numériques, entre types pointeurs, ou entre un type
 entier et un type pointeur.
 
+\added{débordements}
+
 Le premier ne pose pas de problème: il est toujours possible de donner une
-sémantique à une conversion entre deux types numériques. Dans le cas éventuel ou
-une conversion n'est pas possible, on peut signaler une erreur à l'exécution (de
-la même nature qu'une division par zéro).
+sémantique à une conversion entre deux types numériques, quitte à détecter les
+cas où il faut signaler une erreur à l'exécution (comme en cas de débordement).
+
+\added{parenthèse user/kernel}
 
 Le deuxième non plus n'est pas un problème en soi: une conversion entre deux
-types pointeurs revient à convertir entre les types pointés.
+types pointeurs revient à convertir entre les types pointés (il faut bien
+sûr interdire les conversions entre pointeurs noyau et utilisateur).
 
 Le vrai problème provient des conversions entre entiers et pointeurs, qui sont
 des données fondamentalement différentes. Le même problème se pose d'ailleurs si
@@ -119,20 +123,15 @@ raisons valables pour faire cela sont moins nombreuses.
 Si on s'en tient aux conversions entre entiers et pointeurs, une manière naïve
 de typer ces opérations est:
 
-\badrulewarnwrap{
-\badrulewarnline{
+\begin{mathpar}
 \irule{PtrInt-Bad}
   { Γ ⊢ e : \ptrK{t}}
   { Γ ⊢ (\tInt)~e : \tInt }
-}
-\\
-\\
-\badrulewarnline{
+
 \irule{IntPtr-Bad}
   { Γ ⊢ e : \tInt }
   { Γ ⊢ (\textsc{Ptr})~e : \ptrK{t}}
-}
-}
+\end{mathpar}
 
 Tout d'abord, cela pose problème car il est alors possible de créer une fonction
 pouvant convertir n'importe quel type pointeur en n'importe quel autre type
@@ -156,7 +155,7 @@ types, etc.
 La conversion dans le sens inverse, d'entier vers pointeur, est encore plus
 complexe. Entre autres, cela suppose qu'on puisse retrouver la taille des
 valeurs à partir de leur adresse. Dans de nombreux langages, on résout ce
-problème en ajoutant la taille de chaque valeur avec elle.
+problème en stockant la taille de chaque valeur avec elle.
 
 Mais cela fait s'éloigner du modèle mémoire de C, où le déréférencement porte
 sur une adresse mais également sur une taille (portée implicitement par le type
@@ -189,7 +188,7 @@ seront plus accessibles au retour d'une fonction, alors on peut supprimer cette
 préalable. Par exemple les régions~\cite{jfp92} peuvent être utilisées à cet
 effet: en plus de donner un type à chaque expression, on calcule
 statiquement la zone mémoire dans laquelle cette valeur sera allouée. Cela
-correspond à un ramasse-miette fait statiquement.
+correspond à un ramasse-miette réalisé statiquement.
 
 % attention, on peut finir avec une seule région (pire des cas)
 
@@ -266,10 +265,11 @@ En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
 entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
 entière et met à jour $h$. La libération de mémoire est en revanche
 problématique parce qu'il faut faire confiance au programmeur pour ne pas
-accéder aux zones mémoires libérées. Il est aussi possible d'obtenir cette
-garantie avec une analyse préalable. Par exemple, il est possible ici encore
-d'utiliser une analyse basée sur les régions pour vérifier l'absence de
-pointeurs fous~\cite{ifm10}.
+accéder aux zones mémoires libérées, ni libérer deux fois la même zone mémoire.
+\added{double free} Il est aussi possible d'obtenir cette garantie avec une
+analyse préalable. Par exemple, il est possible ici encore d'utiliser une
+analyse basée sur les régions pour vérifier l'absence de pointeurs
+fous~\cite{ifm10}.
 
 %\paragraph{Types structures}
 
@@ -342,27 +342,26 @@ pointeurs fous~\cite{ifm10}.
 \section*{Conclusion}
 
 L'importance des logiciels grandit par deux effets:
-d'une part, ils sont présents dans de plus en plus d'appareils,
-et d'autre part, leur taille est de plus en plus importante.
-Entre les appareils dédiés au calcul, à la communication, au multimédia, et au
-transport, on est facilement exposé en une journée au fonctionnement de plus
-d'une dizaine de millions de lignes de code.
-Il donc primordial de vérifier que ces logiciels ne peuvent pas être détournés
-de leur utilisation prévue. Les conséquences peuvent en effet être
+d'une part, ils sont présents dans de plus en plus d'appareils, et d'autre part,
+leur taille est de plus en plus importante. En une journée, entre les appareils
+dédiés au calcul, à la communication, au multimédia, et au transport, on est
+facilement exposé au fonctionnement de plus d'une dizaine de millions de lignes
+de code. Il donc primordial de vérifier que ces logiciels ne peuvent pas être
+détournés de leur utilisation prévue. Les conséquences peuvent en effet être
 catastrophiques dans un contexte avionique ou militaire.
 
 Au cœur de la plupart de ces systèmes informatiques, se trouve un noyau qui
 abstrait les détails du matériel pour fournir aux programmes des abstractions
 sûres, permettant de protéger les données sensibles contenues dans ce système.
-Si une \linebreak simple erreur de programmation peut briser cette isolation, on
-voit pourquoi la vérification est si importante.
+Si une simple erreur de programmation peut briser cette isolation, on voit
+pourquoi la vérification est si importante.
 
 Dans ce but, les systèmes de types sont des outils bien connus de programmeurs.
 Même dans les langages peu typés comme C, les compilateurs aident de plus en
 plus les programmeurs à trouver des erreurs de programmation. De très nombreuses
 analyses peuvent être faites rien qu'en classifiant les expressions selon le
 genre de valeurs qu'elles créent à l'exécution --- c'est la définition que donne
-Pierce d'un système de types~\cite[p.~1]{TAPL}.
+Benjamin C. Pierce d'un système de types~\cite[p.~1]{TAPL}.
 
 L'utilisation d'un système de types comme analyseur statique léger est donc
 efficace. Pour des propriétés qui ne dépendent pas de la valeur des expressions,
@@ -370,7 +369,7 @@ mais uniquement de leur forme, c'est d'ailleurs la solution à préférer. En
 effet, nous avons montré qu'elle est simple à mettre en œuvre et rapide à
 exécuter.
 
-On peut se poser la question suivante: pourquoi a-t'on besoin d'une analyse
+On peut se poser la question suivante: pourquoi a-t-on besoin d'une analyse
 statique dédiée, plutôt que de passer par le langage C lui-même? Le problème
 vient du fait que celui-ci considère que les types définissent une
 représentation en mémoire sans guère plus d'information. On peut définir des

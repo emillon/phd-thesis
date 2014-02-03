@@ -10,6 +10,8 @@ ces étapes sont implantées dans le langage OCaml~\cite{DAOC}.
 Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
 license libre, la \emph{GNU Lesser General Public License}.
 
+\added{Nouvelle subsection}
+
 \subsection*{Pourquoi \newspeak et pas \langname?}
 
 On peut se demander pourquoi analyser du code \newspeak et non \langname. Une
@@ -25,16 +27,24 @@ du typage. Définir \langname a précisement pour but de définir un langage
 inspiré de C mais sur lequel le typage peut être sûr.
 
 Pour l'implantation sur \newspeak, on s'inspire donc des règles de typage sur
-\langname, en considérant qu'il serait possible d'avoir une traduction fidèle
-des programmes qui n'utilisent que des constructions sûres.
+\langname, mais cette approche n'est sûr que pour les programmes qui peuvent
+être fidèlement traduits.
+
+Par exemple, un programme dans lequel on fait de l'arithmétique de pointeurs
+entre champs de structures peut être traduit en \newspeak (et analysé par
+interprétation abstraite), mais on ne peut rien en tirer déduire du résultat
+d'une analyse par typage.
+
+On reviendra sur cette distinction entre les deux niveaux de sémantique dans la
+conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
 
 \section{\newspeak et chaîne de compilation}
 \label{sec:compil}
 
 \newspeak est un langage intermédiaire conçu pour être un bon support d'analyses
 statiques, contrairement à des langages conçus pour les programmeurs comme C. Sa
-sémantique d'exécution (ainsi qu'une partie des étapes de compilation depuis C)
-est décrite dans \cite{newspeak}. Sa syntaxe est donnée dans la
+sémantique d'exécution (ainsi qu'une partie des étapes de compilation)
+est décrite dans~\cite{newspeak}. Sa syntaxe est donnée dans la
 figure~\ref{fig:stx-npk}.
 
 \begin{figure}%{{{
@@ -106,7 +116,7 @@ figure~\ref{fig:stx-npk}.
 \label{fig:compil-npk}
 \end{figure}
 
-La compilation depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
+La traduction depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
 prétraitement du code source, compilation de C prétraité vers des objets
 \newspeak{}, puis liaison de ces différentes unités de compilation. Il est aussi
 possible de compiler directement du code Ada vers un objet \newspeak{}.
@@ -162,7 +172,7 @@ Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
 principalement à s'assurer que les hypothèses faites par les différentes unités
 de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
 invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
-aient un nom unique.
+aient un nom globalement unique.
 
 Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
 décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
@@ -190,8 +200,10 @@ représentations de types pouvant contenir des inconnues de la forme \texttt{Var
 n}, et retourne une liste de couples $(n, t)$ indiquant les substitutions à
 faire.
 
-Cet algorithme (figure~\ref{fig:algo-unif}) prend un chemin différent selon la
-forme des deux types d'entrée:
+Cet algorithme (décrit en pseudo-code ML en figure~\ref{fig:algo-unif}) prend un
+chemin différent selon la forme des deux types d'entrée:
+
+\changed{Passage en pseudocode}
 
 \begin{figure}%{{{
 
@@ -211,7 +223,7 @@ forme des deux types d'entrée:
     {\algorithmicmatch\ (#1)\ \algorithmicwith}
     {\algorithmicend\ \algorithmicswitch}%
 \algdef{SE}[CASE]{Case}{EndCase}[1]
-    {\ #1\ $⇒$}
+    {|~\ #1\ $⇒$}
     {\algorithmicend\ \algorithmiccase}%
 \algtext*{EndMatch}%
 \algtext*{EndCase}%
@@ -262,13 +274,13 @@ forme des deux types d'entrée:
         \EndCase
 
         \Case{$(l_a) → r_a, (l_b) → r_b$}
-            \State $r \gets$ \Call{unify}{$ra, rb$}
+            \State $r \gets$ \Call{unify}{$r_a, r_b$}
             \State $n \gets$ \Call{length}{$l_a$}
             \If {\Call{length}{$l_b$} $≠ n$}
                 \Error
             \EndIf
             \For{$i = 0$ \algorithmicto{} $n-1$}
-                \State $r \gets r$ \Call{unify}{$l_a[i], l_b[i]$}
+            \State $r \gets r~∪$ \Call{unify}{$l_a[i], l_b[i]$}
             \EndFor
             \State \Return{r}
         \EndCase
@@ -322,6 +334,8 @@ champs. On commence par unifier les types des champs de même nom, et on ajoute 
 l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme de
 rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
 
+\added{citation}
+
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
@@ -335,6 +349,8 @@ travaillent sur une représentation intermédiaire proche de \newspeak, mais où
 des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
 intermédiaire est noté \texttt{'a Tyspeak.t}, où \texttt{'a} est le type des
 étiquettes. Mais ce n'est qu'un type différent: il s'agit bien de \newspeak.
+
+\added{précision que c'est bien du newspeak}
 
 Le reste de l'outil est résumé dans la fonction
 \texttt{process\_npk} (figure~\ref{fig:implem-process}):
@@ -355,7 +371,7 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
     apparaît dans la définition de } f}$. Cela est fait en construisant une
     représentation de $\preceq$ sous forme de graphe, puis en faisant un
     parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
-    mutellement récursives ne sont pas supportées dans l'implantation.
+    mutellement récursives ne sont pas supportées.
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial. Celles-ci permettent par exemple
@@ -396,13 +412,15 @@ L'inférence de types consiste à remplacer les étiquettes de type \texttt{unit
 par des étiquettes de type \texttt{simple} (autrement dit de vraies
 représentations de types).
 
-Cette étape se fait de manière impérative: on peut créer de nouveaux types avec
-la fonction \texttt{new\_unknown} et unifier deux types avec la fonction
-\texttt{unify}. Leurs types sont:
+\added{cela permet...}
 
-% TODO[PJ] pourquoi impérative ? c'est plus facile à prouver en fonctionnel
-
-% TODO choisir si on présente l'algo en fonctionnel ou imp
+Cette étape se fait de manière impérative. Cela permet de ne pas avoir à
+réaliser de substitutions explicites. À la place, on repose sur le partage et
+les références, qui représentent les inconnues de type. Lorsque celles-ci sont
+résolues, il suffit de muter une seule fois la référence, et le partage fait que
+ce changement sera visible partout. Plus précisément, on peut créer de nouveaux
+types avec la fonction \texttt{new\_unknown} et unifier deux types avec la
+fonction \texttt{unify}. Leurs types sont:
 
 \begin{verbatim}
 val new_unknown : unit -> Types.simple
@@ -419,10 +437,11 @@ l'expression ou instruction considérée. Notons que, même si le programme
 programme C), elles ne sont pas utilisées.
 
 Les règles de typage sont implantées par \texttt{new\_unknown} et
-\texttt{unify}. Par exemple, pour typer une déclaration
-(figure~\ref{fig:implem-unif-stmt}), on crée un nouveau type \texttt{t0}. On
-étend l'environnement courant avec cette nouvelle association et, sous ce nouvel
-environnement, on type le bloc de portée de la déclaration.
+\texttt{unify}. Par exemple, pour typer une déclaration (qui n'a pas de valeur
+initiale en \newspeak), on crée un nouveau type \texttt{t0}. On étend
+l'environnement courant avec cette nouvelle association et, sous ce nouvel
+environnement, on type le bloc de portée de la déclaration
+(figure~\ref{fig:implem-unif-stmt}).
 
 \begin{figure}[h] %{{{
 
@@ -453,9 +472,9 @@ let infer_binop op (_, a) (_, b) =
         Float
 \end{verbatim}
 
-Pour prendre l'adresse d'une variable, la règle \textsc{AddrOf-Kernel}
-s'applique: on prend le type de la valeur gauche et on construit un pointeur
-noyau à partir de lui.
+Pour prendre l'adresse d'une variable, la règle \textsc{Addr} s'applique: on
+prend le type de la valeur gauche et on construit un pointeur noyau à partir de
+lui.
 
 \begin{verbatim}
 | T.AddrOf lv ->
@@ -512,31 +531,38 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à
 détecter les débordements d'entiers lors d'une analyse de valeurs par
 interprétation abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
-pertinentes et cet opérateur peut être vu que comme un \enquote{plus} unaire
-typé $(\tInt) → \tInt$.
+pertinentes et cet opérateur peut être vu que comme l'identité.
 
 Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
 \section{Performance}
 
-% TODO [PJ] C'est flou ! complexité asymptotique ?
+\added{2 paragraphes sur la complexité théorique}
 
-Sur les exemples testés nous n'avons pas noté de délai d'exécution notable. Cela
-est dû au fait que l'algorithme d'inférence est assez efficace: son temps
-d'exécution dépend essentiellement de la taille des types du programme, et pour
-du code C ils sont en général très simples.
+Comme le problème de l'inférence de types par l'algorithme W est complet pour
+DEXPTIME~\cite{mairson}, on peut s'attendre à une complexité exponentielle en la
+taille du programme. Cependant, lorsqu'on borne la \enquote{taille} $d$ des
+types, celle-ci devient quasi-linéaire~\cite{rta03} ($O(n α(n) + dn)$ où $α$ est
+l'inverse de la fonction d'Ackermann).
 
-La compilation de C vers \newspeak peut être plus coûteuse, notamment lorsque
-le fichier d'entrée est de taille importante. Le temps de traitement est plus
-long que celui d'un compilateur comme GCC ou \texttt{clang}, mais reste
-raisonnable. \ctonewspeak a été utilisé pour compiler des projets de l'ordre du
-million de lignes de code source prétraité, et son exécution ne prenait pas plus
-de quelques minutes.
+Dans notre cas, on utilise une variante de l'algorithme W pour un langage
+particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
+fonctions imbriquées, et les types des valeurs globales sont écrites par le
+programmeur, ce qui permet de borner $d$. En effet, sur les exemples testés nous
+n'avons pas noté de délai d'exécution notable.
+
+En revanche, la compilation de C vers \newspeak peut être plus coûteuse,
+notamment lorsque le fichier d'entrée est de taille importante. Le temps de
+traitement est plus long que celui d'un compilateur comme \texttt{gcc} ou
+\texttt{clang}, mais reste de l'ordre de quelques secondes. \ctonewspeak a été
+utilisé pour compiler des projets de l'ordre du million de lignes de code source
+prétraité, et son exécution ne prenait pas plus de quelques minutes.
 
 Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres
 optimisations sont certainement possibles, mais la performance n'est pas
-bloquante pour le moment: on ne compile en général qu'une seule fois le code à
-analyser.
+bloquante pour le moment: une fois que le code est compilé, on peut réutiliser
+le fichier objet \newspeak pour d'autres analyses. La compilation est donc
+relativement rare.
 
 \section*{Conclusion}
 

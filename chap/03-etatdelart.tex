@@ -84,10 +84,9 @@ permet parfois de trouver un grand nombre de vulnérabilités~\cite{SpenderGrep}
 
 On peut continuer cette approche en recherchant des motifs mais en étant
 sensible à la syntaxe et au flot de contrôle du programme. Cette notion de
-\emph{semantic grep} est présente dans l'outil Coccinelle
-\cite{coccinelle09,coccinelle11}: on peut définir des
-\emph{patches sémantiques} pour détecter ou modifier des constructions
-particulières.
+\emph{semantic grep} est présente dans l'outil
+Coccinelle~\cite{coccinelle09,coccinelle11}: on peut définir des \emph{patches
+sémantiques} pour détecter ou modifier des constructions particulières.
 
 Ces techniques sont utiles parce qu'elles permettent de plonger rapidement dans
 le code, en identifiant par exemple des appels à des fonctions dangereuses. En
@@ -100,10 +99,10 @@ vérifier manuellement la sortie de ces analyses.
 \label{sec:absint}
 
 L'interprétation abstraite est une technique d'analyse générique qui permet de
-simuler statiquement tous les comportements d'un programme
-\cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer les bornes
-de variation des variables pour s'assurer qu'aucun débordement de tableau n'est
-possible~\cite{AllamigeonHymansSSTIC07}.
+simuler statiquement tous les comportements d'un
+programme~\cite{Cousot77,Cousot92-1}. Un exemple d'application est de calculer
+les bornes de variation des variables pour s'assurer qu'aucun débordement de
+tableau n'est possible~\cite{AllamigeonHymansSSTIC07}.
 
 L'idée est d'associer à chaque ensemble concret de valeurs une représentation
 abstraite. Sur celle-ci, on peut définir des opérations indépendantes de la
@@ -370,7 +369,7 @@ Cette approche est assez proche de la nôtre: on donne un type différent aux
 pointeurs selon leur provenance. Néanmoins cela est très différent. Une première
 différence est dans le langage considéré. CQual s'applique sur un lambda-calcul
 à références, alors que pour étudier du code C nous présentons un modèle mémoire
-avec pile explicite plus proche de la machine. D'autre part, le système de type
+avec pile explicite plus proche de la machine. D'autre part, le système de types
 de CQual est fondamentalement modifié pour prendre en compte ces opérations,
 alors que dans le nôtre il s'agit d'une simple extension qui ne nécessite pas de
 modifier toutes les règles de typage. La conclusion de la
@@ -458,9 +457,9 @@ un système de types forts à C (y compris pour des programmes existants). Dans
 les cas où il n'est pas possible de prouver que le programme s'exécutera
 correctement, des vérifications à l'exécution sont ajoutées. Cependant, cela
 nécessite une instrumentation dynamique qui se paye en performances. Le
-compilateur Fail-Safe C~\cite{oiwa09} utilise une approche similaire permettant
-de garantir la sûreté d'exécution des programmes C tout en respectant la
-totalité de la norme C89.
+compilateur Fail-Safe C~\cite{oiwa09} \added{FailsafeC} utilise une approche
+similaire permettant de garantir la sûreté d'exécution des programmes C tout en
+respectant la totalité de la norme C89.
 
 \section{Logique de Hoare}
 
@@ -487,6 +486,8 @@ sémantique du programme; par exemple la règle de composition est:
 \end{mathpar}
 
 Les pré-conditions peuvent être renforcées et les post-conditions relâchées:
+
+\changed{Les implications étaient dans le mauvais sens}
 
 \begin{mathpar}
   \irule{Hoare-Consequence}
@@ -569,6 +570,7 @@ empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
 les programmes systèmes. C'est pourquoi dans notre solution, \langname, nous
 approchons la sûreté de la manière suivante:
 
+\changed{Liste plutôt que paragraphes}
 \begin{itemize}
 \item Tout d'abord, on utilise le typage pour manipuler les données de manière
       compatible: les types des opérations et fonctions sont vérifiés à la

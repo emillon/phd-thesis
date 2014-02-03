@@ -12,9 +12,8 @@ On cherche à prouver que si
 $ℒ_1 ∈ \setLens{A}{B}$
 et
 $ℒ_2 ∈ \setLens{B}{C}$, alors
-$ℒ = ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$.
-
-$\ggg$ est la composition de lentilles, définie page~\pageref{def:lens-comp}.
+$ℒ = ℒ_1 \ggg ℒ_2 ∈ \setLens{A}{C}$ ($\ggg$ est la composition de lentilles,
+définie page~\pageref{def:lens-comp}).
 
 Il suffit pour cela d'établir les trois propriétés caractéristiques qui
 définissent les lentilles: \textsc{PutPut}, \textsc{GetPut} et \textsc{PutGet}.
@@ -534,7 +533,7 @@ On applique l'hypothèse de récurrence à $lv$.
 
 Les cas d'évaluation et d'erreur sont traités en appliquant respectivement
 \textsc{Ctx} et \textsc{Eval-Err} avec $C = \&\ctxEmpty$. Dans le cas où $lv =
-φ$, on peut appliquer \textsc{Exp-AddrOf}.
+φ$, on peut appliquer \textsc{Exp-Addr}.
 
 %}}}
 \paragraph{\textsc{Set}:} % {{{
@@ -837,7 +836,7 @@ qui convient.
 \paragraph{\textsc{Exp-Lv}:} % {{{
 
 Puisque $Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$, on a d'après le
-lemme~\ref{lemma:mem-typ}: $m ⊧ v : τ$ où $v = m[φ]_Φ$ avec $\tComp{τ}{t}$.
+lemme~\ref{lemma:mem-typ}: $m ⊧ v : τ$ où $v = m[φ]$ avec $\tComp{τ}{t}$.
 
 % }}}
 \paragraph{\textsc{Exp-UnOp}:} % {{{
@@ -851,7 +850,7 @@ $Γ ⊢ \widehat{\opun}~v : τ$ avec $\tComp{τ}{t}$.
 Idem avec les définitions des opérateurs $\widehat{\opbin}$.
 
 % }}}
-\paragraph{\textsc{Exp-AddrOf}:} % {{{
+\paragraph{\textsc{Exp-Addr}:} % {{{
 
 On peut appliquer le lemme~\ref{lemma:repr}, qui nous donne un $τ$ qui convient.
 
@@ -859,7 +858,7 @@ On peut appliquer le lemme~\ref{lemma:repr}, qui nous donne un $τ$ qui convient
 \paragraph{\textsc{Exp-Set}:} % {{{
 
 Deux propriétés sont à prouver. D'une part, $Γ ⊢ v : t$, et d'autre part,
-$\mcomp{Γ}{m'}$ où $m' = m[φ←v]_Φ$.
+$\mcomp{Γ}{m'}$ où $m' = m[φ←v]$.
 Tout d'abord, le lemme d'inversion appliqué à $Γ ⊢ φ ← v : t$ nous donne que
 $Γ ⊢ φ : t$ et $Γ ⊢ v : t$.
 Ensuite, comme $Γ ⊢ φ : t$ et $\mcomp{Γ}{m}$, on peut appliquer le
@@ -982,6 +981,8 @@ $\mcomp{Γ}{\cCleanup{m_3}}$.
 
 %}}}
 
+\added{Nouveau paragraphe}
+
 \subsection*{À propos de la règle \textsc{Ctx}}
 
 L'application de la règle \textsc{Ctx} nécessite une explication particulière.
@@ -1036,7 +1037,7 @@ On procède de la même manière que pour le théorème~\ref{thm:progres} (prouv
 annexe~\ref{proof:progres}). En fait, puisque le schéma de preuve porte sur les
 règles de typage, il suffit de traiter les cas supplémentaires.
 
-\paragraph{\textsc{AddrOf-User} :} % {{{
+\paragraph{\textsc{Addr-User} :} % {{{
 
 Alors $e = \eTaint{lv}$. On applique l'hypothèse de récurrence à $lv$.
 
@@ -1045,20 +1046,6 @@ Alors $e = \eTaint{lv}$. On applique l'hypothèse de récurrence à $lv$.
 \item $\mm{m}{lv}{m'}{lv'}$. On conclut en utilisant \textsc{Ctx} avec $C =
 \eTaint{\ctxEmpty}$.
 \item $\msi{m}{lv} → Ω$. On applique \textsc{Eval-Err} avec ce même $C$.
-\end{itemize}
-
-% }}}
-\paragraph{\textsc{AddrOf-Kernel} :} % {{{
-
-On applique l'hypothèse de récurrence à $lv$.
-
-\begin{itemize}
-\item $lv = φ$. Alors \textsc{Exp-AddrOf} s'applique.
-
-\item $\mm{m}{lv}{m'}{lv'}$. On applique \textsc{Ctx} à $C = \&~\ctxEmpty$.
-
-\item $\msi{m}{lv} → Ω$. Idem avec la règle \textsc{Eval-Err}.
-
 \end{itemize}
 
 % }}}
@@ -1103,6 +1090,8 @@ Ce cas est similaire au cas \textsc{GetU}, en appliquant les règles
 \textsc{User-Put-OK} et \textsc{User-Put-Err}.
 
 % }}}
+
+\deleted{Suppression du cas addr-kernel inutile}
 
 \end{proof}
 

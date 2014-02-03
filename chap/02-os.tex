@@ -14,8 +14,8 @@ pour \emph{Central Processing Unit}), de mémoire principale (ou RAM pour
 Le processeur est constitué de divers registres internes qui permettent
 d'encoder l'état dans lequel il se trouve : quelle est l'instruction courante
 (registre \eip), quelle est la hauteur de la pile système (registre \esp), etc.
-Son fonctionnement peut être vu de la manière la plus simple qui soit comme le
-cycle :
+Son fonctionnement peut être vu de la manière la plus simple qui soit comme la
+suite d'opérations :
 
 \begin{itemize}
 \item
@@ -26,7 +26,9 @@ cycle :
 \item
   effectuer l'instruction;
 \item
-  \emph{(optionnel)} stocker en la mémoire les données modifiées.
+  \emph{(optionnel)} stocker en la mémoire les données modifiées;
+\item
+  continuer avec l'instruction suivante.
 \end{itemize}
 
 Les instructions sont constituées d'un mnémonique (indicant quelle opération
@@ -83,11 +85,11 @@ Pour ceci, il y a deux techniques principales. D'une part, certains
 périphériques sont dits \emph{memory-mapped} : ils sont associés à un espace
 mémoire particulier, qui ne permet pas de stocker des informations mais de lire
 ou d'écrire des données dans le périphérique. Par exemple, écrire à l'adresse
-$0xB8000$ permet d'écrire des caractères à l'écran. L'autre système principal
+\hexa{B8000} permet d'écrire des caractères à l'écran. L'autre système principal
 est l'utilisation des ports d'entrée/sortie. Cela correspond à des instructions
 spéciales \texttt{in \%ax, port} et \texttt{out port, \%ax} où \texttt{port}
 est un numéro qui correspond à un périphérique particulier. Par exemple, en
-écrivant dans le port $0x60$, on peut contrôler l'état des indicateurs
+écrivant dans le port \hexa{60}, on peut contrôler l'état des indicateurs
 lumineux du clavier PS/2.
 
 \section{Tâches et niveaux de privilèges}
@@ -105,7 +107,7 @@ par zéro) qui fait sauter automatiquement le processeur dans une routine de
 traitement d'interruption. À cet endroit le code peut sauvegarder les registres
 et restaurer un autre ensemble de registres, ce qui permet d'exécuter plusieurs
 tâches de manière entrelacée. Si l'alternance est assez rapide, cela peut donner
-l'illusion que les programmes s'exécutent en parallèle. Comme l'interruption
+l'illusion que les programmes s'exécutent en même temps. Comme l'interruption
 peut survenir à tout moment, on parle de multitâche préemptif.
 
 En plus de cet ordonnancement de processus, l'architecture Intel permet
@@ -219,7 +221,7 @@ long transfert mémoire est terminé, une interruption est reçue. D'autres
 interruptions dites logicielles peuvent arriver lorsqu'une erreur se produit.
 Par exemple, diviser par zéro provoque l'interruption 0, et tenter d'exécuter
 une instruction privilégiée provoque l'interruption 14. On peut aussi provoquer
-une interruption par une instruction \asminstr{int} dédiée.
+manuellement une interruption par une instruction \asminstr{int} dédiée.
 
 Une table globale définit, pour chaque numéro d'interruption, quelle est la
 routine à appeler pour la traiter, avec quel niveau de privilège, ainsi que le
@@ -235,7 +237,7 @@ un numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
 \section{Le \emph{Confused Deputy Problem}}
 \label{sec:secu-syscalls}
 
-On a vu que les appels systèmes permettent aux programmes utilisateur d'accéder
+On a vu que les appels système permettent aux programmes utilisateur d'accéder
 au services du noyau. Ils forment donc une interface particulièrement sensible aux
 problèmes de sécurité.
 
@@ -248,8 +250,8 @@ donc trouver la bonne granularité.
 Nous allons présenter ici une difficulté liée à la manipulation de mémoire au
 sein de certains types d'appels système.
 
-Il y a deux grands types d'appels systèmes. D'une part on trouve ceux qui
-renvoient un simple nombre, comme \texttt{getpid} qui renvoie le numéro du
+Il y a deux grands types d'appels système. D'une part on trouve ceux qui
+renvoient un simple entier, comme \texttt{getpid} qui renvoie le numéro du
 processus appelant.
 
 \insertcode{appel-syscall-getpid.c}
@@ -258,7 +260,7 @@ Ici, pas de difficulté particulière: la communication entre le \ring{0} et le
 \ring{3} est faite uniquement à travers les registres, comme décrit dans la
 section~\ref{sec:impl-syscall}.
 
-Mais la plupart des appels systèmes communiquent de l'information de manière
+Mais la plupart des appels système communiquent de l'information de manière
 indirecte, à travers un pointeur. L'appellant alloue une zone mémoire dans son
 espace d'adressage et passe un pointeur à l'appel système. Ce mécanisme est
 utilisé par exemple par la fonction \texttt{gettimeofday}

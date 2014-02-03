@@ -19,6 +19,8 @@ stocké à cette adresse) ou \enquote{non typés}. Dans ce dernier cas, ils ont 
 fait le type \texttt{void *} qui est compatible avec n'importe quel type
 pointeur.
 
+\added{Dans ce dernier cas...}
+
 Son système de types rudimentaire ne permet pas d'avoir beaucoup de garanties
 sur la sûreté du programme. En effet, aucune vérification n'est effectuée en
 dehors de celles faites par le programmeur.
@@ -36,7 +38,7 @@ la variable, puis calculer une nouvelle valeur en remplaçant une sous-valeur,
 avant de replacer cette nouvelle valeur à sa place en mémoire. En pratique, on
 définira deux lentilles: une qui relie un état mémoire à la valeur d'une
 variable, et une qui relie une valeur à une de ses sous-valeurs. Avec cette
-technique, on peut définir en une seule fois les opération de lecture et
+technique, on peut définir en une seule fois les opérations de lecture et
 d'écriture de sous-valeurs imbriquées.
 
 Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
@@ -102,15 +104,15 @@ bas.
 \subsection*{Listes}
 \label{page:def-listes}
 
-$X^*$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si $u ∈
-X^*$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son domaine de
-définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème élément de la
-suite.
+$\sList{X}$ est l'ensemble des suites finies de $X$, indexées à partir de 1. Si
+$u ∈ \sList{X}$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de son
+domaine de définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème
+élément de la suite.
 
 On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
 telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
-suivante: si $x ∈ X$ et $u ∈ X^*$, la liste $x::u ∈ X^*$ est la liste $v$ telle
-que:
+suivante: si $x ∈ X$ et $u ∈ \sList{X}$, la liste $x::u ∈ \sList{X}$ est la
+liste $v$ telle que:
 
 \begin{align*}
                        v_1 & = x \\
@@ -131,13 +133,12 @@ ne peut pas mettre à jour partiellement les valeurs composées comme des
 enregistrements (\emph{records}). Pour simuler cette opération, on a en général
 une opération qui permet de définir un nouvel enregistrement dans lequel seul un
 champ a été mis à jour. C'est ce qui se passe avec le langage
-Haskell~\link{haskell}: \texttt{r \{ x = 5 \}} représente une valeur
-enregistrement égale à \texttt{r} sur tous les champs, sauf pour le champ
-\texttt{x} où elle vaut \texttt{5}. Utiliser des lentilles revient à ajouter
-dans le langage la notion de champ en tant que valeur de première classe. Elles
-ont l'avantage de pouvoir se composer, c'est-à-dire que si on a un champ nommé
-$x$ qui contient un champ nommé $y$, alors on peut modifier le champ du champ
-automatiquement.
+Haskell~\cite{rwh}: \texttt{r \{ x = 5 \}} représente une valeur enregistrement
+égale à \texttt{r} sur tous les champs, sauf pour le champ \texttt{x} où elle
+vaut \texttt{5}. Utiliser des lentilles revient à ajouter dans le langage la
+notion de champ en tant que valeur de première classe. Elles ont l'avantage de
+pouvoir se composer, c'est-à-dire que si on a un champ nommé $x$ qui contient un
+champ nommé $y$, alors on peut modifier le champ du champ automatiquement.
 
 Dans ce cadre, les lentilles ont été popularisées par Van
 Laarhoven~\cite{LaarhovenLenses}. Puisque cela sert à manipuler des données
@@ -205,8 +206,10 @@ Une illustration se trouve dans la figure~\ref{fig:lens-howto}.
 
 \begin{example}[Lentilles de tête et de queue de liste]
 
-Soit $E$ un ensemble. On considère $L(E)$, l'ensemble des listes d'éléments de
-$E$.
+Soit $E$ un ensemble. On rappelle que $\sList{E}$ désigne l'ensemble des listes
+d'éléments de $E$.
+
+\changed{$L(E)$ devient $\sList{E}$ pour rester cohérent}
 
 On définit les fonctions suivantes. Notons qu'elles ne sont pas définies sur la
 liste vide $[]$, qui pourra être traitée comme un cas d'erreur.
@@ -217,9 +220,9 @@ liste vide $[]$, qui pourra être traitée comme un cas d'erreur.
 \end{align*}
 
 Alors
-$T = \mkLens{\mathrm{get}_T}{\mathrm{put}_T} ∈ \setLens{L(E)}{E}$
+$T = \mkLens{\mathrm{get}_T}{\mathrm{put}_T} ∈ \setLens{\sList{E}}{E}$
 et
-$Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \setLens{L(E)}{L(E)}$.
+$Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \setLens{\sList{E}}{\sList{E}}$.
 
 On a par exemple:
 
@@ -298,8 +301,8 @@ Donc $T$ est une lentille indexée, et on a par exemple:
 \end{align*}
 \end{example}
 
-La notation $3 ← 1$ peut surprendre, mais il s'interprète de la manière
-suivante: en remplaçant l'élément d'indice $3$ par $1$.
+La notation $3 ← 1$ peut surprendre, mais elle est à interpréter comme
+\enquote{en remplaçant l'élément d'indice $3$ par $1$}.
 
 \begin{definition}[Composition de lentilles]
 \label{def:lens-comp}
@@ -410,6 +413,7 @@ que le pointeur \eNull qui correspond à une valeur par défaut pour les
 pointeurs, et la valeur unité \eUnit qui pourra être retournée par les fonctions
 travaillant par effets de bord uniquement.
 
+\changed{Partout: lvalues devient valeurs gauches}
 Les accès mémoire en lecture et écriture se font au travers de valeurs gauches
 (\emph{left values} ou \emph{lvalues}): comme en C, elles tiennent leur nom du
 fait que ce sont ces constructions qui sont à gauche du signe d'affectation. En plus
@@ -419,7 +423,7 @@ indice à un élément d'une valeur gauche, ou encore en appliquant l'opérateur
 à un champ doit être décoré du type complet $S$, mais cette annotation est
 ignorée lors de l'évaluation. Les valeurs gauches correspondent aussi à l'unité
 d'adressage: c'est-à-dire que les pointeurs sont construits en prenant l'adresse
-d'une valeur gauche avec l'opérateur \texttt{\&}.
+d'une valeur gauche avec l'opérateur~\texttt{\&}.
 
 Les fonctions sont des expressions comme les autres, contrairement à C où elles
 sont forcément déclarées globalement. Cela veut dire qu'on peut affecter une
@@ -446,9 +450,9 @@ comporte bien sûr l'instruction vide qui ne fait rien et la séquence qui chaî
 deux instructions.
 
 Une expression peut être évaluée dans un contexte d'instruction, pour ses effets
-de bord. Remarquons que l'affectation n'est pas présente ici: c'est en effet une
-expression, qui renvoie la valeur qui a été affectée. Cela permet d'écrire $x ←
-(y ← z)$, comme dans un programme C où on écrirait \texttt{x = y = z}.
+de bord. Remarquons que l'affectation est une expression, qui renvoie la valeur
+affectée. Cela permet d'écrire $x ← (y ← z)$, comme dans un programme C où on
+écrirait \texttt{x = y = z}.
 
 Il est également possible de déclarer une variable locale avec
 $\iDecl{x}{v}{i}$. $x$ est alors une nouvelle variable visible dans $i$ avec
@@ -487,6 +491,8 @@ fonction: par exemple, si une fonction s'appelle récursivement, plusieurs
 instances de ses variables locales sont présentes dans le programme. Le modèle
 mémoire présenté ici de permet pas l'allocation dynamique sur un tas. Cette
 limitation sera détaillée dans le chapitre~\ref{cha:conclusion}.
+
+\added{Le modèle...}
 
 La structure de pile des locales permet de les organiser en niveaux
 indépendants: à \linebreak chaque appel de fonction, un nouveau cadre de pile
@@ -528,8 +534,8 @@ Les flottants sont les flottants IEEE 754 de 32 bits~\cite{ieee754}.
 Il n'y a pas de distinction entre procédures et fonctions; toutes les fonctions
 doivent renvoyer une valeur. Celles qui ne retournent pas de valeur
 \enquote{intéressante} renvoient alors une valeur d'un type à un seul élément
-noté \eUnit\footnote{Cette notation évoque un $n$-uplet à 0 composante.}, et
-donc le type sera noté \tUnit.
+noté \eUnit, et donc le type sera noté \tUnit. Cette notation évoque un
+$n$-uplet à 0 composante.
 
 \item
 
@@ -553,9 +559,9 @@ s'évaluera en la valeur $\widehat{\eArray{ 2, 3 }}$
 
 $\widehat{ \eStruct{ l_1 : v_1 ; … ; l_n : v_n } }$: une structure. C'est une
 valeur composée mais hétérogène. Les différents éléments (appelés \emph{champs})
-sont désignés par leurs noms $l$ (pour \emph{label}). Dans le programme, le nom de
-champ $l$ est décoré de la définition complète de la structure $S$. Celle-ci
-n'est pas utilisée dans l'évaluation et sera décrite au
+sont désignés par leurs noms $l_i$ (pour \emph{label}). Dans le programme, le
+nom de champ $l_i$ est décoré de la définition complète de la structure $S$.
+Celle-ci n'est pas utilisée dans l'évaluation et sera décrite au
 chapitre~\ref{cha:typbase}. Comme précédemment, on note
 $\widehat{\eStruct{\cdot}}$ pour dénoter les valeurs.
 
@@ -570,7 +576,8 @@ exemple, les fonctions globales sont simplement des variables globales de type
 fonctionnel, et les \enquote{pointeurs sur fonction} de C sont remplacés par des
 variables de type fonction.
 
-\item $Ω$: une erreur. Par exemple le résultat de $5 / 0$ est $\serr{div}$.
+\item $Ω$: une erreur. Par exemple le résultat l'évaluation de $5 / 0$ est
+$\serr{div}$.
 
 \end{itemize}
 
@@ -682,7 +689,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
   Dans le cas général, utiliser des instructions pour représenter l'état des
   calculs ne suffit pas; il faut utiliser une continuation.
   C'est ce qui est fait par exemple dans la sémantique de
-  CMinor~\cite{cminorSLfull}.
+  CMinor~\cite{cminorSLfull}. \changed{Référence vers la version complète}
   Ici, le flot de contrôle est plus simple et on peut se contenter de retenir
   une simple instruction, ce qui simplifie la présentation.
 
@@ -752,6 +759,7 @@ Un certain nombre d'opérations est possible sur les valeurs
   $φ[\cdot]$ par: $φ[n]~\opbin~φ[m] \eqdef n~\opbin~m$. Dans les autres cas,
   l'erreur $\serr{ptr}$ est renvoyée. Notamment, il n'est pas possible de
   comparer deux fonctions, deux tableaux ou deux structures.
+  \added{Notamment...}
 \item
   les opérateurs bit à bit sont définis sur les entiers. $\&$, $|$ et $\opxor$
   représentent respectivement la conjonction, la disjonction et la disjonction
@@ -900,12 +908,12 @@ et leur évaluation ne manipule jamais la pile avec ces opérations.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     ;
-    \path (12,0)  node [stack, faded] {}
+    \path (12.4,0)  node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
-    \draw [->] (9.2, 1) -- node[auto] {$\cPush{\cdot}{(x ↦ 0)}$} ++(1.6, 0);
+    \draw [->] (9.3, 1) -- node[auto] {$\cPush{\cdot}{(x ↦ 0)}$} ++(1.7, 0);
   \end{tikzpicture}
   }
 
@@ -921,12 +929,12 @@ et leur évaluation ne manipule jamais la pile avec ces opérations.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0$}
     ;
-    \path (8,-3)  node [stack, faded] {}
+    \path (8.4,-3)  node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$x↦0, y↦3$}
     ;
-    \draw [->] (5.2, -2) -- node[auto] {$\cExtend{\cdot}{y}{3}$} ++(1.6, 0);
+    \draw [->] (5.3, -2) -- node[auto] {$\cExtend{\cdot}{y}{3}$} ++(1.7, 0);
   \end{tikzpicture}
   }
 
@@ -942,11 +950,11 @@ et leur évaluation ne manipule jamais la pile avec ces opérations.
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack] {$…$}
     ;
-    \path (4,0)   node [stack, faded] {}
+    \path (4.2,0)   node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     -- ++ (0,0.5) node [stack, faded] {}
     ;
-    \draw [->] (1.2, 1) -- node[auto] {Pop} ++(1.6, 0);
+    \draw [->] (1.3, 1) -- node[auto] {Pop} ++(1.7, 0);
   \end{tikzpicture}
   }
 
@@ -960,7 +968,7 @@ retours de fonction.
 En effet, si une référence au dernier cadre est toujours présente après
 le retour d'une fonction, cela peut casser le typage.
 
-Par exemple, dans la figure~\ref{fig:prog-cleanup}, l'exécution de $h()$ donne à
+Par exemple, dans la figure~\ref{fig:prog-cleanup}, l'exécution de $h(~)$ donne à
 $p$ la valeur $(1, x)$. Puis en arrivant dans $g$, le déréférencement de $p$ va
 modifier $x$ qui va avoir la valeur $1$. $x$, variable flottante, contient donc
 un entier.
@@ -1041,6 +1049,7 @@ Ces 4 fonctions seront utilisées dans plusieurs règles dans la suite de ce
 chapitre.
 
 \paragraph{Remarques}
+\added{Les 2 paragraphes suivants}
 
 Ces opérations ne sont pas toujours bien définies. Par exemple, $\phxxx\cExtend$
 ne peut pas s'appliquer à une pile vide, et $m - x$ n'est défini que si une
@@ -1135,15 +1144,11 @@ T(0)     &: \eArray{\circled{1}, 2, 3, 5} \\
 
 \end{figure}
 
-\paragraph{Remarque}
-
-Dans toute la suite, on emploiera la notation $m[φ]_Φ$. Il est important de
-remarquer que $m$ désigne un état particulier et $φ$ un chemin particulier, mais
-que $Φ$ est la lentille indexée globale définie page~\pageref{subsec:acces-phi}.
-
 \subsection*{Accès à une liste par indice : $I$}
 
-On définit une lentille indexée $I : ℕ → \setLens{\textrm{List}(α)}{α}$
+\changed{$\textrm{List}(\alpha) \rightarrow \sList{\alpha}$}
+
+On définit une lentille indexée $I : ℕ → \setLens{\sList{α}}{α}$
 permettant d'accéder aux éléments d'une liste par leur indice. On rappelle que
 les listes sont des suites finies, définies page~\pageref{page:def-listes}. En
 outre, I n'est définie que pour $n ∈ [1 ;|l|]$.
@@ -1293,6 +1298,15 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
     m{[\eNull ← v]}_Φ &= \serr{ptr}
   \end{align*}
 
+\paragraph{Remarque}
+
+\added{Ce paragraphe}
+
+Dans toute la suite, lorsque ce n'est pas ambigü, on emploiera la notation
+$m[φ]$ pour désigner $m[φ]_Φ$. Il est important de remarquer que $m$ désigne un
+état particulier et $φ$ un chemin particulier, mais que $Φ$ est la lentille
+indexée globale définie page~\pageref{subsec:acces-phi}.
+
 \section{Contextes d'évaluation}
 
 L'évaluation des expressions repose sur la notion de contextes d'évaluation.
@@ -1360,24 +1374,21 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
   $v = v_1~\widehat{\opbin}~v_2$.
 \end{enumerate}
 
+\changed{Ce cas était défini plus haut}
+
 Le deuxième point sera résolu par la règle d'inférence suivante.
 
 \begin{mathpar}
   \semrule{Ctx}
 \end{mathpar}
 
-Enfin, le troisième revient à définit l'opérateur de substitution
-$\phxx{\ctxSub}$ présent dans la règle précédente. Afin de pouvoir appliquer des
-substitutions au niveau des valeurs gauches et des instructions, on définit aussi
-respectivement $\phxx{\ctxSubL}$ et $\phxx{\ctxSubI}$.
-
-Notons que puisque $i \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer
-aux expressions et aux valeurs gauches l'opération $\phxx\ctxSub$ est purement
-syntaxique.
+Enfin, le troisième revient à définir l'opérateur de substitution
+$\phxx{\ctxSub}$ présent dans la règle précédente. Notons que puisque $i
+\gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer aux expressions et aux
+valeurs gauches : l'opération $\phxx\ctxSub$ est purement syntaxique.
 
 \section{Valeurs gauches}
 \label{sec:eval-lv}
-
 
 Obtenir un chemin à partir d'un nom de variable revient à résoudre le nom de
 cette variable: est-elle accessible? Le nom désigne-t-il une variable locale
@@ -1456,7 +1467,7 @@ $\widehat{\&}~(((1,s0).f)$ et donc
 et en
 \texttt{(b)}.
 
-Dans le cas où la valeur référencée n'a pas la forme $m[φ']_Φ$, aucune règle ne
+Dans le cas où la valeur référencée n'a pas la forme $m[φ']$, aucune règle ne
 peut s'appliquer (comme lorsqu'on cherche à réduire l'addition d'une fonction et
 d'un entier, par exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on
 montrera que ce cas est toujours évité dans les programmes typés
@@ -1537,32 +1548,31 @@ provoque l'erreur $\serr{div}$.
 Il est nécessaire de dire un mot sur les opérations $\widehat{+_p}$ et
 $\widehat{-_p}$ définissant l'arithmétique des pointeurs. Celles-ci sont
 uniquement définies pour les références mémoire à un tableau, c'est-à-dire
-celles qui ont la forme $\widehat{\&}~φ[n]$ (par souci de clarté on ne note pas
-tous les~$\widehat{\cdot}$ ci-dessous). On a alors:
+celles qui ont la forme $\widehat{\&}~φ[n]$. On a alors:
 
 \begin{align*}
-  \widehat{\&}~φ[n]~+_p~i & = \widehat{\&}~φ[n+i] \\
-  \widehat{\&}~φ[n]~-_p~i & = \widehat{\&}~φ[n-i] \\
+    \widehat{\&}~φ[n]~\widehat{+}_p~i & = \widehat{\&}~φ[n~\widehat{+}~i] \\
+  \widehat{\&}~φ[n]~]~\widehat{-}_p~i & = \widehat{\&}~φ[n~\widehat{-}~i] \\
 \end{align*}
 
 Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
-d'une même structure. Autrement c'est une erreur de manipulation de pointeurs
-\label{page:def-arith-ptr-error}\footnote{
-Cela est cohérent avec la norme C99:
+d'une même structure. Autrement c'est une erreur de manipulation de
+pointeurs\footnote{ Cela est cohérent avec la norme C99:
 \enquote{If the pointer operand points to an element of an array object, and the
     array is large enough, […] ; otherwise, the behavior is undefined.
     }~\cite[6.5.6~§8]{AnsiC}}
-et l'opérateur $\widehat{\opbin}$ renvoie $\serr{ptr}$.
+et l'opérateur $\widehat{\opbin}$ renvoie $\serr{ptr}$.\label{page:def-arith-ptr-error}
 
-Si l'indice calculé ($n+i$ ou $n-i$) sort de l'espace alloué, alors l'erreur
-sera faite au moment de l'accès: la lentille $T$ renverra $\serr{array}$
-(page~\pageref{subsec:lens-array}).
+\added{Cas où on sort de l'espace alloué}
 
-Pour prendre l'adresse d'une variable, il suffit de résoudre celle-ci dans
-l'état mémoire courant.
+Si l'indice calculé ($n~\widehat{+}~i$ ou $n~\widehat{-}~i$) sort de l'espace
+alloué, alors l'erreur sera faite au moment de l'accès: la lentille $T$ renverra
+$\serr{array}$ (page~\pageref{subsec:lens-array}).
+
+Une left-value s'évalue en le chemin correspondant.
 
 \begin{mathpar}
-  \semrule{Exp-AddrOf}
+  \semrule{Exp-Addr}
 \end{mathpar}
 
 L'affectation se déroule en 3 étapes. D'abord, l'expression est évaluée en une
@@ -1751,12 +1761,14 @@ de variables et de types, et évaluation d'expressions.
 Donc l'évaluation d'une phrase $p$ fait passer d'un état mémoire $m$
 à un autre $m'$, ce que l'on note $\ph{m}{p}{m'}$.
 
+\changed{Initialiseur $\rightarrow$ valeur initiale}
+
 L'évaluation d'une expression est uniquement faite pour ses effets de bord. Par
 exemple, après avoir défini les fonctions du programme, on pourra appeler
-\texttt{main()}. La déclaration d'une variable globale (avec un initialiseur),
-quant à elle, consiste à évaluer cet initialiseur et à étendre l'état mémoire
-avec ce couple (variable, valeur). On suppose que les variables globales ont
-toutes des noms différents. Notons que ces évaluations se font à grands pas.
+\texttt{main()}. La déclaration d'une variable globale, quant à elle, consiste à
+évaluer sa valeur initiale et à étendre l'état mémoire avec ce couple (variable,
+valeur). On suppose que les variables globales ont toutes des noms différents.
+Notons que ces évaluations se font à grands pas.
 
 Enfin, l'exécution d'un programme est sans surprise l'exécution de ses phrases,
 les unes à la suite des autres.
@@ -1783,7 +1795,7 @@ sémantique). Sur ces deux points, on note que nous sommes restés suffisamment
 proches de C, tout en utilisant pour la mémoire un modèle plus structuré qu'une
 simple suite d'octets. Les définitions de la syntaxe ainsi que de la sémantique
 sont rappelées dans l'annexe~\ref{anx:eval} (sections~\ref{sec:anx-sem-start}
-à~\ref{sec:anx-sem-end}).
+à~\ref{sec:anx-sem-end}). \added{sections entre parenthèses}
 
 Afin de manipuler les états mémoire dans la sémantique d'évaluation, nous avons
 utilisé le concept des lentilles, qui permettent de chaîner des accesseurs entre
