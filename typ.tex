@@ -1,5 +1,17 @@
-\documentclass[a4paper,11pt,draft]{memoir}
+\documentclass[a4paper,11pt]{memoir}
+
+% changemarks without draft mode {{{
+% https://tex.stackexchange.com/questions/33559/how-to-use-memoir-change-markers-without-the-draft-option
+\makeatletter
+\renewcommand{\v@rid}[2]{%
+  \@bsphack
+  \ifchangemarks
+     \marginpar[#1]{#2}%
+  \fi
+  \@esphack}
+\makeatother
 \changemarks
+% }}}
 
 \input{pkg.tex}
 \input{defs.tex}
