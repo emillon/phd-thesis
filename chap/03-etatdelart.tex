@@ -1,6 +1,6 @@
 Dans ce chapitre, nous présentons un tour d'horizon des techniques existantes
 permettant d'analyser des programmes. En particulier, on s'intéresse à la
-propriété de sécurité décrite dans le chapitre~\ref{cha:os}, mais on ne se
+propriété d'isolation décrite dans le chapitre~\ref{cha:os}, mais on ne se
 limite pas à celle-ci: il est également intéressant de considérer des analyses
 développées pour d'autres propriétés (comme par exemple s'assurer de l'absence
 d'erreurs à l'exécution), celles-ci pouvant potentiellement s'adapter.
@@ -31,6 +31,8 @@ forte couverture par les tests a de grandes chances d'être correct pour toutes
 les entrées. Par exemple, dans l'avionique civile, le processus de développement
 demande d'être très rigoureux pour les tests fonctionnels et structurels afin de
 détecter le code ou les branchements non atteints.
+
+% TODO[S] oui mais le processus de certif demande les CC pour la sécu
 
 Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
 uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
@@ -202,7 +204,7 @@ zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 %
     \end{tikzpicture}
   }%}}}
-  \subbottom[Domaine des octaèdres]{%{{{
+  \subbottom[Domaine des octogones]{%{{{
 \label{fig:dom-octo}
 %
     \begin{tikzpicture}
@@ -228,13 +230,13 @@ numérique.
 Au delà des domaines eux-mêmes, l'analyse se fait sous forme d'un calcul de
 point fixe. La manière la plus simple est d'utiliser un algorithme de
 \emph{liste de travail}, décrit par exemple dans~\cite{tapsoft95}. Les
-raffinement en revanche sont nombreux.
+raffinements en revanche sont nombreux.
 
 Dès~\cite{Cousot77} il est remarqué que la terminaison de l'analyse n'est
 assurée que si le treillis des valeurs abstraites est de hauteur finie, ou qu'un
 opérateur d'élargissement (\emph{widening}) $\nabla$ est employé. L'idée est
 qu'une fois qu'on a calculé quelques termes d'une suite croissante, on peut
-réaliser une projection de celle ci. Par exemple, dans le domaine des
+réaliser une projection de celle-ci. Par exemple, dans le domaine des
 intervalles, $[0;2]~\nabla~[0;3] = [0;+\infty[$. On atteint alors un point fixe
 mais qui est plus grand que celui qu'on aurait obtenu sans cette accélération:
 on perd en précision. Pour en gagner, on peut redescendre sur le treillis des
@@ -242,6 +244,8 @@ points fixe avec une suite d'itérations décroissantes~\cite{granger}. Dans
 l'itération de point fixe, il est possible d'obtenir les résultats de manière
 plus efficace en choisissant un ordre particulier dans les calculs des
 sous-itérations~\cite{policy}.
+
+% TODO[S] attention contresens ce n'est pas une itération de Kleene
 
 En termes d'ingéniérie logicielle, implanter un analyseur statique est un défi
 en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le code
@@ -269,6 +273,8 @@ Coverity~\cite{coverityBillion}, qui publie régulièrement des rapports de
 qualité sur certains logiciels \emph{open-source}. Néanmoins, de part leur
 aspect non \emph{sound}, les analyses réalisées ne peuvent pas être assimilées à
 de la vérification formelle en tant que telle.
+
+% TODO[S] ↑ ils ne sont pas basés que sur AI car AI garantit soundness
 
 Enfin, l'interprétation abstraite n'est pas la seule technique pour analyser
 finement les valeurs d'un programme. Par exemple, le système
@@ -443,7 +449,7 @@ pour lesquels le langage n'apporte aucune garantie (il faut d'ailleurs
 encapsuler chaque utilisation dans un bloc marqué explicitement
 \texttt{unsafe}). Ils sont équivalents aux pointeurs de C.
 
-Le systèmes de types de ces projets apportent dans le langage différents types
+Les systèmes de types de ces projets apportent dans le langage différents types
 de pointeurs. Cela permet de manipuler finement la mémoire, à la manière des
 \emph{smart pointers} de C++. De cette approche on retient surtout l'analyse de
 régions de Rust qui permet de manipuler de manière sûre les adresses des
@@ -460,6 +466,8 @@ nécessite une instrumentation dynamique qui se paye en performances. Le
 compilateur Fail-Safe C~\cite{oiwa09} \added{FailsafeC} utilise une approche
 similaire permettant de garantir la sûreté d'exécution des programmes C tout en
 respectant la totalité de la norme C89.
+
+% TODO[S] non applicables pour certif car instrumentation
 
 \section{Logique de Hoare}
 
@@ -501,6 +509,8 @@ Les pré-conditions peuvent être renforcées et les post-conditions relâchées
 Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation
 lorsque c'est possible, sinon à l'exécution.
+
+% TODO[S] découpler?
 
 La règle de conséquence permet de découpler les propriétés du programme
 lui-même: plusieurs niveaux d'annotations sont possibles, du moins précis au
@@ -557,13 +567,18 @@ toutes les propriétés voulues dans un formalisme de très bas niveau (du nivea
 de la théorie des ensembles). De plus, l'inférence de types devient rapidement
 indécidable.
 
+% TODO[S] un ex d'analyse?
+
 \section*{Conclusion}
 
 Il existe de nombreuses techniques pour vérifier du code système ou embarqué. Il
 y a divers choix à faire entre l'expressivité, l'intégration de tests
 dynamiques ou la facilité de mise en œuvre.
 
-Pour résoudre le problèmes des pointeurs utilisateurs dans les noyaux, le typage
+% TODO[S] efficace à -> français
+% TODO[S] expressivité -> ex
+
+Pour résoudre le problème des pointeurs utilisateurs dans les noyaux, le typage
 statique est une solution assez pragmatique, puisqu'elle peut s'appliquer à des
 programmes existants, et est efficace à utiliser. Son expressivité limitée nous
 empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
@@ -586,5 +601,7 @@ approchons la sûreté de la manière suivante:
       sûres. Cela permet de préserver l'isolation entre le noyau et l'espace
       utilisateur.
 \end{itemize}
+
+% TODO[S] je ne comprends pas ce qu'est cette solution safespeak
 
 % vim: spelllang=fr
