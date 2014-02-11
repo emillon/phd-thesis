@@ -53,6 +53,8 @@ L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}. En
 particulier, on y verra comment traduire un sous-ensemble de C vers \newspeak,
 sur lequel notre implantation est faite.
 
+% TODO[E] un petit rappel du lien entre les 2 *speak?
+
 \section{Notations}
 
 \subsection*{Inférence}
@@ -140,6 +142,8 @@ notion de champ en tant que valeur de première classe. Elles ont l'avantage de
 pouvoir se composer, c'est-à-dire que si on a un champ nommé $x$ qui contient un
 champ nommé $y$, alors on peut modifier le champ du champ automatiquement.
 
+% TODO[E] n'y a-t-il pas la même construction en ocaml (with) ?
+
 Dans ce cadre, les lentilles ont été popularisées par Van
 Laarhoven~\cite{LaarhovenLenses}. Puisque cela sert à manipuler des données
 arborescentes, on peut aussi appliquer cet outil aux systèmes de bases de
@@ -154,14 +158,14 @@ pile.
 
 Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈ \setLens{R}{A}$
 (ou \emph{accesseur}) est un moyen d'accéder en lecture ou en écriture à une
-sous-valeur de type $A$ au sein d'une valeur de type $R$ (pour \emph{record}).
-Elle est consistuée des opérations suivantes:
+sous-valeur appartenant à $A$ au sein d'une valeur appartenant à $R$ (pour
+\emph{record}). Elle est consistuée des opérations suivantes:
 
 \begin{itemize}
 \item
-  une fonction de lecture $\mathrm{get}_ℒ : R → A$
+  une fonction de lecture\enspace$\mathrm{get}_ℒ : R → A$
 \item
-  une fonction de mise à jour $\mathrm{put}_ℒ : (A × R) → R$
+  une fonction de mise à jour\enspace$\mathrm{put}_ℒ : (A × R) → R$
 \end{itemize}
 
 telles que pour tous $a∈A, a'∈A, r∈R$:
@@ -494,11 +498,11 @@ limitation sera détaillée dans le chapitre~\ref{cha:conclusion}.
 
 \added{Le modèle...}
 
-La structure de pile des locales permet de les organiser en niveaux
+La structure de pile des variables locales permet de les organiser en niveaux
 indépendants: à \linebreak chaque appel de fonction, un nouveau cadre de pile
 est créé, comprenant ses paramètres et ses variables locales. Au contraire, pour
-les globales il n'y a pas de système d'empilement, puisque ces variables sont
-accessibles depuis tout point du programme.
+les variables globales il n'y a pas de système d'empilement, puisque ces
+variables sont accessibles depuis tout point du programme.
 
 Pour identifier de manière non ambigüe une variable, on note simplement $x$ la
 variable globale nommée $x$, et $(n, x)$ la variable locale nommée $x$ dans le
@@ -841,7 +845,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
   déclarations de variables locales (figure~\ref{fig:stackops-extend}):
 
   \[
-    \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
+    \cExtend{(c::s, g)}{x}{v} = ((x↦v :: c :: s), g)
   \]
 
   L'opération inverse de $\phxxx\cExtend$ sera simplement notée \enquote{$-$} :
@@ -883,6 +887,8 @@ $-1$ sinon.
 \end{align*}
 \end{minipage}
 \end{center}
+
+% TODO[E] 2 dernières lignes = à préciser
 
 \end{definition}
 
@@ -976,6 +982,8 @@ Dans la ligne marquée \texttt{(*)}, on réalise donc l'addition
 d'un entier (contenu dans $x$ malgré son type) et d'un flottant. Cette opération
 est bien typée mais provoquera une erreur $\serr{typ}$ à l'exécution.
 
+% TODO[E] malgré son type / bien typée ??
+
 Pour empêcher cela, on instrumente donc le retour de la fonction
 \texttt{f} pour que \texttt{p} soit remplacé par $\eNull$. Alors dans
 \texttt{h}, le déréférencement provoquera une erreur et empêchera la violation
@@ -1008,6 +1016,8 @@ h = Fun () {
 Pour définir l'opération de nettoyage, on commence par définir une opération
 nettoyant une valeur selon un prédicat sur les chemins:
 
+% TODO[E] valeur = ?? à préciser
+
 \begin{align*}
 \cVP{p}{\widehat{c}} &= \widehat{c} \\
 \cVP{p}{\widehat{f}} &= \widehat{f} \\
@@ -1018,7 +1028,7 @@ nettoyant une valeur selon un prédicat sur les chemins:
 \cVP{p}{\widehat{\eStruct{l_1:v_1, …, l_n:v_n}}} &=
     \widehat{\eStruct{l_1:\cVP{p}{v_1}, …, l_n:\cVP{p}{v_n}}} \\
 \cVP{p}{\widehat{\eArray{v_1, …, v_n}}} &=
-    \widehat{\eStruct{\cVP{p}{v_1}, …, \cVP{p}{v_n}}}
+    \widehat{\eArray{\cVP{p}{v_1}, …, \cVP{p}{v_n}}}
 \end{align*}
 
 On l'étend ensuite aux cadres de pile, puis aux états mémoire:
@@ -1036,13 +1046,13 @@ des états mémoire ou des valeurs en enlevant tout un niveau de pile ou seuleme
 une variable:
 
 \begin{mathpar}
-\cCleanup{m} =  \cP{λφ: \cHphi{φ} > |m|}{m}
+\cCleanup{m} =  \cP{λφ. \cHphi{φ} > |m|}{m}
 
-\cCleanVar{m}{a}  = \cP{λφ: φ = a}{m}
+\cCleanVar{m}{a}  = \cP{λφ. φ = a}{m}
 
-\cV{p}{v}    = \cVP{λφ: \cHphi{φ} > |m|}{v}
+\cV{p}{v}    = \cVP{λφ. \cHphi{φ} > |m|}{v}
 
-\cVV{v}{a}        = \cVP{λφ: φ = a}{v}
+\cVV{v}{a}        = \cVP{λφ. φ = a}{v}
 \end{mathpar}
 
 Ces 4 fonctions seront utilisées dans plusieurs règles dans la suite de ce
@@ -1171,12 +1181,12 @@ outre, I n'est définie que pour $n ∈ [1 ;|l|]$.
 \begin{align*}
 l{[x]}_L  &=
     \begin{cases}
-        v          & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v. l_n = (x ↦ v) \\
+        v          & \mbox{ si } ∃! n ∈ [1;|l|], ∃v, l_n = (x ↦ v) \\
         \serr{var} & \mbox{ sinon }
     \end{cases} \\
 l{[x ← v]}_L  &=
     \begin{cases}
-        l{[n ← (x ↦ v')]}_I & \mbox{ si } ∃! n ∈ [1;|l|]. ∃v. l_n = (x ↦ v) \\
+        l{[n ← (x ↦ v')]}_I & \mbox{ si } ∃! n ∈ [1;|l|], ∃v, l_n = (x ↦ v) \\
         \serr{var} & \mbox{ sinon }
     \end{cases} \\
 \end{align*}
@@ -1352,8 +1362,9 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
   on commence par évaluer l'expression $e_1$ en une valeur $v_1$. Le nouvel
   état mémoire est noté $m'$. Soit donc $\mm{m}{e_1}{m'}{v_1}$.
 \item
-  En appliquant la règle \textsc{Ctx} avec $C = \ctxOp{\ctxEmpty}{e_2}$ (qui est
-  une des formes possibles pour un contexte d'évaluation), on déduit de 1.\ que
+  En appliquant la règle \textsc{Ctx} (définie page suivante) avec $C =
+  \ctxOp{\ctxEmpty}{e_2}$ (qui est une des formes possibles pour un contexte
+  d'évaluation), on déduit de 1.\ que
   $\mm{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
 \item
   D'autre part, on évalue $e_2$ depuis $m'$. En supposant encore que
@@ -1503,6 +1514,8 @@ Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
   \caption{Évaluation des valeurs gauches}
 \label{fig:eval-lv}
 \end{figure}%}}}
+
+% TODO[E] ?
 
 \section{Expressions}
 \label{sec:eval-exp}
@@ -1667,6 +1680,8 @@ en fin de fonction lorsqu'aucun $\iReturn{\cdot}$ n'est présent dans son corps.
     \semrule{Exp-Call-Return}
 \end{mathpar}
 
+% TODO[E] ?? à voir
+
 \section{Instructions}
 \label{sec:eval-instr}
 
@@ -1693,6 +1708,8 @@ le pas d'exécution\footnote{
 \label{page:decl-masquage}
 On suppose qu'il n'y a pas de masquage au sein d'une fonction, c'est-à-dire que
 le nom d'une variable déclarée n'est pas visible avant cette déclaration.
+
+%TODO[E] ne peut on pas masquer?
 
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
@@ -1809,5 +1826,9 @@ qu'aucune règle d'évaluation ne peut s'appliquer. Dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}, nous allons donc définir un
 système de types qui permet de rejeter ces programmes se comportant mal à
 l'exécution.
+
+%TODO[E] il faut effectivement présenter safespeak mais cela donne un chapitre
+%de 25 pages où on se perd un peu (en particulier à la gin)
+% peut être finir avec un exemple + complet
 
 % vim: spelllang=fr
