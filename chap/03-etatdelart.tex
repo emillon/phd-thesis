@@ -53,9 +53,9 @@ décision prenant un programme et le déclarant correct ou incorrect. Un résult
 similaire est qu'on ne peut pas écrire une procédure qui détermine si un
 programme arbitraire boucle indéfiniment ou pas (le problème de l'arrêt).
 
-Il n'est donc pas possible d'écrire un analyseur statique parfait, ne se
-trompant jamais. Toute technique statique va donc de se retrouver dans au moins
-un des cas suivants:
+Il n'est donc pas possible d'écrire un analyseur statique parfait, détectant
+exactement les problèmes. Toute technique statique va donc de se retrouver dans
+au moins un des cas suivants:
 
 \begin{itemize}
 \item
@@ -159,7 +159,7 @@ octogones~\cite{mineOctagons} qui est un compromis entre les polyèdres et les
 zones. Il permet de représenter les relations $\pm v_i \pm v_j \le c$
 (figure~\ref{fig:dom-octo}).
 
-\begin{figure}[b]%{{{
+\begin{figure}[h]%{{{
 
   \centering
 
@@ -252,12 +252,15 @@ en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le cod
 source à analyser dans un langage, et traduire les résultats de l'analyse en un
 ensemble d'alarmes à présenter à l'utilisateur.
 
+% TODO[E] il y a pls fois cette def et cet usage de "sound"
+
 Cette technique est très puissante: si un interprète abstrait \emph{sound}
-(c'est-à-dire ne manquant aucun programme incorrect) analyse un programme et ne renvoie
-pas d'erreur, alors on a prouvé que le programme est correct (par rapport aux
-propriétés que vérifient les domaines abstraits). Cela a été appliqué avec
-succès avec les analyseurs Astrée~\cite{Astree04,Astree05,AstreeScale} chez
-Airbus ou CGS~\cite{cgs} à la NASA par exemple.
+(c'est-à-dire ne manquant aucun programme incorrect) analyse un programme et ne
+renvoie pas d'erreur, alors on a prouvé que le programme est correct (par
+rapport aux propriétés que vérifient les domaines abstraits). Cela a été
+appliqué avec succès avec les analyseurs
+Astrée~\cite{Astree04,Astree05,AstreeScale} chez Airbus ou CGS~\cite{cgs} à la
+NASA par exemple.
 
 Cependant, ces analyses sont difficiles à mettre en œuvre. Avec des domaines
 abstraits classiques comme ceux présentés ci-dessus, les premières analyses
@@ -284,6 +287,8 @@ mémoire. En particulier il traite le problème des pointeurs utilisateur en
 utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Comme
 l'interprétation abstraite, le but de cette analyse est d'être très précis, au
 détriment d'un temps de calcul important dans certains cas.
+
+% TODO[E] quid du model checking? et de la preuve de programme
 
 \section{Typage}
 
@@ -336,7 +341,7 @@ celles qui ne peuvent jamais être nulles. Le cube sur lequel se trouvent les
 qualificateurs correspond à une relation d'ordre, du plus spécifique (en bas) au
 plus général (en haut). ø correspond à un ensemble vide de qualificateurs.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \begin{tikzpicture}
 
@@ -400,6 +405,11 @@ l'inférence peut, dans certains cas, atteindre une complexité considérable, l
 plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
 linéaire en la taille du programme considéré.
 
+
+% TODO[E] considérable => c'est quoi par rapport à linéaire: exp?
+
+% TODO virer car para C7 en parle
+
 \section{Langages sûrs}
 
 Une autre approche est de concevoir un langage à la fois bas niveau et sûr,
@@ -431,6 +441,8 @@ constructions où l'on déréférence un pointeur faisant référence à une ré
 mémoire qui n'est plus allouée (par exemple en évitant de retourner l'adresse
 d'une variable locale).
 
+%TODO[E] tu cites leur nom mais pas Simonet et autres jury
+
 Le langage Rust~\link{rust} développé par Mozilla prend une approche similaire
 en distinguant plusieurs types de pointeurs pour gérer la mémoire de manière
 plus fine. Les \emph{managed pointers} (notés \texttt{@int}) utilisent un
@@ -455,6 +467,8 @@ de pointeurs. Cela permet de manipuler finement la mémoire, à la manière des
 régions de Rust qui permet de manipuler de manière sûre les adresses des
 variables locales, et les pointeurs lourds de Cyclone, qui apportent une sûreté
 à l'arithmétique de pointeurs, au prix d'un test dynamique.
+
+%TODO[E] smart pointers => en dire un mot ou citer
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
 peut pas les appliquer pour étudier la correction de logiciels existants. Dans
@@ -561,6 +575,8 @@ possible de voir un algorithme de vérification de typage comme un algorithme de
 vérification de preuve automatique. Ces preuves ne portent pas forcément sur des
 programmes. Par exemple, le théorème des 4 couleurs a été prouvé en
 Coq~\cite{4colproof} .
+
+% TODO[E] que veux tu dire par les systèmes d'aide à la preuve ?
 
 Cette technique est très complexe à mettre en œuvre, puisqu'il faut encoder
 toutes les propriétés voulues dans un formalisme de très bas niveau (du niveau
