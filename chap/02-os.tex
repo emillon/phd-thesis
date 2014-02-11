@@ -31,17 +31,18 @@ suite d'opérations :
   continuer avec l'instruction suivante.
 \end{itemize}
 
-Les instructions sont constituées d'un mnémonique (indicant quelle opération
-faire) et d'un ensemble d'opérandes. La signification des opérandes dépend du
-mnémonique, mais en général elles permettent de désigner les sources et la
-destination. Les opérandes peuvent avoir plusieurs formes : une valeur
+Les instructions sont constituées d'un \emph{opcode} (mnémonique indiquant
+quelle opération faire) et d'un ensemble d'opérandes. La signification des
+opérandes dépend de l'opcode, mais en général elles permettent de désigner les
+sources et la destination (on emploiera ici la syntaxe AT\&T, celle que comprend
+l'assembleur GNU). Les opérandes peuvent avoir plusieurs formes : une valeur
 immédiate (\$4), un nom de registre (\texttt{\%eax}) ou une référence à la
 mémoire (directement : \texttt{addr} ou indirectement : \texttt{(\%ecx)}
 \footnote{
   Cela consiste à interpréter le contenu du regitre \ecx comme une adresse
   mémoire.
 }
-). On décrit les mnémoniques les plus utilisés, permettant de compiler un cœur
+). On décrit les opcodes les plus utilisés, permettant de compiler un cœur
 de langage impératif:
 
 \begin{itemize}
@@ -98,7 +99,7 @@ lumineux du clavier PS/2.
 \subsection*{Alternance des tâches}
 
 Sans mécanisme particulier, le processeur exécuterait uniquement une suite
-d'instruction à la fois. Pour lui permettre d'exécuter plusieurs tâches, un
+d'instructions à la fois. Pour lui permettre d'exécuter plusieurs tâches, un
 système de partage du temps existe.
 
 À des intervalles de temps réguliers, le système est programmé pour recevoir une
@@ -204,7 +205,7 @@ expressivité limitée. Il ne peut pas contenir d'instructions privilégiées co
 en mémoire. C'est en effet au noyau d'accéder au matériel, et pas au code
 utilisateur.
 
-Il est donc nécessaire d'appeller une routine du noyau depuis le code
+Il est donc nécessaire d'appeler une routine du noyau depuis le code
 utilisateur. C'est le but des appels système. Cela consiste à coupler une
 fonction du \ring{3} à une fonction du \ring{0}: en appelant la fonction non
 privilégiée, le flot d'exécution se retrouve dans le noyau avec les bons
