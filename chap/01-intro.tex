@@ -131,9 +131,9 @@ périphériques et des processus. Les détails d'implantation ne sont pas prése
 fichier. Pour une explication détaillée du concept de système d'exploitation
 ainsi que des cas d'étude, on pourra se référer à~\cite{tanenbaum}.
 
-\section{Séparation entre noyau et espace utilisateur}
+\section{Séparation entre espace noyau et espace utilisateur}
 
-Puisque le noyau est garant du bon fonctionnement du système, il ne doit pas
+Puisque le noyau est garant d'une utilisation sûre du matériel, il ne doit pas
 pouvoir être manipulé directement par l'utilisateur ou les programmes exécutés.
 Ainsi, il est nécessaire de mettre en place des protections entre les espaces
 noyau et utilisateur.
@@ -201,7 +201,7 @@ programme.
 Pour utiliser le matériel ou accéder à des abstractions de haut niveau (comme
 créer un nouveau processus), ils doivent donc passer par l'intermédiaire du
 noyau. La communication entre le noyau et les programmes utilisateur est
-constituée par le mécanisme des \emph{appels système}.
+constituée du mécanisme des \emph{appels système}.
 
 Lors d'un appel système, une fonction du noyau est invoquée (en mode noyau) avec
 des paramètres provenant de l'utilisateur. Il faut donc être particulièrement
@@ -288,7 +288,7 @@ ensemble de contrats peut être vérifié statiquement par le compilateur, à l'
 d'un système de types statique.
 
 Par exemple, on peut dire que l'opérateur \enquote{$+$} a pour type $(\tInt,
-\tInt) → \tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$
+\tInt) → \tInt$. Cela veut dire que, si on lui passe deux entiers ($\tInt$,
 \tInt), alors la valeur obtenue est également un entier. \emph{A contrario}, si
 autre chose qu'un entier est passé à cet opérateur, le programme ne compile pas.
 
@@ -320,6 +320,8 @@ définir séparément l'addition entre deux entiers, entre deux flottants, ou en
 un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
+
+% TODO[S] et en C?
 
 Une autre technique est de déterminer la fonction appelée non pas par le type de
 ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet d'associer
@@ -439,11 +441,15 @@ passes de middle-end.
 \section{Le projet Penjili}
 \added{toute la section}
 
+% TODO[S] problème? ↓
+
 En face de ce problème théorique et technique, il faut mettre en perspective les
 problématiques industrielles liées à celui-ci. Les travaux présentés ici ont en
 effet été réalisés dans l'équipe de sécurité et sûreté logicielle d'EADS
 Innovation Works, dans le cadre d'une convention industrielle de formation par
 la recherche (CIFRE).
+
+% TODO[S] ↓ français
 
 Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
 plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
@@ -487,15 +493,19 @@ constructions posant problème. Par exemple, les exceptions, l'allocation
 dynamique (\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les
 fonctions récursives.
 
+% TODO[S] ↑ pas clair
+
 L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
 que les variables possèdent une valeur, on utilise un domaine abstrait qui
 permet de voir les variables comme possédant un ensemble de valeurs possibles.
+
 
 Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
 considérées: c'est un produit d'ensembles simples, comme des intervalles.
 L'ensemble des comportements réels du programme est au contraire d'une forme
 plus complexe.
 
+% TODO[S] sur = ? ↑ + complexe et surtout pas calculable
 % TODO[E] déf sound
 
 En calculant une approximation de ce dernier, de forme plus simple, on peut
@@ -515,6 +525,9 @@ par manque de précision. Dans la troisième l'approximation n'est pas
 émet une alarme à raison car il existe des comportements erronés. Toute la
 difficulté est donc de construire une surapproximation correcte mais conservant
 une précision suffisante.
+
+% TODO[S] termes corrects, surs non définis. tu parles à la fois
+% de domaines et de domaines abstraits
 
 \begin{figure}[h]
 \centering
@@ -574,6 +587,7 @@ une précision suffisante.
 des états effectifs du programme, noté par des points, est surapproximé par
 l'ensemble en gris.}
 \label{fig:staticanalysis}
+% TODO[S] caption faux: pas le cas en bas à gauche
 \end{figure}
 
 Pour construire cette surapproximation, on peut employer divers outils. Par
@@ -582,6 +596,8 @@ maximale (domaine abstrait des intervalles), et un pointeur sur un tableau peut
 être représenté par un ensemble de variables associé à un décalage
 (\emph{offset}) par rapport au début de la zone mémoire (domaine des pointeurs
 sur tableaux).
+
+%TODO[S] ↑ redite avec le domaine des intervalles du para précédent
 
 %\begin{figure}
 %\insertcode{strlen.c}
@@ -618,11 +634,15 @@ exemple, l'évaluation des arguments d'une fonction est faite de manière
 explicite, les tailles des types sont indiquées à chaque déclaration de
 variable, etc.
 
+% TODO[S] ex sur l'éval des arfuments
+
 Séparer le langage intermédiaire de la phase d'analyse permet de beaucoup
 simplifier l'analyseur statique. D'une part, les constructions redondantes comme
 les différents types de boucles ne sont traitées qu'une fois. D'autre part,
 lorsque le langage source est étendu (en supportant une nouvelle extension de C
 par exemple), l'analyseur n'a pas besoin d'être modifié.
+
+% TODO[S] non pas tous libres ↓
 
 Ces outils sont disponibles sous license libre sur~\link{penjili}. L'analyseur
 statique Penjili, reposant sur ces outils, a été utilisé pour analyser des
@@ -641,7 +661,7 @@ plus simple de construire un système sécurisé en connaissant toutes les
 contraintes d'abord, plutôt que de vérifier \emph{a posteriori} qu'un système
 existant peut répondre à ces contraintes de sûreté.
 
-Néanmoins cette conception de ces logiciels est très coûteuse. Pour des
+Néanmoins cette manière de concevoir des logiciels est très coûteuse. Pour des
 composants qui sont moins critiques, il peut donc être intéressant de considérer
 des logiciels ou bibliothèques existantes, en particulier dans le monde de
 l'\emph{open-source}.
@@ -664,6 +684,8 @@ plus on ne connaît pas \emph{a priori} leur spécification. Une solution peut
 être de prévoir un traitement particulier pour celles-ci (par exemple en leur
 attribuant un type prédéfini), mais leur sémantique d'exécution peut être
 complexe à exprimer car elles peuvent interagir avec le monde extérieur.
+
+% TODO[S] je ne suis pas convaincue
 
 Certaines interagissent directement avec le système d'exploitation, comme les
 fonctions d'ouverture ou d'écriture dans un fichier. D'autres modifient
@@ -743,9 +765,12 @@ Le but de ce travail est de définir et d'implanter des analyses statiques
 \enquote{légères}sur le langage C, c'est-à-dire plus simples que les analyses de
 valeurs par interprétation abstraite. Il est possible de réaliser celles-ci,
 soit directement sur C, soit en utilisant un des langages intermédiaires
-mentionnés dans la section~\ref{sec:lang-int}. Nous proposons d'utiliser
+mentionnés dans la section~\ref{sec:lang-int}. Nous proposons d'étendre
 \newspeak pour analyser des propriétés de sécurité par typage sur du code non
 avionique. Cela est pertinent pour les raisons suivantes:
+
+% TODO [S] tu as déjà expliqué que ct mieux sur un IR!!
+% TODO [S] pas clair
 
 \begin{itemize}
 
@@ -761,6 +786,7 @@ domaines abstraits particuliers). Le typage de \newspeak est un premier pas dans
 cette direction.
 
 % TODO[E] ??
+% TODO[S] ?? pas syntaxique
 
 \end{itemize}
 
@@ -776,6 +802,9 @@ effet, le langage C comme \newspeak permettent des conversions non sûres entre
 données, ce qui limite l'intérêt du typage. Cela revient à définir un
 langage impératif avec un modèle mémoire de plus haut niveau, que l'on nomme
 \langname.
+
+%TODO[S] pas clair. quel rappor entre npk et spk? lequel dev tu? ajouter un élt
+%du contexte CIFRE?
 
 \item
 Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
@@ -793,6 +822,8 @@ problème de base, qui est la vérification des accès aux pointeurs utilisateur
 Notre formalisation est accompagnée d'un prototype basé sur \newspeak, ce qui
 permet de de traiter des programmes écrits en C comme le noyau Linux. Ce
 logiciel est disponible sous une license libre.
+
+%TODO[S] ou safespeak?
 
 \end{itemize}
 
@@ -815,12 +846,14 @@ code source.
 \langname{}. Sa syntaxe y est d'abord décrite, puis sa sémantique ainsi qu'un
 système de types statiques. À ce niveau on a un bon support pour décrire des
 analyses statiques sur un langage impératif. On propose alors deux extensions
-indépendantes au système de types. La première consiste à bien typer les entiers
+indépendantes du système de types. La première consiste à bien typer les entiers
 utilisés comme \emph{bitmasks}. La seconde capture les problèmes d'adressage
 mémoire présents dans les systèmes d'exploitation. Pour ce faire, on ajoute des
 pointeurs contrôlés par l'utilisateur à la sémantique et au système de types. À
 chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
 de sûreté de typage reliant la sémantique d'exécution aux types statiques.
+
+% TODO[S] deux extensions.. du langage impératif considéré?
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage
@@ -836,7 +869,7 @@ erreur alors que, dans la version corrigée, un type correct est inféré. On
 montre ainsi que le système de types capture précisément ce genre d'erreur de
 programmation.
 
-On conclut enfin en décrivant les possibilités d'extension autant sur le point
+On conclut enfin en décrivant les possibilités d'extensions autant sur le point
 théorique qu'expérimental.
 
 % vim: spelllang=fr
