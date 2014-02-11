@@ -55,12 +55,14 @@ entre elles.
 
 Pour en revenir aux noyaux de système d'exploitation, ceux-ci manipulent à la
 fois des données sensibles et des données provenant du monde extérieur, pour
-lesquelles on n'a aucune garantie. On veut pouvoir distinguer ces deux genres de
-données.
+lesquelles on n'a aucune garantie. On veut pouvoir distinguer ces deux classes
+de données.
 
 Plus précisément, un des points cruciaux pour garantir l'isolation d'un noyau de
 système d'exploitation est de restreindre la manière dont sont traitées les
 informations provenant des programmes utilisateur.
+
+% TODO[E] highlight? ↓
 
 Le but de cette thèse est de montrer que le typage statique peut être utilisé
 pour détecter et interdire ces manipulations dangereuses.
@@ -70,7 +72,7 @@ pour détecter et interdire ces manipulations dangereuses.
 Un ordinateur est constitué de nombreux composants matériels: microprocesseur,
 mémoire, et divers périphériques. Et au niveau de l'utilisateur, des dizaines de
 logiciels permettent d'effectuer toutes sortes de calculs et de communications.
-Le système d'exploitation permet de faire l'interface entre ces aspects.
+Le système d'exploitation permet de faire l'interface entre ces deux échelles.
 
 Au cours de l'histoire des systèmes informatiques, la manière de les programmer
 a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel dans
@@ -157,10 +159,10 @@ Par exemple, supposons qu'un programme utilisateur contienne l'instruction
 Alors aucune erreur de protection mémoire n'est déclenchée.
 
 Ainsi, pour une instruction manipulant des données en mémoire, les accès
-possibles sont décrits dans le tableau suivant. En cas d'impossibilité (signalée
-par un \Square), une erreur se produit et l'exécution s'arrête. Par exemple,
-l'avant-dernière ligne indique que, si un programme tente de lire une variable du
-noyau, celui-ci sera arrêté par une exception.
+possibles sont décrits dans le tableau suivant. En cas d'impossibilité, une
+erreur se produit et l'exécution s'arrête. Par exemple, l'avant-dernière ligne
+indique que, si un programme tente de lire une variable du noyau, celui-ci sera
+arrêté par une exception.
 
 \begin{center}
 \def\modeK{Noyau\xspace}
@@ -172,14 +174,14 @@ noyau, celui-ci sera arrêté par une exception.
 & Privilège (données)
 & Accès possible \\
 \midrule
-  \modeK{} & \modeK{} & \modeK{} & \CheckedBox{} \\
-  \modeK{} & \modeK{} & \modeU{} & \CheckedBox{} \\
-  \modeK{} & \modeU{} & \modeK{} & \CheckedBox{} \\
-  \modeK{} & \modeU{} & \modeU{} & \CheckedBox{} \\
-  \modeU{} & \modeK{} & \modeK{} & \Square{} \\
-  \modeU{} & \modeK{} & \modeU{} & \Square{} \\
-  \modeU{} & \modeU{} & \modeK{} & \Square{} \\
-  \modeU{} & \modeU{} & \modeU{} & \CheckedBox{} \\
+  \modeK{} & \modeK{} & \modeK{} & Oui \\
+  \modeK{} & \modeK{} & \modeU{} & Oui \\
+  \modeK{} & \modeU{} & \modeK{} & Oui \\
+  \modeK{} & \modeU{} & \modeU{} & Oui \\
+  \modeU{} & \modeK{} & \modeK{} & Non \\
+  \modeU{} & \modeK{} & \modeU{} & Non \\
+  \modeU{} & \modeU{} & \modeK{} & Non \\
+  \modeU{} & \modeU{} & \modeU{} & Oui \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -275,6 +277,8 @@ et construit alors une valeur obtenue en faisant l'addition des deux valeurs,
 avec une étiquette \enquote{entier}. Par exemple, le langage
 Python~\link{python} utilise cette stratégie.
 
+% TODO[E] ↑ ?
+
 \paragraph{Typage statique}
 
 Dans ce cas on fait les vérifications à la compilation. Pour vérifier ceci, on
@@ -366,6 +370,8 @@ ambigües\footnote{
 }, et de nombreux comportements sont implicites.
 \added{footnote}
 
+% TODO[E] par rapport à qui?
+
 Si on veut analyser des programmes, il est plus pratique de travailler sur une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
 dupliqués. Dans ce cas on ajoute une phase préliminaire à l'analyse, qui
@@ -387,6 +393,9 @@ interne pouvant varier entre deux versions. Cette représentation étant réput�
 difficile à manipuler, le projet MELT~\cite{gcc-melt} permet de générer un
 greffon de compilateur écrit dans un dialecte de Lisp.
 
+% TODO[E] plug-in?
+% TODO virer melt?
+
 \paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
 \emph{open-source} puis sponsorisé par Apple. À la différence de GCC, sa base de
 code est écrite en C++. Il utilise une représentation intermédiaire qui peut
@@ -406,6 +415,8 @@ texte), il est possible d'obtenir du code machine efficace. Le compilateur
 Haskell GHC, par exemple, utilise une représentation intermédiaire très
 similaire à C-~-.
 
+% TODO[E] diff C--/cil
+
 \subsection*{Langages intermédiaires ad hoc}
 
 Comme le problème de construire une représentation intermédiaire adaptée à une
@@ -415,13 +426,15 @@ le support des extensions est en général moins important dans ces langages.
 
 \paragraph{CIL}\cite{NeculaCil} est une représentation en OCaml d'un programme
 C, développée depuis 2002. Grâce à un mécanisme de greffons, elle permet de
-prototyper rapidement des analyses statiques de programmes.
+prototyper rapidement des analyses statiques de programmes C.
 
 \paragraph{CompCert} est un projet qui vise à produire un compilateur certifié
 pour C. C'est-à-dire que les transformations sémantiques sont faites de manière
 prouvée. Il utilise de nombreux langages intermédiaires, dont Compcert C,
 Clight~\cite{cfront} et Cminor~\cite{cminorSLfull} qui est utilisé pour les
 passes de middle-end.
+
+% TODO[E] est-ce un langage ? cf titre subsec*
 
 \section{Le projet Penjili}
 \added{toute la section}
@@ -445,20 +458,21 @@ approches duales sont nécessaires. La première consiste à mettre le logiciel
 dans des situations concrètes et à vérifier que la sortie correspond au résultat
 attendu : c'est la technique des tests.  Les tests \enquote{boîte noire}
 consistent à tester en ayant à disposition uniquement les spécifications des
-modules à plusieurs échelles. L'application est découpée en \enquote{boîtes} à
-plusieurs échelles (par exemple : logiciel, module, classe, méthode). Au
-contraire, les tests dits \enquote{boîte blanche} sont écrits en ayant à
+modules à plusieurs échelles (par exemple : logiciel, module, classe, méthode).
+Au contraire, les tests dits \enquote{boîte blanche} sont écrits en ayant à
 disposition l'implémentation. Cela permet par exemple de s'assurer que chaque
 chemin d'exécution est emprunté. Cette manière de procéder est similaire à la
 preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
 mais pas que le programme est correct.
 
+% TODO[E] fonctionnel/structurel? et l'intégration?
+
 L'approche des méthodes formelles, au contraire, permet de s'assurer de
 l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
 interprétation abstraite permet d'étudier les relations exposées entre les
-variables afin d'en déduire les domaines dans lesquels elles évoluent. En
-s'assurant que ceux-ci sont \enquote{sûrs}, on prouve l'absence d'erreurs de
-manière automatisée.
+variables afin d'en déduire les ensembles de valeurs dans lesquels elles
+évoluent. En s'assurant que ceux-ci sont \enquote{sûrs}, on prouve l'absence
+d'erreurs de manière automatisée.
 
 L'analyse statique par interprétation abstraite se place à un niveau comparable
 à celui des tests unitaires et fonctionnels, c'est-à-dire très près du code. Le
@@ -466,16 +480,43 @@ but est en particulier d'éliminer les erreurs au niveau du langage : division
 par zéro, déréférencement d'un pointeur nul ou invalide, débordement
 arithmétique sur les entiers, débordement de tableau, etc.
 
-En pratique, dans l'embarqué les règles de codage limitent les constructions
-posant problème. Par exemple, les exceptions, l'allocation dynamique
-(\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les fonctions
-récursives.
+% TODO[E] ? ↑
+
+En pratique, dans l'embarqué critique les règles de codage limitent les
+constructions posant problème. Par exemple, les exceptions, l'allocation
+dynamique (\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les
+fonctions récursives.
 
 L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
 que les variables possèdent une valeur, on utilise un domaine abstrait qui
 permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
-\begin{figure}
+Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
+considérées: c'est un produit d'ensembles simples, comme des intervalles.
+L'ensemble des comportements réels du programme est au contraire d'une forme
+plus complexe.
+
+% TODO[E] déf sound
+
+En calculant une approximation de ce dernier, de forme plus simple, on peut
+tester plus facilement que les comportements sont dans la zone sûre : le fait
+que l'analyse soit \emph{sound}, c'est-à-dire que l'approximation ne manque
+aucun comportement, permet de prouver l'absence d'erreurs.
+
+La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
+valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
+comportements réels du programme est noté par des points, et l'approximation en
+gris. Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de
+haut en bas puis de gauche à droite. Dans le premier on a prouvé, à la
+compilation, que le programme ne pourra pas comporter d'erreurs à l'exécution.
+Dans le deuxième, l'approximation recouvre les cas dangereux: on émet une alarme
+par manque de précision. Dans la troisième l'approximation n'est pas
+\emph{sound} (par construction, on évite ce cas). Enfin, dans la quatrième, on
+émet une alarme à raison car il existe des comportements erronés. Toute la
+difficulté est donc de construire une surapproximation correcte mais conservant
+une précision suffisante.
+
+\begin{figure}[h]
 \centering
 
 \tikzstyle{patA}=[fill=white]
@@ -535,29 +576,6 @@ l'ensemble en gris.}
 \label{fig:staticanalysis}
 \end{figure}
 
-Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
-considérées: c'est un produit d'ensembles simples, comme des intervalles.
-L'ensemble des comportements réels du programme est au contraire d'une forme
-plus complexe.
-
-En calculant une approximation de ce dernier, de forme plus simple, on peut
-tester plus facilement que les comportements de sont dans la zone sûre : le fait
-que l'analyse soit \emph{sound}, c'est-à-dire que l'approximation ne manque
-aucun comportement, permet de prouver l'absence d'erreurs.
-
-La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
-valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
-comportements réels du programme est noté par des points, et l'approximation en
-gris. Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de
-haut en bas puis de gauche à droite. Dans le premier on a prouvé, à la
-compilation, que le programme ne pourra pas comporter d'erreurs à l'exécution.
-Dans le deuxième, l'approximation recouvre les cas dangereux: on émet une alarme
-par manque de précision. Dans la troisième l'approximation n'est pas
-\emph{sound} (par construction, on évite ce cas). Enfin, dans la quatrième, on
-émet une alarme à raison car il existe des comportements erronés. Toute la
-difficulté est donc de construire une surapproximation correcte mais conservant
-une précision suffisante.
-
 Pour construire cette surapproximation, on peut employer divers outils. Par
 exemple, un entier pourra être représenté par sa valeur minimale et sa valeur
 maximale (domaine abstrait des intervalles), et un pointeur sur un tableau peut
@@ -612,6 +630,8 @@ logiciels embarqués critiques de plusieurs millions de lignes de code. Ce
 dernier n'est pour le moment pas \emph{open-source}. Tous ces outils sont écrits
 dans le langage OCaml~\cite{DAOC}.
 
+% TODO[E] pourquoi pas open source?
+
 \section{De l'avionique à l'informatique d'entreprise}
 \added{toute la section}
 
@@ -631,44 +651,6 @@ contraintes particulières. Non seulement toutes les constructions du langage
 sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
 allocation dynamique, récursion, accès au système de fichiers, etc), mais aussi
 des extensions non standards peuvent être utilisées.
-
-%\paragraph{Problèmes liés à la compilation}
-
-%\begin{figure}%{{{
-    %\centering
-    %\insertcode{bcopy.c}
-
-    %\caption{Utilisation d'alternatives lors de la compilation}
-    %\label{fig:bcopy}
-%\end{figure}%}}}
-
-%La compilation d'un programme est la suite d'opérations qui permet d'engendrer
-%un fichier exécutable à partir de l'ensemble du code source de celui-ci.
-%Habituellement cela se fait selon la suite d'opérations suivantes. Tout d'abord,
-%l'environnement de compilation est détecté. Cela permet d'ajuster certaines
-%variables de configuration. Par exemple, si le code source utilise la fonction
-%\texttt{memmove} et que celle-ci n'est pas disponible dans l'environnement de
-%compilation, il est possible d'utiliser \texttt{bcopy} à la place
-%(figure~\ref{fig:bcopy}).
-
-%Ensuite, peut venir une étape de génération de code source. Cela arrive dans le
-%cas ou certaines données calculables statiquement doivent être disponible à
-%l'exécution, ou dans le cas d'utilisation d'outils comme \texttt{lex} et
-%\texttt{yacc} qui permettent d'engendrer des analyseurs lexicaux et syntaxiques.
-
-%Puis vient l'étape de compilation en elle-même. Chaque fichier source est
-%prétraité à l'aide de \texttt{cpp}, puis est compilé (en général via
-%\texttt{gcc}) en code-objet (fichier d'extension \texttt{.o}).
-
-%Enfin, la phase d'édition de liens permet de grouper ces fichiers en un
-%exécutable. Des références vers les bibliothèques dynamiques nécessaires sont
-%placées dans cet exécutable, et seront résolues au lancement de celui-ci.
-
-%Pour analyser le code source, le plus simple est de se \enquote{brancher} à ce
-%système de compilation, par exemple en créant une commande nommée \texttt{gcc}
-%qui transmet le code source à l'analyseur statique. Il est à remarquer que les
-%fichiers sont alors vus un par un, ce qui n'est pas compatible avec toutes les
-%analyses.
 
 \paragraph{Programmes non autosuffisants}
 
@@ -692,7 +674,15 @@ dans un fil d'exécution concurrent.
 
 \paragraph{Extensions du langage}
 
-\begin{figure}%{{{
+Par exemple, la figure~\ref{fig:packed} démontre l'influence de l'attribut
+\texttt{packed} (supporté par GCC) sur la compilation d'une structure. Sans
+celui-ci, les champs sont alignés de manière à faciliter les accès à la mémoire,
+par exemple en faisant démarrer les adresses de chaque champ sur un multiple de
+4 octets (en gras). Cela nécessite d'introduire des octets de \emph{padding} (en
+gris) qui ne sont pas utilisés. La taille totale de cette structure est donc de
+12 octets.
+
+\begin{figure}[h]%{{{
     \centering
     \begin{minipage}{0.4\textwidth}
     \insertcode{packed1.c}
@@ -737,14 +727,6 @@ dans un fil d'exécution concurrent.
     \label{fig:packed}
 \end{figure}%}}}
 
-Par exemple, la figure~\ref{fig:packed} démontre l'influence de l'attribut
-\texttt{packed} (supporté par GCC) sur la compilation d'une structure. Sans
-celui-ci, les champs sont alignés de manière à faciliter les accès à la mémoire,
-par exemple en faisant démarrer les adresses de chaque champ sur un multiple de
-4 octets (en gras). Cela nécessite d'introduire des octets de \emph{padding} (en
-gris) qui ne sont pas utilisés. La taille totale de cette structure est donc de
-12 octets.
-
 Au contraire, l'utilisation de \texttt{packed} supprime totalement le
 \emph{padding} et permet de diminuer alors la taille de la structure à 7 octets
 seulement. Puisque \texttt{b} et \texttt{c} ne sont pas alignés, leur accès sera
@@ -777,6 +759,8 @@ Réaliser des analyses syntaxiques sur \newspeak peut permettre de guider en
 amont des analyses de valeurs plus précises (par exemple en choisissant des
 domaines abstraits particuliers). Le typage de \newspeak est un premier pas dans
 cette direction.
+
+% TODO[E] ??
 
 \end{itemize}
 
@@ -840,17 +824,17 @@ de sûreté de typage reliant la sémantique d'exécution aux types statiques.
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage
-\newspeak est d'abord décrite, à l'aide d'une variante de l'algorithme W de
-Damas et Milner. La manière de compiler depuis du code C est également
-présentée. Ensuite, on applique cette implantation à deux cas d'étude concrets
-dans le noyau Linux. L'un est un bug ayant touché un pilote de carte graphique,
-et l'autre un défaut dans l'implantation de la fonction \texttt{ptrace}. Dans
-chaque cas, un pointeur dont la valeur est contrôlée par l'utilisateur crée un
-problème de sécurité car un utilisateur malveillant peut lire ou écrire dans
-l'espace mémoire réservé au noyau. En lançant notre prototype, l'analyse de la
-version non corrigée lève une erreur alors que, dans la version corrigée, un
-type correct est inféré. On montre ainsi que le système de types capture
-précisément ce genre d'erreur de programmation.
+\newspeak est d'abord décrite, reposant sur l'algorithme W de Damas et Milner.
+La manière de compiler depuis du code C est également présentée. Ensuite, on
+applique cette implantation à deux cas d'étude concrets dans le noyau Linux.
+L'un est un bug ayant touché un pilote de carte graphique, et l'autre un défaut
+dans l'implantation de la fonction \texttt{ptrace}. Dans chaque cas, un pointeur
+dont la valeur est contrôlée par l'utilisateur crée un problème de sécurité car
+un utilisateur malveillant peut lire ou écrire dans l'espace mémoire réservé au
+noyau. En lançant notre prototype, l'analyse de la version non corrigée lève une
+erreur alors que, dans la version corrigée, un type correct est inféré. On
+montre ainsi que le système de types capture précisément ce genre d'erreur de
+programmation.
 
 On conclut enfin en décrivant les possibilités d'extension autant sur le point
 théorique qu'expérimental.
