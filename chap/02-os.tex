@@ -11,7 +11,7 @@ Un système informatique est principalement constitué d'un processeur (ou CPU
 pour \emph{Central Processing Unit}), de mémoire principale (ou RAM pour
 \emph{Random Access Memory}), et de divers périphériques.
 
-Le processeur est constitué de divers registres internes qui permettent
+Le processeur est constitué de plusieurs registres internes qui permettent
 d'encoder l'état dans lequel il se trouve : quelle est l'instruction courante
 (registre \eip), quelle est la hauteur de la pile système (registre \esp), etc.
 Son fonctionnement peut être vu de la manière la plus simple qui soit comme la
@@ -116,10 +116,10 @@ d'affecter des niveaux de privilège à ces tâches, en restreignant le type
 d'instructions exécutables, ou en donnant un accès limité à la mémoire aux
 tâches de niveaux moins élevés.
 
-Il y a 4 niveaux de privilèges (nommés aussi \emph{rings}): le \ring{0} est le
-plus privilégié, le \ring{3}, le moins privilégié. Dans l'exemple précédent, on
-pourrait isoler l'ordonnanceur de processus en le faisant s'exécuter en \ring{0}
-alors que les autres tâches seraient en \ring{3}.
+Le matérieul permet 4 niveaux de privilèges (nommés aussi \emph{rings}): le
+\ring{0} est le plus privilégié, le \ring{3}, le moins privilégié. Dans
+l'exemple précédent, on pourrait isoler l'ordonnanceur de processus en le
+faisant s'exécuter en \ring{0} alors que les autres tâches seraient en \ring{3}.
 
 \subsection*{Mémoire virtuelle}
 
@@ -239,8 +239,8 @@ un numéro d'appel système (par exemple 3 pour \texttt{read()} et 5 pour
 \label{sec:secu-syscalls}
 
 On a vu que les appels système permettent aux programmes utilisateur d'accéder
-au services du noyau. Ils forment donc une interface particulièrement sensible aux
-problèmes de sécurité.
+aux services du noyau. Ils forment donc une interface particulièrement sensible
+aux problèmes de sécurité.
 
 Comme pour toutes les interfaces, on peut être plus ou moins fin. D'un côté, une
 interface pas assez fine serait trop restrictive et ne permettrait pas
@@ -269,7 +269,7 @@ utilisé par exemple par la fonction \texttt{gettimeofday}
 
 \begin{figure}[h]
 \insertcode{appel-syscall-gettimeofday.c}
-\caption{Appel de gettimeofday}
+\caption{Appel de \texttt{gettimeofday}}
 \label{fig:appel-gettimeofday}
 \end{figure}
 
@@ -294,18 +294,18 @@ La bonne solution est de tester dynamiquement la valeur du pointeur: s'il pointe
 en espace noyau, il faut indiquer une erreur plutôt que d'écrire. Sinon, il peut
 toujours y avoir une erreur, mais au moins le noyau est protégé.
 
-\begin{figure}
-\insertcode{implem-gettime.c}
-\caption{Implantation de l'appel système \texttt{gettimeofday}}
-\label{fig:implem-gettime}
-\end{figure}
-
 Dans le noyau, un ensemble de fonctions permet d'effectuer des copies sûres. La
 fonction \texttt{access\_ok} réalise le test décrit précédemment. Les fonctions
 \texttt{copy\_from\_user} et \nolinkurl{copy_to_user} réalisent une copie de la
 mémoire après avoir fait ce test. Ainsi, l'implantation correcte de l'appel
 système \texttt{gettimeofday} fait appel à celle-ci
 (figure~\ref{fig:implem-gettime}).
+
+\begin{figure}[h]
+\insertcode{implem-gettime.c}
+\caption{Implantation de l'appel système \texttt{gettimeofday}}
+\label{fig:implem-gettime}
+\end{figure}
 
 Pour préserver la sécurité du noyau, il est donc nécessaire de vérifier la
 valeur de tous les pointeurs dont la valeur est contrôlée par l'utilisateur.
