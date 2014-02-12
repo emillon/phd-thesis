@@ -17,6 +17,8 @@ license libre, la \emph{GNU Lesser General Public License}.
 
 \subsection*{Pourquoi \newspeak et pas \langname?}
 
+% TODO[E] implantation safespeak
+
 On peut se demander pourquoi analyser du code \newspeak et non \langname. Une
 première raison est que de nombreux outils existent déjà autour du langage
 \newspeak, notamment un compilateur depuis C et un analyseur statique par
@@ -24,13 +26,15 @@ interprétation abstraite. Le but de cette thèse est de permettre des analyses 
 typage sur C, donc \newspeak est un bon support grâce à l'existence du
 traducteur.
 
+% TODO[E] voir avec la section modifiér du début sur les C--
+
 Mais le modèle mémoire de \newspeak est très bas niveau. En effet il colle
 finement à celui de C, où des constructions comme les unions empêchent la sûreté
 du typage. Définir \langname a précisement pour but de définir un langage
 inspiré de C mais sur lequel le typage peut être sûr.
 
 Pour l'implantation sur \newspeak, on s'inspire donc des règles de typage sur
-\langname, mais cette approche n'est sûr que pour les programmes qui peuvent
+\langname, mais cette approche n'est sûre que pour les programmes qui peuvent
 être fidèlement traduits.
 
 % TODO[S] fidèlement
@@ -115,6 +119,8 @@ figure~\ref{fig:stx-npk}.
 \label{fig:stx-npk}
 \end{figure}%}}}
 
+%TODO[E] Region = struct/union ?
+
 \begin{figure}
   \centering
   \input{fig/compil-pipeline.tex}
@@ -141,11 +147,14 @@ prétraités; c'est-à-dire des unités de compilation.
 Puisque la directive \texttt{\#include} est textuelle, ces fichiers sont très
 grands et donnent lieu à beaucoup de duplication dans les passes suivantes.
 
+% TODO[E] bcp de: fam
+
 Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
 dans l'arbre de syntaxe abstraite des passes suivantes.
 
 % TODO[E] dire (plus tard) qu'on peut annoter et quelles annotations
+% TODO[E] ann safespeak en C
 
 À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
@@ -172,6 +181,8 @@ qui est toujours un saut vers l'avant (similaire à un \enquote{\emph{break}}
 généralisé). Par conséquence, notre implantation gère les sauts, alors que, dans
 \langname, cette construction n'est pas possible (figure~\ref{fig:stx}, page
 \pageref{fig:stx}).
+
+% TODO[E] Par conséquence... : et donc?
 
 % TODO[S] notre = ?
 
@@ -350,8 +361,10 @@ $\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obti
 sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$. Plus
 précisément, pour unifier deux types structure, on étudie les types de leurs
 champs. On commence par unifier les types des champs de même nom, et on ajoute à
-l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme de
+l'un les champs exclusifs de l'autre. Cela se rapproche du polymorphisme de
 rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
+
+% TODO[E] y a-t-il une variable de rangée?
 
 % TODO[S] plus précisément => ce n'est pas plus précis
 % - pourquoi ça marche
@@ -375,6 +388,8 @@ travaillent sur une représentation intermédiaire proche de \newspeak, mais où
 des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
 intermédiaire est noté \texttt{'a Tyspeak.t}, où \texttt{'a} est le type des
 étiquettes. Mais ce n'est qu'un type différent: il s'agit bien de \newspeak.
+
+% TODO[E] Mais...: ??
 
 \added{précision que c'est bien du newspeak}
 
@@ -524,6 +539,7 @@ indépendants. Cette représentation a néanmoins l'avantage de permettre la
 factorisation de code.
 
 % TODO[S] ?
+% TODO[E] virer les mentions de la première ver
 
 Enfin, pour déréférencer une expression, on unifie tout d'abord son type avec le
 type d'un pointeur noyau.
@@ -562,12 +578,15 @@ Int (example.c:1#4)^f(Ptr (Int) x) {
 }
 \end{verbatim}
 
+% TODO[E] partie perso
+% TODO[E] + en avant
+
 L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à
 détecter les débordements d'entiers lors d'une analyse de valeurs par
 interprétation abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
 pertinentes et cet opérateur peut être vu que comme l'identité.
 
-Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
+Un exemple de détection d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
 \section{Performance}
 
@@ -578,6 +597,8 @@ DEXPTIME~\cite{mairson}, on peut s'attendre à une complexité exponentielle en 
 taille du programme. Cependant, lorsqu'on borne la \enquote{taille} $d$ des
 types, celle-ci devient quasi-linéaire~\cite{rta03} ($O(n α(n) + dn)$ où $α$ est
 l'inverse de la fonction d'Ackermann).
+
+% TODO md ??!! complet exp
 
 Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
@@ -608,6 +629,8 @@ langage \newspeak développé par EADS. Cela permet de réutiliser les phases de
 compilation déjà implantées, et d'exprimer les règles de typage sur un langage
 suffisament simple.
 
+% TODO[E] EADS: le dire avant
+
 On utilise un algorithme par unification, qui donne une forme simple au
 programme d'inférence. Pour chaque expression ou instruction à typer, on
 détermine grâce au lemme~\ref{lemma:inversion} quelle règle il faut appliquer.
@@ -617,6 +640,11 @@ et on indique les contraintes en appelant la fonction d'unification.
 Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
 incomplet, mais il permet de traiter des parties du noyau Linux comme on le
 verra dans le chapitre suivant.
+
+% TODO[E] reste incomplet: en quoi
+% TODO[E] dire que ct le but (meme en ne traitant qu'ue partie de C)
+% TODO[E] dire la taille
+% TODO[E] + rajoute un peu
 
 % TODO[S] lien
 
