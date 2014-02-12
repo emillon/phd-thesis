@@ -15,10 +15,10 @@ permettant d'explorer cette idée, en ajoutant de la \enquote{signification} dan
 les types de données des programmes. Ces extensions permettront de détecter des
 erreurs de programmation communes, appuyées sur des exemples réels.
 
-On commence par un exemple permettant distinguer plusieurs utilisations de types
-entiers, selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de
-bits. Cela permet de détecter une erreur courante qui consiste à mélanger les
-opérateurs logiques et bit à bit.
+Un premier exemple permet de distinguer plusieurs utilisations des entiers,
+selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de bits. Cela
+permet de détecter une erreur courante qui consiste à mélanger les opérateurs
+logiques et bit à bit.
 
 Ensuite, on étend de manière indépendante le système de types, cette fois au
 niveau des pointeurs. Plus précisément, dans le contexte des systèmes
@@ -58,12 +58,6 @@ s'interpréter comme l'ensemble de ses bits égaux à 1: $\{ i ∈ [0;N-1] / a_i
 \}$. Un entier de 32 bits peut donc représenter une combinaison de 32 options
 indépendantes.
 
-\begin{figure}
-    \insertcode{unix-open.c}
-    \caption{Interface permettant d'ouvrir un fichier sous Unix}
-    \label{fig:unix-open}
-\end{figure}
-
 C'est de cette manière que fonctionne l'interface qui permet d'ouvrir un fichier
 sous Unix (figure~\ref{fig:unix-open}). Le paramètre \texttt{flags} est un
 entier qui encode les options liées à l'ouverture du fichier. On précise son
@@ -73,6 +67,14 @@ effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un
 \enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} encode
 de la même manière les permissions que doit avoir le fichier créé, le cas
 échéant (\texttt{mode\_t} désigne en fait \texttt{unsigned int}).
+
+\begin{figure}[h]
+    \insertcode{unix-open.c}
+    \caption{Interface permettant d'ouvrir un fichier sous Unix}
+    \label{fig:unix-open}
+\end{figure}
+
+%TODO[S] en fait c'est une va_list
 
 Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
 correspond à un indice numérique dans une table interne au processus. Par
@@ -123,6 +125,8 @@ figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
 \enquote{constructeurs} (\texttt{O\_*}) et du \enquote{consommateur}
 \texttt{open} (figure~\ref{fig:bitmasks-types}).
 
+% TODO[E] constructeurs => donne la liste
+
 \begin{figure}[h]
 
 \begin{align*}
@@ -171,6 +175,8 @@ aux règles s'appliquant à $\tInt$ les règles suivantes.
        }{ Γ ⊢ e_1~\opbin~e_2 : \tBits
        }
 
+       %TODO[E] surcharge de ~ ?
+
     \irule{Not-Bits}
         { Γ ⊢ e : \tBits }
         { Γ ⊢ \sim e : \tBits }
@@ -189,6 +195,8 @@ $\tBits$ là où une expression de type $\tInt$ est attendue.
         { Γ ⊢ e : \tBits }
         { Γ ⊢ e : \tInt }
 \end{mathpar}
+
+% TODO[E] plus tôt?
 
 Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
 expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
@@ -263,12 +271,12 @@ est bien typée (figure~\ref{fig:notxy-ok}).
 \label{fig:notxy-ok}
 \end{figure}
 
-Cela conclut cet exemple préliminaire, qui permet de voir en quoi \langname est
-adapté à des analyses de typage légères. Puisque le typage est sûr, on en déduit
-que les valeurs d'un certain type ne peuvent être créées que par un certain
-nombre de constructeurs. Par exemple ici les bitmasks ne proviennent que de
-combinaisons de constantes. C'est précisément cette idée de détection de source
-qui est au cœur de l'analyse suivante.
+Cet exemple préliminaire permet de voir en quoi \langname est adapté à des
+analyses de typage légères. Puisque le typage est sûr, on en déduit que les
+valeurs d'un certain type ne peuvent être créées que par un certain nombre de
+constructeurs. Par exemple ici les bitmasks ne proviennent que de combinaisons
+de constantes. C'est précisément cette idée de détection de source qui est au
+cœur de l'analyse suivante.
 
 \section{Analyse de provenance de pointeurs}
 
@@ -394,6 +402,8 @@ dynamiques, les erreurs peuvent arriver à ces deux endroits. Plutôt que de
 proposer un opérateur qui réalise cette copie, on laisse le programmeur faire
 les deux copies manuellement.
 
+%TODO[E] ↓ donne leurs types
+
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
@@ -465,6 +475,8 @@ manière suivante:
 \end{align*}
 }
 
+% TODO[E] attention on tombe sur la figure
+
 \subsection{Extensions sémantiques}
 
 En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
@@ -514,6 +526,8 @@ Ce comportement est calé celui des fonctions \texttt{copy\_\{from,to\}\_user} d
 noyau Linux: en cas de succès elles renvoient $0$, et en cas d'erreur
 \texttt{-EFAULT} ($= -14$).
 
+% TODO[E] -14/-1
+
 \begin{mathpar}
   \semrule{User-Get-OK}
 
@@ -547,6 +561,8 @@ Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
 qui sont bien typables mais dont l'évaluation provoque une erreur autre que
 $\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
 théorème~\ref{thm:progres}. Posons:
+
+% TODO[E] autre que => lesquelles?
 
 \[
 \begin{cases}

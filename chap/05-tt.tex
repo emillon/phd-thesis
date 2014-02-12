@@ -42,6 +42,8 @@ f = Fun() {
 
 \end{figure}
 
+% TODO[E] dire en quoi bien/mal formé
+
 Le but d'un tel système de types est de rejeter les programmes pour lesquels on
 peut facilement déterminer qu'ils sont faux, c'est-à-dire dont on peut prouver
 qu'ils provoqueraient des erreurs à l'exécution dues à une incompatibilité entre
@@ -57,6 +59,9 @@ les tests d'égalité, qu'on veut pouvoir faire sur les valeurs de types scalair
 et récursivement sur tous les types composés (on veut par exemple éviter de
 tester l'égalité de deux fonctions). Là encore, cela ne pose pas de problème,
 puisqu'on peut statiquement savoir si un type a cette propriété ou pas.
+
+% TODO[E] un peu court et pas si simple ou peu clair
+% TODO[E] exceptions pas clair (schéma: pas défini: à suppr?)
 
 En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut construire des
 types composés: pointeurs, tableaux, structures et fonctions.
@@ -81,6 +86,8 @@ instruction est l'affectation de la constante $1$ (entière) à $x$ dont on sait
 qu'elle porte des valeurs entières, ce qui est donc correct. Le fait de
 rencontrer $\iReturn{x}$ permet de conclure que le type de la fonction est $(~)
 → \tInt$.
+
+% TODO[E] est-ce un type? unit?
 
 Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
 début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
@@ -128,6 +135,8 @@ polymorphisme.
 \label{fig:les-types}
 
 \end{figure}
+
+% TODO[E] ne faut il pas des variables/inconnues de type? -- OK
 
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
@@ -474,6 +483,8 @@ des globales de cette nouvelle association.
 
   \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
 
+  %TODO[E] règle T*-Nil ?
+
   \begin{mathpar}
     \irule{T*-Nil}
       { }
@@ -540,6 +551,8 @@ données. Il est par exemple possible de reconnaître le type des constantes, ma
 pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
 de déterminer à l'exécution. On le remplace donc par un cas plus simple où seul
 l'arité est conservée.
+
+% TODO[E] pourquoi ne pas garder le type à l'exécution?
 
 \paragraph{Remarque}
 
@@ -896,6 +909,8 @@ $Γ ⊢ \vRet : t$.
 
 \end{lemma}
 
+%TODO[E] dire un mot sur les esquisses
+
 \begin{proof}[Démonstration (esquisse)]
 Pour chaque forme de jugement de typage, on liste les règles qui peuvent amener
 à cette conclusion.
@@ -1114,6 +1129,10 @@ haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
 On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
 \end{proof}
 
+%TODO[E] un peu court
+
+%TODO faisable je pense
+
 \changed{Partout l'indice grand Phi a été supprimé}
 
 \begin{lemma}[Accès à une mémoire bien typée]
@@ -1268,6 +1287,8 @@ Alors l'un des cas suivants est vrai:
 \end{itemize}
 
 \jolibreak
+
+% TODO[E] jolibreak en haut de page
 
 Supposons que $Γ ⊢ lv : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
 
@@ -1435,5 +1456,8 @@ comme les divisions ou les accès aux tableaux.
 À l'issue de ce chapitre, on a donc un langage impératif sain pour bâtir de
 nouvelles analyses de typage, ce que nous allons faire dans le chapitre
 suivant.
+
+% TODO[E] nouvelles => pourquoi ne pas avoir integré les extrensions tout de
+% suite
 
 % vim: spelllang=fr
