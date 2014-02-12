@@ -45,6 +45,9 @@ principale particularité est la notation \verb!__attribute__((...))! qui peut
 décorer les déclarations de fonctions, de variables ou de types. De nouvelles
 fonctionnalités sont aussi présentes.
 
+% TODO rajouts propres à moi ou pas?
+% TODO[E] dire que cela est inclus dans ton travail
+
 Par exemple, il est possible de manipuler des étiquettes de première classe: si
 \enquote{\texttt{lbl:}} est présent avant une instruction, on peut capturer
 l'adresse de celle-ci avec \texttt{void *p = \&\&lbl} et y sauter indirectement
@@ -68,6 +71,8 @@ Les attributs, quant à eux, rentrent dans trois catégories:
 \end{itemize}
 
 Dans notre cas, toutes ces annotations peuvent être ignorées.
+
+% TODO[E] quel intérêt alors?
 
 \section{Configuration}
 
@@ -99,7 +104,14 @@ doit donc avoir deux piles: une pile \enquote{utilisateur}, qui sert pour
 l'application elle-même, et une pile \enquote{noyau}, qui sert aux appels
 système.
 
-\begin{figure} % fig:memmap {{{
+Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun
+gère un ensemble de tables de pages et une valeur de \crtrois{} associée (ce
+mécanisme a été abordé page~\pageref{page:mem-virt}). Au moment de changer le
+processus en cours, l'ordonnanceur charge donc le \crtrois{} du nouveau
+processus.
+
+\begin{figure}[b] % fig:memmap {{{
 \centering
 \input{fig/memmap.tex}
 
@@ -111,13 +123,6 @@ réservée au mode privilégié.}
 \label{fig:memmap}
 \end{figure}
 % }}}
-
-Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
-mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun
-gère un ensemble de tables de pages et une valeur de \crtrois{} associée (ce
-mécanisme a été abordé page~\pageref{page:mem-virt}). Au moment de changer le
-processus en cours, l'ordonnanceur charge donc le \crtrois{} du nouveau
-processus.
 
 Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
 \hexa{c0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
@@ -170,6 +175,8 @@ figure~\ref{fig:entry-syscall})
     \caption{Point d'entrée des appels système}
     \label{fig:entry-syscall}
 \end{figure}
+
+% TODO[E] overflow
 
 L'exécution reprend donc en \ring{0}, avec dans \esp{} le pointeur de pile noyau
 du processus. Les valeurs des registres ont été préservées; la macro
@@ -234,6 +241,8 @@ Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340.
 Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
 \emph{Kernel Mode Setting} (KMS).
 
+% TODO[E] en dire un mot
+
 Pour configurer un périphérique, l'utilisateur communique avec le pilote noyau
 avec le mécanisme d'\emph{ioctls} (pour \emph{Input/Output Control}).
 Ils sont similaires à des appels système, mais spécifiques à un périphérique
@@ -256,6 +265,9 @@ GPU AMD Radeon.
 \label{fig:kms-buggy}
 \end{figure}
 
+% TODO[E] pourquoi des sauts de ligne? est-ce le code d'origine?
+% TODO il y a la place maintenant
+
 On peut voir que l'argument \texttt{data} est converti en un \texttt{struct
 drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
 \texttt{value}, et finalement ce pointeur est déréferencé.
@@ -263,6 +275,8 @@ drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
 Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
 en espace noyau) du type donné dans la figure~\ref{fig:kms-info}, dont les
 champs proviennent d'un appel utilisateur de \verb!ioctl()!.
+
+% TODO[E] serait il possible de faire tourner ton proto sur ce code?
 
 \begin{figure}[h]
 \insertcode{kms-info.c}
@@ -323,11 +337,15 @@ les variables du processus \texttt{p} si \texttt{addr} est une adresse dans
 l'espace utilisateur (ce qui est le comportement attendu), mais aussi de lire
 dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
 
+% TODO[E] marqueur: fais pareil sur le 1er ex
+
 \begin{figure}
     \insertcode{blackfin-ptrace.c}
     \caption{Implantation de \texttt{ptrace} sur architecture Blackfin}
     \label{fig:ptrace-blackfin}
 \end{figure}
+
+% TODO[E] même question : est ce possible de faire tourner le proto dessus
 
 On peut repérer ce bug par simple relecture pour commencer. On commence par
 remarquer que l'argument \texttt{addr}, malgré son type \texttt{long}, est en
@@ -375,6 +393,8 @@ userptr\_fieldp x f}, qui indique que \texttt{x} est un pointeur vers une
 structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
 il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
 inconnue de type.
+
+% TODO[E] on a le droit à quoi en annotant?
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
@@ -426,7 +446,11 @@ un reste d'une première présentation basée sur les qualificateurs.
 Dans l'implantation, il est cependant agréable de manipuler ces étiquettes
 séparément des pointeurs auxquels elles sont attachées.
 
+% TODO[E] c'est possible de le changer rapidement?
+% TODO & changer le message
+
 % TODO idem sur #2
+% TODO[E] ce serait bien de mettre Blackfin aussi
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
@@ -447,8 +471,10 @@ version corrigée on peut inférer des types compatibles.
 Le prototype décrit dans le chapitre~\ref{cha:implem} peut donc s'adapter à
 détecter des bugs dans le noyau Linux. Pour le moment, il nécessite du code
 annoté, mais des travaux sont en cours pour permettre de passer automatiquement
-dntes portions plus importantes du noyau Linux. Une partie importante du travail
+des portions plus importantes du noyau Linux. Une partie importante du travail
 est déjà faite puisque la phase de compilation depuis le code source supporte
 maintenant le dialecte GNU C.
+
+% TODO[E] à étendre, +++
 
 % vim: spelllang=fr

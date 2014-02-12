@@ -9,7 +9,7 @@ Ensuite, le but du chapitre~\ref{cha:etudedecas} est d'appliquer notre analyse
 (à l'aide de ce prototype) sur le noyau Linux. Après avoir décrit le
 fonctionnement des appels système sur ce noyau, on présente deux bugs qui ont
 touché respectivement un pilote de carte graphique et l'implantation d'un appel
-système. Il sont la manifestation d'un problème de pointeur utilisateur mal
+système. Ils sont la manifestation d'un problème de pointeur utilisateur mal
 déréférencé dans le noyau, ainsi que décrit dans le chapitre~\ref{cha:os}. En
 lançant notre analyse sur le code présentant un problème, l'erreur est détectée.
 Au contraire, en la lançant sur le code après application du correctif, aucune
@@ -21,7 +21,7 @@ constructions permet de ne pas avoir à exprimer plusieurs fois la même règle
 (par exemple, une fois sur la boucle \emph{for} et une autre sur la boucle
 \emph{while}).
 
-\label{page:ccl-npk-spk}.
+\label{page:ccl-npk-spk}
 
 Un des inconvénients est que le modèle mémoire utilisé par \newspeak est assez
 différent de celui de \langname (ainsi que décrit dans le
@@ -32,6 +32,8 @@ valeurs à partir d'une suite d'octets, par exemple). Il est aussi à noter que,
 bien que l'évaluation de \langname ait été décrite dans la
 partie~\ref{part:lang}, c'est principalement dans le but de démontrer des
 propriétés sémantiques: l'interprète n'a pas été implanté.
+
+% TODO[E] ?? l'idée est d'utiliser un compilo C
 
 Le prototype d'implantation peut évoluer dans deux directions: d'une part, en
 continuant à s'appuyer sur \newspeak, on peut réaliser des pré-analyses de
