@@ -25,7 +25,13 @@ permet de définir de manière déclarative la modification en profondeur de
 valeurs dans la mémoire, sans avoir à dupliquer le cas de la lecture et celui de
 l'écriture.
 
+% TODO[S] distinguer
+
+% (je crois que c'était ça avant)
+
 \paragraph{Un système de types abstraits}
+
+% TODO[S] extension?
 
 En partant de ce système de types, on a décrit une extension permettant de créer
 des pointeurs pour lesquels l'opération de déréférencement est restreinte à
@@ -50,7 +56,11 @@ vérifier du code de production à l'aide de techniques de typage.
 Des travaux d'expérimentation sont en cours afin d'analyser de plus grandes
 parties du noyau.
 
+%TODO[E] et le contexte industriel?
+
 \section{Différences avec C}
+
+% TODO[S] spk: le nommer dans la partie précédente
 
 \langname a été construit pour pouvoir ajouter un système de types à un langage
 proche de C. Ces deux langages diffèrent donc sur certains points. On détaille
@@ -88,6 +98,8 @@ type $t_2$ par l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alor
 un \enquote{trou} dans le système de types. Cette fonction devrait en effet être
 typée $(t_1) → t_2$, autrement dit le type \enquote{maudit} $α → β$ de
 \texttt{Obj.magic} en OCaml ou \texttt{unsafeCoerce} en Haskell.
+
+% TODO[E] impossible/possible
 
 Le \emph{type punning} consiste à modifier directement la suite de bits de
 certaines données pour la manipuler d'une manière efficace. Par exemple, il est
@@ -175,6 +187,8 @@ programmes que l'on analyse ne comportent pas de telles erreurs de
 programmation, on peut désactiver ces vérifications et le reste des propriétés
 est toujours valable.
 
+% TODO[S] tu n'en parles pas dans la descr de ton analyseur
+
 On repose sur l'environnement d'exécution à un endroit plus problématique. À la
 sortie de chaque portée (au retour d'une fonction et après la portée d'une
 variable locale déclarée), on parcourt la mémoire à la recherche des pointeurs
@@ -204,7 +218,7 @@ réalisée par \ctonewspeak.
 
 Dans le noyau Linux, il est courant d'utiliser les sauts pour factoriser la
 libération de ressources à la fin d'une fonction. Il est d'ailleurs possible
-d'utiliser l'outil Coccinelle pour donne cette forme à du code utilisant un
+d'utiliser l'outil Coccinelle pour donner cette forme à du code utilisant un
 autre style de structures de contrôle~\cite{lctes11}. On peut imaginer qu'il est
 possible de l'utiliser pour faire la conversion inverse.
 
@@ -230,6 +244,9 @@ En pratique, il est rare de trouver ces constructions plus avancées dans du cod
 noyau ou embarqué, donc ce manque n'a pas beaucoup d'impact. De plus, cela
 permet une présentation plus simple et accessible.
 
+% TODO[S] c'est vrai ça?
+% TODO[S] onpourrait imaginer de l'asm inline
+
 \paragraph{Allocation dynamique}
 
 La plupart des programmes, et le noyau Linux en particulier, utilisent la notion
@@ -249,6 +266,8 @@ sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
 mémoire contenant cette valeur (la taille de chaque valeur fait partie de
 celle-ci). Le typage est alors direct:
+
+% TODO[S] mais à l'intérieur c'est pas typé
 
 \begin{mathpar}
   \irule{New}
@@ -341,6 +360,8 @@ fous~\cite{ifm10}.
 
 \section*{Conclusion}
 
+% TODO[S] une conclusion de conclusion?
+
 L'importance des logiciels grandit par deux effets:
 d'une part, ils sont présents dans de plus en plus d'appareils, et d'autre part,
 leur taille est de plus en plus importante. En une journée, entre les appareils
@@ -388,5 +409,8 @@ compatible avec le type d'origine, et pour lequel l'ensemble des opérations est
 restreint. Avec cette fonctionnalité dans un langage, non seulement on peut
 détecter d'autres classes de problèmes, mais surtout on laisse le programmeur
 définir de nouvelles analyses lui-même.
+
+% TODO[E] peut être revenir sur ce que tu peux détecter et comment le faire
+% + le cadre industriel
 
 % vim: spelllang=fr
