@@ -7,6 +7,9 @@ types. Celles-ci sont calculées par un algorithme d'inférence de types à la
 Hindley-Milner, reposant sur l'unification et le partage de références. Toutes
 ces étapes sont implantées dans le langage OCaml~\cite{DAOC}.
 
+% TODO[S] pourquoi?
+% TODO[S] bitbucket
+
 Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
 license libre, la \emph{GNU Lesser General Public License}.
 
@@ -30,10 +33,13 @@ Pour l'implantation sur \newspeak, on s'inspire donc des règles de typage sur
 \langname, mais cette approche n'est sûr que pour les programmes qui peuvent
 être fidèlement traduits.
 
+% TODO[S] fidèlement
+% TODO[S] pas clair: C -> Npk -> Spk?
+
 Par exemple, un programme dans lequel on fait de l'arithmétique de pointeurs
 entre champs de structures peut être traduit en \newspeak (et analysé par
-interprétation abstraite), mais on ne peut rien en tirer déduire du résultat
-d'une analyse par typage.
+interprétation abstraite), mais on ne peut rien en déduire du résultat d'une
+analyse par typage.
 
 On reviendra sur cette distinction entre les deux niveaux de sémantique dans la
 conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
@@ -117,14 +123,17 @@ figure~\ref{fig:stx-npk}.
 \end{figure}
 
 La traduction depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
-prétraitement du code source, compilation de C prétraité vers des objets
-\newspeak{}, puis liaison de ces différentes unités de compilation. Il est aussi
-possible de compiler directement du code Ada vers un objet \newspeak{}.
+prétraitement du code source par un outil externe, compilation séparée de C
+prétraité vers des objets \newspeak{}, puis liaison de ces différentes unités de
+compilation. Il est aussi possible de compiler directement du code Ada vers un
+objet \newspeak{}.
 
 La première étape consiste à prétraiter les fichiers C source avec le logiciel
 \texttt{cpp}, comme pour une compilation normale. Cette étape interprète les
 directives de prétraitement comme \texttt{\#include}, \texttt{\#ifdef}. À cet
 étape, les commentaires sont aussi supprimés.
+
+% TODO[S] cpp: dans la fig c'est gcc
 
 Une fois cette passe effectuée, le résultat est un ensemble de fichiers C
 prétraités; c'est-à-dire des unités de compilation.
@@ -134,18 +143,22 @@ grands et donnent lieu à beaucoup de duplication dans les passes suivantes.
 
 Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
-dans l'arbre de syntaxe abstrait des passes suivantes.
+dans l'arbre de syntaxe abstraite des passes suivantes.
+
+% TODO[E] dire (plus tard) qu'on peut annoter et quelles annotations
 
 À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
 plupart des extensions GNU C sont acceptées en plus du C ANSI. Dans cette étape,
 les types et les noms sont résolus, et le programme est annoté de manière à
-rendre les prochaines étapes indépendante du contexte. Par exemple, chaque
+rendre les prochaines étapes indépendantes du contexte. Par exemple, chaque
 déclaration de variable est adjointe d'une description complète du type.
 
 Lors de cette étape, le flot de contrôle est également simplifié. C en effet
 propose de nombreuses constructions redondantes ou ambigües
 (comme \texttt{i = i++}).
+
+% TODO[S] ça serait mieux de donne un ex de flot complexe
 
 Au contraire, \newspeak propose un nombre réduit de constructions. Rappelons que
 le but de ce langage est de faciliter l'analyse statique: des constructions
@@ -160,6 +173,8 @@ généralisé). Par conséquence, notre implantation gère les sauts, alors que,
 \langname, cette construction n'est pas possible (figure~\ref{fig:stx}, page
 \pageref{fig:stx}).
 
+% TODO[S] notre = ?
+
 \newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
 n'est faite entre l'accès à un champ et l'accès à un élément d'un tableau (tous
@@ -173,6 +188,8 @@ principalement à s'assurer que les hypothèses faites par les différentes unit
 de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
 invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
 aient un nom globalement unique.
+
+% TODO[S] on dirait que tu fais ça dans c2npk
 
 Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
 décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
@@ -199,6 +216,8 @@ On présente ici la fonction \texttt{unify}. Celle-ci prend en entrée deux
 représentations de types pouvant contenir des inconnues de la forme \texttt{Var
 n}, et retourne une liste de couples $(n, t)$ indiquant les substitutions à
 faire.
+
+%TODO[S] dire d'où vient le Var n
 
 Cet algorithme (décrit en pseudo-code ML en figure~\ref{fig:algo-unif}) prend un
 chemin différent selon la forme des deux types d'entrée:
@@ -329,10 +348,15 @@ chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
 \tInt ; … }$ où $…$ désigne l'ensemble des champs inconnus. En unifiant
 $\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient en
 sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$. Plus
-présisément, pour unifier deux types structure, on étudie les types de leurs
+précisément, pour unifier deux types structure, on étudie les types de leurs
 champs. On commence par unifier les types des champs de même nom, et on ajoute à
 l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme de
 rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
+
+% TODO[S] plus précisément => ce n'est pas plus précis
+% - pourquoi ça marche
+% - un ex plus complet
+% - à quoi ça sert d'unifier des champs de noms différents?
 
 \added{citation}
 
@@ -342,6 +366,8 @@ rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
 Cette analyse est implantée dans un outil du nom de \ptrtype{}. Il lit un
 programme \newspeak (ou un fichier C), et réalise l'inférence de types. En
 sortie, il affiche soit le programme complètement annoté, soit une erreur.
+
+% TODO[S] ça représente combien de lignes de code ptrtype?
 
 Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compilé
 vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
@@ -387,16 +413,22 @@ val infer : Newspeak.fid list
          -> Types.simple Tyspeak.t
 \end{Verbatim}
 
+% TODO[S] comms: liste triée de fcts à typer
+% environnement initial
+% prog à analyser
+
 \item S'il n'y a pas d'erreurs, le programme obtenu, de type
 \texttt{Types.simple Tyspeak.t}, est affiché sur le terminal.
 
 \end{itemize}
 
-La fonction appellée par le reste du code, appellée \texttt{unify}, peut
+La fonction appelée par le reste du code, appelée \texttt{unify}, peut
 retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
 types à unifier est mise dans une liste d'attente qui sera unifiée après le
 parcours du programme. Le but est d'instrumenter l'inférence de types afin de
 pouvoir en faire une exécution \enquote{pas à pas}.
+
+% TODO[S] appelée dans infer? unify: où est elle? et process_npk ? pas clair
 
 \begin{figure}
 
@@ -491,6 +523,8 @@ explicites (sur les pointeurs uniquement), avant de passer à deux types
 indépendants. Cette représentation a néanmoins l'avantage de permettre la
 factorisation de code.
 
+% TODO[S] ?
+
 Enfin, pour déréférencer une expression, on unifie tout d'abord son type avec le
 type d'un pointeur noyau.
 
@@ -558,6 +592,8 @@ traitement est plus long que celui d'un compilateur comme \texttt{gcc} ou
 utilisé pour compiler des projets de l'ordre du million de lignes de code source
 prétraité, et son exécution ne prenait pas plus de quelques minutes.
 
+%TODO[S] plus de temps C->npk que npk->npk annoté?
+
 Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres
 optimisations sont certainement possibles, mais la performance n'est pas
 bloquante pour le moment: une fois que le code est compilé, on peut réutiliser
@@ -581,5 +617,7 @@ et on indique les contraintes en appelant la fonction d'unification.
 Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
 incomplet, mais il permet de traiter des parties du noyau Linux comme on le
 verra dans le chapitre suivant.
+
+% TODO[S] lien
 
 % vim: spelllang=fr
