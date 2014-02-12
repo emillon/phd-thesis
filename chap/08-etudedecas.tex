@@ -76,6 +76,8 @@ Dans notre cas, toutes ces annotations peuvent être ignorées.
 
 \section{Configuration}
 
+% TODO trop court
+
 Pour que le code noyau soit compilable, il est nécessaire de définir certaines
 macros. En particulier, le système de configuration de Linux utilise des macros
 nommées \texttt{CONFIG\_*} pour inclure ou non certaines fonctionnalités. Il a
@@ -85,6 +87,11 @@ de configuration plus important.
 
 \section{Appels système sous Linux}
 \label{sec:linux-sys}
+
+%TODO[S] je ne trouve pas que le passage à l'asm soit parlant. rester au niveau
+%de C et montrer l'enchaînement des appels en disant lesquels sont en ring 0 et
+%ceux en ring 3 serait plus parlant. on ne voit pas bien les pointeurs ut et
+%noyau.
 
 Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
 le noyau Linux. Une description plus détaillée pourra être trouvée
@@ -199,6 +206,8 @@ La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
     \label{fig:syscall-def}
 \end{figure}
 
+% TODO[S] un peu rude à comprendre
+
 La macro \texttt{SYSCALL\_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
 définit entre autres des points d'entrée pour les fonctionnalités de débogage du
 noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
@@ -252,7 +261,7 @@ la section précédente: les applications utilisateurs appellent la fonction
 Celle-ci est traitée par la fonction \texttt{sys\_ioctl()} qui appelle la
 routine de traitement dans le bon pilote de périphérique.
 
-Les fonctions implantant un \emph{ioctl} sont donc vulnérables à la
+Les fonctions du noyau implantant un \emph{ioctl} sont donc vulnérables à la
 même classe d'attaques que les appels système, et donc doivent être écrits avec
 une attention particulière.
 
@@ -330,12 +339,13 @@ a été corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
 \texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
 appelle \texttt{memcpy} au lieu de \nolinkurl{copy\_from\_user} pour lire dans
 la mémoire du processus. La ligne problématique est préfixée par \texttt{/*
-=\textgreater{} */}. En théorie, si un utilisateur passe un pointeur noyau à la
-fonction \texttt{ptrace}, il pourra lire des données du noyau. L'appel
-\texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
-les variables du processus \texttt{p} si \texttt{addr} est une adresse dans
-l'espace utilisateur (ce qui est le comportement attendu), mais aussi de lire
-dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
+=\textgreater{} */}. En théorie, si un utilisateur passe un pointeur vers une
+adresse du noyau à la fonction \texttt{ptrace}, il pourra lire des données du
+noyau. L'appel \texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet ainsi non
+seulement de lire les variables du processus \texttt{p} si \texttt{addr} est une
+adresse dans l'espace utilisateur (ce qui est le comportement attendu), mais
+aussi de lire dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug
+de sécurité).
 
 % TODO[E] marqueur: fais pareil sur le 1er ex
 
@@ -446,6 +456,8 @@ un reste d'une première présentation basée sur les qualificateurs.
 Dans l'implantation, il est cependant agréable de manipuler ces étiquettes
 séparément des pointeurs auxquels elles sont attachées.
 
+% TODO[S] il faut vraiment en parler?
+
 % TODO[E] c'est possible de le changer rapidement?
 % TODO & changer le message
 
@@ -459,10 +471,11 @@ celle-ci, l'inférence se fait sans erreur.
 
 \section*{Conclusion}
 
-Après voir décrit notre l'implantation de notre solution, on a montré comment
-celle-ci peut s'appliquer à détecter un bug dans le noyau Linux. La première
-difficulté est de traduire en \newspeak le code source écrit dans le dialecte
-GNU C.
+Après voir décrit l'implantation de notre solution, on a montré comment celle-ci
+peut s'appliquer à détecter un bug dans le noyau Linux. La première difficulté
+est de traduire en \newspeak le code source écrit dans le dialecte GNU C.
+
+% TODO[S] oui mais bcp était déjà fait non?
 
 En partant d'un bug existant, on montre que la version originale du code
 (incluant une erreur de programmation) ne peut pas être typée, alors que sur la
@@ -474,6 +487,11 @@ annoté, mais des travaux sont en cours pour permettre de passer automatiquement
 des portions plus importantes du noyau Linux. Une partie importante du travail
 est déjà faite puisque la phase de compilation depuis le code source supporte
 maintenant le dialecte GNU C.
+
+% TODO[S] bugs: d'autres que ceux décrits?
+% TODO[S] fin: aucun rapport avec l'annotation automatique non?
+% TODO[S] oui mais il faut réécrire le code pour supprimer les constructions non
+% typables
 
 % TODO[E] à étendre, +++
 
