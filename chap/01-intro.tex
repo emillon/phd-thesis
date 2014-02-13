@@ -310,9 +310,9 @@ triant un tableau en place, leur type doit-il faire intervenir le type des
 éléments manipulés?
 
 En première approximation, on peut imaginer fournir une version du code par type
-de données à manipuler. C'est la solution retenue par les premières versions du
-langage Pascal, ce qui rendait très difficile l'écriture de
-bibliothèques~\cite{PascalNoEscape}. On parle alors de monomorphisme.
+de données à manipuler. C'est la solution retenue par le langage C, ou par les
+premières versions du langage Pascal, ce qui rendait très difficile l'écriture
+de bibliothèques~\cite{PascalNoEscape}. On parle alors de monomorphisme.
 
 Une autre manière de procéder est d'autoriser plusieurs fonctions à avoir le
 même nom, mais avec des types d'arguments différents. Par exemple, on peut
@@ -320,8 +320,6 @@ définir séparément l'addition entre deux entiers, entre deux flottants, ou en
 un entier et un flottant. Selon les informations connues à la compilation, la
 bonne version sera choisie. C'est ainsi que fonctionnent les opérateurs en C++.
 On parle de polymorphisme \emph{ad hoc}, ou de surcharge.
-
-% TODO[S] et en C?
 
 Une autre technique est de déterminer la fonction appelée non pas par le type de
 ses arguments, mais par l'objet sur lequel on l'appelle. Cela permet d'associer
@@ -393,9 +391,8 @@ GIMPLE~\cite{gcc-gimple}. Il s'agit d'une structure d'arbre écrite en C,
 reposant sur de nombreuses macros afin de cacher les détails d'implantation
 interne pouvant varier entre deux versions. Cette représentation étant réputée
 difficile à manipuler, le projet MELT~\cite{gcc-melt} permet de générer un
-greffon de compilateur écrit dans un dialecte de Lisp.
+\emph{plugin} de compilateur écrit dans un dialecte de Lisp.
 
-% TODO[E] plug-in?
 % TODO virer melt?
 
 \paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
@@ -427,7 +424,7 @@ apporter une solution. Puisqu'ils sont développés en parallèle des compilateu
 le support des extensions est en général moins important dans ces langages.
 
 \paragraph{CIL}\cite{NeculaCil} est une représentation en OCaml d'un programme
-C, développée depuis 2002. Grâce à un mécanisme de greffons, elle permet de
+C, développée depuis 2002. Grâce à un mécanisme de \emph{plugins}, elle permet de
 prototyper rapidement des analyses statiques de programmes C.
 
 \paragraph{CompCert} est un projet qui vise à produire un compilateur certifié
