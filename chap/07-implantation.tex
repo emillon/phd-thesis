@@ -420,15 +420,11 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
   suivante:
 
 \begin{Verbatim}
-val infer : Newspeak.fid list
-         -> Types.simple Env.t
-         -> 'a Tyspeak.t
+val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
+         -> Types.simple Env.t  (* environnement initial *)
+         -> 'a Tyspeak.t        (* programme à analyser *)
          -> Types.simple Tyspeak.t
 \end{Verbatim}
-
-% TODO[S] comms: liste triée de fcts à typer
-% environnement initial
-% prog à analyser
 
 \item S'il n'y a pas d'erreurs, le programme obtenu, de type
 \texttt{Types.simple Tyspeak.t}, est affiché sur le terminal.
