@@ -136,15 +136,8 @@ La première étape consiste à prétraiter les fichiers C source avec le logici
 directives de prétraitement comme \texttt{\#include}, \texttt{\#ifdef}. À cet
 étape, les commentaires sont aussi supprimés.
 
-% TODO[S] cpp: dans la fig c'est gcc
-
 Une fois cette passe effectuée, le résultat est un ensemble de fichiers C
 prétraités; c'est-à-dire des unités de compilation.
-
-Puisque la directive \texttt{\#include} est textuelle, ces fichiers sont très
-grands et donnent lieu à beaucoup de duplication dans les passes suivantes.
-
-% TODO[E] bcp de: fam
 
 Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
@@ -622,12 +615,11 @@ détermine grâce au lemme~\ref{lemma:inversion} quelle règle il faut appliquer
 Ensuite, on génère les inconnues de type nécessaires pour appliquer cette règle
 et on indique les contraintes en appelant la fonction d'unification.
 
-Ce prototype, disponible sous license libre sur~\link{penjili}, reste incomplet,
-mais il permet de traiter des parties du noyau Linux comme on le verra dans le
-chapitre suivant.
+Ce prototype est disponible sous license libre sur~\link{penjili}. Il a été
+pensé pour traiter un type de code particulier, à savoir le noyau Linux. On
+montre dans le chapitre suivant que cet objectif est atteint, puisqu'il permet
+de détecter plusieurs bugs.
 
-% TODO[E] reste incomplet: en quoi
-% TODO[E] dire que ct le but (meme en ne traitant qu'ue partie de C)
 % TODO[E] dire la taille
 % TODO[E] + rajoute un peu
 
