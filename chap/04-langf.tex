@@ -978,11 +978,10 @@ Par exemple, dans la figure~\ref{fig:prog-cleanup}, l'exécution de $h(~)$ donne
 $p$ la valeur $(1, x)$. Puis en arrivant dans $g$, le déréférencement de $p$ va
 modifier $x$ qui va avoir la valeur $1$. $x$, variable flottante, contient donc
 un entier.
-Dans la ligne marquée \texttt{(*)}, on réalise donc l'addition
-d'un entier (contenu dans $x$ malgré son type) et d'un flottant. Cette opération
-est bien typée mais provoquera une erreur $\serr{typ}$ à l'exécution.
-
-% TODO[E] malgré son type / bien typée ??
+Dans la ligne marquée \texttt{(*)}, on réalise donc l'addition d'un entier
+(contenu dans $x$ malgré le type de la variable) et d'un flottant. Cette
+opération est bien typée dans le programme mais provoquera une erreur
+$\serr{typ}$ à l'exécution.
 
 Pour empêcher cela, on instrumente donc le retour de la fonction
 \texttt{f} pour que \texttt{p} soit remplacé par $\eNull$. Alors dans
