@@ -74,8 +74,6 @@ de la même manière les permissions que doit avoir le fichier créé, le cas
     \label{fig:unix-open}
 \end{figure}
 
-%TODO[S] en fait c'est une va_list
-
 Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
 correspond à un indice numérique dans une table interne au processus. Par
 exemple, $0$ désigne son entrée standard, $1$ sa sortie standard, et $2$ son
@@ -122,10 +120,9 @@ de nouveau type sémantique, mais on ajoute une règle de compatibilité entre l
 type de valeurs \tInt et le type statique \tBits (cela signifie qu'une valeur de
 type \tBits est représentée par un \tInt en mémoire,
 figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
-\enquote{constructeurs} (\texttt{O\_*}) et du \enquote{consommateur}
+\enquote{constructeurs} (\texttt{O\_RDONLY}, \texttt{O\_RDWR},
+\texttt{O\_APPEND}, …) et du \enquote{consommateur}
 \texttt{open} (figure~\ref{fig:bitmasks-types}).
-
-% TODO[E] constructeurs => donne la liste
 
 \begin{figure}[h]
 
@@ -165,7 +162,10 @@ figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
 \end{figure}
 
 Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on remplace
-aux règles s'appliquant à $\tInt$ les règles suivantes.
+aux règles s'appliquant à $\tInt$ les règles suivantes. Cela revient à
+surcharger le typage de l'opérateur $\sim$, mais la sémantique est la même
+quelque soit le type car $\tBits$ et $\tInt$ sont représentés de la même
+manière.
 
 \begin{mathpar}
     \irule{Op-Bits}
@@ -174,8 +174,6 @@ aux règles s'appliquant à $\tInt$ les règles suivantes.
        \\ Γ ⊢ e_2 : \tBits
        }{ Γ ⊢ e_1~\opbin~e_2 : \tBits
        }
-
-       %TODO[E] surcharge de ~ ?
 
     \irule{Not-Bits}
         { Γ ⊢ e : \tBits }
@@ -526,8 +524,6 @@ Ce comportement est calé celui des fonctions \texttt{copy\_\{from,to\}\_user} d
 noyau Linux: en cas de succès elles renvoient $0$, et en cas d'erreur
 \texttt{-EFAULT} ($= -14$).
 
-% TODO[E] -14/-1
-
 \begin{mathpar}
   \semrule{User-Get-OK}
 
@@ -772,9 +768,9 @@ les appliquer à n'importe quel type de pointeurs. Leur typage est donc plus
 proche de celui d'un opérateur.
 
 \begin{mathpar}
-    \disprule{GetU}
+    \disprule{User-Get}
 
-    \disprule{PutU}
+    \disprule{User-Put}
 \end{mathpar}
 
 \subsection{Sûreté du typage}
