@@ -85,9 +85,8 @@ fait toujours dans un contexte précis. } porteront ce type. La première
 instruction est l'affectation de la constante $1$ (entière) à $x$ dont on sait
 qu'elle porte des valeurs entières, ce qui est donc correct. Le fait de
 rencontrer $\iReturn{x}$ permet de conclure que le type de la fonction est $(~)
-→ \tInt$.
-
-% TODO[E] est-ce un type? unit?
+→ \tInt$ (c'est-à-dire qu'elle n'a pas d'arguments et qu'elle retourne un
+\tInt).
 
 Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
 début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
@@ -135,8 +134,6 @@ polymorphisme.
 \label{fig:les-types}
 
 \end{figure}
-
-% TODO[E] ne faut il pas des variables/inconnues de type? -- OK
 
 Pour maintenir les contextes de typage, un environnement $Γ$ associe un type à
 un ensemble de variables.
@@ -481,28 +478,9 @@ des globales de cette nouvelle association.
     \disprule{T-Var}
   \end{mathpar}
 
-  \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
-
-  %TODO[E] règle T*-Nil ?
-
-  \begin{mathpar}
-    \irule{T*-Nil}
-      { }
-      { \typhstar{Γ}{[~]}{Γ} }
-
-    \irule{T*-Cons}
-      { \typh{Γ_1}{p}{Γ_2}
-     \\ \typhstar{Γ_2}{ps}{Γ_3}
-      }
-      { \typhstar{Γ_1}{p::ps}{Γ_3} }
-  \end{mathpar}
-
   \ruleheader{$Γ ⊢ P$}
-
   \begin{mathpar}
-    \irule{Prog}
-      { \typhstar{[~]}{P}{Γ} }
-      { ⊢ P }
+      \disprule{Prog}
   \end{mathpar}
 
   \caption{Typage des phrases et programmes}

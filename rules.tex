@@ -260,6 +260,14 @@
               }
               { Γ ⊢ \uPut{e_d}{e_s} : \tInt }
     }
+    {Prog}{ \irule{Prog}
+                { \typh{[~]}{p_1}{Γ_1}
+               \\ \typh{Γ_1}{p_2}{Γ_2}
+               \\ …
+               \\ \typh{Γ_{n-1}}{p_n}{Γ_n}
+                }
+                { ⊢ p_1, …, p_n}
+    }
     {END}
 }
 
@@ -423,15 +431,6 @@
                 }
                 {\ph{m}{x = e}{m''}}
     }
-    {T*-Nil}{ \irule{T*-Nil}
-                 { }
-                 {\phstar{m}{[~]}{m}}
-    }
-    {T*-Cons}{ \irule{T*-Cons}
-                  {\ph{m}{p}{m'} \\
-                   \phstar{m'}{ps}{m''}}
-                  {\phstar{m}{p::ps}{m''}}
-    }
     {Exp-Err}{ \irule{Exp-Err}
                  { }
                  { \msi{m}{Ω} → Ω }
@@ -441,8 +440,12 @@
                   { \msi{m}{\ctxSub{C}{e}} → Ω }
     }
     {Prog}{ \irule{Prog}
-              {\phstar{([~], [~])}{P}{m}}
-              {\phprog{P}{m}}
+              { \ph{([~], [~])}{p_1}{m_1}
+             \\ \ph{m_1}{p_2}{m_2}
+             \\ …
+             \\ \ph{m_{n-1}}{p_n}{m_n}
+              }
+              {\phprog{p_1, …, p_n}{m}}
     }
     {Phi-User}{ \irule{Phi-User}
                       { }
