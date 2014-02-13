@@ -1012,10 +1012,8 @@ h = Fun () {
 \label{fig:prog-cleanup}
 \end{figure}
 
-Pour définir l'opération de nettoyage, on commence par définir une opération
-nettoyant une valeur selon un prédicat sur les chemins:
-
-% TODO[E] valeur = ?? à préciser
+Pour définir l'opération de nettoyage, on commence par définir une opération de
+nettoyage selon un prédicat sur les chemins:
 
 \begin{align*}
 \cVP{p}{\widehat{c}} &= \widehat{c} \\
@@ -1487,34 +1485,7 @@ montrera que ce cas est toujours évité dans les programmes typés
   \semrule{Phi-Deref}
 \end{mathpar}
 
-Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
-
-\begin{figure}[h]%{{{
-
-  \centering
-
-  \begin{tikzpicture}
-    \node              (a1) {$x$};
-    \node[right of=a1] (a2) {$.l_S$};
-    \node[right of=a2] (a3) {$[2*n]$};
-    \node[right of=a3] (a4) {$.g$};
-
-    \node[below of=a1] (b1) {$(2, x)$};
-    \node[below of=a2] (b2) {$.l$};
-    \node[below of=a3] (b3) {$[4]$};
-    \node[below of=a4] (b4) {$.g$};
-
-    \draw[->] (a1) -- (b1);
-    \draw[->] (a2) -- (b2);
-    \draw[->] (a3) -- (b3);
-    \draw[->] (a4) -- (b4);
-  \end{tikzpicture}
-
-  \caption{Évaluation des valeurs gauches}
-\label{fig:eval-lv}
-\end{figure}%}}}
-
-% TODO[E] ?
+Par exemple, $lv = x.l_S[2*n].g_T$ pourra s'évaluer en $φ = (2, x).l[4].g$.
 
 \section{Expressions}
 \label{sec:eval-exp}
@@ -1679,8 +1650,6 @@ en fin de fonction lorsqu'aucun $\iReturn{\cdot}$ n'est présent dans son corps.
     \semrule{Exp-Call-Return}
 \end{mathpar}
 
-% TODO[E] ?? à voir
-
 \section{Instructions}
 \label{sec:eval-instr}
 
@@ -1706,9 +1675,8 @@ le pas d'exécution\footnote{
 
 \label{page:decl-masquage}
 On suppose qu'il n'y a pas de masquage au sein d'une fonction, c'est-à-dire que
-le nom d'une variable déclarée n'est pas visible avant cette déclaration.
-
-%TODO[E] ne peut on pas masquer?
+le nom d'une variable déclarée n'est jamais dans l'environnement avant cette
+déclaration.
 
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
