@@ -554,11 +554,9 @@ naïvement le système de types avec la règle suivante:
 \end{mathpar}
 
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
-qui sont bien typables mais dont l'évaluation provoque une erreur autre que
-$\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
+qui sont bien typables mais dont l'évaluation provoque une erreur $\serr{sec} ∉
+\{\serr{div},\serr{array},\serr{ptr}\}$, violant ainsi le
 théorème~\ref{thm:progres}. Posons:
-
-% TODO[E] autre que => lesquelles?
 
 \[
 \begin{cases}
