@@ -118,8 +118,6 @@ figure~\ref{fig:stx-npk}.
 \label{fig:stx-npk}
 \end{figure}%}}}
 
-%TODO[E] Region = struct/union ?
-
 \begin{figure}
   \centering
   \input{fig/compil-pipeline.tex}
@@ -189,9 +187,10 @@ généralisé). Par conséquence, notre implantation gère les sauts, alors que,
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
 n'est faite entre l'accès à un champ et l'accès à un élément d'un tableau (tous
 deux sont traduits par un décalage numérique depuis le début de la zone
-mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
-structures internes de \ctonewspeak, où les informations nécessaires sont encore
-présentes.
+mémoire). De plus, les unions et les structures sont regroupées sous forme des
+types \enquote{régions} qui associent à un décalage un type de champ. Pour
+supprimer ces ambiguïtés, il faut s'interfacer dans les structures internes de
+\ctonewspeak, où les informations nécessaires sont encore présentes.
 
 Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
 principalement à s'assurer que les hypothèses faites par les différentes unités
