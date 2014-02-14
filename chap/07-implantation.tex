@@ -118,18 +118,10 @@ figure~\ref{fig:stx-npk}.
 \label{fig:stx-npk}
 \end{figure}%}}}
 
-\begin{figure}
-  \centering
-  \input{fig/compil-pipeline.tex}
-  \caption{Compilation depuis \newspeak}
-\label{fig:compil-npk}
-\end{figure}
-
-La traduction depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
-prétraitement du code source par un outil externe, compilation séparée de C
-prétraité vers des objets \newspeak{}, puis liaison de ces différentes unités de
-compilation. Il est aussi possible de compiler directement du code Ada vers un
-objet \newspeak{}.
+La traduction depuis C est faite en trois étapes: prétraitement du code source
+par un outil externe, compilation séparée de C prétraité vers des objets
+\newspeak{}, puis liaison de ces différentes unités de compilation. Il est aussi
+possible de compiler directement du code Ada vers un objet \newspeak{}.
 
 La première étape consiste à prétraiter les fichiers C source avec le logiciel
 \texttt{cpp}, comme pour une compilation normale. Cette étape interprète les
@@ -153,11 +145,39 @@ les types et les noms sont résolus, et le programme est annoté de manière à
 rendre les prochaines étapes indépendantes du contexte. Par exemple, chaque
 déclaration de variable est adjointe d'une description complète du type.
 
-Lors de cette étape, le flot de contrôle est également simplifié. C en effet
-propose de nombreuses constructions redondantes ou ambigües
-(comme \texttt{i = i++}).
+Lors de cette étape, le flot de contrôle est également simplifié
+(figure~\ref{fig:flot-controle-simple}). De plus, les constructions ambigües en
+C comme \texttt{i = i++} sont transformées pour que leur évaluation se fasse
+dans dans un ordre explicite.
 
-% TODO[S] ça serait mieux de donne un ex de flot complexe
+\begin{figure}[b]
+
+\begin{minipage}{0.25\linewidth}
+\insertcode{npk-while.c}
+\end{minipage}
+\begin{minipage}{0.7\linewidth}
+\begin{Verbatim}
+int32 x;
+x =(int32) 0;
+do {
+    while (1) {
+        choose {
+            -->
+                guard((10 > x_int32));
+            -->
+                guard(! (10 > x_int32));
+                goto lbl1;
+        }
+        x =(int32) coerce[-2**31,2**31-1] (x_int32 + 1);
+    }
+} with lbl1: {
+}
+\end{Verbatim}
+\end{minipage}
+
+    \caption{Compilation du flot de contrôle en \newspeak}
+    \label{fig:flot-controle-simple}
+\end{figure}
 
 Au contraire, \newspeak propose un nombre réduit de constructions. Rappelons que
 le but de ce langage est de faciliter l'analyse statique: des constructions
