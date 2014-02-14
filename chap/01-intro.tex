@@ -492,9 +492,8 @@ permet de voir les variables comme possédant un ensemble de valeurs possibles.
 Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
 considérées: c'est un produit d'ensembles simples, comme des intervalles.
 L'ensemble des comportements réels du programme est au contraire d'une forme
-plus complexe.
+plus complexe et non calculable.
 
-% TODO[S] sur = ? ↑ + complexe et surtout pas calculable
 % TODO[E] déf sound
 
 En calculant une approximation de ce dernier, de forme plus simple, on peut
@@ -834,15 +833,13 @@ code source.
 \paragraph{Dans la partie~\ref{part:lang},} on décrit notre solution: le langage
 \langname{}. Sa syntaxe y est d'abord décrite, puis sa sémantique ainsi qu'un
 système de types statiques. À ce niveau on a un bon support pour décrire des
-analyses statiques sur un langage impératif. On propose alors deux extensions
-indépendantes du système de types. La première consiste à bien typer les entiers
-utilisés comme \emph{bitmasks}. La seconde capture les problèmes d'adressage
-mémoire présents dans les systèmes d'exploitation. Pour ce faire, on ajoute des
-pointeurs contrôlés par l'utilisateur à la sémantique et au système de types. À
-chaque étape, c'est-à-dire avant et après ces ajouts, on établit une propriété
-de sûreté de typage reliant la sémantique d'exécution aux types statiques.
-
-% TODO[S] deux extensions.. du langage impératif considéré?
+analyses statiques sur un langage impératif. On propose alors deux extensions du
+système de types. La première consiste à bien typer les entiers utilisés comme
+\emph{bitmasks}. La seconde capture les problèmes d'adressage mémoire présents
+dans les systèmes d'exploitation. Pour ce faire, on ajoute des pointeurs
+contrôlés par l'utilisateur à la sémantique et au système de types. À chaque
+étape, c'est-à-dire avant et après ces ajouts, on établit une propriété de
+sûreté de typage reliant la sémantique d'exécution aux types statiques.
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage
