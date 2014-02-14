@@ -62,8 +62,6 @@ Plus précisément, un des points cruciaux pour garantir l'isolation d'un noyau 
 système d'exploitation est de restreindre la manière dont sont traitées les
 informations provenant des programmes utilisateur.
 
-% TODO[E] highlight? ↓
-
 Le but de cette thèse est de montrer que le typage statique peut être utilisé
 pour détecter et interdire ces manipulations dangereuses.
 
@@ -274,10 +272,8 @@ Dans ce cas, chaque valeur manipulée par le programme est décorée d'une
 typage sont alors réalisées à l'exécution. Par exemple, l'opérateur
 \enquote{$+$} vérifie que ses deux opérandes ont une étiquette \enquote{entier},
 et construit alors une valeur obtenue en faisant l'addition des deux valeurs,
-avec une étiquette \enquote{entier}. Par exemple, le langage
-Python~\link{python} utilise cette stratégie.
-
-% TODO[E] ↑ ?
+avec une étiquette \enquote{entier}. C'est ce qui se passe par exemple dans le
+langage Python~\link{python}.
 
 \paragraph{Typage statique}
 
@@ -367,10 +363,12 @@ ambigües\footnote{
     sera interprétée comme le transtypage de \texttt{-(b)} dans le type
     \texttt{a}, ou la soustraction des deux expressions \texttt{(a)} et
     \texttt{(b)}.
-}, et de nombreux comportements sont implicites.
-\added{footnote}
+}, et de nombreux comportements sont implicites\footnote{
+    Par exemple, une fonction acceptant un entier long peut être appelée avec un
+    entier de taille plus petite. Celui-ci sera alors converti implicitement.
+}.
 
-% TODO[E] par rapport à qui?
+\added{footnote}
 
 Si on veut analyser des programmes, il est plus pratique de travailler sur une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
@@ -392,8 +390,6 @@ reposant sur de nombreuses macros afin de cacher les détails d'implantation
 interne pouvant varier entre deux versions. Cette représentation étant réputée
 difficile à manipuler, le projet MELT~\cite{gcc-melt} permet de générer un
 \emph{plugin} de compilateur écrit dans un dialecte de Lisp.
-
-% TODO virer melt?
 
 \paragraph{LLVM}\cite{llvm-pres} est un compilateur développé par la communauté
 \emph{open-source} puis sponsorisé par Apple. À la différence de GCC, sa base de
@@ -427,13 +423,11 @@ le support des extensions est en général moins important dans ces langages.
 C, développée depuis 2002. Grâce à un mécanisme de \emph{plugins}, elle permet de
 prototyper rapidement des analyses statiques de programmes C.
 
-\paragraph{CompCert} est un projet qui vise à produire un compilateur certifié
-pour C. C'est-à-dire que les transformations sémantiques sont faites de manière
-prouvée. Il utilise de nombreux langages intermédiaires, dont Compcert C,
-Clight~\cite{cfront} et Cminor~\cite{cminorSLfull} qui est utilisé pour les
-passes de middle-end.
-
-% TODO[E] est-ce un langage ? cf titre subsec*
+\paragraph{CompCert C, Clight et Cminor} sont des langages intermédiaires
+utilisés dans Compcert, un compilateur certifié pour C
+~\cite{cfront,cminorSLfull}. C'est-à-dire que les transformations sémantiques
+sont faites de manière prouvée. Ces langages intermédiaires sont utilisés pour
+les passes de front-end et de middle-end.
 
 \section{Le projet Penjili}
 \added{toute la section}
@@ -446,12 +440,10 @@ effet été réalisés dans l'équipe de sécurité et sûreté logicielle d'EAD
 Innovation Works, dans le cadre d'une convention industrielle de formation par
 la recherche (CIFRE).
 
-% TODO[S] ↓ français
-
-Aujourd'hui, la réussite de missions dépend de logiciels de taille de plus en
-plus importante. Ainsi en cas de fautes dans ce genre de logiciel, on peut se
-retrouver face à grands impacts économiques, voire risquer des vies humaines. On
-comprend bien que les phases de vérification et de certification sont au cœur
+Aujourd'hui, la réussite de missions dépend de logiciels dont la taille est de
+plus en plus grande. Ainsi en cas de fautes dans ce genre de logiciel, on peut
+se retrouver face à grands impacts économiques, voire risquer des vies humaines.
+On comprend bien que les phases de vérification et de certification sont au cœur
 du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
 vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
 vol avait été vérifié plus efficacement~\cite{Ariane501}.
