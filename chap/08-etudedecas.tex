@@ -250,8 +250,6 @@ Il est répertorié sur \url{http://freedesktop.org} en tant que bug \#29340.
 Pour changer de mode graphique, les pilotes de GPU peuvent supporter le
 \emph{Kernel Mode Setting} (KMS).
 
-% TODO[E] en dire un mot
-
 Pour configurer un périphérique, l'utilisateur communique avec le pilote noyau
 avec le mécanisme d'\emph{ioctls} (pour \emph{Input/Output Control}).
 Ils sont similaires à des appels système, mais spécifiques à un périphérique
@@ -273,9 +271,6 @@ GPU AMD Radeon.
 \caption{Code de la fonction \texttt{radeon\_info\_ioctl}}
 \label{fig:kms-buggy}
 \end{figure}
-
-% TODO[E] pourquoi des sauts de ligne? est-ce le code d'origine?
-% TODO il y a la place maintenant
 
 On peut voir que l'argument \texttt{data} est converti en un \texttt{struct
 drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
@@ -338,16 +333,14 @@ Dans d'anciennes versions de Linux\footnote{Jusqu'à la version 2.6.28 --- ce bu
 a été corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
 \texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
 appelle \texttt{memcpy} au lieu de \nolinkurl{copy\_from\_user} pour lire dans
-la mémoire du processus. La ligne problématique est préfixée par \texttt{/*
-=\textgreater{} */}. En théorie, si un utilisateur passe un pointeur vers une
-adresse du noyau à la fonction \texttt{ptrace}, il pourra lire des données du
-noyau. L'appel \texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet ainsi non
-seulement de lire les variables du processus \texttt{p} si \texttt{addr} est une
-adresse dans l'espace utilisateur (ce qui est le comportement attendu), mais
-aussi de lire dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug
-de sécurité).
-
-% TODO[E] marqueur: fais pareil sur le 1er ex
+la mémoire du processus. La ligne problématique est préfixée par
+\texttt{/*=\textgreater{}*/}. En théorie, si un utilisateur passe un pointeur
+vers une adresse du noyau à la fonction \texttt{ptrace}, il pourra lire des
+données du noyau. L'appel \texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet
+ainsi non seulement de lire les variables du processus \texttt{p} si
+\texttt{addr} est une adresse dans l'espace utilisateur (ce qui est le
+comportement attendu), mais aussi de lire dans l'espace noyau si \texttt{addr} y
+pointe (ce qui est un bug de sécurité).
 
 \begin{figure}
     \insertcode{blackfin-ptrace.c}
