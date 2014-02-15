@@ -22,12 +22,8 @@ structuré, modélisant les cadres de piles présents dans le langage. Pour déc
 la sémantique des accès mémoire, nous utilisons le concept de lentilles issues
 de la programmation fonctionnelle et des systèmes de bases de données. Cela
 permet de définir de manière déclarative la modification en profondeur de
-valeurs dans la mémoire, sans avoir à dupliquer le cas de la lecture et celui de
-l'écriture.
-
-% TODO[S] distinguer
-
-% (je crois que c'était ça avant)
+valeurs dans la mémoire, sans avoir à distinguer le cas de la lecture et celui
+de l'écriture.
 
 \paragraph{Un système de types abstraits}
 
@@ -90,7 +86,7 @@ similaire: les littéraux entiers ont le type de précision arbitraire
 \paragraph{Transtypage et unions}
 
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
-de capturer de nombreuses constructions qui sont possibles, ou même idiomatiques
+de capturer de nombreuses constructions qui sont permises, ou même idiomatiques
 en C:\@ les unions, les conversions de types (explicites ou implicites) et le
 \emph{type punning} (défini ci-dessous). Les deux premières sont équivalentes.
 Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
@@ -98,8 +94,6 @@ type $t_2$ par l'appel à une fonction $\mathrm{cast}_{t_1,t_2}$, on ajoute alor
 un \enquote{trou} dans le système de types. Cette fonction devrait en effet être
 typée $(t_1) → t_2$, autrement dit le type \enquote{maudit} $α → β$ de
 \texttt{Obj.magic} en OCaml ou \texttt{unsafeCoerce} en Haskell.
-
-% TODO[E] impossible/possible
 
 Le \emph{type punning} consiste à modifier directement la suite de bits de
 certaines données pour la manipuler d'une manière efficace. Par exemple, il est
@@ -244,9 +238,6 @@ En pratique, il est rare de trouver ces constructions plus avancées dans du cod
 noyau ou embarqué, donc ce manque n'a pas beaucoup d'impact. De plus, cela
 permet une présentation plus simple et accessible.
 
-% TODO[S] c'est vrai ça?
-% TODO[S] onpourrait imaginer de l'asm inline
-
 \paragraph{Allocation dynamique}
 
 La plupart des programmes, et le noyau Linux en particulier, utilisent la notion
@@ -266,8 +257,6 @@ sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
 mémoire contenant cette valeur (la taille de chaque valeur fait partie de
 celle-ci). Le typage est alors direct:
-
-% TODO[S] mais à l'intérieur c'est pas typé
 
 \begin{mathpar}
   \irule{New}
