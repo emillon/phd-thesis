@@ -395,9 +395,8 @@ pointeurs utilisateur, on ajoute un commentaire spécial \texttt{!npk
 userptr\_fieldp x f}, qui indique que \texttt{x} est un pointeur vers une
 structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
 il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
-inconnue de type.
-
-% TODO[E] on a le droit à quoi en annotant?
+inconnue de type. Cette annotation est nécessaire car c'est le moyen d'indiquer
+que la structure contient un pointeur utilisateur.
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
