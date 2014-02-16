@@ -498,7 +498,7 @@ par manque de précision. Dans la troisième l'approximation n'est pas
 difficulté est donc de construire une surapproximation correcte mais conservant
 une précision suffisante.
 
-\begin{figure}[h]
+\begin{figure}[h]%{{{
 \centering
 
 \tikzstyle{patA}=[fill=white]
@@ -553,11 +553,10 @@ une précision suffisante.
 
 \end{tikzpicture}
 \caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
-des états effectifs du programme, noté par des points, est surapproximé par
+des états effectifs du programme, noté par des points, est approximé par
 l'ensemble en gris.}
 \label{fig:staticanalysis}
-% TODO[S] caption faux: pas le cas en bas à gauche
-\end{figure}
+\end{figure}%}}}
 
 Pour construire cette surapproximation, on peut employer divers outils. Par
 exemple, un entier pourra être représenté par sa valeur minimale et sa valeur
@@ -565,8 +564,6 @@ maximale (domaine abstrait des intervalles), et un pointeur sur un tableau peut
 être représenté par un ensemble de variables associé à un décalage
 (\emph{offset}) par rapport au début de la zone mémoire (domaine des pointeurs
 sur tableaux).
-
-%TODO[S] ↑ redite avec le domaine des intervalles du para précédent
 
 %\begin{figure}
 %\insertcode{strlen.c}
@@ -599,11 +596,9 @@ restreint à la boucle infinie et au saut en avant (\enquote{\emph{break}}
 généralisé).
 
 Enfin, lorsque certaines constructions sont ambigües, un choix est fait. Par
-exemple, l'évaluation des arguments d'une fonction est faite de manière
-explicite, les tailles des types sont indiquées à chaque déclaration de
-variable, etc.
-
-% TODO[S] ex sur l'éval des arfuments
+exemple, l'évaluation des arguments d'une fonction est faite dans un ordre
+précis, les tailles des types sont indiquées à chaque déclaration de variable,
+etc.
 
 Séparer le langage intermédiaire de la phase d'analyse permet de beaucoup
 simplifier l'analyseur statique. D'une part, les constructions redondantes comme
@@ -611,15 +606,12 @@ les différents types de boucles ne sont traitées qu'une fois. D'autre part,
 lorsque le langage source est étendu (en supportant une nouvelle extension de C
 par exemple), l'analyseur n'a pas besoin d'être modifié.
 
-% TODO[S] non pas tous libres ↓
-
-Ces outils sont disponibles sous license libre sur~\link{penjili}. L'analyseur
-statique Penjili, reposant sur ces outils, a été utilisé pour analyser des
-logiciels embarqués critiques de plusieurs millions de lignes de code. Ce
-dernier n'est pour le moment pas \emph{open-source}. Tous ces outils sont écrits
-dans le langage OCaml~\cite{DAOC}.
-
-% TODO[E] pourquoi pas open source?
+Le langage \newspeak, ainsi que les outils permettant de le manipuler, sont
+disponibles sous license libre sur~\link{penjili}. L'analyseur statique Penjili,
+reposant sur ces outils, a été utilisé pour analyser des logiciels embarqués
+critiques de plusieurs millions de lignes de code. Ce dernier n'est pour le
+moment pas \emph{open-source}. Tous ces outils sont écrits dans le langage
+OCaml~\cite{DAOC}.
 
 \section{De l'avionique à l'informatique d'entreprise}
 \added{toute la section}
