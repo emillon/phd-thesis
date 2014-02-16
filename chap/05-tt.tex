@@ -520,9 +520,8 @@ Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes, mais
 pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
 de déterminer à l'exécution. On le remplace donc par un cas plus simple où seul
-l'arité est conservée.
-
-% TODO[E] pourquoi ne pas garder le type à l'exécution?
+l'arité est conservée. L'alternative serait de garder le type à l'exécution, ce
+qui éloigne d'un langage à la C.
 
 \paragraph{Remarque}
 
@@ -1100,8 +1099,7 @@ On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
 \end{proof}
 
 %TODO[E] un peu court
-
-%TODO faisable je pense
+% (faisable je pense)
 
 \changed{Partout l'indice grand Phi a été supprimé}
 
@@ -1423,11 +1421,7 @@ parties du programme. Cela permet surtout de s'assurer que les programmes ne
 peuvent provoquer une erreur d'exécution que dans certains cas particuliers,
 comme les divisions ou les accès aux tableaux.
 
-À l'issue de ce chapitre, on a donc un langage impératif sain pour bâtir de
-nouvelles analyses de typage, ce que nous allons faire dans le chapitre
-suivant.
-
-% TODO[E] nouvelles => pourquoi ne pas avoir integré les extrensions tout de
-% suite
+À l'issue de ce chapitre, on a donc un langage impératif sain pour bâtir des
+analyses de typage, ce que nous allons faire dans le chapitre suivant.
 
 % vim: spelllang=fr
