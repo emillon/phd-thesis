@@ -1,13 +1,11 @@
 Dans ce chapitre, nous décrivons la mise en œuvre des analyses statiques
 précédentes. Notons que, malgré qu'elles aient été décrites sur \langname, leur
-implantation est faite sur la représentation intermédiaire \newspeak. Nous
-commençons donc par décrire celle-ci. Ensuite, nous décrivons la phase de
-compilation, de C à \newspeak, auquel on rajoute ensuite des étiquettes de
-types. Celles-ci sont calculées par un algorithme d'inférence de types à la
+implantation est faite sur la représentation intermédiaire \newspeak, développée
+par EADS. Nous commençons donc par décrire celle-ci. Ensuite, nous décrivons la
+phase de compilation, de C à \newspeak, auquel on rajoute ensuite des étiquettes
+de types. Celles-ci sont calculées par un algorithme d'inférence de types à la
 Hindley-Milner, reposant sur l'unification et le partage de références. Toutes
 ces étapes sont implantées dans le langage OCaml~\cite{DAOC}.
-
-% TODO[S] pourquoi?
 
 Le prototype décrit ici est disponible sur~\link{penjili} sous une license
 libre, la \emph{GNU Lesser General Public License}.
@@ -188,13 +186,7 @@ Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle \emph{for}, \newspeak fournit une unique boucle
 \phx\npkWhile. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto},
 qui est toujours un saut vers l'avant (similaire à un \enquote{\emph{break}}
-généralisé). Par conséquence, notre implantation gère les sauts, alors que, dans
-\langname, cette construction n'est pas possible (figure~\ref{fig:stx}, page
-\pageref{fig:stx}).
-
-% TODO[E] Par conséquence... : et donc?
-
-% TODO[S] notre = ?
+généralisé).
 
 \newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
@@ -626,8 +618,6 @@ et~\ref{cha:qualifs} ont été implantées sous forme d'un prototype utilisant l
 langage \newspeak développé par EADS. Cela permet de réutiliser les phases de
 compilation déjà implantées, et d'exprimer les règles de typage sur un langage
 suffisament simple.
-
-% TODO[E] EADS: le dire avant
 
 On utilise un algorithme par unification, qui donne une forme simple au
 programme d'inférence. Pour chaque expression ou instruction à typer, on
