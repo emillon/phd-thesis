@@ -3,9 +3,8 @@ avons présenté ici notre démarche expérimentale. Dans le
 chapitre~\ref{cha:implem}, nous avons détaillé l'implantation de notre
 prototype. Pour ce faire, nous avons ajouté des étiquettes de type au langage
 \newspeak et adapté l'algorithme W de Damas et Milner pour réaliser l'inférence
-de types.
-
-% TODO[S] ocaml, nom du proto, taille du code...
+de types. Ce prototype est distribué sur~\link{penjili} sous le nom de
+\texttt{ptrtype}. Il est constitué d'environ 1600 lignes d'OCaml.
 
 Ensuite, le but du chapitre~\ref{cha:etudedecas} est d'appliquer notre analyse
 (à l'aide de ce prototype) sur le noyau Linux. Après avoir décrit le
@@ -30,12 +29,7 @@ différent de celui de \langname (ainsi que décrit dans le
 chapitre~\ref{cha:lang}). \newspeak est en effet prévu pour implanter des
 analyses précises de valeur reposant sur l'interprétation abstraite, et
 nécessite donc un modèle mémoire de plus bas niveau (où on peut créer des
-valeurs à partir d'une suite d'octets, par exemple). Il est aussi à noter que,
-bien que l'évaluation de \langname ait été décrite dans la
-partie~\ref{part:lang}, c'est principalement dans le but de démontrer des
-propriétés sémantiques: l'interprète n'a pas été implanté.
-
-% TODO[E] ?? l'idée est d'utiliser un compilo C
+valeurs à partir d'une suite d'octets, par exemple).
 
 Le prototype d'implantation peut évoluer dans deux directions: d'une part, en
 continuant à s'appuyer sur \newspeak, on peut réaliser des pré-analyses de
@@ -46,12 +40,9 @@ rencontrés. D'autre part, il est possible de faire une implantation plus fidèl
 de C. Par exemple, un système de régions comme~\cite{jfp92} permettrait de
 simplifier l'environnement d'exécution en enlevant l'opération de nettoyage
 mémoire $\phx\cCleanup$. Le système de types peut également être enrichi, pour
-ajouter par exemple du polymorphisme. Le chapitre~\ref{cha:conclusion} présente
-quelques unes de ces extensions possibles.
-
-%TODO[S] ça permettrait d'analyser quel genre de langage de prog?
-
-% (=> Rust)
+ajouter par exemple du polymorphisme. Cela rapprocherait le langage source de
+Rust. Le chapitre~\ref{cha:conclusion} présente quelques unes de ces extensions
+possibles.
 
 L'expérimentation, quant à elle, est pour le moment limitée, mais on peut
 l'étendre à des domaines de plus en plus importants dans le noyau Linux. Tout
