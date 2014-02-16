@@ -252,13 +252,11 @@ en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le cod
 source à analyser dans un langage, et traduire les résultats de l'analyse en un
 ensemble d'alarmes à présenter à l'utilisateur.
 
-% TODO[E] il y a pls fois cette def et cet usage de "sound"
-
 Cette technique est très puissante: si un interprète abstrait \emph{sound}
-(c'est-à-dire ne manquant aucun programme incorrect) analyse un programme et ne
-renvoie pas d'erreur, alors on a prouvé que le programme est correct (par
-rapport aux propriétés que vérifient les domaines abstraits). Cela a été
-appliqué avec succès avec les analyseurs
+(réalisant une surapproximation, c'est-à-dire ne manquant aucun programme
+incorrect) analyse un programme et ne renvoie pas d'erreur, alors on a prouvé
+que le programme est correct (par rapport aux propriétés que vérifient les
+domaines abstraits). Cela a été appliqué avec succès avec les analyseurs
 Astrée~\cite{Astree04,Astree05,AstreeScale} chez Airbus ou CGS~\cite{cgs} à la
 NASA par exemple.
 
@@ -268,16 +266,14 @@ peuvent remonter un nombre prohibitif de fausses alarmes. Pour \enquote{aider}
 l'analyse, il faut soit annoter le code soit développer des domaines abstraits
 \emph{ad hoc} au programme à analyser.
 
-Il existe également des analyseurs statiques par interprétation abstraite qui ne
-sont pas \emph{sound}, c'est-à-dire qui peuvent manquer des comportements
-erronés. Leur approche est plus d'aider le programmeur à détecter certains types
-de bugs pendant le développement. On citer l'exemple de
-Coverity~\cite{coverityBillion}, qui publie régulièrement des rapports de
-qualité sur certains logiciels \emph{open-source}. Néanmoins, de part leur
-aspect non \emph{sound}, les analyses réalisées ne peuvent pas être assimilées à
-de la vérification formelle en tant que telle.
-
-% TODO[S] ↑ ils ne sont pas basés que sur AI car AI garantit soundness
+Il existe également des analyseurs statiques combinant l'interprétation
+abstraite avec d'autres techniques et qui ne sont pas \emph{sound}, c'est-à-dire
+qu'ils peuvent manquer des comportements erronés. Leur approche est plus d'aider
+le programmeur à détecter certains types de bugs pendant le développement. On
+citer l'exemple de Coverity~\cite{coverityBillion}, qui publie régulièrement des
+rapports de qualité sur certains logiciels \emph{open-source}. Néanmoins, de
+part leur aspect non \emph{sound}, les analyses réalisées ne peuvent pas être
+assimilées à de la vérification formelle en tant que telle.
 
 Enfin, l'interprétation abstraite n'est pas la seule technique pour analyser
 finement les valeurs d'un programme. Par exemple, le système
@@ -288,7 +284,7 @@ utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Comme
 l'interprétation abstraite, le but de cette analyse est d'être très précis, au
 détriment d'un temps de calcul important dans certains cas.
 
-% TODO[E] quid du model checking? et de la preuve de programme
+% TODO[E] quid du model checking?
 
 \section{Typage}
 
@@ -401,12 +397,9 @@ la correction du programme (par rapport aux propriétés capturées par le syst�
 de types).
 
 Le typage statique peut également être implanté de manière efficace. Même si
-l'inférence peut, dans certains cas, atteindre une complexité considérable, la
+l'inférence peut, dans certains cas, atteindre une complexité exponentielle, la
 plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
 linéaire en la taille du programme considéré.
-
-
-% TODO[E] considérable => c'est quoi par rapport à linéaire: exp?
 
 % TODO virer car para C7 en parle
 
@@ -463,12 +456,14 @@ encapsuler chaque utilisation dans un bloc marqué explicitement
 
 Les systèmes de types de ces projets apportent dans le langage différents types
 de pointeurs. Cela permet de manipuler finement la mémoire, à la manière des
-\emph{smart pointers} de C++. De cette approche on retient surtout l'analyse de
-régions de Rust qui permet de manipuler de manière sûre les adresses des
-variables locales, et les pointeurs lourds de Cyclone, qui apportent une sûreté
-à l'arithmétique de pointeurs, au prix d'un test dynamique.
+\emph{smart pointers} de C++. Ceux-ci sont des types de données abstraits
+permettant de déterminer quelle partie du code est responsable de la libération
+de la mémoire associée au pointeur.
 
-%TODO[E] smart pointers => en dire un mot ou citer
+De cette approche on retient surtout l'analyse de régions de Rust qui permet de
+manipuler de manière sûre les adresses des variables locales, et les pointeurs
+lourds de Cyclone, qui apportent une sûreté à l'arithmétique de pointeurs, au
+prix d'un test dynamique.
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
 peut pas les appliquer pour étudier la correction de logiciels existants. Dans
@@ -476,12 +471,11 @@ cette perspective, le langage CCured~\cite{ccured-toplas} a pour but d'ajouter
 un système de types forts à C (y compris pour des programmes existants). Dans
 les cas où il n'est pas possible de prouver que le programme s'exécutera
 correctement, des vérifications à l'exécution sont ajoutées. Cependant, cela
-nécessite une instrumentation dynamique qui se paye en performances. Le
+nécessite une instrumentation dynamique qui se paye en performances et interdit
+la certification, car l'environnement d'exécution doit être inchangé. Le
 compilateur Fail-Safe C~\cite{oiwa09} \added{FailsafeC} utilise une approche
 similaire permettant de garantir la sûreté d'exécution des programmes C tout en
 respectant la totalité de la norme C89.
-
-% TODO[S] non applicables pour certif car instrumentation
 
 \section{Logique de Hoare}
 
@@ -524,9 +518,7 @@ Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation
 lorsque c'est possible, sinon à l'exécution.
 
-% TODO[S] découpler?
-
-La règle de conséquence permet de découpler les propriétés du programme
+La règle de conséquence permet de séparer les propriétés du programme
 lui-même: plusieurs niveaux d'annotations sont possibles, du moins précis au
 plus précis. En fait, il est même possible d'annoter chaque point de contrôle
 par l'ensemble d'annotations vide: \hoare{T}{i}{T} est toujours vrai.
