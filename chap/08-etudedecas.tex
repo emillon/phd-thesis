@@ -42,11 +42,7 @@ difficulté pour traiter le code du noyau est donc de le compiler.
 
 Pour traduire ce dialecte, il a été nécessaire d'adapter \ctonewspeak. La
 principale particularité est la notation \verb!__attribute__((...))! qui peut
-décorer les déclarations de fonctions, de variables ou de types. De nouvelles
-fonctionnalités sont aussi présentes.
-
-% TODO rajouts propres à moi ou pas?
-% TODO[E] dire que cela est inclus dans ton travail
+décorer les déclarations de fonctions, de variables ou de types.
 
 Par exemple, il est possible de manipuler des étiquettes de première classe: si
 \enquote{\texttt{lbl:}} est présent avant une instruction, on peut capturer
@@ -70,9 +66,10 @@ Les attributs, quant à eux, rentrent dans trois catégories:
     spécifie qu'un objet doit être aligné sur au moins \texttt{n} bits.
 \end{itemize}
 
-Dans notre cas, toutes ces annotations peuvent être ignorées.
-
-% TODO[E] quel intérêt alors?
+Dans notre cas, toutes ces annotations peuvent être ignorées, mais il faut tout
+de même adapter l'analyse syntaxique pour les ignorer. En particulier, pour le
+traitement du noyau Linux, il a fallu traiter certaines formes de la
+construction \texttt{typeof} qui n'étaient pas supportées.
 
 \section{Configuration}
 
