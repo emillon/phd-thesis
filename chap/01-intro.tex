@@ -724,32 +724,11 @@ programmes d'une manière subtile et pas toujours bien spécifiée ni documenté
 
 Le but de ce travail est de définir et d'implanter des analyses statiques
 \enquote{légères}sur le langage C, c'est-à-dire plus simples que les analyses de
-valeurs par interprétation abstraite. Il est possible de réaliser celles-ci,
-soit directement sur C, soit en utilisant un des langages intermédiaires
-mentionnés dans la section~\ref{sec:lang-int}. Nous proposons d'étendre
-\newspeak pour analyser des propriétés de sécurité par typage sur du code non
-avionique. Cela est pertinent pour les raisons suivantes:
-
-% TODO [S] tu as déjà expliqué que ct mieux sur un IR!!
-% TODO [S] pas clair
-
-\begin{itemize}
-
-\item
-Les types permettent de modéliser l'environnement d'exécution d'un
-programme (ici, les paramètres d'appels système) avec un grain assez grand. Être
-plus fin est difficile et nécessite de modéliser l'environnement.
-
-\item
-Réaliser des analyses syntaxiques sur \newspeak peut permettre de guider en
-amont des analyses de valeurs plus précises (par exemple en choisissant des
-domaines abstraits particuliers). Le typage de \newspeak est un premier pas dans
-cette direction.
-
-% TODO[E] ??
-% TODO[S] ?? pas syntaxique
-
-\end{itemize}
+valeurs par interprétation abstraite.  Nous proposons d'étendre \newspeak pour
+analyser des propriétés de sécurité par typage sur du code non avionique. En
+effet, les types permettent de modéliser l'environnement d'exécution d'un
+programme (ici, les paramètres d'appels système) avec un grain assez grand,
+alors qu'être plus fin est difficile et nécessite de modéliser l'environnement.
 
 Nos contributions sont les suivantes:
 
