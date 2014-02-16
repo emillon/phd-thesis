@@ -71,24 +71,15 @@ de même adapter l'analyse syntaxique pour les ignorer. En particulier, pour le
 traitement du noyau Linux, il a fallu traiter certaines formes de la
 construction \texttt{typeof} qui n'étaient pas supportées.
 
-\section{Configuration}
-
-% TODO trop court
-
-Pour que le code noyau soit compilable, il est nécessaire de définir certaines
-macros. En particulier, le système de configuration de Linux utilise des macros
-nommées \texttt{CONFIG\_*} pour inclure ou non certaines fonctionnalités. Il a
-donc fallu faire un choix; nous avons choisi la configuration par défaut. Pour
-analyser des morceaux plus importants du noyau, il faudrait définir un fichier
-de configuration plus important.
+De plus, pour que le code noyau soit compilable, il est nécessaire de définir
+certaines macros. En particulier, le système de configuration de Linux utilise
+des macros nommées \texttt{CONFIG\_*} pour inclure ou non certaines
+fonctionnalités. Il a donc fallu faire un choix; nous avons choisi la
+configuration par défaut. Pour analyser des morceaux plus importants du noyau,
+il faudrait définir un fichier de configuration plus important.
 
 \section{Appels système sous Linux}
 \label{sec:linux-sys}
-
-%TODO[S] je ne trouve pas que le passage à l'asm soit parlant. rester au niveau
-%de C et montrer l'enchaînement des appels en disant lesquels sont en ring 0 et
-%ceux en ring 3 serait plus parlant. on ne voit pas bien les pointeurs ut et
-%noyau.
 
 Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
 le noyau Linux. Une description plus détaillée pourra être trouvée
@@ -418,13 +409,9 @@ version corrigée on peut inférer des types compatibles.
 Le prototype décrit dans le chapitre~\ref{cha:implem} peut donc s'adapter à
 détecter des bugs dans le noyau Linux. Pour le moment, il nécessite du code
 annoté, mais des travaux sont en cours pour permettre de passer automatiquement
-des portions plus importantes du noyau Linux. Une partie importante du travail
-est déjà faite puisque la phase de compilation depuis le code source supporte
-maintenant le dialecte GNU C.
-
-% TODO[S] fin: aucun rapport avec l'annotation automatique non?
-% TODO[S] oui mais il faut réécrire le code pour supprimer les constructions non
-% typables
+des portions plus importantes du noyau Linux. Le principal obstacle est de
+devoir réécrire certaines parties du code pour supprimer les constructions non
+typables.
 
 % TODO[E] à étendre, +++
 
