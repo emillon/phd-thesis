@@ -15,11 +15,9 @@ de la mémoire. Un des avantages de cette solution est qu'elle est très
 extensible. Par exemple, la propagation des erreurs ou l'ajout de continuations
 légères (c'est-à-dire le support des fonctions \texttt{setjmp} et
 \texttt{longjmp}) peuvent facilement être exprimés dans un formalisme monadique.
-Nous avons préféré une présentation classique qui reste plus accessible, et
-suffisante compte tenu de la simplicité des constructions à interpréter dans le
-langage.
-
-% TODO[E] ↑ et pour les programmeurs C
+Nous avons préféré une présentation classique qui reste plus accessible une
+audience habituée à C, et suffisante compte tenu de la simplicité des
+constructions à interpréter dans le langage.
 
 Ensuite, dans le chapitre~\ref{cha:typbase} nous avons ajouté un système de
 types à \langname. Le but est de restreindre le genre d'erreurs qui peuvent
@@ -72,9 +70,6 @@ type qualifié $\qUser~\tInt$, alors $(\tFloat~*)~e$ aura pour type qualifié
 $\qUser~\tFloat~*$, et déréférencer cette expression produira une erreur de
 typage. \langname, dans son état actuel, ne permet pas de traiter les
 conversions de type et ne permet donc pas de traiter ce cas.
-
-% TODO[E] n'est-ce pas possible en passant aussi au noyau le cast devient fct de
-% conversion
 
 Nous prenons, au contraire, l'approche de ne modifier le système de types que là
 où cela est nécessaire, c'est-à-dire sur les types pointeurs. Cela permet de ne
