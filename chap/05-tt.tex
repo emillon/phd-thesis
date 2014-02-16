@@ -2,6 +2,10 @@ Dans ce chapitre, nous enrichissons le langage défini dans le
 chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
 programmes bien formés, comme celui de la figure~\ref{fig:progwf:good}, des
 programmes mal formés, comme celui de la figure~\ref{fig:progwf:bad}.
+Intuitivement, le programme mal formé provoquera des erreurs à l'exécution car
+il manipule des données de manière incohérente: la variable \texttt{x} reçoit 1,
+donc elle se comporte comme un entier, puis est déférencée, se comportant comme
+un pointeur.
 
 \begin{SaveVerbatim}[]{VerbProgGood}
 f = Fun() {
@@ -42,8 +46,6 @@ f = Fun() {
 
 \end{figure}
 
-% TODO[E] dire en quoi bien/mal formé
-
 Le but d'un tel système de types est de rejeter les programmes pour lesquels on
 peut facilement déterminer qu'ils sont faux, c'est-à-dire dont on peut prouver
 qu'ils provoqueraient des erreurs à l'exécution dues à une incompatibilité entre
@@ -51,20 +53,8 @@ valeurs. En ajoutant cette étape, on restreint la classe d'erreurs qui
 pourraient bloquer la sémantique.
 
 On emploie un système de types monomorphe: à chaque expression, on associe un
-type, et non un schéma de types. Il y a deux exceptions : tout d'abord, le
-pointeur $\eNull$ a pour type $t~*$. Mais cela ne pose pas de complications, car
-il n'y a pas d'étape de généralisation de $t$. Cela indique seulement que
-$\eNull$ est compatible avec n'importe quel type pointeur. L'autre cas concerne
-les tests d'égalité, qu'on veut pouvoir faire sur les valeurs de types scalaires
-et récursivement sur tous les types composés (on veut par exemple éviter de
-tester l'égalité de deux fonctions). Là encore, cela ne pose pas de problème,
-puisqu'on peut statiquement savoir si un type a cette propriété ou pas.
-
-% TODO[E] un peu court et pas si simple ou peu clair
-% TODO[E] exceptions pas clair (schéma: pas défini: à suppr?)
-
-En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut construire des
-types composés: pointeurs, tableaux, structures et fonctions.
+unique type. En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut
+construire des types composés: pointeurs, tableaux, structures et fonctions.
 
 Pour typer les structures, on suppose avoir à notre disposition (par un
 prétraitement, par exemple) le type complet de la structure à chaque accès d'un
@@ -224,6 +214,8 @@ ce sont toujours des entiers ou des flottants.
 \end{mathpar}
 
 Le pointeur nul, quant à lui, est compatible avec tous les types pointeur.
+Cependant, il conserve bien un type monomorphe: le type $t$ n'est pas
+généralisé.
 
 \begin{mathpar}
   \disprule{Cst-Null}
