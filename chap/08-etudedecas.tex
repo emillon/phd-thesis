@@ -152,50 +152,14 @@ nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 e
 \enquote{magiques} qui font appel au système d'exploitation pour effectuer des
 opérations.
 
-Voyons ce qui se passe derrière la magie apparente. Une explication plus
-détaillée est disponible dans la documentation fournie par
-Intel~\cite{intelsys}.
+Par exemple, le programmeur peut appeller la fonction \texttt{getpid} pour
+connaître le numéro du processus courant. Cela passe par une fonction
+\texttt{getpid} dans la bibliothèque C, en espace utilisateur. Celle-ci va
+invoquer (via un mécanisme non pertinent ici) la fonction \texttt{sys\_getpid}
+du noyau (figure~\ref{fig:syscall-def}).
 
-\paragraph{Dans la bibliothèque C}
-
-Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
-système. C'est la fonction qui est directement appelée par le programme. Cette
-fonction commence par placer le numéro de l'appel système (noté
-\texttt{\_\_NR\_getpid}, valant 20 ici) dans \eax, puis les arguments éventuels
-dans les registres (\ebx, \ecx, \edx, \esi{} puis \edi). Une interruption
-logicielle est ensuite déclenchée (\verb!int 0x80!).
-
-\paragraph{Dans la routine de traitement d'interruption}
-
-Étant donné la configuration du processeur\footnote{Il est impropre de dire que
-le processeur est configuré --- tout dépend uniquement de l'état de certains
-registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
-Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
-prédéfini (dans \verb!arch/x86/kernel/entry_32.S!,
-figure~\ref{fig:entry-syscall})
-
-\begin{figure}[h]
-    \insertcode{entry-syscall.s}
-    \caption{Point d'entrée des appels système}
-    \label{fig:entry-syscall}
-\end{figure}
-
-% TODO[E] overflow
-
-L'exécution reprend donc en \ring{0}, avec dans \esp{} le pointeur de pile noyau
-du processus. Les valeurs des registres ont été préservées; la macro
-\texttt{SAVE\_ALL} les place sur la pile. Ensuite, à l'étiquette
-\texttt{syscall\_call}, le numéro d'appel système (toujours dans \eax) sert
-d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
-
-
-\paragraph{Dans l'implantation de l'appel système}
-
-Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
-fonction \enquote{classique}, la convention d'appel \emph{cdecl} est respectée.
-La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
-être écrite en C. On la trouve dans \texttt{kernel/timer.c}
-(figure~\ref{fig:syscall-def}).
+Comme les piles sont différentes entre les espaces, la convention d'appel est
+différente: les arguments sont copiés directement par les registres.
 
 \begin{figure}[h]
     \insertcode{syscall-definition.c}
@@ -203,22 +167,11 @@ La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
     \label{fig:syscall-def}
 \end{figure}
 
-% TODO[S] un peu rude à comprendre
-
-La macro \texttt{SYSCALL\_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
-définit entre autres des points d'entrée pour les fonctionnalités de débogage du
-noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
-conformément à la convention \emph{cdecl}.
-
-\paragraph{Retour vers le ring 3}
-
-Au retour de la fonction, la valeur de retour est placée à la place de \eax{} là
-où les registres ont été sauvegardés sur la pile noyau
-(\texttt{PT\_EFLAGS(\%esp)}). % chktex 36
-L'instruction \texttt{iret} (derrière la macro
-\texttt{INTERRUPT\_RETURN}) permet de restaurer les registres et de repasser en
-mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
-peut alors retourner au programme appelant.
+La macro \texttt{SYSCALL\_DEFINE0} permet de nommer la fonction
+\texttt{sys\_getpid}, et définit entre autres des points d'entrée pour les
+fonctionnalités de débogage du noyau. Le corps de la fonction fait directement
+référence aux structures de données internes du noyau pour retourner le résultat
+voulu.
 
 \section{Risques}
 \label{sec:risques-dos}
