@@ -201,15 +201,14 @@ Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
 principalement à s'assurer que les hypothèses faites par les différentes unités
 de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
 invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
-aient un nom globalement unique.
+aient un nom globalement unique. Cette étape se conclut par la création d'un
+fichier \newspeak.
 
-% TODO[S] on dirait que tu fais ça dans c2npk
-
-Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
-décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
-simple. Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on
-peut utiliser une variante de l'algorithme W de Damas et
-Milner~\cite{DamasMilner}.
+La dernière étape est réalisée dans un autre outil nommé \ptrtype. Elle consiste
+en l'implantation d'un algorithme d'inférence pour les systèmes de types décrits
+dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez simple.
+Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on peut
+utiliser une variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
 
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
