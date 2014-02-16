@@ -1,10 +1,8 @@
 \long\def\partintro{
-Dans cette partie, nous allons présenter un langage impératif modélisant le
-langage C. Le chapitre~\ref{cha:lang} décrit sa syntaxe, ainsi que sa sémantique
-d'exécution. À ce point, de nombreux programmes acceptés peuvent provoquer des
-erreurs à l'exécution.
-
-% TODO[S] le langage C ou une sous classe ?
+Dans cette partie, nous allons présenter un langage impératif modélisant une
+sous-classe \enquote{bien typable} du langage C. Le chapitre~\ref{cha:lang}
+décrit sa syntaxe, ainsi que sa sémantique d'exécution. À ce point, de nombreux
+programmes acceptés peuvent provoquer des erreurs à l'exécution.
 
 Afin de rejeter ces programmes incorrects, on définit ensuite dans le
 chapitre~\ref{cha:typbase} une sémantique statique s'appuyant sur un système de
@@ -36,10 +34,11 @@ possibles en contexte noyau.
 
 L'introduction des types simples enlève la possibilité de rencontrer le premier
 cas. Il reste en revanche toujours possible de rencontrer des erreurs mémoire
-(ainsi que des divisions par zéro). En présence d'extensions permettant de
-manipuler des pointeurs utilisateurs, une extension naïve du système de types
-n'empêche pas la présence d'erreurs de sécurité, qui sont évitées par l'ajout de
-règles de typage supplémentaires.
+ainsi que des divisions par zéro. Éliminer ces erreurs dépasse le cadre de ce
+travail.
 
-%TODO[S] il reste => comment on fait alors? combinaison avec analyse dyn?
+En présence d'extensions permettant de manipuler des pointeurs utilisateurs, une
+extension naïve du système de types ne suffit pas à empêcher la présence
+d'erreurs de sécurité. Celles si sont évitées par l'ajout de règles de typage
+supplémentaires.
 }
