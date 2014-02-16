@@ -130,6 +130,7 @@ fichier. Pour une explication détaillée du concept de système d'exploitation
 ainsi que des cas d'étude, on pourra se référer à~\cite{tanenbaum}.
 
 \section{Séparation entre espace noyau et espace utilisateur}
+\label{sec:sep-esp}
 
 Puisque le noyau est garant d'une utilisation sûre du matériel, il ne doit pas
 pouvoir être manipulé directement par l'utilisateur ou les programmes exécutés.
@@ -410,8 +411,6 @@ texte), il est possible d'obtenir du code machine efficace. Le compilateur
 Haskell GHC, par exemple, utilise une représentation intermédiaire très
 similaire à C-~-.
 
-% TODO[E] diff C--/cil
-
 \subsection*{Langages intermédiaires ad hoc}
 
 Comme le problème de construire une représentation intermédiaire adaptée à une
@@ -432,13 +431,12 @@ les passes de front-end et de middle-end.
 \section{Le projet Penjili}
 \added{toute la section}
 
-% TODO[S] problème? ↓
-
-En face de ce problème théorique et technique, il faut mettre en perspective les
-problématiques industrielles liées à celui-ci. Les travaux présentés ici ont en
-effet été réalisés dans l'équipe de sécurité et sûreté logicielle d'EADS
-Innovation Works, dans le cadre d'une convention industrielle de formation par
-la recherche (CIFRE).
+En face du problème théorique et technique décrit dans la
+section~\ref{sec:sep-esp}, il faut mettre en perspective les problématiques
+industrielles liées à celui-ci. Les travaux présentés ici ont en effet été
+réalisés dans l'équipe de sécurité et sûreté logicielle d'EADS Innovation Works,
+dans le cadre d'une convention industrielle de formation par la recherche
+(CIFRE).
 
 Aujourd'hui, la réussite de missions dépend de logiciels dont la taille est de
 plus en plus grande. Ainsi en cas de fautes dans ce genre de logiciel, on peut
@@ -469,32 +467,18 @@ variables afin d'en déduire les ensembles de valeurs dans lesquels elles
 évoluent. En s'assurant que ceux-ci sont \enquote{sûrs}, on prouve l'absence
 d'erreurs de manière automatisée.
 
-L'analyse statique par interprétation abstraite se place à un niveau comparable
-à celui des tests unitaires et fonctionnels, c'est-à-dire très près du code. Le
-but est en particulier d'éliminer les erreurs au niveau du langage : division
-par zéro, déréférencement d'un pointeur nul ou invalide, débordement
-arithmétique sur les entiers, débordement de tableau, etc.
-
-% TODO[E] ? ↑
-
-En pratique, dans l'embarqué critique les règles de codage limitent les
-constructions posant problème. Par exemple, les exceptions, l'allocation
-dynamique (\texttt{malloc} / \texttt{free}), l'instruction \texttt{goto} et les
-fonctions récursives.
-
-% TODO[S] ↑ pas clair
-
 L'interprétation abstraite repose sur l'idée suivante : au lieu de considérer
 que les variables possèdent une valeur, on utilise un domaine abstrait qui
 permet de voir les variables comme possédant un ensemble de valeurs possibles.
 
+On dit que l'approche est \emph{sound} si l'abstraction d'un ensemble de valeurs
+est un surensemble de l'ensemble concret. Autrement dit, on réalise une
+surapproximation.
 
-Le domaine \enquote{sûr} a une forme assez simple compte tenu des erreurs
-considérées: c'est un produit d'ensembles simples, comme des intervalles.
-L'ensemble des comportements réels du programme est au contraire d'une forme
-plus complexe et non calculable.
-
-% TODO[E] déf sound
+La zone \enquote{sûre} (correspondant aux exécutions sans erreurs) a une forme
+assez simple compte tenu des erreurs considérées: c'est un produit d'ensembles
+simples, comme des intervalles. L'ensemble des comportements réels du programme
+est au contraire d'une forme plus complexe et non calculable.
 
 En calculant une approximation de ce dernier, de forme plus simple, on peut
 tester plus facilement que les comportements sont dans la zone sûre : le fait
@@ -513,9 +497,6 @@ par manque de précision. Dans la troisième l'approximation n'est pas
 émet une alarme à raison car il existe des comportements erronés. Toute la
 difficulté est donc de construire une surapproximation correcte mais conservant
 une précision suffisante.
-
-% TODO[S] termes corrects, surs non définis. tu parles à la fois
-% de domaines et de domaines abstraits
 
 \begin{figure}[h]
 \centering
