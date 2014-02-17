@@ -1849,12 +1849,51 @@ suivante (en évaluant $\&x$ en $\widehat{\&}(x)$ via \textsc{Exp-Addr}):
 \]
 
 La fonction et son argument sont évalués, donc on peut appliquer
-\textsc{Exp-Call-Ctx}.
+\textsc{Exp-Call-Ctx}. En posant $m_3' = \cPush{m_3}{(q ↦ \widehat{\&}(x))}$, le
+but est de trouver $m_3''$ et $v$ tels que:
+
+\[
+    \mm{m_3'}{*q←1;\iReturn{\eUnit}}{m_3''}{\iReturn{v}}
+\]
+
+Puisque l'instruction est une séquence, on va appliquer \textsc{Seq}. La
+première partie n'étant pas $\iPass$, il faut l'évaluer grâce à la règle
+\textsc{Ctx} avec $C = \ctxEmpty;\iReturn{\eUnit}$.
+
+Le nouveau but est de trouver un $m_3''$ tel que
+$\mm{m_3'}{*q←1}{m_3'}{\iPass}$.
+
+En appliquant \textsc{Phi-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
+$\mm{m_3'}{*q←1}{m_3'}{(x)←1}$.
+
+Puis on applique \textsc{Exp-Cst} sous $C = (x)←\ctxEmpty$ et
+$\mm{m_3'}{*q←1}{m_3'}{(x)←\widehat{1}}$.
+
+Maintenant que les deux côtés de $←$ sont évalués, on peut appliquer
+\textsc{Exp-Set}, et $\mm{m_3'}{*q←1}{m_3''}{\iPass}$ où:
+
+\[m_3 = ([[q↦(x)]],
+[main↦\widehat{\eFun{}{f(\&x);\iReturn{\eUnit}}}
+;f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
+;x↦\widehat{1}])
+\]
+
+Alors, d'après \textsc{Seq}, $\mm{m_3'}{*q←1}{m_3''}{\iReturn{()}}$.
+Avec \textsc{Exp-Cst} sous $C = \iReturn{\ctxEmpty}$, on a donc
+$\mm{m_3'}{*q←1}{m_3''}{\iReturn{\widehat{()}}}$.
+
+On peut enfin appliquer \textsc{Exp-Call-Ctx} pour en déduire que:
+
+\[
+    \mm{m_3}{f(\&x)}{m_3'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(x)) }
+\]
 
 % ...
 
 % TODO intégrer une structure
 % TODO intégrer if
+
+% TODO le main est pas appellé
 
 \section*{Conclusion}
 
