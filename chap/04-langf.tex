@@ -1764,6 +1764,98 @@ les unes à la suite des autres.
 
 \end{mathpar}
 
+\section{Exemple}
+
+Considérons le programme suivant:
+
+\begin{Verbatim}
+x = 0
+f = fun(q) {
+    *q <- 1
+    return ()
+}
+main = fun () {
+    f(&p)
+    return ()
+}
+main()
+\end{Verbatim}
+
+Ce programme est constitué des phrases $p_1, p_2, p_3$ et $p_4$. D'après
+\textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 4 phrases.
+
+\paragraph{Déclaration de \texttt{x}}
+
+D'après \textsc{Prog}, on part d'un état mémoire $m_0 = ([~], [~])$. Pour
+trouver $m_1$ tel que $\ph{m_0}{x = 0}{m_1}$, il faut appliquer la règle
+\textsc{ET-Var}.
+
+Celle-ci va étendre l'ensemble (vide) des globales mais demande d'évaluer
+l'expression $0$. D'après \textsc{Exp-Cst}, $\mm{m_0}{0}{m_0}{\widehat{0}}$.
+
+Donc $\ph{m_0}{x = 0}{m_1}$ en posant $m_1 = ([~], [x↦\widehat{0}])$.
+
+\paragraph{Déclaration de \texttt{f}}
+
+On se trouve encore dans le cas de la déclaration d'une variable globale. Il
+faut comme auparavant évaluer l'expression. C'est la règle \textsc{Exp-Fun} qui
+s'applique: $\mm{m_1}{\eFun{q}{*q←1;\iReturn{\eUnit}}}
+{m_1}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}$ (ce qui revient à dire que la
+fonction est directement placée en mémoire).
+
+Ainsi $\ph{m_1}{f = \eFun{q}{*q←1;\iReturn{\eUnit}}}{m_2}$ où:
+
+\[ m_2 = ([~], [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}};x↦\widehat{0}])\]
+
+\paragraph{Déclaration de \texttt{main}}
+
+Encore une fois, on définit une fonction. Ce cas est similaire au précédent et
+$\ph{m_2}{main = \eFun{}{f(\&x);\iReturn{\eUnit}}}{m_3}$ où:
+
+\[m_3 = ([~],
+[main↦\widehat{\eFun{}{f(\&x);\iReturn{\eUnit}}}
+;f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
+;x↦\widehat{0}])\]
+
+\paragraph{Appel de \texttt{main}}
+
+Ici, on évalue une expression pour ses effets de bords. La règle à appliquer est
+\textsc{ET-Exp}, qui a comme prémisse $\mm{m_3}{main()}{m_4}{v}$.
+
+D'après la forme de l'expression, la règle à appliquer va être
+\textsc{Exp-Call-Return}. Mais il va falloir d'abord réécrire l'expression à
+l'aide de \textsc{Ctx} (pour que l'expression appellée ait la forme
+$\widehat{f}$ et l'argument soit évalué) et \textsc{Exp-Call-Ctx} (pour que le
+corps de la fonction ait pour forme $\iReturn{\eUnit}$).
+
+Tout d'abord on applique donc \textsc{Ctx} avec $C = \ctxEmpty (\&x)$. Comme on
+a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
+
+\[
+    \mm{m_3}{f}{m_3}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}
+\]
+
+On en déduit que:
+
+\[
+    \mm{m_3}{f(\&x)}{m_3}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&x)}
+\]
+
+Une application supplémentaire de \textsc{Ctx} permet d'en arriver à la ligne
+suivante (en évaluant $\&x$ en $\widehat{\&}(x)$ via \textsc{Exp-Addr}):
+
+\[
+    \mm{m_3}{f(\&x)}{m_3}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(x))}
+\]
+
+La fonction et son argument sont évalués, donc on peut appliquer
+\textsc{Exp-Call-Ctx}.
+
+% ...
+
+% TODO intégrer une structure
+% TODO intégrer if
+
 \section*{Conclusion}
 
 On vient de définir un langage impératif, \langname. Le but est que celui-ci
