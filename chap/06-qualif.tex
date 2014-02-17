@@ -15,6 +15,42 @@ permettant d'explorer cette idée, en ajoutant de la \enquote{signification} dan
 les types de données des programmes. Ces extensions permettront de détecter des
 erreurs de programmation communes, appuyées sur des exemples réels.
 
+Cela revient à introduire une séparation entre le type des données et sa
+représentation, c'est-à-dire définir un type abstrait. Les pointeurs
+utilisateur sont en fait des pointeurs classiques déguisés, pour lesquels on
+interdit l'opérateur de déréférencement.
+
+Cette technique est en fait générique : on peut également l'appliquer à certains
+types d'entiers. En C, il est commun d'utiliser des \texttt{int} pour tout et
+n'importe quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
+identificateurs pour lesquels les opérations usuelles comme l'addition n'ont pas
+de sens. Par exemple, sous Linux, l'opération d'ouverture de fichier renvoie un
+entier, dit \emph{descripteur de fichier}, qui identifie ce fichier pour ce
+processus.
+Le langage autorise donc par exemple de multiplier entre
+eux deux descripteurs de fichiers, mais le résultat n'a pas de raison \emph{a
+priori} d'être un descripteur de fichier valide.
+
+En n'offrant pas cette distinction, le langage C permet d'écrire du code qui
+peut s'exécuter mais dont la sémantique n'est, quelque part, pas bien fondée. En
+effet, le système de types de C est trop primitif pour pouvoir garantir une
+véritable isolation entre deux types de même représentation : il n'y a pas de
+types abstraits. Certes, \texttt{typedef} permet d'introduire un nouveau nom
+pour un type, mais ce n'est qu'un raccourci syntaxique. Le compilateur ne peut
+en effet pas considérer un programme sans avoir la définition quasi-complète des
+types qui y apparaissent. La seule exception concerne les pointeurs sur
+structures : si on ne fait que les affecter, il n'est pas nécessaire de
+connaître la taille ni la disposition de la structure, donc la définition peut
+ne pas être visible. Cette technique, connue sous le nom de \emph{pointeurs
+opaques}, n'est pas applicable aux autres types.
+
+En ajoutant une couche de typage, on interdit ces opérations à la compilation.
+Cela permet deux choses : pour le code déjà écrit, de détecter et corriger les
+manipulations dangereuses ; et, pour le nouveau code, de s'assurer qu'il est
+correct. Par exemple, si on écrit un éditeur de texte, on peut éviter de
+nombreuses erreurs de programmation en définissant un type \enquote{indice de
+ligne} et un type \enquote{indice de colonne} incompatibles entre eux.
+
 Un premier exemple permet de distinguer plusieurs utilisations des entiers,
 selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de bits. Cela
 permet de détecter une erreur courante qui consiste à mélanger les opérateurs
