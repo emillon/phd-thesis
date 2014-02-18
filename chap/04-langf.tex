@@ -1772,17 +1772,15 @@ Considérons le programme suivant:
 x = 0
 f = fun(q) {
     *q <- 1
-    return ()
 }
-main = fun () {
-    f(&p)
-    return ()
-}
-main()
+f(&x)
 \end{Verbatim}
 
-Ce programme est constitué des phrases $p_1, p_2, p_3$ et $p_4$. D'après
-\textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 4 phrases.
+Ce programme est constitué des phrases $p_1, p_2$ et $p_3$. On rappelle que par
+rapport à la syntaxe concrète, un \iReturn{\eUnit} est inséré automatiquement,
+donc $p_2 = f=\eFun{q}{*q←1;\iReturn{\eUnit}}$
+
+D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 4 phrases.
 
 \paragraph{Déclaration de \texttt{x}}
 
@@ -1807,20 +1805,10 @@ Ainsi $\ph{m_1}{f = \eFun{q}{*q←1;\iReturn{\eUnit}}}{m_2}$ où:
 
 \[ m_2 = ([~], [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}};x↦\widehat{0}])\]
 
-\paragraph{Déclaration de \texttt{main}}
-
-Encore une fois, on définit une fonction. Ce cas est similaire au précédent et
-$\ph{m_2}{main = \eFun{}{f(\&x);\iReturn{\eUnit}}}{m_3}$ où:
-
-\[m_3 = ([~],
-[main↦\widehat{\eFun{}{f(\&x);\iReturn{\eUnit}}}
-;f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
-;x↦\widehat{0}])\]
-
-\paragraph{Appel de \texttt{main}}
+\paragraph{Appel de \texttt{f}}
 
 Ici, on évalue une expression pour ses effets de bords. La règle à appliquer est
-\textsc{ET-Exp}, qui a comme prémisse $\mm{m_3}{main()}{m_4}{v}$.
+\textsc{ET-Exp}, qui a comme prémisse $\mm{m_3}{f(\&x)}{m_4}{v}$.
 
 D'après la forme de l'expression, la règle à appliquer va être
 \textsc{Exp-Call-Return}. Mais il va falloir d'abord réécrire l'expression à
@@ -1873,8 +1861,7 @@ Maintenant que les deux côtés de $←$ sont évalués, on peut appliquer
 \textsc{Exp-Set}, et $\mm{m_3'}{*q←1}{m_3''}{\iPass}$ où:
 
 \[m_3 = ([[q↦(x)]],
-[main↦\widehat{\eFun{}{f(\&x);\iReturn{\eUnit}}}
-;f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
+[f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
 ;x↦\widehat{1}])
 \]
 
@@ -1887,6 +1874,18 @@ On peut enfin appliquer \textsc{Exp-Call-Ctx} pour en déduire que:
 \[
     \mm{m_3}{f(\&x)}{m_3'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(x)) }
 \]
+
+Donc d'après \textsc{Exp-Call-Return} (car on a $m_3''' = \cCleanup{m_3'''}$ et
+$ \widehat{\eUnit} = \cV{|m_3'''|}{\widehat{\eUnit}} $):
+
+\[
+    \mm{m_3}{f(\&x)}{m_3'''}{ \widehat{\eUnit} }
+\]
+
+En posant $m_4 = m_3'''$, on a $\ph{m_3}{f(\&x)}{m_4}$.
+
+Donc pour conclure (grâce à \textsc{Prog}), on a
+$\phprog{[p_1,p_2,p_3,p_4]}{m_4}$.
 
 % ...
 
