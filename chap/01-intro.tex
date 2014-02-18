@@ -458,8 +458,6 @@ chemin d'exécution est emprunté. Cette manière de procéder est similaire à 
 preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
 mais pas que le programme est correct.
 
-% TODO[E] fonctionnel/structurel? et l'intégration?
-
 L'approche des méthodes formelles, au contraire, permet de s'assurer de
 l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
 interprétation abstraite permet d'étudier les relations exposées entre les
@@ -643,10 +641,7 @@ Cela veut dire qu'un fichier en cours d'analyse peut contenir des appels à des
 fonctions inconnues. Non seulement on n'a pas accès à leur code source, mais en
 plus on ne connaît pas \emph{a priori} leur spécification. Une solution peut
 être de prévoir un traitement particulier pour celles-ci (par exemple en leur
-attribuant un type prédéfini), mais leur sémantique d'exécution peut être
-complexe à exprimer car elles peuvent interagir avec le monde extérieur.
-
-% TODO[S] je ne suis pas convaincue
+attribuant un type prédéfini).
 
 Certaines interagissent directement avec le système d'exploitation, comme les
 fonctions d'ouverture ou d'écriture dans un fichier. D'autres modifient
