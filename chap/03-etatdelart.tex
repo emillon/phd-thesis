@@ -32,8 +32,6 @@ les entrées. Par exemple, dans l'avionique civile, le processus de développeme
 demande d'être très rigoureux pour les tests fonctionnels et structurels afin de
 détecter le code ou les branchements non atteints.
 
-% TODO[S] oui mais le processus de certif demande les CC pour la sécu
-
 Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
 uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
 --- car il est souvent impossible d'étudier l'ensemble complet de tous les
@@ -240,12 +238,7 @@ réaliser une projection de celle-ci. Par exemple, dans le domaine des
 intervalles, $[0;2]~\nabla~[0;3] = [0;+\infty[$. On atteint alors un point fixe
 mais qui est plus grand que celui qu'on aurait obtenu sans cette accélération:
 on perd en précision. Pour en gagner, on peut redescendre sur le treillis des
-points fixe avec une suite d'itérations décroissantes~\cite{granger}. Dans
-l'itération de point fixe, il est possible d'obtenir les résultats de manière
-plus efficace en choisissant un ordre particulier dans les calculs des
-sous-itérations~\cite{policy}.
-
-% TODO[S] attention contresens ce n'est pas une itération de Kleene
+points fixe avec une suite d'itérations décroissantes~\cite{granger,policy}.
 
 En termes d'ingéniérie logicielle, implanter un analyseur statique est un défi
 en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le code
@@ -280,11 +273,11 @@ finement les valeurs d'un programme. Par exemple, le système
 Saturn~\cite{paste07}, conçu pour analyser du code système écrit en C, utilise
 des clauses logiques et un solveur SAT pour manipuler des invariants sur la
 mémoire. En particulier il traite le problème des pointeurs utilisateur en
-utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Comme
-l'interprétation abstraite, le but de cette analyse est d'être très précis, au
-détriment d'un temps de calcul important dans certains cas.
-
-% TODO[E] quid du model checking?
+utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Un autre
+exemple est le \emph{model checking}~\cite{modelcheck}, qui consiste à énumérer
+l'ensemble des états qui peut atteindre un système. Comme l'interprétation
+abstraite, le but des cette analyse est d'être très précis, au détriment d'un
+temps de calcul important dans certains cas.
 
 \section{Typage}
 
