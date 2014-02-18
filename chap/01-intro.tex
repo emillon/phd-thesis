@@ -733,13 +733,10 @@ Nos contributions sont les suivantes:
 
 \item
 Une première étape est de définir des restrictions sur le langage source. En
-effet, le langage C comme \newspeak permettent des conversions non sûres entre
-données, ce qui limite l'intérêt du typage. Cela revient à définir un
-langage impératif avec un modèle mémoire de plus haut niveau, que l'on nomme
-\langname.
-
-%TODO[S] pas clair. quel rappor entre npk et spk? lequel dev tu? ajouter un élt
-%du contexte CIFRE?
+effet, le langage C permet des conversions non sûres entre données, ce qui
+empêche le typage d'avoir un intérêt. On définit alors un modèle de langage
+impératif avec un modèle mémoire de plus haut niveau, interdisant ces
+constructions: \langname.
 
 \item
 Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
@@ -754,11 +751,11 @@ ainsi que deux extensions validant l'approche typage pour résoudre notre
 problème de base, qui est la vérification des accès aux pointeurs utilisateur.
 
 \item
-Notre formalisation est accompagnée d'un prototype basé sur \newspeak, ce qui
-permet de de traiter des programmes écrits en C comme le noyau Linux. Ce
-logiciel est disponible sous une license libre.
-
-%TODO[S] ou safespeak?
+Notre formalisation est accompagnée d'un prototype, basé sur \newspeak. Cela
+permet d'utiliser les règles de typage précédemment définies (en les adaptant),
+tout en profitant des outils existants développés par EADS, qui utilisent
+\newspeak. En particulier, cela permet de traiter des programmes écrits en C
+comme le noyau Linux. Ce prototype est disponible sous une license libre.
 
 \end{itemize}
 
