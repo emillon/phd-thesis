@@ -559,16 +559,12 @@ donner la preuve d'un théorème. À l'aide de cette correspondance, il est
 possible de voir un algorithme de vérification de typage comme un algorithme de
 vérification de preuve automatique. Ces preuves ne portent pas forcément sur des
 programmes. Par exemple, le théorème des 4 couleurs a été prouvé en
-Coq~\cite{4colproof} .
-
-% TODO[E] que veux tu dire par les systèmes d'aide à la preuve ?
+Coq~\cite{4colproof}.
 
 Cette technique est très complexe à mettre en œuvre, puisqu'il faut encoder
 toutes les propriétés voulues dans un formalisme de très bas niveau (du niveau
 de la théorie des ensembles). De plus, l'inférence de types devient rapidement
 indécidable.
-
-% TODO[S] un ex d'analyse?
 
 \section*{Conclusion}
 
@@ -576,15 +572,13 @@ Il existe de nombreuses techniques pour vérifier du code système ou embarqué.
 y a divers choix à faire entre l'expressivité, l'intégration de tests
 dynamiques ou la facilité de mise en œuvre.
 
-% TODO[S] efficace à -> français
-% TODO[S] expressivité -> ex
-
 Pour résoudre le problème des pointeurs utilisateurs dans les noyaux, le typage
-statique est une solution assez pragmatique, puisqu'elle peut s'appliquer à des
-programmes existants, et est efficace à utiliser. Son expressivité limitée nous
-empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
-les programmes systèmes. C'est pourquoi dans notre solution, \langname, nous
-approchons la sûreté de la manière suivante:
+statique est une solution performante et assez pragmatique, puisqu'elle peut
+s'appliquer à des programmes existants. Son expressivité limitée nous empêche de
+reposer entièrement sur elle pour garantir l'absence d'erreur dans les
+programmes systèmes (par exemple, le typage est mal adapté pour détecter les
+divisions par zéro). C'est pourquoi nous approchons la sûreté de la manière
+suivante:
 
 \changed{Liste plutôt que paragraphes}
 \begin{itemize}
@@ -602,7 +596,5 @@ approchons la sûreté de la manière suivante:
       sûres. Cela permet de préserver l'isolation entre le noyau et l'espace
       utilisateur.
 \end{itemize}
-
-% TODO[S] je ne comprends pas ce qu'est cette solution safespeak
 
 % vim: spelllang=fr
