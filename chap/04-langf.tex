@@ -49,11 +49,9 @@ Enfin, on décrit une sémantique opérationnelle pour ce langage. Cela permet d
 définir précisément l'exécution d'un programme \langname au niveau de la
 mémoire.
 
-L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}. En
-particulier, on y verra comment traduire un sous-ensemble de C vers \newspeak,
-sur lequel notre implantation est faite.
-
-% TODO[E] un petit rappel du lien entre les 2 *speak?
+L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}.
+Puisque \langname n'est qu'un modèle, il s'agira d'adapter ces règles de typage
+sur \newspeak, qui possède un modèle mémoire plus bas niveau.
 
 \section{Notations}
 
@@ -885,8 +883,6 @@ $-1$ sinon.
 \end{align*}
 \end{minipage}
 \end{center}
-
-% TODO[E] 2 dernières lignes = à préciser
 
 \end{definition}
 
@@ -1887,8 +1883,6 @@ En posant $m_4 = m_3'''$, on a $\ph{m_3}{f(\&x)}{m_4}$.
 Donc pour conclure (grâce à \textsc{Prog}), on a
 $\phprog{[p_1,p_2,p_3,p_4]}{m_4}$.
 
-% ...
-
 % TODO intégrer une structure
 % TODO intégrer if
 
@@ -1916,9 +1910,5 @@ qu'aucune règle d'évaluation ne peut s'appliquer. Dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}, nous allons donc définir un
 système de types qui permet de rejeter ces programmes se comportant mal à
 l'exécution.
-
-%TODO[E] il faut effectivement présenter safespeak mais cela donne un chapitre
-%de 25 pages où on se perd un peu (en particulier à la fin)
-% peut être finir avec un exemple + complet
 
 % vim: spelllang=fr
