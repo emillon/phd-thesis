@@ -525,29 +525,55 @@ L'exécution de notre analyseur affiche un programme complètement annoté:
 
 \begin{verbatim}
  % ptrtype example.c
-f : (Ptr (Int)) -> (Int)
-Int (example.c:1#4)^f(Ptr (Int) x) {
-  (.c:3#4)^!return =(int32)
-    (coerce[-2147483648,2147483647]
-      ( ( ([(x_Ptr (Int) : Ptr (Int))]32_Int
-            : Int
-          )
-          + (1 : Int)
-        ) : Int
-      ) : Int
-    );
-}
+     1	f : (KPtr (Int)) -> (Int)
+     2	Int (example.c:1#4)^f(KPtr (Int) x) {
+     3	  (.c:3#4)^!return =(int32)
+     4	    (coerce[-2147483648,2147483647]
+     5	      ( ( ([(x_KPtr (Int) : KPtr (Int))]32_Int
+     6	            : Int
+     7	          )
+     8	          + (1 : Int)
+     9	        ) : Int
+    10	      ) : Int
+    11	    );
+    12	}
 \end{verbatim}
-
-% TODO[E] partie perso
-% TODO[E] + en avant
 
 % TODO[S] étiquettes perso en couleurs?
 
-L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à
-détecter les débordements d'entiers lors d'une analyse de valeurs par
-interprétation abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
-pertinentes et cet opérateur peut être vu que comme l'identité.
+\begin{itemize}
+    \item Ligne 1: le type inféré de la fonction \texttt{f} est affiché. Il est
+        calculé entièrement en fonction des opérations effectuées, on n'utilise
+        pas les étiquettes de type du programme.
+
+    \item Ligne 2: le code de la fonction est affiché. Les indications de la
+        forme \texttt{(F:L\#C)\^{}X} correspondent à la déclaration d'une
+        variable X, dans le fichier F, ligne L et colonne C.
+
+    \item Ligne 3: en \newspeak, la valeur de retour est une variable qui est
+        affectée. On sépare ainsi le flot de données (définir la valeur de
+        retour) du flot de contrôle (sortir de la fonction). C'est un équivalent
+        de la variable $\vRet$ introduite pour le typage des fonctions
+        (page~\pageref{sec:typ-fun}). L'affectation est notée \texttt{=(int32)}
+        car en \newspeak elle est décorée du type des opérandes. Cette
+        information n'est pas utilisée dans l'inférence de types.
+
+    \item Ligne 4: l'opérateur \texttt{coerce[a,b]} sert à détecter les
+        débordements d'entiers lors d'une analyse de valeurs par interprétation
+        abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
+        pertinentes et cet opérateur peut être vu que comme l'identité.
+
+    \item Ligne 5: le déréférencement d'une valeur gauche \texttt{e} est noté
+        \texttt{[e]\_n}. Il est annoté par la taille de l'opérande (32 bits
+        ici). De plus, l'accès à une valeur gauche (pour la transformer en
+        expression) est annoté par son type, ce qui explique la verbosité de
+        cette ligne.
+
+    \item les autres lignes sont des étiquettes de type inférées sur les
+        expressions $1$, $*x$, $1$, $*x + 1$ et la valeur de retour
+        $\mathrm{coerce}[-2^{31},2^{31}-1](*x + 1)$.
+
+\end{itemize}
 
 Un exemple de détection d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
