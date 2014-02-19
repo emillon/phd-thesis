@@ -1,49 +1,29 @@
 Dans ce chapitre, nous décrivons la mise en œuvre des analyses statiques
-précédentes. Notons que, malgré qu'elles aient été décrites sur \langname, leur
-implantation est faite sur la représentation intermédiaire \newspeak, développée
-par EADS. Nous commençons donc par décrire celle-ci. Ensuite, nous décrivons la
-phase de compilation, de C à \newspeak, auquel on rajoute ensuite des étiquettes
-de types. Celles-ci sont calculées par un algorithme d'inférence de types à la
+précédentes.
+Celles-ci ont été décrites sur \langname, qui permet de modéliser des programmes
+C bien typables.
+
+Notre but est d'utiliser la représentation intermédiaire \newspeak, développée
+par EADS. Cela permet de profiter des nombreux outils existant déjà autour de ce
+langage, notamment un compilateur depuis C et un analyseur statique par
+interprétation abstraite.
+
+Mais cette représentation utilise un modèle mémoire différent. En effet il
+colle finement à celui de C, où des constructions comme les unions empêchent la
+sûreté du typage. Définir \langname a précisement pour but de définir un langage
+inspiré de C mais sur lequel le typage peut être sûr. Il faudra donc adapter les
+règles de typage les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}. On
+reviendra sur cette distinction entre les deux niveaux de sémantique dans la
+conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
+
+On commence par décrire le langage \newspeak. Ensuite, nous décrivons la phase
+de compilation, de C à \newspeak, auquel on rajoute ensuite des étiquettes de
+types. Celles-ci sont calculées par un algorithme d'inférence de types à la
 Hindley-Milner, reposant sur l'unification et le partage de références. Toutes
 ces étapes sont implantées dans le langage OCaml~\cite{DAOC}.
 
 Le prototype décrit ici est disponible sur~\link{penjili} sous une license
 libre, la \emph{GNU Lesser General Public License}.
-
-\added{Nouvelle subsection}
-
-\subsection*{Pourquoi \newspeak et pas \langname?}
-
-% TODO[E] implantation safespeak
-
-On peut se demander pourquoi analyser du code \newspeak et non \langname. Une
-première raison est que de nombreux outils existent déjà autour du langage
-\newspeak, notamment un compilateur depuis C et un analyseur statique par
-interprétation abstraite. Le but de cette thèse est de permettre des analyses de
-typage sur C, donc \newspeak est un bon support grâce à l'existence du
-traducteur.
-
-% TODO[E] voir avec la section modifiér du début sur les C--
-
-Mais le modèle mémoire de \newspeak est très bas niveau. En effet il colle
-finement à celui de C, où des constructions comme les unions empêchent la sûreté
-du typage. Définir \langname a précisement pour but de définir un langage
-inspiré de C mais sur lequel le typage peut être sûr.
-
-Pour l'implantation sur \newspeak, on s'inspire donc des règles de typage sur
-\langname, mais cette approche n'est sûre que pour les programmes qui peuvent
-être fidèlement traduits.
-
-% TODO[S] fidèlement
-% TODO[S] pas clair: C -> Npk -> Spk?
-
-Par exemple, un programme dans lequel on fait de l'arithmétique de pointeurs
-entre champs de structures peut être traduit en \newspeak (et analysé par
-interprétation abstraite), mais on ne peut rien en déduire du résultat d'une
-analyse par typage.
-
-On reviendra sur cette distinction entre les deux niveaux de sémantique dans la
-conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
 
 \section{\newspeak et chaîne de compilation}
 \label{sec:compil}
