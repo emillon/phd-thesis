@@ -1804,7 +1804,7 @@ Ainsi $\ph{m_1}{f = \eFun{q}{*q←1;\iReturn{\eUnit}}}{m_2}$ où:
 \paragraph{Appel de \texttt{f}}
 
 Ici, on évalue une expression pour ses effets de bords. La règle à appliquer est
-\textsc{ET-Exp}, qui a comme prémisse $\mm{m_3}{f(\&x)}{m_4}{v}$.
+\textsc{ET-Exp}, qui a comme prémisse $\mm{m_2}{f(\&x)}{m_3}{v}$.
 
 D'après la forme de l'expression, la règle à appliquer va être
 \textsc{Exp-Call-Return}. Mais il va falloir d'abord réécrire l'expression à
@@ -1816,72 +1816,72 @@ Tout d'abord on applique donc \textsc{Ctx} avec $C = \ctxEmpty (\&x)$. Comme on
 a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
 
 \[
-    \mm{m_3}{f}{m_3}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}
+    \mm{m_2}{f}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}
 \]
 
 On en déduit que:
 
 \[
-    \mm{m_3}{f(\&x)}{m_3}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&x)}
+    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&x)}
 \]
 
 Une application supplémentaire de \textsc{Ctx} permet d'en arriver à la ligne
 suivante (en évaluant $\&x$ en $\widehat{\&}(x)$ via \textsc{Exp-Addr}):
 
 \[
-    \mm{m_3}{f(\&x)}{m_3}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(x))}
+    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(x))}
 \]
 
 La fonction et son argument sont évalués, donc on peut appliquer
-\textsc{Exp-Call-Ctx}. En posant $m_3' = \cPush{m_3}{(q ↦ \widehat{\&}(x))}$, le
-but est de trouver $m_3''$ et $v$ tels que:
+\textsc{Exp-Call-Ctx}. En posant $m_2' = \cPush{m_2}{(q ↦ \widehat{\&}(x))}$, le
+but est de trouver $m_2''$ et $v$ tels que:
 
 \[
-    \mm{m_3'}{*q←1;\iReturn{\eUnit}}{m_3''}{\iReturn{v}}
+    \mm{m_2'}{*q←1;\iReturn{\eUnit}}{m_2''}{\iReturn{v}}
 \]
 
 Puisque l'instruction est une séquence, on va appliquer \textsc{Seq}. La
 première partie n'étant pas $\iPass$, il faut l'évaluer grâce à la règle
 \textsc{Ctx} avec $C = \ctxEmpty;\iReturn{\eUnit}$.
 
-Le nouveau but est de trouver un $m_3''$ tel que
-$\mm{m_3'}{*q←1}{m_3'}{\iPass}$.
+Le nouveau but est de trouver un $m_2''$ tel que
+$\mm{m_2'}{*q←1}{m_2'}{\iPass}$.
 
 En appliquant \textsc{Phi-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
-$\mm{m_3'}{*q←1}{m_3'}{(x)←1}$.
+$\mm{m_2'}{*q←1}{m_2'}{(x)←1}$.
 
 Puis on applique \textsc{Exp-Cst} sous $C = (x)←\ctxEmpty$ et
-$\mm{m_3'}{*q←1}{m_3'}{(x)←\widehat{1}}$.
+$\mm{m_2'}{*q←1}{m_2'}{(x)←\widehat{1}}$.
 
 Maintenant que les deux côtés de $←$ sont évalués, on peut appliquer
-\textsc{Exp-Set}, et $\mm{m_3'}{*q←1}{m_3''}{\iPass}$ où:
+\textsc{Exp-Set}, et $\mm{m_2'}{*q←1}{m_2''}{\iPass}$ où:
 
-\[m_3 = ([[q↦(x)]],
+\[m_2'' = ([[q↦(x)]],
 [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
 ;x↦\widehat{1}])
 \]
 
-Alors, d'après \textsc{Seq}, $\mm{m_3'}{*q←1}{m_3''}{\iReturn{()}}$.
+Alors, d'après \textsc{Seq}, $\mm{m_2'}{*q←1}{m_2''}{\iReturn{()}}$.
 Avec \textsc{Exp-Cst} sous $C = \iReturn{\ctxEmpty}$, on a donc
-$\mm{m_3'}{*q←1}{m_3''}{\iReturn{\widehat{()}}}$.
+$\mm{m_2'}{*q←1}{m_2''}{\iReturn{\widehat{()}}}$.
 
 On peut enfin appliquer \textsc{Exp-Call-Ctx} pour en déduire que:
 
 \[
-    \mm{m_3}{f(\&x)}{m_3'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(x)) }
+    \mm{m_2}{f(\&x)}{m_2'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(x)) }
 \]
 
-Donc d'après \textsc{Exp-Call-Return} (car on a $m_3''' = \cCleanup{m_3'''}$ et
-$ \widehat{\eUnit} = \cV{|m_3'''|}{\widehat{\eUnit}} $):
+Donc d'après \textsc{Exp-Call-Return} (car on a $m_2''' = \cCleanup{m_2'''}$ et
+$ \widehat{\eUnit} = \cV{|m_2'''|}{\widehat{\eUnit}} $):
 
 \[
-    \mm{m_3}{f(\&x)}{m_3'''}{ \widehat{\eUnit} }
+    \mm{m_2}{f(\&x)}{m_2'''}{ \widehat{\eUnit} }
 \]
 
-En posant $m_4 = m_3'''$, on a $\ph{m_3}{f(\&x)}{m_4}$.
+En posant $m_3 = m_2'''$, on a $\ph{m_2}{f(\&x)}{m_3}$.
 
 Donc pour conclure (grâce à \textsc{Prog}), on a
-$\phprog{[p_1,p_2,p_3,p_4]}{m_4}$.
+$\phprog{[p_1,p_2,p_3]}{m_3}$.
 
 % TODO intégrer une structure
 % TODO intégrer if
