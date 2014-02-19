@@ -19,8 +19,8 @@ pointeur. Comme on l'a vu, cela peut poser des problèmes de sécurité si on
 déréférence ces pointeurs sans vérification.
 
 Dans ce chapitre, on met en œuvre sur le noyau Linux le système de types décrit
-dans le chapitre~\ref{cha:qualifs}, ou plus précisément l'outil \texttt{ptrtype}
-du chapitre~\ref{cha:implem}.
+dans le chapitre~\ref{cha:qualifs}, ou plus précisément l'outil \ptrtype du
+chapitre~\ref{cha:implem}.
 
 Pour montrer que le système de types capture cette propriété et que
 l'implantation est utilisable, on étudie les cas de deux bugs qui ont touché le
@@ -42,8 +42,7 @@ difficulté pour traiter le code du noyau est donc de le compiler.
 
 Pour traduire ce dialecte, il a été nécessaire d'adapter \ctonewspeak. La
 principale particularité est la notation \verb!__attribute__((...))! qui peut
-décorer les déclarations de fonctions, de variables ou de types. De nouvelles
-fonctionnalités sont aussi présentes.
+décorer les déclarations de fonctions, de variables ou de types.
 
 Par exemple, il est possible de manipuler des étiquettes de première classe: si
 \enquote{\texttt{lbl:}} est présent avant une instruction, on peut capturer
@@ -67,16 +66,17 @@ Les attributs, quant à eux, rentrent dans trois catégories:
     spécifie qu'un objet doit être aligné sur au moins \texttt{n} bits.
 \end{itemize}
 
-Dans notre cas, toutes ces annotations peuvent être ignorées.
+Dans notre cas, toutes ces annotations peuvent être ignorées, mais il faut tout
+de même adapter l'analyse syntaxique pour les ignorer. En particulier, pour le
+traitement du noyau Linux, il a fallu traiter certaines formes de la
+construction \texttt{typeof} qui n'étaient pas supportées.
 
-\section{Configuration}
-
-Pour que le code noyau soit compilable, il est nécessaire de définir certaines
-macros. En particulier, le système de configuration de Linux utilise des macros
-nommées \texttt{CONFIG\_*} pour inclure ou non certaines fonctionnalités. Il a
-donc fallu faire un choix; nous avons choisi la configuration par défaut. Pour
-analyser des morceaux plus importants du noyau, il faudrait définir un fichier
-de configuration plus important.
+De plus, pour que le code noyau soit compilable, il est nécessaire de définir
+certaines macros. En particulier, le système de configuration de Linux utilise
+des macros nommées \texttt{CONFIG\_*} pour inclure ou non certaines
+fonctionnalités. Il a donc fallu faire un choix; nous avons choisi la
+configuration par défaut. Pour analyser des morceaux plus importants du noyau,
+il faudrait définir un fichier de configuration plus important.
 
 \section{Appels système sous Linux}
 \label{sec:linux-sys}
@@ -99,7 +99,14 @@ doit donc avoir deux piles: une pile \enquote{utilisateur}, qui sert pour
 l'application elle-même, et une pile \enquote{noyau}, qui sert aux appels
 système.
 
-\begin{figure} % fig:memmap {{{
+Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
+mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun
+gère un ensemble de tables de pages et une valeur de \crtrois{} associée (ce
+mécanisme a été abordé page~\pageref{page:mem-virt}). Au moment de changer le
+processus en cours, l'ordonnanceur charge donc le \crtrois{} du nouveau
+processus.
+
+\begin{figure}[b] % fig:memmap {{{
 \centering
 \input{fig/memmap.tex}
 
@@ -111,13 +118,6 @@ réservée au mode privilégié.}
 \label{fig:memmap}
 \end{figure}
 % }}}
-
-Grâce à la mémoire virtuelle, chaque processus possède sa propre vue de la
-mémoire dans son espace d'adressage (figure~\ref{fig:memmap}), et donc chacun
-gère un ensemble de tables de pages et une valeur de \crtrois{} associée (ce
-mécanisme a été abordé page~\pageref{page:mem-virt}). Au moment de changer le
-processus en cours, l'ordonnanceur charge donc le \crtrois{} du nouveau
-processus.
 
 Les adresses basses (inférieures à \texttt{PAGE\_OFFSET} = 3 Gio =
 \hexa{c0000000}) sont réservées à l'utilisateur. On y trouvera par exemple:
@@ -143,48 +143,14 @@ nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 e
 \enquote{magiques} qui font appel au système d'exploitation pour effectuer des
 opérations.
 
-Voyons ce qui se passe derrière la magie apparente. Une explication plus
-détaillée est disponible dans la documentation fournie par
-Intel~\cite{intelsys}.
+Par exemple, le programmeur peut appeller la fonction \texttt{getpid} pour
+connaître le numéro du processus courant. Cela passe par une fonction
+\texttt{getpid} dans la bibliothèque C, en espace utilisateur. Celle-ci va
+invoquer (via un mécanisme non pertinent ici) la fonction \texttt{sys\_getpid}
+du noyau (figure~\ref{fig:syscall-def}).
 
-\paragraph{Dans la bibliothèque C}
-
-Il y a bien une fonction \texttt{getpid} présente dans la bibliothèque C du
-système. C'est la fonction qui est directement appelée par le programme. Cette
-fonction commence par placer le numéro de l'appel système (noté
-\texttt{\_\_NR\_getpid}, valant 20 ici) dans \eax, puis les arguments éventuels
-dans les registres (\ebx, \ecx, \edx, \esi{} puis \edi). Une interruption
-logicielle est ensuite déclenchée (\verb!int 0x80!).
-
-\paragraph{Dans la routine de traitement d'interruption}
-
-Étant donné la configuration du processeur\footnote{Il est impropre de dire que
-le processeur est configuré --- tout dépend uniquement de l'état de certains
-registres, ici la \emph{Global Descriptor Table} et les \emph{Interrupt
-Descriptor Tables}.}, elle sera traitée en \ring{0}, à un point d'entrée
-prédéfini (dans \verb!arch/x86/kernel/entry_32.S!,
-figure~\ref{fig:entry-syscall})
-
-\begin{figure}[h]
-    \insertcode{entry-syscall.s}
-    \caption{Point d'entrée des appels système}
-    \label{fig:entry-syscall}
-\end{figure}
-
-L'exécution reprend donc en \ring{0}, avec dans \esp{} le pointeur de pile noyau
-du processus. Les valeurs des registres ont été préservées; la macro
-\texttt{SAVE\_ALL} les place sur la pile. Ensuite, à l'étiquette
-\texttt{syscall\_call}, le numéro d'appel système (toujours dans \eax) sert
-d'index dans le tableau de fonctions \texttt{sys\_call\_table}.
-
-
-\paragraph{Dans l'implantation de l'appel système}
-
-Puisque les arguments sont en place sur la pile, comme dans le cas d'un appel de
-fonction \enquote{classique}, la convention d'appel \emph{cdecl} est respectée.
-La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
-être écrite en C. On la trouve dans \texttt{kernel/timer.c}
-(figure~\ref{fig:syscall-def}).
+Comme les piles sont différentes entre les espaces, la convention d'appel est
+différente: les arguments sont copiés directement par les registres.
 
 \begin{figure}[h]
     \insertcode{syscall-definition.c}
@@ -192,20 +158,11 @@ La fonction implantant l'appel système, nommée \texttt{sys\_getpid}, peut donc
     \label{fig:syscall-def}
 \end{figure}
 
-La macro \texttt{SYSCALL\_DEFINE0} nomme la fonction \texttt{sys\_getpid}, et
-définit entre autres des points d'entrée pour les fonctionnalités de débogage du
-noyau. À la fin de la fonction, la valeur de retour est placée dans \eax,
-conformément à la convention \emph{cdecl}.
-
-\paragraph{Retour vers le ring 3}
-
-Au retour de la fonction, la valeur de retour est placée à la place de \eax{} là
-où les registres ont été sauvegardés sur la pile noyau
-(\texttt{PT\_EFLAGS(\%esp)}). % chktex 36
-L'instruction \texttt{iret} (derrière la macro
-\texttt{INTERRUPT\_RETURN}) permet de restaurer les registres et de repasser en
-mode utilisateur, juste après l'interruption. La fonction de la bibliothèque C
-peut alors retourner au programme appelant.
+La macro \texttt{SYSCALL\_DEFINE0} permet de nommer la fonction
+\texttt{sys\_getpid}, et définit entre autres des points d'entrée pour les
+fonctionnalités de débogage du noyau. Le corps de la fonction fait directement
+référence aux structures de données internes du noyau pour retourner le résultat
+voulu.
 
 \section{Risques}
 \label{sec:risques-dos}
@@ -243,7 +200,7 @@ la section précédente: les applications utilisateurs appellent la fonction
 Celle-ci est traitée par la fonction \texttt{sys\_ioctl()} qui appelle la
 routine de traitement dans le bon pilote de périphérique.
 
-Les fonctions implantant un \emph{ioctl} sont donc vulnérables à la
+Les fonctions du noyau implantant un \emph{ioctl} sont donc vulnérables à la
 même classe d'attaques que les appels système, et donc doivent être écrits avec
 une attention particulière.
 
@@ -263,6 +220,8 @@ drm\_radeon\_info *}. Un pointeur \texttt{value\_ptr} est extrait de son champ
 Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
 en espace noyau) du type donné dans la figure~\ref{fig:kms-info}, dont les
 champs proviennent d'un appel utilisateur de \verb!ioctl()!.
+
+% TODO[E] serait il possible de faire tourner ton proto sur ce code?
 
 \begin{figure}[h]
 \insertcode{kms-info.c}
@@ -315,19 +274,22 @@ Dans d'anciennes versions de Linux\footnote{Jusqu'à la version 2.6.28 --- ce bu
 a été corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
 \texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
 appelle \texttt{memcpy} au lieu de \nolinkurl{copy\_from\_user} pour lire dans
-la mémoire du processus. La ligne problématique est préfixée par \texttt{/*
-=\textgreater{} */}. En théorie, si un utilisateur passe un pointeur noyau à la
-fonction \texttt{ptrace}, il pourra lire des données du noyau. L'appel
-\texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet ainsi non seulement de lire
-les variables du processus \texttt{p} si \texttt{addr} est une adresse dans
-l'espace utilisateur (ce qui est le comportement attendu), mais aussi de lire
-dans l'espace noyau si \texttt{addr} y pointe (ce qui est un bug de sécurité).
+la mémoire du processus. La ligne problématique est préfixée par
+\texttt{/*=\textgreater{}*/}. En théorie, si un utilisateur passe un pointeur
+vers une adresse du noyau à la fonction \texttt{ptrace}, il pourra lire des
+données du noyau. L'appel \texttt{ptrace (PTRACE\_PEEKDATA, p, addr)} permet
+ainsi non seulement de lire les variables du processus \texttt{p} si
+\texttt{addr} est une adresse dans l'espace utilisateur (ce qui est le
+comportement attendu), mais aussi de lire dans l'espace noyau si \texttt{addr} y
+pointe (ce qui est un bug de sécurité).
 
 \begin{figure}
     \insertcode{blackfin-ptrace.c}
     \caption{Implantation de \texttt{ptrace} sur architecture Blackfin}
     \label{fig:ptrace-blackfin}
 \end{figure}
+
+% TODO[E] même question : est ce possible de faire tourner le proto dessus
 
 On peut repérer ce bug par simple relecture pour commencer. On commence par
 remarquer que l'argument \texttt{addr}, malgré son type \texttt{long}, est en
@@ -374,7 +336,8 @@ pointeurs utilisateur, on ajoute un commentaire spécial \texttt{!npk
 userptr\_fieldp x f}, qui indique que \texttt{x} est un pointeur vers une
 structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
 il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
-inconnue de type.
+inconnue de type. Cette annotation est nécessaire car c'est le moyen d'indiquer
+que la structure contient un pointeur utilisateur.
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
@@ -413,20 +376,17 @@ Enfin, on peut lancer l'inférence de type. Ainsi, sur l'exemple de la
 figure~\ref{fig:ex-drm}, on obtient la sortie suivante:
 
 \begin{Verbatim}
-05-drm.c:18#1 - Cannot unify qualifiers:
-  Kernel
-  User
+05-drm.c:18#8 - Type clash between :
+  KPtr (_a15)
+  UPtr (_a8)
 \end{Verbatim}
 
 Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
 type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
-unification a échoué. Le message d'erreur fait apparaître des qualificateurs
-explicites: comme on l'explique page~\pageref{page:qualifs-pas-qualifs}, c'est
-un reste d'une première présentation basée sur les qualificateurs.
-Dans l'implantation, il est cependant agréable de manipuler ces étiquettes
-séparément des pointeurs auxquels elles sont attachées.
+unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type).
 
 % TODO idem sur #2
+% TODO[E] ce serait bien de mettre Blackfin aussi
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
@@ -435,10 +395,9 @@ celle-ci, l'inférence se fait sans erreur.
 
 \section*{Conclusion}
 
-Après voir décrit notre l'implantation de notre solution, on a montré comment
-celle-ci peut s'appliquer à détecter un bug dans le noyau Linux. La première
-difficulté est de traduire en \newspeak le code source écrit dans le dialecte
-GNU C.
+Après voir décrit l'implantation de notre solution, on a montré comment celle-ci
+peut s'appliquer à détecter un bug dans le noyau Linux. La première difficulté
+est de traduire en \newspeak le code source écrit dans le dialecte GNU C.
 
 En partant d'un bug existant, on montre que la version originale du code
 (incluant une erreur de programmation) ne peut pas être typée, alors que sur la
@@ -447,8 +406,10 @@ version corrigée on peut inférer des types compatibles.
 Le prototype décrit dans le chapitre~\ref{cha:implem} peut donc s'adapter à
 détecter des bugs dans le noyau Linux. Pour le moment, il nécessite du code
 annoté, mais des travaux sont en cours pour permettre de passer automatiquement
-dntes portions plus importantes du noyau Linux. Une partie importante du travail
-est déjà faite puisque la phase de compilation depuis le code source supporte
-maintenant le dialecte GNU C.
+des portions plus importantes du noyau Linux. Le principal obstacle est de
+devoir réécrire certaines parties du code pour supprimer les constructions non
+typables.
+
+% TODO[E] à étendre, +++
 
 % vim: spelllang=fr

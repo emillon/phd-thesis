@@ -32,8 +32,6 @@ les entrées. Par exemple, dans l'avionique civile, le processus de développeme
 demande d'être très rigoureux pour les tests fonctionnels et structurels afin de
 détecter le code ou les branchements non atteints.
 
-% TODO[S] oui mais le processus de certif demande les CC pour la sécu
-
 Mais pour s'assurer de la correction d'un programme, on ne peut pas s'appuyer
 uniquement sur les tests --- ou de manière générale sur des analyses dynamiques
 --- car il est souvent impossible d'étudier l'ensemble complet de tous les
@@ -240,25 +238,18 @@ réaliser une projection de celle-ci. Par exemple, dans le domaine des
 intervalles, $[0;2]~\nabla~[0;3] = [0;+\infty[$. On atteint alors un point fixe
 mais qui est plus grand que celui qu'on aurait obtenu sans cette accélération:
 on perd en précision. Pour en gagner, on peut redescendre sur le treillis des
-points fixe avec une suite d'itérations décroissantes~\cite{granger}. Dans
-l'itération de point fixe, il est possible d'obtenir les résultats de manière
-plus efficace en choisissant un ordre particulier dans les calculs des
-sous-itérations~\cite{policy}.
-
-% TODO[S] attention contresens ce n'est pas une itération de Kleene
+points fixe avec une suite d'itérations décroissantes~\cite{granger,policy}.
 
 En termes d'ingéniérie logicielle, implanter un analyseur statique est un défi
 en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le code
 source à analyser dans un langage, et traduire les résultats de l'analyse en un
 ensemble d'alarmes à présenter à l'utilisateur.
 
-% TODO[E] il y a pls fois cette def et cet usage de "sound"
-
 Cette technique est très puissante: si un interprète abstrait \emph{sound}
-(c'est-à-dire ne manquant aucun programme incorrect) analyse un programme et ne
-renvoie pas d'erreur, alors on a prouvé que le programme est correct (par
-rapport aux propriétés que vérifient les domaines abstraits). Cela a été
-appliqué avec succès avec les analyseurs
+(réalisant une surapproximation, c'est-à-dire ne manquant aucun programme
+incorrect) analyse un programme et ne renvoie pas d'erreur, alors on a prouvé
+que le programme est correct (par rapport aux propriétés que vérifient les
+domaines abstraits). Cela a été appliqué avec succès avec les analyseurs
 Astrée~\cite{Astree04,Astree05,AstreeScale} chez Airbus ou CGS~\cite{cgs} à la
 NASA par exemple.
 
@@ -268,27 +259,25 @@ peuvent remonter un nombre prohibitif de fausses alarmes. Pour \enquote{aider}
 l'analyse, il faut soit annoter le code soit développer des domaines abstraits
 \emph{ad hoc} au programme à analyser.
 
-Il existe également des analyseurs statiques par interprétation abstraite qui ne
-sont pas \emph{sound}, c'est-à-dire qui peuvent manquer des comportements
-erronés. Leur approche est plus d'aider le programmeur à détecter certains types
-de bugs pendant le développement. On citer l'exemple de
-Coverity~\cite{coverityBillion}, qui publie régulièrement des rapports de
-qualité sur certains logiciels \emph{open-source}. Néanmoins, de part leur
-aspect non \emph{sound}, les analyses réalisées ne peuvent pas être assimilées à
-de la vérification formelle en tant que telle.
-
-% TODO[S] ↑ ils ne sont pas basés que sur AI car AI garantit soundness
+Il existe également des analyseurs statiques combinant l'interprétation
+abstraite avec d'autres techniques et qui ne sont pas \emph{sound}, c'est-à-dire
+qu'ils peuvent manquer des comportements erronés. Leur approche est plus d'aider
+le programmeur à détecter certains types de bugs pendant le développement. On
+citer l'exemple de Coverity~\cite{coverityBillion}, qui publie régulièrement des
+rapports de qualité sur certains logiciels \emph{open-source}. Néanmoins, de
+part leur aspect non \emph{sound}, les analyses réalisées ne peuvent pas être
+assimilées à de la vérification formelle en tant que telle.
 
 Enfin, l'interprétation abstraite n'est pas la seule technique pour analyser
 finement les valeurs d'un programme. Par exemple, le système
 Saturn~\cite{paste07}, conçu pour analyser du code système écrit en C, utilise
 des clauses logiques et un solveur SAT pour manipuler des invariants sur la
 mémoire. En particulier il traite le problème des pointeurs utilisateur en
-utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Comme
-l'interprétation abstraite, le but de cette analyse est d'être très précis, au
-détriment d'un temps de calcul important dans certains cas.
-
-% TODO[E] quid du model checking? et de la preuve de programme
+utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Un autre
+exemple est le \emph{model checking}~\cite{modelcheck}, qui consiste à énumérer
+l'ensemble des états qui peut atteindre un système. Comme l'interprétation
+abstraite, le but des cette analyse est d'être très précis, au détriment d'un
+temps de calcul important dans certains cas.
 
 \section{Typage}
 
@@ -401,12 +390,9 @@ la correction du programme (par rapport aux propriétés capturées par le syst�
 de types).
 
 Le typage statique peut également être implanté de manière efficace. Même si
-l'inférence peut, dans certains cas, atteindre une complexité considérable, la
+l'inférence peut, dans certains cas, atteindre une complexité exponentielle, la
 plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
 linéaire en la taille du programme considéré.
-
-
-% TODO[E] considérable => c'est quoi par rapport à linéaire: exp?
 
 % TODO virer car para C7 en parle
 
@@ -463,12 +449,14 @@ encapsuler chaque utilisation dans un bloc marqué explicitement
 
 Les systèmes de types de ces projets apportent dans le langage différents types
 de pointeurs. Cela permet de manipuler finement la mémoire, à la manière des
-\emph{smart pointers} de C++. De cette approche on retient surtout l'analyse de
-régions de Rust qui permet de manipuler de manière sûre les adresses des
-variables locales, et les pointeurs lourds de Cyclone, qui apportent une sûreté
-à l'arithmétique de pointeurs, au prix d'un test dynamique.
+\emph{smart pointers} de C++. Ceux-ci sont des types de données abstraits
+permettant de déterminer quelle partie du code est responsable de la libération
+de la mémoire associée au pointeur.
 
-%TODO[E] smart pointers => en dire un mot ou citer
+De cette approche on retient surtout l'analyse de régions de Rust qui permet de
+manipuler de manière sûre les adresses des variables locales, et les pointeurs
+lourds de Cyclone, qui apportent une sûreté à l'arithmétique de pointeurs, au
+prix d'un test dynamique.
 
 Ces techniques sont utiles pour créer des nouveaux programmes sûrs, mais on ne
 peut pas les appliquer pour étudier la correction de logiciels existants. Dans
@@ -476,12 +464,11 @@ cette perspective, le langage CCured~\cite{ccured-toplas} a pour but d'ajouter
 un système de types forts à C (y compris pour des programmes existants). Dans
 les cas où il n'est pas possible de prouver que le programme s'exécutera
 correctement, des vérifications à l'exécution sont ajoutées. Cependant, cela
-nécessite une instrumentation dynamique qui se paye en performances. Le
+nécessite une instrumentation dynamique qui se paye en performances et interdit
+la certification, car l'environnement d'exécution doit être inchangé. Le
 compilateur Fail-Safe C~\cite{oiwa09} \added{FailsafeC} utilise une approche
 similaire permettant de garantir la sûreté d'exécution des programmes C tout en
 respectant la totalité de la norme C89.
-
-% TODO[S] non applicables pour certif car instrumentation
 
 \section{Logique de Hoare}
 
@@ -524,9 +511,7 @@ Il est alors possible d'annoter le programme avec ses invariants formalisés de
 manière explicite dans $\mathcal{L}$. Ceux-ci seront vérifiés à la compilation
 lorsque c'est possible, sinon à l'exécution.
 
-% TODO[S] découpler?
-
-La règle de conséquence permet de découpler les propriétés du programme
+La règle de conséquence permet de séparer les propriétés du programme
 lui-même: plusieurs niveaux d'annotations sont possibles, du moins précis au
 plus précis. En fait, il est même possible d'annoter chaque point de contrôle
 par l'ensemble d'annotations vide: \hoare{T}{i}{T} est toujours vrai.
@@ -574,16 +559,12 @@ donner la preuve d'un théorème. À l'aide de cette correspondance, il est
 possible de voir un algorithme de vérification de typage comme un algorithme de
 vérification de preuve automatique. Ces preuves ne portent pas forcément sur des
 programmes. Par exemple, le théorème des 4 couleurs a été prouvé en
-Coq~\cite{4colproof} .
-
-% TODO[E] que veux tu dire par les systèmes d'aide à la preuve ?
+Coq~\cite{4colproof}.
 
 Cette technique est très complexe à mettre en œuvre, puisqu'il faut encoder
 toutes les propriétés voulues dans un formalisme de très bas niveau (du niveau
 de la théorie des ensembles). De plus, l'inférence de types devient rapidement
 indécidable.
-
-% TODO[S] un ex d'analyse?
 
 \section*{Conclusion}
 
@@ -591,15 +572,13 @@ Il existe de nombreuses techniques pour vérifier du code système ou embarqué.
 y a divers choix à faire entre l'expressivité, l'intégration de tests
 dynamiques ou la facilité de mise en œuvre.
 
-% TODO[S] efficace à -> français
-% TODO[S] expressivité -> ex
-
 Pour résoudre le problème des pointeurs utilisateurs dans les noyaux, le typage
-statique est une solution assez pragmatique, puisqu'elle peut s'appliquer à des
-programmes existants, et est efficace à utiliser. Son expressivité limitée nous
-empêche de reposer entièrement sur elle pour garantir l'absence d'erreur dans
-les programmes systèmes. C'est pourquoi dans notre solution, \langname, nous
-approchons la sûreté de la manière suivante:
+statique est une solution performante et assez pragmatique, puisqu'elle peut
+s'appliquer à des programmes existants. Son expressivité limitée nous empêche de
+reposer entièrement sur elle pour garantir l'absence d'erreur dans les
+programmes systèmes (par exemple, le typage est mal adapté pour détecter les
+divisions par zéro). C'est pourquoi nous approchons la sûreté de la manière
+suivante:
 
 \changed{Liste plutôt que paragraphes}
 \begin{itemize}
@@ -617,7 +596,5 @@ approchons la sûreté de la manière suivante:
       sûres. Cela permet de préserver l'isolation entre le noyau et l'espace
       utilisateur.
 \end{itemize}
-
-% TODO[S] je ne comprends pas ce qu'est cette solution safespeak
 
 % vim: spelllang=fr

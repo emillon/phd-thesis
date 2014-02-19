@@ -3,24 +3,26 @@ Après avoir décrit notre solution dans la partie~\ref{part:lang}, on présente
 ici son implantation.
 
 Le chapitre~\ref{cha:implem} décrit l'implantation en elle-même: un prototype
-d'analyseur de types, distribué avec le langage \newspeak sur
-\url{http://penjili.org/}. Il s'agit d'un logiciel libre, distribué sous la
-license LGPL. La compilation depuis C est réalisée par l'utilitaire
-\ctonewspeak. Celui-ci, comme le langage \newspeak, est antérieur à ce projet,
-mais le support de plusieurs extensions GNU C a été développé spécialement pour
-pouvoir analyser le code du noyau Linux.
+d'analyseur de types, distribué avec le langage \newspeak sur~\link{penjili}. Il
+s'agit d'un logiciel libre, distribué sous la license LGPL. La compilation
+depuis C est réalisée par l'utilitaire \ctonewspeak. Celui-ci, tout comme le
+langage \newspeak, proviennent d'EADS et sont antérieurs à ce projet, mais le
+support de plusieurs extensions GNU C a été développé spécialement pour pouvoir
+analyser le code du noyau Linux.
+
+% TODO check l'extra todo de PJ
 
 L'analyse en elle-même est implantée de la manière classique avec une variation
 de l'algorithme W de Damas et Milner. Pour des raisons de simplicité et
 d'efficacité, l'unification est faite en utilisant le partage de références
-plutôt que des substitutions explicites. L'algorithme d'inférence ne pose pas de
-problèmes de performance.
+plutôt que des substitutions. L'algorithme d'inférence ne pose pas de problèmes
+de performance.
 
-Ensuite, dans le chapitre~\ref{cha:etudedecas}, on applique cette implantation
-au noyau Linux. On commence par décrire l'implantation des appels système sous
-ce noyau, et les problèmes de sécurité qui peuvent arriver (ceci a déjà été
-abordé dans le chapitre~\ref{cha:os}). Dans une deuxième partie, on décrit le
-cas de deux \emph{bugs} dans le noyau Linux. On montre que, pour chacun, les
-analyses précédentes permettent de distinguer statiquement entre le cas
-incorrect et le cas corrigé.
+Ensuite, dans le chapitre~\ref{cha:etudedecas}, on évalue cette implantation sur
+le noyau Linux. On commence par décrire comment fonctionnennt les appels système
+sous ce noyau, et comment le \emph{confused deputy problem} évoqué dans le
+chapitre~\ref{cha:os} peut arriver dans ce contexte. Dans une deuxième partie,
+on décrit le cas de deux \emph{bugs} dans le noyau Linux. On montre que, pour
+chacun, les analyses précédentes permettent de distinguer statiquement le cas
+incorrect du cas corrigé.
 }

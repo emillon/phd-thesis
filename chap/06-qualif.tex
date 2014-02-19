@@ -15,10 +15,46 @@ permettant d'explorer cette idée, en ajoutant de la \enquote{signification} dan
 les types de données des programmes. Ces extensions permettront de détecter des
 erreurs de programmation communes, appuyées sur des exemples réels.
 
-On commence par un exemple permettant distinguer plusieurs utilisations de types
-entiers, selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de
-bits. Cela permet de détecter une erreur courante qui consiste à mélanger les
-opérateurs logiques et bit à bit.
+Cela revient à introduire une séparation entre le type des données et sa
+représentation, c'est-à-dire définir un type abstrait. Les pointeurs
+utilisateur sont en fait des pointeurs classiques déguisés, pour lesquels on
+interdit l'opérateur de déréférencement.
+
+Cette technique est en fait générique : on peut également l'appliquer à certains
+types d'entiers. En C, il est commun d'utiliser des \texttt{int} pour tout et
+n'importe quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
+identificateurs pour lesquels les opérations usuelles comme l'addition n'ont pas
+de sens. Par exemple, sous Linux, l'opération d'ouverture de fichier renvoie un
+entier, dit \emph{descripteur de fichier}, qui identifie ce fichier pour ce
+processus.
+Le langage autorise donc par exemple de multiplier entre
+eux deux descripteurs de fichiers, mais le résultat n'a pas de raison \emph{a
+priori} d'être un descripteur de fichier valide.
+
+En n'offrant pas cette distinction, le langage C permet d'écrire du code qui
+peut s'exécuter mais dont la sémantique n'est, quelque part, pas bien fondée. En
+effet, le système de types de C est trop primitif pour pouvoir garantir une
+véritable isolation entre deux types de même représentation : il n'y a pas de
+types abstraits. Certes, \texttt{typedef} permet d'introduire un nouveau nom
+pour un type, mais ce n'est qu'un raccourci syntaxique. Le compilateur ne peut
+en effet pas considérer un programme sans avoir la définition quasi-complète des
+types qui y apparaissent. La seule exception concerne les pointeurs sur
+structures : si on ne fait que les affecter, il n'est pas nécessaire de
+connaître la taille ni la disposition de la structure, donc la définition peut
+ne pas être visible. Cette technique, connue sous le nom de \emph{pointeurs
+opaques}, n'est pas applicable aux autres types.
+
+En ajoutant une couche de typage, on interdit ces opérations à la compilation.
+Cela permet deux choses : pour le code déjà écrit, de détecter et corriger les
+manipulations dangereuses ; et, pour le nouveau code, de s'assurer qu'il est
+correct. Par exemple, si on écrit un éditeur de texte, on peut éviter de
+nombreuses erreurs de programmation en définissant un type \enquote{indice de
+ligne} et un type \enquote{indice de colonne} incompatibles entre eux.
+
+Un premier exemple permet de distinguer plusieurs utilisations des entiers,
+selon s'ils sont utilisés comme entiers arithmétiques ou ensemble de bits. Cela
+permet de détecter une erreur courante qui consiste à mélanger les opérateurs
+logiques et bit à bit.
 
 Ensuite, on étend de manière indépendante le système de types, cette fois au
 niveau des pointeurs. Plus précisément, dans le contexte des systèmes
@@ -58,12 +94,6 @@ s'interpréter comme l'ensemble de ses bits égaux à 1: $\{ i ∈ [0;N-1] / a_i
 \}$. Un entier de 32 bits peut donc représenter une combinaison de 32 options
 indépendantes.
 
-\begin{figure}
-    \insertcode{unix-open.c}
-    \caption{Interface permettant d'ouvrir un fichier sous Unix}
-    \label{fig:unix-open}
-\end{figure}
-
 C'est de cette manière que fonctionne l'interface qui permet d'ouvrir un fichier
 sous Unix (figure~\ref{fig:unix-open}). Le paramètre \texttt{flags} est un
 entier qui encode les options liées à l'ouverture du fichier. On précise son
@@ -73,6 +103,12 @@ effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un
 \enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} encode
 de la même manière les permissions que doit avoir le fichier créé, le cas
 échéant (\texttt{mode\_t} désigne en fait \texttt{unsigned int}).
+
+\begin{figure}[h]
+    \insertcode{unix-open.c}
+    \caption{Interface permettant d'ouvrir un fichier sous Unix}
+    \label{fig:unix-open}
+\end{figure}
 
 Ces fonctions retournent un entier, qui est un \emph{descripteur de fichier}. Il
 correspond à un indice numérique dans une table interne au processus. Par
@@ -120,7 +156,8 @@ de nouveau type sémantique, mais on ajoute une règle de compatibilité entre l
 type de valeurs \tInt et le type statique \tBits (cela signifie qu'une valeur de
 type \tBits est représentée par un \tInt en mémoire,
 figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
-\enquote{constructeurs} (\texttt{O\_*}) et du \enquote{consommateur}
+\enquote{constructeurs} (\texttt{O\_RDONLY}, \texttt{O\_RDWR},
+\texttt{O\_APPEND}, …) et du \enquote{consommateur}
 \texttt{open} (figure~\ref{fig:bitmasks-types}).
 
 \begin{figure}[h]
@@ -161,7 +198,10 @@ figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
 \end{figure}
 
 Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on remplace
-aux règles s'appliquant à $\tInt$ les règles suivantes.
+aux règles s'appliquant à $\tInt$ les règles suivantes. Cela revient à
+surcharger le typage de l'opérateur $\sim$, mais la sémantique est la même
+quelque soit le type car $\tBits$ et $\tInt$ sont représentés de la même
+manière.
 
 \begin{mathpar}
     \irule{Op-Bits}
@@ -189,6 +229,8 @@ $\tBits$ là où une expression de type $\tInt$ est attendue.
         { Γ ⊢ e : \tBits }
         { Γ ⊢ e : \tInt }
 \end{mathpar}
+
+% TODO[E] plus tôt?
 
 Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
 expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
@@ -263,12 +305,12 @@ est bien typée (figure~\ref{fig:notxy-ok}).
 \label{fig:notxy-ok}
 \end{figure}
 
-Cela conclut cet exemple préliminaire, qui permet de voir en quoi \langname est
-adapté à des analyses de typage légères. Puisque le typage est sûr, on en déduit
-que les valeurs d'un certain type ne peuvent être créées que par un certain
-nombre de constructeurs. Par exemple ici les bitmasks ne proviennent que de
-combinaisons de constantes. C'est précisément cette idée de détection de source
-qui est au cœur de l'analyse suivante.
+Cet exemple préliminaire permet de voir en quoi \langname est adapté à des
+analyses de typage légères. Puisque le typage est sûr, on en déduit que les
+valeurs d'un certain type ne peuvent être créées que par un certain nombre de
+constructeurs. Par exemple ici les bitmasks ne proviennent que de combinaisons
+de constantes. C'est précisément cette idée de détection de source qui est au
+cœur de l'analyse suivante.
 
 \section{Analyse de provenance de pointeurs}
 
@@ -394,6 +436,8 @@ dynamiques, les erreurs peuvent arriver à ces deux endroits. Plutôt que de
 proposer un opérateur qui réalise cette copie, on laisse le programmeur faire
 les deux copies manuellement.
 
+%TODO[E] ↓ donne leurs types
+
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
 et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
 étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
@@ -464,6 +508,8 @@ manière suivante:
   & \indent \mathrm{sys\_getver} (\eTaint{v})
 \end{align*}
 }
+
+% TODO[E] attention on tombe sur la figure
 
 \subsection{Extensions sémantiques}
 
@@ -544,8 +590,8 @@ naïvement le système de types avec la règle suivante:
 \end{mathpar}
 
 Cette règle est compatible avec l'extension, sauf qu'elle introduit des termes
-qui sont bien typables mais dont l'évaluation provoque une erreur autre que
-$\serr{div}$, $\serr{array}$ ou $\serr{ptr}$, violant ainsi le
+qui sont bien typables mais dont l'évaluation provoque une erreur $\serr{sec} ∉
+\{\serr{div},\serr{array},\serr{ptr}\}$, violant ainsi le
 théorème~\ref{thm:progres}. Posons:
 
 \[
@@ -756,9 +802,9 @@ les appliquer à n'importe quel type de pointeurs. Leur typage est donc plus
 proche de celui d'un opérateur.
 
 \begin{mathpar}
-    \disprule{GetU}
+    \disprule{User-Get}
 
-    \disprule{PutU}
+    \disprule{User-Put}
 \end{mathpar}
 
 \subsection{Sûreté du typage}

@@ -5,6 +5,8 @@ onlytotal() {
 }
 
 verbose() {
+    onlytotal
+    echo
     grep -c -r TODO '--include=*.tex' |\
     grep -v ':0$' |\
     awk -F: '{print $1 " " $2}' |\

@@ -2,6 +2,10 @@ Dans ce chapitre, nous enrichissons le langage défini dans le
 chapitre~\ref{cha:lang} d'un système de types. Celui-ci permet de séparer les
 programmes bien formés, comme celui de la figure~\ref{fig:progwf:good}, des
 programmes mal formés, comme celui de la figure~\ref{fig:progwf:bad}.
+Intuitivement, le programme mal formé provoquera des erreurs à l'exécution car
+il manipule des données de manière incohérente: la variable \texttt{x} reçoit 1,
+donc elle se comporte comme un entier, puis est déférencée, se comportant comme
+un pointeur.
 
 \begin{SaveVerbatim}[]{VerbProgGood}
 f = Fun() {
@@ -49,17 +53,8 @@ valeurs. En ajoutant cette étape, on restreint la classe d'erreurs qui
 pourraient bloquer la sémantique.
 
 On emploie un système de types monomorphe: à chaque expression, on associe un
-type, et non un schéma de types. Il y a deux exceptions : tout d'abord, le
-pointeur $\eNull$ a pour type $t~*$. Mais cela ne pose pas de complications, car
-il n'y a pas d'étape de généralisation de $t$. Cela indique seulement que
-$\eNull$ est compatible avec n'importe quel type pointeur. L'autre cas concerne
-les tests d'égalité, qu'on veut pouvoir faire sur les valeurs de types scalaires
-et récursivement sur tous les types composés (on veut par exemple éviter de
-tester l'égalité de deux fonctions). Là encore, cela ne pose pas de problème,
-puisqu'on peut statiquement savoir si un type a cette propriété ou pas.
-
-En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut construire des
-types composés: pointeurs, tableaux, structures et fonctions.
+unique type. En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut
+construire des types composés: pointeurs, tableaux, structures et fonctions.
 
 Pour typer les structures, on suppose avoir à notre disposition (par un
 prétraitement, par exemple) le type complet de la structure à chaque accès d'un
@@ -80,7 +75,8 @@ fait toujours dans un contexte précis. } porteront ce type. La première
 instruction est l'affectation de la constante $1$ (entière) à $x$ dont on sait
 qu'elle porte des valeurs entières, ce qui est donc correct. Le fait de
 rencontrer $\iReturn{x}$ permet de conclure que le type de la fonction est $(~)
-→ \tInt$.
+→ \tInt$ (c'est-à-dire qu'elle n'a pas d'arguments et qu'elle retourne un
+\tInt).
 
 Dans la seconde fonction, au contraire, l'opérateur $*$ est appliqué à $x$ (le
 début de l'analyse est identique et permet de conclure que $x$ porte des valeurs
@@ -218,6 +214,8 @@ ce sont toujours des entiers ou des flottants.
 \end{mathpar}
 
 Le pointeur nul, quant à lui, est compatible avec tous les types pointeur.
+Cependant, il conserve bien un type monomorphe: le type $t$ n'est pas
+généralisé.
 
 \begin{mathpar}
   \disprule{Cst-Null}
@@ -415,6 +413,7 @@ bien typées, et si la condition est d'un type entier.
 \end{mathpar}
 
 \section{Fonctions}
+\label{sec:typ-fun}
 
 Le typage des fonctions fait intervenir une variable virtuelle $\vRet$. Cela
 revient à typer l'instruction $\iReturn{e}$ comme $\vRet ← e$. Cela rappelle le
@@ -472,26 +471,9 @@ des globales de cette nouvelle association.
     \disprule{T-Var}
   \end{mathpar}
 
-  \ruleheader{$\typhstar{Γ}{ps}{Γ'}$}
-
-  \begin{mathpar}
-    \irule{T*-Nil}
-      { }
-      { \typhstar{Γ}{[~]}{Γ} }
-
-    \irule{T*-Cons}
-      { \typh{Γ_1}{p}{Γ_2}
-     \\ \typhstar{Γ_2}{ps}{Γ_3}
-      }
-      { \typhstar{Γ_1}{p::ps}{Γ_3} }
-  \end{mathpar}
-
   \ruleheader{$Γ ⊢ P$}
-
   \begin{mathpar}
-    \irule{Prog}
-      { \typhstar{[~]}{P}{Γ} }
-      { ⊢ P }
+      \disprule{Prog}
   \end{mathpar}
 
   \caption{Typage des phrases et programmes}
@@ -539,7 +521,8 @@ Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes, mais
 pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
 de déterminer à l'exécution. On le remplace donc par un cas plus simple où seul
-l'arité est conservée.
+l'arité est conservée. L'alternative serait de garder le type à l'exécution, ce
+qui éloigne d'un langage à la C.
 
 \paragraph{Remarque}
 
@@ -896,6 +879,8 @@ $Γ ⊢ \vRet : t$.
 
 \end{lemma}
 
+%TODO[E] dire un mot sur les esquisses
+
 \begin{proof}[Démonstration (esquisse)]
 Pour chaque forme de jugement de typage, on liste les règles qui peuvent amener
 à cette conclusion.
@@ -1114,6 +1099,9 @@ haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
 On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
 \end{proof}
 
+%TODO[E] un peu court
+% (faisable je pense)
+
 \changed{Partout l'indice grand Phi a été supprimé}
 
 \begin{lemma}[Accès à une mémoire bien typée]
@@ -1268,6 +1256,8 @@ Alors l'un des cas suivants est vrai:
 \end{itemize}
 
 \jolibreak
+
+% TODO[E] jolibreak en haut de page
 
 Supposons que $Γ ⊢ lv : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
 
@@ -1432,8 +1422,7 @@ parties du programme. Cela permet surtout de s'assurer que les programmes ne
 peuvent provoquer une erreur d'exécution que dans certains cas particuliers,
 comme les divisions ou les accès aux tableaux.
 
-À l'issue de ce chapitre, on a donc un langage impératif sain pour bâtir de
-nouvelles analyses de typage, ce que nous allons faire dans le chapitre
-suivant.
+À l'issue de ce chapitre, on a donc un langage impératif sain pour bâtir des
+analyses de typage, ce que nous allons faire dans le chapitre suivant.
 
 % vim: spelllang=fr

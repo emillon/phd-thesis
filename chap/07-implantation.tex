@@ -1,42 +1,29 @@
 Dans ce chapitre, nous décrivons la mise en œuvre des analyses statiques
-précédentes. Notons que, malgré qu'elles aient été décrites sur \langname, leur
-implantation est faite sur la représentation intermédiaire \newspeak. Nous
-commençons donc par décrire celle-ci. Ensuite, nous décrivons la phase de
-compilation, de C à \newspeak, auquel on rajoute ensuite des étiquettes de
+précédentes.
+Celles-ci ont été décrites sur \langname, qui permet de modéliser des programmes
+C bien typables.
+
+Notre but est d'utiliser la représentation intermédiaire \newspeak, développée
+par EADS. Cela permet de profiter des nombreux outils existant déjà autour de ce
+langage, notamment un compilateur depuis C et un analyseur statique par
+interprétation abstraite.
+
+Mais cette représentation utilise un modèle mémoire différent. En effet il
+colle finement à celui de C, où des constructions comme les unions empêchent la
+sûreté du typage. Définir \langname a précisement pour but de définir un langage
+inspiré de C mais sur lequel le typage peut être sûr. Il faudra donc adapter les
+règles de typage les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}. On
+reviendra sur cette distinction entre les deux niveaux de sémantique dans la
+conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
+
+On commence par décrire le langage \newspeak. Ensuite, nous décrivons la phase
+de compilation, de C à \newspeak, auquel on rajoute ensuite des étiquettes de
 types. Celles-ci sont calculées par un algorithme d'inférence de types à la
 Hindley-Milner, reposant sur l'unification et le partage de références. Toutes
 ces étapes sont implantées dans le langage OCaml~\cite{DAOC}.
 
-Le prototype décrit ici est disponible sur \url{http://penjili.org} sous une
-license libre, la \emph{GNU Lesser General Public License}.
-
-\added{Nouvelle subsection}
-
-\subsection*{Pourquoi \newspeak et pas \langname?}
-
-On peut se demander pourquoi analyser du code \newspeak et non \langname. Une
-première raison est que de nombreux outils existent déjà autour du langage
-\newspeak, notamment un compilateur depuis C et un analyseur statique par
-interprétation abstraite. Le but de cette thèse est de permettre des analyses de
-typage sur C, donc \newspeak est un bon support grâce à l'existence du
-traducteur.
-
-Mais le modèle mémoire de \newspeak est très bas niveau. En effet il colle
-finement à celui de C, où des constructions comme les unions empêchent la sûreté
-du typage. Définir \langname a précisement pour but de définir un langage
-inspiré de C mais sur lequel le typage peut être sûr.
-
-Pour l'implantation sur \newspeak, on s'inspire donc des règles de typage sur
-\langname, mais cette approche n'est sûr que pour les programmes qui peuvent
-être fidèlement traduits.
-
-Par exemple, un programme dans lequel on fait de l'arithmétique de pointeurs
-entre champs de structures peut être traduit en \newspeak (et analysé par
-interprétation abstraite), mais on ne peut rien en tirer déduire du résultat
-d'une analyse par typage.
-
-On reviendra sur cette distinction entre les deux niveaux de sémantique dans la
-conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
+Le prototype décrit ici est disponible sur~\link{penjili} sous une license
+libre, la \emph{GNU Lesser General Public License}.
 
 \section{\newspeak et chaîne de compilation}
 \label{sec:compil}
@@ -66,7 +53,7 @@ figure~\ref{fig:stx-npk}.
     {END}
 \\ \\
 \gramdef{Bloc}{blk}
-    {[i_i]}{Liste d'instructions}
+    {[s_i]}{Liste d'instructions}
     {END}
 \\ \\
 \gramdef{Valeur gauche}{lv}
@@ -109,15 +96,8 @@ figure~\ref{fig:stx-npk}.
 \label{fig:stx-npk}
 \end{figure}%}}}
 
-\begin{figure}
-  \centering
-  \input{fig/compil-pipeline.tex}
-  \caption{Compilation depuis \newspeak}
-\label{fig:compil-npk}
-\end{figure}
-
-La traduction depuis C est faite en trois étapes (figure~\ref{fig:compil-npk}):
-prétraitement du code source, compilation de C prétraité vers des objets
+La traduction depuis C est faite en trois étapes: prétraitement du code source
+par un outil externe, compilation séparée de C prétraité vers des objets
 \newspeak{}, puis liaison de ces différentes unités de compilation. Il est aussi
 possible de compiler directement du code Ada vers un objet \newspeak{}.
 
@@ -129,23 +109,52 @@ directives de prétraitement comme \texttt{\#include}, \texttt{\#ifdef}. À cet
 Une fois cette passe effectuée, le résultat est un ensemble de fichiers C
 prétraités; c'est-à-dire des unités de compilation.
 
-Puisque la directive \texttt{\#include} est textuelle, ces fichiers sont très
-grands et donnent lieu à beaucoup de duplication dans les passes suivantes.
-
 Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
-dans l'arbre de syntaxe abstrait des passes suivantes.
+dans l'arbre de syntaxe abstraite des passes suivantes.
+
+% TODO[E] dire (plus tard) qu'on peut annoter et quelles annotations
 
 À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
 plupart des extensions GNU C sont acceptées en plus du C ANSI. Dans cette étape,
 les types et les noms sont résolus, et le programme est annoté de manière à
-rendre les prochaines étapes indépendante du contexte. Par exemple, chaque
+rendre les prochaines étapes indépendantes du contexte. Par exemple, chaque
 déclaration de variable est adjointe d'une description complète du type.
 
-Lors de cette étape, le flot de contrôle est également simplifié. C en effet
-propose de nombreuses constructions redondantes ou ambigües
-(comme \texttt{i = i++}).
+Lors de cette étape, le flot de contrôle est également simplifié
+(figure~\ref{fig:flot-controle-simple}). De plus, les constructions ambigües en
+C comme \texttt{i = i++} sont transformées pour que leur évaluation se fasse
+dans dans un ordre explicite.
+
+\begin{figure}[b]
+
+\begin{minipage}{0.25\linewidth}
+\insertcode{npk-while.c}
+\end{minipage}
+\begin{minipage}{0.7\linewidth}
+\begin{Verbatim}
+int32 x;
+x =(int32) 0;
+do {
+    while (1) {
+        choose {
+            -->
+                guard((10 > x_int32));
+            -->
+                guard(! (10 > x_int32));
+                goto lbl1;
+        }
+        x =(int32) coerce[-2**31,2**31-1] (x_int32 + 1);
+    }
+} with lbl1: {
+}
+\end{Verbatim}
+\end{minipage}
+
+    \caption{Compilation du flot de contrôle en \newspeak}
+    \label{fig:flot-controle-simple}
+\end{figure}
 
 Au contraire, \newspeak propose un nombre réduit de constructions. Rappelons que
 le but de ce langage est de faciliter l'analyse statique: des constructions
@@ -156,29 +165,29 @@ Par exemple, plutôt que de fournir une boucle \emph{while}, une boucle
 \emph{do/while} et une boucle \emph{for}, \newspeak fournit une unique boucle
 \phx\npkWhile. La sortie de boucle est compilée vers un \npkGoto{}\cite{goto},
 qui est toujours un saut vers l'avant (similaire à un \enquote{\emph{break}}
-généralisé). Par conséquence, notre implantation gère les sauts, alors que, dans
-\langname, cette construction n'est pas possible (figure~\ref{fig:stx}, page
-\pageref{fig:stx}).
+généralisé).
 
 \newspeak est conçu pour l'analyse statique par interprétation abstraite. Il a
 donc une vue de bas niveau sur les programmes. Par exemple, aucune distinction
 n'est faite entre l'accès à un champ et l'accès à un élément d'un tableau (tous
 deux sont traduits par un décalage numérique depuis le début de la zone
-mémoire). Pour supprimer cette ambiguïté, il faut s'interfacer dans les
-structures internes de \ctonewspeak, où les informations nécessaires sont encore
-présentes.
+mémoire). De plus, les unions et les structures sont regroupées sous forme des
+types \enquote{régions} qui associent à un décalage un type de champ. Pour
+supprimer ces ambiguïtés, il faut s'interfacer dans les structures internes de
+\ctonewspeak, où les informations nécessaires sont encore présentes.
 
 Ensuite, les différents fichiers sont liés ensemble. Cette étape consiste
 principalement à s'assurer que les hypothèses faites par les différentes unités
 de compilation sont cohérentes entre elles. Les objets marqués \texttt{static},
 invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
-aient un nom globalement unique.
+aient un nom globalement unique. Cette étape se conclut par la création d'un
+fichier \newspeak.
 
-Enfin, l'implantation d'un algorithme d'inférence pour les systèmes de types
-décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez
-simple. Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on
-peut utiliser une variante de l'algorithme W de Damas et
-Milner~\cite{DamasMilner}.
+La dernière étape est réalisée dans un autre outil nommé \ptrtype. Elle consiste
+en l'implantation d'un algorithme d'inférence pour les systèmes de types décrits
+dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez simple.
+Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on peut
+utiliser une variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
 
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
@@ -329,17 +338,25 @@ chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
 \tInt ; … }$ où $…$ désigne l'ensemble des champs inconnus. En unifiant
 $\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient en
 sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$. Plus
-présisément, pour unifier deux types structure, on étudie les types de leurs
+précisément, pour unifier deux types structure, on étudie les types de leurs
 champs. On commence par unifier les types des champs de même nom, et on ajoute à
-l'un les champs exclusifs à l'autre. Cela se rapproche du polymorphisme de
+l'un les champs exclusifs de l'autre. Cela se rapproche du polymorphisme de
 rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
+
+% TODO[E] y a-t-il une variable de rangée?
+
+% TODO[S] plus précisément => ce n'est pas plus précis
+% - pourquoi ça marche
+% - un ex plus complet
+% - à quoi ça sert d'unifier des champs de noms différents?
 
 \added{citation}
 
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
-Cette analyse est implantée dans un outil du nom de \ptrtype{}. Il lit un
+Cette analyse est implantée dans un outil du nom de \ptrtype{}, d'environ 1600
+lignes de code OCaml. Il lit un
 programme \newspeak (ou un fichier C), et réalise l'inférence de types. En
 sortie, il affiche soit le programme complètement annoté, soit une erreur.
 
@@ -347,8 +364,8 @@ Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compil�
 vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
 travaillent sur une représentation intermédiaire proche de \newspeak, mais où
 des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
-intermédiaire est noté \texttt{'a Tyspeak.t}, où \texttt{'a} est le type des
-étiquettes. Mais ce n'est qu'un type différent: il s'agit bien de \newspeak.
+intermédiaire est noté \texttt{'a Tyspeak.t} (pour \emph{typed} \newspeak), où
+\texttt{'a} est le type des étiquettes.
 
 \added{précision que c'est bien du newspeak}
 
@@ -381,9 +398,9 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
   suivante:
 
 \begin{Verbatim}
-val infer : Newspeak.fid list
-         -> Types.simple Env.t
-         -> 'a Tyspeak.t
+val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
+         -> Types.simple Env.t  (* environnement initial *)
+         -> 'a Tyspeak.t        (* programme à analyser *)
          -> Types.simple Tyspeak.t
 \end{Verbatim}
 
@@ -392,11 +409,13 @@ val infer : Newspeak.fid list
 
 \end{itemize}
 
-La fonction appellée par le reste du code, appellée \texttt{unify}, peut
+La fonction appelée par le reste du code, appelée \texttt{unify}, peut
 retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
 types à unifier est mise dans une liste d'attente qui sera unifiée après le
 parcours du programme. Le but est d'instrumenter l'inférence de types afin de
 pouvoir en faire une exécution \enquote{pas à pas}.
+
+% TODO[S] appelée dans infer? unify: où est elle? et process_npk ? pas clair
 
 \begin{figure}
 
@@ -483,14 +502,6 @@ lui.
     (T.AddrOf lv', Ptr (Kernel, ty))
 \end{verbatim}
 
-\label{page:qualifs-pas-qualifs}
-Notons que, dans la représentation des types pointeurs, c'est une étiquette
-séparée qui tient compte de qui contrôle la valeur. Cela vient du fait qu'une
-première présentation de ce système de types utilisait des qualificateurs
-explicites (sur les pointeurs uniquement), avant de passer à deux types
-indépendants. Cette représentation a néanmoins l'avantage de permettre la
-factorisation de code.
-
 Enfin, pour déréférencer une expression, on unifie tout d'abord son type avec le
 type d'un pointeur noyau.
 
@@ -514,36 +525,68 @@ L'exécution de notre analyseur affiche un programme complètement annoté:
 
 \begin{verbatim}
  % ptrtype example.c
-f : (Ptr (Int)) -> (Int)
-Int (example.c:1#4)^f(Ptr (Int) x) {
-  (.c:3#4)^!return =(int32)
-    (coerce[-2147483648,2147483647]
-      ( ( ([(x_Ptr (Int) : Ptr (Int))]32_Int
-            : Int
-          )
-          + (1 : Int)
-        ) : Int
-      ) : Int
-    );
-}
+     1	f : (KPtr (Int)) -> (Int)
+     2	Int (example.c:1#4)^f(KPtr (Int) x) {
+     3	  (.c:3#4)^!return =(int32)
+     4	    (coerce[-2147483648,2147483647]
+     5	      ( ( ([(x_KPtr (Int) : KPtr (Int))]32_Int
+     6	            : Int
+     7	          )
+     8	          + (1 : Int)
+     9	        ) : Int
+    10	      ) : Int
+    11	    );
+    12	}
 \end{verbatim}
 
-L'opérateur \texttt{coerce[a,b]} est un artefact de \newspeak, destiné à
-détecter les débordements d'entiers lors d'une analyse de valeurs par
-interprétation abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
-pertinentes et cet opérateur peut être vu que comme l'identité.
+% TODO[S] étiquettes perso en couleurs?
 
-Un exemple de cas d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
+\begin{itemize}
+    \item Ligne 1: le type inféré de la fonction \texttt{f} est affiché. Il est
+        calculé entièrement en fonction des opérations effectuées, on n'utilise
+        pas les étiquettes de type du programme.
+
+    \item Ligne 2: le code de la fonction est affiché. Les indications de la
+        forme \texttt{(F:L\#C)\^{}X} correspondent à la déclaration d'une
+        variable X, dans le fichier F, ligne L et colonne C.
+
+    \item Ligne 3: en \newspeak, la valeur de retour est une variable qui est
+        affectée. On sépare ainsi le flot de données (définir la valeur de
+        retour) du flot de contrôle (sortir de la fonction). C'est un équivalent
+        de la variable $\vRet$ introduite pour le typage des fonctions
+        (page~\pageref{sec:typ-fun}). L'affectation est notée \texttt{=(int32)}
+        car en \newspeak elle est décorée du type des opérandes. Cette
+        information n'est pas utilisée dans l'inférence de types.
+
+    \item Ligne 4: l'opérateur \texttt{coerce[a,b]} sert à détecter les
+        débordements d'entiers lors d'une analyse de valeurs par interprétation
+        abstraite. Dans le cas de notre analyse, les valeurs ne sont pas
+        pertinentes et cet opérateur peut être vu que comme l'identité.
+
+    \item Ligne 5: le déréférencement d'une valeur gauche \texttt{e} est noté
+        \texttt{[e]\_n}. Il est annoté par la taille de l'opérande (32 bits
+        ici). De plus, l'accès à une valeur gauche (pour la transformer en
+        expression) est annoté par son type, ce qui explique la verbosité de
+        cette ligne.
+
+    \item les autres lignes sont des étiquettes de type inférées sur les
+        expressions $1$, $*x$, $1$, $*x + 1$ et la valeur de retour
+        $\mathrm{coerce}[-2^{31},2^{31}-1](*x + 1)$.
+
+\end{itemize}
+
+Un exemple de détection d'erreur sera décrit dans la section~\ref{sec:demo-unif}.
 
 \section{Performance}
 
 \added{2 paragraphes sur la complexité théorique}
 
-Comme le problème de l'inférence de types par l'algorithme W est complet pour
-DEXPTIME~\cite{mairson}, on peut s'attendre à une complexité exponentielle en la
-taille du programme. Cependant, lorsqu'on borne la \enquote{taille} $d$ des
-types, celle-ci devient quasi-linéaire~\cite{rta03} ($O(n α(n) + dn)$ où $α$ est
-l'inverse de la fonction d'Ackermann).
+Même s'il est simple en apparence, le problème de l'inférence de types par
+l'algorithme W est EXP-complet~\cite{mairson}, c'est-à-dire que les algorithmes
+efficaces ont une complexité exponentielle en la taille du programme. Cependant,
+lorsqu'on borne la \enquote{taille} des types, celle-ci devient
+quasi-linéaire~\cite{rta03}, ce qui signifie qu'il n'y a pas de problème de
+performance à attendre.
 
 Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
@@ -557,6 +600,8 @@ traitement est plus long que celui d'un compilateur comme \texttt{gcc} ou
 \texttt{clang}, mais reste de l'ordre de quelques secondes. \ctonewspeak a été
 utilisé pour compiler des projets de l'ordre du million de lignes de code source
 prétraité, et son exécution ne prenait pas plus de quelques minutes.
+
+%TODO[S] plus de temps C->npk que npk->npk annoté?
 
 Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres
 optimisations sont certainement possibles, mais la performance n'est pas
@@ -578,8 +623,11 @@ détermine grâce au lemme~\ref{lemma:inversion} quelle règle il faut appliquer
 Ensuite, on génère les inconnues de type nécessaires pour appliquer cette règle
 et on indique les contraintes en appelant la fonction d'unification.
 
-Ce prototype, disponible sous license libre sur \url{http://penjili.org}, reste
-incomplet, mais il permet de traiter des parties du noyau Linux comme on le
-verra dans le chapitre suivant.
+Ce prototype comporte environ 1600 lignes de code OCaml. Il est disponible sous
+license libre sur~\link{penjili}. Il a été pensé pour traiter un type de code
+particulier, à savoir le noyau Linux. On montre dans le chapitre suivant que cet
+objectif est atteint, puisqu'il permet de détecter plusieurs bugs.
+
+% TODO[E] + rajoute un peu
 
 % vim: spelllang=fr

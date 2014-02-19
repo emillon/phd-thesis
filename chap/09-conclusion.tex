@@ -22,10 +22,12 @@ structuré, modélisant les cadres de piles présents dans le langage. Pour déc
 la sémantique des accès mémoire, nous utilisons le concept de lentilles issues
 de la programmation fonctionnelle et des systèmes de bases de données. Cela
 permet de définir de manière déclarative la modification en profondeur de
-valeurs dans la mémoire, sans avoir à dupliquer le cas de la lecture et celui de
-l'écriture.
+valeurs dans la mémoire, sans avoir à distinguer le cas de la lecture et celui
+de l'écriture.
 
 \paragraph{Un système de types abstraits}
+
+% TODO[S] extension?
 
 En partant de ce système de types, on a décrit une extension permettant de créer
 des pointeurs pour lesquels l'opération de déréférencement est restreinte à
@@ -50,7 +52,11 @@ vérifier du code de production à l'aide de techniques de typage.
 Des travaux d'expérimentation sont en cours afin d'analyser de plus grandes
 parties du noyau.
 
+%TODO[E] et le contexte industriel?
+
 \section{Différences avec C}
+
+% TODO[S] spk: le nommer dans la partie précédente
 
 \langname a été construit pour pouvoir ajouter un système de types à un langage
 proche de C. Ces deux langages diffèrent donc sur certains points. On détaille
@@ -80,7 +86,7 @@ similaire: les littéraux entiers ont le type de précision arbitraire
 \paragraph{Transtypage et unions}
 
 Puisque l'approche retenue est basée sur le typage statique, il est impossible
-de capturer de nombreuses constructions qui sont possibles, ou même idiomatiques
+de capturer de nombreuses constructions qui sont permises, ou même idiomatiques
 en C:\@ les unions, les conversions de types (explicites ou implicites) et le
 \emph{type punning} (défini ci-dessous). Les deux premières sont équivalentes.
 Bien qu'on puisse remplacer chaque conversion explicite d'un type $t_1$ vers un
@@ -175,6 +181,8 @@ programmes que l'on analyse ne comportent pas de telles erreurs de
 programmation, on peut désactiver ces vérifications et le reste des propriétés
 est toujours valable.
 
+% TODO[S] tu n'en parles pas dans la descr de ton analyseur
+
 On repose sur l'environnement d'exécution à un endroit plus problématique. À la
 sortie de chaque portée (au retour d'une fonction et après la portée d'une
 variable locale déclarée), on parcourt la mémoire à la recherche des pointeurs
@@ -204,7 +212,7 @@ réalisée par \ctonewspeak.
 
 Dans le noyau Linux, il est courant d'utiliser les sauts pour factoriser la
 libération de ressources à la fin d'une fonction. Il est d'ailleurs possible
-d'utiliser l'outil Coccinelle pour donne cette forme à du code utilisant un
+d'utiliser l'outil Coccinelle pour donner cette forme à du code utilisant un
 autre style de structures de contrôle~\cite{lctes11}. On peut imaginer qu'il est
 possible de l'utiliser pour faire la conversion inverse.
 
@@ -341,6 +349,8 @@ fous~\cite{ifm10}.
 
 \section*{Conclusion}
 
+% TODO[S] une conclusion de conclusion?
+
 L'importance des logiciels grandit par deux effets:
 d'une part, ils sont présents dans de plus en plus d'appareils, et d'autre part,
 leur taille est de plus en plus importante. En une journée, entre les appareils
@@ -388,5 +398,8 @@ compatible avec le type d'origine, et pour lequel l'ensemble des opérations est
 restreint. Avec cette fonctionnalité dans un langage, non seulement on peut
 détecter d'autres classes de problèmes, mais surtout on laisse le programmeur
 définir de nouvelles analyses lui-même.
+
+% TODO[E] peut être revenir sur ce que tu peux détecter et comment le faire
+% + le cadre industriel
 
 % vim: spelllang=fr

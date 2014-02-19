@@ -8,60 +8,28 @@ mémoire également contrôlée par l'appelant, on risque de lire ou d'écrire d
 des zones mémoires réservées au noyau seul.
 
 Nous proposons une technique de typage pour détecter ces cas dangereux. Pour ce
-faire, il faudra tout d'abord définir un langage impératif bien typé que nous
+faire, il faudra tout d'abord définir un langage impératif bien typable que nous
 appellerons \langname.
 Celui-ci s'appuie sur le langage \newspeak, qui est un langage intermédiaire
 développé par EADS dans le but de vérifier la sûreté de programmes C embarqués.
 À ce titre, il existe un compilateur qui est capable de traduire du code C vers
 \newspeak.
 
-Une fois \langname défini, nous lui ajoutons des constructions permettant
-d'écrire du code noyau, et en particulier on lui ajoute des pointeurs
-utilisateur: il s'agit de pointeurs dont la valeur est contrôlée par un
-utilisateur interagissant avec le programme via un appel système. Ces pointeurs
-ont un type distinct des pointeurs habituels.
+Définir la syntaxe et la sémantique de \langname permet d'écrire et d'évaluer
+des programmes. Mais cela reste trop permissif, car on ne rejette pas les
+programmes qui manipulent les données de manière incohérente. La première étape
+est donc de définir un système de types pour classifier les expressions et
+fonctions selon le type de valeurs que leur évaluation produit.
 
-Cela revient à introduire une séparation entre le type des données et sa
-représentation, c'est-à-dire définir un type abstrait. Les pointeurs
-utilisateur sont en fait des pointeurs classiques déguisés, pour lesquels on
-interdit l'opérateur de déréférencement.
+Une fois \langname défini et étendu d'un système de types, nous lui ajoutons des
+constructions permettant d'écrire du code noyau, et en particulier on lui ajoute
+des pointeurs utilisateur. il s'agit de pointeurs dont la valeur est contrôlée
+par un utilisateur interagissant avec le programme via un appel système. Ces
+pointeurs ont un type distinct des pointeurs habituels.
 
-Cette technique est en fait générique : on peut également l'appliquer à certains
-types d'entiers. En C, il est commun d'utiliser des \texttt{int} pour tout et
-n'importe quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
-identificateurs pour lesquels les opérations usuelles comme l'addition n'ont pas
-de sens. Par exemple, sous Linux, l'opération d'ouverture de fichier renvoie un
-entier, dit \emph{descripteur de fichier}, qui identifie ce fichier pour ce
-processus.
-Le langage autorise donc par exemple de multiplier entre
-eux deux descripteurs de fichiers, mais le résultat n'a pas de raison \emph{a
-priori} d'être un descripteur de fichier valide.
-
-En n'offrant pas cette distinction, le langage C permet d'écrire du code qui
-peut s'exécuter mais dont la sémantique n'est, quelque part, pas bien fondée. En
-effet, le système de types de C est trop primitif pour pouvoir garantir une
-véritable isolation entre deux types de même représentation : il n'y a pas de
-types abstraits. Certes, \texttt{typedef} permet d'introduire un nouveau nom
-pour un type, mais ce n'est qu'un raccourci syntaxique. Le compilateur ne peut
-en effet pas considérer un programme sans avoir la définition quasi-complète des
-types qui y apparaissent. La seule exception concerne les pointeurs sur
-structures : si on ne fait que les affecter, il n'est pas nécessaire de
-connaître la taille ni la disposition de la structure, donc la définition peut
-ne pas être visible. Cette technique, connue sous le nom de \emph{pointeurs
-opaques}, n'est pas applicable aux autres types.
-
-En ajoutant une couche de typage, on interdit ces opérations à la compilation.
-Cela permet deux choses : pour le code déjà écrit, de détecter et corriger les
-manipulations dangereuses ; et, pour le nouveau code, de s'assurer qu'il est
-correct. Par exemple, si on écrit un éditeur de texte, on peut éviter de
-nombreuses erreurs de programmation en définissant un type \enquote{indice de
-ligne} et un type \enquote{indice de colonne} incompatibles entre eux.
-
-Le but de cette thèse est donc de définir un langage intermédiaire proche de C,
-mais bien typable, et de lui adjoindre un système de types tel que les
-programmes bien typés manipulent les pointeurs utilisateur sans causer de
+En résumé, le but de cette thèse est donc de définir un langage intermédiaire
+proche de C, mais bien typable, et de lui adjoindre un système de types tel que
+les programmes bien typés manipulent les pointeurs utilisateur sans causer de
 problèmes de sécurité.
-
-% TODO[S] ce sont des éléments nouveaux et pas une ccl. C'est déroutant.
 
 % vim: spelllang=fr

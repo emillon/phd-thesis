@@ -49,11 +49,9 @@ Enfin, on décrit une sémantique opérationnelle pour ce langage. Cela permet d
 définir précisément l'exécution d'un programme \langname au niveau de la
 mémoire.
 
-L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}. En
-particulier, on y verra comment traduire un sous-ensemble de C vers \newspeak,
-sur lequel notre implantation est faite.
-
-% TODO[E] un petit rappel du lien entre les 2 *speak?
+L'implantation de ces analyses est faite dans le chapitre~\ref{cha:implem}.
+Puisque \langname n'est qu'un modèle, il s'agira d'adapter ces règles de typage
+sur \newspeak, qui possède un modèle mémoire plus bas niveau.
 
 \section{Notations}
 
@@ -141,8 +139,6 @@ vaut \texttt{5}. Utiliser des lentilles revient à ajouter dans le langage la
 notion de champ en tant que valeur de première classe. Elles ont l'avantage de
 pouvoir se composer, c'est-à-dire que si on a un champ nommé $x$ qui contient un
 champ nommé $y$, alors on peut modifier le champ du champ automatiquement.
-
-% TODO[E] n'y a-t-il pas la même construction en ocaml (with) ?
 
 Dans ce cadre, les lentilles ont été popularisées par Van
 Laarhoven~\cite{LaarhovenLenses}. Puisque cela sert à manipuler des données
@@ -888,8 +884,6 @@ $-1$ sinon.
 \end{minipage}
 \end{center}
 
-% TODO[E] 2 dernières lignes = à préciser
-
 \end{definition}
 
 
@@ -978,11 +972,10 @@ Par exemple, dans la figure~\ref{fig:prog-cleanup}, l'exécution de $h(~)$ donne
 $p$ la valeur $(1, x)$. Puis en arrivant dans $g$, le déréférencement de $p$ va
 modifier $x$ qui va avoir la valeur $1$. $x$, variable flottante, contient donc
 un entier.
-Dans la ligne marquée \texttt{(*)}, on réalise donc l'addition
-d'un entier (contenu dans $x$ malgré son type) et d'un flottant. Cette opération
-est bien typée mais provoquera une erreur $\serr{typ}$ à l'exécution.
-
-% TODO[E] malgré son type / bien typée ??
+Dans la ligne marquée \texttt{(*)}, on réalise donc l'addition d'un entier
+(contenu dans $x$ malgré le type de la variable) et d'un flottant. Cette
+opération est bien typée dans le programme mais provoquera une erreur
+$\serr{typ}$ à l'exécution.
 
 Pour empêcher cela, on instrumente donc le retour de la fonction
 \texttt{f} pour que \texttt{p} soit remplacé par $\eNull$. Alors dans
@@ -1013,10 +1006,8 @@ h = Fun () {
 \label{fig:prog-cleanup}
 \end{figure}
 
-Pour définir l'opération de nettoyage, on commence par définir une opération
-nettoyant une valeur selon un prédicat sur les chemins:
-
-% TODO[E] valeur = ?? à préciser
+Pour définir l'opération de nettoyage, on commence par définir une opération de
+nettoyage selon un prédicat sur les chemins:
 
 \begin{align*}
 \cVP{p}{\widehat{c}} &= \widehat{c} \\
@@ -1488,34 +1479,7 @@ montrera que ce cas est toujours évité dans les programmes typés
   \semrule{Phi-Deref}
 \end{mathpar}
 
-Un exemple d'évaluation est donné dans la figure~\ref{fig:eval-lv}.
-
-\begin{figure}[h]%{{{
-
-  \centering
-
-  \begin{tikzpicture}
-    \node              (a1) {$x$};
-    \node[right of=a1] (a2) {$.l_S$};
-    \node[right of=a2] (a3) {$[2*n]$};
-    \node[right of=a3] (a4) {$.g$};
-
-    \node[below of=a1] (b1) {$(2, x)$};
-    \node[below of=a2] (b2) {$.l$};
-    \node[below of=a3] (b3) {$[4]$};
-    \node[below of=a4] (b4) {$.g$};
-
-    \draw[->] (a1) -- (b1);
-    \draw[->] (a2) -- (b2);
-    \draw[->] (a3) -- (b3);
-    \draw[->] (a4) -- (b4);
-  \end{tikzpicture}
-
-  \caption{Évaluation des valeurs gauches}
-\label{fig:eval-lv}
-\end{figure}%}}}
-
-% TODO[E] ?
+Par exemple, $lv = x.l_S[2*n].g_T$ pourra s'évaluer en $φ = (2, x).l[4].g$.
 
 \section{Expressions}
 \label{sec:eval-exp}
@@ -1680,8 +1644,6 @@ en fin de fonction lorsqu'aucun $\iReturn{\cdot}$ n'est présent dans son corps.
     \semrule{Exp-Call-Return}
 \end{mathpar}
 
-% TODO[E] ?? à voir
-
 \section{Instructions}
 \label{sec:eval-instr}
 
@@ -1707,9 +1669,8 @@ le pas d'exécution\footnote{
 
 \label{page:decl-masquage}
 On suppose qu'il n'y a pas de masquage au sein d'une fonction, c'est-à-dire que
-le nom d'une variable déclarée n'est pas visible avant cette déclaration.
-
-%TODO[E] ne peut on pas masquer?
+le nom d'une variable déclarée n'est jamais dans l'environnement avant cette
+déclaration.
 
 Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
@@ -1795,12 +1756,135 @@ les unes à la suite des autres.
 
   \semrule{ET-Var}
 
-  \semrule{T*-Nil}
-
-  \semrule{T*-Cons}
-
   \semrule{Prog}
+
 \end{mathpar}
+
+\section{Exemple}
+
+Considérons le programme suivant:
+
+\begin{Verbatim}
+x = 0
+f = fun(q) {
+    *q <- 1
+}
+f(&x)
+\end{Verbatim}
+
+Ce programme est constitué des phrases $p_1, p_2$ et $p_3$. On rappelle que par
+rapport à la syntaxe concrète, un \iReturn{\eUnit} est inséré automatiquement,
+donc $p_2 = f=\eFun{q}{*q←1;\iReturn{\eUnit}}$
+
+D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 4 phrases.
+
+\paragraph{Déclaration de \texttt{x}}
+
+D'après \textsc{Prog}, on part d'un état mémoire $m_0 = ([~], [~])$. Pour
+trouver $m_1$ tel que $\ph{m_0}{x = 0}{m_1}$, il faut appliquer la règle
+\textsc{ET-Var}.
+
+Celle-ci va étendre l'ensemble (vide) des globales mais demande d'évaluer
+l'expression $0$. D'après \textsc{Exp-Cst}, $\mm{m_0}{0}{m_0}{\widehat{0}}$.
+
+Donc $\ph{m_0}{x = 0}{m_1}$ en posant $m_1 = ([~], [x↦\widehat{0}])$.
+
+\paragraph{Déclaration de \texttt{f}}
+
+On se trouve encore dans le cas de la déclaration d'une variable globale. Il
+faut comme auparavant évaluer l'expression. C'est la règle \textsc{Exp-Fun} qui
+s'applique: $\mm{m_1}{\eFun{q}{*q←1;\iReturn{\eUnit}}}
+{m_1}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}$ (ce qui revient à dire que la
+fonction est directement placée en mémoire).
+
+Ainsi $\ph{m_1}{f = \eFun{q}{*q←1;\iReturn{\eUnit}}}{m_2}$ où:
+
+\[ m_2 = ([~], [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}};x↦\widehat{0}])\]
+
+\paragraph{Appel de \texttt{f}}
+
+Ici, on évalue une expression pour ses effets de bords. La règle à appliquer est
+\textsc{ET-Exp}, qui a comme prémisse $\mm{m_2}{f(\&x)}{m_3}{v}$.
+
+D'après la forme de l'expression, la règle à appliquer va être
+\textsc{Exp-Call-Return}. Mais il va falloir d'abord réécrire l'expression à
+l'aide de \textsc{Ctx} (pour que l'expression appellée ait la forme
+$\widehat{f}$ et l'argument soit évalué) et \textsc{Exp-Call-Ctx} (pour que le
+corps de la fonction ait pour forme $\iReturn{\eUnit}$).
+
+Tout d'abord on applique donc \textsc{Ctx} avec $C = \ctxEmpty (\&x)$. Comme on
+a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
+
+\[
+    \mm{m_2}{f}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}
+\]
+
+On en déduit que:
+
+\[
+    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&x)}
+\]
+
+Une application supplémentaire de \textsc{Ctx} permet d'en arriver à la ligne
+suivante (en évaluant $\&x$ en $\widehat{\&}(x)$ via \textsc{Exp-Addr}):
+
+\[
+    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(x))}
+\]
+
+La fonction et son argument sont évalués, donc on peut appliquer
+\textsc{Exp-Call-Ctx}. En posant $m_2' = \cPush{m_2}{(q ↦ \widehat{\&}(x))}$, le
+but est de trouver $m_2''$ et $v$ tels que:
+
+\[
+    \mm{m_2'}{*q←1;\iReturn{\eUnit}}{m_2''}{\iReturn{v}}
+\]
+
+Puisque l'instruction est une séquence, on va appliquer \textsc{Seq}. La
+première partie n'étant pas $\iPass$, il faut l'évaluer grâce à la règle
+\textsc{Ctx} avec $C = \ctxEmpty;\iReturn{\eUnit}$.
+
+Le nouveau but est de trouver un $m_2''$ tel que
+$\mm{m_2'}{*q←1}{m_2'}{\iPass}$.
+
+En appliquant \textsc{Phi-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
+$\mm{m_2'}{*q←1}{m_2'}{(x)←1}$.
+
+Puis on applique \textsc{Exp-Cst} sous $C = (x)←\ctxEmpty$ et
+$\mm{m_2'}{*q←1}{m_2'}{(x)←\widehat{1}}$.
+
+Maintenant que les deux côtés de $←$ sont évalués, on peut appliquer
+\textsc{Exp-Set}, et $\mm{m_2'}{*q←1}{m_2''}{\iPass}$ où:
+
+\[m_2'' = ([[q↦(x)]],
+[f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
+;x↦\widehat{1}])
+\]
+
+Alors, d'après \textsc{Seq}, $\mm{m_2'}{*q←1}{m_2''}{\iReturn{()}}$.
+Avec \textsc{Exp-Cst} sous $C = \iReturn{\ctxEmpty}$, on a donc
+$\mm{m_2'}{*q←1}{m_2''}{\iReturn{\widehat{()}}}$.
+
+On peut enfin appliquer \textsc{Exp-Call-Ctx} pour en déduire que:
+
+\[
+    \mm{m_2}{f(\&x)}{m_2'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(x)) }
+\]
+
+Donc d'après \textsc{Exp-Call-Return} (car on a $m_2''' = \cCleanup{m_2'''}$ et
+$ \widehat{\eUnit} = \cV{|m_2'''|}{\widehat{\eUnit}} $):
+
+\[
+    \mm{m_2}{f(\&x)}{m_2'''}{ \widehat{\eUnit} }
+\]
+
+En posant $m_3 = m_2'''$, on a $\ph{m_2}{f(\&x)}{m_3}$.
+
+Donc pour conclure (grâce à \textsc{Prog}), on a
+$\phprog{[p_1,p_2,p_3]}{m_3}$.
+
+% TODO intégrer une structure
+% TODO intégrer if
 
 \section*{Conclusion}
 
@@ -1826,9 +1910,5 @@ qu'aucune règle d'évaluation ne peut s'appliquer. Dans les
 chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}, nous allons donc définir un
 système de types qui permet de rejeter ces programmes se comportant mal à
 l'exécution.
-
-%TODO[E] il faut effectivement présenter safespeak mais cela donne un chapitre
-%de 25 pages où on se perd un peu (en particulier à la gin)
-% peut être finir avec un exemple + complet
 
 % vim: spelllang=fr
