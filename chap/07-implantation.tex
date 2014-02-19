@@ -555,13 +555,12 @@ Un exemple de détection d'erreur sera décrit dans la section~\ref{sec:demo-uni
 
 \added{2 paragraphes sur la complexité théorique}
 
-Comme le problème de l'inférence de types par l'algorithme W est complet pour
-DEXPTIME~\cite{mairson}, on peut s'attendre à une complexité exponentielle en la
-taille du programme. Cependant, lorsqu'on borne la \enquote{taille} $d$ des
-types, celle-ci devient quasi-linéaire~\cite{rta03} ($O(n α(n) + dn)$ où $α$ est
-l'inverse de la fonction d'Ackermann).
-
-% TODO md ??!! complet exp
+Même s'il est simple en apparence, le problème de l'inférence de types par
+l'algorithme W est EXP-complet~\cite{mairson}, c'est-à-dire que les algorithmes
+efficaces ont une complexité exponentielle en la taille du programme. Cependant,
+lorsqu'on borne la \enquote{taille} des types, celle-ci devient
+quasi-linéaire~\cite{rta03}, ce qui signifie qu'il n'y a pas de problème de
+performance à attendre.
 
 Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
