@@ -1,22 +1,18 @@
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{c+cm}{/* from drivers/gpu/drm/radeon/radeon\PYZus{}kms.c */}
-\PY{k+kt}{int} \PY{n+nf}{radeon\PYZus{}info\PYZus{}ioctl}\PY{p}{(}\PY{k}{struct} \PY{n}{drm\PYZus{}device} \PY{o}{*}\PY{n}{dev}\PY{p}{,}
-                      \PY{k+kt}{void} \PY{o}{*}\PY{n}{data}\PY{p}{,}
+\PY{c+cm}{/* drivers/gpu/drm/radeon/radeon\PYZus{}kms.c */}
+\PY{k+kt}{int} \PY{n+nf}{radeon\PYZus{}info\PYZus{}ioctl}\PY{p}{(}\PY{k}{struct} \PY{n}{drm\PYZus{}device} \PY{o}{*}\PY{n}{dev}\PY{p}{,} \PY{k+kt}{void} \PY{o}{*}\PY{n}{data}\PY{p}{,}
                       \PY{k}{struct} \PY{n}{drm\PYZus{}file} \PY{o}{*}\PY{n}{filp}\PY{p}{)} \PY{p}{\PYZob{}}
-	\PY{k}{struct} \PY{n}{radeon\PYZus{}device} \PY{o}{*}\PY{n}{rdev} \PY{o}{=}
-            \PY{n}{dev}\PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}}\PY{n}{dev\PYZus{}private}\PY{p}{;}
+	\PY{k}{struct} \PY{n}{radeon\PYZus{}device} \PY{o}{*}\PY{n}{rdev} \PY{o}{=} \PY{n}{dev}\PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}}\PY{n}{dev\PYZus{}private}\PY{p}{;}
 	\PY{k}{struct} \PY{n}{drm\PYZus{}radeon\PYZus{}info} \PY{o}{*}\PY{n}{info}\PY{p}{;}
-	\PY{k}{struct} \PY{n}{radeon\PYZus{}mode\PYZus{}info} \PY{o}{*}\PY{n}{minfo} \PY{o}{=}
-            \PY{o}{\PYZam{}}\PY{n}{rdev}\PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}}\PY{n}{mode\PYZus{}info}\PY{p}{;}
+	\PY{k}{struct} \PY{n}{radeon\PYZus{}mode\PYZus{}info} \PY{o}{*}\PY{n}{minfo} \PY{o}{=} \PY{o}{\PYZam{}}\PY{n}{rdev}\PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}}\PY{n}{mode\PYZus{}info}\PY{p}{;}
 	\PY{k+kt}{uint32\PYZus{}t} \PY{o}{*}\PY{n}{value\PYZus{}ptr}\PY{p}{;}
 	\PY{k+kt}{uint32\PYZus{}t} \PY{n}{value}\PY{p}{;}
 	\PY{k}{struct} \PY{n}{drm\PYZus{}crtc} \PY{o}{*}\PY{n}{crtc}\PY{p}{;}
 	\PY{k+kt}{int} \PY{n}{i}\PY{p}{,} \PY{n}{found}\PY{p}{;}
 
 	\PY{n}{info} \PY{o}{=} \PY{n}{data}\PY{p}{;}
-	\PY{n}{value\PYZus{}ptr} \PY{o}{=} \PY{p}{(}\PY{k+kt}{uint32\PYZus{}t} \PY{o}{*}\PY{p}{)}
-            \PY{p}{(}\PY{p}{(}\PY{k+kt}{unsigned} \PY{k+kt}{long}\PY{p}{)}\PY{n}{info}\PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}}\PY{n}{value}\PY{p}{)}\PY{p}{;}
-	\PY{n}{value} \PY{o}{=} \PY{o}{*}\PY{n}{value\PYZus{}ptr}\PY{p}{;}
-        \PY{p}{[}\PY{p}{.}\PY{p}{.}\PY{p}{.}\PY{p}{]}
+	\PY{n}{value\PYZus{}ptr} \PY{o}{=} \PY{p}{(}\PY{k+kt}{uint32\PYZus{}t} \PY{o}{*}\PY{p}{)} \PY{p}{(}\PY{p}{(}\PY{k+kt}{unsigned} \PY{k+kt}{long}\PY{p}{)}\PY{n}{info}\PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}}\PY{n}{value}\PY{p}{)}\PY{p}{;}
+\PY{c+cm}{/*=\PYZgt{}*/}  \PY{n}{value} \PY{o}{=} \PY{o}{*}\PY{n}{value\PYZus{}ptr}\PY{p}{;}
+        \PY{c+cm}{/* ... */}
 \PY{p}{\PYZcb{}}
 \end{Verbatim}
