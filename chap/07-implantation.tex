@@ -114,7 +114,6 @@ annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
 dans l'arbre de syntaxe abstraite des passes suivantes.
 
 % TODO[E] dire (plus tard) qu'on peut annoter et quelles annotations
-% TODO[E] ann safespeak en C
 
 À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
@@ -209,8 +208,6 @@ On présente ici la fonction \texttt{unify}. Celle-ci prend en entrée deux
 représentations de types pouvant contenir des inconnues de la forme \texttt{Var
 n}, et retourne une liste de couples $(n, t)$ indiquant les substitutions à
 faire.
-
-%TODO[S] dire d'où vient le Var n
 
 Cet algorithme (décrit en pseudo-code ML en figure~\ref{fig:algo-unif}) prend un
 chemin différent selon la forme des deux types d'entrée:
@@ -358,20 +355,17 @@ rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
 \section{Architecture de \ptrtype}
 \label{sec:ptrtype-archi}
 
-Cette analyse est implantée dans un outil du nom de \ptrtype{}. Il lit un
+Cette analyse est implantée dans un outil du nom de \ptrtype{}, d'environ 1600
+lignes de code OCaml. Il lit un
 programme \newspeak (ou un fichier C), et réalise l'inférence de types. En
 sortie, il affiche soit le programme complètement annoté, soit une erreur.
-
-% TODO[S] ça représente combien de lignes de code ptrtype?
 
 Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compilé
 vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
 travaillent sur une représentation intermédiaire proche de \newspeak, mais où
 des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
-intermédiaire est noté \texttt{'a Tyspeak.t}, où \texttt{'a} est le type des
-étiquettes. Mais ce n'est qu'un type différent: il s'agit bien de \newspeak.
-
-% TODO[E] Mais...: ??
+intermédiaire est noté \texttt{'a Tyspeak.t} (pour \emph{typed} \newspeak), où
+\texttt{'a} est le type des étiquettes.
 
 \added{précision que c'est bien du newspeak}
 
