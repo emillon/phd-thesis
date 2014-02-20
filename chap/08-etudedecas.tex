@@ -221,8 +221,6 @@ Cependant, l'argument \texttt{data} est un pointeur vers une structure (allouée
 en espace noyau) du type donné dans la figure~\ref{fig:kms-info}, dont les
 champs proviennent d'un appel utilisateur de \verb!ioctl()!.
 
-% TODO[E] serait il possible de faire tourner ton proto sur ce code?
-
 \begin{figure}[h]
 \insertcode{kms-info.c}
 \caption{Définition de \texttt{struct drm\_radeon\_info}}
@@ -271,7 +269,7 @@ l'implantation de celle-ci pour les processeurs Blackfin,
 figure~\ref{fig:ptrace-blackfin}.
 
 Dans d'anciennes versions de Linux\footnote{Jusqu'à la version 2.6.28 --- ce bug
-a été corrigé dans le \emph{commit} \texttt{7786ce} en remplaçant l'appel à
+a été corrigé dans le \emph{commit} \texttt{7786ce82} en remplaçant l'appel à
 \texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
 appelle \texttt{memcpy} au lieu de \nolinkurl{copy\_from\_user} pour lire dans
 la mémoire du processus. La ligne problématique est préfixée par
