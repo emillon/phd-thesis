@@ -335,20 +335,31 @@ différente de la présentation du chapitre~\ref{cha:lang}. C'est pourquoi elle
 n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directement
 au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
 chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
-\tInt ; … }$ où $…$ désigne l'ensemble des champs inconnus. En unifiant
-$\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient en
-sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$. Plus
-précisément, pour unifier deux types structure, on étudie les types de leurs
-champs. On commence par unifier les types des champs de même nom, et on ajoute à
-l'un les champs exclusifs de l'autre. Cela se rapproche du polymorphisme de
-rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
+\tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus.
 
-% TODO[E] y a-t-il une variable de rangée?
+Plus précisément, si on cherche à unifier les types structures
+$A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a }$
+et
+$B = \tStruct{ b_1: s_1 ; … ; b_m: u_m; …X_b }$,
+il faut partitionner l'ensemble des champs en 3: ceux qui apparaissent dans les
+deux structures, ceux qui apparaissent dans $A$ mais pas dans $B$, et ceux qui
+apparaissent dans $B$ mais pas dans $A$.
 
-% TODO[S] plus précisément => ce n'est pas plus précis
-% - pourquoi ça marche
-% - un ex plus complet
-% - à quoi ça sert d'unifier des champs de noms différents?
+\begin{itemize}
+    \item Pour tous les champs $l$ tels que $l: a_i ∈ A$ et $l: b_j ∈ B$,
+        on unifie $a_i$ et $b_j$.
+    \item Pour les champs $l$ qui sont dans $A$ mais pas dans $B$: on ajoute $l$
+        à $X_b$.
+    \item Et symétriquement dans $X_a$.
+\end{itemize}
+
+Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
+les langages comme OCaml. À la fin de l'inférence, on considère que la variable
+de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
+
+% TODO ajouter à la figure algo?
+% cstrs ::= n ↦ t
+%        |  t ∈ X
 
 \added{citation}
 
