@@ -230,8 +230,6 @@ $\tBits$ là où une expression de type $\tInt$ est attendue.
         { Γ ⊢ e : \tInt }
 \end{mathpar}
 
-% TODO[E] plus tôt?
-
 Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
 expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
 priori} de type \tInt, mais \tBits ou \tInt. Cela implique aussi qu'on peut
@@ -436,18 +434,22 @@ dynamiques, les erreurs peuvent arriver à ces deux endroits. Plutôt que de
 proposer un opérateur qui réalise cette copie, on laisse le programmeur faire
 les deux copies manuellement.
 
-%TODO[E] ↓ donne leurs types
-
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
-et $\phxx{\uGet}$ de copie sûre. Afin de leur donner une sémantique, il faut
-étendre l'ensemble des valeurs pointeur $φ$ aux constructions de la forme
-$\vTainted{φ'}$. Pour créer des termes s'évaluant en de telles valeurs, il faut
-une construction syntaxique $\eTaint{e}$ telle que, si $e$ s'évalue en
-$\wphi{φ}$, $\eTaint{e}$ s'évalue en $\wphi{\vTainted{φ}$}. Cela demande 2
-autres ajouts: un nouveau contexte d'évaluation $\eTaint{C}$ et une règle
-d'évaluation. Enfin, on ajoute une nouvelle erreur $\serr{sec}$ à déclencher
-lorsqu'on déréférence directement un pointeur utilisateur. Ces étapes sont
-résumées dans la figure~\ref{fig:qualif-changes}.
+et $\phxx{\uGet}$ de copie sûre. $\uGet{p_k}{p_u}$ copie la valeur par pointée
+par $p_u$ (qui se trouve en espace utilisateur) à l'emplacement mémoire pointé
+par $p_k$ (en espace noyau). $\uPut{p_u}{p_k}$ réalise l'opération inverse, en
+copiant la valeur par pointée par $p_k$ (en espace noyau) à l'emplacement
+mémoire pointé par $p_u$ (en espace utilisateur).
+
+Afin de leur donner une sémantique, il faut étendre l'ensemble des valeurs
+pointeur $φ$ aux constructions de la forme $\vTainted{φ'}$. Pour créer des
+termes s'évaluant en de telles valeurs, il faut une construction syntaxique
+$\eTaint{e}$ telle que, si $e$ s'évalue en $\wphi{φ}$, $\eTaint{e}$ s'évalue en
+$\wphi{\vTainted{φ}$}. Cela demande 2 autres ajouts: un nouveau contexte
+d'évaluation $\eTaint{C}$ et une règle d'évaluation. Enfin, on ajoute une
+nouvelle erreur $\serr{sec}$ à déclencher lorsqu'on déréférence directement un
+pointeur utilisateur. Ces étapes sont résumées dans la
+figure~\ref{fig:qualif-changes}.
 
 \added{Cas e ::= copy*}
 
@@ -497,9 +499,9 @@ pointeur utilisateur. Seule la première est faite pour être utilisée dans le
 code à analyser. La seconde sert uniquement à modéliser les points d'entrée du
 noyau. Par exemple, la fonction $\mathrm{sys\_getver}$ de la
 figure~\ref{fig:ex-sys-getver} peut être appelée par un utilisateur de la
-manière suivante:
+manière décrite dans la figure~\ref{fig:ex-sys-getver-call}.
 
-{
+\begin{figure}[h]
 \setlength{\parindent}{1cm}
 \begin{align*}
   & \indent \textsc{Decl}~v= \{~\texttt{major} : 0
@@ -507,9 +509,12 @@ manière suivante:
                               ; \texttt{patch} : 0~\}~\textsc{in} \\
   & \indent \mathrm{sys\_getver} (\eTaint{v})
 \end{align*}
-}
 
-% TODO[E] attention on tombe sur la figure
+\caption{Appel de la fonction $\mathrm{sys\_getver}$ de la
+    figure~\ref{fig:ex-sys-getver}}
+\label{fig:ex-sys-getver-call}
+
+\end{figure}
 
 \subsection{Extensions sémantiques}
 
