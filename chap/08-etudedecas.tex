@@ -270,7 +270,7 @@ figure~\ref{fig:ptrace-blackfin}.
 
 Dans d'anciennes versions de Linux\footnote{Jusqu'à la version 2.6.28 --- ce bug
 a été corrigé dans le \emph{commit} \texttt{7786ce82} en remplaçant l'appel à
-\texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}}, cette fonction
+\texttt{memcpy} par un appel à \texttt{copy\_from\_user\_page}.}, cette fonction
 appelle \texttt{memcpy} au lieu de \nolinkurl{copy\_from\_user} pour lire dans
 la mémoire du processus. La ligne problématique est préfixée par
 \texttt{/*=\textgreater{}*/}. En théorie, si un utilisateur passe un pointeur
