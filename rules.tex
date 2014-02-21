@@ -287,6 +287,10 @@
                    { v = \widehat{\&}~φ }
                    { \mms{*~v }{φ} }
     }
+    {Phi-Deref-Null}{ \irule{Phi-Deref-Null}
+                   { v = \widehat{\eNull} }
+                   { \msi{m}{*~v } → \serr{ptr} }
+    }
     {Phi-Struct}{ \irule{Phi-Struct}
                     {  }
                     { \mms{φ.l_S}{φ\widehat{.}l} }

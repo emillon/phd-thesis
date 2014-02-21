@@ -1050,7 +1050,7 @@ Ces 4 fonctions seront utilisées dans plusieurs règles dans la suite de ce
 chapitre.
 
 \paragraph{Remarques}
-\added{Les 2 paragraphes suivants}
+\added{Les 3 paragraphes suivants}
 
 Ces opérations ne sont pas toujours bien définies. Par exemple, $\phxxx\cExtend$
 ne peut pas s'appliquer à une pile vide, et $m - x$ n'est défini que si une
@@ -1066,6 +1066,15 @@ ne peuvent pas être distinguées. On interdit donc ce cas en demandant aux
 programmes d'être bien formés: au sein d'une fonction, les paramètres ainsi que
 l'ensemble des locales déclarées doivent être de noms différents. En pratique,
 une phase préalable d'$α$-conversion peut renommer les variables problématiques.
+
+De plus, le fait d'ajouter cette étape de nettoyage à chaque retour de fonction
+peut être assez coûteux. C'est un compromis: si on considère que les programmes
+se comportent bien et ne créent pas de pointeurs fous (pointant au-dessus de la
+pile), alors cette phase est inutile et peut être remplacée par l'identité.
+Autrement dit, il s'agit seulement d'une technique pour s'assurer de ne pas
+avoir d'erreurs dans la sémantique. L'ajout d'un ramasse-miette, ou une
+vérification préalable par un système de régions~\cite{jfp92} peut garantir
+qu'il n'y a pas de telles constructions dangereuses.
 
 \section{Accesseurs}
 \label{sec:mem-access}
@@ -1260,7 +1269,8 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
 
   On définit de même un accesseur ${[\cdot]}_T$ pour les accès par indice à des
   valeurs tableaux. Néanmoins le paramètre indice est toujours un entier et pas
-  une expression arbitraire.
+  une expression arbitraire. Notons que les accès sont vérifiés dynamiquement:
+  il ne peut pas y avoir de débordement de tableau.
 
   \begin{align*}
     \eArray{ v_1 ; … ; v_n } {[i]}_T   &= v_{i+1} \textrm{ si } i ∈ [0;n-1] \\
@@ -1278,25 +1288,14 @@ indice $|s|-n+1$ apparaît dans la définition précédente.
 
   L'accès par chemin $Φ$ permet de lire et de modifier la mémoire en profondeur.
 
-  On peut accéder directement à une variable:
+  On peut accéder directement à une variable, et les accès à des sous-valeurs se
+  font en composant les accesseurs (définition~\ref{def:lens-comp},
+  page~\pageref{def:lens-comp}):
 
   \begin{align*}
-    Φ(a) &= A(a)
-  \end{align*}
-
-  Les accès à des sous-valeurs se font en composant les accesseurs
-  (définition~\ref{def:lens-comp}, page~\pageref{def:lens-comp}):
-
-  \begin{align*}
+    Φ(a)    &= A(a) \\
     Φ(φ.l)  &= Φ(φ) \ggg F(l) \\
     Φ(φ[i]) &= Φ(φ) \ggg T(i)
-  \end{align*}
-
-  Enfin, l'accès à la mémoire par le pointeur nul provoque une erreur:
-
-  \begin{align*}
-    m{[\eNull    ]}_Φ &= \serr{ptr} \\
-    m{[\eNull ← v]}_Φ &= \serr{ptr}
   \end{align*}
 
 \paragraph{Remarque}
@@ -1469,14 +1468,16 @@ $\widehat{\&}~(((1,s0).f)$ et donc
 et en
 \texttt{(b)}.
 
-Dans le cas où la valeur référencée n'a pas la forme $m[φ']$, aucune règle ne
-peut s'appliquer (comme lorsqu'on cherche à réduire l'addition d'une fonction et
-d'un entier, par exemple). Cela est préférable à renvoyer $\serr{ptr}$ car on
-montrera que ce cas est toujours évité dans les programmes typés
-(théorème~\ref{thm:progres}).
+Dans le cas où la valeur référencée n'a pas la forme $\widehat{\&} φ$ ou
+$\widehat{\eNull}$, aucune règle ne peut s'appliquer (comme lorsqu'on cherche à
+réduire l'addition d'une fonction et d'un entier, par exemple). Cela est
+préférable à renvoyer $\serr{ptr}$ car on montrera que ce cas est toujours évité
+dans les programmes typés (théorème~\ref{thm:progres}).
 
 \begin{mathpar}
   \semrule{Phi-Deref}
+
+  \semrule{Phi-Deref-Null}
 \end{mathpar}
 
 Par exemple, $lv = x.l_S[2*n].g_T$ pourra s'évaluer en $φ = (2, x).l[4].g$.
