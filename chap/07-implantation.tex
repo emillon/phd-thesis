@@ -420,13 +420,11 @@ val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
 
 \end{itemize}
 
-La fonction appelée par le reste du code, appelée \texttt{unify}, peut
-retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
-types à unifier est mise dans une liste d'attente qui sera unifiée après le
-parcours du programme. Le but est d'instrumenter l'inférence de types afin de
-pouvoir en faire une exécution \enquote{pas à pas}.
-
-% TODO[S] appelée dans infer? unify: où est elle? et process_npk ? pas clair
+La fonction appelée \texttt{unify}, appelée dans toutes les fonctions
+d'inférence, peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce
+cas, la paire de types à unifier est mise dans une liste d'attente qui sera
+unifiée après le parcours du programme. Le but est d'instrumenter l'inférence de
+types afin de pouvoir en faire une exécution \enquote{pas à pas}.
 
 \begin{figure}
 
@@ -549,8 +547,6 @@ L'exécution de notre analyseur affiche un programme complètement annoté:
     11	    );
     12	}
 \end{verbatim}
-
-% TODO[S] étiquettes perso en couleurs?
 
 \begin{itemize}
     \item Ligne 1: le type inféré de la fonction \texttt{f} est affiché. Il est
