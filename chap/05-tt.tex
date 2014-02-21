@@ -692,7 +692,7 @@ sur la forme de $Γ$ et $m$. Fonctionnellement, cela implique que les accès
 (lemme~\ref{lemma:mem-typ}). Les règles définissant cette relation sont données
 dans la figure~\ref{fig:comp-mem}.
 
-\begin{figure}[h]%{{{
+\begin{figure}%{{{
 
 \centering
 
@@ -703,7 +703,7 @@ dans la figure~\ref{fig:comp-mem}.
 
         \irule{M-Global}
             { \mcomp{Γ}{(s, g)}
-           \\ m ⊧ v : τ
+           \\ (s, g) ⊧ v : τ
            \\ \tComp{τ}{t}
             }
             { \mcomp{\extendGlobal{Γ}{x}{t}}{(s, ((x↦v)::g))} }
@@ -764,7 +764,8 @@ dans la figure~\ref{fig:comp-mem}.
 \section{Propriétés du typage}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
-théorèmes.
+théorèmes. Certaines démonstrations sont des analyses de cas laborieuses et sans
+difficultés; dans ce cas on n'en donne que des esquisses.
 
 \begin{lemma}[Inversion]
 \label{lemma:inversion}
@@ -878,8 +879,6 @@ $Γ ⊢ \vRet : t$.
 \end{itemize}
 
 \end{lemma}
-
-%TODO[E] dire un mot sur les esquisses
 
 \begin{proof}[Démonstration (esquisse)]
 Pour chaque forme de jugement de typage, on liste les règles qui peuvent amener
@@ -1115,6 +1114,8 @@ $\tComp{τ}{t}$.
 
 \end{lemma}
 
+%TODO ack-grep '\[\]'
+
 \begin{proof}
 
 %\def\cVars#1{\mathrm{Vars}(#1)} % utile?
@@ -1257,8 +1258,6 @@ Alors l'un des cas suivants est vrai:
 
 \jolibreak
 
-% TODO[E] jolibreak en haut de page
-
 Supposons que $Γ ⊢ lv : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
 
 Alors l'un des cas suivants est vrai:
@@ -1282,6 +1281,7 @@ C'est-à-dire, soit:
 La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
 
 % attention il est recopié dans d-preuves
+\newpage %TODx check
 
 \begin{theorem}[Préservation]
 \label{thm:preservation}
@@ -1358,8 +1358,6 @@ Selon la forme de $p$, il suffit alors d'appliquer la règle
 \textsc{ET-Exp} ou \textsc{ET-Var}.
 
 \end{proof}
-
-\newpage
 
 \begin{theorem}[Préservation pour les phrases]
 \label{thm:presa-phr}

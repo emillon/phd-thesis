@@ -12,22 +12,19 @@ Cette thèse comporte 4 contributions principales.
 Le système de types de C est trop rudimentaire pour permettre d'obtenir des
 garanties sur l'exécution des programmes bien typés. En interdisant certaines
 constructions dangereuses et en annotant certaines autres, nous avons isolé un
-langage impératif bien typable, pour lequel on peut définir un système de types
-sûr.
+langage impératif bien typable, \langname, pour lequel on peut définir un
+système de types sûr.
 
 \paragraph{Une sémantique basée sur les lentilles}
 
-Une des particularités de ce langage impératif est qu'il utilise un état mémoire
-structuré, modélisant les cadres de piles présents dans le langage. Pour décrire
-la sémantique des accès mémoire, nous utilisons le concept de lentilles issues
-de la programmation fonctionnelle et des systèmes de bases de données. Cela
-permet de définir de manière déclarative la modification en profondeur de
-valeurs dans la mémoire, sans avoir à distinguer le cas de la lecture et celui
-de l'écriture.
+Une des particularités de \langname est qu'il utilise un état mémoire structuré,
+modélisant les cadres de piles présents dans le langage. Pour décrire la
+sémantique des accès mémoire, nous utilisons le concept de lentilles issues de
+la programmation fonctionnelle et des systèmes de bases de données. Cela permet
+de définir de manière déclarative la modification en profondeur de valeurs dans
+la mémoire, sans avoir à distinguer le cas de la lecture et celui de l'écriture.
 
 \paragraph{Un système de types abstraits}
-
-% TODO[S] extension?
 
 En partant de ce système de types, on a décrit une extension permettant de créer
 des pointeurs pour lesquels l'opération de déréférencement est restreinte à
@@ -42,21 +39,19 @@ ou masque de bits.
 \paragraph{Un prototype d'analyseur statique}
 
 Les analyses de typage ici décrites ont été implantées sous forme d'un prototype
-d'analyseur statique distribué avec le langage \newspeak.
-D'une part, cela permet de vérifier la propriété d'isolation des appels système
-sur du code C existant, et d'autre part cela fournit une base saine pour
-implanter d'autres analyses de typage sur le langage \newspeak.
-D'autre part, ce prototype a été utilisé pour confirmer l'existence de deux bugs
+d'analyseur statique distribué avec le langage \newspeak, développé par EADS. Le
+choix de \newspeak pour l'implantation demande d'adapter les règles de typage,
+mais il permet de réutiliser un traducteur existant, et de contribuer les
+résultats à l'entreprise. Ce prototype permet d'une part de vérifier la
+propriété d'isolation des appels système sur du code C existant, et d'autre part
+fournit une base saine pour implanter d'autres analyses de typage sur le langage
+\newspeak. Ce prototype a été utilisé pour confirmer l'existence de deux bugs
 dans le noyau Linux, ce qui permet de valider l'approche: il est possible de
-vérifier du code de production à l'aide de techniques de typage.
-Des travaux d'expérimentation sont en cours afin d'analyser de plus grandes
-parties du noyau.
-
-%TODO[E] et le contexte industriel?
+vérifier du code de production à l'aide de techniques de typage. Des travaux
+d'expérimentation sont en cours afin d'analyser de plus grandes parties du
+noyau.
 
 \section{Différences avec C}
-
-% TODO[S] spk: le nommer dans la partie précédente
 
 \langname a été construit pour pouvoir ajouter un système de types à un langage
 proche de C. Ces deux langages diffèrent donc sur certains points. On détaille
@@ -69,7 +64,7 @@ En C, on dispose de plusieurs types entiers, pouvant avoir plusieurs tailles et
 être signés ou non signés, ainsi que des types flottants qui diffèrent par leur
 taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier et
 un seul type de flottant. La raison pour cela est que nous ne nous intéressons
-pas du tout aux problématiques de sémantique entière: les débordements,
+pas du tout aux problématiques de sémantique arithmétique: les débordements,
 dénormalisations, etc, sont supposés ne pas arriver.
 
 Il est possible d'étendre le système de types de \langname{} pour ajouter tous
@@ -180,8 +175,6 @@ caractéristique cruciale de cette approche: en effet, si on suppose que les
 programmes que l'on analyse ne comportent pas de telles erreurs de
 programmation, on peut désactiver ces vérifications et le reste des propriétés
 est toujours valable.
-
-% TODO[S] tu n'en parles pas dans la descr de ton analyseur
 
 On repose sur l'environnement d'exécution à un endroit plus problématique. À la
 sortie de chaque portée (au retour d'une fonction et après la portée d'une
@@ -348,8 +341,6 @@ fous~\cite{ifm10}.
 %le type \texttt{int}.
 
 \section*{Conclusion}
-
-% TODO[S] une conclusion de conclusion?
 
 L'importance des logiciels grandit par deux effets:
 d'une part, ils sont présents dans de plus en plus d'appareils, et d'autre part,

@@ -335,20 +335,31 @@ différente de la présentation du chapitre~\ref{cha:lang}. C'est pourquoi elle
 n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directement
 au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
 chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
-\tInt ; … }$ où $…$ désigne l'ensemble des champs inconnus. En unifiant
-$\tStruct{ a: t_a ; … }$ et $\tStruct{ b: t_b ; … }$ (si $a ≠ b$), on obtient en
-sortie que ces deux types sont égaux à $\tStruct{ a: t_a; b: t_b ; … }$. Plus
-précisément, pour unifier deux types structure, on étudie les types de leurs
-champs. On commence par unifier les types des champs de même nom, et on ajoute à
-l'un les champs exclusifs de l'autre. Cela se rapproche du polymorphisme de
-rangée~\cite{ocamlObjects} présent dans les langages comme OCaml.
+\tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus.
 
-% TODO[E] y a-t-il une variable de rangée?
+Plus précisément, si on cherche à unifier les types structures
+$A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a }$
+et
+$B = \tStruct{ b_1: s_1 ; … ; b_m: u_m; …X_b }$,
+il faut partitionner l'ensemble des champs en 3: ceux qui apparaissent dans les
+deux structures, ceux qui apparaissent dans $A$ mais pas dans $B$, et ceux qui
+apparaissent dans $B$ mais pas dans $A$.
 
-% TODO[S] plus précisément => ce n'est pas plus précis
-% - pourquoi ça marche
-% - un ex plus complet
-% - à quoi ça sert d'unifier des champs de noms différents?
+\begin{itemize}
+    \item Pour tous les champs $l$ tels que $l: a_i ∈ A$ et $l: b_j ∈ B$,
+        on unifie $a_i$ et $b_j$.
+    \item Pour les champs $l$ qui sont dans $A$ mais pas dans $B$: on ajoute $l$
+        à $X_b$.
+    \item Et symétriquement dans $X_a$.
+\end{itemize}
+
+Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
+les langages comme OCaml. À la fin de l'inférence, on considère que la variable
+de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
+
+% TODO ajouter à la figure algo?
+% cstrs ::= n ↦ t
+%        |  t ∈ X
 
 \added{citation}
 
@@ -409,13 +420,11 @@ val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
 
 \end{itemize}
 
-La fonction appelée par le reste du code, appelée \texttt{unify}, peut
-retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
-types à unifier est mise dans une liste d'attente qui sera unifiée après le
-parcours du programme. Le but est d'instrumenter l'inférence de types afin de
-pouvoir en faire une exécution \enquote{pas à pas}.
-
-% TODO[S] appelée dans infer? unify: où est elle? et process_npk ? pas clair
+La fonction appelée \texttt{unify}, appelée dans toutes les fonctions
+d'inférence, peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce
+cas, la paire de types à unifier est mise dans une liste d'attente qui sera
+unifiée après le parcours du programme. Le but est d'instrumenter l'inférence de
+types afin de pouvoir en faire une exécution \enquote{pas à pas}.
 
 \begin{figure}
 
@@ -539,8 +548,6 @@ L'exécution de notre analyseur affiche un programme complètement annoté:
     12	}
 \end{verbatim}
 
-% TODO[S] étiquettes perso en couleurs?
-
 \begin{itemize}
     \item Ligne 1: le type inféré de la fonction \texttt{f} est affiché. Il est
         calculé entièrement en fonction des opérations effectuées, on n'utilise
@@ -627,7 +634,5 @@ Ce prototype comporte environ 1600 lignes de code OCaml. Il est disponible sous
 license libre sur~\link{penjili}. Il a été pensé pour traiter un type de code
 particulier, à savoir le noyau Linux. On montre dans le chapitre suivant que cet
 objectif est atteint, puisqu'il permet de détecter plusieurs bugs.
-
-% TODO[E] + rajoute un peu
 
 % vim: spelllang=fr

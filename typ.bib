@@ -1,15 +1,13 @@
-@unpublished{4colproof,
-    author = {Gonthier, Georges},
-    citeulike-article-id = {7631006},
-    citeulike-linkout-0 = {http://research.microsoft.com/\~{}gonthier/4colproof.pdf},
-    keywords = {coq, master-project, theorem-proving, verification},
-    posted-at = {2010-08-13 13:39:53},
-    priority = {0},
-    title = {{A computer-checked proof of the Four Colour Theorem}},
-    url = {http://research.microsoft.com/\~{}gonthier/4colproof.pdf},
-    year = {2005}
+@inproceedings{4colpap,
+  author    = {Georges Gonthier},
+  title     = {The Four Colour Theorem: Engineering of a Formal Proof},
+  booktitle = {8th Asian Symposium on Computer Mathematics},
+  series = {ASCM 2007},
+  year      = {2007},
+  pages     = {333},
+  ee        = {http://dx.doi.org/10.1007/978-3-540-87827-8_28},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
 }
-
 @inproceedings{agdatutorial,
  author = {Bove, Ana and Dybjer, Peter and Norell, Ulf},
  title = {A Brief Overview of {A}gda --- A Functional Language with Dependent Types},
@@ -76,25 +74,11 @@ organization = "The International Federation for Information Processing",
                David Monniaux and
                Xavier Rival},
   title     = {The {ASTRE{\'E}} Analyzer},
-  booktitle = {ESOP},
+  booktitle = {Proceedings of the 14th European Symposium on Programming},
+  series = {ESOP 2005},
   year      = {2005},
   pages     = {21-30},
   ee        = {http://dx.doi.org/10.1007/978-3-540-31987-0_3},
-  crossref  = {DBLP:conf/esop/2005},
-  bibsource = {DBLP, http://dblp.uni-trier.de}
-}
-@proceedings{DBLP:conf/esop/2005,
-  editor    = {Shmuel Sagiv},
-  title     = {Programming Languages and Systems, 14th European Symposium
-               on Programming,ESOP 2005, Held as Part of the Joint European
-               Conferences on Theory and Practice of Software, ETAPS 2005,
-               Edinburgh, UK, April 4-8, 2005, Proceedings},
-  booktitle = {ESOP},
-  publisher = {Springer},
-  series    = {Lecture Notes in Computer Science},
-  volume    = {3444},
-  year      = {2005},
-  isbn      = {3-540-25435-8},
   bibsource = {DBLP, http://dblp.uni-trier.de}
 }
 @article{AstreeScale,
@@ -176,26 +160,13 @@ previous work.},
 @inproceedings{cminorSLfull,
   author    = {Andrew W. Appel and
                Sandrine Blazy},
-  title     = {Separation Logic for Small-Step cminor},
-  booktitle = {TPHOLs},
+  title     = {Separation Logic for Small-Step {Cminor}},
+  booktitle = {Proceedings of the 20th International Conference
+               on Theorem Proving in Higher Order Logics},
+  series    = {TPHOLs 2007},
   year      = {2007},
   pages     = {5-21},
   ee        = {http://dx.doi.org/10.1007/978-3-540-74591-4_3},
-  crossref  = {DBLP:conf/tphol/2007},
-  bibsource = {DBLP, http://dblp.uni-trier.de}
-}
-@proceedings{DBLP:conf/tphol/2007,
-  editor    = {Klaus Schneider and
-               Jens Brandt},
-  title     = {Theorem Proving in Higher Order Logics, 20th International
-               Conference, TPHOLs 2007, Kaiserslautern, Germany, September
-               10-13, 2007, Proceedings},
-  booktitle = {TPHOLs},
-  publisher = {Springer},
-  series    = {Lecture Notes in Computer Science},
-  volume    = {4732},
-  year      = {2007},
-  isbn      = {978-3-540-74590-7},
   bibsource = {DBLP, http://dblp.uni-trier.de}
 }
 @inproceedings{coccinelle09,
@@ -205,6 +176,7 @@ previous work.},
             and Julia L. Lawall and Gilles Muller},
   booktitle = {The 36th Annual ACM SIGPLAN - SIGACT Symposium on
     Principles of Programming Languages},
+  series = {POPL},
   address = {Savannah, GA, USA},
   year = 2009,
   month = jan,
@@ -252,9 +224,9 @@ previous work.},
             ignoring the termination problems, type checking, program
             optimizations which are not carried in the absence of certainty
             about their feasibility, …).},
-    address = {New York, NY, USA},
     author = {Cousot, Patrick and Cousot, Radhia},
-    booktitle = {POPL '77: Proceedings of the 4th ACM SIGACT-SIGPLAN symposium on Principles of Programming Languages},
+    booktitle = {Proceedings of the 4th ACM SIGACT-SIGPLAN symposium on Principles of Programming Languages},
+    series = {POPL '77},
     citeulike-article-id = {120466},
     citeulike-linkout-0 = {http://portal.acm.org/citation.cfm?id=512973},
     citeulike-linkout-1 = {http://dx.doi.org/10.1145/512950.512973},
@@ -287,6 +259,7 @@ previous work.},
    pages =     {84--97},
    booktitle = {Conference Record of the Fifth Annual ACM SIGPLAN-SIGACT 
                 Symposium on Principles of Programming Languages},
+   series = {POPL '78},
    address =   {Tucson, Arizona},
    publisher = {ACM Press, New York, NY},
    year =      1978,
@@ -583,10 +556,23 @@ previous work.},
     volume = {2},
     pages = {245--271}
 }
-@MISC{jmlkluwer,
-    author = {Gary T. Leavens and Albert L. Baker and Clyde Ruby},
-    title = {JML: A Notation for Detailed Design},
-    year = {1999}
+@article{jml,
+ author = {Leavens, Gary T. and Baker, Albert L. and Ruby, Clyde},
+ title = {Preliminary Design of JML: A Behavioral Interface Specification Language for Java},
+ journal = {SIGSOFT Softw. Eng. Notes},
+ issue_date = {May 2006},
+ volume = {31},
+ number = {3},
+ month = may,
+ year = {2006},
+ issn = {0163-5948},
+ pages = {1--38},
+ numpages = {38},
+ url = {http://doi.acm.org/10.1145/1127878.1127884},
+ doi = {10.1145/1127878.1127884},
+ acmid = {1127884},
+ publisher = {ACM},
+ address = {New York, NY, USA},
 }
 @BOOK{KandR,
    AUTHOR  = "Kernighan, Brian W. and Ritchie, Dennis M.",
@@ -695,25 +681,14 @@ previous work.},
 }
 @inproceedings{mairson,
   author    = {Harry G. Mairson},
-  title     = {Deciding ML Typability is Complete for Deterministic Exponential
+  title     = {Deciding {ML} Typability is Complete for Deterministic Exponential
                Time},
-  booktitle = {POPL},
+  booktitle     = {Conference Record of the Seventeenth Annual ACM Symposium
+               on Principles of Programming Languages},
+  series = {POPL '90},
   year      = {1990},
   pages     = {382-401},
   ee        = {http://doi.acm.org/10.1145/96709.96748},
-  crossref  = {DBLP:conf/popl/1990},
-  bibsource = {DBLP, http://dblp.uni-trier.de}
-}
-@proceedings{DBLP:conf/popl/1990,
-  editor    = {Frances E. Allen},
-  title     = {Conference Record of the Seventeenth Annual ACM Symposium
-               on Principles of Programming Languages, San Francisco, California,
-               USA, January 1990},
-  booktitle = {POPL},
-  publisher = {ACM Press},
-  year      = {1990},
-  isbn      = {0-89791-343-4},
-  ee        = {http://dl.acm.org/citation.cfm?id=96709},
   bibsource = {DBLP, http://dblp.uni-trier.de}
 }
 @InProceedings{mc-hoare-logic,
@@ -801,7 +776,8 @@ previous work.},
 }
 @inproceedings{NeculaCil,
  author = {Necula, George C. and McPeak, Scott and Rahul, Shree Prakash and Weimer, Westley},
- title = {CIL: Intermediate Language and Tools for Analysis and Transformation of C Programs},
+ title = {{CIL}: Intermediate Language and Tools for Analysis and Transformation
+         of {C} Programs},
  booktitle = {Proceedings of the 11th International Conference on Compiler Construction},
  series = {CC '02},
  year = {2002},
@@ -846,7 +822,7 @@ previous work.},
 }
 @inproceedings{oiwa09,
  author = {Oiwa, Yutaka},
- title = {Implementation of the memory-safe full ANSI-C compiler},
+ title = {Implementation of the memory-safe full {ANSI-C} compiler},
  booktitle = {Proceedings of the 2009 ACM SIGPLAN conference on Programming language design and implementation},
  series = {PLDI '09},
  year = {2009},
@@ -985,26 +961,16 @@ pages={237-252}
 }
 @inproceedings{rta03,
   author    = {David A. McAllester},
-  title     = {Joint RTA-TLCA Invited Talk: A Logical Algorithm for ML
+  title     = {Joint {RTA-TLCA} Invited Talk: A Logical Algorithm for {ML}
                Type Inference},
-  booktitle = {RTA},
+  booktitle     = {Proceedings of the
+      14th International Conference on
+      Rewriting Techniques and Applications
+  },
+  series = {RTA},
   year      = {2003},
   pages     = {436-451},
   ee        = {http://dx.doi.org/10.1007/3-540-44881-0_31},
-  crossref  = {DBLP:conf/rta/2003},
-  bibsource = {DBLP, http://dblp.uni-trier.de}
-}
-@proceedings{DBLP:conf/rta/2003,
-  editor    = {Robert Nieuwenhuis},
-  title     = {Rewriting Techniques and Applications, 14th International
-               Conference, RTA 2003, Valencia, Spain, June 9-11, 2003,
-               Proceedings},
-  booktitle = {RTA},
-  publisher = {Springer},
-  series    = {Lecture Notes in Computer Science},
-  volume    = {2706},
-  year      = {2003},
-  isbn      = {3-540-40254-3},
   bibsource = {DBLP, http://dblp.uni-trier.de}
 }
 @book{rwh,
@@ -1039,7 +1005,7 @@ pages={237-252}
   author    = {Peyton Jones, Simon L. and
                Thomas Nordin and
                Dino Oliva},
-  title     = {C-: A Portable Assembly Language},
+  title     = {C-~-: A Portable Assembly Language},
   booktitle = {Implementation of Functional Languages},
   year      = {1997},
   pages     = {1-19},
