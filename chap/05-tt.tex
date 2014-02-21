@@ -692,7 +692,7 @@ sur la forme de $Γ$ et $m$. Fonctionnellement, cela implique que les accès
 (lemme~\ref{lemma:mem-typ}). Les règles définissant cette relation sont données
 dans la figure~\ref{fig:comp-mem}.
 
-\begin{figure}[h]%{{{
+\begin{figure}%{{{
 
 \centering
 
@@ -703,7 +703,7 @@ dans la figure~\ref{fig:comp-mem}.
 
         \irule{M-Global}
             { \mcomp{Γ}{(s, g)}
-           \\ m ⊧ v : τ
+           \\ (s, g) ⊧ v : τ
            \\ \tComp{τ}{t}
             }
             { \mcomp{\extendGlobal{Γ}{x}{t}}{(s, ((x↦v)::g))} }
@@ -1113,6 +1113,8 @@ où
 $\tComp{τ}{t}$.
 
 \end{lemma}
+
+%TODO ack-grep '\[\]'
 
 \begin{proof}
 
