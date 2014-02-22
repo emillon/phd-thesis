@@ -1765,30 +1765,35 @@ les unes à la suite des autres.
 
 Considérons le programme suivant:
 
+\begin{center}
+\begin{minipage}{3cm}
 \begin{Verbatim}
-x = 0
+s = { x: 0; y: 0}
 f = fun(q) {
     *q <- 1
 }
-f(&x)
+f(&s.x)
 \end{Verbatim}
+\end{minipage}
+\end{center}
 
 Ce programme est constitué des phrases $p_1, p_2$ et $p_3$. On rappelle que par
 rapport à la syntaxe concrète, un \iReturn{\eUnit} est inséré automatiquement,
-donc $p_2 = f=\eFun{q}{*q←1;\iReturn{\eUnit}}$
+donc $p_2 = f=\eFun{q}{*q←1;\iReturn{\eUnit}}$. De plus, un prétraitement va
+annoter l'accès à $s.x$ en rajoutant le type structure de $s$, noté $S$.
 
-D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 4 phrases.
+D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 3 phrases.
 
 \paragraph{Déclaration de \texttt{x}}
 
 D'après \textsc{Prog}, on part d'un état mémoire $m_0 = ([~], [~])$. Pour
 trouver $m_1$ tel que $\ph{m_0}{x = 0}{m_1}$, il faut appliquer la règle
-\textsc{ET-Var}.
+\textsc{ET-Var}. Celle-ci va étendre l'ensemble (vide) des globales mais demande
+d'évaluer l'expression $0$. D'après \textsc{Exp-Cst},
+$\mm{m_0}{0}{m_0}{\widehat{0}}$.
 
-Celle-ci va étendre l'ensemble (vide) des globales mais demande d'évaluer
-l'expression $0$. D'après \textsc{Exp-Cst}, $\mm{m_0}{0}{m_0}{\widehat{0}}$.
-
-Donc $\ph{m_0}{x = 0}{m_1}$ en posant $m_1 = ([~], [x↦\widehat{0}])$.
+Donc $\ph{m_0}{x = 0}{m_1}$ en posant
+$m_1 = ([~], [s↦\widehat{\eStruct{x:0; y:0}}])$.
 
 \paragraph{Déclaration de \texttt{f}}
 
@@ -1800,12 +1805,12 @@ fonction est directement placée en mémoire).
 
 Ainsi $\ph{m_1}{f = \eFun{q}{*q←1;\iReturn{\eUnit}}}{m_2}$ où:
 
-\[ m_2 = ([~], [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}};x↦\widehat{0}])\]
+\[ m_2 = ([~], [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}};s↦\widehat{\eStruct{x:0; y:0}}])\]
 
 \paragraph{Appel de \texttt{f}}
 
 Ici, on évalue une expression pour ses effets de bords. La règle à appliquer est
-\textsc{ET-Exp}, qui a comme prémisse $\mm{m_2}{f(\&x)}{m_3}{v}$.
+\textsc{ET-Exp}, qui a comme prémisse $\mm{m_2}{f(\&s.x_S)}{m_3}{v}$.
 
 D'après la forme de l'expression, la règle à appliquer va être
 \textsc{Exp-Call-Return}. Mais il va falloir d'abord réécrire l'expression à
@@ -1813,8 +1818,8 @@ l'aide de \textsc{Ctx} (pour que l'expression appellée ait la forme
 $\widehat{f}$ et l'argument soit évalué) et \textsc{Exp-Call-Ctx} (pour que le
 corps de la fonction ait pour forme $\iReturn{\eUnit}$).
 
-Tout d'abord on applique donc \textsc{Ctx} avec $C = \ctxEmpty (\&x)$. Comme on
-a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
+Tout d'abord on applique donc \textsc{Ctx} avec $C = \ctxEmpty (\&s.x_S)$. Comme
+on a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
 
 \[
     \mm{m_2}{f}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}
@@ -1823,18 +1828,21 @@ a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
 On en déduit que:
 
 \[
-    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&x)}
+    \mm{m_2}{f(\&s.x_S)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&s.x_S)}
 \]
 
-Une application supplémentaire de \textsc{Ctx} permet d'en arriver à la ligne
-suivante (en évaluant $\&x$ en $\widehat{\&}(x)$ via \textsc{Exp-Addr}):
+On évalue ensuite $\&s.x_S$. Les règles à appliquer sont \textsc{Exp-Addr} et
+\textsc{Phi-Struct}. On en déduit que
+$\mm{m_2}{\&s.x_S}{m_2}{\widehat{\&}(s).x}$. Remarquons que l'étiquette de type
+structure $S$ a été effacée. Une application supplémentaire de \textsc{Ctx}
+permet d'en arriver à la ligne suivante:
 
 \[
-    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(x))}
+    \mm{m_2}{f(\&s.x_S)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(s).x)}
 \]
 
 La fonction et son argument sont évalués, donc on peut appliquer
-\textsc{Exp-Call-Ctx}. En posant $m_2' = \cPush{m_2}{(q ↦ \widehat{\&}(x))}$, le
+\textsc{Exp-Call-Ctx}. En posant $m_2' = \cPush{m_2}{(q ↦ \widehat{\&}(s).x)}$, le
 but est de trouver $m_2''$ et $v$ tels que:
 
 \[
@@ -1849,17 +1857,17 @@ Le nouveau but est de trouver un $m_2''$ tel que
 $\mm{m_2'}{*q←1}{m_2'}{\iPass}$.
 
 En appliquant \textsc{Phi-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
-$\mm{m_2'}{*q←1}{m_2'}{(x)←1}$.
+$\mm{m_2'}{*q←1}{m_2'}{(s).x←1}$.
 
-Puis on applique \textsc{Exp-Cst} sous $C = (x)←\ctxEmpty$ et
-$\mm{m_2'}{*q←1}{m_2'}{(x)←\widehat{1}}$.
+Puis on applique \textsc{Exp-Cst} sous $C = (s).x←\ctxEmpty$ et
+$\mm{m_2'}{*q←1}{m_2'}{(s).x←\widehat{1}}$.
 
 Maintenant que les deux côtés de $←$ sont évalués, on peut appliquer
 \textsc{Exp-Set}, et $\mm{m_2'}{*q←1}{m_2''}{\iPass}$ où:
 
-\[m_2'' = ([[q↦(x)]],
+\[m_2'' = ([[q↦\widehat{\&}(s).x]],
 [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
-;x↦\widehat{1}])
+;s↦\widehat{\eStruct{x:0;y:0}}])
 \]
 
 Alors, d'après \textsc{Seq}, $\mm{m_2'}{*q←1}{m_2''}{\iReturn{()}}$.
@@ -1869,22 +1877,22 @@ $\mm{m_2'}{*q←1}{m_2''}{\iReturn{\widehat{()}}}$.
 On peut enfin appliquer \textsc{Exp-Call-Ctx} pour en déduire que:
 
 \[
-    \mm{m_2}{f(\&x)}{m_2'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(x)) }
+    \mm{m_2}{f(\&s.x_S)}
+    {m_2'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(s).x) }
 \]
 
 Donc d'après \textsc{Exp-Call-Return} (car on a $m_2''' = \cCleanup{m_2'''}$ et
 $ \widehat{\eUnit} = \cV{|m_2'''|}{\widehat{\eUnit}} $):
 
 \[
-    \mm{m_2}{f(\&x)}{m_2'''}{ \widehat{\eUnit} }
+    \mm{m_2}{f(\&s.x_S)}{m_2'''}{ \widehat{\eUnit} }
 \]
 
-En posant $m_3 = m_2'''$, on a $\ph{m_2}{f(\&x)}{m_3}$.
+En posant $m_3 = m_2'''$, on a $\ph{m_2}{f(\&s.x_S)}{m_3}$.
 
 Donc pour conclure (grâce à \textsc{Prog}), on a
 $\phprog{[p_1,p_2,p_3]}{m_3}$.
 
-% TODO intégrer une structure
 % TODO intégrer if
 
 \section*{Conclusion}
