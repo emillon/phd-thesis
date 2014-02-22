@@ -342,14 +342,15 @@ fous~\cite{ifm10}.
 
 \section*{Conclusion}
 
-L'importance des logiciels grandit par deux effets:
-d'une part, ils sont présents dans de plus en plus d'appareils, et d'autre part,
-leur taille est de plus en plus importante. En une journée, entre les appareils
-dédiés au calcul, à la communication, au multimédia, et au transport, on est
-facilement exposé au fonctionnement de plus d'une dizaine de millions de lignes
-de code. Il donc primordial de vérifier que ces logiciels ne peuvent pas être
-détournés de leur utilisation prévue. Les conséquences peuvent en effet être
-catastrophiques dans un contexte avionique ou militaire.
+L'importance des logiciels grandit par deux effets: d'une part, ils sont
+présents dans de plus en plus d'appareils, et d'autre part, leur taille est de
+plus en plus importante. En une journée, entre les appareils dédiés au calcul, à
+la communication, au multimédia, et au transport, on est facilement exposé au
+fonctionnement de plus d'une dizaine de millions de lignes de code. Il donc
+primordial de vérifier que ces logiciels ne peuvent pas être détournés de leur
+utilisation prévue. Dans le cas de logiciels avioniques ou militaires, les
+conséquences peuvent en effet être catastrophiques. C'est dans ce contexte
+industriel que ce travail a été motivé et réalisé.
 
 Au cœur de la plupart de ces systèmes informatiques, se trouve un noyau qui
 abstrait les détails du matériel pour fournir aux programmes des abstractions
@@ -379,9 +380,9 @@ En un mot il est impossible de distinguer le rôle d'un type (son intention) de
 sa représentation (son extension).
 
 Ici, nous avons amené une solution au problème de pointeurs utilisateur en
-introduisant un type ayant la même représentation que les pointeurs classique,
-mais pour lequel l'ensemble des opérations est différents: c'est un type
-opaque. Cela suffit déjà à détecter des erreurs de programmation.
+introduisant un type ayant la même représentation que les pointeurs classiques,
+mais pour lequel l'ensemble des opérations est différents: c'est un type opaque.
+Cela suffit déjà à détecter des erreurs de programmation.
 
 Si on ajoutait cette construction au langage, on pourrait définir des nouveaux
 types partageant la représentation d'un type C existant, mais qui ne soit pas
@@ -389,8 +390,5 @@ compatible avec le type d'origine, et pour lequel l'ensemble des opérations est
 restreint. Avec cette fonctionnalité dans un langage, non seulement on peut
 détecter d'autres classes de problèmes, mais surtout on laisse le programmeur
 définir de nouvelles analyses lui-même.
-
-% TODO[E] peut être revenir sur ce que tu peux détecter et comment le faire
-% + le cadre industriel
 
 % vim: spelllang=fr
