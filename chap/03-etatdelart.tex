@@ -390,11 +390,10 @@ la correction du programme (par rapport aux propriétés capturées par le syst�
 de types).
 
 Le typage statique peut également être implanté de manière efficace. Même si
-l'inférence peut, dans certains cas, atteindre une complexité exponentielle, la
-plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
-linéaire en la taille du programme considéré.
-
-% TODO virer car para C7 en parle
+l'inférence peut, dans certains cas, atteindre une complexité
+exponentielle~\cite{mairson}, la plupart des systèmes de types peuvent être
+vérifiés en pratique dans un temps linéaire en la taille du programme
+considéré~\cite{rta03}.
 
 \section{Langages sûrs}
 
@@ -426,8 +425,6 @@ Tofte~\cite{jfp92,ToTa1993,popl94}. Cela permet d'interdire statiquement les
 constructions où l'on déréférence un pointeur faisant référence à une région de
 mémoire qui n'est plus allouée (par exemple en évitant de retourner l'adresse
 d'une variable locale).
-
-%TODO[E] tu cites leur nom mais pas Simonet et autres jury
 
 Le langage Rust~\link{rust} développé par Mozilla prend une approche similaire
 en distinguant plusieurs types de pointeurs pour gérer la mémoire de manière
