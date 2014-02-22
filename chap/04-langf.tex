@@ -1475,9 +1475,9 @@ préférable à renvoyer $\serr{ptr}$ car on montrera que ce cas est toujours é
 dans les programmes typés (théorème~\ref{thm:progres}).
 
 \begin{mathpar}
-  \semrule{Phi-Deref}
+  \semrule{Exp-Deref}
 
-  \semrule{Phi-Deref-Null}
+  \semrule{Exp-Deref-Null}
 \end{mathpar}
 
 Par exemple, $lv = x.l_S[2*n].g_T$ pourra s'évaluer en $φ = (2, x).l[4].g$.
@@ -1856,7 +1856,7 @@ première partie n'étant pas $\iPass$, il faut l'évaluer grâce à la règle
 Le nouveau but est de trouver un $m_2''$ tel que
 $\mm{m_2'}{*q←1}{m_2'}{\iPass}$.
 
-En appliquant \textsc{Phi-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
+En appliquant \textsc{Exp-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
 $\mm{m_2'}{*q←1}{m_2'}{(s).x←1}$.
 
 Puis on applique \textsc{Exp-Cst} sous $C = (s).x←\ctxEmpty$ et

@@ -282,12 +282,12 @@
                  {
                    \mmlv{m}{x}{m}{a}
                  }
-    } % TODO Phi-Deref -> Exp-Deref
-    {Phi-Deref}{ \irule{Phi-Deref}
+    }
+    {Exp-Deref}{ \irule{Exp-Deref}
                    { v = \widehat{\&}~φ }
                    { \mms{*~v }{φ} }
     }
-    {Phi-Deref-Null}{ \irule{Phi-Deref-Null}
+    {Exp-Deref-Null}{ \irule{Exp-Deref-Null}
                    { v = \widehat{\eNull} }
                    { \msi{m}{*~v } → \serr{ptr} }
     }
