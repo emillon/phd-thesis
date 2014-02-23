@@ -381,12 +381,15 @@ Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
 type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
 unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type).
 
-% TODO[E] ce serait bien de mettre Blackfin aussi
-
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
 
 % TODO le faire
+
+En ce qui concerne l'exemple \enquote{Blackfin}, on commence par isoler la
+fonction problématique.
+
+\insertcode{blackfin-min.c}
 
 \section*{Conclusion}
 
