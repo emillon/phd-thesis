@@ -598,17 +598,22 @@ performance à attendre.
 Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
 fonctions imbriquées, et les types des valeurs globales sont écrites par le
-programmeur, ce qui permet de borner leur taille. En pratique, sur les exemples
-testés nous n'avons pas noté de délai d'exécution notable.
+programmeur. Cela permet permet de borner leur taille. En pratique, sur les
+exemples testés nous n'avons pas noté de délai d'exécution notable.
 
 En revanche, la compilation de C vers \newspeak peut être plus coûteuse,
 notamment lorsque le fichier d'entrée est de taille importante. Le temps de
 traitement est plus long que celui d'un compilateur comme \texttt{gcc} ou
-\texttt{clang}, mais reste de l'ordre de quelques secondes. \ctonewspeak a été
-utilisé pour compiler des projets de l'ordre du million de lignes de code source
-prétraité, et son exécution ne prenait pas plus de quelques minutes.
+\texttt{clang}. \ctonewspeak a été utilisé pour compiler des projets de l'ordre
+du million de lignes de code source prétraité, et son exécution ne prenait pas
+plus de quelques minutes.
 
-%TODO[S] plus de temps C->npk que npk->npk annoté?
+À titre d'illustration, nous avons mesuré les performances de \ctonewspeak et
+\ptrtype sur l'exemple \enquote{Blackfin} du chapitre suivant. Celui consiste en
+un fichier prétraité de 853 lignes de code C. Exécuter 1000 fois \ctonewspeak
+sur ce fichier prend 36.3 secondes, alors qu'exécuter 1000 fois \ptrtype sur le
+fichier \newspeak résultant ne dure que 8.1 secondes (pour comparaison, lancer
+1000 fois \texttt{/bin/true}, commande qui ne fait rien, prend 1.6 seconde).
 
 Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres
 optimisations sont certainement possibles, mais la performance n'est pas
