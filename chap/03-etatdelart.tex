@@ -420,11 +420,12 @@ autorisée que sur ces derniers, rendant impossibles les débordements de tablea
     que la fonction dans laquelle elles ont été définies retourne.
 }
 est résolu en utilisant un système de régions~\cite{cyclone-regions}, inspiré
-des travaux de Jouvelot, Talpin et \linebreak
-Tofte~\cite{jfp92,ToTa1993,popl94}. Cela permet d'interdire statiquement les
-constructions où l'on déréférence un pointeur faisant référence à une région de
-mémoire qui n'est plus allouée (par exemple en évitant de retourner l'adresse
-d'une variable locale).
+des travaux de Jouvelot, Talpin et \linebreak Tofte~\cite{jfp92,popl94}. Cela
+permet d'interdire statiquement les constructions où l'on déréférence un
+pointeur faisant référence à une région de mémoire qui n'est plus allouée (par
+exemple en évitant de retourner l'adresse d'une variable locale). Cette approche
+peut également servir à suivre les provenances de données
+sensibles~\cite{regPtr}.
 
 Le langage Rust~\link{rust} développé par Mozilla prend une approche similaire
 en distinguant plusieurs types de pointeurs pour gérer la mémoire de manière
@@ -593,7 +594,5 @@ suivante:
       sûres. Cela permet de préserver l'isolation entre le noyau et l'espace
       utilisateur.
 \end{itemize}
-
-% TODO http://www.sciencedirect.com/science/article/pii/S147784241300002X
 
 % vim: spelllang=fr
