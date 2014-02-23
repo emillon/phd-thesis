@@ -33,7 +33,7 @@ noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système d
 ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin les bugs
 étudié, et comment les adapter pour traiter le code en question.
 
-\section{GNU C}
+\section{Spécificités du code noyau}
 \label{sec:gnuc}
 
 Linux est écrit dans le langage C, mais pas dans la version qui correspond à la
@@ -384,22 +384,78 @@ unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur.
 
-% TODO le faire
-
 En ce qui concerne l'exemple \enquote{Blackfin}, on commence par isoler la
-fonction problématique.
+fonction problématique. Celle-ci utilise de nombreuses constructions propres au
+noyau. On écrit donc un préambule permettant de les traiter (définitions de
+type, etc). La figure~\ref{fig:blackfin-cas} montre les parties sensibles de
+cette fonction.
 
+% TODO dire ou pas le if0
+
+\begin{figure}
 \insertcode{blackfin-min.c}
+\caption{Cas d'étude \enquote{Blackfin}}
+\label{fig:blackfin-cas}
+\end{figure}
+
+Dans le cas où \texttt{FIX} vaut 0, la sortie est la suivante:
+
+\begin{Verbatim}
+bf.c:260#32 - Type clash between :
+  KPtr (Int)
+  UPtr (_a122)
+\end{Verbatim}
+
+Et quand \texttt{FIX} vaut 1, le programme annoté est affiché. Les parties
+correspondantes aux appels sensibles sont:
+
+\begin{Verbatim}
+ (bf.c:255#3)^guard((! (((coerce[0,4294967295]
+     (((coerce[0,4294967295] (addr_Int : Int) : Int)
+     + (4 : Int)) : Int) : Int) > (1168 : Int)) : Int) : Int));
+ (bf.c:258#32)^{
+   Int tmp_cir!7;
+   (bf.c:258#32)^tmp_cir!7 <-
+       copy_from_user_page(
+           (0 : Int): Int,
+           (0 : Int): Int,
+           (0 : Int): Int,
+           (focus32 (&(tmp) : KPtr (Int)) : KPtr (Int)): KPtr (Int),
+           ((ptr) (addr_Int : Int) : UPtr (Int)): UPtr (Int),
+           (4 : Int): Int);
+ }
+ (bf.c:262#4)^copied =(int32) (4 : Int);
+\end{Verbatim}
+
+Et:
+
+\begin{Verbatim}
+ (bf.c:342#28)^guard((! (((coerce[0,4294967295]
+     (((coerce[0,4294967295] (addr_Int : Int) : Int)
+     + (4 : Int)) : Int) : Int) > (1168 : Int)) : Int) : Int));
+ (bf.c:345#32)^{
+   Int tmp_cir!5;
+   (bf.c:345#32)^tmp_cir!5 <-
+       copy_to_user_page(
+           (0 : Int): Int,
+           (0 : Int): Int,
+           (0 : Int): Int,
+           ((ptr) (addr_Int : Int) : UPtr (Int)): UPtr (Int),
+           (focus32 (&(data) : KPtr (Int)) : KPtr (Int)): KPtr (Int),
+           (4 : Int): Int);
+ }
+ (bf.c:349#4)^copied =(int32) (4 : Int);
+\end{Verbatim}
 
 \section*{Conclusion}
 
 Après voir décrit l'implantation de notre solution, on a montré comment celle-ci
-peut s'appliquer à détecter un bug dans le noyau Linux. La première difficulté
+peut s'appliquer à détecter deux bugs dans le noyau Linux. La première difficulté
 est de traduire en \newspeak le code source écrit dans le dialecte GNU C.
 
-En partant d'un bug existant, on montre que la version originale du code
-(incluant une erreur de programmation) ne peut pas être typée, alors que sur la
-version corrigée on peut inférer des types compatibles.
+Pour chaque bug, on montre que la version originale du code (incluant une erreur
+de programmation) ne peut pas être typée, alors que sur la version corrigée on
+peut inférer des types compatibles.
 
 Le prototype décrit dans le chapitre~\ref{cha:implem} peut donc s'adapter à
 détecter des bugs dans le noyau Linux. Pour le moment, il nécessite du code
@@ -407,7 +463,5 @@ annoté, mais des travaux sont en cours pour permettre de passer automatiquement
 des portions plus importantes du noyau Linux. Le principal obstacle est de
 devoir réécrire certaines parties du code pour supprimer les constructions non
 typables.
-
-% TODO[E] à étendre, +++
 
 % vim: spelllang=fr
