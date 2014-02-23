@@ -109,8 +109,8 @@ $u ∈ \sList{X}$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de s
 domaine de définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème
 élément de la suite.
 
-On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
-telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
+On peut aussi voir les suites comme des listes: on note $[~]$ la suite vide,
+telle que $|[~]| = 0$. On définit en outre la construction de suite de la manière
 suivante: si $x ∈ X$ et $u ∈ \sList{X}$, la liste $x::u ∈ \sList{X}$ est la
 liste $v$ telle que:
 
@@ -212,7 +212,7 @@ d'éléments de $E$.
 \changed{$L(E)$ devient $\sList{E}$ pour rester cohérent}
 
 On définit les fonctions suivantes. Notons qu'elles ne sont pas définies sur la
-liste vide $[]$, qui pourra être traitée comme un cas d'erreur.
+liste vide $[~]$, qui pourra être traitée comme un cas d'erreur.
 
 \begin{align*}
   \mathrm{get}_T     (t::q) &= t   & \mathrm{put}_T (t', t::q) &= t'::q  \\
@@ -227,7 +227,7 @@ $Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \setLens{\sList{E}}{\sList{E}}$
 On a par exemple:
 
 \begin{align*}
-\mathrm{get}_T (1::6::1::8::[]) &= 1   &   \mathrm{put}_Q (4::2::[], 3::6::1::5::[]) = 3::4::2::[]
+\mathrm{get}_T (1::6::1::8::[~]) &= 1   &   \mathrm{put}_Q (4::2::[~], 3::6::1::5::[~]) = 3::4::2::[~]
 \end{align*}
 
 \end{example}
@@ -646,7 +646,7 @@ $|m| = |s|$ la hauteur de la pile (en nombre de cadres).
 
   \begin{align*}
   \gramdef{Pile}{s}
-    { [] }{Pile vide}
+    { [~] }{Pile vide}
     { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
     {END}
   \\
@@ -675,7 +675,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 \item
   un couple $\msi{m}{e}$ où $e$ est une expression et $m$ un état
   mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
-  réalisée. Par exemple $\mm{([], [x↦3])}{3}{([], [x↦3])}{\widehat{3}}$
+  réalisée. Par exemple $\mm{([~], [x↦3])}{3}{([~], [x↦3])}{\widehat{3}}$
   L'évaluation des expressions est détaillée dans la
   section~\ref{sec:eval-exp}.
 \item
@@ -982,7 +982,7 @@ Pour empêcher cela, on instrumente donc le retour de la fonction
 \texttt{h}, le déréférencement provoquera une erreur et empêchera la violation
 du typage.
 
-\begin{SaveVerbatim}[]{LeBonProgramme}
+\begin{SaveVerbatim}{LeBonProgramme}
 f = Fun () {
     Decl x = 0 in
     return (&x);
@@ -1433,7 +1433,7 @@ au moment de l'affectation dans la valeur gauche plutôt qu'à sa définition. L
 figure~\ref{fig:lazy-deref} illustre ce problème.
 
 %{{{
-\begin{SaveVerbatim}[]{LeLazy}
+\begin{SaveVerbatim}{LeLazy}
 Decl s0 = { .f : 0 } in
 Decl s1 = { .f : 1 } in
 Decl x  = & s0 in

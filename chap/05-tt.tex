@@ -7,7 +7,7 @@ il manipule des données de manière incohérente: la variable \texttt{x} reçoi
 donc elle se comporte comme un entier, puis est déférencée, se comportant comme
 un pointeur.
 
-\begin{SaveVerbatim}[]{VerbProgGood}
+\begin{SaveVerbatim}{VerbProgGood}
 f = Fun() {
   Decl x = 0 in
   x <- 1
@@ -15,7 +15,7 @@ f = Fun() {
 }
 \end{SaveVerbatim}
 
-\begin{SaveVerbatim}[]{VerbProgBad}
+\begin{SaveVerbatim}{VerbProgBad}
 f = Fun() {
   Decl x = 0 in
   x <- 1
@@ -109,7 +109,7 @@ polymorphisme.
       { \tFloat                     }{Flottant}
       { \tUnit                      }{Unité}
       { t*                          }{Pointeur}
-      { t~[]                        }{Tableau}
+      { t~[~]                       }{Tableau}
       { S                           }{Structure}
       { (t_1, …, t_n) \rightarrow t }{Fonction}
       {END} \\
@@ -356,7 +356,7 @@ l'expression d'affectation.
   \disprule{Set}
 \end{mathpar}
 
-Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
+Un littéral tableau a pour type $t[~]$ où $t$ est le type de chacun de ses
 éléments.
 
 \begin{mathpar}
@@ -790,7 +790,7 @@ difficultés; dans ce cas on n'en donne que des esquisses.
     \item
       si $Γ ⊢ *e : t$, alors $Γ ⊢ e : t*$
     \item
-      si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[]$ et $Γ ⊢ e : \tInt$
+      si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[~]$ et $Γ ⊢ e : \tInt$
     \item
       si $Γ ⊢ lv.l_S : t$, alors $Γ ⊢ lv : S$
 
@@ -938,8 +938,8 @@ On définit un opérateur de représentation d'un type statique à l'exécution:
         \cRepr{ \tInt   } &= \tInt   \\
         \cRepr{ \tFloat } &= \tFloat \\
         \cRepr{ \tUnit  } &= \tUnit  \\
-        \cRepr{ t'*      } &= \cRepr{t'}* \\
-        \cRepr{ t'[]     } &= \cRepr{t'}[] \\
+        \cRepr{ t'*     } &= \cRepr{t'}* \\
+        \cRepr{ t'[~]   } &= \cRepr{t'}[~] \\
         \cRepr{ \tStruct{ l_1 : t_1; … ; l_n : t_n } }
         &= \tStruct{ l_1 : \cRepr{t_1}; … ; l_n : \cRepr{t_n} }\\
         \cRepr{ (t_1, …, t_n) \rightarrow t } &= \stFun{n}
@@ -993,12 +993,12 @@ On procède par induction sur la forme de $t$.
 
     \end{itemize}
 
-\item $t = t'[]$:
+\item $t = t'[~]$:
     Par le lemme des formes canoniques,
     $v = \widehat{\eArray{v_1,…,v_n}}$.
     Par inversion on obtient que $∀i, Γ ⊢ v_i : t'$.
 
-    Soient $τ' = \cRepr{t'}$ et $τ = τ'~[]$.
+    Soient $τ' = \cRepr{t'}$ et $τ = τ'~[~]$.
 
     Alors par induction $∀i, m ⊧ v_i : τ'$ et $\tComp{τ'}{t'}$.
     De la première propriété il vient (via \textsc{S-Array})
@@ -1113,8 +1113,6 @@ où
 $\tComp{τ}{t}$.
 
 \end{lemma}
-
-%TODO ack-grep '\[\]'
 
 \begin{proof}
 
