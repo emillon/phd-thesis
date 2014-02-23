@@ -113,8 +113,6 @@ Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
 dans l'arbre de syntaxe abstraite des passes suivantes.
 
-% TODO[E] dire (plus tard) qu'on peut annoter et quelles annotations
-
 À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
 plupart des extensions GNU C sont acceptées en plus du C ANSI. Dans cette étape,
@@ -357,7 +355,7 @@ Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
 les langages comme OCaml. À la fin de l'inférence, on considère que la variable
 de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
 
-% TODO ajouter à la figure algo?
+% TODx ajouter à la figure algo?
 % cstrs ::= n ↦ t
 %        |  t ∈ X
 
@@ -402,8 +400,11 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
     mutellement récursives ne sont pas supportées.
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
-  qui permet de créer un environnement initial. Celles-ci permettent par exemple
-  de spécifier le type d'une fonction inconnue.
+  qui permet de créer un environnement initial. On peut par exemple écrire
+  \texttt{/*!npk f : (Int) -> Int */} pour signifier que \texttt{f} est une
+  fonction prenant comme argument un entier et renvoyant un entier.
+
+% TODO fieldp
 
 \item Les types de chaque fonction sont inférés, par le biais de la fonction
   suivante:
