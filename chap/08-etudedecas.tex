@@ -350,7 +350,7 @@ toute l'exécution.
 \begin{figure}[p]
 \insertcode{ex-drm.c}
 
-\caption{Cas d'étude minimisé et annoté}
+\caption{Cas d'étude \enquote{Radeon} minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
 
@@ -358,7 +358,7 @@ toute l'exécution.
 
     \insertcode{ex-drm-ok.c}
 
-    \caption{Cas d'étude minimisé et annoté -- version correcte}
+    \caption{Cas d'étude \enquote{Radeon} minimisé et annoté -- version correcte}
     \label{fig:ex-drm-ok}
 
 \end{figure}
@@ -387,10 +387,11 @@ celle-ci, l'inférence se fait sans erreur.
 En ce qui concerne l'exemple \enquote{Blackfin}, on commence par isoler la
 fonction problématique. Celle-ci utilise de nombreuses constructions propres au
 noyau. On écrit donc un préambule permettant de les traiter (définitions de
-type, etc). La figure~\ref{fig:blackfin-cas} montre les parties sensibles de
-cette fonction.
-
-% TODO dire ou pas le if0
+type, etc). Ensuite, il est nécessaire de commenter certains appels à
+\texttt{memcpy} pour lesquelles les adresses sont testées dynamiquement (il
+n'est donc pas nécessaire d'utiliser les fonctions de copie sûres pour ces sites
+d'appel). La figure~\ref{fig:blackfin-cas} montre le reste de la fonction,
+c'est-à-dire les parties sensibles.
 
 \begin{figure}
 \insertcode{blackfin-min.c}
