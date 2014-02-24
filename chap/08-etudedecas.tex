@@ -382,7 +382,20 @@ type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
 unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type).
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
-celle-ci, l'inférence se fait sans erreur.
+celle-ci, l'inférence se fait sans erreur. La partie pertinente est:
+
+\begin{Verbatim}
+(06-drm-ok.c:18#8)^{
+  Int tmp_cir!0;
+  (06-drm-ok.c:18#8)^tmp_cir!0 <-
+      copy_from_user
+          ( (focus32 (&(value) : KPtr (d)) : KPtr (d)): KPtr (d),
+            (value_ptr_UPtr (d) : UPtr (d)): UPtr (d),
+            (4 : Int): Int
+            );
+}
+\end{Verbatim}
+
 
 En ce qui concerne l'exemple \enquote{Blackfin}, on commence par isoler la
 fonction problématique. Celle-ci utilise de nombreuses constructions propres au

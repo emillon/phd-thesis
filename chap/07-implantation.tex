@@ -401,10 +401,21 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
   qui permet de créer un environnement initial. On peut par exemple écrire
-  \texttt{/*!npk f : (Int) -> Int */} pour signifier que \texttt{f} est une
+  les annotations suivantes:
+
+\begin{itemize}
+    \item
+  \texttt{/*!npk f : (Int) -> Int */} signifie que \texttt{f} est une
   fonction prenant comme argument un entier et renvoyant un entier.
 
-% TODO fieldp
+  \item
+      \texttt{/*!npk userptr x*/} signifie que \texttt{x} a pour type $\ptrU{a}$,
+      où $a$ est une inconnue de type.
+
+  \item
+      \texttt{/*!npk userptr_fieldp p f*/} signifie que \texttt{x} a pour type
+      $\{ f: \ptrU{a} ; … \}~*$, où $a$ est une inconnue de type.
+\end{itemize}
 
 \item Les types de chaque fonction sont inférés, par le biais de la fonction
   suivante:

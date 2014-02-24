@@ -17,6 +17,5 @@ int radeon_info_ioctl(struct drm_device *d, void *data, struct drm_file *f)
 	value_ptr = info->value;
         if (copy_from_user(&value, value_ptr, sizeof(value)))
             return -14;
-        value = *value_ptr;
         return 0;
 }
