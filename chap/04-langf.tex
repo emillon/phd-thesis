@@ -1779,7 +1779,7 @@ f(&s.x)
 
 Ce programme est constitué des phrases $p_1, p_2$ et $p_3$. On rappelle que par
 rapport à la syntaxe concrète, un \iReturn{\eUnit} est inséré automatiquement,
-donc $p_2 = f=\eFun{q}{*q←1;\iReturn{\eUnit}}$. De plus, un prétraitement va
+donc $p_2$ est en fait $f=\eFun{q}{*q←1;\iReturn{\eUnit}}$. De plus, un prétraitement va
 annoter l'accès à $s.x$ en rajoutant le type structure de $s$, noté $S$.
 
 D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 3 phrases.
