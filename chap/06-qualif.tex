@@ -435,11 +435,11 @@ proposer un opérateur qui réalise cette copie, on laisse le programmeur faire
 les deux copies manuellement.
 
 On commence donc par ajouter aux instructions des constructions $\phxx{\uPut}$
-et $\phxx{\uGet}$ de copie sûre. $\uGet{p_k}{p_u}$ copie la valeur par pointée
-par $p_u$ (qui se trouve en espace utilisateur) à l'emplacement mémoire pointé
-par $p_k$ (en espace noyau). $\uPut{p_u}{p_k}$ réalise l'opération inverse, en
-copiant la valeur par pointée par $p_k$ (en espace noyau) à l'emplacement
-mémoire pointé par $p_u$ (en espace utilisateur).
+et $\phxx{\uGet}$ de copie sûre. $\uGet{p_k}{p_u}$ copie la valeur pointée par
+$p_u$ (qui se trouve en espace utilisateur) à l'emplacement mémoire pointé par
+$p_k$ (en espace noyau). $\uPut{p_u}{p_k}$ réalise l'opération inverse, en
+copiant la valeur pointée par $p_k$ (en espace noyau) à l'emplacement mémoire
+pointé par $p_u$ (en espace utilisateur).
 
 Afin de leur donner une sémantique, il faut étendre l'ensemble des valeurs
 pointeur $φ$ aux constructions de la forme $\vTainted{φ'}$. Pour créer des
