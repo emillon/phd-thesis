@@ -428,6 +428,7 @@ utilisés dans Compcert, un compilateur certifié pour C
 sont faites de manière prouvée. Ces langages intermédiaires sont utilisés pour
 les passes de front-end et de middle-end.
 
+%TODO[E] renommer
 \section{Le projet Penjili}
 \added{toute la section}
 
@@ -440,23 +441,24 @@ dans le cadre d'une convention industrielle de formation par la recherche
 
 Aujourd'hui, la réussite de missions dépend de logiciels dont la taille est de
 plus en plus grande. Ainsi en cas de fautes dans ce genre de logiciel, on peut
-se retrouver face à grands impacts économiques, voire risquer des vies humaines.
-On comprend bien que les phases de vérification et de certification sont au cœur
-du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
-vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
-vol avait été vérifié plus efficacement~\cite{Ariane501}.
+se retrouver face à de grands impacts économiques, voire risquer des vies
+humaines. On comprend bien que les phases de vérification et de certification
+sont au cœur du cycle de vie des logiciels avioniques. A titre d'exemple,
+l'échec du premier vol d'Ariane 5 aurait certainement pu être évité si le
+logiciel de contrôle de vol avait été vérifié plus
+efficacement~\cite{Ariane501}.
 
 Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
 approches duales sont nécessaires. La première consiste à mettre le logiciel
 dans des situations concrètes et à vérifier que la sortie correspond au résultat
 attendu : c'est la technique des tests.  Les tests \enquote{boîte noire}
 consistent à tester en ayant à disposition uniquement les spécifications des
-modules à plusieurs échelles (par exemple : logiciel, module, classe, méthode).
-Au contraire, les tests dits \enquote{boîte blanche} sont écrits en ayant à
-disposition l'implémentation. Cela permet par exemple de s'assurer que chaque
-chemin d'exécution est emprunté. Cette manière de procéder est similaire à la
-preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
-mais pas que le programme est correct.
+modules à différentes échelles (par exemple : logiciel, module, classe,
+méthode). Au contraire, les tests dits \enquote{boîte blanche} sont écrits en
+ayant à disposition l'implémentation. Cela permet par exemple de s'assurer que
+chaque chemin d'exécution est emprunté. Cette manière de procéder est similaire
+à la preuve par neuf enseignée aux enfants : il est possible de prouver
+l'erreur, mais pas que le programme est correct.
 
 L'approche des méthodes formelles, au contraire, permet de s'assurer de
 l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
@@ -664,7 +666,9 @@ Dans ce sens, des outils fondés sur l'interprétation abstraite ont été
 développés chez EADS Innovation Works dans le cadre du projet
 Penjili~\cite{AllamigeonHymansSSTIC07}.
 
-Les analyses statiques ne manipulent pas directement du code C, mais un langage
+% TODO[E] cela arrive un peu tard, en fire un mot en début de sec ou fin page 7
+
+Ces analyses statiques ne manipulent pas directement du code C, mais un langage
 intermédiaire appelé \newspeak~\cite{newspeak}. Celui-ci est suffisamment
 expressif pour compiler la plupart des programmes C, y compris de nombreuses
 extensions GNU utilisées dans le noyau Linux (section~\ref{sec:gnuc}), et des
@@ -709,7 +713,7 @@ l'\emph{open-source}.
 
 Ces logiciels sont plus difficiles à analyser car ils sont écrits sans
 contraintes particulières. Non seulement toutes les constructions du langage
-sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
+sont autorisées, même celles qui sont difficiles à traiter (transtypage,
 allocation dynamique, récursion, accès au système de fichiers, etc), mais aussi
 des extensions non standards peuvent être utilisées.
 
@@ -799,6 +803,8 @@ programmes d'une manière subtile et pas toujours bien spécifiée ni documenté
 \section{Objectifs et contributions de la thèse}
 \added{toute la section}
 
+% TODO[E] dire c'est pour traiter quoi
+
 Le but de ce travail est de définir et d'implanter des analyses statiques
 \enquote{légères}sur le langage C, c'est-à-dire plus simples que les analyses de
 valeurs par interprétation abstraite.  Nous proposons d'étendre \newspeak pour
@@ -814,7 +820,7 @@ Nos contributions sont les suivantes:
 \begin{itemize}
 
 \item
-Une première étape est de définir des restrictions sur le langage source. En
+Une première étape est de définir un sous-ensemble sûr du le langage source. En
 effet, le langage C permet des conversions non sûres entre données, ce qui
 empêche le typage d'avoir un intérêt. On définit alors un modèle de langage
 impératif avec un modèle mémoire de plus haut niveau, interdisant ces
@@ -822,15 +828,16 @@ constructions: \langname.
 
 \item
 Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
-sur l'exécution des programmes. On profite du caractère structuré des états
-mémoire pour exprimer cette sémantique en terme de lentilles
-bidirectionnelles, permettant de décrire la modification en profondeur de la
-mémoire.
+sur les exécutions des programmes. On profite du caractère structuré des états
+mémoire pour exprimer cette sémantique en terme de lentilles bidirectionnelles,
+permettant de décrire la modification en profondeur de la mémoire.
 
 \item
 Au cœur de notre travail se trouve un système de types sûrs pour \langname,
 ainsi que deux extensions validant l'approche typage pour résoudre notre
 problème de base, qui est la vérification des accès aux pointeurs utilisateur.
+
+%TODO[E] en parle t'on avant ↑
 
 \item
 Notre formalisation est accompagnée d'un prototype, basé sur \newspeak. Cela
@@ -838,6 +845,8 @@ permet d'utiliser les règles de typage précédemment définies (en les adaptan
 tout en profitant des outils existants développés par EADS, qui utilisent
 \newspeak. En particulier, cela permet de traiter des programmes écrits en C
 comme le noyau Linux. Ce prototype est disponible sous une license libre.
+
+% TODO[S] en les adaptant -> pas clair. en quoi npk permet cela?
 
 \end{itemize}
 
@@ -866,6 +875,8 @@ dans les systèmes d'exploitation. Pour ce faire, on ajoute des pointeurs
 contrôlés par l'utilisateur à la sémantique et au système de types. À chaque
 étape, c'est-à-dire avant et après ces ajouts, on établit une propriété de
 sûreté de typage reliant la sémantique d'exécution aux types statiques.
+
+%TODO[E] problèmes d'addressage: préciser
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage
