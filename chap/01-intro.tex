@@ -486,12 +486,12 @@ aucun comportement, permet de prouver l'absence d'erreurs.
 La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
 valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
 comportements réels du programme est noté par des points, et l'approximation en
-gris. Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de
-haut en bas puis de gauche à droite. Dans le premier on a prouvé, à la
-compilation, que le programme ne pourra pas comporter d'erreurs à l'exécution.
-Dans le deuxième, l'approximation recouvre les cas dangereux: on émet une alarme
-par manque de précision. Dans la troisième l'approximation n'est pas
-\emph{sound} (par construction, on évite ce cas). Enfin, dans la quatrième, on
+gris. Plusieurs cas peuvent se produire. Dans la figure~\ref{fig:appx-proof}, on
+a prouvé à la compilation que le programme ne pourra pas comporter d'erreurs à
+l'exécution. Dans la figure~\ref{fig:appx-warn}, l'approximation recouvre les
+cas dangereux: on émet une alarme par manque de précision. Dans la
+figure~\ref{fig:appx-unsound} l'approximation n'est pas \emph{sound} (par
+construction, on évite ce cas). Enfin, dans la figure~\ref{fig:appx-warn-ok}, on
 émet une alarme à raison car il existe des comportements erronés. Toute la
 difficulté est donc de construire une surapproximation correcte mais conservant
 une précision suffisante.
@@ -542,39 +542,96 @@ une précision suffisante.
             -- ++(1,-3) --    cycle;
 }
 
+\subbottom[]{
+\label{fig:appx-proof}
 \begin{tikzpicture}[scale=0.7]
-\clip  (-1,-1) rectangle (12,12);
+\clip  (-0.5,5.5) rectangle (5.5,12);
 
 % Hachures
 \foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
 
 % Ensemble sûr
-\foreach \xsh in {0, 180}
-\foreach \ysh in {0, 180}
-\enssur{\xsh}{\ysh};
+\enssur{0}{180};
 
 % Approximation (précise)
-\foreach \ysh in {0,180}
-\appx{\ysh};
-
-% Approximation (imprécise)
-\foreach \ysh in {0,180}
-\appximp{\ysh};
+\appx{180};
 
 % Comportement réel (sans erreurs)
-\foreach \xsh in {0, 180}
-\semok{\xsh};
-
-% Comportement réel (avec erreurs)
-\foreach \xsh in {0, 180}
-\semko{\xsh};
+\semok{0};
 
 % Ensemble sûr (redraw)
-\foreach \xsh in {0, 180}
-\foreach \ysh in {0, 180}
-\enssurR{\xsh}{\ysh};
+\enssurR{0}{180};
 
 \end{tikzpicture}
+}
+\subbottom[]{
+\label{fig:appx-warn}
+\begin{tikzpicture}[scale=0.7]
+\clip  (6,5.5) rectangle (12,12);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\enssur{180}{180};
+
+% Approximation (imprécise)
+\appximp{180};
+
+% Comportement réel (sans erreurs)
+\semok{180};
+
+% Ensemble sûr (redraw)
+\enssurR{180}{180};
+
+\end{tikzpicture}
+}
+
+\subbottom[]{
+\label{fig:appx-unsound}
+\begin{tikzpicture}[scale=0.7]
+\clip  (-0.5,-0.5) rectangle (5.5,6);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\enssur{0}{0};
+
+% Approximation (précise)
+\appx{0};
+
+% Comportement réel (avec erreurs)
+\semko{0};
+
+% Ensemble sûr (redraw)
+\enssurR{0}{0};
+
+\end{tikzpicture}
+}
+\subbottom[]{
+\label{fig:appx-warn-ok}
+\begin{tikzpicture}[scale=0.7]
+\clip  (6,-0.5) rectangle (12,6);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\enssur{180}{0};
+
+% Approximation (imprécise)
+\appximp{0};
+
+% Comportement réel (avec erreurs)
+\semko{180};
+
+% Ensemble sûr (redraw)
+\enssurR{180}{0};
+
+\end{tikzpicture}
+}
+
 \caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
 des états effectifs du programme, noté par des points, est approximé par
 l'ensemble en gris.}
