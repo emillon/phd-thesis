@@ -1,7 +1,7 @@
-On fait ici un résumé des travaux présentés, en commençant par un bilan des
-contributions réalisées. On fait ensuite un tour des aspects posant problème, ou
-traités de manière incomplète, en évoquant les travaux possibles pour enrichir
-l'expressivité de ce système.
+On présente ici un résumé des travaux présentés, en commençant par un bilan des
+contributions réalisées. On réalise ensuite un tour des aspects posant problème,
+ou traités de manière incomplète, en évoquant les travaux possibles pour
+enrichir l'expressivité de ce système.
 
 \section{Contributions}
 
@@ -199,13 +199,13 @@ correspond à un ramasse-miette réalisé statiquement.
 
 \paragraph{Flot de contrôle}
 
-Dans le langage C, en plus des boucles et de l'alternative, on peut sauter au
-sein d'une fonction à l'aide de la construction \texttt{goto}. Pour pouvoir
-traiter ces cas, il est possible de transformer ces sauts d'un programme vers
-des simples boucles. Cette réécriture peut être coûteuse puisqu'elle peut
-introduire des variables booléennes et dupliquer du code. En pratique, c'est
-d'ailleurs ce qui est fait dans l'implantation puisque cette transformation est
-réalisée par \ctonewspeak.
+Dans le langage C, en plus des boucles et de l'alternative, on peut sauter d'une
+instruction à l'autre au sein d'une fonction à l'aide de la construction
+\texttt{goto}. Pour pouvoir traiter ces cas, il est possible de transformer ces
+sauts d'un programme vers des simples boucles. Cette réécriture peut être
+coûteuse puisqu'elle peut introduire des variables booléennes et dupliquer du
+code. En pratique, c'est d'ailleurs ce qui est fait dans l'implantation puisque
+cette transformation est réalisée par \ctonewspeak.
 
 Dans le noyau Linux, il est courant d'utiliser les sauts pour factoriser la
 libération de ressources à la fin d'une fonction. Il est d'ailleurs possible
