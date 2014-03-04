@@ -64,6 +64,8 @@ chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
 (\emph{row polymorphism})~\cite{ocamlObjects} présent dans OCaml pour unifier
 deux types structures partiellement connus. \added{référence}
 
+% TODO[E] ↑ à refaire
+
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
 de la figure~\ref{fig:progwf:good}, la variable $x$ est initialisée avec la
@@ -764,8 +766,9 @@ dans la figure~\ref{fig:comp-mem}.
 \section{Propriétés du typage}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
-théorèmes. Certaines démonstrations sont des analyses de cas laborieuses et sans
-difficultés; dans ce cas on n'en donne que des esquisses.
+théorèmes. Les démonstrations des lemmes~\ref{lemma:inversion},
+\ref{lemma:canon} et~\ref{lemma:var-typ} sont des analyses de cas laborieuses et
+sans difficulté; dans ce cas on n'en donne que des esquisses.
 
 \begin{lemma}[Inversion]
 \label{lemma:inversion}
