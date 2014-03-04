@@ -38,6 +38,8 @@ ou masque de bits.
 
 \paragraph{Un prototype d'analyseur statique}
 
+% TODO[S] contribuer les résultats: FR
+
 Les analyses de typage ici décrites ont été implantées sous forme d'un prototype
 d'analyseur statique distribué avec le langage \newspeak, développé par EADS. Le
 choix de \newspeak pour l'implantation demande d'adapter les règles de typage,
@@ -66,6 +68,8 @@ taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier et
 un seul type de flottant. La raison pour cela est que nous ne nous intéressons
 pas du tout aux problématiques de sémantique arithmétique: les débordements,
 dénormalisations, etc, sont supposés ne pas arriver.
+
+% TODO[S] ↓ et l'arith des ptr sur fct?
 
 Il est possible d'étendre le système de types de \langname{} pour ajouter tous
 ces nouveaux types. La traduction depuis \newspeak insère déjà des opérateurs de
@@ -261,14 +265,16 @@ celle-ci). Le typage est alors direct:
     { Γ ⊢ \textsc{Free}(e) }
 \end{mathpar}
 
+% TODO[S] modèle ou malloc n'échoue jamais?
+
 En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
 états mémoire: $m = (s, g, h)$ où $h$ est une liste d'association entre des
-entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
-entière et met à jour $h$. La libération de mémoire est en revanche
-problématique parce qu'il faut faire confiance au programmeur pour ne pas
-accéder aux zones mémoires libérées, ni libérer deux fois la même zone mémoire.
-\added{double free} Il est aussi possible d'obtenir cette garantie avec une
-analyse préalable. Par exemple, il est possible ici encore d'utiliser une
+identifiants uniques et des valeurs. Chaque allocation dynamique crée une
+nouvelle clef entière et met à jour $h$. La libération de mémoire est en
+revanche problématique parce qu'il faut faire confiance au programmeur pour ne
+pas accéder aux zones mémoires libérées, ni libérer deux fois la même zone
+mémoire. \added{double free} Il est aussi possible d'obtenir cette garantie avec
+une analyse préalable. Par exemple, il est possible ici encore d'utiliser une
 analyse basée sur les régions pour vérifier l'absence de pointeurs
 fous~\cite{ifm10}.
 
@@ -390,5 +396,7 @@ compatible avec le type d'origine, et pour lequel l'ensemble des opérations est
 restreint. Avec cette fonctionnalité dans un langage, non seulement on peut
 détecter d'autres classes de problèmes, mais surtout on laisse le programmeur
 définir de nouvelles analyses lui-même.
+
+%TODO[S] pas très clair, un ex?
 
 % vim: spelllang=fr
