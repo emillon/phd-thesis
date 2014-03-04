@@ -428,8 +428,10 @@ bf.c:260#32 - Type clash between :
 \end{Verbatim}
 
 Et quand \texttt{FIX} vaut 1, le programme annoté est affiché. Les parties
-correspondantes aux appels sensibles sont:
+correspondantes aux appels sensibles sont données dans les
+figures~\ref{fig:black-npk1} et~\ref{fig:black-npk2}.
 
+\begin{figure}[h]
 \begin{Verbatim}
  (bf.c:255#3)^guard((! (((coerce[0,4294967295]
      (((coerce[0,4294967295] (addr_Int : Int) : Int)
@@ -447,9 +449,11 @@ correspondantes aux appels sensibles sont:
  }
  (bf.c:262#4)^copied =(int32) (4 : Int);
 \end{Verbatim}
+\caption{Traduction en \newspeak de la partie \enquote{lecture} du bug Blackfin}
+\label{fig:black-npk1}
+\end{figure}
 
-Et:
-
+\begin{figure}[h]
 \begin{Verbatim}
  (bf.c:342#28)^guard((! (((coerce[0,4294967295]
      (((coerce[0,4294967295] (addr_Int : Int) : Int)
@@ -467,10 +471,9 @@ Et:
  }
  (bf.c:349#4)^copied =(int32) (4 : Int);
 \end{Verbatim}
-
-% TODO[S] lire autant de npk n'est pas facile, peut etre en 2 couleurs
-
-% TODO[E] figures
+\caption{Traduction en \newspeak de la partie \enquote{écriture} du bug Blackfin}
+\label{fig:black-npk2}
+\end{figure}
 
 \section*{Conclusion}
 
