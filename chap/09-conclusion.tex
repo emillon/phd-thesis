@@ -38,13 +38,11 @@ ou masque de bits.
 
 \paragraph{Un prototype d'analyseur statique}
 
-% TODO[S] contribuer les résultats: FR
-
 Les analyses de typage ici décrites ont été implantées sous forme d'un prototype
 d'analyseur statique distribué avec le langage \newspeak, développé par EADS. Le
 choix de \newspeak pour l'implantation demande d'adapter les règles de typage,
-mais il permet de réutiliser un traducteur existant, et de contribuer les
-résultats à l'entreprise. Ce prototype permet d'une part de vérifier la
+mais il permet de réutiliser un traducteur existant, et de faire profiter à
+l'entreprise les résultats. Ce prototype permet d'une part de vérifier la
 propriété d'isolation des appels système sur du code C existant, et d'autre part
 fournit une base saine pour implanter d'autres analyses de typage sur le langage
 \newspeak. Ce prototype a été utilisé pour confirmer l'existence de deux bugs
@@ -68,8 +66,6 @@ taille. Au contraire, en \langname{} on ne conserve qu'un seul type d'entier et
 un seul type de flottant. La raison pour cela est que nous ne nous intéressons
 pas du tout aux problématiques de sémantique arithmétique: les débordements,
 dénormalisations, etc, sont supposés ne pas arriver.
-
-% TODO[S] ↓ et l'arith des ptr sur fct?
 
 Il est possible d'étendre le système de types de \langname{} pour ajouter tous
 ces nouveaux types. La traduction depuis \newspeak insère déjà des opérateurs de
@@ -253,7 +249,7 @@ présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
 sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
 mémoire contenant cette valeur (la taille de chaque valeur fait partie de
-celle-ci). Le typage est alors direct:
+celle-ci), ou \eNull si l'allocation échoue. Le typage est alors direct:
 
 \begin{mathpar}
   \irule{New}
@@ -264,8 +260,6 @@ celle-ci). Le typage est alors direct:
     { Γ ⊢ e : \ptrK{t} }
     { Γ ⊢ \textsc{Free}(e) }
 \end{mathpar}
-
-% TODO[S] modèle ou malloc n'échoue jamais?
 
 En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
 états mémoire: $m = (s, g, h)$ où $h$ est une liste d'association entre des
