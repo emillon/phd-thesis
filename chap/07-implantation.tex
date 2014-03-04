@@ -355,7 +355,8 @@ apparaissent dans $B$ mais pas dans $A$.
         on unifie $a_i$ et $b_j$.
     \item Pour les champs $l$ qui sont dans $A$ mais pas dans $B$: on ajoute $l$
         à $X_b$.
-    \item Et symétriquement dans $X_a$.
+    \item Pour les champs $l$ qui sont dans $B$ mais pas dans $A$: on ajoute $l$
+        à $X_a$.
 \end{itemize}
 
 Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
@@ -428,6 +429,8 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
       \bottomrule
     \end{tabular}
   \end{center}
+
+  % TODO[E] portée de a
 
 \item Les types de chaque fonction sont inférés, par le biais de la fonction
   suivante:
