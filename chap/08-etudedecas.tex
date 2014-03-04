@@ -326,16 +326,14 @@ Pour utiliser notre système de types, plusieurs étapes sont nécessaires en pl
 de traduire le noyau Linux en \newspeak{}.
 
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
-environnement initial (via la variable \texttt{exttbl} décrite en
-section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
-pointeurs utilisateur, on ajoute un commentaire spécial \texttt{!npk
-userptr\_fieldp x f}, qui indique que \texttt{x} est un pointeur vers une
-structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
-il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
-inconnue de type. Cette annotation est nécessaire car c'est le moyen d'indiquer
-que la structure contient un pointeur utilisateur.
-
-%TODO[E] réf vers c7
+environnement initial (les annotations possibles sont résumées dans un tableau
+page~\pageref{page:tab-anns}). Plus précisément, pour chaque source de pointeurs
+utilisateur, on ajoute un commentaire \texttt{!npk userptr\_fieldp x f}, qui
+indique que \texttt{x} est un pointeur vers une structure contenant un pointeur
+utilisateur dans le champ \texttt{f}. En fait, il unifie le type de \texttt{x}
+avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une inconnue de type. Cette annotation
+est nécessaire car c'est le moyen d'indiquer que la structure contient un
+pointeur utilisateur.
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
@@ -390,9 +388,9 @@ type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
 unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type).
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
-celle-ci, l'inférence se fait sans erreur. La partie pertinente est:
-
-% TODO[E] est('ce que tu donne la syntaxe de ces constructions (=> citer)
+celle-ci, l'inférence se fait sans erreur. La partie pertinente est la suivante
+(une explication de la syntaxe est donnée dans la section~\ref{sec:impl-ex},
+page~\pageref{sec:impl-ex})):
 
 \begin{Verbatim}
 (06-drm-ok.c:18#8)^{
@@ -405,7 +403,6 @@ celle-ci, l'inférence se fait sans erreur. La partie pertinente est:
             );
 }
 \end{Verbatim}
-
 
 En ce qui concerne l'exemple \enquote{Blackfin}, on commence par isoler la
 fonction problématique. Celle-ci utilise de nombreuses constructions propres au
