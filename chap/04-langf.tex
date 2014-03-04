@@ -1734,8 +1734,8 @@ ou une instruction.
 
 \section{Phrases et exécution d'un programme}
 
-Un programme est constitué d'une suite de phrases: déclarations de fonctions,
-de variables et de types, et évaluation d'expressions.
+Un programme est constitué d'une suite de phrases qui sont soit des déclarations
+de variables (dont les fonctions), soit des évaluations d'expressions.
 
 Donc l'évaluation d'une phrase $p$ fait passer d'un état mémoire $m$
 à un autre $m'$, ce que l'on note $\ph{m}{p}{m'}$.
@@ -1768,11 +1768,11 @@ Considérons le programme suivant:
 \begin{center}
 \begin{minipage}{3cm}
 \begin{Verbatim}
-s = { x: 0; y: 0}
-f = fun(q) {
-    *q <- 1
-}
-f(&s.x)
+(p1)  s = { x: 0; y: 0}
+(p2)  f = fun(q) {
+          *q <- 1
+      }
+(p3)  f(&s.x)
 \end{Verbatim}
 \end{minipage}
 \end{center}
@@ -1787,12 +1787,12 @@ D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 3 phra
 \paragraph{Déclaration de \texttt{x}}
 
 D'après \textsc{Prog}, on part d'un état mémoire $m_0 = ([~], [~])$. Pour
-trouver $m_1$ tel que $\ph{m_0}{x = 0}{m_1}$, il faut appliquer la règle
-\textsc{ET-Var}. Celle-ci va étendre l'ensemble (vide) des globales mais demande
-d'évaluer l'expression $0$. D'après \textsc{Exp-Cst},
+trouver $m_1$ tel que $\ph{m_0}{s = \eStruct{x:0; y:0}}{m_1}$, il faut appliquer
+la règle \textsc{ET-Var}. Celle-ci va étendre l'ensemble (vide) des globales
+mais demande d'évaluer l'expression $0$. D'après \textsc{Exp-Cst},
 $\mm{m_0}{0}{m_0}{\widehat{0}}$.
 
-Donc $\ph{m_0}{x = 0}{m_1}$ en posant
+Donc $\ph{m_0}{s = \eStruct{x:0; y:0}}{m_1}$ en posant
 $m_1 = ([~], [s↦\widehat{\eStruct{x:0; y:0}}])$.
 
 \paragraph{Déclaration de \texttt{f}}
@@ -1800,8 +1800,8 @@ $m_1 = ([~], [s↦\widehat{\eStruct{x:0; y:0}}])$.
 On se trouve encore dans le cas de la déclaration d'une variable globale. Il
 faut comme auparavant évaluer l'expression. C'est la règle \textsc{Exp-Fun} qui
 s'applique: $\mm{m_1}{\eFun{q}{*q←1;\iReturn{\eUnit}}}
-{m_1}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}$ (ce qui revient à dire que la
-fonction est directement placée en mémoire).
+{m_1}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}$ (ce qui revient à dire que le
+code de la fonction est directement placé en mémoire).
 
 Ainsi $\ph{m_1}{f = \eFun{q}{*q←1;\iReturn{\eUnit}}}{m_2}$ où:
 
