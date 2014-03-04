@@ -198,12 +198,10 @@ figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
 \end{figure}
 
 Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on ajoute
-aux règles s'appliquant à $\tInt$ les règles suivantes. Cela revient à
-surcharger le typage de l'opérateur $\sim$, mais la sémantique est la même
-quelque soit le type car $\tBits$ et $\tInt$ sont représentés de la même
+aux règles s'appliquant à $\tInt$ les règles suivantes. Cela revient à permettre
+plusieurs types pour l'opérateur $\sim$, mais la sémantique d'exécution est la
+même quelque soit le type car $\tBits$ et $\tInt$ sont représentés de la même
 manière.
-
-% TODO[E] surcharger: que veux tu dire
 
 \begin{mathpar}
     \irule{Op-Bits}
@@ -238,13 +236,11 @@ priori} de type \tInt, mais \tBits ou \tInt. Cela implique aussi qu'on peut
 additionner un \tBits et un \tInt pour obtenir un \tInt.
 
 Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$. On rappelle que
-la règle permettant de typer $!$ est inchangée et reste :
+la règle permettant de typer $!$ est inchangée et reste la suivante:
 
 \[
     \disprule{Unop-Not}
 \]
-
-% TODO[E] dire un mot du choix bits int
 
 % TODO inférence de type de fun x y -> x | y
 
