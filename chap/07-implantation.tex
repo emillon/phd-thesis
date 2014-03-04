@@ -191,15 +191,14 @@ fichier \newspeak.
 
 % TODO[S] sépare dans une nv section et insère l'algo
 
-% TODO[S] dis que c'est le tien
-
 % TODO impression backticks
 
-La dernière étape est réalisée dans un autre outil nommé \ptrtype. Elle consiste
-en l'implantation d'un algorithme d'inférence pour les systèmes de types décrits
-dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez simple.
-Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on peut
-utiliser une variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
+La dernière étape est réalisée dans un autre outil nommé \ptrtype, réalisé dans
+le cadre de cette thèse. Elle consiste en l'implantation d'un algorithme
+d'inférence pour les systèmes de types décrits dans les
+chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez simple. Puisqu'ils
+sont suffisamment proches du lambda calcul simplement typé, on peut utiliser une
+variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
 
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
