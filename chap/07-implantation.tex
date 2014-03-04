@@ -123,7 +123,8 @@ déclaration de variable est adjointe d'une description complète du type.
 Lors de cette étape, le flot de contrôle est également simplifié
 (figure~\ref{fig:flot-controle-simple}). De plus, les constructions ambigües en
 C comme \texttt{i = i++} sont transformées pour que leur évaluation se fasse
-dans dans un ordre explicite.
+dans dans un ordre explicite. Un choix arbitraire est alors fait ; par exemple,
+les arguments de fonctions sont évalués de droite à gauche.
 
 \begin{figure}[b]
 
@@ -187,6 +188,10 @@ de compilation sont cohérentes entre elles. Les objets marqués \texttt{static}
 invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu'ils
 aient un nom globalement unique. Cette étape se conclut par la création d'un
 fichier \newspeak.
+
+% TODO[S] sépare dans une nv section et insère l'algo
+
+% TODO[S] dis que c'est le tien
 
 La dernière étape est réalisée dans un autre outil nommé \ptrtype. Elle consiste
 en l'implantation d'un algorithme d'inférence pour les systèmes de types décrits
