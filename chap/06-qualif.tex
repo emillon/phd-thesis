@@ -59,7 +59,7 @@ logiques et bit à bit.
 Ensuite, on étend de manière indépendante le système de types, cette fois au
 niveau des pointeurs. Plus précisément, dans le contexte des systèmes
 d'exploitation, introduit une différence entre les pointeurs dont la valeur est
-contrôlée par l'utilisateur et les autres.
+contrôlée par l'utilisateur et ceux dont elle ne l'est pas.
 
 \section{Exemple préliminaire: les entiers utilisés comme bitmasks}
 
@@ -203,6 +203,8 @@ surcharger le typage de l'opérateur $\sim$, mais la sémantique est la même
 quelque soit le type car $\tBits$ et $\tInt$ sont représentés de la même
 manière.
 
+% TODO[E] surcharger: que veux tu dire
+
 \begin{mathpar}
     \irule{Op-Bits}
         { \opbin ∈ \{~|~, ~\&~, ~\opxor~ \}
@@ -241,6 +243,10 @@ la règle permettant de typer $!$ est inchangée et reste :
 \[
     \disprule{Unop-Not}
 \]
+
+% TODO[E] dire un mot du choix bits int
+
+% TODO inférence de type de fun x y -> x | y
 
 % Alternative
 %
