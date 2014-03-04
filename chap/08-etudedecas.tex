@@ -31,7 +31,7 @@ d'informations confidentielles dans le noyau.
 On commence par décrire les difficultés rencontrées pour analyser le code du
 noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système dans
 ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin les bugs
-étudié, et comment les adapter pour traiter le code en question.
+étudiés, et comment les adapter pour traiter le code en question.
 
 \section{Spécificités du code noyau}
 \label{sec:gnuc}
@@ -323,7 +323,7 @@ empêcher.
 \label{sec:demo-unif}
 
 Pour utiliser notre système de types, plusieurs étapes sont nécessaires en plus
-de traduire le noyau Linux en \langname{}.
+de traduire le noyau Linux en \newspeak{}.
 
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
 environnement initial (via la variable \texttt{exttbl} décrite en
@@ -334,6 +334,8 @@ structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
 il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
 inconnue de type. Cette annotation est nécessaire car c'est le moyen d'indiquer
 que la structure contient un pointeur utilisateur.
+
+%TODO[E] réf vers c7
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
@@ -347,12 +349,17 @@ drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
 d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
 toute l'exécution.
 
+% TODO[E] !!!
+
 \begin{figure}[p]
 \insertcode{ex-drm.c}
 
 \caption{Cas d'étude \enquote{Radeon} minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
+
+% TODO[E] tu pourrais mettre les numéros de ligne et infiquer les lignes dans le
+% texte pour epliquer le clash
 
 \begin{figure}[p]
 
@@ -369,7 +376,8 @@ par le noyau (\texttt{get\_user}, \texttt{put\_user},
 l'environnement global leur type correct.
 
 Enfin, on peut lancer l'inférence de type. Ainsi, sur l'exemple de la
-figure~\ref{fig:ex-drm}, on obtient la sortie suivante:
+figure~\ref{fig:ex-drm} (page~\pageref{fig:ex-drm}), on obtient la sortie
+suivante:
 
 \begin{Verbatim}
 05-drm.c:18#8 - Type clash between :
@@ -383,6 +391,8 @@ unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur. La partie pertinente est:
+
+% TODO[E] est('ce que tu donne la syntaxe de ces constructions (=> citer)
 
 \begin{Verbatim}
 (06-drm-ok.c:18#8)^{
@@ -463,7 +473,7 @@ Et:
 
 % TODO[S] lire autant de npk n'est pas facile, peut etre en 2 couleurs
 
-% TODO à un moment je dis compiler vers safespeak
+% TODO[E] figures
 
 \section*{Conclusion}
 
