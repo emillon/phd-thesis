@@ -20,9 +20,10 @@ Ensuite, dans le chapitre~\ref{cha:etudedecas}, on évalue cette implantation su
 le noyau Linux. On commence par décrire comment fonctionnennt les appels système
 sous ce noyau, et comment le \emph{confused deputy problem} évoqué dans le
 chapitre~\ref{cha:os} peut arriver dans ce contexte. Dans une deuxième partie,
-on décrit le cas de deux \emph{bugs} dans le noyau Linux. On montre que, pour
+on décrit le cas de deux \emph{bugs} dans le noyau Linux. Le premier porte sur
+un pilote de carte graphique Radeon et le second sur l'appel système
+\texttt{ptrace} sur l'architecture Blackfin. Ils manipulent de manière non
+sécurisée des pointeurs provenant de l'espace utilisateur. On montre que, pour
 chacun, les analyses précédentes permettent de distinguer statiquement le cas
 incorrect du cas corrigé.
-
-% TODO[E] bugs: à indiquer
 }
