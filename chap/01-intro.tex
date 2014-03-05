@@ -77,13 +77,13 @@ a beaucoup évolué. Au départ, les programmeurs avaient accès au matériel da
 son intégralité: toute la mémoire pouvait être accédée, toutes les instructions
 pouvaient être utilisées.
 
-Néanmoins c'est un peu restrictif, puisque cela ne permet qu'à une personne
-d'interagir avec le système. Dans la seconde moitié des années 1960, sont
-apparus les premiers systèmes \enquote{à temps partagé}, permettant à plusieurs
-utilisateurs de travailler en même temps.
+Néanmoins cela était un peu restrictif, puisque cela ne permet qu'à une
+personne d'interagir avec le système. Dans la seconde moitié des années 1960,
+sont apparus les premiers systèmes \enquote{à temps partagé}, permettant à
+plusieurs utilisateurs de travailler en même temps.
 
 Permettre l'exécution de plusieurs programmes en même temps est une idée
-révolutionnaire, mais elle n'est pas sans difficultés techniques: en effet les
+importante, mais elle n'est pas sans difficultés techniques: en effet les
 ressources de la machine doivent être aussi partagées entre les utilisateurs et
 les programmes. Par exemple, plusieurs programmes vont utiliser le processeur
 les uns à la suite des autres; et chaque programme aura à sa disposition une
@@ -375,7 +375,7 @@ Si on veut analyser des programmes, il est plus pratique de travailler sur une
 représentation intermédiaire plus simple afin d'avoir moins de traitements
 dupliqués. Dans ce cas on ajoute une phase préliminaire à l'analyse, qui
 consiste à convertir le code à étudier vers cette représentation. On présente
-quelques candidats langages qui peuvent servir ce rôle:
+quelques langages qui peuvent servir ce rôle:
 
 \subsection*{Middle-ends}
 
@@ -428,7 +428,7 @@ utilisés dans Compcert, un compilateur certifié pour C
 sont faites de manière prouvée. Ces langages intermédiaires sont utilisés pour
 les passes de front-end et de middle-end.
 
-\section{Le projet Penjili}
+\section{L'analyse statique dans l'industrie aéronautique}
 \added{toute la section}
 
 En face du problème théorique et technique décrit dans la
@@ -438,25 +438,26 @@ réalisés dans l'équipe de sécurité et sûreté logicielle d'EADS Innovation
 dans le cadre d'une convention industrielle de formation par la recherche
 (CIFRE).
 
-Aujourd'hui, la réussite de missions dépend de logiciels dont la taille est de
-plus en plus grande. Ainsi en cas de fautes dans ce genre de logiciel, on peut
-se retrouver face à grands impacts économiques, voire risquer des vies humaines.
-On comprend bien que les phases de vérification et de certification sont au cœur
-du cycle de vie des logiciels avioniques. A titre d'exemple, l'échec du premier
-vol d'Ariane 5 aurait certainement pu être évité si le logiciel de contrôle de
-vol avait été vérifié plus efficacement~\cite{Ariane501}.
+Aujourd'hui, la réussite de nombreuses missions dépend de logiciels dont la
+taille est de plus en plus grande. Ainsi en cas de fautes dans ce genre de
+logiciel, on peut se retrouver face à de grands impacts économiques, voire
+risquer des vies humaines. On comprend bien que les phases de vérification et de
+certification sont au cœur du cycle de vie des logiciels avioniques. A titre
+d'exemple, l'échec du premier vol d'Ariane 5 aurait certainement pu être évité
+si le logiciel de contrôle de vol avait été vérifié plus
+efficacement~\cite{Ariane501}.
 
 Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
 approches duales sont nécessaires. La première consiste à mettre le logiciel
 dans des situations concrètes et à vérifier que la sortie correspond au résultat
 attendu : c'est la technique des tests.  Les tests \enquote{boîte noire}
 consistent à tester en ayant à disposition uniquement les spécifications des
-modules à plusieurs échelles (par exemple : logiciel, module, classe, méthode).
-Au contraire, les tests dits \enquote{boîte blanche} sont écrits en ayant à
-disposition l'implémentation. Cela permet par exemple de s'assurer que chaque
-chemin d'exécution est emprunté. Cette manière de procéder est similaire à la
-preuve par neuf enseignée aux enfants : il est possible de prouver l'erreur,
-mais pas que le programme est correct.
+modules à différentes échelles (par exemple : logiciel, module, classe,
+méthode). Au contraire, les tests dits \enquote{boîte blanche} sont écrits en
+ayant à disposition l'implémentation. Cela permet par exemple de s'assurer que
+chaque chemin d'exécution est emprunté. Cette manière de procéder est similaire
+à la preuve par neuf enseignée aux enfants : il est possible de prouver
+l'erreur, mais pas que le programme est correct.
 
 L'approche des méthodes formelles, au contraire, permet de s'assurer de
 l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
@@ -486,12 +487,12 @@ aucun comportement, permet de prouver l'absence d'erreurs.
 La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
 valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
 comportements réels du programme est noté par des points, et l'approximation en
-gris. Plusieurs cas peuvent se produire. Ils correspondent aux cas suivants, de
-haut en bas puis de gauche à droite. Dans le premier on a prouvé, à la
-compilation, que le programme ne pourra pas comporter d'erreurs à l'exécution.
-Dans le deuxième, l'approximation recouvre les cas dangereux: on émet une alarme
-par manque de précision. Dans la troisième l'approximation n'est pas
-\emph{sound} (par construction, on évite ce cas). Enfin, dans la quatrième, on
+gris. Plusieurs cas peuvent se produire. Dans la figure~\ref{fig:appx-proof}, on
+a prouvé à la compilation que le programme ne pourra pas comporter d'erreurs à
+l'exécution. Dans la figure~\ref{fig:appx-warn}, l'approximation recouvre les
+cas dangereux: on émet une alarme par manque de précision. Dans la
+figure~\ref{fig:appx-unsound} l'approximation n'est pas \emph{sound} (par
+construction, on évite ce cas). Enfin, dans la figure~\ref{fig:appx-warn-ok}, on
 émet une alarme à raison car il existe des comportements erronés. Toute la
 difficulté est donc de construire une surapproximation correcte mais conservant
 une précision suffisante.
@@ -503,53 +504,137 @@ une précision suffisante.
 \tikzstyle{patB}=[fill=black!30]
 \tikzstyle{patC}=[fill=white,pattern=crosshatch dots]
 
+\def\enssur#1#2{
+\path [xshift=#1,yshift=#2,patA]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle
+}
+
+\def\appx#1{
+\draw [yshift=#1,patB,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+             -- (2,3) -- (3,3)
+             -- (3,1) -- cycle
+}
+
+
+\def\appximp#1{
+\draw [xshift=180,yshift=#1,patB,scale around={1.3:(3,3)}]
+                (1,1) -- (1,2)
+             -- (4,5)
+             -- (4,1) -- cycle
+}
+
+\def\semok#1{
+\draw [xshift=#1,yshift=180,patC,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)}
+}
+
+\def\semko#1{
+\draw [xshift=#1,patC,scale=0.8] plot[smooth cycle]
+      coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)}
+}
+
+\def\enssurR#1#2{
+\draw [xshift=#1,yshift=#2]
+                 (0, 0) -- ++(0, 2)
+            -- ++(1, 2) -- ++(3,-1)
+            -- ++(1,-3) --    cycle;
+}
+
+\subbottom[]{
+\label{fig:appx-proof}
 \begin{tikzpicture}[scale=0.7]
-\clip  (-1,-1) rectangle (12,12);
+\clip  (-0.5,5.5) rectangle (5.5,12);
 
 % Hachures
 \foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
 
 % Ensemble sûr
-\foreach \xsh in {0, 180}
-\foreach \ysh in {0, 180}
-\path [xshift=\xsh,yshift=\ysh,patA]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
+\enssur{0}{180};
 
 % Approximation (précise)
-\foreach \ysh in {0,180}
-\draw [yshift=\ysh,patB,scale around={1.3:(3,3)}]
-                (1,1) -- (1,2)
-             -- (2,3) -- (3,3)
-             -- (3,1) -- cycle;
-
-% Approximation (imprécise)
-\foreach \ysh in {0,180}
-\draw [xshift=180,yshift=\ysh,patB,scale around={1.3:(3,3)}]
-                (1,1) -- (1,2)
-              -- (4,5)
-             -- (4,1) -- cycle;
+\appx{180};
 
 % Comportement réel (sans erreurs)
-\foreach \xsh in {0, 180}
-\draw [xshift=\xsh,yshift=180,patC,scale=0.8] plot[smooth cycle]
-      coordinates{(1,1) (1,2) (2,3) (3,3) (3,1)};
-
-% Comportement réel (avec erreurs)
-\foreach \xsh in {0, 180}
-\draw [xshift=\xsh,patC,scale=0.8] plot[smooth cycle]
-      coordinates{(1,1) (1,2) (2,3) (3,3) (4.5,5) (3,1)};
+\semok{0};
 
 % Ensemble sûr (redraw)
-\foreach \xsh in {0, 180}
-\foreach \ysh in {0, 180}
-\draw [xshift=\xsh,yshift=\ysh]
-                 (0, 0) -- ++(0, 2)
-            -- ++(1, 2) -- ++(3,-1)
-            -- ++(1,-3) --    cycle;
+\enssurR{0}{180};
 
 \end{tikzpicture}
+}
+\hspace{5mm}
+\subbottom[]{
+\label{fig:appx-warn}
+\begin{tikzpicture}[scale=0.7]
+\clip  (6,5.5) rectangle (12,12);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\enssur{180}{180};
+
+% Approximation (imprécise)
+\appximp{180};
+
+% Comportement réel (sans erreurs)
+\semok{180};
+
+% Ensemble sûr (redraw)
+\enssurR{180}{180};
+
+\end{tikzpicture}
+}
+
+\subbottom[]{
+\label{fig:appx-unsound}
+\begin{tikzpicture}[scale=0.7]
+\clip  (-0.5,-0.5) rectangle (5.5,6);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\enssur{0}{0};
+
+% Approximation (précise)
+\appx{0};
+
+% Comportement réel (avec erreurs)
+\semko{0};
+
+% Ensemble sûr (redraw)
+\enssurR{0}{0};
+
+\end{tikzpicture}
+}
+\hspace{5mm}
+\subbottom[]{
+\label{fig:appx-warn-ok}
+\begin{tikzpicture}[scale=0.7]
+\clip  (6,-0.5) rectangle (12,6);
+
+% Hachures
+\foreach \y in {-10,-9.3,...,11} \draw [gray, very thin, rotate=30] (-4,\y) to (18,\y);
+
+% Ensemble sûr
+\enssur{180}{0};
+
+% Approximation (imprécise)
+\appximp{0};
+
+% Comportement réel (avec erreurs)
+\semko{180};
+
+% Ensemble sûr (redraw)
+\enssurR{180}{0};
+
+\end{tikzpicture}
+}
+
 \caption{Surapproximation. L'ensemble des états erronés est hachuré. L'ensemble
 des états effectifs du programme, noté par des points, est approximé par
 l'ensemble en gris.}
@@ -578,11 +663,13 @@ sur tableaux).
 %domaines abstraits nécessaires. Mais cela peut être coûteux, surtout lorsque le
 %programme comporte un grand nombre de variables.
 
+\subsection*{Le projet Penjili}
+
 Dans ce sens, des outils fondés sur l'interprétation abstraite ont été
 développés chez EADS Innovation Works dans le cadre du projet
 Penjili~\cite{AllamigeonHymansSSTIC07}.
 
-Les analyses statiques ne manipulent pas directement du code C, mais un langage
+Ces analyses statiques ne manipulent pas directement du code C, mais un langage
 intermédiaire appelé \newspeak~\cite{newspeak}. Celui-ci est suffisamment
 expressif pour compiler la plupart des programmes C, y compris de nombreuses
 extensions GNU utilisées dans le noyau Linux (section~\ref{sec:gnuc}), et des
@@ -627,7 +714,7 @@ l'\emph{open-source}.
 
 Ces logiciels sont plus difficiles à analyser car ils sont écrits sans
 contraintes particulières. Non seulement toutes les constructions du langage
-sont autorisées, mêmes celles qui sont difficiles à traiter (transtypage,
+sont autorisées, même celles qui sont difficiles à traiter (transtypage,
 allocation dynamique, récursion, accès au système de fichiers, etc), mais aussi
 des extensions non standards peuvent être utilisées.
 
@@ -718,12 +805,14 @@ programmes d'une manière subtile et pas toujours bien spécifiée ni documenté
 \added{toute la section}
 
 Le but de ce travail est de définir et d'implanter des analyses statiques
-\enquote{légères}sur le langage C, c'est-à-dire plus simples que les analyses de
-valeurs par interprétation abstraite.  Nous proposons d'étendre \newspeak pour
-analyser des propriétés de sécurité par typage sur du code non avionique. En
-effet, les types permettent de modéliser l'environnement d'exécution d'un
-programme (ici, les paramètres d'appels système) avec un grain assez grand,
-alors qu'être plus fin est difficile et nécessite de modéliser l'environnement.
+\enquote{légères} sur le langage C (c'est-à-dire plus simples que les analyses
+de valeurs par interprétation abstraite) dans le but de détecter les
+utilisations dangereuses de pointeurs utilisateurs. Nous proposons d'étendre
+\newspeak pour analyser des propriétés de sécurité par typage sur du code non
+avionique. En effet, les types permettent de modéliser l'environnement
+d'exécution d'un programme (ici, les paramètres d'appels système) avec un grain
+assez grand, alors qu'être plus fin est difficile et nécessite de modéliser
+l'environnement.
 
 Nos contributions sont les suivantes:
 
@@ -732,7 +821,7 @@ Nos contributions sont les suivantes:
 \begin{itemize}
 
 \item
-Une première étape est de définir des restrictions sur le langage source. En
+Une première étape est de définir un sous-ensemble sûr du le langage source. En
 effet, le langage C permet des conversions non sûres entre données, ce qui
 empêche le typage d'avoir un intérêt. On définit alors un modèle de langage
 impératif avec un modèle mémoire de plus haut niveau, interdisant ces
@@ -740,22 +829,22 @@ constructions: \langname.
 
 \item
 Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
-sur l'exécution des programmes. On profite du caractère structuré des états
-mémoire pour exprimer cette sémantique en terme de lentilles
-bidirectionnelles, permettant de décrire la modification en profondeur de la
-mémoire.
+sur les exécutions des programmes. On profite du caractère structuré des états
+mémoire pour exprimer cette sémantique en terme de lentilles bidirectionnelles,
+permettant de décrire la modification en profondeur de la mémoire.
 
 \item
 Au cœur de notre travail se trouve un système de types sûrs pour \langname,
 ainsi que deux extensions validant l'approche typage pour résoudre notre
-problème de base, qui est la vérification des accès aux pointeurs utilisateur.
+problème de base, qui est la vérification des accès aux pointeurs utilisateur
+(présentés dans la section~\ref{sec:sep-esp}).
 
 \item
 Notre formalisation est accompagnée d'un prototype, basé sur \newspeak. Cela
-permet d'utiliser les règles de typage précédemment définies (en les adaptant),
-tout en profitant des outils existants développés par EADS, qui utilisent
-\newspeak. En particulier, cela permet de traiter des programmes écrits en C
-comme le noyau Linux. Ce prototype est disponible sous une license libre.
+permet d'appliquer les règles de typage précédemment définies sur des programmes
+écrits en C, grâce aux outils existants développés par EADS. En particulier,
+cela permet d'analyser des parties du noyau Linux. Ce prototype est disponible
+sous une license libre.
 
 \end{itemize}
 
@@ -780,10 +869,11 @@ système de types statiques. À ce niveau on a un bon support pour décrire des
 analyses statiques sur un langage impératif. On propose alors deux extensions du
 système de types. La première consiste à bien typer les entiers utilisés comme
 \emph{bitmasks}. La seconde capture les problèmes d'adressage mémoire présents
-dans les systèmes d'exploitation. Pour ce faire, on ajoute des pointeurs
-contrôlés par l'utilisateur à la sémantique et au système de types. À chaque
-étape, c'est-à-dire avant et après ces ajouts, on établit une propriété de
-sûreté de typage reliant la sémantique d'exécution aux types statiques.
+dans les systèmes d'exploitation, décrits dans la section~\ref{sec:sep-esp}.
+Pour ce faire, on ajoute des pointeurs contrôlés par l'utilisateur à la
+sémantique et au système de types. À chaque étape, c'est-à-dire avant et après
+ces ajouts, on établit une propriété de sûreté de typage reliant la sémantique
+d'exécution aux types statiques.
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage

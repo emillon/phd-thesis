@@ -7,7 +7,7 @@ il manipule des données de manière incohérente: la variable \texttt{x} reçoi
 donc elle se comporte comme un entier, puis est déférencée, se comportant comme
 un pointeur.
 
-\begin{SaveVerbatim}[]{VerbProgGood}
+\begin{SaveVerbatim}{VerbProgGood}
 f = Fun() {
   Decl x = 0 in
   x <- 1
@@ -15,7 +15,7 @@ f = Fun() {
 }
 \end{SaveVerbatim}
 
-\begin{SaveVerbatim}[]{VerbProgBad}
+\begin{SaveVerbatim}{VerbProgBad}
 f = Fun() {
   Decl x = 0 in
   x <- 1
@@ -56,13 +56,12 @@ On emploie un système de types monomorphe: à chaque expression, on associe un
 unique type. En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut
 construire des types composés: pointeurs, tableaux, structures et fonctions.
 
-Pour typer les structures, on suppose avoir à notre disposition (par un
-prétraitement, par exemple) le type complet de la structure à chaque accès d'un
-champ. Cela alourdit la présentation, mais permet d'éviter le sous-typage qui
-rend l'inférence indécidable. En pratique, dans l'implantation décrite dans le
-chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
-(\emph{row polymorphism})~\cite{ocamlObjects} présent dans OCaml pour unifier
-deux types structures partiellement connus. \added{référence}
+Pour typer les structures, on suppose que les accès aux champs sont décorés du
+type complet de la structure. Cela permet de typer sans ambigüité ces accès.
+Dans l'implantation décrite dans le chapitre~\ref{cha:implem}, ces annotations
+ne sont pas présentes. On utilise donc une variante du polymorphisme de
+rangée~\cite{ocamlObjects} présent dans OCaml pour unifier deux types structures
+partiellement connus. \added{référence}
 
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
@@ -109,7 +108,7 @@ polymorphisme.
       { \tFloat                     }{Flottant}
       { \tUnit                      }{Unité}
       { t*                          }{Pointeur}
-      { t~[]                        }{Tableau}
+      { t~[~]                       }{Tableau}
       { S                           }{Structure}
       { (t_1, …, t_n) \rightarrow t }{Fonction}
       {END} \\
@@ -356,7 +355,7 @@ l'expression d'affectation.
   \disprule{Set}
 \end{mathpar}
 
-Un littéral tableau a pour type $t[]$ où $t$ est le type de chacun de ses
+Un littéral tableau a pour type $t[~]$ où $t$ est le type de chacun de ses
 éléments.
 
 \begin{mathpar}
@@ -764,8 +763,9 @@ dans la figure~\ref{fig:comp-mem}.
 \section{Propriétés du typage}
 
 On commence par énoncer quelques lemmes utiles dans la démonstration de ces
-théorèmes. Certaines démonstrations sont des analyses de cas laborieuses et sans
-difficultés; dans ce cas on n'en donne que des esquisses.
+théorèmes. Les démonstrations des lemmes~\ref{lemma:inversion} et
+\ref{lemma:canon} sont des analyses de cas laborieuses et sans difficulté; dans
+ce cas on n'en donne que des esquisses.
 
 \begin{lemma}[Inversion]
 \label{lemma:inversion}
@@ -786,11 +786,11 @@ difficultés; dans ce cas on n'en donne que des esquisses.
 \item Références mémoire:
   \begin{itemize}
     \item
-      si $Γ ⊢ x : t$, alors $x : t ∈ Γ$
+      si $Γ ⊢ (x) : t$, alors $x : t ∈ Γ_G$
     \item
-      si $Γ ⊢ *e : t$, alors $Γ ⊢ e : t*$
+      si $Γ ⊢ (n, x) : t$, alors $x : t ∈ Γ_L$
     \item
-      si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[]$ et $Γ ⊢ e : \tInt$
+      si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[~]$ et $Γ ⊢ e : \tInt$
     \item
       si $Γ ⊢ lv.l_S : t$, alors $Γ ⊢ lv : S$
 
@@ -859,6 +859,7 @@ $(t_1, …, t_n)$ et $t'$ tels que:
     (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t]) ⊢ i
   \end{cases} \]
 
+\item Si $Γ ⊢ *e : t$, alors $Γ ⊢ e : t*$.
 \item Si $Γ ⊢ lv ← e : t$, alors $Γ ⊢ lv : t$ et $Γ ⊢ e : t$.
 \item Si $Γ ⊢ \&~lv : t$, alors il existe $t'$ tel que
 $Γ ⊢ lv : t'$ et $t = t'~*$.
@@ -923,8 +924,8 @@ $Γ = x:t$).
 \end{lemma}
 
 \begin{proof}[Démonstration (esquisse)]
-On fait comme pour le lemme d'inversion: Pour chaque forme syntaxique, on fait
-l'inventaire des règles pouvant arriver à cette dérivation.
+On procède comme pour le lemme d'inversion: pour chaque forme syntaxique, on
+fait l'inventaire des règles pouvant arriver à cette dérivation.
 \end{proof}
 
 \changed{Ce lemme était plus loin}
@@ -938,8 +939,8 @@ On définit un opérateur de représentation d'un type statique à l'exécution:
         \cRepr{ \tInt   } &= \tInt   \\
         \cRepr{ \tFloat } &= \tFloat \\
         \cRepr{ \tUnit  } &= \tUnit  \\
-        \cRepr{ t'*      } &= \cRepr{t'}* \\
-        \cRepr{ t'[]     } &= \cRepr{t'}[] \\
+        \cRepr{ t'*     } &= \cRepr{t'}* \\
+        \cRepr{ t'[~]   } &= \cRepr{t'}[~] \\
         \cRepr{ \tStruct{ l_1 : t_1; … ; l_n : t_n } }
         &= \tStruct{ l_1 : \cRepr{t_1}; … ; l_n : \cRepr{t_n} }\\
         \cRepr{ (t_1, …, t_n) \rightarrow t } &= \stFun{n}
@@ -993,12 +994,12 @@ On procède par induction sur la forme de $t$.
 
     \end{itemize}
 
-\item $t = t'[]$:
+\item $t = t'[~]$:
     Par le lemme des formes canoniques,
     $v = \widehat{\eArray{v_1,…,v_n}}$.
     Par inversion on obtient que $∀i, Γ ⊢ v_i : t'$.
 
-    Soient $τ' = \cRepr{t'}$ et $τ = τ'~[]$.
+    Soient $τ' = \cRepr{t'}$ et $τ = τ'~[~]$.
 
     Alors par induction $∀i, m ⊧ v_i : τ'$ et $\tComp{τ'}{t'}$.
     De la première propriété il vient (via \textsc{S-Array})
@@ -1094,12 +1095,20 @@ globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale $(|m|, x)$ du p
 haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
 \end{lemma}
 
-\begin{proof}[Démonstration (esquisse)]
-On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
-\end{proof}
+\begin{proof}[Démonstration]
+On procède par induction sur la forme de $φ$.
 
-%TODO[E] un peu court
-% (faisable je pense)
+\begin{itemize}
+    \item Si $φ = φ'.l_S$, alors $\cVar{φ} = \cVar{φ'}$, et par inversion
+        $Γ ⊢ φ' : S$. On conclut en appliquant l'hypothèse de récurrence à $φ'$.
+    \item Si $φ = φ'[n]$, le cas est similaire.
+    \item Si $φ = a$, alors $\cVar{φ} = a$. Si $a = (x)$, on a par inversion
+        $x : t ∈ Γ_G$. Si $a = (n, x)$, alors par inversion $x : t ∈ Γ_L$.
+        Il reste à montrer que $n = |m|$, ce qui peut se prouver par induction
+        sur la dérivation de $\mcomp{Γ}{m}$, en notant que $\cDom{Γ_L}$ coincide
+        toujours avec le dernier niveau de pile. Cette étape est ici admise.
+\end{itemize}
+\end{proof}
 
 \changed{Partout l'indice grand Phi a été supprimé}
 
@@ -1113,8 +1122,6 @@ où
 $\tComp{τ}{t}$.
 
 \end{lemma}
-
-%TODO ack-grep '\[\]'
 
 \begin{proof}
 
@@ -1248,7 +1255,7 @@ Alors l'un des cas suivants est vrai:
 \jolibreak
 
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivants est vrai: 
+  Alors l'un des cas suivants est vrai:
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
@@ -1281,7 +1288,6 @@ C'est-à-dire, soit:
 La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres}.
 
 % attention il est recopié dans d-preuves
-\newpage %TODx check
 
 \begin{theorem}[Préservation]
 \label{thm:preservation}

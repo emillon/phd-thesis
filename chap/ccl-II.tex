@@ -34,9 +34,9 @@ typage: les variables globales et les variable locales sont séparées dans les
 environnements de typage $Γ$ (page~\pageref{page:gamma-split}).
 
 Enfin, dans le chapitre~\ref{cha:qualifs}, on a étendu le langage pour exprimer
-la notion de pointeurs utilisateur. Cela permet d'écrire des fonctions qui se
-comportent comme des appels système. On a commencé par montrer qu'une extension
-naïve du système de types ne suffit pas, car le théorème de progrès est alors
+la notion de pointeurs utilisateur. Cela permet d'écrire des fonctions qui
+implantent des appels système. On a commencé par montrer qu'une extension naïve
+du système de types ne suffit pas, car le théorème de progrès est alors
 invalidé. On ajoute donc un type dédié aux pointeurs utilisateur. Les valeurs de
 ce type sont créées explicitement et passées aux appels système. La règle de
 typage du déréférencement est restreinte aux pointeurs noyau, ce qui permet de
@@ -102,9 +102,9 @@ les systèmes embarqués de manipuler des pointeurs provenant d'espaces mémoire
 indépendants : par exemple, de la mémoire flash, de la RAM, ou une EEPROM de
 configuration. Ces différentes mémoires possèdent des adresses, et un pointeur
 est interprété comme faisant référence à une ou l'autre selon le code dont il
-est tiré. Lorsqu'il y a plus de deux espaces mémoire, il devient impossible
-d'encoder cette propriété dans un qualificateur, qui n'a que deux valeurs
-possibles.
+est tiré. Lorsqu'il y a plus de deux espaces mémoire, aucun n'est plus
+spécifique que les autres. Il devient donc impossible d'encoder cette propriété
+dans un qualificateur, qui n'a que deux valeurs possibles.
 
 \added{Lorsqu'il...}
 

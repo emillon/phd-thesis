@@ -1,7 +1,7 @@
-On fait ici un résumé des travaux présentés, en commençant par un bilan des
-contributions réalisées. On fait ensuite un tour des aspects posant problème, ou
-traités de manière incomplète, en évoquant les travaux possibles pour enrichir
-l'expressivité de ce système.
+On présente ici un résumé des travaux présentés, en commençant par un bilan des
+contributions réalisées. On réalise ensuite un tour des aspects posant problème,
+ou traités de manière incomplète, en évoquant les travaux possibles pour
+enrichir l'expressivité de ce système.
 
 \section{Contributions}
 
@@ -41,8 +41,8 @@ ou masque de bits.
 Les analyses de typage ici décrites ont été implantées sous forme d'un prototype
 d'analyseur statique distribué avec le langage \newspeak, développé par EADS. Le
 choix de \newspeak pour l'implantation demande d'adapter les règles de typage,
-mais il permet de réutiliser un traducteur existant, et de contribuer les
-résultats à l'entreprise. Ce prototype permet d'une part de vérifier la
+mais il permet de réutiliser un traducteur existant, et de faire profiter à
+l'entreprise les résultats. Ce prototype permet d'une part de vérifier la
 propriété d'isolation des appels système sur du code C existant, et d'autre part
 fournit une base saine pour implanter d'autres analyses de typage sur le langage
 \newspeak. Ce prototype a été utilisé pour confirmer l'existence de deux bugs
@@ -195,13 +195,13 @@ correspond à un ramasse-miette réalisé statiquement.
 
 \paragraph{Flot de contrôle}
 
-Dans le langage C, en plus des boucles et de l'alternative, on peut sauter au
-sein d'une fonction à l'aide de la construction \texttt{goto}. Pour pouvoir
-traiter ces cas, il est possible de transformer ces sauts d'un programme vers
-des simples boucles. Cette réécriture peut être coûteuse puisqu'elle peut
-introduire des variables booléennes et dupliquer du code. En pratique, c'est
-d'ailleurs ce qui est fait dans l'implantation puisque cette transformation est
-réalisée par \ctonewspeak.
+Dans le langage C, en plus des boucles et de l'alternative, on peut sauter d'une
+instruction à l'autre au sein d'une fonction à l'aide de la construction
+\texttt{goto}. Pour pouvoir traiter ces cas, il est possible de transformer ces
+sauts d'un programme vers des simples boucles. Cette réécriture peut être
+coûteuse puisqu'elle peut introduire des variables booléennes et dupliquer du
+code. En pratique, c'est d'ailleurs ce qui est fait dans l'implantation puisque
+cette transformation est réalisée par \ctonewspeak.
 
 Dans le noyau Linux, il est courant d'utiliser les sauts pour factoriser la
 libération de ressources à la fin d'une fonction. Il est d'ailleurs possible
@@ -249,7 +249,7 @@ présuppose un modèle mémoire plus bas niveau. Pour se rapprocher de la
 sémantique de \langname, une manière de faire est de définir un opérateur de
 plus haut niveau prenant une expression et retournant l'adresse d'une cellule
 mémoire contenant cette valeur (la taille de chaque valeur fait partie de
-celle-ci). Le typage est alors direct:
+celle-ci), ou \eNull si l'allocation échoue. Le typage est alors direct:
 
 \begin{mathpar}
   \irule{New}
@@ -263,12 +263,12 @@ celle-ci). Le typage est alors direct:
 
 En ce qui concerne l'exécution, on peut ajouter une troisième composante aux
 états mémoire: $m = (s, g, h)$ où $h$ est une liste d'association entre des
-entiers et des valeurs. Chaque allocation dynamique crée une nouvelle clef
-entière et met à jour $h$. La libération de mémoire est en revanche
-problématique parce qu'il faut faire confiance au programmeur pour ne pas
-accéder aux zones mémoires libérées, ni libérer deux fois la même zone mémoire.
-\added{double free} Il est aussi possible d'obtenir cette garantie avec une
-analyse préalable. Par exemple, il est possible ici encore d'utiliser une
+identifiants uniques et des valeurs. Chaque allocation dynamique crée une
+nouvelle clef entière et met à jour $h$. La libération de mémoire est en
+revanche problématique parce qu'il faut faire confiance au programmeur pour ne
+pas accéder aux zones mémoires libérées, ni libérer deux fois la même zone
+mémoire. \added{double free} Il est aussi possible d'obtenir cette garantie avec
+une analyse préalable. Par exemple, il est possible ici encore d'utiliser une
 analyse basée sur les régions pour vérifier l'absence de pointeurs
 fous~\cite{ifm10}.
 
@@ -342,19 +342,20 @@ fous~\cite{ifm10}.
 
 \section*{Conclusion}
 
-L'importance des logiciels grandit par deux effets:
-d'une part, ils sont présents dans de plus en plus d'appareils, et d'autre part,
-leur taille est de plus en plus importante. En une journée, entre les appareils
-dédiés au calcul, à la communication, au multimédia, et au transport, on est
-facilement exposé au fonctionnement de plus d'une dizaine de millions de lignes
-de code. Il donc primordial de vérifier que ces logiciels ne peuvent pas être
-détournés de leur utilisation prévue. Les conséquences peuvent en effet être
-catastrophiques dans un contexte avionique ou militaire.
+L'importance des logiciels grandit par deux effets: d'une part, ils sont
+présents dans de plus en plus d'appareils, et d'autre part, leur taille est de
+plus en plus importante. En une journée, entre les appareils dédiés au calcul, à
+la communication, au multimédia, et au transport, on est facilement exposé au
+fonctionnement de plus d'une dizaine de millions de lignes de code. Il donc
+primordial de vérifier que ces logiciels ne peuvent pas être détournés de leur
+utilisation prévue. Dans le cas de logiciels avioniques ou militaires, les
+conséquences peuvent en effet être catastrophiques. C'est dans ce contexte
+industriel que ce travail a été motivé et réalisé.
 
 Au cœur de la plupart de ces systèmes informatiques, se trouve un noyau qui
 abstrait les détails du matériel pour fournir aux programmes des abstractions
 sûres, permettant de protéger les données sensibles contenues dans ce système.
-Si une simple erreur de programmation peut briser cette isolation, on voit
+Puisqu'une simple erreur de programmation peut briser cette isolation, on voit
 pourquoi la vérification est si importante.
 
 Dans ce but, les systèmes de types sont des outils bien connus de programmeurs.
@@ -362,7 +363,7 @@ Même dans les langages peu typés comme C, les compilateurs aident de plus en
 plus les programmeurs à trouver des erreurs de programmation. De très nombreuses
 analyses peuvent être faites rien qu'en classifiant les expressions selon le
 genre de valeurs qu'elles créent à l'exécution --- c'est la définition que donne
-Benjamin C. Pierce d'un système de types~\cite[p.~1]{TAPL}.
+Benjamin C. Pierce d'un système de types~\cite{TAPL}.
 
 L'utilisation d'un système de types comme analyseur statique léger est donc
 efficace. Pour des propriétés qui ne dépendent pas de la valeur des expressions,
@@ -379,18 +380,15 @@ En un mot il est impossible de distinguer le rôle d'un type (son intention) de
 sa représentation (son extension).
 
 Ici, nous avons amené une solution au problème de pointeurs utilisateur en
-introduisant un type ayant la même représentation que les pointeurs classique,
-mais pour lequel l'ensemble des opérations est différents: c'est un type
-opaque. Cela suffit déjà à détecter des erreurs de programmation.
+introduisant un type ayant la même représentation que les pointeurs classiques,
+mais pour lequel l'ensemble des opérations est différents: c'est un type opaque.
+Cela suffit déjà à détecter des erreurs de programmation.
 
 Si on ajoutait cette construction au langage, on pourrait définir des nouveaux
 types partageant la représentation d'un type C existant, mais qui ne soit pas
-compatible avec le type d'origine, et pour lequel l'ensemble des opérations est
-restreint. Avec cette fonctionnalité dans un langage, non seulement on peut
-détecter d'autres classes de problèmes, mais surtout on laisse le programmeur
-définir de nouvelles analyses lui-même.
-
-% TODO[E] peut être revenir sur ce que tu peux détecter et comment le faire
-% + le cadre industriel
+compatible avec le type d'origine. Avec cette fonctionnalité dans un langage,
+non seulement on peut détecter d'autres classes de problèmes, mais surtout on
+laisse le programmeur définir de nouvelles analyses lui-même en modélisant les
+problèmes concrets par des types.
 
 % vim: spelllang=fr

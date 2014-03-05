@@ -113,8 +113,6 @@ Sur cette représentation (du C prétraité), il est possible d'ajouter des
 annotations de la forme \texttt{/*!npk [...] */} qui pourront être accessibles
 dans l'arbre de syntaxe abstraite des passes suivantes.
 
-% TODO[E] dire (plus tard) qu'on peut annoter et quelles annotations
-
 À ce niveau, les fichiers sont passés à l'outil \ctonewspeak qui les
 traduit vers \newspeak. Comme il sera décrit dans la section~\ref{sec:gnuc}, la
 plupart des extensions GNU C sont acceptées en plus du C ANSI. Dans cette étape,
@@ -125,15 +123,12 @@ déclaration de variable est adjointe d'une description complète du type.
 Lors de cette étape, le flot de contrôle est également simplifié
 (figure~\ref{fig:flot-controle-simple}). De plus, les constructions ambigües en
 C comme \texttt{i = i++} sont transformées pour que leur évaluation se fasse
-dans dans un ordre explicite.
+dans dans un ordre explicite. Un choix arbitraire est alors fait ; par exemple,
+les arguments de fonctions sont évalués de droite à gauche.
 
 \begin{figure}[b]
 
-\begin{minipage}{0.25\linewidth}
-\insertcode{npk-while.c}
-\end{minipage}
-\begin{minipage}{0.7\linewidth}
-\begin{Verbatim}
+\begin{SaveVerbatim}{compilnpk}
 int32 x;
 x =(int32) 0;
 do {
@@ -149,8 +144,19 @@ do {
     }
 } with lbl1: {
 }
-\end{Verbatim}
+\end{SaveVerbatim}
+
+\subbottom[Code source C]{
+\begin{minipage}{0.23\linewidth}
+\insertcode{npk-while.c}
 \end{minipage}
+}
+\vrule\hspace{2pt}
+\subbottom[Programme compilé en \newspeak]{
+\begin{minipage}{0.7\linewidth}
+\BUseVerbatim{compilnpk}
+\end{minipage}
+}
 
     \caption{Compilation du flot de contrôle en \newspeak}
     \label{fig:flot-controle-simple}
@@ -183,31 +189,28 @@ invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu
 aient un nom globalement unique. Cette étape se conclut par la création d'un
 fichier \newspeak.
 
-La dernière étape est réalisée dans un autre outil nommé \ptrtype. Elle consiste
-en l'implantation d'un algorithme d'inférence pour les systèmes de types décrits
-dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez simple.
-Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on peut
-utiliser une variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
+% TODx impression backticks
+\section{L'outil \ptrtype}
+
+La dernière étape est réalisée dans un autre outil nommé \ptrtype, d'environ
+1600 lignes de code OCaml, et réalisé dans le cadre de cette thèse. Elle
+consiste en l'implantation d'un algorithme d'inférence pour les systèmes de
+types décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est
+assez simple. Puisqu'ils sont suffisamment proches du lambda calcul simplement
+typé, on peut utiliser une variante de l'algorithme W de Damas et
+Milner~\cite{DamasMilner}.
 
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
-inconnus. Cet algorithme sera décrit dans la section~\ref{sec:unif}. En
-pratique, on utilise l'optimisation classique qui consiste à se
+inconnus. En pratique, on utilise l'optimisation classique qui consiste à se
 reposer sur le partage de références pour réaliser l'unification, plutôt que de
 faire des substitutions explicites. Puisque ces systèmes de types sont
 monomorphes, on présente une erreur si des variable de type libres sont
 présentes.
 
-À la fin de cette étape, on obtient soit un programme complètement annoté, soit
-une erreur de type.
-
-\section{Algorithme d'unification}
-\label{sec:unif}
-
-On présente ici la fonction \texttt{unify}. Celle-ci prend en entrée deux
-représentations de types pouvant contenir des inconnues de la forme \texttt{Var
-n}, et retourne une liste de couples $(n, t)$ indiquant les substitutions à
-faire.
+La fonction \texttt{unify} prend en entrée deux représentations de types pouvant
+contenir des inconnues de la forme \texttt{Var n}, et retourne une liste de
+couples $(n, t)$ indiquant les substitutions à faire.
 
 Cet algorithme (décrit en pseudo-code ML en figure~\ref{fig:algo-unif}) prend un
 chemin différent selon la forme des deux types d'entrée:
@@ -350,38 +353,27 @@ apparaissent dans $B$ mais pas dans $A$.
         on unifie $a_i$ et $b_j$.
     \item Pour les champs $l$ qui sont dans $A$ mais pas dans $B$: on ajoute $l$
         à $X_b$.
-    \item Et symétriquement dans $X_a$.
+    \item Pour les champs $l$ qui sont dans $B$ mais pas dans $A$: on ajoute $l$
+        à $X_a$.
 \end{itemize}
 
 Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
 les langages comme OCaml. À la fin de l'inférence, on considère que la variable
 de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
 
-% TODO ajouter à la figure algo?
+% TODx ajouter à la figure algo?
 % cstrs ::= n ↦ t
 %        |  t ∈ X
 
 \added{citation}
 
-\section{Architecture de \ptrtype}
-\label{sec:ptrtype-archi}
+\subsection*{Architecture de \ptrtype}
 
-Cette analyse est implantée dans un outil du nom de \ptrtype{}, d'environ 1600
-lignes de code OCaml. Il lit un
-programme \newspeak (ou un fichier C), et réalise l'inférence de types. En
-sortie, il affiche soit le programme complètement annoté, soit une erreur.
-
-Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compilé
-vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
-travaillent sur une représentation intermédiaire proche de \newspeak, mais où
-des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
-intermédiaire est noté \texttt{'a Tyspeak.t} (pour \emph{typed} \newspeak), où
-\texttt{'a} est le type des étiquettes.
-
-\added{précision que c'est bien du newspeak}
-
-Le reste de l'outil est résumé dans la fonction
-\texttt{process\_npk} (figure~\ref{fig:implem-process}):
+Bâti autour de cette fonction, le programme \ptrtype lit un programme \newspeak
+et réalise l'inférence de types. Si l'argument passé à \ptrtype{} est un fichier
+C, il est tout d'abord compilé vers \newspeak grâce à l'utilitaire \ctonewspeak.
+En sortie, il affiche soit le programme complètement annoté, soit une erreur. Ce
+comportement est implanté dans la fonction de la figure~\ref{fig:implem-process}.
 
 \begin{figure}
 \insertcode{implem-process.ml}
@@ -392,7 +384,9 @@ Le reste de l'outil est résumé dans la fonction
 \begin{itemize}
 
 \item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!, on
-ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
+ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!)\footnote
+{\texttt{'a Tyspeak.t} est le type des programmes \newspeak où on insère des
+étiquettes de type \texttt{'a} à tous les niveaux.}.
 
 \item L'ensemble des fonctions du programme est trié topologiquement selon la
     relation~$\preceq$ définie par $f \preceq g \eqdef \enquote{g \textrm{
@@ -402,8 +396,28 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
     mutellement récursives ne sont pas supportées.
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
-  qui permet de créer un environnement initial. Celles-ci permettent par exemple
-  de spécifier le type d'une fonction inconnue.
+    qui permet de créer un environnement initial. On peut écrire les annotations
+    suivantes:
+
+  \begin{center}
+    \begin{tabular}{lp{7cm}}
+        \toprule
+        Annotation & Signification \\
+        \midrule
+        \texttt{/*!npk f : (Int) -> Int */} &
+        \texttt{f} est une fonction prenant comme argument un entier et
+        renvoyant un entier.
+        \\
+        \texttt{/*!npk userptr x*/} &
+        \texttt{x} a pour type $\ptrU{a}$, où $a$ est une nouvelle inconnue de type.
+        \\
+        \texttt{/*!npk userptr_fieldp p f*/} &
+      \texttt{x} a pour type $\{ f: \ptrU{a} ; … \}~*$, où $a$ est une nouvelle inconnue
+      de type. \\
+      \bottomrule
+    \end{tabular}
+    \label{page:tab-anns}
+  \end{center}
 
 \item Les types de chaque fonction sont inférés, par le biais de la fonction
   suivante:
@@ -434,11 +448,11 @@ types afin de pouvoir en faire une exécution \enquote{pas à pas}.
 \label{fig:implem-lazy}
 \end{figure}
 
-\section{Inférence de types}
+\subsection*{Inférence de types}
 
-L'inférence de types consiste à remplacer les étiquettes de type \texttt{unit}
-par des étiquettes de type \texttt{simple} (autrement dit de vraies
-représentations de types).
+Il ne reste plus qu'à remplacer les étiquettes de type \texttt{unit} par des
+étiquettes de type \texttt{simple} (autrement dit de vraies représentations de
+types), à l'aide de la fonction \texttt{unify}.
 
 \added{cela permet...}
 
@@ -523,6 +537,7 @@ type d'un pointeur noyau.
 \end{verbatim}
 
 \section{Exemple}
+\label{sec:impl-ex}
 
 Lançons l'analyse sur un petit exemple:
 
@@ -598,17 +613,22 @@ performance à attendre.
 Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
 fonctions imbriquées, et les types des valeurs globales sont écrites par le
-programmeur, ce qui permet de borner $d$. En effet, sur les exemples testés nous
-n'avons pas noté de délai d'exécution notable.
+programmeur. Cela permet permet de borner leur taille. En pratique, sur les
+exemples testés nous n'avons pas noté de délai d'exécution notable.
 
 En revanche, la compilation de C vers \newspeak peut être plus coûteuse,
 notamment lorsque le fichier d'entrée est de taille importante. Le temps de
 traitement est plus long que celui d'un compilateur comme \texttt{gcc} ou
-\texttt{clang}, mais reste de l'ordre de quelques secondes. \ctonewspeak a été
-utilisé pour compiler des projets de l'ordre du million de lignes de code source
-prétraité, et son exécution ne prenait pas plus de quelques minutes.
+\texttt{clang}. \ctonewspeak a été utilisé pour compiler des projets de l'ordre
+du million de lignes de code source prétraité, et son exécution ne prenait pas
+plus de quelques minutes.
 
-%TODO[S] plus de temps C->npk que npk->npk annoté?
+À titre d'illustration, nous avons mesuré les performances de \ctonewspeak et
+\ptrtype sur l'exemple \enquote{Blackfin} du chapitre suivant. Celui consiste en
+un fichier prétraité de 853 lignes de code C. Exécuter 1000 fois \ctonewspeak
+sur ce fichier prend 36.3 secondes, alors qu'exécuter 1000 fois \ptrtype sur le
+fichier \newspeak résultant ne dure que 8.1 secondes (pour comparaison, lancer
+1000 fois \texttt{/bin/true}, commande qui ne fait rien, prend 1.6 seconde).
 
 Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres
 optimisations sont certainement possibles, mais la performance n'est pas

@@ -109,8 +109,8 @@ $u ∈ \sList{X}$, on note $|u|$ le nombre d'éléments de $u$ (le cardinal de s
 domaine de définition). Pour $i ∈ [1 ; |u|]$, on note $u_i = u(i)$ le i-ème
 élément de la suite.
 
-On peut aussi voir les suites comme des listes: on note $[]$ la suite vide,
-telle que $|[]| = 0$. On définit en outre la construction de suite de la manière
+On peut aussi voir les suites comme des listes: on note $[~]$ la suite vide,
+telle que $|[~]| = 0$. On définit en outre la construction de suite de la manière
 suivante: si $x ∈ X$ et $u ∈ \sList{X}$, la liste $x::u ∈ \sList{X}$ est la
 liste $v$ telle que:
 
@@ -212,7 +212,7 @@ d'éléments de $E$.
 \changed{$L(E)$ devient $\sList{E}$ pour rester cohérent}
 
 On définit les fonctions suivantes. Notons qu'elles ne sont pas définies sur la
-liste vide $[]$, qui pourra être traitée comme un cas d'erreur.
+liste vide $[~]$, qui pourra être traitée comme un cas d'erreur.
 
 \begin{align*}
   \mathrm{get}_T     (t::q) &= t   & \mathrm{put}_T (t', t::q) &= t'::q  \\
@@ -227,7 +227,7 @@ $Q = \mkLens{\mathrm{get}_Q}{\mathrm{put}_Q} ∈ \setLens{\sList{E}}{\sList{E}}$
 On a par exemple:
 
 \begin{align*}
-\mathrm{get}_T (1::6::1::8::[]) &= 1   &   \mathrm{put}_Q (4::2::[], 3::6::1::5::[]) = 3::4::2::[]
+\mathrm{get}_T (1::6::1::8::[~]) &= 1   &   \mathrm{put}_Q (4::2::[~], 3::6::1::5::[~]) = 3::4::2::[~]
 \end{align*}
 
 \end{example}
@@ -646,7 +646,7 @@ $|m| = |s|$ la hauteur de la pile (en nombre de cadres).
 
   \begin{align*}
   \gramdef{Pile}{s}
-    { [] }{Pile vide}
+    { [~] }{Pile vide}
     { \{ x_1 ↦v_1; … ; x_n ↦v_n\} :: s }{Ajout d'un cadre}
     {END}
   \\
@@ -675,7 +675,7 @@ Enfin, l'interprétation est définie comme une relation $\cdot → \cdot$ entre
 \item
   un couple $\msi{m}{e}$ où $e$ est une expression et $m$ un état
   mémoire. $m$ est l'état mémoire sous lequel l'évaluation sera
-  réalisée. Par exemple $\mm{([], [x↦3])}{3}{([], [x↦3])}{\widehat{3}}$
+  réalisée. Par exemple $\mm{([~], [x↦3])}{3}{([~], [x↦3])}{\widehat{3}}$
   L'évaluation des expressions est détaillée dans la
   section~\ref{sec:eval-exp}.
 \item
@@ -982,7 +982,7 @@ Pour empêcher cela, on instrumente donc le retour de la fonction
 \texttt{h}, le déréférencement provoquera une erreur et empêchera la violation
 du typage.
 
-\begin{SaveVerbatim}[]{LeBonProgramme}
+\begin{SaveVerbatim}{LeBonProgramme}
 f = Fun () {
     Decl x = 0 in
     return (&x);
@@ -1433,7 +1433,7 @@ au moment de l'affectation dans la valeur gauche plutôt qu'à sa définition. L
 figure~\ref{fig:lazy-deref} illustre ce problème.
 
 %{{{
-\begin{SaveVerbatim}[]{LeLazy}
+\begin{SaveVerbatim}{LeLazy}
 Decl s0 = { .f : 0 } in
 Decl s1 = { .f : 1 } in
 Decl x  = & s0 in
@@ -1475,9 +1475,9 @@ préférable à renvoyer $\serr{ptr}$ car on montrera que ce cas est toujours é
 dans les programmes typés (théorème~\ref{thm:progres}).
 
 \begin{mathpar}
-  \semrule{Phi-Deref}
+  \semrule{Exp-Deref}
 
-  \semrule{Phi-Deref-Null}
+  \semrule{Exp-Deref-Null}
 \end{mathpar}
 
 Par exemple, $lv = x.l_S[2*n].g_T$ pourra s'évaluer en $φ = (2, x).l[4].g$.
@@ -1734,8 +1734,8 @@ ou une instruction.
 
 \section{Phrases et exécution d'un programme}
 
-Un programme est constitué d'une suite de phrases: déclarations de fonctions,
-de variables et de types, et évaluation d'expressions.
+Un programme est constitué d'une suite de phrases qui sont soit des déclarations
+de variables (dont les fonctions), soit des évaluations d'expressions.
 
 Donc l'évaluation d'une phrase $p$ fait passer d'un état mémoire $m$
 à un autre $m'$, ce que l'on note $\ph{m}{p}{m'}$.
@@ -1765,47 +1765,52 @@ les unes à la suite des autres.
 
 Considérons le programme suivant:
 
+\begin{center}
+\begin{minipage}{3cm}
 \begin{Verbatim}
-x = 0
-f = fun(q) {
-    *q <- 1
-}
-f(&x)
+(p1)  s = { x: 0; y: 0}
+(p2)  f = fun(q) {
+          *q <- 1
+      }
+(p3)  f(&s.x)
 \end{Verbatim}
+\end{minipage}
+\end{center}
 
 Ce programme est constitué des phrases $p_1, p_2$ et $p_3$. On rappelle que par
 rapport à la syntaxe concrète, un \iReturn{\eUnit} est inséré automatiquement,
-donc $p_2 = f=\eFun{q}{*q←1;\iReturn{\eUnit}}$
+donc $p_2$ est en fait $f=\eFun{q}{*q←1;\iReturn{\eUnit}}$. De plus, un prétraitement va
+annoter l'accès à $s.x$ en rajoutant le type structure de $s$, noté $S$.
 
-D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 4 phrases.
+D'après \textsc{Prog}, l'évaluer va revenir à évaluer à la suite ces 3 phrases.
 
 \paragraph{Déclaration de \texttt{x}}
 
 D'après \textsc{Prog}, on part d'un état mémoire $m_0 = ([~], [~])$. Pour
-trouver $m_1$ tel que $\ph{m_0}{x = 0}{m_1}$, il faut appliquer la règle
-\textsc{ET-Var}.
+trouver $m_1$ tel que $\ph{m_0}{s = \eStruct{x:0; y:0}}{m_1}$, il faut appliquer
+la règle \textsc{ET-Var}. Celle-ci va étendre l'ensemble (vide) des globales
+mais demande d'évaluer l'expression $0$. D'après \textsc{Exp-Cst},
+$\mm{m_0}{0}{m_0}{\widehat{0}}$.
 
-Celle-ci va étendre l'ensemble (vide) des globales mais demande d'évaluer
-l'expression $0$. D'après \textsc{Exp-Cst}, $\mm{m_0}{0}{m_0}{\widehat{0}}$.
-
-Donc $\ph{m_0}{x = 0}{m_1}$ en posant $m_1 = ([~], [x↦\widehat{0}])$.
+Donc $\ph{m_0}{s = \eStruct{x:0; y:0}}{m_1}$ en posant
+$m_1 = ([~], [s↦\widehat{\eStruct{x:0; y:0}}])$.
 
 \paragraph{Déclaration de \texttt{f}}
 
 On se trouve encore dans le cas de la déclaration d'une variable globale. Il
 faut comme auparavant évaluer l'expression. C'est la règle \textsc{Exp-Fun} qui
 s'applique: $\mm{m_1}{\eFun{q}{*q←1;\iReturn{\eUnit}}}
-{m_1}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}$ (ce qui revient à dire que la
-fonction est directement placée en mémoire).
+{m_1}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}$ (ce qui revient à dire que le
+code de la fonction est directement placé en mémoire).
 
 Ainsi $\ph{m_1}{f = \eFun{q}{*q←1;\iReturn{\eUnit}}}{m_2}$ où:
 
-\[ m_2 = ([~], [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}};x↦\widehat{0}])\]
+\[ m_2 = ([~], [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}};s↦\widehat{\eStruct{x:0; y:0}}])\]
 
 \paragraph{Appel de \texttt{f}}
 
 Ici, on évalue une expression pour ses effets de bords. La règle à appliquer est
-\textsc{ET-Exp}, qui a comme prémisse $\mm{m_2}{f(\&x)}{m_3}{v}$.
+\textsc{ET-Exp}, qui a comme prémisse $\mm{m_2}{f(\&s.x_S)}{m_3}{v}$.
 
 D'après la forme de l'expression, la règle à appliquer va être
 \textsc{Exp-Call-Return}. Mais il va falloir d'abord réécrire l'expression à
@@ -1813,8 +1818,8 @@ l'aide de \textsc{Ctx} (pour que l'expression appellée ait la forme
 $\widehat{f}$ et l'argument soit évalué) et \textsc{Exp-Call-Ctx} (pour que le
 corps de la fonction ait pour forme $\iReturn{\eUnit}$).
 
-Tout d'abord on applique donc \textsc{Ctx} avec $C = \ctxEmpty (\&x)$. Comme on
-a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
+Tout d'abord on applique donc \textsc{Ctx} avec $C = \ctxEmpty (\&s.x_S)$. Comme
+on a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
 
 \[
     \mm{m_2}{f}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}}
@@ -1823,18 +1828,21 @@ a via \textsc{Phi-Var} puis \textsc{Exp-Lv}:
 On en déduit que:
 
 \[
-    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&x)}
+    \mm{m_2}{f(\&s.x_S)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\&s.x_S)}
 \]
 
-Une application supplémentaire de \textsc{Ctx} permet d'en arriver à la ligne
-suivante (en évaluant $\&x$ en $\widehat{\&}(x)$ via \textsc{Exp-Addr}):
+On évalue ensuite $\&s.x_S$. Les règles à appliquer sont \textsc{Exp-Addr} et
+\textsc{Phi-Struct}. On en déduit que
+$\mm{m_2}{\&s.x_S}{m_2}{\widehat{\&}(s).x}$. Remarquons que l'étiquette de type
+structure $S$ a été effacée. Une application supplémentaire de \textsc{Ctx}
+permet d'en arriver à la ligne suivante:
 
 \[
-    \mm{m_2}{f(\&x)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(x))}
+    \mm{m_2}{f(\&s.x_S)}{m_2}{\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}(\widehat{\&}(s).x)}
 \]
 
 La fonction et son argument sont évalués, donc on peut appliquer
-\textsc{Exp-Call-Ctx}. En posant $m_2' = \cPush{m_2}{(q ↦ \widehat{\&}(x))}$, le
+\textsc{Exp-Call-Ctx}. En posant $m_2' = \cPush{m_2}{(q ↦ \widehat{\&}(s).x)}$, le
 but est de trouver $m_2''$ et $v$ tels que:
 
 \[
@@ -1848,18 +1856,18 @@ première partie n'étant pas $\iPass$, il faut l'évaluer grâce à la règle
 Le nouveau but est de trouver un $m_2''$ tel que
 $\mm{m_2'}{*q←1}{m_2'}{\iPass}$.
 
-En appliquant \textsc{Phi-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
-$\mm{m_2'}{*q←1}{m_2'}{(x)←1}$.
+En appliquant \textsc{Exp-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
+$\mm{m_2'}{*q←1}{m_2'}{(s).x←1}$.
 
-Puis on applique \textsc{Exp-Cst} sous $C = (x)←\ctxEmpty$ et
-$\mm{m_2'}{*q←1}{m_2'}{(x)←\widehat{1}}$.
+Puis on applique \textsc{Exp-Cst} sous $C = (s).x←\ctxEmpty$ et
+$\mm{m_2'}{*q←1}{m_2'}{(s).x←\widehat{1}}$.
 
 Maintenant que les deux côtés de $←$ sont évalués, on peut appliquer
 \textsc{Exp-Set}, et $\mm{m_2'}{*q←1}{m_2''}{\iPass}$ où:
 
-\[m_2'' = ([[q↦(x)]],
+\[m_2'' = ([[q↦\widehat{\&}(s).x]],
 [f↦\widehat{\eFun{q}{*q←1;\iReturn{\eUnit}}}
-;x↦\widehat{1}])
+;s↦\widehat{\eStruct{x:0;y:0}}])
 \]
 
 Alors, d'après \textsc{Seq}, $\mm{m_2'}{*q←1}{m_2''}{\iReturn{()}}$.
@@ -1869,23 +1877,21 @@ $\mm{m_2'}{*q←1}{m_2''}{\iReturn{\widehat{()}}}$.
 On peut enfin appliquer \textsc{Exp-Call-Ctx} pour en déduire que:
 
 \[
-    \mm{m_2}{f(\&x)}{m_2'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(x)) }
+    \mm{m_2}{f(\&s.x_S)}
+    {m_2'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(s).x) }
 \]
 
 Donc d'après \textsc{Exp-Call-Return} (car on a $m_2''' = \cCleanup{m_2'''}$ et
 $ \widehat{\eUnit} = \cV{|m_2'''|}{\widehat{\eUnit}} $):
 
 \[
-    \mm{m_2}{f(\&x)}{m_2'''}{ \widehat{\eUnit} }
+    \mm{m_2}{f(\&s.x_S)}{m_2'''}{ \widehat{\eUnit} }
 \]
 
-En posant $m_3 = m_2'''$, on a $\ph{m_2}{f(\&x)}{m_3}$.
+En posant $m_3 = m_2'''$, on a $\ph{m_2}{f(\&s.x_S)}{m_3}$.
 
 Donc pour conclure (grâce à \textsc{Prog}), on a
 $\phprog{[p_1,p_2,p_3]}{m_3}$.
-
-% TODO intégrer une structure
-% TODO intégrer if
 
 \section*{Conclusion}
 

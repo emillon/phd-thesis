@@ -31,9 +31,9 @@ d'informations confidentielles dans le noyau.
 On commence par décrire les difficultés rencontrées pour analyser le code du
 noyau Linux. On décrit ensuite l'implantation du mécanisme d'appels système dans
 ce noyau, et en quoi cela peut poser des problèmes. On détaille enfin les bugs
-étudié, et comment les adapter pour traiter le code en question.
+étudiés, et comment les adapter pour traiter le code en question.
 
-\section{GNU C}
+\section{Spécificités du code noyau}
 \label{sec:gnuc}
 
 Linux est écrit dans le langage C, mais pas dans la version qui correspond à la
@@ -323,17 +323,17 @@ empêcher.
 \label{sec:demo-unif}
 
 Pour utiliser notre système de types, plusieurs étapes sont nécessaires en plus
-de traduire le noyau Linux en \langname{}.
+de traduire le noyau Linux en \newspeak{}.
 
 Afin de réaliser l'analyse, il faut annoter les sources pour créer un
-environnement initial (via la variable \texttt{exttbl} décrite en
-section~\ref{sec:ptrtype-archi}). Plus précisément, pour chaque source de
-pointeurs utilisateur, on ajoute un commentaire spécial \texttt{!npk
-userptr\_fieldp x f}, qui indique que \texttt{x} est un pointeur vers une
-structure contenant un pointeur utilisateur dans le champ \texttt{f}. En fait,
-il unifie le type de \texttt{x} avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une
-inconnue de type. Cette annotation est nécessaire car c'est le moyen d'indiquer
-que la structure contient un pointeur utilisateur.
+environnement initial (les annotations possibles sont résumées dans un tableau
+page~\pageref{page:tab-anns}). Plus précisément, pour chaque source de pointeurs
+utilisateur, on ajoute un commentaire \texttt{!npk userptr\_fieldp x f}, qui
+indique que \texttt{x} est un pointeur vers une structure contenant un pointeur
+utilisateur dans le champ \texttt{f}. En fait, il unifie le type de \texttt{x}
+avec $\{ f: \ptrU{t} ; … \}~*$ où $t$ est une inconnue de type. Cette annotation
+est nécessaire car c'est le moyen d'indiquer que la structure contient un
+pointeur utilisateur.
 
 Par rapport au code complet présent dans l'annexe~\ref{cha:code-noyau},
 l'expression calculant \texttt{value_ptr} est également simplifiée. Dans le code
@@ -347,18 +347,77 @@ drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
 d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
 toute l'exécution.
 
-\begin{figure}[p]
-\insertcode{ex-drm.c}
+\begin{SaveVerbatim}{NumLines}
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+\end{SaveVerbatim}
 
-\caption{Cas d'étude minimisé et annoté}
+\begin{figure}[p]
+\begin{minipage}{1cm}
+    \BUseVerbatim{NumLines}
+\end{minipage}
+\begin{minipage}{0.93\linewidth}
+\insertcode{ex-drm.c}
+\end{minipage}
+
+\caption{Cas d'étude \enquote{Radeon} minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
 
+\begin{SaveVerbatim}{NumLinesOK}
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+\end{SaveVerbatim}
+
 \begin{figure}[p]
 
+\begin{minipage}{1cm}
+    \BUseVerbatim{NumLinesOK}
+\end{minipage}
+\begin{minipage}{0.93\linewidth}
     \insertcode{ex-drm-ok.c}
+\end{minipage}
 
-    \caption{Cas d'étude minimisé et annoté -- version correcte}
+    \caption{Cas d'étude \enquote{Radeon} minimisé et annoté -- version correcte}
     \label{fig:ex-drm-ok}
 
 \end{figure}
@@ -369,10 +428,11 @@ par le noyau (\texttt{get\_user}, \texttt{put\_user},
 l'environnement global leur type correct.
 
 Enfin, on peut lancer l'inférence de type. Ainsi, sur l'exemple de la
-figure~\ref{fig:ex-drm}, on obtient la sortie suivante:
+figure~\ref{fig:ex-drm} (page~\pageref{fig:ex-drm}), on obtient la sortie
+suivante:
 
 \begin{Verbatim}
-05-drm.c:18#8 - Type clash between :
+05-drm.c:19#8 - Type clash between :
   KPtr (_a15)
   UPtr (_a8)
 \end{Verbatim}
@@ -380,23 +440,139 @@ figure~\ref{fig:ex-drm}, on obtient la sortie suivante:
 Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
 type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
 unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type).
-
-% TODO[E] ce serait bien de mettre Blackfin aussi
+En effet, l'annotation de la ligne 10 donne à \texttt{data} le type
+$\ptrK{\tStruct{value: \ptrU{a}; …}}$, où $a$ est une nouvelle inconnue de type.
+La ligne 18 donne donc à \texttt{value\_ptr} le type $\ptrU{a}$. Il y a donc une
+incompatibilité ligne 19 puisque l'instruction cherche à unifier
+le type de \texttt{value\_ptr} avec $\ptrK{b}$ où $b$ est une nouvelle inconnue
+de type. La variable \texttt{value} aurait alors le type $b$.
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
-celle-ci, l'inférence se fait sans erreur.
+celle-ci, l'inférence se fait sans erreur. La partie pertinente est la suivante
+(une explication de la syntaxe est donnée dans la section~\ref{sec:impl-ex},
+page~\pageref{sec:impl-ex})):
 
-% TODO le faire
+\begin{Verbatim}
+(06-drm-ok.c:19#8)^{
+  Int tmp_cir!0;
+  (06-drm-ok.c:19#8)^tmp_cir!0 <-
+      copy_from_user
+          ( (focus32 (&(value) : KPtr (d)) : KPtr (d)): KPtr (d),
+            (value_ptr_UPtr (d) : UPtr (d)): UPtr (d),
+            (4 : Int): Int
+            );
+}
+\end{Verbatim}
+
+En ce qui concerne l'exemple \enquote{Blackfin}, on commence par isoler la
+fonction problématique. Celle-ci utilise de nombreuses constructions propres au
+noyau. On écrit donc un préambule permettant de les traiter (définitions de
+type, etc). Ensuite, il est nécessaire de commenter certains appels à
+\texttt{memcpy} pour lesquelles les adresses sont testées dynamiquement (il
+n'est donc pas nécessaire d'utiliser les fonctions de copie sûres pour ces sites
+d'appel). La figure~\ref{fig:blackfin-cas} montre le reste de la fonction,
+c'est-à-dire les parties sensibles.
+
+\begin{SaveVerbatim}{NumLinesBF}
+217
+
+218
+
+255
+256
+257
+258
+
+259
+260
+261
+262
+
+342
+343
+344
+345
+
+346
+347
+348
+349
+
+441
+\end{SaveVerbatim}
+
+\begin{figure}
+\begin{minipage}{1cm}
+    \BUseVerbatim{NumLinesBF}
+\end{minipage}
+\begin{minipage}{0.93\linewidth}
+\insertcode{blackfin-min.c}
+\end{minipage}
+\caption{Cas d'étude \enquote{Blackfin}}
+\label{fig:blackfin-cas}
+\end{figure}
+
+Dans le cas où \texttt{FIX} vaut 0, la sortie est la suivante:
+
+\begin{Verbatim}
+bf.c:260#32 - Type clash between :
+  KPtr (Int)
+  UPtr (_a122)
+\end{Verbatim}
+
+Et quand \texttt{FIX} vaut 1, le programme annoté est affiché. Les parties
+correspondantes aux appels sensibles sont données dans la
+figurs~\ref{fig:black-npk}.
+
+\begin{figure}[p]
+\begin{Verbatim}
+ (bf.c:255#3)^guard((! (((coerce[0,4294967295]
+     (((coerce[0,4294967295] (addr_Int : Int) : Int)
+     + (4 : Int)) : Int) : Int) > (1168 : Int)) : Int) : Int));
+ (bf.c:258#32)^{
+   Int tmp_cir!7;
+   (bf.c:258#32)^tmp_cir!7 <-
+       copy_from_user_page(
+           (0 : Int): Int,
+           (0 : Int): Int,
+           (0 : Int): Int,
+           (focus32 (&(tmp) : KPtr (Int)) : KPtr (Int)): KPtr (Int),
+           ((ptr) (addr_Int : Int) : UPtr (Int)): UPtr (Int),
+           (4 : Int): Int);
+ }
+ (bf.c:262#4)^copied =(int32) (4 : Int);
+
+ ...
+
+ (bf.c:342#28)^guard((! (((coerce[0,4294967295]
+     (((coerce[0,4294967295] (addr_Int : Int) : Int)
+     + (4 : Int)) : Int) : Int) > (1168 : Int)) : Int) : Int));
+ (bf.c:345#32)^{
+   Int tmp_cir!5;
+   (bf.c:345#32)^tmp_cir!5 <-
+       copy_to_user_page(
+           (0 : Int): Int,
+           (0 : Int): Int,
+           (0 : Int): Int,
+           ((ptr) (addr_Int : Int) : UPtr (Int)): UPtr (Int),
+           (focus32 (&(data) : KPtr (Int)) : KPtr (Int)): KPtr (Int),
+           (4 : Int): Int);
+ }
+ (bf.c:349#4)^copied =(int32) (4 : Int);
+\end{Verbatim}
+\caption{Traduction en \newspeak du cas d'étude \enquote{Blackfin}}
+\label{fig:black-npk}
+\end{figure}
 
 \section*{Conclusion}
 
 Après voir décrit l'implantation de notre solution, on a montré comment celle-ci
-peut s'appliquer à détecter un bug dans le noyau Linux. La première difficulté
+peut s'appliquer à détecter deux bugs dans le noyau Linux. La première difficulté
 est de traduire en \newspeak le code source écrit dans le dialecte GNU C.
 
-En partant d'un bug existant, on montre que la version originale du code
-(incluant une erreur de programmation) ne peut pas être typée, alors que sur la
-version corrigée on peut inférer des types compatibles.
+Pour chaque bug, on montre que la version originale du code (incluant une erreur
+de programmation) ne peut pas être typée, alors que sur la version corrigée on
+peut inférer des types compatibles.
 
 Le prototype décrit dans le chapitre~\ref{cha:implem} peut donc s'adapter à
 détecter des bugs dans le noyau Linux. Pour le moment, il nécessite du code
@@ -404,7 +580,5 @@ annoté, mais des travaux sont en cours pour permettre de passer automatiquement
 des portions plus importantes du noyau Linux. Le principal obstacle est de
 devoir réécrire certaines parties du code pour supprimer les constructions non
 typables.
-
-% TODO[E] à étendre, +++
 
 % vim: spelllang=fr

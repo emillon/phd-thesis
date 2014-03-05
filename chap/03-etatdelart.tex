@@ -274,10 +274,19 @@ Saturn~\cite{paste07}, conçu pour analyser du code système écrit en C, utilis
 des clauses logiques et un solveur SAT pour manipuler des invariants sur la
 mémoire. En particulier il traite le problème des pointeurs utilisateur en
 utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Un autre
-exemple est le \emph{model checking}~\cite{modelcheck}, qui consiste à énumérer
-l'ensemble des états qui peut atteindre un système. Comme l'interprétation
-abstraite, le but des cette analyse est d'être très précis, au détriment d'un
-temps de calcul important dans certains cas.
+exemple est le \emph{model checking}~\cite{modelcheck}, qui consiste à explorer
+l'ensemble des états que peut atteindre un système. Ce graphe est
+potentiellement infini, donc il peut être impossible de l'explorer pour détecter
+les cas d'erreur. Plusieurs techniques permettent de résoudre ce problème. Le
+\emph{bounded model checking}~\cite{boundedmodelchecking} explore uniquement les
+états atteints en moins de $k$ étapes. Cela peut permettre de trouver des cas
+d'erreur, mais pas de montrer que le système est correct (seulement qu'il l'est
+pour les exécutions de moins de $k$ étapes). Il est aussi possible de
+partitionner l'espace d'états en classes
+d'équivalence~\cite{partitionmodelchecking}, permettant de réduire le nombre
+d'états de l'automate à explorer en ne considérant que des représentants de
+chaque classe. Comme l'interprétation abstraite, ces analyses sont très
+précises, au détriment d'un temps de calcul important.
 
 \section{Typage}
 
@@ -390,11 +399,10 @@ la correction du programme (par rapport aux propriétés capturées par le syst�
 de types).
 
 Le typage statique peut également être implanté de manière efficace. Même si
-l'inférence peut, dans certains cas, atteindre une complexité exponentielle, la
-plupart des systèmes de types peuvent être vérifiés en pratique dans un temps
-linéaire en la taille du programme considéré.
-
-% TODO virer car para C7 en parle
+l'inférence peut, dans certains cas, atteindre une complexité
+exponentielle~\cite{mairson}, la plupart des systèmes de types peuvent être
+vérifiés en pratique dans un temps linéaire en la taille du programme
+considéré~\cite{rta03}.
 
 \section{Langages sûrs}
 
@@ -421,13 +429,12 @@ autorisée que sur ces derniers, rendant impossibles les débordements de tablea
     que la fonction dans laquelle elles ont été définies retourne.
 }
 est résolu en utilisant un système de régions~\cite{cyclone-regions}, inspiré
-des travaux de Jouvelot, Talpin et \linebreak
-Tofte~\cite{jfp92,ToTa1993,popl94}. Cela permet d'interdire statiquement les
-constructions où l'on déréférence un pointeur faisant référence à une région de
-mémoire qui n'est plus allouée (par exemple en évitant de retourner l'adresse
-d'une variable locale).
-
-%TODO[E] tu cites leur nom mais pas Simonet et autres jury
+des travaux de Jouvelot, Talpin et \linebreak Tofte~\cite{jfp92,popl94}. Cela
+permet d'interdire statiquement les constructions où l'on déréférence un
+pointeur faisant référence à une région de mémoire qui n'est plus allouée (par
+exemple en évitant de retourner l'adresse d'une variable locale). Cette approche
+peut également servir à suivre les provenances de données
+sensibles~\cite{regPtr}.
 
 Le langage Rust~\link{rust} développé par Mozilla prend une approche similaire
 en distinguant plusieurs types de pointeurs pour gérer la mémoire de manière
@@ -596,7 +603,5 @@ suivante:
       sûres. Cela permet de préserver l'isolation entre le noyau et l'espace
       utilisateur.
 \end{itemize}
-
-% TODO http://www.sciencedirect.com/science/article/pii/S147784241300002X
 
 % vim: spelllang=fr

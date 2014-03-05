@@ -649,7 +649,7 @@ renvoie une adresse correcte.
   Dans le premier cas, puisque $\msi{m}{*\eNull} → \serr{ptr}$, on a
   $\msi{m}{e} → \serr{ptr}$.
 
-  Dans le second cas, \textsc{Phi-Deref} s'applique.
+  Dans le second cas, \textsc{Exp-Deref} s'applique.
 
 \item
   $\mm{m}{e}{m'}{e'}$.
@@ -671,7 +671,7 @@ De même, on applique l'hypothèse de récurrence à $lv$.
 \begin{itemize}
 \item $lv = v$.
 
-Comme $Γ ⊢ v : t[]$, on déduit du lemme~\ref{lemma:canon} que
+Comme $Γ ⊢ v : t[~]$, on déduit du lemme~\ref{lemma:canon} que
 $v = \eArray{v_1; …; v_p}$.
 Appliquons l'hypothèse de récurrence à $e$.
 
@@ -798,7 +798,7 @@ d'appliquer l'hypothèse de récurrence à ses prémisses.
 
 \subsection*{Cas $Γ ⊢ lv : t$ et $\mm{m}{lv}{m'}{φ}$}
 
-\paragraph{\textsc{Phi-Deref}:} % {{{
+\paragraph{\textsc{Exp-Deref}:} % {{{
 
 On sait que $Γ ⊢ *~v : t$ où $v = \widehat{\&}~φ$.
 Par inversion, $Γ ⊢ v : t~*$.
