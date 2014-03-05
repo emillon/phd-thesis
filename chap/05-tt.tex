@@ -56,15 +56,12 @@ On emploie un système de types monomorphe: à chaque expression, on associe un
 unique type. En plus des types de base $\tInt$, $\tFloat$ et $\tUnit$, on peut
 construire des types composés: pointeurs, tableaux, structures et fonctions.
 
-Pour typer les structures, on suppose avoir à notre disposition (par un
-prétraitement, par exemple) le type complet de la structure à chaque accès d'un
-champ. Cela alourdit la présentation, mais permet d'éviter le sous-typage qui
-rend l'inférence indécidable. En pratique, dans l'implantation décrite dans le
-chapitre~\ref{cha:implem}, on utilise une variante du polymorphisme de rangée
-(\emph{row polymorphism})~\cite{ocamlObjects} présent dans OCaml pour unifier
-deux types structures partiellement connus. \added{référence}
-
-% TODO[E] ↑ à refaire
+Pour types les structures, on suppose que les accès aux champs sont décorés du
+type complet de la structure. Cela permet de typer sans ambigüité ces accès.
+Dans l'implantation décrite dans le chapitre~\ref{cha:implem}, ces annotations
+ne sont pas présentes. On utilise donc une variante du polymorphisme de
+rangée~\cite{ocamlObjects} présent dans OCaml pour unifier deux types structures
+partiellement connus. \added{référence}
 
 Le principe du typage est d'associer à chaque construction syntaxique une
 étiquette représentant le genre de valeurs qu'elle produira. Dans le programme
