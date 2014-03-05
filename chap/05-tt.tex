@@ -786,9 +786,9 @@ sans difficulté; dans ce cas on n'en donne que des esquisses.
 \item Références mémoire:
   \begin{itemize}
     \item
-      si $Γ ⊢ x : t$, alors $x : t ∈ Γ$
+      si $Γ ⊢ (x) : t$, alors $x : t ∈ Γ_G$
     \item
-      si $Γ ⊢ *e : t$, alors $Γ ⊢ e : t*$
+      si $Γ ⊢ (n, x) : t$, alors $x : t ∈ Γ_L$
     \item
       si $Γ ⊢ lv[e] : t$, alors $Γ ⊢ lv : t[~]$ et $Γ ⊢ e : \tInt$
     \item
@@ -859,6 +859,7 @@ $(t_1, …, t_n)$ et $t'$ tels que:
     (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t]) ⊢ i
   \end{cases} \]
 
+\item Si $Γ ⊢ *e : t$, alors $Γ ⊢ e : t*$.
 \item Si $Γ ⊢ lv ← e : t$, alors $Γ ⊢ lv : t$ et $Γ ⊢ e : t$.
 \item Si $Γ ⊢ \&~lv : t$, alors il existe $t'$ tel que
 $Γ ⊢ lv : t'$ et $t = t'~*$.
@@ -1094,12 +1095,20 @@ globale $(x)$ avec $x ∈ \cDom{Γ_G}$, soit une variable locale $(|m|, x)$ du p
 haut cadre de pile avec $x ∈ \cDom{Γ_L}$.
 \end{lemma}
 
-\begin{proof}[Démonstration (esquisse)]
-On procède par induction sur une dérivation de $\mcomp{Γ}{m}$.
-\end{proof}
+\begin{proof}[Démonstration]
+On procède par induction sur la forme de $φ$.
 
-%TODO[E] un peu court
-% (faisable je pense)
+\begin{itemize}
+    \item Si $φ = φ'.l_S$, alors $\cVar{φ} = \cVar{φ'}$, et par inversion
+        $Γ ⊢ φ' : S$. On conclut en appliquant l'hypothèse de récurrence à $φ'$.
+    \item Si $φ = φ'[n]$, le cas est similaire.
+    \item Si $φ = a$, alors $\cVar{φ} = a$. Si $a = (x)$, on a par inversion
+        $x : t ∈ Γ_G$. Si $a = (n, x)$, alors par inversion $x : t ∈ Γ_L$.
+        Il reste à montrer que $n = |m|$, ce qui peut se prouver par induction
+        sur la dérivation de $\mcomp{Γ}{m}$, en notant que $\cDom{Γ_L}$ coincide
+        toujours avec le dernier niveau de pile. Cette étape est ici admise.
+\end{itemize}
+\end{proof}
 
 \changed{Partout l'indice grand Phi a été supprimé}
 
@@ -1246,7 +1255,7 @@ Alors l'un des cas suivants est vrai:
 \jolibreak
 
   Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
-  Alors l'un des cas suivants est vrai: 
+  Alors l'un des cas suivants est vrai:
 
 \begin{itemize}
   \item $∃ v ≠ Ω, e = v$
