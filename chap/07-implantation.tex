@@ -189,36 +189,28 @@ invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu
 aient un nom globalement unique. Cette étape se conclut par la création d'un
 fichier \newspeak.
 
-% TODO[S] sépare dans une nv section et insère l'algo
-
 % TODx impression backticks
+\section{L'outil \ptrtype}
 
-La dernière étape est réalisée dans un autre outil nommé \ptrtype, réalisé dans
-le cadre de cette thèse. Elle consiste en l'implantation d'un algorithme
-d'inférence pour les systèmes de types décrits dans les
-chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est assez simple. Puisqu'ils
-sont suffisamment proches du lambda calcul simplement typé, on peut utiliser une
-variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
+La dernière étape est réalisée dans un autre outil nommé \ptrtype, d'environ
+1600 lignes de code OCaml, et réalisé dans le cadre de cette thèse. Elle
+consiste en l'implantation d'un algorithme d'inférence pour les systèmes de
+types décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est
+assez simple. Puisqu'ils sont suffisamment proches du lambda calcul simplement
+typé, on peut utiliser une variante de l'algorithme W de Damas et
+Milner~\cite{DamasMilner}.
 
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
-inconnus. Cet algorithme sera décrit dans la section~\ref{sec:unif}. En
-pratique, on utilise l'optimisation classique qui consiste à se
+inconnus. En pratique, on utilise l'optimisation classique qui consiste à se
 reposer sur le partage de références pour réaliser l'unification, plutôt que de
 faire des substitutions explicites. Puisque ces systèmes de types sont
 monomorphes, on présente une erreur si des variable de type libres sont
 présentes.
 
-À la fin de cette étape, on obtient soit un programme complètement annoté, soit
-une erreur de type.
-
-\section{Algorithme d'unification}
-\label{sec:unif}
-
-On présente ici la fonction \texttt{unify}. Celle-ci prend en entrée deux
-représentations de types pouvant contenir des inconnues de la forme \texttt{Var
-n}, et retourne une liste de couples $(n, t)$ indiquant les substitutions à
-faire.
+La fonction \texttt{unify} prend en entrée deux représentations de types pouvant
+contenir des inconnues de la forme \texttt{Var n}, et retourne une liste de
+couples $(n, t)$ indiquant les substitutions à faire.
 
 Cet algorithme (décrit en pseudo-code ML en figure~\ref{fig:algo-unif}) prend un
 chemin différent selon la forme des deux types d'entrée:
@@ -375,25 +367,13 @@ de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
 
 \added{citation}
 
-\section{Architecture de \ptrtype}
-\label{sec:ptrtype-archi}
+\subsection*{Architecture de \ptrtype}
 
-Cette analyse est implantée dans un outil du nom de \ptrtype{}, d'environ 1600
-lignes de code OCaml. Il lit un
-programme \newspeak (ou un fichier C), et réalise l'inférence de types. En
-sortie, il affiche soit le programme complètement annoté, soit une erreur.
-
-Si l'argument passé à \ptrtype{} est un fichier C, il est tout d'abord compilé
-vers \newspeak grâce à l'utilitaire \ctonewspeak. Ensuite, les autres passes
-travaillent sur une représentation intermédiaire proche de \newspeak, mais où
-des étiquettes de type supplémentaires sont ajoutées. Ce type de représentation
-intermédiaire est noté \texttt{'a Tyspeak.t} (pour \emph{typed} \newspeak), où
-\texttt{'a} est le type des étiquettes.
-
-\added{précision que c'est bien du newspeak}
-
-Le reste de l'outil est résumé dans la fonction
-\texttt{process\_npk} (figure~\ref{fig:implem-process}):
+Bâti autour de cette fonction, le programme \ptrtype lit un programme \newspeak
+et réalise l'inférence de types. Si l'argument passé à \ptrtype{} est un fichier
+C, il est tout d'abord compilé vers \newspeak grâce à l'utilitaire \ctonewspeak.
+En sortie, il affiche soit le programme complètement annoté, soit une erreur. Ce
+comportement est implanté dans la fonction de la figure~\ref{fig:implem-process}.
 
 \begin{figure}
 \insertcode{implem-process.ml}
@@ -404,7 +384,9 @@ Le reste de l'outil est résumé dans la fonction
 \begin{itemize}
 
 \item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!, on
-ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!).
+ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!)\footnote
+{\texttt{'a Tyspeak.t} est le type des programmes \newspeak où on insère des
+étiquettes de type \texttt{'a} à tous les niveaux.}.
 
 \item L'ensemble des fonctions du programme est trié topologiquement selon la
     relation~$\preceq$ définie par $f \preceq g \eqdef \enquote{g \textrm{
@@ -466,11 +448,11 @@ types afin de pouvoir en faire une exécution \enquote{pas à pas}.
 \label{fig:implem-lazy}
 \end{figure}
 
-\section{Inférence de types}
+\subsection*{Inférence de types}
 
-L'inférence de types consiste à remplacer les étiquettes de type \texttt{unit}
-par des étiquettes de type \texttt{simple} (autrement dit de vraies
-représentations de types).
+Il ne reste plus qu'à remplacer les étiquettes de type \texttt{unit} par des
+étiquettes de type \texttt{simple} (autrement dit de vraies représentations de
+types), à l'aide de la fonction \texttt{unify}.
 
 \added{cela permet...}
 
