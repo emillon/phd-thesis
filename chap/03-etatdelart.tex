@@ -275,19 +275,18 @@ des clauses logiques et un solveur SAT pour manipuler des invariants sur la
 mémoire. En particulier il traite le problème des pointeurs utilisateur en
 utilisant une analyse de forme \enquote{pointe-sur}~\cite{oakland08}. Un autre
 exemple est le \emph{model checking}~\cite{modelcheck}, qui consiste à explorer
-l'ensemble des états que peut atteindre un système. Ce graphe est infini, donc
-il est impossible de l'explorer pour détecter les cas d'erreur. Plusieurs
-techniques permettent de résoudre ce problème. Le \emph{bounded model checking}
-explore uniquement les états atteints en moins de $k$ étapes. Cela peut
-permettre de trouver des cas d'erreur, mais pas de montrer que le système est
-correct (seulement qu'il l'est pour les exécutions de moins de $k$ étapes). Il
-est aussi possible de partitionner l'espace d'états en classes d'équivalence,
-permettant de réduire le nombre d'états de l'automate à explorer en ne
-considérant que des représentants de chaque classe. Comme l'interprétation
-abstraite, ces analyses sont très précises, au détriment d'un temps de calcul
-important.
-
-% TODO pk pas citer
+l'ensemble des états que peut atteindre un système. Ce graphe est
+potentiellement infini, donc il peut être impossible de l'explorer pour détecter
+les cas d'erreur. Plusieurs techniques permettent de résoudre ce problème. Le
+\emph{bounded model checking}~\cite{boundedmodelchecking} explore uniquement les
+états atteints en moins de $k$ étapes. Cela peut permettre de trouver des cas
+d'erreur, mais pas de montrer que le système est correct (seulement qu'il l'est
+pour les exécutions de moins de $k$ étapes). Il est aussi possible de
+partitionner l'espace d'états en classes
+d'équivalence~\cite{partitionmodelchecking}, permettant de réduire le nombre
+d'états de l'automate à explorer en ne considérant que des représentants de
+chaque classe. Comme l'interprétation abstraite, ces analyses sont très
+précises, au détriment d'un temps de calcul important.
 
 \section{Typage}
 
