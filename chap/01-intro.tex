@@ -836,18 +836,15 @@ permettant de décrire la modification en profondeur de la mémoire.
 \item
 Au cœur de notre travail se trouve un système de types sûrs pour \langname,
 ainsi que deux extensions validant l'approche typage pour résoudre notre
-problème de base, qui est la vérification des accès aux pointeurs utilisateur.
-
-%TODO[E] en parle t'on avant ↑
+problème de base, qui est la vérification des accès aux pointeurs utilisateur
+(présentés dans la section~\ref{sec:sep-esp}).
 
 \item
 Notre formalisation est accompagnée d'un prototype, basé sur \newspeak. Cela
-permet d'utiliser les règles de typage précédemment définies (en les adaptant),
-tout en profitant des outils existants développés par EADS, qui utilisent
-\newspeak. En particulier, cela permet de traiter des programmes écrits en C
-comme le noyau Linux. Ce prototype est disponible sous une license libre.
-
-% TODO[S] en les adaptant -> pas clair. en quoi npk permet cela?
+permet d'appliquer les règles de typage précédemment définies sur des programmes
+écrits en C, grâce aux outils existants développés par EADS. En particulier,
+cela permet d'analyser des parties du noyau Linux. Ce prototype est disponible
+sous une license libre.
 
 \end{itemize}
 
@@ -872,12 +869,11 @@ système de types statiques. À ce niveau on a un bon support pour décrire des
 analyses statiques sur un langage impératif. On propose alors deux extensions du
 système de types. La première consiste à bien typer les entiers utilisés comme
 \emph{bitmasks}. La seconde capture les problèmes d'adressage mémoire présents
-dans les systèmes d'exploitation. Pour ce faire, on ajoute des pointeurs
-contrôlés par l'utilisateur à la sémantique et au système de types. À chaque
-étape, c'est-à-dire avant et après ces ajouts, on établit une propriété de
-sûreté de typage reliant la sémantique d'exécution aux types statiques.
-
-%TODO[E] problèmes d'addressage: préciser
+dans les systèmes d'exploitation, décrits dans la section~\ref{sec:sep-esp}.
+Pour ce faire, on ajoute des pointeurs contrôlés par l'utilisateur à la
+sémantique et au système de types. À chaque étape, c'est-à-dire avant et après
+ces ajouts, on établit une propriété de sûreté de typage reliant la sémantique
+d'exécution aux types statiques.
 
 \paragraph{Dans la partie~\ref{part:xp},} on documente la démarche expérimentale
 associée à ces travaux. L'implantation du système de types sur le langage
