@@ -428,8 +428,7 @@ utilisés dans Compcert, un compilateur certifié pour C
 sont faites de manière prouvée. Ces langages intermédiaires sont utilisés pour
 les passes de front-end et de middle-end.
 
-%TODO[E] renommer
-\section{Le projet Penjili}
+\section{L'analyse statique dans l'industrie aéronautique}
 \added{toute la section}
 
 En face du problème théorique et technique décrit dans la
@@ -566,6 +565,7 @@ une précision suffisante.
 
 \end{tikzpicture}
 }
+\hspace{5mm}
 \subbottom[]{
 \label{fig:appx-warn}
 \begin{tikzpicture}[scale=0.7]
@@ -611,6 +611,7 @@ une précision suffisante.
 
 \end{tikzpicture}
 }
+\hspace{5mm}
 \subbottom[]{
 \label{fig:appx-warn-ok}
 \begin{tikzpicture}[scale=0.7]
@@ -662,11 +663,11 @@ sur tableaux).
 %domaines abstraits nécessaires. Mais cela peut être coûteux, surtout lorsque le
 %programme comporte un grand nombre de variables.
 
+\subsection*{Le projet Penjili}
+
 Dans ce sens, des outils fondés sur l'interprétation abstraite ont été
 développés chez EADS Innovation Works dans le cadre du projet
 Penjili~\cite{AllamigeonHymansSSTIC07}.
-
-% TODO[E] cela arrive un peu tard, en fire un mot en début de sec ou fin page 7
 
 Ces analyses statiques ne manipulent pas directement du code C, mais un langage
 intermédiaire appelé \newspeak~\cite{newspeak}. Celui-ci est suffisamment
