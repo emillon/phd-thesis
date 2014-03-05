@@ -1,0 +1,27 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kt}{long} \PY{n+nf}{arch\PYZus{}ptrace}\PY{p}{(}\PY{k}{struct} \PY{n}{task\PYZus{}struct} \PY{o}{*}\PY{n}{child}\PY{p}{,} \PY{k+kt}{long} \PY{n}{request}\PY{p}{,}
+        \PY{k+kt}{long} \PY{n}{addr}\PY{p}{,} \PY{k+kt}{long} \PY{n}{data}\PY{p}{)}
+\PY{p}{\PYZob{}}
+    \PY{c+cm}{/* ... */}
+        \PY{k}{if} \PY{p}{(}\PY{n}{addr} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{FIXED\PYZus{}CODE\PYZus{}START}
+            \PY{o}{\PYZam{}}\PY{o}{\PYZam{}} \PY{n}{addr} \PY{o}{+} \PY{k}{sizeof}\PY{p}{(}\PY{n}{tmp}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{FIXED\PYZus{}CODE\PYZus{}END}\PY{p}{)} \PY{p}{\PYZob{}}
+\PY{c+cp}{\PYZsh{}}\PY{c+cp}{if FIX}
+        \PY{n}{copy\PYZus{}from\PYZus{}user\PYZus{}page}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZam{}}\PY{n}{tmp}\PY{p}{,}
+                \PY{p}{(}\PY{k}{const} \PY{k+kt}{void} \PY{o}{*}\PY{p}{)}\PY{p}{(}\PY{n}{addr}\PY{p}{)}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{tmp}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{c+cp}{\PYZsh{}}\PY{c+cp}{else}
+        \PY{n}{memcpy}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{tmp}\PY{p}{,} \PY{p}{(}\PY{k}{const} \PY{k+kt}{void} \PY{o}{*}\PY{p}{)}\PY{p}{(}\PY{n}{addr}\PY{p}{)}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{tmp}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{c+cp}{\PYZsh{}}\PY{c+cp}{endif}
+        \PY{n}{copied} \PY{o}{=} \PY{k}{sizeof}\PY{p}{(}\PY{n}{tmp}\PY{p}{)}\PY{p}{;}
+    \PY{c+cm}{/* ... */}
+        \PY{k}{if} \PY{p}{(}\PY{n}{addr} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{FIXED\PYZus{}CODE\PYZus{}START}
+            \PY{o}{\PYZam{}}\PY{o}{\PYZam{}} \PY{n}{addr} \PY{o}{+} \PY{k}{sizeof}\PY{p}{(}\PY{n}{data}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{FIXED\PYZus{}CODE\PYZus{}END}\PY{p}{)} \PY{p}{\PYZob{}}
+\PY{c+cp}{\PYZsh{}}\PY{c+cp}{if FIX}
+        \PY{n}{copy\PYZus{}to\PYZus{}user\PYZus{}page}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,}
+                \PY{p}{(}\PY{k+kt}{void} \PY{o}{*}\PY{p}{)}\PY{p}{(}\PY{n}{addr}\PY{p}{)}\PY{p}{,} \PY{o}{\PYZam{}}\PY{n}{data}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{c+cp}{\PYZsh{}}\PY{c+cp}{else}
+        \PY{n}{memcpy}\PY{p}{(}\PY{p}{(}\PY{k+kt}{void} \PY{o}{*}\PY{p}{)}\PY{p}{(}\PY{n}{addr}\PY{p}{)}\PY{p}{,} \PY{o}{\PYZam{}}\PY{n}{data}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{)}\PY{p}{;}
+\PY{c+cp}{\PYZsh{}}\PY{c+cp}{endif}
+        \PY{n}{copied} \PY{o}{=} \PY{k}{sizeof}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{;}
+    \PY{c+cm}{/* ... */}
+\PY{p}{\PYZcb{}}
+\end{Verbatim}

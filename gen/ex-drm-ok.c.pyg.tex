@@ -5,7 +5,8 @@
     \PY{k+kt}{uint32\PYZus{}t} \PY{o}{*}\PY{n}{value}\PY{p}{;}
 \PY{p}{\PYZcb{}}\PY{p}{;}
 
-\PY{k+kt}{int} \PY{n+nf}{radeon\PYZus{}info\PYZus{}ioctl}\PY{p}{(}\PY{k}{struct} \PY{n}{drm\PYZus{}device} \PY{o}{*}\PY{n}{d}\PY{p}{,} \PY{k+kt}{void} \PY{o}{*}\PY{n}{data}\PY{p}{,} \PY{k}{struct} \PY{n}{drm\PYZus{}file} \PY{o}{*}\PY{n}{f}\PY{p}{)}
+\PY{k+kt}{int} \PY{n+nf}{radeon\PYZus{}info\PYZus{}ioctl}\PY{p}{(}\PY{k}{struct} \PY{n}{drm\PYZus{}device} \PY{o}{*}\PY{n}{d}\PY{p}{,} \PY{k+kt}{void} \PY{o}{*}\PY{n}{data}\PY{p}{,}
+        \PY{k}{struct} \PY{n}{drm\PYZus{}file} \PY{o}{*}\PY{n}{f}\PY{p}{)}
 \PY{p}{\PYZob{}}
 	\PY{c+cm}{/*!npk userptr\PYZus{}fieldp data value*/}
 	\PY{k}{struct} \PY{n}{drm\PYZus{}radeon\PYZus{}info} \PY{o}{*}\PY{n}{info}\PY{p}{;}
@@ -18,7 +19,6 @@
 	\PY{n}{value\PYZus{}ptr} \PY{o}{=} \PY{n}{info}\PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}}\PY{n}{value}\PY{p}{;}
         \PY{k}{if} \PY{p}{(}\PY{n}{copy\PYZus{}from\PYZus{}user}\PY{p}{(}\PY{o}{\PYZam{}}\PY{n}{value}\PY{p}{,} \PY{n}{value\PYZus{}ptr}\PY{p}{,} \PY{k}{sizeof}\PY{p}{(}\PY{n}{value}\PY{p}{)}\PY{p}{)}\PY{p}{)}
             \PY{k}{return} \PY{o}{\PYZhy{}}\PY{l+m+mi}{14}\PY{p}{;}
-        \PY{n}{value} \PY{o}{=} \PY{o}{*}\PY{n}{value\PYZus{}ptr}\PY{p}{;}
         \PY{k}{return} \PY{l+m+mi}{0}\PY{p}{;}
 \PY{p}{\PYZcb{}}
 \end{Verbatim}
