@@ -347,19 +347,75 @@ drm\_radeon\_info} pour que son champ \texttt{value} ait pour type
 d'étude, cet entier est uniquement utilisé en tant que pointeur au cours de
 toute l'exécution.
 
+\begin{SaveVerbatim}{NumLines}
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+\end{SaveVerbatim}
+
 \begin{figure}[p]
+\begin{minipage}{1cm}
+    \BUseVerbatim{NumLines}
+\end{minipage}
+\begin{minipage}{0.93\linewidth}
 \insertcode{ex-drm.c}
+\end{minipage}
 
 \caption{Cas d'étude \enquote{Radeon} minimisé et annoté}
 \label{fig:ex-drm}
 \end{figure}
 
-% TODO[E] tu pourrais mettre les numéros de ligne et infiquer les lignes dans le
-% texte pour epliquer le clash
+\begin{SaveVerbatim}{NumLinesOK}
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+\end{SaveVerbatim}
 
 \begin{figure}[p]
 
+\begin{minipage}{1cm}
+    \BUseVerbatim{NumLinesOK}
+\end{minipage}
+\begin{minipage}{0.93\linewidth}
     \insertcode{ex-drm-ok.c}
+\end{minipage}
 
     \caption{Cas d'étude \enquote{Radeon} minimisé et annoté -- version correcte}
     \label{fig:ex-drm-ok}
@@ -376,7 +432,7 @@ figure~\ref{fig:ex-drm} (page~\pageref{fig:ex-drm}), on obtient la sortie
 suivante:
 
 \begin{Verbatim}
-05-drm.c:18#8 - Type clash between :
+05-drm.c:19#8 - Type clash between :
   KPtr (_a15)
   UPtr (_a8)
 \end{Verbatim}
@@ -384,6 +440,12 @@ suivante:
 Cela indique qu'on a essayé d'unifier un type de la forme $\ptrK{t}$ avec un
 type de la forme $\ptrU{t}$, en précisant l'emplacement où la dernière
 unification a échoué (les \texttt{\_aN} correspondent à des inconnues de type).
+En effet, l'annotation de la ligne 10 donne à \texttt{data} le type
+$\ptrK{\tStruct{value: \ptrU{a}; …}}$, où $a$ est une nouvelle inconnue de type.
+La ligne 18 donne donc à \texttt{value\_ptr} le type $\ptrU{a}$. Il y a donc une
+incompatibilité ligne 19 puisque l'instruction cherche à unifier
+le type de \texttt{value\_ptr} avec $\ptrK{b}$ où $b$ est une nouvelle inconnue
+de type. La variable \texttt{value} aurait alors le type $b$.
 
 La version correcte minimisée correspond à la figure~\ref{fig:ex-drm-ok}. Pour
 celle-ci, l'inférence se fait sans erreur. La partie pertinente est la suivante
@@ -391,9 +453,9 @@ celle-ci, l'inférence se fait sans erreur. La partie pertinente est la suivante
 page~\pageref{sec:impl-ex})):
 
 \begin{Verbatim}
-(06-drm-ok.c:18#8)^{
+(06-drm-ok.c:19#8)^{
   Int tmp_cir!0;
-  (06-drm-ok.c:18#8)^tmp_cir!0 <-
+  (06-drm-ok.c:19#8)^tmp_cir!0 <-
       copy_from_user
           ( (focus32 (&(value) : KPtr (d)) : KPtr (d)): KPtr (d),
             (value_ptr_UPtr (d) : UPtr (d)): UPtr (d),
@@ -411,8 +473,41 @@ n'est donc pas nécessaire d'utiliser les fonctions de copie sûres pour ces sit
 d'appel). La figure~\ref{fig:blackfin-cas} montre le reste de la fonction,
 c'est-à-dire les parties sensibles.
 
+\begin{SaveVerbatim}{NumLinesBF}
+217
+
+218
+
+255
+256
+257
+258
+
+259
+260
+261
+262
+
+342
+343
+344
+345
+
+346
+347
+348
+349
+
+441
+\end{SaveVerbatim}
+
 \begin{figure}
+\begin{minipage}{1cm}
+    \BUseVerbatim{NumLinesBF}
+\end{minipage}
+\begin{minipage}{0.93\linewidth}
 \insertcode{blackfin-min.c}
+\end{minipage}
 \caption{Cas d'étude \enquote{Blackfin}}
 \label{fig:blackfin-cas}
 \end{figure}
