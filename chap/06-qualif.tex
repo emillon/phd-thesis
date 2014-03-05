@@ -233,7 +233,10 @@ $\tBits$ là où une expression de type $\tInt$ est attendue.
 Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
 expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
 priori} de type \tInt, mais \tBits ou \tInt. Cela implique aussi qu'on peut
-additionner un \tBits et un \tInt pour obtenir un \tInt.
+additionner un \tBits et un \tInt pour obtenir un \tInt. Les expressions de la
+forme $\eFun{x,y}{\iReturn{x|y}}$ peuvent donc accepter plusieurs types. Pour
+l'inférence, on suppose que ces fonctions sont utilisées au moins une fois,
+ce qui permet de lever l'ambigüité.
 
 Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$. On rappelle que
 la règle permettant de typer $!$ est inchangée et reste la suivante:
@@ -241,8 +244,6 @@ la règle permettant de typer $!$ est inchangée et reste la suivante:
 \[
     \disprule{Unop-Not}
 \]
-
-% TODO inférence de type de fun x y -> x | y
 
 % Alternative
 %
