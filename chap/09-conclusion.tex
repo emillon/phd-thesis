@@ -355,7 +355,7 @@ industriel que ce travail a été motivé et réalisé.
 Au cœur de la plupart de ces systèmes informatiques, se trouve un noyau qui
 abstrait les détails du matériel pour fournir aux programmes des abstractions
 sûres, permettant de protéger les données sensibles contenues dans ce système.
-Si une simple erreur de programmation peut briser cette isolation, on voit
+Puisqu'une simple erreur de programmation peut briser cette isolation, on voit
 pourquoi la vérification est si importante.
 
 Dans ce but, les systèmes de types sont des outils bien connus de programmeurs.
@@ -363,7 +363,7 @@ Même dans les langages peu typés comme C, les compilateurs aident de plus en
 plus les programmeurs à trouver des erreurs de programmation. De très nombreuses
 analyses peuvent être faites rien qu'en classifiant les expressions selon le
 genre de valeurs qu'elles créent à l'exécution --- c'est la définition que donne
-Benjamin C. Pierce d'un système de types~\cite[p.~1]{TAPL}.
+Benjamin C. Pierce d'un système de types~\cite{TAPL}.
 
 L'utilisation d'un système de types comme analyseur statique léger est donc
 efficace. Pour des propriétés qui ne dépendent pas de la valeur des expressions,
@@ -386,11 +386,9 @@ Cela suffit déjà à détecter des erreurs de programmation.
 
 Si on ajoutait cette construction au langage, on pourrait définir des nouveaux
 types partageant la représentation d'un type C existant, mais qui ne soit pas
-compatible avec le type d'origine, et pour lequel l'ensemble des opérations est
-restreint. Avec cette fonctionnalité dans un langage, non seulement on peut
-détecter d'autres classes de problèmes, mais surtout on laisse le programmeur
-définir de nouvelles analyses lui-même.
-
-%TODO[S] pas très clair, un ex?
+compatible avec le type d'origine. Avec cette fonctionnalité dans un langage,
+non seulement on peut détecter d'autres classes de problèmes, mais surtout on
+laisse le programmeur définir de nouvelles analyses lui-même en modélisant les
+problèmes concrets par des types.
 
 % vim: spelllang=fr
