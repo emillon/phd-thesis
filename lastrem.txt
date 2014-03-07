@@ -8,6 +8,8 @@ Clarification du dernier paragraphe
 ==> tu ne conclus pas tant que cela sur ton choix "typage" plutôt qu'IA
 ==> en dehors du 1er paragraphe qui parle des chapitres 2 et 3, le reste est plutôt sur la suite; ce n'est pas forcément gmenant si tu fais bien la liaison sur le choix de l'analyse statique
 
+pas encore fait mais je m'y colle
+
 C5
 ==
 
@@ -18,19 +20,23 @@ p63, Clarification sur les typage des accès aux structures (paragraphe 4).
     qui sera implanté. Je trouve que cela trouble la lecture et je le déplacerai
     bien au niveau de l'implantation.
 
-p76, la preuve du lemme 5.5 est nouvelle (mais comporte un point admis)
+Je crois qu'il y a déjà quelque chose du genre de ce côté là et que justement on
+disait qu'il rajouter de ce côté-ci cette explication.
 
+p76, la preuve du lemme 5.5 est nouvelle (mais comporte un point admis)
 ==> quelle est la différence entre esquisse et admission ? 
+
+Là j'isole précisément le point difficile tout en détaillant le reste.
+Mais sur le fond c'est pareil en effet.
 
 C7
 ==
 
 ==> quelle est la remarque sur les subfloats ? 
+
 Avant il n'y avait qu'une figure non séparée en 2, et pas de barre entre.
 
-
 p102: la section 7.2 est refaite pour fusionner plusieurs anciennes sections.
-
 ==> ce qui est un peu étrange à la lecture du 2ème paragraphe de prttype, c'est
     que l'on imagine que l'unification est destructive alors ye tu ramènes en fait
     une substitution
@@ -51,4 +57,4 @@ p117: référence vers la syntaxe de la sortie page 107
 ==> en fait page 107 tu décris la syntaxe de sortie sur un exemple,
 ==> mais rien n'empêche de la décrire complètement à la manière des annotations npk ? 
 
-chaque construction de newspeak tu veux dire? (choice, --->, focus) etc?
+chaque construction de newspeak tu veux dire? (choice, --->, focus, etc?)
