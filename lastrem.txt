@@ -1,0 +1,175 @@
+C1
+==
+
+p7 la section 1.5 est renommée.
+
+==> sur les 2 derniers paragraphes, il me semble qu'il y a une ambiguité de portée sur "En fait 2 approche ...";
+   on peut comprendre boîte noire puis bopite blanche ou test et MF (ce qui est bien le cas, mais le changement de pragraphe peut faire douter)
+
+p8 la figure est explosée en sous-figures numérotées.
+
+==> c'est beaucoup plus clair, un dernier mot indique que la zone en fond blanc correspond à des valeurs correctes
+
+p9 "le projet Penjili" est une subsection*.
+
+==> pour OCaml cite aussi  à un moment le manuel de référence (Leroy et al)
+
+p10 dans le début de 1.7 je cite le but.
+
+restrictions => un sous ensemble sûr
+
+==> au début de 1.7 tu dis "Le but ... sur le langage C (...) dans le but ..." : le but dans le but n'est pas si clair. 
+==> premier item "du le langage" : coquille
+ 
+p11 2 références vers la section 1.2 qui décrit le problème des pointeurs
+   utilisateurs
+
+clarification de l'intérêt de newspeak dans la dernière contribution.
+
+
+==> toujours au premier ietm, indique que cela limite l'intérêt du typage de C plutôt que de dire qu'il n'y en a pas 
+==> indique dès le début le lien avec NEWSPEAK
+==> au 3ème item : précise déjà les deux extensions que tu vas construire pour valider la démarche
+
+C3
+==
+
+p24, développements sur le modèle checking: citation de BCC+03 (bounded model
+checking) et Pel93 (partial order reduction).
+
+==> des points fixeS
+==> dans le défi d'implanter un analyseur, je n'ai pas compris la phrase "il faut traduire le code source à analyser dans un langage" ???
+==> à la fin de la présentation p24 (model -checking  interprétation abstraite), tu peux indiquer le risque d'explosion combinatoire.
+
+ccl P1
+======
+
+p31, meilleure concordance des temps.
+
+Clarification du dernier paragraphe
+
+
+==> tu ne conclus pas tant que cela sur ton choix "typage" plutôt qu'IA
+==> en dehors du 1er paragraphe qui parle des chapitres 2 et 3, le reste est plutôt sur la suite; ce n'est pas forcément gmenant si tu fais bien la liaison sur le choix 
+==> de l'analyse statique
+
+C4
+==
+
+p58, début de 4.13: correction d'une typo. il n'y a pas de déclaration de types,
+et les fonctions sont des variables comme les autres.
+
+==> ok pour les fonctions
+==> par contre dis un mot sur les types car par la suite tu as un enregistrement dans l'exemple en 4.14 
+
+p59, numérotation des phrases (p1) (p2) (p3).
+
+==> YES
+
+C5
+==
+
+p63, Clarification sur les typage des accès aux structures (paragraphe 4).
+
+==> ok pour la précision, par contre je ne suis pas sûr que cela motive la lecture de dire je vais lire un système de types 
+==> qui n'est pas exactement celui qui sera implanté. Je trouve que cela trouble la lecture et je le déplacerai bien au niveau de l'implantation. 
+
+p72, référence sur les preuves "à esquisse"
+
+==> ok, à voir s'il y aura une demande de les intégrer en annexe
+
+p76, la preuve du lemme 5.5 est nouvelle (mais comporte un point admis)
+
+
+==> quelle est la différence entre esquisse et admission ? 
+
+C6
+==
+
+p84: ajout d'un passage sur fun x y -> x | y. On suppose que les fonctions sont
+appelées au moins une fois.
+
+==> en fait tu peux clasher si à la fin du typage il te reste des inconnues dans le cas général, 
+==> pour le cas particulier INT et BITS ce n'est pas sûr qu'un seul appel à une fonction suffise  pour déterminer ;
+==>   indique que tu clashes s'il reste des points de choix à la fin du typage. Tout cela vient du côté monomorphe de ton système. 
+==> tu peux parler de relation de subsomption entre BITS et INT.  
+
+
+
+ccl P2
+======
+
+p96 ajout de "aucun n'est plus spécifique que les autres" dans le dernier
+paragraphe
+
+==> un doute sur le sens de "présentation classique"
+==> à la fin tu veux dire qu'avec plus de deux espaces il n'y aura pas de relation de sous-typage entre qualifieurs ? 
+==> alors que chez toi tu pourrais faire une nouvelle extension légère pour traiter ce cas ??
+
+
+
+C7
+==
+
+p101: précision sur les choix faits: exemple du sens d'évaluation des fonctions.
+
+subfloats & barre verticale dans la figure 7.2.
+
+
+==> pourquoi le sens de l'évaluaiton des arguments d'une fonction est-il de de droite à gauche  ? 
+==> quelle est la remarque sur les subfloats ? 
+==> tu peux mettre une ligne horizontale pour séparer lé légende du dessin (ou mettre cette ligne de légende en haut de la figure).
+
+p102: la section 7.2 est refaite pour fusionner plusieurs anciennes sections.
+
+==> 5 et 6 est assez simple ??
+==> ce qui est un peu étrange à la lecture du 2ème paragraphe de prttype, c'est qu el'on imagine que l'unification est destructive alors ye tu ramènes en fait une substitution
+==>  que veux-tu dire par substitutions explicites ? 
+
+
+C8
+==
+
+p115: référence au tableau de la page 104
+
+==> ok
+
+p116: numérotation des lignes des figures. On y fait référence en bas de la page
+115 (En effet, l'annotation de la ligne 10...), et les numéros correspondent aux
+listings newspeak.
+
+
+===> faut-il indiquer dans la figure 8.7 où cel aplante-t-il ? 
+
+p117: référence vers la syntaxe de la sortie page 107
+
+
+==> en fait page 107 tu décris la syntaxe de sortie sur un exemple,
+==> mais rien n'empêche de la décrire complètement à la manière des annotations npk ? 
+
+p119: la sorties est placée dans une figure.
+
+==> ok
+
+C9
+==
+
+p126: contribuer => faire profiter
+
+==> mal dit : "et de faire profiter à l'entreprise les résultats" ??
+
+p128 dernière ligne: ou null si l'allocation échoue
+
+==> ok 
+
+p129 association entre des entiers => identifiants uniques
+
+
+==> pour les propriétés qui dépendent de la valeur des expressions, il pourrait avoir des pistes avec les types dépendants.
+
+p130 ajout de "en modélisant les problèmes concrets par des types"
+
+==> ok
+
+-- 
+
