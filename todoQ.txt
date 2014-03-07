@@ -1,6 +1,4 @@
-    - pourquoi alourdir les choses avec l'adresse de l'éditeur quand c'est
-      Springer-Verlag : Berlin, Heideger : [BGH10] [BLS05], tu peux faire comme dans [CE81]
-+    - uniformisation des citations de même conférence :
+    - uniformisation des citations de même conférence :
          POPL : [CC77] [DM82] [MAI90] ’TT94]
          PLDI : [FFA99] [FTA02] [Oiw09][VB04]
     - dans plusieurs citations il y a pas mal d'adresse du genre,
