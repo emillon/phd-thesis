@@ -1,22 +1,3 @@
-C1
-==
-
-p10 dans le début de 1.7 je cite le but.
-
-restrictions => un sous ensemble sûr
-
-==> au début de 1.7 tu dis "Le but ... sur le langage C (...) dans le but ..." : le but dans le but n'est pas si clair. 
- 
-p11 2 références vers la section 1.2 qui décrit le problème des pointeurs
-   utilisateurs
-
-clarification de l'intérêt de newspeak dans la dernière contribution.
-
-
-==> toujours au premier ietm, indique que cela limite l'intérêt du typage de C plutôt que de dire qu'il n'y en a pas 
-==> indique dès le début le lien avec NEWSPEAK
-==> au 3ème item : précise déjà les deux extensions que tu vas construire pour valider la démarche
-
 C3
 ==
 
@@ -47,10 +28,6 @@ et les fonctions sont des variables comme les autres.
 
 ==> ok pour les fonctions
 ==> par contre dis un mot sur les types car par la suite tu as un enregistrement dans l'exemple en 4.14 
-
-p59, numérotation des phrases (p1) (p2) (p3).
-
-==> YES
 
 C5
 ==
