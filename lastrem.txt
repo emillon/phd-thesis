@@ -22,29 +22,14 @@ p76, la preuve du lemme 5.5 est nouvelle (mais comporte un point admis)
 
 ==> quelle est la différence entre esquisse et admission ? 
 
-
-ccl P2
-======
-
-p96 ajout de "aucun n'est plus spécifique que les autres" dans le dernier
-paragraphe
-
-==> un doute sur le sens de "présentation classique"
-==> à la fin tu veux dire qu'avec plus de deux espaces il n'y aura pas de relation de sous-typage entre qualifieurs ? 
-==> alors que chez toi tu pourrais faire une nouvelle extension légère pour traiter ce cas ??
-
-
-
 C7
 ==
-
-p101: précision sur les choix faits: exemple du sens d'évaluation des fonctions.
-
-subfloats & barre verticale dans la figure 7.2.
 
 
 ==> pourquoi le sens de l'évaluaiton des arguments d'une fonction est-il de de droite à gauche  ? 
 ==> quelle est la remarque sur les subfloats ? 
+
+
 ==> tu peux mettre une ligne horizontale pour séparer lé légende du dessin (ou mettre cette ligne de légende en haut de la figure).
 
 p102: la section 7.2 est refaite pour fusionner plusieurs anciennes sections.

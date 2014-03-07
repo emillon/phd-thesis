@@ -15,7 +15,7 @@ de la mémoire. Un des avantages de cette solution est qu'elle est très
 extensible. Par exemple, la propagation des erreurs ou l'ajout de continuations
 légères (c'est-à-dire le support des fonctions \texttt{setjmp} et
 \texttt{longjmp}) peuvent facilement être exprimés dans un formalisme monadique.
-Nous avons préféré une présentation classique qui reste plus accessible une
+Nous avons préféré une présentation plus directe qui reste plus accessible une
 audience habituée à C, et suffisante compte tenu de la simplicité des
 constructions à interpréter dans le langage.
 
@@ -103,8 +103,9 @@ indépendants : par exemple, de la mémoire flash, de la RAM, ou une EEPROM de
 configuration. Ces différentes mémoires possèdent des adresses, et un pointeur
 est interprété comme faisant référence à une ou l'autre selon le code dont il
 est tiré. Lorsqu'il y a plus de deux espaces mémoire, aucun n'est plus
-spécifique que les autres. Il devient donc impossible d'encoder cette propriété
-dans un qualificateur, qui n'a que deux valeurs possibles.
+spécifique que les autres: le sous-typage, et donc un système de qualificateurs,
+n'est donc plus adapté. Au contraire il est possible de créer un type de
+pointeurs pour chaque zone mémoire.
 
 \added{Lorsqu'il...}
 
