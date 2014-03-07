@@ -2,8 +2,6 @@
          POPL : [CC77] [DM82] [MAI90] ’TT94]
          PLDI : [FFA99] [FTA02] [Oiw09][VB04]
     - dans plusieurs citations il y a pas mal d'adresse du genre,
-         [NMRW02] : London, UK, UK (est-ce encore l'adresse de l'éditeur ?)
-        [oEE08] : 3 Park avenue, New York, NY ... : n'est-ce pas un peu trop
 précis ?
         [SRH96] : The Betherland, The Netherland ( 2 fois)
 
