@@ -1,7 +1,3 @@
     - uniformisation des citations de même conférence :
          POPL : [CC77] [DM82] [MAI90] ’TT94]
          PLDI : [FFA99] [FTA02] [Oiw09][VB04]
-    - dans plusieurs citations il y a pas mal d'adresse du genre,
-précis ?
-        [SRH96] : The Betherland, The Netherland ( 2 fois)
-
