@@ -1,25 +1,11 @@
 C1
 ==
 
-p7 la section 1.5 est renommée.
-
-==> sur les 2 derniers paragraphes, il me semble qu'il y a une ambiguité de portée sur "En fait 2 approche ...";
-   on peut comprendre boîte noire puis bopite blanche ou test et MF (ce qui est bien le cas, mais le changement de pragraphe peut faire douter)
-
-p8 la figure est explosée en sous-figures numérotées.
-
-==> c'est beaucoup plus clair, un dernier mot indique que la zone en fond blanc correspond à des valeurs correctes
-
-p9 "le projet Penjili" est une subsection*.
-
-==> pour OCaml cite aussi  à un moment le manuel de référence (Leroy et al)
-
 p10 dans le début de 1.7 je cite le but.
 
 restrictions => un sous ensemble sûr
 
 ==> au début de 1.7 tu dis "Le but ... sur le langage C (...) dans le but ..." : le but dans le but n'est pas si clair. 
-==> premier item "du le langage" : coquille
  
 p11 2 références vers la section 1.2 qui décrit le problème des pointeurs
    utilisateurs
