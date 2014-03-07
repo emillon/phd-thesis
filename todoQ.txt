@@ -1,2 +1,0 @@
-    - uniformisation des citations de même conférence :
-         PLDI : [FFA99] [FTA02] [Oiw09][VB04]
