@@ -124,7 +124,8 @@ Lors de cette étape, le flot de contrôle est également simplifié
 (figure~\ref{fig:flot-controle-simple}). De plus, les constructions ambigües en
 C comme \texttt{i = i++} sont transformées pour que leur évaluation se fasse
 dans dans un ordre explicite. Un choix arbitraire est alors fait ; par exemple,
-les arguments de fonctions sont évalués de droite à gauche.
+les arguments de fonctions sont évalués de droite à gauche (la raison étant sur
+Intel, les arguments sont empilés dans ce sens).
 
 \begin{figure}[b]
 
@@ -195,10 +196,9 @@ fichier \newspeak.
 La dernière étape est réalisée dans un autre outil nommé \ptrtype, d'environ
 1600 lignes de code OCaml, et réalisé dans le cadre de cette thèse. Elle
 consiste en l'implantation d'un algorithme d'inférence pour les systèmes de
-types décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs} est
-assez simple. Puisqu'ils sont suffisamment proches du lambda calcul simplement
-typé, on peut utiliser une variante de l'algorithme W de Damas et
-Milner~\cite{DamasMilner}.
+types décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
+Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on peut
+utiliser une variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
 
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
