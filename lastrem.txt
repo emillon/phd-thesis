@@ -13,29 +13,14 @@ C5
 
 p63, Clarification sur les typage des accès aux structures (paragraphe 4).
 
-==> ok pour la précision, par contre je ne suis pas sûr que cela motive la lecture de dire je vais lire un système de types 
-==> qui n'est pas exactement celui qui sera implanté. Je trouve que cela trouble la lecture et je le déplacerai bien au niveau de l'implantation. 
-
-p72, référence sur les preuves "à esquisse"
-
-==> ok, à voir s'il y aura une demande de les intégrer en annexe
+==> ok pour la précision, par contre je ne suis pas sûr que cela motive la
+    lecture de dire je vais lire un système de types qui n'est pas exactement celui
+    qui sera implanté. Je trouve que cela trouble la lecture et je le déplacerai
+    bien au niveau de l'implantation.
 
 p76, la preuve du lemme 5.5 est nouvelle (mais comporte un point admis)
 
-
 ==> quelle est la différence entre esquisse et admission ? 
-
-C6
-==
-
-p84: ajout d'un passage sur fun x y -> x | y. On suppose que les fonctions sont
-appelées au moins une fois.
-
-==> en fait tu peux clasher si à la fin du typage il te reste des inconnues dans le cas général, 
-==> pour le cas particulier INT et BITS ce n'est pas sûr qu'un seul appel à une fonction suffise  pour déterminer ;
-==>   indique que tu clashes s'il reste des points de choix à la fin du typage. Tout cela vient du côté monomorphe de ton système. 
-==> tu peux parler de relation de subsomption entre BITS et INT.  
-
 
 
 ccl P2

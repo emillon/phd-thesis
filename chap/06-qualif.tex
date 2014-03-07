@@ -221,8 +221,8 @@ entier. Par exemple, pour écrire $\iIf{x~\&~\hexa{80}}{…}{…}$ (test du bit
 numéro 7). On veut donc exprimer que \enquote{un \tBits est un \tInt}. Cette
 relation entre différents types d'entier correspond à un cas particulier de sous-typage.
 
-On ajoute la règle suivante. Elle permet d'utiliser une expression de type
-$\tBits$ là où une expression de type $\tInt$ est attendue.
+On ajoute la règle de subsomption suivante. Elle permet d'utiliser une
+expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
 
 \begin{mathpar}
     \irule{Sub-BitsInt}
@@ -235,8 +235,9 @@ expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
 priori} de type \tInt, mais \tBits ou \tInt. Cela implique aussi qu'on peut
 additionner un \tBits et un \tInt pour obtenir un \tInt. Les expressions de la
 forme $\eFun{x,y}{\iReturn{x|y}}$ peuvent donc accepter plusieurs types. Pour
-l'inférence, on suppose que ces fonctions sont utilisées au moins une fois,
-ce qui permet de lever l'ambigüité.
+l'inférence, cela correspondra à une inconnue de type. Si celle-ci n'est pas
+résolue à la fin de l'inférence (par exemple si cette fonction n'est pas
+appelée), une erreur est levée. C'est une limitation du monomorphisme.
 
 Ainsi, si $Γ ⊢ e : \tBits$, on a par exemple $Γ ⊢ ~!~e : \tInt$. On rappelle que
 la règle permettant de typer $!$ est inchangée et reste la suivante:
