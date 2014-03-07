@@ -1,13 +1,3 @@
-C3
-==
-
-p24, développements sur le modèle checking: citation de BCC+03 (bounded model
-checking) et Pel93 (partial order reduction).
-
-==> des points fixeS
-==> dans le défi d'implanter un analyseur, je n'ai pas compris la phrase "il faut traduire le code source à analyser dans un langage" ???
-==> à la fin de la présentation p24 (model -checking  interprétation abstraite), tu peux indiquer le risque d'explosion combinatoire.
-
 ccl P1
 ======
 
@@ -15,19 +5,8 @@ p31, meilleure concordance des temps.
 
 Clarification du dernier paragraphe
 
-
 ==> tu ne conclus pas tant que cela sur ton choix "typage" plutôt qu'IA
-==> en dehors du 1er paragraphe qui parle des chapitres 2 et 3, le reste est plutôt sur la suite; ce n'est pas forcément gmenant si tu fais bien la liaison sur le choix 
-==> de l'analyse statique
-
-C4
-==
-
-p58, début de 4.13: correction d'une typo. il n'y a pas de déclaration de types,
-et les fonctions sont des variables comme les autres.
-
-==> ok pour les fonctions
-==> par contre dis un mot sur les types car par la suite tu as un enregistrement dans l'exemple en 4.14 
+==> en dehors du 1er paragraphe qui parle des chapitres 2 et 3, le reste est plutôt sur la suite; ce n'est pas forcément gmenant si tu fais bien la liaison sur le choix de l'analyse statique
 
 C5
 ==

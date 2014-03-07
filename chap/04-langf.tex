@@ -1737,8 +1737,13 @@ ou une instruction.
 Un programme est constitué d'une suite de phrases qui sont soit des déclarations
 de variables (dont les fonctions), soit des évaluations d'expressions.
 
-Donc l'évaluation d'une phrase $p$ fait passer d'un état mémoire $m$
-à un autre $m'$, ce que l'on note $\ph{m}{p}{m'}$.
+Contrairement à C, il n'y a pas de déclaration de types au niveau des phrases
+(permettant par example de définir les types structures et leurs champs). On
+suppose dans une étape précédente chaque accès à un champ de structure a été
+décoré du type complet correspondant.
+
+L'évaluation d'une phrase $p$ fait donc passer d'un état mémoire $m$ à un autre
+$m'$, ce que l'on note $\ph{m}{p}{m'}$.
 
 \changed{Initialiseur $\rightarrow$ valeur initiale}
 
