@@ -16,6 +16,7 @@ regen-bib:
 	    | sort -u \
 	    | xargs cat \
 	    | grep -v month \
+	    | grep -v address \
 	    > $(NAME).bib
 
 gen/%.pycon.pyg.tex: code/%.pycon gen

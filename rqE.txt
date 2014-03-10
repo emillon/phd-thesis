@@ -44,20 +44,3 @@ substitution quitte à
   le 2ème paragraphe ne me semble pas si clair.
 
 
-E.
-°°
-
-   pour la biblio, je trouve qu'il y a encore des incorrections en particulier
-quelle information veux-tu
-+donner en indiquant les lieux, par exemple sur PLDI'2009 Oiw09 où tu précises
-"New York, NY USA" alors
-+que PLDI'09 était à DUblin (Ireland) :
-http://www-plan.cs.colorado.edu/~pldi09/, avec Philippe W. nous y
-+étions (c'est pour ça que j'ai trouvé cela bizarre).
-
-  j'ai l'impression qu'il y a une confusion entre adresse de l'éditeur et lieu
-de la conférence. C'est le
-+plus souvent le cas avec New York et Berlin.
-  Dans le doute tu peux les enlever.
-
-
