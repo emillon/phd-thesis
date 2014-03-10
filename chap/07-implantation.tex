@@ -147,19 +147,22 @@ do {
 }
 \end{SaveVerbatim}
 
-\subbottom[Code source C]{
+\subbottom{
 \begin{minipage}{0.23\linewidth}
 \insertcode{npk-while.c}
 \end{minipage}
 }
 \vrule\hspace{2pt}
-\subbottom[Programme compilé en \newspeak]{
+\subbottom{
 \begin{minipage}{0.7\linewidth}
 \BUseVerbatim{compilnpk}
 \end{minipage}
 }
 
-    \caption{Compilation du flot de contrôle en \newspeak}
+    \caption[Compilation du flot de contrôle en \newspeak]
+        {Compilation du flot de contrôle en \newspeak. Le code source C, à
+            gauche,
+        est compilé en \newspeak, à droite.}
     \label{fig:flot-controle-simple}
 \end{figure}
 

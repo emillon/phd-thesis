@@ -1,0 +1,33 @@
+> B.
+> °°
+> 
+> 
+> 
+> p84 : je n'ai pas vu de changements :
+> ----
+> 
+> p84: ajout d'un passage sur fun x y -> x | y. On suppose que les fonctions sont
+> appelées au moins une fois.
+> 
+> ==> en fait tu peux clasher si à la fin du typage il te reste des inconnues dans
+> le cas général,
+> ==> pour le cas particulier INT et BITS ce n'est pas sûr qu'un seul appel à une
+> fonction suffise  pour
+> +déterminer ;
+> ==>   indique que tu clashes s'il reste des points de choix à la fin du typage.
+> Tout cela vient du côté
+> +monomorphe de ton système.
+> ==> tu peux parler de relation de subsomption entre BITS et INT.
+> ---
+
+J'ai précisé que c'était une règle de subsomption et que c'était une limitation du
+monomorphisme.
+
+> C.
+> °°
+> 
+> figure 7.2
+> 
+> sépare la légende : code avec une barre horizontale dans ton tableau
+
+C'était un peu chargé avec un tableau, j'ai fait une légende plus longue.
