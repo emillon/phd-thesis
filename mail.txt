@@ -1,3 +1,15 @@
+> A.
+> °°
+> mais à un moment tu vas utiliser des structs,
+>
+> tu indiques néanmoins qu'il y a une étape intermédiaire qui associe les types de
+> structures, mais seront-elles déclarées ?
+
+Soit le programmeur a écrit les types en entier à chaque fois, soit on compile
+depuis un langage où il y a des déclaration de structures. J'ai rajouté une
+phrase là dessus en 4.13. Et au pire j'en reparle dans le chapitre 5 pages 63
+puis 66.
+
 > B.
 > °°
 > en fait tu peux clasher si à la fin du typage il te reste des inconnues dans
