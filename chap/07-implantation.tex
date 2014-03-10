@@ -215,8 +215,14 @@ La fonction \texttt{unify} prend en entrée deux représentations de types pouva
 contenir des inconnues de la forme \texttt{Var n}, et retourne une liste de
 couples $(n, t)$ indiquant les substitutions à faire.
 
-Cet algorithme (décrit en pseudo-code ML en figure~\ref{fig:algo-unif}) prend un
-chemin différent selon la forme des deux types d'entrée:
+Cet algorithme est décrit en pseudo-code ML en figure~\ref{fig:algo-unif}. Pour
+simplifier, on le présente comme retournant une liste de substitutions, mais il
+est implanté de manière destructive: \texttt{Var n} contient une référence qui
+peut être modifiée, et grâce au partage c'est équivalent à substituer dans tous
+les types qui contiennent \texttt{Var n}.
+
+La fonction d'unification prend un chemin différent selon la forme des deux
+types d'entrée:
 
 \changed{Passage en pseudocode}
 

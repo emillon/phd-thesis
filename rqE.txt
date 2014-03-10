@@ -2,45 +2,13 @@ A.    en 4.13 :
 °°
       comme indiqué à la figure 4.5 il n'y a pas de déclarations de types dans
 les phrases du langage
-+
+
      mais à un moment tu vas utiliser des structs,
 
     tu indiques néanmoins qu'il y a une étape intermédiaire qui associe les
-types de structures, mais ser
-+ont-elles déclarées ?
-+
+types de structures, mais seront-elles déclarées ?
+
   par exemple la figure 5.2 indique que S (au sens struct) est un type accepté.
 
    tu reprends cet argument d'association du type S à un accès à un champ mais
-on ne voit pas  forcément
-+si bien comment c'est fait.
-+
-
-
-
-D.
-°°
-
-sur
----
-p102: la section 7.2 est refaite pour fusionner plusieurs anciennes sections.
-==> ce qui est un peu étrange à la lecture du 2ème paragraphe de prttype, c'est
-    que l'on imagine que l'unification est destructive alors ye tu ramènes en
-fait
-    une substitution
-==>  que veux-tu dire par substitutions explicites ?
-
-En fait c'est fait de manière destructive, mais Pierre m'a conseillé (je crois)
-de le présenter comme un algo "pur", mais je peux facilement modifier.
-
-L'avantage de le présenter de manière destructive c'est que je peux y intégrer
-le passage sur les structures (on ne peut pas dire "ajouter l à X_b" en
-renvoyant une liste de substitutions).
----
-
-indique que tu présentes l'algo en peusdo-code version retour d'une liste de
-substitution quitte à
-+l'avoir implanté de manière destructive
-  le 2ème paragraphe ne me semble pas si clair.
-
-
+on ne voit pas  forcément si bien comment c'est fait.
