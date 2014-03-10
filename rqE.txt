@@ -1,0 +1,90 @@
+A.    en 4.13 :
+°°
+      comme indiqué à la figure 4.5 il n'y a pas de déclarations de types dans
+les phrases du langage
++
+     mais à un moment tu vas utiliser des structs,
+
+    tu indiques néanmoins qu'il y a une étape intermédiaire qui associe les
+types de structures, mais ser
++ont-elles déclarées ?
++
+  par exemple la figure 5.2 indique que S (au sens struct) est un type accepté.
+
+   tu reprends cet argument d'association du type S à un accès à un champ mais
+on ne voit pas  forcément
++si bien comment c'est fait.
++
+B.
+°°
+
+
+
+p84 : je n'ai pas vu de changements :
+----
+
+p84: ajout d'un passage sur fun x y -> x | y. On suppose que les fonctions sont
+appelées au moins une fois.
+
+==> en fait tu peux clasher si à la fin du typage il te reste des inconnues dans
+le cas général,
+==> pour le cas particulier INT et BITS ce n'est pas sûr qu'un seul appel à une
+fonction suffise  pour
++déterminer ;
+==>   indique que tu clashes s'il reste des points de choix à la fin du typage.
+Tout cela vient du côté
++monomorphe de ton système.
+==> tu peux parler de relation de subsomption entre BITS et INT.
+---
+
+C.
+°°
+
+figure 7.2
+
+sépare la légende : code avec une barre horizontale dans ton tableau
+
+
+D.
+°°
+
+sur
+---
+p102: la section 7.2 est refaite pour fusionner plusieurs anciennes sections.
+==> ce qui est un peu étrange à la lecture du 2ème paragraphe de prttype, c'est
+    que l'on imagine que l'unification est destructive alors ye tu ramènes en
+fait
+    une substitution
+==>  que veux-tu dire par substitutions explicites ?
+
+En fait c'est fait de manière destructive, mais Pierre m'a conseillé (je crois)
+de le présenter comme un algo "pur", mais je peux facilement modifier.
+
+L'avantage de le présenter de manière destructive c'est que je peux y intégrer
+le passage sur les structures (on ne peut pas dire "ajouter l à X_b" en
+renvoyant une liste de substitutions).
+---
+
+indique que tu présentes l'algo en peusdo-code version retour d'une liste de
+substitution quitte à
++l'avoir implanté de manière destructive
+  le 2ème paragraphe ne me semble pas si clair.
+
+
+E.
+°°
+
+   pour la biblio, je trouve qu'il y a encore des incorrections en particulier
+quelle information veux-tu
++donner en indiquant les lieux, par exemple sur PLDI'2009 Oiw09 où tu précises
+"New York, NY USA" alors
++que PLDI'09 était à DUblin (Ireland) :
+http://www-plan.cs.colorado.edu/~pldi09/, avec Philippe W. nous y
++étions (c'est pour ça que j'ai trouvé cela bizarre).
+
+  j'ai l'impression qu'il y a une confusion entre adresse de l'éditeur et lieu
+de la conférence. C'est le
++plus souvent le cas avec New York et Berlin.
+  Dans le doute tu peux les enlever.
+
+
