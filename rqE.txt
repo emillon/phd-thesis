@@ -1,14 +1,15 @@
-A.    en 4.13 :
-°°
-      comme indiqué à la figure 4.5 il n'y a pas de déclarations de types dans
-les phrases du langage
-
-     mais à un moment tu vas utiliser des structs,
-
-    tu indiques néanmoins qu'il y a une étape intermédiaire qui associe les
-types de structures, mais seront-elles déclarées ?
-
-  par exemple la figure 5.2 indique que S (au sens struct) est un type accepté.
-
-   tu reprends cet argument d'association du type S à un accès à un champ mais
-on ne voit pas  forcément si bien comment c'est fait.
+> A.
+> °°
+> en 4.13 :
+> comme indiqué à la figure 4.5 il n'y a pas de déclarations de types dans les
+> phrases du langage
+>
+> mais à un moment tu vas utiliser des structs,
+>
+> tu indiques néanmoins qu'il y a une étape intermédiaire qui associe les types de
+> structures, mais seront-elles déclarées ?
+>
+> par exemple la figure 5.2 indique que S (au sens struct) est un type accepté.
+>
+> tu reprends cet argument d'association du type S à un accès à un champ mais on
+> ne voit pas  forcément si bien comment c'est fait.
