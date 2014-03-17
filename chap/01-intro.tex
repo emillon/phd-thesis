@@ -399,7 +399,7 @@ code est écrite en C++. Il utilise une représentation intermédiaire qui peut
 code-octet compact, ou textuelle.
 
 \paragraph{Cmm} est une représentation interne utilisée pour la génération de
-code lors de la compilation d'OCaml~\link{ocaml}, et disponible dans les sources
+code lors de la compilation d'OCaml~\cite{ocamlManual,DAOC}, et disponible dans les sources
 du compilateur (il s'agit donc d'une structure de données OCaml). Ce langage a
 l'avantage d'être très restreint, mais malheureusement il n'existe pas
 directement de traducteur permettant de compiler C vers Cmm.
@@ -448,16 +448,17 @@ si le logiciel de contrôle de vol avait été vérifié plus
 efficacement~\cite{Ariane501}.
 
 Plusieurs méthodes existent pour éliminer les risques de fautes. En fait, deux
-approches duales sont nécessaires. La première consiste à mettre le logiciel
-dans des situations concrètes et à vérifier que la sortie correspond au résultat
-attendu : c'est la technique des tests.  Les tests \enquote{boîte noire}
-consistent à tester en ayant à disposition uniquement les spécifications des
-modules à différentes échelles (par exemple : logiciel, module, classe,
-méthode). Au contraire, les tests dits \enquote{boîte blanche} sont écrits en
-ayant à disposition l'implémentation. Cela permet par exemple de s'assurer que
-chaque chemin d'exécution est emprunté. Cette manière de procéder est similaire
-à la preuve par neuf enseignée aux enfants : il est possible de prouver
-l'erreur, mais pas que le programme est correct.
+approches duales sont nécessaires: les tests et les méthodes formelles. La
+première consiste à mettre le logiciel dans des situations concrètes et à
+vérifier que la sortie correspond au résultat attendu : c'est la technique des
+tests.  Les tests \enquote{boîte noire} consistent à tester en ayant à
+disposition uniquement les spécifications des modules à différentes échelles
+(par exemple : logiciel, module, classe, méthode). Au contraire, les tests dits
+\enquote{boîte blanche} sont écrits en ayant à disposition l'implémentation.
+Cela permet par exemple de s'assurer que chaque chemin d'exécution est emprunté.
+Cette manière de procéder est similaire à la preuve par neuf enseignée aux
+enfants : il est possible de prouver l'erreur, mais pas que le programme est
+correct.
 
 L'approche des méthodes formelles, au contraire, permet de s'assurer de
 l'absence d'erreurs à l'exécution. Par exemple, l'analyse statique par
@@ -486,16 +487,16 @@ aucun comportement, permet de prouver l'absence d'erreurs.
 
 La figure~\ref{fig:staticanalysis} résume cette approche : l'ensemble des
 valeurs dangereuses est représenté par un ensemble hachuré, l'ensemble des
-comportements réels du programme est noté par des points, et l'approximation en
-gris. Plusieurs cas peuvent se produire. Dans la figure~\ref{fig:appx-proof}, on
-a prouvé à la compilation que le programme ne pourra pas comporter d'erreurs à
-l'exécution. Dans la figure~\ref{fig:appx-warn}, l'approximation recouvre les
-cas dangereux: on émet une alarme par manque de précision. Dans la
-figure~\ref{fig:appx-unsound} l'approximation n'est pas \emph{sound} (par
-construction, on évite ce cas). Enfin, dans la figure~\ref{fig:appx-warn-ok}, on
-émet une alarme à raison car il existe des comportements erronés. Toute la
-difficulté est donc de construire une surapproximation correcte mais conservant
-une précision suffisante.
+valeurs sûres est en blanc, l'ensemble des comportements réels du programme est
+noté par des points, et l'approximation en gris. Plusieurs cas peuvent se
+produire. Dans la figure~\ref{fig:appx-proof}, on a prouvé à la compilation que
+le programme ne pourra pas comporter d'erreurs à l'exécution. Dans la
+figure~\ref{fig:appx-warn}, l'approximation recouvre les cas dangereux: on émet
+une alarme par manque de précision. Dans la figure~\ref{fig:appx-unsound}
+l'approximation n'est pas \emph{sound} (par construction, on évite ce cas).
+Enfin, dans la figure~\ref{fig:appx-warn-ok}, on émet une alarme à raison car il
+existe des comportements erronés. Toute la difficulté est donc de construire une
+surapproximation correcte mais conservant une précision suffisante.
 
 \begin{figure}[h]%{{{
 \centering
@@ -696,7 +697,7 @@ disponibles sous license libre sur~\link{penjili}. L'analyseur statique Penjili,
 reposant sur ces outils, a été utilisé pour analyser des logiciels embarqués
 critiques de plusieurs millions de lignes de code. Ce dernier n'est pour le
 moment pas \emph{open-source}. Tous ces outils sont écrits dans le langage
-OCaml~\cite{DAOC}.
+OCaml~\cite{ocamlManual,DAOC}.
 
 \section{De l'avionique à l'informatique d'entreprise}
 \added{toute la section}
@@ -806,13 +807,12 @@ programmes d'une manière subtile et pas toujours bien spécifiée ni documenté
 
 Le but de ce travail est de définir et d'implanter des analyses statiques
 \enquote{légères} sur le langage C (c'est-à-dire plus simples que les analyses
-de valeurs par interprétation abstraite) dans le but de détecter les
-utilisations dangereuses de pointeurs utilisateurs. Nous proposons d'étendre
-\newspeak pour analyser des propriétés de sécurité par typage sur du code non
-avionique. En effet, les types permettent de modéliser l'environnement
-d'exécution d'un programme (ici, les paramètres d'appels système) avec un grain
-assez grand, alors qu'être plus fin est difficile et nécessite de modéliser
-l'environnement.
+de valeurs par interprétation abstraite) pour détecter les utilisations
+dangereuses de pointeurs utilisateurs. Nous proposons d'étendre \newspeak pour
+analyser des propriétés de sécurité par typage sur du code non avionique. En
+effet, les types permettent de modéliser l'environnement d'exécution d'un
+programme (ici, les paramètres d'appels système) avec un grain assez grand,
+alors qu'être plus fin est difficile et nécessite de modéliser l'environnement.
 
 Nos contributions sont les suivantes:
 
@@ -821,11 +821,12 @@ Nos contributions sont les suivantes:
 \begin{itemize}
 
 \item
-Une première étape est de définir un sous-ensemble sûr du le langage source. En
+Une première étape est de définir un sous-ensemble sûr du langage source. En
 effet, le langage C permet des conversions non sûres entre données, ce qui
-empêche le typage d'avoir un intérêt. On définit alors un modèle de langage
-impératif avec un modèle mémoire de plus haut niveau, interdisant ces
-constructions: \langname.
+limite l'intérêt du typage. On définit alors un modèle de langage impératif avec
+un modèle mémoire de plus haut niveau, interdisant ces constructions: \langname.
+Celui-ci est un modèle inspiré du langage \newspeak, déjà utilisé pour d'autres
+analyses statiques.
 
 \item
 Sur ce langage on définit une sémantique opérationnelle, qui permet de raisonner
@@ -835,9 +836,10 @@ permettant de décrire la modification en profondeur de la mémoire.
 
 \item
 Au cœur de notre travail se trouve un système de types sûrs pour \langname,
-ainsi que deux extensions validant l'approche typage pour résoudre notre
-problème de base, qui est la vérification des accès aux pointeurs utilisateur
-(présentés dans la section~\ref{sec:sep-esp}).
+ainsi que deux extensions. La première permet d'illustrer l'approche typage en
+détectant les entiers utilisés comme ensembles de bits, et la seconde permet de
+résoudre notre problème de base, qui est la vérification des accès aux pointeurs
+utilisateur (présentés dans la section~\ref{sec:sep-esp}).
 
 \item
 Notre formalisation est accompagnée d'un prototype, basé sur \newspeak. Cela

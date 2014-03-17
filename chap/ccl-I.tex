@@ -1,4 +1,3 @@
-
 Nous avons montré que l'écriture de noyaux de systèmes d'exploitation nécessite
 de manipuler des données provenant d'une zone non sûre, l'espace utilisateur.
 Parmi ces données, il arrive de récupérer des pointeurs qui servent à passer des
@@ -7,10 +6,13 @@ déréférence ces pointeurs sans vérifier qu'ils pointent bien vers une zone
 mémoire également contrôlée par l'appelant, on risque de lire ou d'écrire dans
 des zones mémoires réservées au noyau seul.
 
-Nous proposons une technique de typage pour détecter ces cas dangereux. Pour ce
-faire, on commence par définir un langage impératif bien typable que nous
-appellerons \langname.
-Celui-ci s'appuie sur le langage \newspeak, qui est un langage intermédiaire
+Nous proposons une technique de typage pour détecter ces cas dangereux. Elle est
+plus adaptée qu'une analyse de valeurs, car le grain pour distinguer les
+pointeurs sensibles des pointeurs sûrs n'a pas besoin d'être très fin.
+
+Pour décrire ces analyses, on commence par définir un langage impératif bien
+typable que nous appellerons \langname.
+Celui-ci s'inspire du langage \newspeak, qui est un langage intermédiaire
 développé par EADS dans le but de vérifier la sûreté de programmes C embarqués.
 À ce titre, il existe un compilateur qui est capable de traduire du code C vers
 \newspeak.

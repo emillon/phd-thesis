@@ -11,7 +11,13 @@ showdvi: $(NAME).dvi
 	xdvi $<
 
 regen-bib:
-	cat *.tex chap/*.tex | perl scripts/extractbib.pl | sort -u | xargs cat > $(NAME).bib
+	cat *.tex chap/*.tex \
+	    | perl scripts/extractbib.pl \
+	    | sort -u \
+	    | xargs cat \
+	    | grep -v month \
+	    | grep -v address \
+	    > $(NAME).bib
 
 gen/%.pycon.pyg.tex: code/%.pycon gen
 	pygmentize -f latex -l pycon -o $@ $<

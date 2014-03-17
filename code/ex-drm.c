@@ -16,6 +16,6 @@ int radeon_info_ioctl(struct drm_device *d, void *data,
 
 	info = data;
 	value_ptr = info->value;
-        value = *value_ptr;
+        value = *value_ptr;      /* erreur */
         return 0;
 }

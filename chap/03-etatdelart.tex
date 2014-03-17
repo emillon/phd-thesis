@@ -238,12 +238,12 @@ réaliser une projection de celle-ci. Par exemple, dans le domaine des
 intervalles, $[0;2]~\nabla~[0;3] = [0;+\infty[$. On atteint alors un point fixe
 mais qui est plus grand que celui qu'on aurait obtenu sans cette accélération:
 on perd en précision. Pour en gagner, on peut redescendre sur le treillis des
-points fixe avec une suite d'itérations décroissantes~\cite{granger,policy}.
+points fixes avec une suite d'itérations décroissantes~\cite{granger,policy}.
 
 En termes d'ingéniérie logicielle, implanter un analyseur statique est un défi
 en soi. En plus des domaines abstraits, d'un itérateur, il faut traduire le code
-source à analyser dans un langage, et traduire les résultats de l'analyse en un
-ensemble d'alarmes à présenter à l'utilisateur.
+source à analyser dans un langage intermédiaire, et traduire les résultats de
+l'analyse en un ensemble d'alarmes à présenter à l'utilisateur.
 
 Cette technique est très puissante: si un interprète abstrait \emph{sound}
 (réalisant une surapproximation, c'est-à-dire ne manquant aucun programme
@@ -281,12 +281,10 @@ les cas d'erreur. Plusieurs techniques permettent de résoudre ce problème. Le
 \emph{bounded model checking}~\cite{boundedmodelchecking} explore uniquement les
 états atteints en moins de $k$ étapes. Cela peut permettre de trouver des cas
 d'erreur, mais pas de montrer que le système est correct (seulement qu'il l'est
-pour les exécutions de moins de $k$ étapes). Il est aussi possible de
-partitionner l'espace d'états en classes
-d'équivalence~\cite{partitionmodelchecking}, permettant de réduire le nombre
-d'états de l'automate à explorer en ne considérant que des représentants de
-chaque classe. Comme l'interprétation abstraite, ces analyses sont très
-précises, au détriment d'un temps de calcul important.
+pour les exécutions de moins de $k$ étapes). Il est aussi possible de réduire le
+nombre d'états de l'automate~\cite{partitionmodelchecking}. Comme
+l'interprétation abstraite, ces analyses sont très précises, au détriment d'un
+temps de calcul important à cause de l'explosion combinatoire.
 
 \section{Typage}
 
