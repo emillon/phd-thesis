@@ -281,16 +281,10 @@ les cas d'erreur. Plusieurs techniques permettent de résoudre ce problème. Le
 \emph{bounded model checking}~\cite{boundedmodelchecking} explore uniquement les
 états atteints en moins de $k$ étapes. Cela peut permettre de trouver des cas
 d'erreur, mais pas de montrer que le système est correct (seulement qu'il l'est
-pour les exécutions de moins de $k$ étapes). Il est aussi possible de
-partitionner l'espace d'états en classes
-d'équivalence~\cite{partitionmodelchecking}, permettant de réduire le nombre
-d'états de l'automate à explorer en ne considérant que des représentants de
-chaque classe. Comme l'interprétation abstraite, ces analyses sont très
-précises, au détriment d'un temps de calcul important à cause de l'explosion
-combinatoire.
-
-%TODO[S] le "partial order reduction" sert à réduire le nombre de classes
-%d'équivalence à explorer, pas à rendre ça fini.
+pour les exécutions de moins de $k$ étapes). Il est aussi possible de réduire le
+nombre d'états de l'automate~\cite{partitionmodelchecking}. Comme
+l'interprétation abstraite, ces analyses sont très précises, au détriment d'un
+temps de calcul important à cause de l'explosion combinatoire.
 
 \section{Typage}
 
