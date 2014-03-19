@@ -520,16 +520,16 @@ Pour les calculer, on n'a pas accès au code du programme, seulement à ses
 données. Il est par exemple possible de reconnaître le type des constantes, mais
 pas celui des fonctions. Celles-ci sont en fait le seul cas qu'il est impossible
 de déterminer à l'exécution. On le remplace donc par un cas plus simple où seul
-l'arité est conservée. L'alternative serait de garder le type à l'exécution, ce
-qui éloigne d'un langage à la C.
+l'arité est conservée.
 
 \paragraph{Remarque}
 
 \added{Ce paragraphe}
 
-Le fait d'effacer les types à l'exécution est un choix permettant d'alléger les
-valeurs en mémoire. Il serait aussi possible de conserver les types complets à
-l'exécution, afin de permettre une introspection dynamique des valeurs.
+Le fait d'effacer les types à l'exécution est un choix permettant
+d'alléger les valeurs en mémoire. Il serait aussi possible de conserver les
+types complets à l'exécution, afin de permettre une introspection dynamique des
+valeurs, mais cela éloignerait le langage de C.
 
 Le cas des références (règle \textsc{S-Ptr}) utilise le typage des valeurs
 gauches, codéfini par:
