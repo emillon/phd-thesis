@@ -372,13 +372,6 @@
              { }
              { \mmi{m}{v}{m}{\iPass} }
     }
-    {Decl}{ \irule{Decl}
-            { m' = \cExtend{m}{x}{v}
-           \\ \mmi{m'}{i}{m''}{\iPass}
-           \\ m''' = \cCleanVar{m''}{(|m|, x)}
-            }
-            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
-    }
     {Decl-Pass}{ \irule{Decl-Pass}
                      { m' = \cCleanVar{m - x}{(|m|, x)} }
                      { \mm{m}{\iDecl{x}{v}{\iPass}}
