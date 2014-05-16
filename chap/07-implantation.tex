@@ -12,7 +12,7 @@ Mais cette représentation utilise un modèle mémoire différent. En effet il
 colle finement à celui de C, où des constructions comme les unions empêchent la
 sûreté du typage. Définir \langname a précisement pour but de définir un langage
 inspiré de C mais sur lequel le typage peut être sûr. Il faudra donc adapter les
-règles de typage les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}. On
+règles de typage des chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}. On
 reviendra sur cette distinction entre les deux niveaux de sémantique dans la
 conclusion de la partie~\ref{part:xp}, page~\pageref{page:ccl-npk-spk}.
 
@@ -203,6 +203,8 @@ types décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on peut
 utiliser une variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
 
+% TODO (*) UNIFY
+
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
 inconnus. En pratique, on utilise l'optimisation classique qui consiste à se
@@ -318,6 +320,8 @@ types d'entrée:
 \label{fig:algo-unif}
 \end{figure}%}}}
 
+% TODO fig utilise plutôt la notation de type de la figure 7.1
+
 \begin{itemize}
 
 \item si les deux types sont inconnus (de la forme \texttt{Var n}), on substitue
@@ -326,7 +330,7 @@ l'un par l'autre.
 \item si un type est inconnu et pas l'autre, il faut de la même manière faire
 une substitution.
 Mais en faisant ça inconditionnellement, cela peut poser problème:
-par exemple en tentant d'unifier \texttt{a} avec \verb!Ptr(a)! on pourrait
+par exemple, en tentant d'unifier \texttt{a} avec \verb!KPtr(a)!, on pourrait
 créer une substitution cyclique.
 Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
 pas présent dans le type à affecter. C'est le but de la fonction
@@ -357,6 +361,8 @@ il faut partitionner l'ensemble des champs en 3: ceux qui apparaissent dans les
 deux structures, ceux qui apparaissent dans $A$ mais pas dans $B$, et ceux qui
 apparaissent dans $B$ mais pas dans $A$.
 
+% TODO ↑ Et l'ordre des champs?
+
 \begin{itemize}
     \item Pour tous les champs $l$ tels que $l: a_i ∈ A$ et $l: b_j ∈ B$,
         on unifie $a_i$ et $b_j$.
@@ -377,6 +383,8 @@ de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
 \added{citation}
 
 \subsection*{Architecture de \ptrtype}
+
+% TODO mettre cette section avant UNIFY (*)
 
 Bâti autour de cette fonction, le programme \ptrtype lit un programme \newspeak
 et réalise l'inférence de types. Si l'argument passé à \ptrtype{} est un fichier
@@ -405,8 +413,8 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!)\foot
     mutellement récursives ne sont pas supportées.
 
 \item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
-    qui permet de créer un environnement initial. On peut écrire les annotations
-    suivantes:
+    qui permet de créer un environnement initial. On peut y introduire les
+    annotations suivantes:
 
   \begin{center}
     \begin{tabular}{lp{7cm}}
@@ -420,7 +428,7 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!)\foot
         \texttt{/*!npk userptr x */} &
         \texttt{x} a pour type $\ptrU{a}$, où $a$ est une nouvelle inconnue de type.
         \\
-        \texttt{/*!npk userptr_fieldp p f */} &
+        \texttt{/*!npk userptr_fieldp x f */} &
       \texttt{x} a pour type $\{ f: \ptrU{a} ; … \}~*$, où $a$ est une nouvelle inconnue
       de type. \\
       \bottomrule
@@ -428,8 +436,8 @@ ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!)\foot
     \label{page:tab-anns}
   \end{center}
 
-\item Les types de chaque fonction sont inférés, par le biais de la fonction
-  suivante:
+\item Les types de chaque fonction sont ensuite inférés, par le biais de la
+    fonction suivante:
 
 \begin{Verbatim}
 val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
@@ -443,11 +451,11 @@ val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
 
 \end{itemize}
 
-La fonction appelée \texttt{unify}, appelée dans toutes les fonctions
-d'inférence, peut retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce
-cas, la paire de types à unifier est mise dans une liste d'attente qui sera
-unifiée après le parcours du programme. Le but est d'instrumenter l'inférence de
-types afin de pouvoir en faire une exécution \enquote{pas à pas}.
+La fonction \texttt{unify}, appelée dans toutes les fonctions d'inférence, peut
+retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
+types à unifier est mise dans une liste d'attente qui sera unifiée après le
+parcours du programme. Le but est d'instrumenter l'inférence de types afin de
+pouvoir en faire une exécution \enquote{pas à pas}.
 
 \begin{figure}
 
@@ -509,9 +517,9 @@ valeurs gauches de retour. On obtient également le type de la fonction (à part
 du type de la fonction présent dans l'environnement, ou du type du pointeur de
 fonction qui est déréférencé), et on unifie ces deux informations.
 
-On peut donner quelques autres exemples. Pour additionner deux flottants, on
-unifie leur type avec \tFloat. Le résultat est également de type \tFloat. Cela
-correspond à la règle \textsc{Op-Float}.
+Pour additionner deux flottants, par exemple, on unifie leurs types avec
+\tFloat. Le résultat est également de type \tFloat. Cela correspond à la règle
+\textsc{Op-Float}.
 
 \begin{verbatim}
 let infer_binop op (_, a) (_, b) =
@@ -548,7 +556,8 @@ type d'un pointeur noyau.
 \section{Exemple}
 \label{sec:impl-ex}
 
-Lançons l'analyse sur un petit exemple:
+Lançons l'analyse sur un petit exemple (stocké dans le fichier
+\texttt{example.c}):
 
 \begin{verbatim}
 int f(int *x) { return (*x + 1); }
@@ -574,7 +583,7 @@ L'exécution de notre analyseur affiche un programme complètement annoté:
 
 \begin{itemize}
     \item Ligne 1: le type inféré de la fonction \texttt{f} est affiché. Il est
-        calculé entièrement en fonction des opérations effectuées, on n'utilise
+        calculé entièrement en fonction des opérations effectuées; on n'utilise
         pas les étiquettes de type du programme.
 
     \item Ligne 2: le code de la fonction est affiché. Les indications de la
@@ -617,26 +626,28 @@ l'algorithme W est EXP-complet~\cite{mairson}, c'est-à-dire que les algorithmes
 efficaces ont une complexité exponentielle en la taille du programme. Cependant,
 lorsqu'on borne la \enquote{taille} des types, celle-ci devient
 quasi-linéaire~\cite{rta03}, ce qui signifie qu'il n'y a pas de problème de
-performance à attendre.
+performance à attendre en pratique.
 
 Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
 fonctions imbriquées, et les types des valeurs globales sont écrites par le
-programmeur. Cela permet permet de borner leur taille. En pratique, sur les
-exemples testés nous n'avons pas noté de délai d'exécution notable.
+programmeur. Cela permet de borner leur taille. En pratique, sur les exemples
+testés nous n'avons pas noté de délai d'exécution notable.
+
+% TODO ↑ combien? de quelle taille?
 
 En revanche, la compilation de C vers \newspeak peut être plus coûteuse,
 notamment lorsque le fichier d'entrée est de taille importante. Le temps de
 traitement est plus long que celui d'un compilateur comme \texttt{gcc} ou
-\texttt{clang}. \ctonewspeak a été utilisé pour compiler des projets de l'ordre
-du million de lignes de code source prétraité, et son exécution ne prenait pas
-plus de quelques minutes.
+\texttt{clang}. \ctonewspeak a toutefois été utilisé pour compiler des projets
+de l'ordre du million de lignes de code source prétraité, et son exécution ne
+prenait pas plus de quelques minutes.
 
 À titre d'illustration, nous avons mesuré les performances de \ctonewspeak et
 \ptrtype sur l'exemple \enquote{Blackfin} du chapitre suivant. Celui consiste en
 un fichier prétraité de 853 lignes de code C. Exécuter 1000 fois \ctonewspeak
 sur ce fichier prend 36.3 secondes, alors qu'exécuter 1000 fois \ptrtype sur le
-fichier \newspeak résultant ne dure que 8.1 secondes (pour comparaison, lancer
+fichier \newspeak résultant ne dure que 8.1 secondes (par comparaison, lancer
 1000 fois \texttt{/bin/true}, commande qui ne fait rien, prend 1.6 seconde).
 
 Les structures internes de \ctonewspeak ont déjà été améliorées, et d'autres

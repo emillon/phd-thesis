@@ -13,10 +13,10 @@ homogènes (dans le cas des tableaux) ou hétérogènes (dans le cas des
 structures).
 
 Une des spécificités de C est qu'il expose au programmeur la notion de pointeur,
-c'est-à-dire des variables qui représentent directement une adresse en mémoire.
+c'est-à-dire de variables qui représentent directement une adresse en mémoire.
 Les pointeurs peuvent être typés (on garde une indication sur le type de l'objet
 stocké à cette adresse) ou \enquote{non typés}. Dans ce dernier cas, ils ont en
-fait le type \texttt{void *} qui est compatible avec n'importe quel type
+fait le type \texttt{void *}, qui est compatible avec n'importe quel type
 pointeur.
 
 \added{Dans ce dernier cas...}
@@ -32,18 +32,18 @@ Tout d'abord, on commence par présenter les notations qui accompagneront le
 reste des chapitres. Cela inclut la notion de lentille, qui est utilisée pour
 définir les accès profonds à la mémoire. Cela permet de résoudre le problème de
 mettre à jour une sous-valeur (par exemple un champ de structure) d'une
-variable, par exemple. Les lentilles permettent de définir de manière
-déclarative que pour faire cette opération, il faut obtenir l'ancienne valeur de
-la variable, puis calculer une nouvelle valeur en remplaçant une sous-valeur,
-avant de replacer cette nouvelle valeur à sa place en mémoire. En pratique, on
-définira deux lentilles: une qui relie un état mémoire à la valeur d'une
-variable, et une qui relie une valeur à une de ses sous-valeurs. Avec cette
-technique, on peut définir en une seule fois les opérations de lecture et
-d'écriture de sous-valeurs imbriquées.
+variable. Les lentilles permettent de définir de manière déclarative que, pour
+faire cette opération, il faut obtenir l'ancienne valeur de la variable, puis
+calculer une nouvelle valeur en remplaçant une sous-valeur, avant de replacer
+cette nouvelle valeur à sa place en mémoire. En pratique, on définira deux
+lentilles: une qui relie un état mémoire à la valeur d'une variable, et une qui
+relie une valeur à une de ses sous-valeurs. Avec cette technique, on peut
+définir en une seule fois les opérations de lecture et d'écriture de
+sous-valeurs imbriquées.
 
-Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi qu'une
-description de ses caractéristiques principales. En particulier, le modèle
-mémoire est détaillé, ainsi que les valeurs manipulées par le langage.
+Ensuite, on présente \langname en soi, c'est-à-dire sa syntaxe, ainsi que ses
+caractéristiques principales. En particulier, le modèle mémoire est détaillé,
+ainsi que les valeurs manipulées par le langage.
 
 Enfin, on décrit une sémantique opérationnelle pour ce langage. Cela permet de
 définir précisément l'exécution d'un programme \langname au niveau de la
@@ -73,7 +73,7 @@ logiques et des règles d'inférence, de la forme:
 Les $P_i$ sont les prémisses, et $C$ la conclusion. Cette règle s'interprète de
 la manière suivante: si les $P_i$ sont vraies, alors $C$ est vraie.
 
-Certaines règles n'ont pas de prémisse, ce sont des axiomes:
+Certaines règles n'ont pas de prémisse; ce sont des axiomes:
 
 \[
 \iaxiom{Ax}{A}
@@ -137,7 +137,7 @@ Haskell~\cite{rwh}: \texttt{r \{ x = 5 \}} représente une valeur enregistrement
 égale à \texttt{r} sur tous les champs, sauf pour le champ \texttt{x} où elle
 vaut \texttt{5}. Utiliser des lentilles revient à ajouter dans le langage la
 notion de champ en tant que valeur de première classe. Elles ont l'avantage de
-pouvoir se composer, c'est-à-dire que si on a un champ nommé $x$ qui contient un
+pouvoir se composer, c'est-à-dire que, si on a un champ nommé $x$ qui contient un
 champ nommé $y$, alors on peut modifier le champ du champ automatiquement.
 
 Dans ce cadre, les lentilles ont été popularisées par Van
@@ -155,7 +155,7 @@ pile.
 Étant donnés deux ensembles $R$ et $A$, une \emph{lentille} $ℒ ∈ \setLens{R}{A}$
 (ou \emph{accesseur}) est un moyen d'accéder en lecture ou en écriture à une
 sous-valeur appartenant à $A$ au sein d'une valeur appartenant à $R$ (pour
-\emph{record}). Elle est consistuée des opérations suivantes:
+\emph{record}). Elle est constituée des opérations suivantes:
 
 \begin{itemize}
 \item
@@ -164,7 +164,7 @@ sous-valeur appartenant à $A$ au sein d'une valeur appartenant à $R$ (pour
   une fonction de mise à jour\enspace$\mathrm{put}_ℒ : (A × R) → R$
 \end{itemize}
 
-telles que pour tous $a∈A, a'∈A, r∈R$:
+telles que pour tour $a∈A, a'∈A, r∈R$:
 
 \begin{align*}
 \tag{\textsc{GetPut}}
@@ -178,7 +178,7 @@ telles que pour tous $a∈A, a'∈A, r∈R$:
 On note $ℒ =
 \mkLens{\mathrm{get}_{ℒ}}{\mathrm{put}_{ℒ}}$.
 
-\textsc{GetPut} signifie que si on lit une valeur puis qu'on la réécrit, l'objet
+\textsc{GetPut} signifie que, si on lit une valeur puis qu'on la réécrit, l'objet
 n'est pas modifié; \textsc{PutGet} décrit l'opération inverse: si on écrit
 une valeur dans le champ, c'est la valeur qui sera lue; enfin, \textsc{PutPut}
 évoque le fait que chaque écriture est totale: quand deux écritures se suivent,
@@ -463,7 +463,7 @@ qu'un seul type de boucle et pas de saut (instruction \texttt{goto}).
 
 Les opérateurs sont donnés dans la figure~\ref{fig:stx-ops}. Ils correspondent à
 ceux du langage C. La différence principale est que les opérations sur les
-entiers, flottants et pointeurs sont annotés avec le type de données sur lequel
+entiers, flottants et pointeurs sont annotées avec le type de données sur lequel
 ils travaillent. Par exemple \enquote{$+$} désigne l'addition sur les entiers et
 \enquote{$+.$} l'addition sur les flottants. Les opérations de test d'égalité,
 en revanche, sont possibles pour les types numériques, les pointeurs, ainsi que
@@ -483,22 +483,22 @@ L'interprète que nous nous apprêtons à définir manipule des valeurs qui sont
 associées aux variables du programme.
 
 La mémoire est constituée de variables (toutes mutables), qui contiennent des
-valeurs. Ces variables sont organisées, d'une part en un ensemble de variables
-globales, et d'autre part en une pile de contextes d'appel (qu'on appellera donc
-aussi cadres de pile, ou \emph{stack frames} en anglais). Cette structure
+valeurs. Ces variables sont organisées, d'une part, en un ensemble de variables
+globales et, d'autre part, en une pile de contextes d'appel (qu'on appellera
+donc aussi cadres de pile, ou \emph{stack frames} en anglais). Cette structure
 empilée permet de représenter les différents contextes à chaque appel de
 fonction: par exemple, si une fonction s'appelle récursivement, plusieurs
 instances de ses variables locales sont présentes dans le programme. Le modèle
-mémoire présenté ici de permet pas l'allocation dynamique sur un tas. Cette
+mémoire présenté ici ne permet pas l'allocation dynamique sur un tas. Cette
 limitation sera détaillée dans le chapitre~\ref{cha:conclusion}.
 
 \added{Le modèle...}
 
 La structure de pile des variables locales permet de les organiser en niveaux
-indépendants: à chaque appel de fonction, un nouveau cadre de pile
-est créé, comprenant ses paramètres et ses variables locales. Au contraire, pour
-les variables globales il n'y a pas de système d'empilement, puisque ces
-variables sont accessibles depuis tout point du programme.
+indépendants: à chaque appel de fonction, un nouveau cadre de pile est créé,
+comprenant ses paramètres et ses variables locales. Au contraire, pour les
+variables globales, il n'y a pas de système d'empilement, puisque ces variables
+sont accessibles depuis tout point du programme.
 
 Pour identifier de manière non ambigüe une variable, on note simplement $x$ la
 variable globale nommée $x$, et $(n, x)$ la variable locale nommée $x$ dans le
@@ -552,8 +552,8 @@ par exemple 100 entiers. On accède à ces valeurs par un indice entier. C'est u
 erreur ($\serr{array}$) d'accéder à un tableau en dehors de ses bornes,
 c'est-à-dire en dehors de $[0;n-1]$ pour un tableau à $n$ éléments.
 Pareillement, $\widehat{\eArray{\cdot}}$ permet de désigner les valeurs tableau.
-Par exemple, si $x$ vaut $2$ et $y$ vaut $3$, l'expression $\eArray{ x, y }$
-s'évaluera en la valeur $\widehat{\eArray{ 2, 3 }}$
+Par exemple, si $x$ vaut $2$ et $y$ vaut $3$, l'expression $\eArray{ x; y }$
+s'évaluera en la valeur $\widehat{\eArray{ 2; 3 }}$
 
 \item
 
@@ -709,7 +709,7 @@ un cas de base:
 \item pour les expressions, une valeur $v$;
 \item pour les instructions, l'instruction $\iPass$ ou $\iReturn{v}$ où $v$ est
     une valeur;
-\item pour les valeurs gauches un chemin $φ$.
+\item pour les valeurs gauches, un chemin $φ$.
 \end{itemize}
 
 On considère en fait la clôture transitive de cette relation. Cela revient à
@@ -748,7 +748,7 @@ Un certain nombre d'opérations est possible sur les valeurs
 \item
   les opérations d'égalité $=$ et $≠$. L'égalité entre entiers ou entre
   flottants est immédiate. Deux valeurs composées (tableaux ou structures) sont
-  égales si elles ont la même forme (même taille pour les tableaux, ou même
+  égales si elles ont la même forme (même taille pour les tableaux, ou mêmes
   champs pour les structures) et que toutes leurs sous-valeurs sont égales deux
   à deux. Deux références mémoire sont égales \linebreak lorsque les chemins
   qu'elles décrivent sont syntaxiquement égaux.
@@ -793,7 +793,7 @@ Un certain nombre d'opérations est possible sur les valeurs
 \item
   $\sim$ inverse tous les bits de son opérande.
   $!$ est une version logique, % chktex 40
-  c'est-à-dire que $!0 = 1$ et si $n ≠ 0$, $!n = 0$.
+  c'est-à-dire que $!0 = 1$ et, si $n ≠ 0$, $!n = 0$.
 \end{itemize}
 
 Si ces opérateurs sémantiques reçoivent des données incompatibles (par exemple
@@ -841,7 +841,7 @@ l'appelant, il faudra supprimer ce cadre de pile.
   déclarations de variables locales (figure~\ref{fig:stackops-extend}):
 
   \[
-    \cExtend{(c::s, g)}{x}{v} = ((x↦v :: c :: s), g)
+      \cExtend{(c::s, g)}{x}{v} = (((x↦v :: c) :: s), g)
   \]
 
   L'opération inverse de $\phxxx\cExtend$ sera simplement notée \enquote{$-$} :
@@ -1018,8 +1018,8 @@ nettoyage selon un prédicat sur les chemins:
                      \end{cases} \\
 \cVP{p}{\widehat{\eStruct{l_1:v_1, …, l_n:v_n}}} &=
     \widehat{\eStruct{l_1:\cVP{p}{v_1}, …, l_n:\cVP{p}{v_n}}} \\
-\cVP{p}{\widehat{\eArray{v_1, …, v_n}}} &=
-    \widehat{\eArray{\cVP{p}{v_1}, …, \cVP{p}{v_n}}}
+\cVP{p}{\widehat{\eArray{v_1; …; v_n}}} &=
+    \widehat{\eArray{\cVP{p}{v_1}; …; \cVP{p}{v_n}}}
 \end{align*}
 
 On l'étend ensuite aux cadres de pile, puis aux états mémoire:
@@ -1032,7 +1032,7 @@ On l'étend ensuite aux cadres de pile, puis aux états mémoire:
                             g' &=  \cLP{p}{g}
 \end{align*}
 
-À l'aide de ces fonctions, on définit quatre opérations, permettant de nettoyer
+À l'aide de ces fonctions, on définit quatre opérations permettant de nettoyer
 des états mémoire ou des valeurs en enlevant tout un niveau de pile ou seulement
 une variable:
 
@@ -1041,7 +1041,7 @@ une variable:
 
 \cCleanVar{m}{a}  = \cP{λφ. φ = a}{m}
 
-\cV{p}{v}    = \cVP{λφ. \cHphi{φ} > |m|}{v}
+\cV{m}{v}    = \cVP{λφ. \cHphi{φ} > |m|}{v}
 
 \cVV{v}{a}        = \cVP{λφ. φ = a}{v}
 \end{mathpar}
@@ -1073,14 +1073,15 @@ se comportent bien et ne créent pas de pointeurs fous (pointant au-dessus de la
 pile), alors cette phase est inutile et peut être remplacée par l'identité.
 Autrement dit, il s'agit seulement d'une technique pour s'assurer de ne pas
 avoir d'erreurs dans la sémantique. L'ajout d'un ramasse-miette, ou une
-vérification préalable par un système de régions~\cite{jfp92} peut garantir
+vérification préalable par un système de régions~\cite{jfp92}, peut garantir
 qu'il n'y a pas de telles constructions dangereuses.
 
 \section{Accesseurs}
 \label{sec:mem-access}
 
 Le but de cette section est de définir rigoureusement les accès à la mémoire. À
-partir d'un état mémoire $m$ et d'une valeur gauche $φ$, on veut pouvoir obtenir:
+partir d'un état mémoire $m$ et d'une valeur gauche $φ$, on veut pouvoir définir
+une lentille $Φ$, permettant d'obtenir:
 
 \begin{itemize}
     \item la valeur accessible au chemin $φ$: $m[φ]_Φ$
@@ -1144,7 +1145,7 @@ valeur qui peut être renvoyée ou mise à jour.
 I(3)     &: (3, 14, \circled{15}, 92, 65) \\
 L(toto)  &: ((toto, \circled{3}), (tata, 6), (titi, 2)) \\
 F(y)     &: \{ x: 0; y: \circled{-3} \} \\
-T(0)     &: \eArray{\circled{1}, 2, 3, 5} \\
+T(0)     &: \eArray{\circled{1}; 2; 3; 5} \\
 \end{align*}
 \end{minipage}
 \vspace{5mm}
@@ -1184,7 +1185,7 @@ l{[x]}_L  &=
         v          & \mbox{ si } ∃! n ∈ [1;|l|], ∃v, l_n = (x ↦ v) \\
         \serr{var} & \mbox{ sinon }
     \end{cases} \\
-l{[x ← v]}_L  &=
+l{[x ← v']}_L  &=
     \begin{cases}
         l{[n ← (x ↦ v')]}_I & \mbox{ si } ∃! n ∈ [1;|l|], ∃v, l_n = (x ↦ v) \\
         \serr{var} & \mbox{ sinon }
@@ -1198,13 +1199,13 @@ Les états mémoire sont constitués des listes d'association (nom, valeur).
 L'accesseur par adresse ${[\cdot]}_A$ permet de généraliser l'accès à ces
 valeurs en utilisant comme clef non pas un nom mais une adresse.
 
-Selon cette adresse, on accède soit à la liste des globales, soit à une
-des listes de la pile des locales.
+Selon cette adresse, on accède soit à la liste des variables globales, soit à
+une des listes de la pile des variables locales.
 
 On pose $m = (s, g)$.
 
-Les accès aux globales se font de la manière suivante. Si la variable n'existe
-pas, notons que $L$ retourne $\serr{var}$.
+Les accès aux variables globales se font de la manière suivante. Si la variable
+n'existe pas, notons que $L$ retourne $\serr{var}$.
 
 \[
 A((x)) = \mathrm{Snd} \ggg L(x)
@@ -1220,16 +1221,16 @@ Ainsi, par exemple $m{[(x) ← v]}_A = (s, g[x←v]_L)$.
 
 Les accès aux locales reviennent à accéder à la bonne variable du bon cadre de
 pile. Cela revient naturellement à composer les lentilles $L$ et $I$. On définit
-donc une lentille $ℒ_{n,x} = I(|s|-n+1) \ggg L(x)$ qui accède à la variable $x$
+donc une lentille $ℒ_{s,n,x} = I(|s|-n+1) \ggg L(x)$ qui accède à la variable $x$
 du $n$\ieme cadre de pile.
 
 \begin{align*}
 m {[(n, x)]}_A     & = \begin{cases}
-                           \lensGet{ℒ_{n,x}}{s} & \mbox{ si $n ∈ [1 ; |s|]$} \\
+                           \lensGet{ℒ_{s,n,x}}{s} & \mbox{ si $n ∈ [1 ; |s|]$} \\
                            \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 m {[(n, x) ← v]}_A & = \begin{cases}
-                            (\lensPut{ℒ_{n,x}}{v}{s}, g) & \mbox{ si $n ∈ [1;|s|]$} \\
+                            (\lensPut{ℒ_{s,n,x}}{v}{s}, g) & \mbox{ si $n ∈ [1;|s|]$} \\
                             \serr{var}          & \mbox{ sinon}
                        \end{cases} \\
 \end{align*}
@@ -1352,7 +1353,7 @@ v_1~\widehat{\opbin}~v_2$ depuis un état mémoire $m$:
   on commence par évaluer l'expression $e_1$ en une valeur $v_1$. Le nouvel
   état mémoire est noté $m'$. Soit donc $\mm{m}{e_1}{m'}{v_1}$.
 \item
-  En appliquant la règle \textsc{Ctx} (définie page suivante) avec $C =
+  En appliquant la règle \textsc{Ctx} (définie ci-après) avec $C =
   \ctxOp{\ctxEmpty}{e_2}$ (qui est une des formes possibles pour un contexte
   d'évaluation), on déduit de 1.\ que
   $\mm{m}{e_1~\opbin~e_2}{m'}{v_1~\opbin~e_2}$
@@ -1382,6 +1383,12 @@ Le deuxième point sera résolu par la règle d'inférence suivante.
 \begin{mathpar}
   \semrule{Ctx}
 \end{mathpar}
+
+% TODO ?
+%
+% 1/0, m -> Ω, m
+% ----------------------
+% if true the 0 else 1/0n l → Ω, m
 
 Enfin, le troisième revient à définir l'opérateur de substitution
 $\phxx{\ctxSub}$ présent dans la règle précédente. Notons que puisque $i
@@ -1426,11 +1433,9 @@ La règle portant sur le déréférencement est particulière. On peut penser qu
 bonne définition de $φ$ consiste à se calquer sur la définition de $lv$, en
 remplaçant les noms de variable par leur adresse résolue et en évaluant les
 indices de tableau, et à ajouter une règle qui transforme $*φ$ en
-$\widehat{*}φ$.
-
-Cela ne fonctionne pas, car alors les déréférencements sont évalués trop tard:
-au moment de l'affectation dans la valeur gauche plutôt qu'à sa définition. La
-figure~\ref{fig:lazy-deref} illustre ce problème.
+$\widehat{*}φ$. Or, cela ne fonctionne pas, car alors les déréférencements sont
+évalués trop tard: au moment de l'affectation dans la valeur gauche plutôt qu'à
+sa définition. La figure~\ref{fig:lazy-deref} illustre ce problème.
 
 %{{{
 \begin{SaveVerbatim}{LeLazy}
@@ -1508,7 +1513,7 @@ l'évaluer en un chemin.
 \end{mathpar}
 
 Pour évaluer une expression constituée d'un opérateur, on évalue une
-sous-expression, puis l'autre (l'ordre d'évaluation, est encore imposé: de
+sous-expression, puis l'autre (l'ordre d'évaluation est encore imposé: de
 gauche à droite). À chaque opérateur $\opbin$, correspond un opérateur
 sémantique $\widehat{\opbin}$ qui agit sur les valeurs. Par exemple, l'opérateur
 $\widehat{+}$ est l'addition entre entiers machine
@@ -1533,7 +1538,7 @@ celles qui ont la forme $\widehat{\&}~φ[n]$. On a alors:
   \widehat{\&}~φ[n]~]~\widehat{-}_p~i & = \widehat{\&}~φ[n~\widehat{-}~i] \\
 \end{align*}
 
-Cela implique qu'on ne peut pas faire faire d'arithmétique de pointeurs au sein
+Cela implique qu'on ne peut pas faire d'arithmétique de pointeurs au sein
 d'une même structure. Autrement c'est une erreur de manipulation de
 pointeurs\footnote{ Cela est cohérent avec la norme C99:
 \enquote{If the pointer operand points to an element of an array object, and the
@@ -1621,7 +1626,7 @@ $\mm{m_1}{i}{m_2}{i'}$ à un pas externe. Une fois l'instruction interne réduit
 d'un pas, on évalue les arguments en des valeurs $v'_i$. Ils correspondent aux
 nouvelles valeurs à passer à la fonction.
 
-Les autres fonctions permettent de transférer le flot de contrôle: en retournant
+Les autres règles permettent de transférer le flot de contrôle: en retournant
 la même instruction pour une instruction terminale, ou en propageant une erreur.
 Dans le cas où on retourne de la fonction par $i = \iReturn{v}$, il faut alors
 supprimer les références aux variables qui ont disparu grâce aux opérateurs
@@ -1673,7 +1678,7 @@ On suppose qu'il n'y a pas de masquage au sein d'une fonction, c'est-à-dire que
 le nom d'une variable déclarée n'est jamais dans l'environnement avant cette
 déclaration.
 
-Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut s'évaluer en $i$
+Si $i$ est terminale ($\iPass$ ou $\iReturn{v}$), alors on peut l'évaluer en $i$
 en nettoyant l'espace mémoire des références à $x$ qui peuvent subsister.
 
 Enfin, si une erreur se produit elle est propagée.
@@ -1702,6 +1707,8 @@ est prise.
 \end{mathpar}
 
 On exprime la sémantique de la boucle comme une simple règle de réécriture:
+
+% TODO ELSE PASS
 
 \begin{mathpar}
   \semrule{While}
@@ -1739,11 +1746,11 @@ de variables (dont les fonctions), soit des évaluations d'expressions.
 
 Contrairement à C, il n'y a pas de déclaration de types au niveau des phrases
 (permettant par example de définir les types structures et leurs champs). On
-suppose dans une étape précédente chaque accès à un champ de structure a été
-décoré du type complet correspondant. Par exemple, il est possible de
+suppose que, dans une étape précédente, chaque accès à un champ de structure a
+été décoré du type complet correspondant. Par exemple, il est possible de
 compiler vers \langname un langage comportant des accès non décorés, mais où les
 types de structures sont déclarés. Le compilateur est alors capable de repérer à
-quel type appartient quels champs et d'émettre ces étiquettes. C'est d'ailleurs
+quel type appartiennent quels champs et d'émettre ces étiquettes. C'est d'ailleurs
 une des étapes de la compilation d'un programme C.
 
 L'évaluation d'une phrase $p$ fait donc passer d'un état mémoire $m$ à un autre
@@ -1760,6 +1767,8 @@ Notons que ces évaluations se font à grands pas.
 
 Enfin, l'exécution d'un programme est sans surprise l'exécution de ses phrases,
 les unes à la suite des autres.
+
+% TODO mentionner →*
 
 \begin{mathpar}
   \semrule{ET-Exp}
@@ -1863,7 +1872,7 @@ première partie n'étant pas $\iPass$, il faut l'évaluer grâce à la règle
 \textsc{Ctx} avec $C = \ctxEmpty;\iReturn{\eUnit}$.
 
 Le nouveau but est de trouver un $m_2''$ tel que
-$\mm{m_2'}{*q←1}{m_2'}{\iPass}$.
+$\mm{m_2'}{*q←1}{m_2''}{\iPass}$.
 
 En appliquant \textsc{Exp-Deref} sous $C = *\ctxEmpty ← 1$, on obtient
 $\mm{m_2'}{*q←1}{m_2'}{(s).x←1}$.
@@ -1890,7 +1899,7 @@ On peut enfin appliquer \textsc{Exp-Call-Ctx} pour en déduire que:
     {m_2'''}{ \eFun{q}{\iReturn{\widehat{\eUnit}}}(\widehat{\&}(s).x) }
 \]
 
-Donc d'après \textsc{Exp-Call-Return} (car on a $m_2''' = \cCleanup{m_2'''}$ et
+Donc d'après \textsc{Exp-Call-Return} (car on a $m_2''' = \cCleanup{m_2''}$ et
 $ \widehat{\eUnit} = \cV{|m_2'''|}{\widehat{\eUnit}} $):
 
 \[

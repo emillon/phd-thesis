@@ -1,7 +1,7 @@
-On vient de décrire en détail un langage impératif, \langname: tout d'abord sa
-syntaxe et sa sémantique d'évaluation dans le chapitre~\ref{cha:lang}. Une des
-spécificités de cette sémantique est l'utilisation de lentilles pour modifier
-les valeurs composées en profondeur.
+On vient de décrire en détail un langage impératif, \langname, et tout d'abord
+sa syntaxe et sa sémantique d'évaluation dans le chapitre~\ref{cha:lang}. Une
+des spécificités de cette sémantique est l'utilisation de lentilles pour
+modifier les valeurs composées en profondeur.
 
 \label{page:ccl-II-monad}
 Il y a plusieurs alternatives à cette présentation. La première est la solution
@@ -9,17 +9,17 @@ classique qui consiste à décrire les modifications de la mémoire en extension
 C'est en général long et laborieux puisqu'il faut définir les accès en lecture
 et écriture à chaque étape (avec des lentilles on décrit ces deux opérations
 uniquement sur les briques du calcul, et la composition fait le reste). La
-seconde solution est d'employer une sémantique monadique. Les transisitions sont
+seconde solution est d'employer une sémantique monadique. Les transitions sont
 alors encodées comme des actions monadiques qui représentent les modifications
 de la mémoire. Un des avantages de cette solution est qu'elle est très
 extensible. Par exemple, la propagation des erreurs ou l'ajout de continuations
 légères (c'est-à-dire le support des fonctions \texttt{setjmp} et
 \texttt{longjmp}) peuvent facilement être exprimés dans un formalisme monadique.
-Nous avons préféré une présentation plus directe qui reste plus accessible une
+Nous avons préféré une présentation plus directe qui reste plus accessible à une
 audience habituée à C, et suffisante compte tenu de la simplicité des
 constructions à interpréter dans le langage.
 
-Ensuite, dans le chapitre~\ref{cha:typbase} nous avons ajouté un système de
+Ensuite, dans le chapitre~\ref{cha:typbase}, nous avons ajouté un système de
 types à \langname. Le but est de restreindre le genre d'erreurs qui peuvent
 arriver lors de l'évaluation d'un programme. Par le théorème de progrès
 (théorème~\ref{thm:progres} , page~\pageref{thm:progres}), on interdit les
@@ -27,7 +27,7 @@ erreurs qui signalent une manipulation de valeurs incompatibles, l'accès à un
 champ de structure inconnu, et l'accès à une variable inexistante. Et le
 théorème de préservation (théorème~\ref{thm:preservation},
 page~\pageref{thm:preservation}) formalise le résultat classique qu'une étape
-d'évaluation ne modifier pas le typage.
+d'évaluation ne modifie pas le typage.
 Une particularité de \langname est que son état mémoire est structuré, avec une
 pile de variables locales explicite. On retrouve donc cette distinction dans le
 typage: les variables globales et les variable locales sont séparées dans les
@@ -63,7 +63,7 @@ une expression, $q$ un qualificateur et $t$ un type), alors que le nôtre a la
 forme plus classique $Γ ⊢ e : t$.
 
 En intégrant $q$ à la relation de typage, on ajoute un qualificateur à chaque
-type, même les expressions pour lesquels il n'est pas directement pertinent de
+type, même les expressions pour lesquelles il n'est pas directement pertinent de
 déterminer qui les contrôle (comme par exemple, un entier). Dans CQual, ceci
 permet de traiter de manière correcte le transtypage. Par exemple, si $e$ a pour
 type qualifié $\qUser~\tInt$, alors $(\tFloat~*)~e$ aura pour type qualifié

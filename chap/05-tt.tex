@@ -59,7 +59,7 @@ construire des types composés: pointeurs, tableaux, structures et fonctions.
 Pour typer les structures, on suppose que les accès aux champs sont décorés du
 type complet de la structure. Cela permet de typer sans ambigüité ces accès.
 Dans l'implantation décrite dans le chapitre~\ref{cha:implem}, ces annotations
-ne sont pas présentes. On utilise donc une variante du polymorphisme de
+ne sont pas présentes. On y utilise donc une variante du polymorphisme de
 rangée~\cite{ocamlObjects} présent dans OCaml pour unifier deux types structures
 partiellement connus. \added{référence}
 
@@ -252,7 +252,7 @@ une fois le type de base du type tableau.
   \disprule{Lv-Index}
 \end{mathpar}
 
-Le typage de l'accès à un champ est facilité par le fait que dans le programme,
+Le typage de l'accès à un champ est facilité par le fait que, dans le programme,
 le type complet de la structure est accessible sur chaque accès.
 
 Dans la définition de cette règle on utilise la notation:
@@ -537,7 +537,7 @@ gauches, codéfini par:
 \[
     \semtypphi{m}{φ}{τ}
     \eqdef
-    \semtyp{m}{m[φ]}{τ}
+    \semtyp{m}{m[φ]_Φ}{τ}
 \]
 
 Les règles de définition du typage des valeurs sont données dans la
@@ -682,7 +682,7 @@ l'exécution, et le second le type statique.
 
 On définit enfin la notion d'état mémoire bien typé. On dit qu'un état mémoire
 $m$ est bien typé sous un environnement $Γ$, ce que l'on note $\mcomp{Γ}{m}$, si
-le types des valeurs à l'exécution présent dans $m$ est \enquote{compatible}
+le type des valeurs à l'exécution présent dans $m$ est \enquote{compatible}
 avec les types présents dans $Γ$.
 
 Cela se fait par induction
@@ -855,8 +855,8 @@ ce cas on n'en donne que des esquisses.
 $(t_1, …, t_n)$ et $t'$ tels que:
 
   \[ \begin{cases}
-    t' = (t_1, …, t_n) → t \\
-    (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t]) ⊢ i
+    t = (t_1, …, t_n) → t' \\
+    (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t']) ⊢ i
   \end{cases} \]
 
 \item Si $Γ ⊢ *e : t$, alors $Γ ⊢ e : t*$.
@@ -996,7 +996,7 @@ On procède par induction sur la forme de $t$.
 
 \item $t = t'[~]$:
     Par le lemme des formes canoniques,
-    $v = \widehat{\eArray{v_1,…,v_n}}$.
+    $v = \widehat{\eArray{v_1;…;v_n}}$.
     Par inversion on obtient que $∀i, Γ ⊢ v_i : t'$.
 
     Soient $τ' = \cRepr{t'}$ et $τ = τ'~[~]$.
@@ -1056,7 +1056,7 @@ profonde}
 c'est immédiat. Si $a = (n, x)$, alors d'après la forme de $v$, la dernière
 règle appliquée dans la dérivation de $m ⊧ v : τ$ est \textsc{S-Ptr}, et donc
 $m[(n, x)]$ est une valeur.
-D'après la définition de $φ$, $n ≤ |m|$.
+D'après la définition de $a$, $n ≤ |m|$.
 
 \paragraph{$\widehat{\&}~φ.l$:} %
 On procède par induction sur $v' = \widehat{\&}~φ$.
@@ -1165,13 +1165,13 @@ m[φ]$ et on applique l'hypothèse d'induction.
 % }}}
 \paragraph{\textsc{M-DeclClean}:} % {{{
 
-On suppose que $Γ ⊢ φ : t'$. Alors $\extendLocal{Γ}{x}{t} ⊢ φ : t'$ par
-affaiblissement. On peut donc appliquer l'hypothèse d'induction: $m[φ] = v$ où
-$m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On distingue alors selon la forme de $v$. Si
-$v = \wphi{φ'}$ où $\cVar{φ'} = (|m|, x)$, alors $m'[φ] = \eNull$ par
-l'opération $\phxx\cCleanVar$. Le type $τ'$ étant un type pointeur par le
-lemme~\ref{lemma:canon}, on peut conclure. Dans les autres cas $m[φ] = m'[φ]$ ce
-qui termine ce cas.
+On suppose que $Γ ⊢ φ : t'$ et $m' = \cCleanVar{m - x}{x}$. Alors
+$\extendLocal{Γ}{x}{t} ⊢ φ : t'$ par affaiblissement. On peut donc appliquer
+l'hypothèse d'induction: $m[φ] = v$ où $m ⊧ v : τ'$ avec $\tComp{τ'}{t'}$. On
+distingue alors selon la forme de $v$. Si $v = \wphi{φ'}$ où $\cVar{φ'} = (|m|,
+x)$, alors $m'[φ] = \eNull$ par l'opération $\phxx\cCleanVar$. Le type $τ'$
+étant un type pointeur par le lemme~\ref{lemma:canon}, on peut conclure. Dans
+les autres cas $m[φ] = m'[φ]$ ce qui termine ce cas.
 
 % }}}
 \paragraph{\textsc{M-Push}:} % {{{
@@ -1292,7 +1292,7 @@ La preuve du théorème~\ref{thm:progres} se trouve en annexe~\ref{proof:progres
 \begin{theorem}[Préservation]
 \label{thm:preservation}
 
-Soient $Γ$ un environnement de typage, et $m$ un état mémoire tels que
+Soit $Γ$ un environnement de typage et $m$ un état mémoire tels que
 $\mcomp{Γ}{m}$.
 
 Alors:
@@ -1346,7 +1346,7 @@ Enfin, on donne une version de ces propriétés pour les phrases de programme.
 \begin{theorem}[Progrès pour les phrases]
 \label{thm:prog-phr}
 
-Soient $Γ$ un environnement de typage, $m$ un état mémoire et $p$ une phrase de
+Soit $Γ$ un environnement de typage, $m$ un état mémoire et $p$ une phrase de
 programme. Supposons que $\typh{Γ}{p}{Γ'}$ et $\mcomp{Γ}{m}$.
 
 On suppose en outre que l'évaluation de $p$ termine.
@@ -1412,7 +1412,7 @@ nous donne que $\mcomp{Γ'}{m''}$.
 \section*{Conclusion}
 
 En ajoutant un système de types statiques à \langname, on peut calculer à la
-compilation la forme des valeurs produite par chaque expression. Pour ce faire,
+compilation la forme des valeurs produites par chaque expression. Pour ce faire,
 on a défini un ensemble de règles de typage (regroupées dans
 l'annexe~\ref{anx:typage}) à appliquer selon la forme de celle-ci.
 

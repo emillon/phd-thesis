@@ -9,7 +9,7 @@ système d'exploitation.
 
 Un système informatique est principalement constitué d'un processeur (ou CPU
 pour \emph{Central Processing Unit}), de mémoire principale (ou RAM pour
-\emph{Random Access Memory}), et de divers périphériques.
+\emph{Random Access Memory}) et de divers périphériques.
 
 Le processeur est constitué de plusieurs registres internes qui permettent
 d'encoder l'état dans lequel il se trouve : quelle est l'instruction courante
@@ -33,7 +33,7 @@ suite d'opérations :
 
 Les instructions sont constituées d'un \emph{opcode} (mnémonique indiquant
 quelle opération faire) et d'un ensemble d'opérandes. La signification des
-opérandes dépend de l'opcode, mais en général elles permettent de désigner les
+opérandes dépend de l'opcode, mais en général ils permettent de désigner les
 sources et la destination (on emploiera ici la syntaxe AT\&T, celle que comprend
 l'assembleur GNU). Les opérandes peuvent avoir plusieurs formes : une valeur
 immédiate (\$4), un nom de registre (\texttt{\%eax}) ou une référence à la
@@ -47,24 +47,24 @@ de langage impératif:
 
 \begin{itemize}
 
-\item \texttt{mov src, dst} copie le contenu de \texttt{src} dans \texttt{dst}.
+\item \texttt{mov src, dst} copie le contenu de \texttt{src} dans \texttt{dst};
 
 \item \texttt{add src, dst} calcule la somme des contenus de \texttt{src} et
-  \texttt{dst} et place ce résultat dans \texttt{dst}.
+  \texttt{dst} et place ce résultat dans \texttt{dst};
 
 \item \texttt{push src} place \texttt{src} sur la pile, c'est-à-dire que cette
   instruction enlève au pointeur de pile \esp la taille de \texttt{src}, puis
-  place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp.
+  place \texttt{src} à l'adresse mémoire de la nouvelle valeur \esp;
 
 \item \texttt{pop src} réalise l'opération inverse : elle charge le contenu de
   la mémoire à l'adresse \esp dans \texttt{src} puis incrémente \esp de la
-  taille correspondante.
+  taille correspondante;
 
 \item \texttt{jmp addr} saute à l'adresse \texttt{addr} : c'est l'équivalent de
-  \texttt{mov addr, \%eip}.
+  \texttt{mov addr, \%eip};
 
 \item \texttt{call addr} sert aux appels de fonction : cela revient à
-  \texttt{push \%eip} puis \texttt{jmp addr}.
+  \texttt{push \%eip} puis \texttt{jmp addr};
 
 \item \texttt{ret} sert à revenir d'une fonction : c'est l'équivalent de
   \texttt{pop \%eip}.
@@ -183,12 +183,12 @@ adresse contiendra une valeur différente (figure~\ref{fig:memoire-virtuelle}).
 \end{figure} % }}}
 
 \label{page:mem-virt}
-Ce mécanisme est contrôlé par valeur du registre \crtrois: les 10 premiers bits
-d'une adresse virtuelle sont un index dans le répertoire de pages qui commence à
-l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse d'une table
-de pages. Les 10 bits suivants de l'adresse sont un index dans cette page,
-donnant l'adresse d'une page de 4 kio (figure~\ref{fig:pagetables}).
-Plus de détails sur l'utilisation de ce mécanisme seront donnés dans la
+Ce mécanisme est contrôlé par la valeur du registre \crtrois: les 10 premiers
+bits d'une adresse virtuelle sont un index dans le répertoire de pages qui
+commence à l'adresse contenue dans \crtrois. À cet index, se trouve l'adresse
+d'une table de pages. Les 10 bits suivants de l'adresse sont un index dans cette
+page, donnant l'adresse d'une page de 4 kio (figure~\ref{fig:pagetables}). Plus
+de détails sur l'utilisation de ce mécanisme seront donnés dans la
 section~\ref{sec:linux-sys}.
 
 \begin{figure}[h]

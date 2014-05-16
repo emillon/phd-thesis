@@ -16,9 +16,11 @@ les types de données des programmes. Ces extensions permettront de détecter de
 erreurs de programmation communes, appuyées sur des exemples réels.
 
 Cela revient à introduire une séparation entre le type des données et sa
-représentation, c'est-à-dire définir un type abstrait. Les pointeurs
-utilisateur sont en fait des pointeurs classiques déguisés, pour lesquels on
-interdit l'opérateur de déréférencement.
+représentation, c'est-à-dire définir un type abstrait. Dans un système
+d'exploitation, les pointeurs utilisateur sont en fait des pointeurs classiques
+déguisés, pour lesquels on interdit l'opérateur de déréférencement.
+
+% TODO pointeurs utilisateur sans S
 
 Cette technique est en fait générique : on peut également l'appliquer à certains
 types d'entiers. En C, il est commun d'utiliser des \texttt{int} pour tout et
@@ -40,7 +42,7 @@ pour un type, mais ce n'est qu'un raccourci syntaxique. Le compilateur ne peut
 en effet pas considérer un programme sans avoir la définition quasi-complète des
 types qui y apparaissent. La seule exception concerne les pointeurs sur
 structures : si on ne fait que les affecter, il n'est pas nécessaire de
-connaître la taille ni la disposition de la structure, donc la définition peut
+connaître la taille ni la disposition de la structure; donc la définition peut
 ne pas être visible. Cette technique, connue sous le nom de \emph{pointeurs
 opaques}, n'est pas applicable aux autres types.
 
@@ -58,8 +60,8 @@ logiques et bit à bit.
 
 Ensuite, on étend de manière indépendante le système de types, cette fois au
 niveau des pointeurs. Plus précisément, dans le contexte des systèmes
-d'exploitation, introduit une différence entre les pointeurs dont la valeur est
-contrôlée par l'utilisateur et ceux dont elle ne l'est pas.
+d'exploitation, on introduit une différence entre les pointeurs dont la valeur
+est contrôlée par l'utilisateur et ceux dont elle ne l'est pas.
 
 \section{Exemple préliminaire: les entiers utilisés comme bitmasks}
 
@@ -77,7 +79,7 @@ typedef int year_t;
 
 Cependant, rien ne distingue le nouveau type de l'ancien. Il ne s'agit que d'une
 aide à la documentation. Dans cet exemple, \texttt{month\_t} et \texttt{year\_t}
-sont tous les deux des nouveaux noms pour le type \texttt{int}, donc ils sont en
+sont tous les deux des nouveaux noms pour le type \texttt{int}; donc ils sont en
 fait compatibles. Le compilateur ne peut donc pas détecter qu'on utilise un
 numéro de mois là où un numéro d'année était attendu (ou \emph{vice versa}).
 
@@ -90,15 +92,15 @@ entier du type \texttt{uid\_t}.
 
 Un autre idiome est répandu: l'utilisation d'entiers comme représentation d'un
 ensemble de booléens. En effet, un nombre $a = \sum_{i=0}^{N-1} a_i 2^i$ peut
-s'interpréter comme l'ensemble de ses bits égaux à 1: $\{ i ∈ [0;N-1] / a_i = 1
-\}$. Un entier de 32 bits peut donc représenter une combinaison de 32 options
-indépendantes.
+s'interpréter comme la liste d'indices de ses bits égaux à 1: $\{ i ∈ [0;N-1] /
+a_i = 1 \}$. Un entier de 32 bits peut donc représenter une combinaison de
+32 options indépendantes.
 
 C'est de cette manière que fonctionne l'interface qui permet d'ouvrir un fichier
 sous Unix (figure~\ref{fig:unix-open}). Le paramètre \texttt{flags} est un
 entier qui encode les options liées à l'ouverture du fichier. On précise son
-mode (lecture, écriture ou les deux) par les bits 1 et 2, s'il faut créer le
-fichier ou non s'il n'existe pas par le bit 7, si dans ce cas il doit être
+mode (lecture, écriture ou les deux) par les bits 1 et 2; s'il faut créer le
+fichier ou non s'il n'existe pas par le bit 7; si dans ce cas il doit être
 effacé par le bit 8, etc. On obtient le paramètre complet en réalisant un
 \enquote{ou} bit à bit entre des constantes. Le paramètre \texttt{mode} encode
 de la même manière les permissions que doit avoir le fichier créé, le cas
@@ -200,7 +202,7 @@ figure~\ref{fig:ajouts-bitmasks}). Par ailleurs, on change le type des
 Pour que les opérations bit à bit puissent s'appliquer aux bitmasks, on ajoute
 aux règles s'appliquant à $\tInt$ les règles suivantes. Cela revient à permettre
 plusieurs types pour l'opérateur $\sim$, mais la sémantique d'exécution est la
-même quelque soit le type car $\tBits$ et $\tInt$ sont représentés de la même
+même quel que soit le type, car $\tBits$ et $\tInt$ sont représentés de la même
 manière.
 
 \begin{mathpar}
@@ -229,6 +231,8 @@ expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
         { Γ ⊢ e : \tBits }
         { Γ ⊢ e : \tInt }
 \end{mathpar}
+
+% TODO Cela n'a pas été évoqué jusqu'à présent!
 
 Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
 expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
@@ -355,7 +359,7 @@ Tout d'abord, on définit une nouvelle erreur $\serr{sec}$ (pour
 pointant vers le noyau est déréférencé (le cas que l'on cherche à éviter). Il
 est important de noter que ce cas d'erreur est \enquote{virtuel}, c'est-à-dire
 qu'on l'ajoute à la sémantique pour pouvoir le détecter facilement comme un cas
-d'erreur, mais dans une sémantique de plus bas niveau, comme en C, l'erreur ne
+d'erreur, mais, dans une sémantique de plus bas niveau, comme en C, l'erreur ne
 serait pas déclenchée. D'un point de vue opérationnel, cela équivaut à ajouter
 un test dynamique à chaque déréférencement, ce qui est sûr mais se paye en
 performances. Ajouter ce cas d'erreur virtuel dans la sémantique d'évaluation
@@ -525,6 +529,8 @@ manière décrite dans la figure~\ref{fig:ex-sys-getver-call}.
 En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
 règle suivante:
 
+% TODO à quoi le & sert il ? ♢ semble suffisant
+
 \[
   \semrule{Phi-User}
 \]
@@ -565,9 +571,9 @@ $\vTainted{φ'}$, soit non (et dans ce cas $∄φ', φ = \vTainted{φ'}$). Dans 
 premier cas (règles \textsc{User-*-OK}), alors la copie est faite et l'opération
 de copie retourne la valeur entière $0$. Dans le second (règles
 \textsc{User-*-Err}), aucune copie n'est faite et la valeur $-1$ est retournée.
-Ce comportement est calé celui des fonctions \texttt{copy\_\{from,to\}\_user} du
-noyau Linux: en cas de succès elles renvoient $0$, et en cas d'erreur
-\texttt{-EFAULT} ($= -14$).
+Ce comportement est calé sur celui des fonctions
+\texttt{copy\_\{from,to\}\_user} du noyau Linux: en cas de succès elles
+renvoient $0$, et en cas d'erreur \texttt{-EFAULT} ($= -14$).
 
 \begin{mathpar}
   \semrule{User-Get-OK}
@@ -843,6 +849,8 @@ constructeur $\phx\vTainted$ transforme un pointeur en pointeur utilisateur.
 
 En plus des cas présentés dans le lemme~\ref{lemma:inversion}, les cas suivants
 permettent de remonter un jugement de typage.
+
+% TODO fonte pour uget/uput
 
 \begin{itemize}
 \item

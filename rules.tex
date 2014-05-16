@@ -188,9 +188,9 @@
     {Fun}{ \irule{Fun}
              { Γ  = (Γ_G, Γ_L)
             \\ Γ' = (Γ_G,
-                     [ a_1 : t_1,
-                       …,
-                       a_n : t_n,
+                     [ a_1 : t_1;
+                       …;
+                       a_n : t_n;
                        \vRet : t
                      ]
                     )
@@ -248,7 +248,7 @@
                { Γ ⊢ lv : t }
                { Γ ⊢ \eTaint{lv} : \ptrU{t} }
     }
-    {User-Get}{ \irule{Uset-Get}
+    {User-Get}{ \irule{User-Get}
                   { Γ ⊢ e_d : \ptrK{t}
                  \\ Γ ⊢ e_s : \ptrU{t}
                   }
@@ -336,8 +336,8 @@
     {Exp-Array}{ \irule{Exp-Array}
                  { }
                  {
-                   \mms{      \eArray{ v_1, … , v_n } }
-                   { \widehat{\eArray{ v_1, … , v_n } }}
+                   \mms{      \eArray{ v_1; … ; v_n } }
+                   { \widehat{\eArray{ v_1; … ; v_n } }}
                  }
     }
     {Exp-Call-Return}{ \irule{Exp-Call-Return}
@@ -371,13 +371,6 @@
     {Exp}{ \irule{Exp}
              { }
              { \mmi{m}{v}{m}{\iPass} }
-    }
-    {Decl}{ \irule{Decl}
-            { m' = \cExtend{m}{x}{v}
-           \\ \mmi{m'}{i}{m''}{\iPass}
-           \\ m''' = \cCleanVar{m''}{(|m|, x)}
-            }
-            {\mmi{m}{\iDecl{x}{v}{i}}{m'''}{\iPass}}
     }
     {Decl-Pass}{ \irule{Decl-Pass}
                      { m' = \cCleanVar{m - x}{(|m|, x)} }

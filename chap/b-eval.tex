@@ -2,6 +2,8 @@ On rappelle ici pour référence la syntaxe de \langname, ainsi que sa sémantiq
 d'évaluation. Les règles sont décrites dans les chapitres~\ref{cha:lang}
 et~\ref{cha:qualifs}.
 
+% TODO véeifier par rapport aux modifs du C4
+
 \section{Syntaxe des expressions}
 \label{sec:anx-sem-start}
 \vspace{-1em}
@@ -52,12 +54,6 @@ et~\ref{cha:qualifs}.
 \begin{framed}
 
 \begin{mathpar}
-    \ruleheader{$\mm{m}{e}{m'}{e'}$}
-
-    \semrule{Ctx}
-
-    \semrule{Exp-Call-Ctx}
-
     \ruleheader{$\mm{m}{lv}{m}{φ}$}
 
     \semrule{Phi-Var}
@@ -91,6 +87,12 @@ et~\ref{cha:qualifs}.
     \semrule{Exp-Array}
 
     \semrule{Exp-Call-Return}
+
+    \ruleheader{$\mm{m}{e}{m'}{e'}$}
+
+    \semrule{Ctx}
+
+    \semrule{Exp-Call-Ctx}
 \end{mathpar}
 
 \end{framed}
