@@ -8,7 +8,7 @@ sûreté du typage.
 
 \begin{proof}
 
-On cherche à prouver que si 
+On cherche à prouver que, si
 $ℒ_1 ∈ \setLens{A}{B}$
 et
 $ℒ_2 ∈ \setLens{B}{C}$, alors
@@ -333,6 +333,8 @@ récurrence à $e$.
 \begin{itemize}
 \item $e = v$. Alors $i = \iReturn{v}$, ce qui nous permet de conclure.
 
+    % TODO ↓ normalement CTX est défini sur i et non sur e
+
 \item $\mm{m}{e}{m'}{e'}$.
 Alors en appliquant \textsc{Ctx} avec
 $C = \iReturn{\ctxEmpty}$, on conclut que
@@ -453,13 +455,13 @@ Ce cas est direct: la règle \textsc{Exp-Fun} s'applique.
 
 \begin{itemize}
 
-  \item $e_1 = v_1$. On a alors $\mm{m}{e_1}{m'}{v_1}$ avec $m' = m$.
+  \item $e_1 = v_1$. On a alors $\msi{m}{e_1} = \msi{m'}{v_1}$ avec $m' = m$.
 
     On applique l'hypothèse de récurrence à $e_2$.
 
       \begin{itemize}
 
-        \item $e_2 = v_2$: alors $\mm{m'}{e_2}{m''}{v_2}$ avec $m'' = m$. On
+        \item $e_2 = v_2$: alors $\msi{m'}{e_2} = \msi{m''}{v_2}$ avec $m'' = m$. On
           peut alors appliquer \textsc{Exp-BinOp}, sauf dans le cas d'une
           division par zéro ($ \opbin ∈ \{ / ; \% ; /. \} $ et
           $ v_2 = 0 $) où alors $v_1~\widehat{\opbin}~v_2 = \serr{div}$. Dans ce cas, on a
@@ -559,13 +561,13 @@ On applique l'hypothèse de récurrence à $lv$.
 %}}}
 \paragraph{\textsc{Array}:} % {{{
 
-On va appliquer l'hypothèse de récurrence à $e_1$, puis si $e_1 = v_1$, on
+On va appliquer l'hypothèse de récurrence à $e_1$, puis, si $e_1 = v_1$, on
 l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants:
 
 \begin{itemize}
 \item $∃ p ∈ [1;n],e'_p,m: e_1 = v_1, …, e_{p-1} = v_{p-1}, \mm{m}{e_p}{m'}{e'_p}$.
   Alors on peut appliquer \textsc{Ctx} avec
-  $C = [v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n]$.
+  $C = [v_1; …; v_{p-1}; \ctxEmpty; e_{p+1}; …; e_n]$.
 \item $∃ p ∈ [1;n],Ω :     e_1 = v_1, …, e_{p-1} = v_{p-1}, \msi{m}{e_p} → Ω$.
   Dans ce cas \textsc{Eval-Err} est applicable avec ce même $C$.
 \item $e_1 = v_1, …, e_n = v_n$.
@@ -577,7 +579,7 @@ l'applique à $e_2$, etc. Alors on se retrouve dans un des cas suivants:
 
 Le schéma de preuve est similaire au cas \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise le contexte
-$C = \eStruct{l_1: v_1, …, l_{p-1}: v_{p-1}, \ctxEmpty, l_{p+1}: e_{p+1}, …, l_n:
+$C = \eStruct{l_1: v_1; …; l_{p-1}: v_{p-1}; l_p: \ctxEmpty; l_{p+1}: e_{p+1}; …; l_n:
 e_n}$; et dans le cas où toutes les expressions sont évaluées, on applique
 \textsc{Exp-Struct}.
 
@@ -590,6 +592,8 @@ d'évaluation ou d'erreur, on applique respectivement \textsc{Ctx} ou
 Reste le cas où $e$ est une valeur: d'après le lemme~\ref{lemma:canon}, $e$ est
 de la forme $f = \eFun{\vec{a}}{i}$.
 
+% TODO vec: nouvelle notation
+
 Ensuite, appliquons le même schéma que pour \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise
 \textsc{Ctx} ou \textsc{Eval-Err} avec
@@ -599,7 +603,7 @@ $f (v_1, …, v_n)$
 avec
 $f = \eFun{\vec{a}}{i}$.
 
-Soient $Γ' = (Γ_G, [a_1 : t_1, …, a_n : t_n, \vRet : t])$
+Soit $Γ' = (Γ_G, [a_1 : t_1, …, a_n : t_n, \vRet : t])$
 et
 $m_1 = \cPush{m_0}{(a_1 ↦ v_1, … a_n ↦ v_n)}$
 où $Γ = (Γ_G, Γ_L)$.
@@ -611,6 +615,8 @@ d'inversion garantit que $Γ' ⊢ i$).
 \item $i = \iPass$. Ce cas est impossible puisqu'on prend l'hypothèse que les
 fonctions se terminent par une instruction $\iReturn{\cdot}$
 (page~\pageref{page:return-fonction}).
+
+% TODO cas i = return(v) ?
 
 \item $\mm{m_1}{i}{m_2}{i'}$.
 
@@ -685,8 +691,7 @@ $\mm{m}{lv[e]}{m}{v_{n+1}}$.
 Sinon elle vaut $\serr{array}$ et $\msi{m}{lv[e]} → \serr{array}$ par \textsc{Exp-Err}.
 
 \item $\mm{m}{e}{m'}{e'}$.
-En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit
-\item $\mm{m}{lv[e]}{m'}{lv[e']}$.
+En appliquant \textsc{Ctx} avec $C = v[\ctxEmpty]$, on en déduit $\mm{m}{lv[e]}{m'}{lv[e']}$.
 
 \item $\msi{m}{e} → Ω$.
 Avec \textsc{Eval-Err} sous ce même contexte,
@@ -817,6 +822,8 @@ montrer la compatibilité de $m'$.
 Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
 lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
 
+% TODO il n'est pas nécessaire... : à mettre avant
+
 % }}}
 
 \subsection*{Cas $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$}
@@ -829,7 +836,7 @@ s'appliquer : $τ = \cRepr{t}$ convient.
 % }}}
 \paragraph{\textsc{Exp-Fun}:} % {{{
 
-Idem: le lemme de réprésentabilité nous donne un candidat $τ = \cRepr{t}$
+Idem: le lemme de représentabilité nous donne un candidat $τ = \cRepr{t}$
 qui convient.
 
 % }}}
@@ -884,12 +891,12 @@ $Γ ⊢ \eFun{a_1, …, a_n}{i} : (t_1, …, t_n) → t'$
 et
 $∀ i ∈ [1;n], Γ ⊢ v_i : t_i$.
 
-Posons $Γ' = (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t])$ où $Γ = (Γ_G, Γ_L)$. Alors
-par inversions successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t$.
+Posons $Γ' = (Γ_G, [a_1:t_1, …, a_n:t_n, \vRet:t'])$ où $Γ = (Γ_G, Γ_L)$. Alors
+par inversions successives on obtient que $Γ' ⊢ \iReturn{v}$ et $Γ' ⊢ v : t'$.
 
 Si on définit $m'' = \cPush{m}{a_1↦v_1, …, a_n↦v_n}$, alors par \textsc{M-Push}
 on obtient que $\mcomp{Γ'}{m''}$. Donc, par le lemme~\ref{lemma:repr}, il existe
-$τ$ tel que $m'' ⊧ v : τ$ où $\tComp{τ}{t}$.
+$τ$ tel que $m'' ⊧ v : τ$ où $\tComp{τ}{t'}$.
 
 Il reste à montrer que $m' ⊧ v' : τ$.
 
@@ -954,6 +961,8 @@ D'après le lemme d'inversion, $Γ ⊢ e : t$ et $Γ ⊢ i$.
 Par \textsc{Seq}, on a $Γ ⊢ i ; \iWhile{e}{i}$.
 Enfin par \textsc{If} il vient $Γ ⊢ \iThen{e}{i ; \iWhile{e}{i}}$.
 
+% TODO ELSE PASS
+
 %}}}
 \paragraph{\textsc{Return}:}%{{{
 
@@ -1003,7 +1012,7 @@ Si $Γ ⊢ \ctxSub{C}{lv}$, on admet qu'il existe $Γ'$ et $t$ tels que:
 
 \begin{itemize}
     \item $Γ' ⊢ lv : t$;
-    \item Quelque soit $lv'$,
+    \item Quel que soit $lv'$,
         si
         $Γ' ⊢ lv' : t$,
         alors
@@ -1104,14 +1113,16 @@ De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 
 \paragraph{\textsc{Phi-User}:} % {{{
 
-On applique le lemme de représentation, qu'on a étend avec le cas
+On applique le lemme de représentation, qu'on étend avec le cas
 \linebreak
 $\cRepr{t~@} = \cRepr{\cRepr{t}~@}$.
+
+% TODO repr en trop?
 
 % }}}
 \paragraph{\textsc{User-Get-OK}:} % {{{
 Tout d'abord, d'après le lemme~\ref{lemma:inv-qualif}, $t = \tInt$, donc la
-préservation du type est établie car $m' ⊧ 0 : \tInt$
+préservation du type est établie car $m' ⊧ 0 : \tInt$.
 La compatibilité mémoire est obtenue en appliquant \textsc{M-Write}.
 % }}}
 \paragraph{\textsc{User-Get-Err}:} % {{{
