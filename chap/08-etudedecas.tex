@@ -83,15 +83,15 @@ il faudrait définir un fichier de configuration plus important.
 
 Dans cette section, nous allons voir comment ces mécanismes sont implantés dans
 le noyau Linux. Une description plus détaillée pourra être trouvée
-dans~\cite{UnderstandingTheLinuxKernel}, ou, pour le cas de la mémoire
+dans~\cite{UnderstandingTheLinuxKernel} ou, pour le cas de la mémoire
 virtuelle, dans~\cite{LinuxVMM}.
 
 Deux rings sont utilisés: en \ring{0}, le code noyau et, en \ring{3}, le code
 utilisateur.
 
 Une notion de tâche similaire à celle décrite dans la section~\ref{sec:taches}
-existe: elles s'exécutent l'une après l'autre, le changement s'effectuant sur
-interruptions.
+existe: les tâches s'exécutent l'une après l'autre, le changement s'effectuant
+sur interruptions.
 
 Pour faire appel aux services du noyau, le code utilisateur doit faire appel à
 des appels système, qui sont des fonctions exécutées par le noyau. Chaque tâche
@@ -137,7 +137,7 @@ Cette zone contient le code du noyau, les piles noyau des processus, etc.
 Les programmes utilisateur s'exécutant en \ring{3}, ils ne peuvent pas contenir
 d'instructions privilégiées, et donc ne peuvent pas accéder directement au
 matériel. Pour que ces programmes puissent interagir avec le système (afficher
-une sortie, écrire sur le disque…) le mécanisme des appels système est
+une sortie, écrire sur le disque…), le mécanisme des appels système est
 nécessaire. Il s'agit d'une interface de haut niveau entre les \emph{rings} 3 et
 0. Du point de vue du programmeur, il s'agit d'un ensemble de fonctions C
 \enquote{magiques} qui font appel au système d'exploitation pour effectuer des
@@ -201,7 +201,7 @@ Celle-ci est traitée par la fonction \texttt{sys\_ioctl()} qui appelle la
 routine de traitement dans le bon pilote de périphérique.
 
 Les fonctions du noyau implantant un \emph{ioctl} sont donc vulnérables à la
-même classe d'attaques que les appels système, et donc doivent être écrits avec
+même classe d'attaques que les appels système, et donc doivent être écrites avec
 une attention particulière.
 
 Le code de la figure~\ref{fig:kms-buggy} est présent dans le pilote KMS pour les
@@ -309,7 +309,7 @@ est suffisant.
 En pratique, le problème de sécurité n'est pas si important. En effet,
 la copie se fait sous un test forçant \texttt{addr} à être entre
 \nolinkurl{FIXED\_CODE\_START} et \texttt{FIXED\_CODE\_END}. Cette zone est
-incluse en espace utilisateur, cela empêche donc le problème de fuite de
+incluse en espace utilisateur; cela empêche donc le problème de fuite de
 données.
 
 Mais cela reste un problème de sécurité: contrairement à
