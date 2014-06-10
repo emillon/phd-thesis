@@ -952,9 +952,7 @@ D'après le lemme d'inversion, $Γ ⊢ i_t$.
 
 D'après le lemme d'inversion, $Γ ⊢ e : t$ et $Γ ⊢ i$.
 Par \textsc{Seq}, on a $Γ ⊢ i ; \iWhile{e}{i}$.
-Enfin par \textsc{If} il vient $Γ ⊢ \iThen{e}{i ; \iWhile{e}{i}}$.
-
-% TODO ELSE PASS
+Enfin par \textsc{If} il vient $Γ ⊢ \iIf{e}{i ; \iWhile{e}{i}}{\iPass}$.
 
 %}}}
 \paragraph{\textsc{Return}:}%{{{
