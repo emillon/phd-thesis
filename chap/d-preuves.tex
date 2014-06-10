@@ -610,15 +610,13 @@ On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
 d'inversion garantit que $Γ' ⊢ i$).
 
 \begin{itemize}
+\item $i = \iReturn{v}$. Alors on applique \textsc{Exp-Call-Return}.
+
 \item $i = \iPass$. Ce cas est impossible puisqu'on prend l'hypothèse que les
 fonctions se terminent par une instruction $\iReturn{\cdot}$
 (page~\pageref{page:return-fonction}).
 
-% TODO cas i = return(v) ?
-
-\item $\mm{m_1}{i}{m_2}{i'}$.
-
-    Alors on peut appliquer \textsc{Exp-Call-Ctx}.
+\item $\mm{m_1}{i}{m_2}{i'}$. Alors on peut appliquer \textsc{Exp-Call-Ctx}.
 
 \item $\msi{m}{i} → Ω$. On peut alors appliquer \textsc{Exp-Call-Err}.
 
