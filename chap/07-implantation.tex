@@ -351,7 +351,9 @@ différente de la présentation du chapitre~\ref{cha:lang}. C'est pourquoi elle
 n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directement
 au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
 chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
-\tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus.
+\tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus (on rappelle que
+dans la sémantique qui nous intéresse, ceux-ci n'ont pas un ordre défini au sein
+d'une structure).
 
 Plus précisément, si on cherche à unifier les types structures
 $A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a }$
@@ -360,8 +362,6 @@ $B = \tStruct{ b_1: s_1 ; … ; b_m: u_m; …X_b }$,
 il faut partitionner l'ensemble des champs en 3: ceux qui apparaissent dans les
 deux structures, ceux qui apparaissent dans $A$ mais pas dans $B$, et ceux qui
 apparaissent dans $B$ mais pas dans $A$.
-
-% TODO ↑ Et l'ordre des champs?
 
 \begin{itemize}
     \item Pour tous les champs $l$ tels que $l: a_i ∈ A$ et $l: b_j ∈ B$,
