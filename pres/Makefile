@@ -36,4 +36,4 @@ regen-bib:
 	  $(WHAT).bib
 
 clean:
-	rm -f *.aux *.nav *.log *.out *.snm
+	rm -f *.aux *.nav *.log *.out *.snm *.vrb

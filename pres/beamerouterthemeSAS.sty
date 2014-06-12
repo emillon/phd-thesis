@@ -1,0 +1,227 @@
+% EADS beamer outer theme - EADShorizontal
+\usepackage{tikz}
+
+\mode<presentation>
+
+
+% \defbeamertemplate*{headline}{miniframes theme}
+% {%
+% %   \begin{beamercolorbox}[colsep=1.5pt]{upper separation line head}
+% %   \end{beamercolorbox}
+%   \begin{beamercolorbox}{section in head/foot}
+%     \vskip2pt\insertnavigation{\paperwidth}%\vskip2pt
+%   \end{beamercolorbox}%
+% % %   \ifbeamer@theme@subsection%
+% % %     \begin{beamercolorbox}[colsep=1.5pt]{middle separation line head}
+% % %     \end{beamercolorbox}
+% % %     \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+% % %       leftskip=.3cm,rightskip=.3cm plus1fil]{subsection in head/foot}
+% % %       \usebeamerfont{subsection in head/foot}\insertsubsectionhead
+% % %     \end{beamercolorbox}%
+% % %   \fi%
+% % %   
+% %   \begin{beamercolorbox}[colsep=1.5pt]{lower separation line head}
+% %   \end{beamercolorbox} 
+% }
+
+%%% Headline
+\defbeamertemplate*{footline}{SAS theme}
+{
+    % EADS long arc
+%     \begin{tikzpicture}
+%         \clip (0cm, -3.823\paperwidth) rectangle (\paperwidth, -4\paperwidth);
+%         \filldraw[fill=gray!20!white, draw=gray!50!black] (0cm,0cm) circle (4\paperwidth);
+%     \end{tikzpicture}
+%     \vskip -.177\paperwidth
+
+    % EADS Logo
+%     \begin{beamercolorbox}[wd=.177\paperwidth,ht=.133\paperwidth,leftskip=.026\paperwidth]{EADS logo}
+%         \begin{pgfpicture}
+%             \begin{pgfmagnify}{.47}{.47}
+%                 \pgfpathmoveto{\pgfpoint{0.012cm}{0.005cm}}
+%                 \pgfpathlineto{\pgfpoint{3.412cm}{0.005cm}}
+%                 \pgfpathlineto{\pgfpoint{3.412cm}{2.433cm}}
+%                 \pgfpathlineto{\pgfpoint{0.012cm}{2.433cm}}
+%                 \pgfpathclose
+%                 \pgfusepath{clip}
+%                 \begin{pgfscope}
+%                     \pgfpathmoveto{\pgfpoint{0cm}{0cm}}
+%                     \pgfpathlineto{\pgfpoint{21.59cm}{0cm}}
+%                     \pgfpathlineto{\pgfpoint{21.59cm}{27.94cm}}
+%                     \pgfpathlineto{\pgfpoint{0cm}{27.94cm}}
+%                     \pgfpathclose
+%                     \pgfusepath{clip}
+%                     % Arrow
+%                     \definecolor{gray80}{RGB}{204,204,204}\pgfsetstrokecolor{gray80}\pgfsetfillcolor{gray80}
+%                     \pgfpathmoveto{\pgfpoint{0.754cm}{1.637cm}}
+%                     \pgfpathcurveto{\pgfpoint{0.645cm}{1.569cm}}{\pgfpoint{0.512cm}{1.326cm}}{\pgfpoint{0.552cm}{1.005cm}}
+%                     \pgfpathcurveto{\pgfpoint{0.636cm}{0.345cm}}{\pgfpoint{1.588cm}{0.297cm}}{\pgfpoint{1.581cm}{0.306cm}}
+%                     \pgfpathcurveto{\pgfpoint{1.58cm}{0.306cm}}{\pgfpoint{0.814cm}{0.414cm}}{\pgfpoint{0.736cm}{1.02cm}}
+%                     \pgfpathcurveto{\pgfpoint{0.634cm}{1.816cm}}{\pgfpoint{2.129cm}{2.312cm}}{\pgfpoint{2.129cm}{2.312cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.661cm}{2.196cm}}{\pgfpoint{0.182cm}{1.958cm}}{\pgfpoint{0.202cm}{1.002cm}}
+% 					\pgfpathcurveto{\pgfpoint{0.222cm}{-0.005cm}}{\pgfpoint{1.768cm}{0.003cm}}{\pgfpoint{1.76cm}{0.013cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.759cm}{0.014cm}}{\pgfpoint{0.491cm}{0.121cm}}{\pgfpoint{0.416cm}{0.977cm}}
+% 					\pgfpathcurveto{\pgfpoint{0.399cm}{1.173cm}}{\pgfpoint{0.49cm}{1.427cm}}{\pgfpoint{0.753cm}{1.639cm}}
+% 					\pgfpathlineto{\pgfpoint{0.754cm}{1.637cm}}
+% 					\pgfusepath{fill}
+% 					\pgfsetdash{}{0cm}
+% 					\pgfsetlinewidth{0.125mm}
+% 					\pgfsetmiterlimit{3.86369}
+% 					\pgfpathmoveto{\pgfpoint{0.754cm}{1.637cm}}
+% 					\pgfpathcurveto{\pgfpoint{0.645cm}{1.569cm}}{\pgfpoint{0.512cm}{1.326cm}}{\pgfpoint{0.552cm}{1.005cm}}
+% 					\pgfpathcurveto{\pgfpoint{0.636cm}{0.345cm}}{\pgfpoint{1.588cm}{0.297cm}}{\pgfpoint{1.581cm}{0.306cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.58cm}{0.306cm}}{\pgfpoint{0.814cm}{0.414cm}}{\pgfpoint{0.736cm}{1.02cm}}
+% 					\pgfpathcurveto{\pgfpoint{0.634cm}{1.816cm}}{\pgfpoint{2.129cm}{2.312cm}}{\pgfpoint{2.129cm}{2.312cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.661cm}{2.196cm}}{\pgfpoint{0.182cm}{1.958cm}}{\pgfpoint{0.202cm}{1.002cm}}
+% 					\pgfpathcurveto{\pgfpoint{0.222cm}{-0.005cm}}{\pgfpoint{1.768cm}{0.003cm}}{\pgfpoint{1.76cm}{0.013cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.759cm}{0.014cm}}{\pgfpoint{0.491cm}{0.121cm}}{\pgfpoint{0.416cm}{0.977cm}}
+% 					\pgfpathcurveto{\pgfpoint{0.399cm}{1.173cm}}{\pgfpoint{0.49cm}{1.427cm}}{\pgfpoint{0.753cm}{1.639cm}}
+% 					\pgfpathlineto{\pgfpoint{0.754cm}{1.637cm}}
+% 					\pgfpathclose
+% 					\pgfusepath{stroke}
+% 					\pgfpathmoveto{\pgfpoint{2.407cm}{2.414cm}}
+% 					\pgfpathlineto{\pgfpoint{2.061cm}{2.426cm}}
+% 					\pgfpathlineto{\pgfpoint{2.164cm}{2.323cm}}
+% 					\pgfpathlineto{\pgfpoint{2.141cm}{2.171cm}}
+% 					\pgfpathlineto{\pgfpoint{2.407cm}{2.414cm}}
+% 					\pgfusepath{fill}
+% 					\pgfsetdash{}{0cm}
+% 					\pgfpathmoveto{\pgfpoint{2.407cm}{2.414cm}}
+% 					\pgfpathlineto{\pgfpoint{2.061cm}{2.426cm}}
+% 					\pgfpathlineto{\pgfpoint{2.164cm}{2.323cm}}
+% 					\pgfpathlineto{\pgfpoint{2.141cm}{2.171cm}}
+% 					\pgfpathlineto{\pgfpoint{2.407cm}{2.414cm}}
+% 					\pgfpathclose
+% 					\pgfusepath{stroke}
+%                     % Text
+% 					\definecolor{blacktext}{RGB}{0,0,0}\pgfsetstrokecolor{blacktext}\pgfsetfillcolor{blacktext}
+% 					\pgfpathmoveto{\pgfpoint{0.768cm}{1.099cm}}
+% 					\pgfpathlineto{\pgfpoint{0.962cm}{1.099cm}}
+% 					\pgfpathlineto{\pgfpoint{0.869cm}{1.35cm}}
+% 					\pgfpathlineto{\pgfpoint{0.768cm}{1.099cm}}
+% 					\pgfpathclose
+% 					\pgfpathmoveto{\pgfpoint{0.845cm}{1.485cm}}
+% 					\pgfpathlineto{\pgfpoint{0.953cm}{1.485cm}}
+% 					\pgfpathlineto{\pgfpoint{1.225cm}{0.824cm}}
+% 					\pgfpathlineto{\pgfpoint{1.066cm}{0.824cm}}
+% 					\pgfpathlineto{\pgfpoint{0.993cm}{1.021cm}}
+% 					\pgfpathlineto{\pgfpoint{0.736cm}{1.021cm}}
+% 					\pgfpathlineto{\pgfpoint{0.657cm}{0.824cm}}
+% 					\pgfpathlineto{\pgfpoint{0.529cm}{0.824cm}}
+% 					\pgfpathlineto{\pgfpoint{0.845cm}{1.485cm}}
+% 					\pgfseteorule\pgfusepath{fill}\pgfsetnonzerorule
+% 					\pgfpathmoveto{\pgfpoint{2.496cm}{1.459cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.494cm}{1.468cm}}{\pgfpoint{2.494cm}{1.472cm}}{\pgfpoint{2.485cm}{1.476cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.474cm}{1.48cm}}{\pgfpoint{2.404cm}{1.497cm}}{\pgfpoint{2.332cm}{1.497cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.179cm}{1.497cm}}{\pgfpoint{2.065cm}{1.426cm}}{\pgfpoint{2.065cm}{1.304cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.065cm}{1.184cm}}{\pgfpoint{2.167cm}{1.14cm}}{\pgfpoint{2.27cm}{1.096cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.358cm}{1.058cm}}{\pgfpoint{2.399cm}{1.041cm}}{\pgfpoint{2.399cm}{0.988cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.399cm}{0.944cm}}{\pgfpoint{2.368cm}{0.897cm}}{\pgfpoint{2.279cm}{0.897cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.257cm}{0.897cm}}{\pgfpoint{2.205cm}{0.898cm}}{\pgfpoint{2.126cm}{0.94cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.109cm}{0.949cm}}{\pgfpoint{2.07cm}{0.974cm}}{\pgfpoint{2.062cm}{0.971cm}}
+% 					\pgfpathlineto{\pgfpoint{2.054cm}{0.968cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.047cm}{0.964cm}}{\pgfpoint{2.052cm}{0.939cm}}{\pgfpoint{2.053cm}{0.926cm}}
+% 					\pgfpathlineto{\pgfpoint{2.062cm}{0.854cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.063cm}{0.843cm}}{\pgfpoint{2.064cm}{0.84cm}}{\pgfpoint{2.08cm}{0.835cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.128cm}{0.821cm}}{\pgfpoint{2.212cm}{0.81cm}}{\pgfpoint{2.265cm}{0.81cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.424cm}{0.81cm}}{\pgfpoint{2.531cm}{0.904cm}}{\pgfpoint{2.531cm}{1.017cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.531cm}{1.128cm}}{\pgfpoint{2.447cm}{1.165cm}}{\pgfpoint{2.338cm}{1.215cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.229cm}{1.265cm}}{\pgfpoint{2.198cm}{1.279cm}}{\pgfpoint{2.198cm}{1.332cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.198cm}{1.382cm}}{\pgfpoint{2.238cm}{1.416cm}}{\pgfpoint{2.31cm}{1.416cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.36cm}{1.416cm}}{\pgfpoint{2.404cm}{1.398cm}}{\pgfpoint{2.43cm}{1.385cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.462cm}{1.369cm}}{\pgfpoint{2.485cm}{1.35cm}}{\pgfpoint{2.493cm}{1.353cm}}
+% 					\pgfpathlineto{\pgfpoint{2.502cm}{1.357cm}}
+% 					\pgfpathcurveto{\pgfpoint{2.506cm}{1.361cm}}{\pgfpoint{2.505cm}{1.384cm}}{\pgfpoint{2.503cm}{1.397cm}}
+% 					\pgfpathlineto{\pgfpoint{2.496cm}{1.459cm}}
+% 					\pgfusepath{fill}
+% 					\pgfpathmoveto{\pgfpoint{1.459cm}{1.409cm}}
+% 					\pgfpathlineto{\pgfpoint{1.459cm}{0.906cm}}
+% 					\pgfpathlineto{\pgfpoint{1.55cm}{0.906cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.692cm}{0.906cm}}{\pgfpoint{1.816cm}{0.934cm}}{\pgfpoint{1.816cm}{1.16cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.816cm}{1.315cm}}{\pgfpoint{1.766cm}{1.411cm}}{\pgfpoint{1.558cm}{1.411cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.521cm}{1.411cm}}{\pgfpoint{1.506cm}{1.41cm}}{\pgfpoint{1.459cm}{1.409cm}}
+% 					\pgfpathclose
+% 					\pgfpathmoveto{\pgfpoint{1.314cm}{0.823cm}}
+% 					\pgfpathlineto{\pgfpoint{1.314cm}{1.485cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.379cm}{1.485cm}}{\pgfpoint{1.451cm}{1.492cm}}{\pgfpoint{1.53cm}{1.492cm}}
+% 					\pgfpathlineto{\pgfpoint{1.573cm}{1.492cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.678cm}{1.492cm}}{\pgfpoint{1.969cm}{1.492cm}}{\pgfpoint{1.969cm}{1.177cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.969cm}{1.022cm}}{\pgfpoint{1.895cm}{0.925cm}}{\pgfpoint{1.815cm}{0.878cm}}
+% 					\pgfpathcurveto{\pgfpoint{1.721cm}{0.823cm}}{\pgfpoint{1.56cm}{0.823cm}}{\pgfpoint{1.506cm}{0.823cm}}
+% 					\pgfpathlineto{\pgfpoint{1.314cm}{0.823cm}}
+% 					\pgfseteorule\pgfusepath{fill}\pgfsetnonzerorule
+% 					\pgfpathmoveto{\pgfpoint{0.012cm}{1.485cm}}
+% 					\pgfpathlineto{\pgfpoint{0.012cm}{0.824cm}}
+% 					\pgfpathlineto{\pgfpoint{0.498cm}{0.824cm}}
+% 					\pgfpathlineto{\pgfpoint{0.498cm}{0.911cm}}
+% 					\pgfpathlineto{\pgfpoint{0.157cm}{0.911cm}}
+% 					\pgfpathlineto{\pgfpoint{0.157cm}{1.13cm}}
+% 					\pgfpathlineto{\pgfpoint{0.458cm}{1.13cm}}
+% 					\pgfpathlineto{\pgfpoint{0.458cm}{1.213cm}}
+% 					\pgfpathlineto{\pgfpoint{0.157cm}{1.213cm}}
+% 					\pgfpathlineto{\pgfpoint{0.157cm}{1.404cm}}
+% 					\pgfpathlineto{\pgfpoint{0.492cm}{1.404cm}}
+% 					\pgfpathlineto{\pgfpoint{0.492cm}{1.485cm}}
+% 					\pgfpathlineto{\pgfpoint{0.012cm}{1.485cm}}
+% 					\pgfusepath{fill}
+% 					% Star (blue part)
+%                     \definecolor{bluestar}{RGB}{0,153,216}\pgfsetstrokecolor{bluestar}\pgfsetfillcolor{bluestar}
+% 					\pgfpathmoveto{\pgfpoint{2.926cm}{2.357cm}}
+% 					\pgfpathlineto{\pgfpoint{2.989cm}{1.966cm}}
+% 					\pgfpathlineto{\pgfpoint{3.38cm}{1.903cm}}
+% 					\pgfpathlineto{\pgfpoint{3.412cm}{1.897cm}}
+% 					\pgfpathlineto{\pgfpoint{3.38cm}{1.891cm}}
+% 					\pgfpathlineto{\pgfpoint{2.989cm}{1.828cm}}
+% 					\pgfpathlineto{\pgfpoint{2.926cm}{1.437cm}}
+% 					\pgfpathlineto{\pgfpoint{2.92cm}{1.405cm}}
+% 					\pgfpathlineto{\pgfpoint{2.914cm}{1.437cm}}
+% 					\pgfpathlineto{\pgfpoint{2.851cm}{1.828cm}}
+% 					\pgfpathlineto{\pgfpoint{2.459cm}{1.891cm}}
+% 					\pgfpathlineto{\pgfpoint{2.428cm}{1.897cm}}
+% 					\pgfpathlineto{\pgfpoint{2.459cm}{1.903cm}}
+% 					\pgfpathlineto{\pgfpoint{2.851cm}{1.966cm}}
+% 					\pgfpathlineto{\pgfpoint{2.914cm}{2.357cm}}
+% 					\pgfpathlineto{\pgfpoint{2.92cm}{2.389cm}}
+% 					\pgfpathlineto{\pgfpoint{2.926cm}{2.357cm}}
+% 					\pgfusepath{fill}
+% 					% Star (white part)
+%                     \definecolor{whitestar}{RGB}{255,255,255}\pgfsetstrokecolor{whitestar}\pgfsetfillcolor{whitestar}
+% 					\pgfpathmoveto{\pgfpoint{2.86cm}{1.964cm}}
+% 					\pgfpathlineto{\pgfpoint{2.92cm}{2.341cm}}
+% 					\pgfpathlineto{\pgfpoint{2.92cm}{1.903cm}}
+% 					\pgfpathlineto{\pgfpoint{2.86cm}{1.964cm}}
+% 					\pgfusepath{fill}
+% 					\pgfpathmoveto{\pgfpoint{2.476cm}{1.897cm}}
+% 					\pgfpathlineto{\pgfpoint{2.853cm}{1.957cm}}
+% 					\pgfpathlineto{\pgfpoint{2.914cm}{1.897cm}}
+% 					\pgfpathlineto{\pgfpoint{2.476cm}{1.897cm}}
+% 					\pgfusepath{fill}
+% 					\pgfpathmoveto{\pgfpoint{2.981cm}{1.958cm}}
+% 					\pgfpathlineto{\pgfpoint{3.363cm}{1.897cm}}
+% 					\pgfpathlineto{\pgfpoint{2.926cm}{1.897cm}}
+% 					\pgfpathlineto{\pgfpoint{2.994cm}{1.829cm}}
+% 					\pgfpathlineto{\pgfpoint{2.989cm}{1.828cm}}
+% 					\pgfpathlineto{\pgfpoint{2.988cm}{1.824cm}}
+% 					\pgfpathlineto{\pgfpoint{2.92cm}{1.892cm}}
+% 					\pgfpathlineto{\pgfpoint{2.92cm}{1.454cm}}
+% 					\pgfpathlineto{\pgfpoint{2.859cm}{1.836cm}}
+% 					\pgfpathlineto{\pgfpoint{2.981cm}{1.958cm}}
+% 					\pgfusepath{fill}
+% 				\end{pgfscope}
+% 			\end{pgfmagnify}
+% 	    \end{pgfpicture}
+%     \end{beamercolorbox}
+%     \vskip -.133\paperwidth
+
+    % Head banner
+    %\vskip 10pt
+    \begin{beamercolorbox}[wd=.98\paperwidth,ht=.05\paperwidth,leftskip=.177\paperwidth]{foot banner1}
+        \begin{flushright}
+            \hfill\insertshorttitle~|~\insertshortauthor~|~\insertframenumber/\inserttotalframenumber
+        \end{flushright}
+    \end{beamercolorbox}
+    \vskip -7pt
+}
+
+\mode
+<all>
