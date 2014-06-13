@@ -230,8 +230,6 @@ expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
         { Γ ⊢ e : \tInt }
 \end{mathpar}
 
-% TODO Cela n'a pas été évoqué jusqu'à présent!
-
 Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
 expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
 priori} de type \tInt, mais \tBits ou \tInt. Cela implique aussi qu'on peut
