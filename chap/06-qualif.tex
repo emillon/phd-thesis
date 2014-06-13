@@ -527,8 +527,6 @@ manière décrite dans la figure~\ref{fig:ex-sys-getver-call}.
 En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
 règle suivante:
 
-% TODO à quoi le & sert il ? ♢ semble suffisant
-
 \[
   \semrule{Phi-User}
 \]
@@ -536,6 +534,13 @@ règle suivante:
 Dans $\wphi{(\vTainted{φ})}$, l'opérateur $\phx\wphi$ indique que la valeur
 créée est une référence mémoire. Cette référence mémoire, $\vTainted{φ}$, est
 contrôlée par l'utilisateur. C'est ce qu'indique le constructeur $\phx\vTainted$
+
+Cette règle semble asymétrique. C'est lié au fait qu'habituellement, les valeurs
+pointeurs (de la forme $\wphi{Φ}$) sont crées en utilisant la règle \textsc{Ctx}
+avec l'opérateur $\&$. Ici une expression crée une valeur pointeur, il faut donc
+y insérer un $\widehat{\&}$. En effet, $\phx\vTainted$ n'est qu'une
+transformation entre chemins, pas une manière de construire une valeur à partir
+d'un chemin comme $\widehat{\&}$.
 
 Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
 déclencher une erreur $\serr{sec}$ en cas de déréférencement d'un pointeur
