@@ -193,7 +193,6 @@ invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu
 aient un nom globalement unique. Cette étape se conclut par la création d'un
 fichier \newspeak.
 
-% TODO impression backticks
 \section{L'outil \ptrtype}
 
 La dernière étape est réalisée dans un autre outil nommé \ptrtype, d'environ
@@ -632,9 +631,8 @@ Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
 fonctions imbriquées, et les types des valeurs globales sont écrites par le
 programmeur. Cela permet de borner leur taille. En pratique, sur les exemples
-testés nous n'avons pas noté de délai d'exécution notable.
-
-% TODO ↑ combien? de quelle taille?
+testés (jusqu'à quelques centaines de lignes de code) nous n'avons pas noté de
+délai d'exécution notable.
 
 En revanche, la compilation de C vers \newspeak peut être plus coûteuse,
 notamment lorsque le fichier d'entrée est de taille importante. Le temps de
