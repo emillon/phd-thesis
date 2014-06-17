@@ -1,9 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{c+cp}{\PYZsh{}}\PY{c+cp}{ifndef HAVE\PYZus{}MEMMOVE}
-\PY{c+cp}{\PYZsh{}}\PY{c+cp}{ifdef HAVE\PYZus{}BCOPY}
-\PY{c+cp}{\PYZsh{}}\PY{c+cp}{define memmove(d, s, l) bcopy((s), (d), (l))}
-\PY{c+cp}{\PYZsh{}}\PY{c+cp}{else}
-\PY{c+cp}{\PYZsh{}}\PY{c+cp}{error memmove does not exist on this platform, nor is a substitute available}
-\PY{c+cp}{\PYZsh{}}\PY{c+cp}{endif }\PY{c+cm}{/* HAVE\PYZus{}BCOPY */}
-\PY{c+cp}{\PYZsh{}}\PY{c+cp}{endif }\PY{c+cm}{/* HAVE\PYZus{}MEMMOVE */}
-\end{Verbatim}
