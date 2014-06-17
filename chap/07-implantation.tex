@@ -283,13 +283,13 @@ val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
 
 La fonction \texttt{unify} prend en entrée deux représentations de types pouvant
 contenir des inconnues de la forme \texttt{Var n}, et retourne une liste de
-couples $(n, t)$ indiquant les substitutions à faire.
+contraintes indiquant les substitutions à faire.
 
 Cet algorithme est décrit en pseudo-code ML en figure~\ref{fig:algo-unif}. Pour
-simplifier, on le présente comme retournant une liste de substitutions, mais il
-est implanté de manière destructive: \texttt{Var n} contient une référence qui
-peut être modifiée, et grâce au partage c'est équivalent à substituer dans tous
-les types qui contiennent \texttt{Var n}.
+simplifier, on le présente comme retournant une liste, mais il est implanté de
+manière destructive: \texttt{Var n} contient une référence qui peut être
+modifiée, et grâce au partage c'est équivalent à substituer dans tous les types
+qui contiennent \texttt{Var n}.
 
 La fonction d'unification prend un chemin différent selon la forme des deux
 types d'entrée:
@@ -297,6 +297,15 @@ types d'entrée:
 \changed{Passage en pseudocode}
 
 \begin{figure}%{{{
+\def\cstrSub#1#2{#1 \hookrightarrow #2}
+\def\cstrRow#1#2#3{(#1:#2) ∈ #3}
+
+\begin{align*}
+\gramdef{Contrainte}{c}
+    {\cstrSub{n}{t}}{Substitution}
+    {\cstrRow{l}{t}{X}}{Variable de rangée}
+    {END}
+\end{align*}
 
 % {{{
 % http://tex.stackexchange.com/questions/53357/switch-cases-in-algorithmic
@@ -305,8 +314,8 @@ types d'entrée:
 \algnewcommand\algorithmiccase{\textbf{case}}
 \algnewcommand\algorithmicwith{\textbf{with}}
 \algnewcommand\algorithmicto{\textbf{to}}
-\algnewcommand\ErrorCul{\textbf{erreur}}
-\algnewcommand\Error{\State \ErrorCul}
+\algnewcommand\ErrorX{\textbf{erreur}}
+\algnewcommand\Error{\State \ErrorX}
 \algnewcommand\algorithmicnil{[~]}
 \algnewcommand\Var[1]{\textsc{Var}~{#1}}
 % New "environments"
@@ -329,7 +338,7 @@ types d'entrée:
             \If{$n_a = n_b$}
                 \State \Return{\algorithmicnil}
             \Else
-                \State \Return{$[(n_a, t_b)]$}
+                \State \Return{$[\cstrSub{n_a}{t_b}]$}
             \EndIf
         \EndCase
 
@@ -337,7 +346,7 @@ types d'entrée:
             \If{\Call{occurs}{$n_a, t_b$}}
                 \Error
             \EndIf
-            \State \Return{$[(n_a, t_b)]$}
+            \State \Return{$[\cstrSub{n_a}{t_b}]$}
         \EndCase
 
         \Case{$t_a, \Var{n_b}$}
@@ -376,8 +385,23 @@ types d'entrée:
             \State \Return{r}
         \EndCase
 
+        \Case{$A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a },
+               B = \tStruct{ b_1: s_1 ; … ; b_m: u_m; …X_b }$}
+               \State $r \gets ∅$
+               \For{$\{(t, u) / ∃ l . \cstrRow{l}{t}{A} ∧ \cstrRow{l}{u}{B} \}$}
+                    \State $r \gets r~∪$ \Call{unify}{$t, u$}
+               \EndFor
+               \For{$\{(l, t) ∈ A / ∀ \cstrRow{l'}{u}{B} . l ≠ l'\}$}
+                   \State $r \gets r~∪ [\cstrRow{l}{t}{X_B}]$
+               \EndFor
+               \For{$\{(l, u) ∈ B / ∀ \cstrRow{l'}{t}{A} . l ≠ l'\}$}
+                   \State $r \gets r~∪ [\cstrRow{l}{u}{X_A}]$
+               \EndFor
+               \State \Return{r}
+        \EndCase
+
         \Case{$\_$}
-            \ErrorCul
+            \ErrorX
         \EndCase
 
     \EndMatch
@@ -413,13 +437,12 @@ constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
 \end{itemize}
 
 Le traitement des types structures est géré dans l'implantation d'une manière
-différente de la présentation du chapitre~\ref{cha:lang}. C'est pourquoi elle
-n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directement
-au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
-chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
-\tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus (on rappelle que
-dans la sémantique qui nous intéresse, ceux-ci n'ont pas un ordre défini au sein
-d'une structure).
+différente de la présentation du chapitre~\ref{cha:lang}. Au lieu d'accéder
+directement au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom
+de champ à chaque accès. C'est-à-dire qu'on va par exemple inférer le type
+$\tStruct{ l: \tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus (on
+rappelle que dans la sémantique qui nous intéresse, ceux-ci n'ont pas un ordre
+défini au sein d'une structure).
 
 Plus précisément, si on cherche à unifier les types structures
 $A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a }$
@@ -430,8 +453,8 @@ deux structures, ceux qui apparaissent dans $A$ mais pas dans $B$, et ceux qui
 apparaissent dans $B$ mais pas dans $A$.
 
 \begin{itemize}
-    \item Pour tous les champs $l$ tels que $l: a_i ∈ A$ et $l: b_j ∈ B$,
-        on unifie $a_i$ et $b_j$.
+    \item Pour tous les champs $l$ tels que $l: t ∈ A$ et $l: u ∈ B$,
+        on unifie $t$ et $u$.
     \item Pour les champs $l$ qui sont dans $A$ mais pas dans $B$: on ajoute $l$
         à $X_b$.
     \item Pour les champs $l$ qui sont dans $B$ mais pas dans $A$: on ajoute $l$
@@ -441,10 +464,6 @@ apparaissent dans $B$ mais pas dans $A$.
 Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
 les langages comme OCaml. À la fin de l'inférence, on considère que la variable
 de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
-
-% TODO ajouter à la figure algo?
-% cstrs ::= n ↦ t
-%        |  t ∈ X
 
 \added{citation}
 
