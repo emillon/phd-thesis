@@ -35,6 +35,10 @@
 \restylefloat{figure}
 \newsubfloat{figure}
 
+\usepackage{caption}
+\DeclareCaptionLabelSeparator{frenchcolon}{ : }
+\captionsetup{labelsep=frenchcolon}
+
 % Epigraphs
 \epigraphfontsize{\itshape}
 \setlength\epigraphwidth{8cm}
@@ -82,7 +86,7 @@
 \title{Analyse de sécurité de logiciels système par typage statique}
 \subtitle{Application au noyau Linux}
 \author{Étienne Millon}
-\date{xx-yy-2013}
+\date{10 juillet 2014}
 
 \input{title.tex}
 \begin{document}
@@ -93,27 +97,25 @@
 \titleUL{}
 \end{titlingpage}
 
-% TODx decom
-%\cleartorecto %{{{
+%{{{
+\begin{headingpage}
+\hfill%
+\begin{minipage}{0.6\textwidth}
+\shorthandoff{;}
+\begin{shadequote}[r]{Peter van den Linden}
+Many C programmers believe that \enquote{strong typing}
+just means pounding extra hard on the keyboard.
+\end{shadequote}
 
-%\begin{headingpage}
-%\hfill%
-%\begin{minipage}{0.6\textwidth}
-%\shorthandoff{;}
-%\begin{shadequote}[r]{Peter van den Linden}
-%Many C programmers believe that \enquote{strong typing}
-%just means pounding extra hard on the keyboard.
-%\end{shadequote}
+%The fundamental problem addressed by a type theory is to ensure that programs
+%have meaning. The fundamental problem caused by a type theory is that meaningful
+%programs may not have meanings ascribed to them. The quest for richer type
+%systems results from this tension.
+ %Mark Manasse
 
-%%The fundamental problem addressed by a type theory is to ensure that programs
-%%have meaning. The fundamental problem caused by a type theory is that meaningful
-%%programs may not have meanings ascribed to them. The quest for richer type
-%%systems results from this tension.
- %%Mark Manasse
-
-%\shorthandon{;}
-%\end{minipage}
-%\end{headingpage}%}}}
+\shorthandon{;}
+\end{minipage}
+\end{headingpage}%}}}
 
 %{{{
 \asuacknowledgements
@@ -122,8 +124,6 @@
 %}}}
 
 \clearpage
-
-%\asudedication{Dédicace}
 
 \tableofcontents
 
@@ -199,9 +199,6 @@
 \partccl{part:xp}
 \input{chap/ccl-III.tex}
 
-\part{Conclusion}
-% TODO pas besoin d'une partie pour ça. Faire comme l'intro
-
 \chapter{Conclusion}
 
 \label{cha:conclusion}
@@ -257,8 +254,6 @@
 \bibliography{typ}
 
 \input{abstract.tex}
-
-% TODx bib en français
 
 \end{document}
 

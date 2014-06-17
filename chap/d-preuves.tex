@@ -333,11 +333,11 @@ récurrence à $e$.
 \begin{itemize}
 \item $e = v$. Alors $i = \iReturn{v}$, ce qui nous permet de conclure.
 
-    % TODO ↓ normalement CTX est défini sur i et non sur e
-
 \item $\mm{m}{e}{m'}{e'}$.
 Alors en appliquant \textsc{Ctx} avec
-$C = \iReturn{\ctxEmpty}$, on conclut que
+$C = \iReturn{\ctxEmpty}$\footnote{Les contextes sont des objets purement
+syntaxiques: on peut les appliquer entre instructions et expressions
+indifféremment}, on conclut que
 \linebreak
 $\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
 
@@ -590,9 +590,7 @@ On commence par appliquer l'hypothèse de récurrence à $e$. Dans le cas d'un p
 d'évaluation ou d'erreur, on applique respectivement \textsc{Ctx} ou
 \textsc{Eval-Err} avec $C = \ctxEmpty (e_1, …, e_n)$.
 Reste le cas où $e$ est une valeur: d'après le lemme~\ref{lemma:canon}, $e$ est
-de la forme $f = \eFun{\vec{a}}{i}$.
-
-% TODO vec: nouvelle notation
+de la forme $f = \eFun{a_1, …, a_n}{i}$.
 
 Ensuite, appliquons le même schéma que pour \textsc{Array}.
 En cas de pas d'évaluation ou d'erreur, on utilise
@@ -601,7 +599,7 @@ $C = f (v_1, …, v_{p-1}, \ctxEmpty, e_{p+1}, …, e_n)$.
 Le seul cas restant est celui où l'expression considérée a pour forme
 $f (v_1, …, v_n)$
 avec
-$f = \eFun{\vec{a}}{i}$.
+$f = \eFun{a_1, …, a_n}{i}$.
 
 Soit $Γ' = (Γ_G, [a_1 : t_1, …, a_n : t_n, \vRet : t])$
 et
@@ -612,15 +610,13 @@ On applique alors l'hypothèse de récurrence à $Γ'$, $m_1$ et $i$ (le lemme
 d'inversion garantit que $Γ' ⊢ i$).
 
 \begin{itemize}
+\item $i = \iReturn{v}$. Alors on applique \textsc{Exp-Call-Return}.
+
 \item $i = \iPass$. Ce cas est impossible puisqu'on prend l'hypothèse que les
 fonctions se terminent par une instruction $\iReturn{\cdot}$
 (page~\pageref{page:return-fonction}).
 
-% TODO cas i = return(v) ?
-
-\item $\mm{m_1}{i}{m_2}{i'}$.
-
-    Alors on peut appliquer \textsc{Exp-Call-Ctx}.
+\item $\mm{m_1}{i}{m_2}{i'}$. Alors on peut appliquer \textsc{Exp-Call-Ctx}.
 
 \item $\msi{m}{i} → Ω$. On peut alors appliquer \textsc{Exp-Call-Err}.
 
@@ -817,12 +813,9 @@ $\semtypphi{m}{φ}{τ}$.
 % }}}
 \paragraph{\textsc{Phi-Var}, \textsc{Phi-Struct} et \textsc{Phi-Array}:} % {{{
 
-Tout d'abord, la mémoire n'est pas modifiée donc il n'est pas nécessaire de
-montrer la compatibilité de $m'$.
-Ensuite, les prémisses de ces règles ont la forme $φ$ , donc le
+Il n'est pas nécessaire de montrer la compatibilité de $m'$ car la mémoire n'est
+pas modifiée. De plus, les prémisses de ces règles ont la forme $φ$ , donc le
 lemme~\ref{lemma:mem-typ} s'applique avec la conclusion correcte.
-
-% TODO il n'est pas nécessaire... : à mettre avant
 
 % }}}
 
@@ -959,9 +952,7 @@ D'après le lemme d'inversion, $Γ ⊢ i_t$.
 
 D'après le lemme d'inversion, $Γ ⊢ e : t$ et $Γ ⊢ i$.
 Par \textsc{Seq}, on a $Γ ⊢ i ; \iWhile{e}{i}$.
-Enfin par \textsc{If} il vient $Γ ⊢ \iThen{e}{i ; \iWhile{e}{i}}$.
-
-% TODO ELSE PASS
+Enfin par \textsc{If} il vient $Γ ⊢ \iIf{e}{i ; \iWhile{e}{i}}{\iPass}$.
 
 %}}}
 \paragraph{\textsc{Return}:}%{{{
@@ -1115,9 +1106,7 @@ De même, il suffit de prouver les cas correspondant aux nouvelles règles.
 
 On applique le lemme de représentation, qu'on étend avec le cas
 \linebreak
-$\cRepr{t~@} = \cRepr{\cRepr{t}~@}$.
-
-% TODO repr en trop?
+$\cRepr{t~@} = \cRepr{t}~@$.
 
 % }}}
 \paragraph{\textsc{User-Get-OK}:} % {{{

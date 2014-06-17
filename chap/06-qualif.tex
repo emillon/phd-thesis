@@ -20,8 +20,6 @@ représentation, c'est-à-dire définir un type abstrait. Dans un système
 d'exploitation, les pointeurs utilisateur sont en fait des pointeurs classiques
 déguisés, pour lesquels on interdit l'opérateur de déréférencement.
 
-% TODO pointeurs utilisateur sans S
-
 Cette technique est en fait générique : on peut également l'appliquer à certains
 types d'entiers. En C, il est commun d'utiliser des \texttt{int} pour tout et
 n'importe quoi : pour des entiers bien sûr (au sens de $ℤ$), mais aussi comme
@@ -232,8 +230,6 @@ expression de type $\tBits$ là où une expression de type $\tInt$ est attendue.
         { Γ ⊢ e : \tInt }
 \end{mathpar}
 
-% TODO Cela n'a pas été évoqué jusqu'à présent!
-
 Cela modifie légèrement l'implantation de l'inférence de types. Le type d'une
 expression utilisée comme opérande de l'opérateur $+$ n'est donc pas \emph{a
 priori} de type \tInt, mais \tBits ou \tInt. Cela implique aussi qu'on peut
@@ -393,13 +389,13 @@ ne classifie pas les valeurs selon la variable pointée mais selon la
 construction du pointeur.
 
 Remarquons qu'on n'introduit pas de sous-typage: les pointeurs noyau ne peuvent
-être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateurs
-qu'en tant que pointeurs utilisateurs.
+être utilisés qu'en tant que pointeurs noyau, et les pointeurs utilisateur
+qu'en tant que pointeurs utilisateur.
 
 En plus du déréférencement par \texttt{*} (qui devra donc renvoyer
 $\serr{sec}$ pour les valeurs de la forme $\vTainted{φ'}$), il faut aussi
 ajouter des constructions de lecture et d'écriture à travers les pointeurs
-utilisateurs. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et \linebreak
+utilisateur. Ceci sera fait sous forme de deux fonctions, $\cfuF$ et \linebreak
 $\ctuF$. Celles-ci prennent deux pointeurs en paramètre et renvoient un booléen
 indiquant si la copie a pu être faite (si le paramètre contrôlé par
 l'utilisateur pointe en espace noyau, les fonctions ne font pas la copie et
@@ -494,7 +490,7 @@ figure~\ref{fig:qualif-changes}.
   {END}
 \end{align*}
 
-\caption{Ajouts liés aux pointeurs utilisateurs (par rapport à l'interprète du
+\caption{Ajouts liés aux pointeurs utilisateur (par rapport à l'interprète du
 chapitre~\ref{cha:lang})}
 
 \label{fig:qualif-changes}
@@ -529,8 +525,6 @@ manière décrite dans la figure~\ref{fig:ex-sys-getver-call}.
 En ce qui concerne l'évaluation des expressions $\phx\eTaint$, on ajoute la
 règle suivante:
 
-% TODO à quoi le & sert il ? ♢ semble suffisant
-
 \[
   \semrule{Phi-User}
 \]
@@ -538,6 +532,13 @@ règle suivante:
 Dans $\wphi{(\vTainted{φ})}$, l'opérateur $\phx\wphi$ indique que la valeur
 créée est une référence mémoire. Cette référence mémoire, $\vTainted{φ}$, est
 contrôlée par l'utilisateur. C'est ce qu'indique le constructeur $\phx\vTainted$
+
+Cette règle semble asymétrique. C'est lié au fait qu'habituellement, les valeurs
+pointeurs (de la forme $\wphi{Φ}$) sont crées en utilisant la règle \textsc{Ctx}
+avec l'opérateur $\&$. Ici une expression crée une valeur pointeur, il faut donc
+y insérer un $\widehat{\&}$. En effet, $\phx\vTainted$ n'est qu'une
+transformation entre chemins, pas une manière de construire une valeur à partir
+d'un chemin comme $\widehat{\&}$.
 
 Ensuite, il est nécessaire d'adapter les règles d'accès à la mémoire pour
 déclencher une erreur $\serr{sec}$ en cas de déréférencement d'un pointeur
@@ -704,7 +705,7 @@ $\cdot ⊢ \cdot : \cdot$, en modifiant certaines règles et en en ajoutant
 d'autres. Naturellement, la plupart des différences porteront sur le traitement
 des pointeurs.
 
-\subsubsection*{Pointeurs utilisateurs}
+\subsubsection*{Pointeurs utilisateur}
 
 Le changement clef est l'ajout de \emph{pointeurs utilisateur}. En plus des
 types pointeurs habituels $\ptrK{t}$, on ajoute des types pointeurs utilisateur
@@ -849,8 +850,6 @@ constructeur $\phx\vTainted$ transforme un pointeur en pointeur utilisateur.
 
 En plus des cas présentés dans le lemme~\ref{lemma:inversion}, les cas suivants
 permettent de remonter un jugement de typage.
-
-% TODO fonte pour uget/uput
 
 \begin{itemize}
 \item

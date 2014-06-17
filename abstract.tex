@@ -6,8 +6,6 @@
 
 \begin{center}\Large \textbf{Résumé}\end{center}
 
-    % TODx màj
-
 Les noyaux de système d'exploitation manipulent des données fournies par les
 programmes utilisateur via les appels système. Si elles sont manipulées sans
 prendre une attention particulière, une faille de sécurité connue sous le nom de
@@ -23,12 +21,15 @@ lequel sont écrits la plupart des systèmes d'exploitation. Sa sémantique
 opérationnelle et un système de types sont décrits, et les propriétés classiques
 de sûreté du typage sont établies.
 
-On ajoute ensuite à \langname{} la notion de valeur provenant de l'espace
-utilisateur. La sûreté du typage est alors brisée, mais on peut la réétablir en
-donnant un type particulier aux pointeurs contrôlés par l'espace utilisateur, ce
-qui force leur déférencement à se faire de manière contrôlée. Cette technique
-permet de détecter un bug qui a frappé un pilote de carte graphique AMD dans le
-noyau Linux.
+Un premier exemple d'analyse sur ce langage est décrite, permettant de
+distinguer les entiers utilisés comme \emph{bitmasks}, qui sont une source de
+bugs dans les programmes C. On ajoute ensuite à \langname{} la notion de valeur
+provenant de l'espace utilisateur. La sûreté du typage est alors brisée, mais on
+peut la réétablir en donnant un type particulier aux pointeurs contrôlés par
+l'espace utilisateur, ce qui force leur déférencement à se faire de manière
+contrôlée. Cette technique permet de détecter deux bugs dans le noyau Linux: le
+premier concerne un pilote de carte graphique AMD, et le second l'appel système
+\texttt{ptrace} sur l'architecture Blackfin.
 
 Ces travaux ouvrent des perspectives sur deux points. Il est possible
 d'appliquer cette analyse à d'autres interfaces du noyau Linux qui communiquent
@@ -37,7 +38,7 @@ l'interface des types de leur implantation. Ce concept de \emph{types abstraits}
 étant absent de C, de nombreuses erreurs de programmation peuvent également être
 vérifiées à l'aide de cette méthode.
 
-%TODx
+%TODO
 %\begin{center}\Large \textbf{Abstract}\end{center}
 
 %Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec gravida, diam

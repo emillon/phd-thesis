@@ -410,7 +410,7 @@
     }
     {While}{ \irule{While}
                { }
-               { \mmi{m}{\iWhile{e}{i}}{m}{\iThen{e}{i;\iWhile{e}{i}}}
+               { \mmi{m}{\iWhile{e}{i}}{m}{\iIf{e}{i;\iWhile{e}{i}}{\iPass}}
                }
     }
     {Return}{ \irule{Return}

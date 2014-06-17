@@ -193,7 +193,6 @@ invisibles à l'extérieur de leur unité de compilation, sont renommés afin qu
 aient un nom globalement unique. Cette étape se conclut par la création d'un
 fichier \newspeak.
 
-% TODx impression backticks
 \section{L'outil \ptrtype}
 
 La dernière étape est réalisée dans un autre outil nommé \ptrtype, d'environ
@@ -203,7 +202,7 @@ types décrits dans les chapitres~\ref{cha:typbase} et~\ref{cha:qualifs}.
 Puisqu'ils sont suffisamment proches du lambda calcul simplement typé, on peut
 utiliser une variante de l'algorithme W de Damas et Milner~\cite{DamasMilner}.
 
-% TODO (*) UNIFY
+% (*) UNIFY
 
 Cela repose sur l'unification: on dispose d'une fonction permettant de créer des
 inconnues de type, et d'une fonction pour unifier deux types partiellement
@@ -213,178 +212,7 @@ faire des substitutions explicites. Puisque ces systèmes de types sont
 monomorphes, on présente une erreur si des variable de type libres sont
 présentes.
 
-La fonction \texttt{unify} prend en entrée deux représentations de types pouvant
-contenir des inconnues de la forme \texttt{Var n}, et retourne une liste de
-couples $(n, t)$ indiquant les substitutions à faire.
-
-Cet algorithme est décrit en pseudo-code ML en figure~\ref{fig:algo-unif}. Pour
-simplifier, on le présente comme retournant une liste de substitutions, mais il
-est implanté de manière destructive: \texttt{Var n} contient une référence qui
-peut être modifiée, et grâce au partage c'est équivalent à substituer dans tous
-les types qui contiennent \texttt{Var n}.
-
-La fonction d'unification prend un chemin différent selon la forme des deux
-types d'entrée:
-
-\changed{Passage en pseudocode}
-
-\begin{figure}%{{{
-
-% {{{
-% http://tex.stackexchange.com/questions/53357/switch-cases-in-algorithmic
-% New definitions
-\algnewcommand\algorithmicmatch{\textbf{match}}
-\algnewcommand\algorithmiccase{\textbf{case}}
-\algnewcommand\algorithmicwith{\textbf{with}}
-\algnewcommand\algorithmicto{\textbf{to}}
-\algnewcommand\ErrorCul{\textbf{erreur}}
-\algnewcommand\Error{\State \ErrorCul}
-\algnewcommand\algorithmicnil{[~]}
-\algnewcommand\Var[1]{\textsc{Var}~{#1}}
-% New "environments"
-\algdef{SE}[MATCH]{Match}{EndMatch}[1]
-    {\algorithmicmatch\ (#1)\ \algorithmicwith}
-    {\algorithmicend\ \algorithmicswitch}%
-\algdef{SE}[CASE]{Case}{EndCase}[1]
-    {|~\ #1\ $⇒$}
-    {\algorithmicend\ \algorithmiccase}%
-\algtext*{EndMatch}%
-\algtext*{EndCase}%
-
-\algrenewcommand\algorithmicindent{3em}
-%}}}
-
-\begin{algorithmic}[1]
-    \Function{unify}{$t_a, t_b$}
-    \Match{$t_a, t_b$}
-        \Case{$\Var{n_a}, \Var{n_b}$}
-            \If{$n_a = n_b$}
-                \State \Return{\algorithmicnil}
-            \Else
-                \State \Return{$[(n_a, t_b)]$}
-            \EndIf
-        \EndCase
-
-        \Case{$\Var{n_a}, t_b$}
-            \If{\Call{occurs}{$n_a, t_b$}}
-                \Error
-            \EndIf
-            \State \Return{$[(n_a, t_b)]$}
-        \EndCase
-
-        \Case{$t_a, \Var{n_b}$}
-            \Return{\Call{unify}{$t_b, t_a$}}
-        \EndCase
-
-        \Case{$\tInt, \tInt$}
-            \Return{\algorithmicnil}
-        \EndCase
-
-        \Case{$\tFloat, \tFloat$}
-            \Return{\algorithmicnil}
-        \EndCase
-
-        \Case{$a[~], b[~]$}
-            \Return{\Call{unify}{$a, b$}}
-        \EndCase
-
-        \Case{$\ptrK{a}, \ptrK{b}$}
-            \Return{\Call{unify}{$a, b$}}
-        \EndCase
-
-        \Case{$\ptrU{a}, \ptrU{b}$}
-            \Return{\Call{unify}{$a, b$}}
-        \EndCase
-
-        \Case{$(l_a) → r_a, (l_b) → r_b$}
-            \State $r \gets$ \Call{unify}{$r_a, r_b$}
-            \State $n \gets$ \Call{length}{$l_a$}
-            \If {\Call{length}{$l_b$} $≠ n$}
-                \Error
-            \EndIf
-            \For{$i = 0$ \algorithmicto{} $n-1$}
-            \State $r \gets r~∪$ \Call{unify}{$l_a[i], l_b[i]$}
-            \EndFor
-            \State \Return{r}
-        \EndCase
-
-        \Case{$\_$}
-            \ErrorCul
-        \EndCase
-
-    \EndMatch
-    \EndFunction
-\end{algorithmic}
-
-\caption{Algorithme d'unification}
-\label{fig:algo-unif}
-\end{figure}%}}}
-
-% TODO fig utilise plutôt la notation de type de la figure 7.1
-
-\begin{itemize}
-
-\item si les deux types sont inconnus (de la forme \texttt{Var n}), on substitue
-l'un par l'autre.
-
-\item si un type est inconnu et pas l'autre, il faut de la même manière faire
-une substitution.
-Mais en faisant ça inconditionnellement, cela peut poser problème:
-par exemple, en tentant d'unifier \texttt{a} avec \verb!KPtr(a)!, on pourrait
-créer une substitution cyclique.
-Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
-pas présent dans le type à affecter. C'est le but de la fonction
-\texttt{occurs(n, t)} qui calcule si \texttt{Var n} apparaît dans \texttt{t}.
-
-\item si les deux types sont des types de base (comme $\tInt$ ou $\tFloat$)
-égaux, on ne fait rien.
-
-\item si les deux types sont des constructeurs de type, il faut que les
-constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
-
-\item dans les autres cas, l'algorithme échoue.
-
-\end{itemize}
-
-Le traitement des types structures est géré dans l'implantation d'une manière
-différente de la présentation du chapitre~\ref{cha:lang}. C'est pourquoi elle
-n'apparaît pas dans la figure~\ref{fig:algo-unif}. Au lieu d'accéder directement
-au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom de champ à
-chaque accès. C'est-à-dire qu'on va par exemple inférer le type $\tStruct{ l:
-\tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus.
-
-Plus précisément, si on cherche à unifier les types structures
-$A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a }$
-et
-$B = \tStruct{ b_1: s_1 ; … ; b_m: u_m; …X_b }$,
-il faut partitionner l'ensemble des champs en 3: ceux qui apparaissent dans les
-deux structures, ceux qui apparaissent dans $A$ mais pas dans $B$, et ceux qui
-apparaissent dans $B$ mais pas dans $A$.
-
-% TODO ↑ Et l'ordre des champs?
-
-\begin{itemize}
-    \item Pour tous les champs $l$ tels que $l: a_i ∈ A$ et $l: b_j ∈ B$,
-        on unifie $a_i$ et $b_j$.
-    \item Pour les champs $l$ qui sont dans $A$ mais pas dans $B$: on ajoute $l$
-        à $X_b$.
-    \item Pour les champs $l$ qui sont dans $B$ mais pas dans $A$: on ajoute $l$
-        à $X_a$.
-\end{itemize}
-
-Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
-les langages comme OCaml. À la fin de l'inférence, on considère que la variable
-de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
-
-% TODx ajouter à la figure algo?
-% cstrs ::= n ↦ t
-%        |  t ∈ X
-
-\added{citation}
-
 \subsection*{Architecture de \ptrtype}
-
-% TODO mettre cette section avant UNIFY (*)
 
 Bâti autour de cette fonction, le programme \ptrtype lit un programme \newspeak
 et réalise l'inférence de types. Si l'argument passé à \ptrtype{} est un fichier
@@ -451,6 +279,194 @@ val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
 
 \end{itemize}
 
+\subsection*{Unification}
+
+La fonction \texttt{unify} prend en entrée deux représentations de types pouvant
+contenir des inconnues de la forme \texttt{Var n}, et retourne une liste de
+contraintes indiquant les substitutions à faire.
+
+Cet algorithme est décrit en pseudo-code ML en figure~\ref{fig:algo-unif}. Pour
+simplifier, on le présente comme retournant une liste, mais il est implanté de
+manière destructive: \texttt{Var n} contient une référence qui peut être
+modifiée, et grâce au partage c'est équivalent à substituer dans tous les types
+qui contiennent \texttt{Var n}.
+
+La fonction d'unification prend un chemin différent selon la forme des deux
+types d'entrée:
+
+\changed{Passage en pseudocode}
+
+\begin{figure}%{{{
+\def\cstrSub#1#2{#1 \hookrightarrow #2}
+\def\cstrRow#1#2#3{(#1:#2) ∈ #3}
+
+\begin{align*}
+\gramdef{Contrainte}{c}
+    {\cstrSub{n}{t}}{Substitution}
+    {\cstrRow{l}{t}{X}}{Variable de rangée}
+    {END}
+\end{align*}
+
+% {{{
+% http://tex.stackexchange.com/questions/53357/switch-cases-in-algorithmic
+% New definitions
+\algnewcommand\algorithmicmatch{\textbf{match}}
+\algnewcommand\algorithmiccase{\textbf{case}}
+\algnewcommand\algorithmicwith{\textbf{with}}
+\algnewcommand\algorithmicto{\textbf{to}}
+\algnewcommand\ErrorX{\textbf{erreur}}
+\algnewcommand\Error{\State \ErrorX}
+\algnewcommand\algorithmicnil{[~]}
+\algnewcommand\Var[1]{\textsc{Var}~{#1}}
+% New "environments"
+\algdef{SE}[MATCH]{Match}{EndMatch}[1]
+    {\algorithmicmatch\ (#1)\ \algorithmicwith}
+    {\algorithmicend\ \algorithmicswitch}%
+\algdef{SE}[CASE]{Case}{EndCase}[1]
+    {|~\ #1\ $⇒$}
+    {\algorithmicend\ \algorithmiccase}%
+\algtext*{EndMatch}%
+\algtext*{EndCase}%
+
+\algrenewcommand\algorithmicindent{3em}
+%}}}
+
+\begin{algorithmic}[1]
+    \Function{unify}{$t_a, t_b$}
+    \Match{$t_a, t_b$}
+        \Case{$\Var{n_a}, \Var{n_b}$}
+            \If{$n_a = n_b$}
+                \State \Return{\algorithmicnil}
+            \Else
+                \State \Return{$[\cstrSub{n_a}{t_b}]$}
+            \EndIf
+        \EndCase
+
+        \Case{$\Var{n_a}, t_b$}
+            \If{\Call{occurs}{$n_a, t_b$}}
+                \Error
+            \EndIf
+            \State \Return{$[\cstrSub{n_a}{t_b}]$}
+        \EndCase
+
+        \Case{$t_a, \Var{n_b}$}
+            \Return{\Call{unify}{$t_b, t_a$}}
+        \EndCase
+
+        \Case{$\tInt, \tInt$}
+            \Return{\algorithmicnil}
+        \EndCase
+
+        \Case{$\tFloat, \tFloat$}
+            \Return{\algorithmicnil}
+        \EndCase
+
+        \Case{$a[~], b[~]$}
+            \Return{\Call{unify}{$a, b$}}
+        \EndCase
+
+        \Case{$\ptrK{a}, \ptrK{b}$}
+            \Return{\Call{unify}{$a, b$}}
+        \EndCase
+
+        \Case{$\ptrU{a}, \ptrU{b}$}
+            \Return{\Call{unify}{$a, b$}}
+        \EndCase
+
+        \Case{$(l_a) → r_a, (l_b) → r_b$}
+            \State $r \gets$ \Call{unify}{$r_a, r_b$}
+            \State $n \gets$ \Call{length}{$l_a$}
+            \If {\Call{length}{$l_b$} $≠ n$}
+                \Error
+            \EndIf
+            \For{$i = 0$ \algorithmicto{} $n-1$}
+            \State $r \gets r~∪$ \Call{unify}{$l_a[i], l_b[i]$}
+            \EndFor
+            \State \Return{r}
+        \EndCase
+
+        \Case{$A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a },
+               B = \tStruct{ b_1: s_1 ; … ; b_m: u_m; …X_b }$}
+               \State $r \gets ∅$
+               \For{$\{(t, u) / ∃ l . \cstrRow{l}{t}{A} ∧ \cstrRow{l}{u}{B} \}$}
+                    \State $r \gets r~∪$ \Call{unify}{$t, u$}
+               \EndFor
+               \For{$\{(l, t) ∈ A / ∀ \cstrRow{l'}{u}{B} . l ≠ l'\}$}
+                   \State $r \gets r~∪ [\cstrRow{l}{t}{X_B}]$
+               \EndFor
+               \For{$\{(l, u) ∈ B / ∀ \cstrRow{l'}{t}{A} . l ≠ l'\}$}
+                   \State $r \gets r~∪ [\cstrRow{l}{u}{X_A}]$
+               \EndFor
+               \State \Return{r}
+        \EndCase
+
+        \Case{$\_$}
+            \ErrorX
+        \EndCase
+
+    \EndMatch
+    \EndFunction
+\end{algorithmic}
+
+\caption{Algorithme d'unification}
+\label{fig:algo-unif}
+\end{figure}%}}}
+
+\begin{itemize}
+
+\item si les deux types sont inconnus (de la forme \texttt{Var n}), on substitue
+l'un par l'autre.
+
+\item si un type est inconnu et pas l'autre, il faut de la même manière faire
+une substitution.
+Mais en faisant ça inconditionnellement, cela peut poser problème:
+par exemple, en tentant d'unifier \texttt{a} avec \verb!KPtr(a)!, on pourrait
+créer une substitution cyclique.
+Pour éviter cette situation, il suffit de s'assurer que le type inconnu n'est
+pas présent dans le type à affecter. C'est le but de la fonction
+\texttt{occurs(n, t)} qui calcule si \texttt{Var n} apparaît dans \texttt{t}.
+
+\item si les deux types sont des types de base (comme $\tInt$ ou $\tFloat$)
+égaux, on ne fait rien.
+
+\item si les deux types sont des constructeurs de type, il faut que les
+constructeurs soient égaux. On unifie en outre leurs arguments deux à deux.
+
+\item dans les autres cas, l'algorithme échoue.
+
+\end{itemize}
+
+Le traitement des types structures est géré dans l'implantation d'une manière
+différente de la présentation du chapitre~\ref{cha:lang}. Au lieu d'accéder
+directement au type complet $S$ à chaque accès $x.l_S$, on n'obtient qu'un nom
+de champ à chaque accès. C'est-à-dire qu'on va par exemple inférer le type
+$\tStruct{ l: \tInt ; …X }$ où $…X$ désigne l'ensemble des champs inconnus (on
+rappelle que dans la sémantique qui nous intéresse, ceux-ci n'ont pas un ordre
+défini au sein d'une structure).
+
+Plus précisément, si on cherche à unifier les types structures
+$A = \tStruct{ a_1: t_1 ; … ; a_n: t_n; …X_a }$
+et
+$B = \tStruct{ b_1: s_1 ; … ; b_m: u_m; …X_b }$,
+il faut partitionner l'ensemble des champs en 3: ceux qui apparaissent dans les
+deux structures, ceux qui apparaissent dans $A$ mais pas dans $B$, et ceux qui
+apparaissent dans $B$ mais pas dans $A$.
+
+\begin{itemize}
+    \item Pour tous les champs $l$ tels que $l: t ∈ A$ et $l: u ∈ B$,
+        on unifie $t$ et $u$.
+    \item Pour les champs $l$ qui sont dans $A$ mais pas dans $B$: on ajoute $l$
+        à $X_b$.
+    \item Pour les champs $l$ qui sont dans $B$ mais pas dans $A$: on ajoute $l$
+        à $X_a$.
+\end{itemize}
+
+Cela se rapproche du polymorphisme de rangée~\cite{ocamlObjects} présent dans
+les langages comme OCaml. À la fin de l'inférence, on considère que la variable
+de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
+
+\added{citation}
+
 La fonction \texttt{unify}, appelée dans toutes les fonctions d'inférence, peut
 retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
 types à unifier est mise dans une liste d'attente qui sera unifiée après le
@@ -470,8 +486,6 @@ pouvoir en faire une exécution \enquote{pas à pas}.
 Il ne reste plus qu'à remplacer les étiquettes de type \texttt{unit} par des
 étiquettes de type \texttt{simple} (autrement dit de vraies représentations de
 types), à l'aide de la fonction \texttt{unify}.
-
-\added{cela permet...}
 
 Cette étape se fait de manière impérative. Cela permet de ne pas avoir à
 réaliser de substitutions explicites. À la place, on repose sur le partage et
@@ -632,9 +646,8 @@ Dans notre cas, on utilise une variante de l'algorithme W pour un langage
 particulièrement simple. En particulier il n'y a pas de polymorphisme, ni de
 fonctions imbriquées, et les types des valeurs globales sont écrites par le
 programmeur. Cela permet de borner leur taille. En pratique, sur les exemples
-testés nous n'avons pas noté de délai d'exécution notable.
-
-% TODO ↑ combien? de quelle taille?
+testés (jusqu'à quelques centaines de lignes de code) nous n'avons pas noté de
+délai d'exécution notable.
 
 En revanche, la compilation de C vers \newspeak peut être plus coûteuse,
 notamment lorsque le fichier d'entrée est de taille importante. Le temps de

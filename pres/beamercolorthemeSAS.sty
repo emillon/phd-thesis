@@ -1,0 +1,92 @@
+% SAS beamer color theme
+
+\usepackage{tikz}
+
+% \usetikzlibrary{arrows}
+% \usetikzlibrary[arrows]
+\usetikzlibrary{fadings} 
+\usetikzlibrary[fadings]
+\usetikzlibrary{shadows} 
+\usetikzlibrary[shadows]
+% \usetikzlibrary{calc} 
+% \usetikzlibrary[calc]
+% \usetikzlibrary{matrix} 
+% \usetikzlibrary[matrix]
+
+\mode<presentation>
+
+%%% Colors definition
+\definecolor{myblue}{RGB}{0,153,255}
+\definecolor{myred}{RGB}{232,64,2}
+\definecolor{mygreen}{RGB}{93,189,52}
+\definecolor{mygray}{RGB}{255,255,255}
+
+%%% Set colors usage
+% Background
+
+%\setbeamercolor{background canvas}{bg=mygray}mygray!20!white
+% \setbeamertemplate{background canvas}{
+% \begin{tikzpicture}[overlay]
+% %\filldraw[mygray,fill=mygray] (0,0) rectangle (128mm, 96mm);
+% \filldraw[mygray,fill=mygray] (current page.north west) rectangle (current page.south east);
+% %\filldraw[draw opacity=0,inner color=mygray, outer color=mygray!20!white] (current page.north west) rectangle (current page.south east);
+% \end{tikzpicture}}
+
+\setbeamercolor{background canvas}{bg=mygray}
+%\setbeamercolor{lower separation line head}{bg=mygray!50!black}
+% Normal text
+\setbeamercolor*{normal text}{fg=black}
+
+% Title(s)
+\setbeamercolor*{titlelike}{fg=myblue,bg=}
+
+% Head banner1 (horizontal - outer EADS1 & EADS2 & EADS3)
+\setbeamercolor*{head banner1}{fg=black}
+
+% Section/Subsection (navigation outer EADS1 & EADS4)
+\setbeamercolor*{section in head/foot}{fg=myblue,bg=mygray}
+\setbeamertemplate{section in head/foot shaded}[default][10]
+\setbeamercolor*{subsection in head/foot}{fg=myblue,bg=mygray}
+\setbeamertemplate{subsection in head/foot shaded}[default][10]
+
+% Shorttitle/Section/Subsection (outer EADS2)
+\setbeamercolor*{title in head}{fg=black}
+\setbeamercolor*{section in head}{fg=black}
+\setbeamercolor*{subsection in head}{fg=black}
+
+% Shorttitle/Section/Subsection (outer EADS5)
+\setbeamercolor*{section in sidebar}{fg=black}
+
+% Structure
+\setbeamercolor*{structure}{fg=myblue}
+
+% Example text
+\setbeamercolor*{example text}{fg=mygreen}
+
+% Alerted text
+\setbeamercolor*{alerted text}{fg=myred}
+
+% Normal block
+\setbeamercolor{block title}{fg=myblue}
+\setbeamercolor{block body}{parent=normal text}
+
+% Example block
+\setbeamercolor{block title example}{use=example text,fg=mygreen}
+\setbeamercolor{block body example}{use=example text,fg=black}
+
+% Alert block
+\setbeamercolor{block title alerted}{use=alerted text,fg=myred}
+\setbeamercolor{block body alerted}{use=alerted text,fg=myred}
+
+% Palette
+\setbeamercolor{palette primary}{fg=myblue}
+\setbeamercolor{palette secondary}{fg=myblue}
+\setbeamercolor{palette teriary}{fg=myblue}
+\setbeamercolor{palette quaternary}{fg=myblue}
+
+% Separation line
+\setbeamercolor*{separation line}{}
+\setbeamercolor*{fine separation line}{}
+
+\mode
+<all>

@@ -1384,12 +1384,6 @@ Le deuxième point sera résolu par la règle d'inférence suivante.
   \semrule{Ctx}
 \end{mathpar}
 
-% TODO ?
-%
-% 1/0, m -> Ω, m
-% ----------------------
-% if true the 0 else 1/0n l → Ω, m
-
 Enfin, le troisième revient à définir l'opérateur de substitution
 $\phxx{\ctxSub}$ présent dans la règle précédente. Notons que puisque $i
 \gramisa e$ et $e \gramisa lv$, on peut aussi l'appliquer aux expressions et aux
@@ -1708,8 +1702,6 @@ est prise.
 
 On exprime la sémantique de la boucle comme une simple règle de réécriture:
 
-% TODO ELSE PASS
-
 \begin{mathpar}
   \semrule{While}
 \end{mathpar}
@@ -1765,10 +1757,9 @@ exemple, après avoir défini les fonctions du programme, on pourra appeler
 valeur). On suppose que les variables globales ont toutes des noms différents.
 Notons que ces évaluations se font à grands pas.
 
-Enfin, l'exécution d'un programme est sans surprise l'exécution de ses phrases,
-les unes à la suite des autres.
-
-% TODO mentionner →*
+Enfin, l'exécution d'un programme, notée $\phprog{P}{m}$, permet de construire
+un état mémoire final. Cette relation $→^*$ est l'extension de $→$ sur les
+suites de phrases, c'est-à-dire les programmes.
 
 \begin{mathpar}
   \semrule{ET-Exp}
