@@ -212,6 +212,75 @@ faire des substitutions explicites. Puisque ces systèmes de types sont
 monomorphes, on présente une erreur si des variable de type libres sont
 présentes.
 
+\subsection*{Architecture de \ptrtype}
+
+Bâti autour de cette fonction, le programme \ptrtype lit un programme \newspeak
+et réalise l'inférence de types. Si l'argument passé à \ptrtype{} est un fichier
+C, il est tout d'abord compilé vers \newspeak grâce à l'utilitaire \ctonewspeak.
+En sortie, il affiche soit le programme complètement annoté, soit une erreur. Ce
+comportement est implanté dans la fonction de la figure~\ref{fig:implem-process}.
+
+\begin{figure}
+\insertcode{implem-process.ml}
+\caption{Fonction principale de \ptrtype{}}
+\label{fig:implem-process}
+\end{figure}
+
+\begin{itemize}
+
+\item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!, on
+ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!)\footnote
+{\texttt{'a Tyspeak.t} est le type des programmes \newspeak où on insère des
+étiquettes de type \texttt{'a} à tous les niveaux.}.
+
+\item L'ensemble des fonctions du programme est trié topologiquement selon la
+    relation~$\preceq$ définie par $f \preceq g \eqdef \enquote{g \textrm{
+    apparaît dans la définition de } f}$. Cela est fait en construisant une
+    représentation de $\preceq$ sous forme de graphe, puis en faisant un
+    parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
+    mutellement récursives ne sont pas supportées.
+
+\item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
+    qui permet de créer un environnement initial. On peut y introduire les
+    annotations suivantes:
+
+  \begin{center}
+    \begin{tabular}{lp{7cm}}
+        \toprule
+        Annotation & Signification \\
+        \midrule
+        \texttt{/*!npk f : (Int) -> Int */} &
+        \texttt{f} est une fonction prenant comme argument un entier et
+        renvoyant un entier.
+        \\
+        \texttt{/*!npk userptr x */} &
+        \texttt{x} a pour type $\ptrU{a}$, où $a$ est une nouvelle inconnue de type.
+        \\
+        \texttt{/*!npk userptr_fieldp x f */} &
+      \texttt{x} a pour type $\{ f: \ptrU{a} ; … \}~*$, où $a$ est une nouvelle inconnue
+      de type. \\
+      \bottomrule
+    \end{tabular}
+    \label{page:tab-anns}
+  \end{center}
+
+\item Les types de chaque fonction sont ensuite inférés, par le biais de la
+    fonction suivante:
+
+\begin{Verbatim}
+val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
+         -> Types.simple Env.t  (* environnement initial *)
+         -> 'a Tyspeak.t        (* programme à analyser *)
+         -> Types.simple Tyspeak.t
+\end{Verbatim}
+
+\item S'il n'y a pas d'erreurs, le programme obtenu, de type
+\texttt{Types.simple Tyspeak.t}, est affiché sur le terminal.
+
+\end{itemize}
+
+\subsection*{Unification}
+
 La fonction \texttt{unify} prend en entrée deux représentations de types pouvant
 contenir des inconnues de la forme \texttt{Var n}, et retourne une liste de
 couples $(n, t)$ indiquant les substitutions à faire.
@@ -381,75 +450,6 @@ de rangée \enquote{$…X$} est vide. Elle n'apparaît donc pas dans les types.
 
 \added{citation}
 
-\subsection*{Architecture de \ptrtype}
-
-% TODO mettre cette section avant UNIFY (*)
-
-Bâti autour de cette fonction, le programme \ptrtype lit un programme \newspeak
-et réalise l'inférence de types. Si l'argument passé à \ptrtype{} est un fichier
-C, il est tout d'abord compilé vers \newspeak grâce à l'utilitaire \ctonewspeak.
-En sortie, il affiche soit le programme complètement annoté, soit une erreur. Ce
-comportement est implanté dans la fonction de la figure~\ref{fig:implem-process}.
-
-\begin{figure}
-\insertcode{implem-process.ml}
-\caption{Fonction principale de \ptrtype{}}
-\label{fig:implem-process}
-\end{figure}
-
-\begin{itemize}
-
-\item Grâce à la fonction \verb!convert_unit : Newspeak.t -> unit Tyspeak.t!, on
-ajoute des étiquettes \enquote{vides} (toutes égales à \verb!() : unit!)\footnote
-{\texttt{'a Tyspeak.t} est le type des programmes \newspeak où on insère des
-étiquettes de type \texttt{'a} à tous les niveaux.}.
-
-\item L'ensemble des fonctions du programme est trié topologiquement selon la
-    relation~$\preceq$ définie par $f \preceq g \eqdef \enquote{g \textrm{
-    apparaît dans la définition de } f}$. Cela est fait en construisant une
-    représentation de $\preceq$ sous forme de graphe, puis en faisant un
-    parcours en largeur de celui-ci. Pour le moment, les fonctions récursives et
-    mutellement récursives ne sont pas supportées.
-
-\item Les annotations extérieures sont alors lues (variable \texttt{exttbl}), ce
-    qui permet de créer un environnement initial. On peut y introduire les
-    annotations suivantes:
-
-  \begin{center}
-    \begin{tabular}{lp{7cm}}
-        \toprule
-        Annotation & Signification \\
-        \midrule
-        \texttt{/*!npk f : (Int) -> Int */} &
-        \texttt{f} est une fonction prenant comme argument un entier et
-        renvoyant un entier.
-        \\
-        \texttt{/*!npk userptr x */} &
-        \texttt{x} a pour type $\ptrU{a}$, où $a$ est une nouvelle inconnue de type.
-        \\
-        \texttt{/*!npk userptr_fieldp x f */} &
-      \texttt{x} a pour type $\{ f: \ptrU{a} ; … \}~*$, où $a$ est une nouvelle inconnue
-      de type. \\
-      \bottomrule
-    \end{tabular}
-    \label{page:tab-anns}
-  \end{center}
-
-\item Les types de chaque fonction sont ensuite inférés, par le biais de la
-    fonction suivante:
-
-\begin{Verbatim}
-val infer : Newspeak.fid list   (* liste triée de fonctions à typer *)
-         -> Types.simple Env.t  (* environnement initial *)
-         -> 'a Tyspeak.t        (* programme à analyser *)
-         -> Types.simple Tyspeak.t
-\end{Verbatim}
-
-\item S'il n'y a pas d'erreurs, le programme obtenu, de type
-\texttt{Types.simple Tyspeak.t}, est affiché sur le terminal.
-
-\end{itemize}
-
 La fonction \texttt{unify}, appelée dans toutes les fonctions d'inférence, peut
 retarder l'unification (figure~\ref{fig:implem-lazy}). Dans ce cas, la paire de
 types à unifier est mise dans une liste d'attente qui sera unifiée après le
@@ -469,8 +469,6 @@ pouvoir en faire une exécution \enquote{pas à pas}.
 Il ne reste plus qu'à remplacer les étiquettes de type \texttt{unit} par des
 étiquettes de type \texttt{simple} (autrement dit de vraies représentations de
 types), à l'aide de la fonction \texttt{unify}.
-
-\added{cela permet...}
 
 Cette étape se fait de manière impérative. Cela permet de ne pas avoir à
 réaliser de substitutions explicites. À la place, on repose sur le partage et
