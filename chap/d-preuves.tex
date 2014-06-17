@@ -333,11 +333,11 @@ récurrence à $e$.
 \begin{itemize}
 \item $e = v$. Alors $i = \iReturn{v}$, ce qui nous permet de conclure.
 
-    % TODO ↓ normalement CTX est défini sur i et non sur e
-
 \item $\mm{m}{e}{m'}{e'}$.
 Alors en appliquant \textsc{Ctx} avec
-$C = \iReturn{\ctxEmpty}$, on conclut que
+$C = \iReturn{\ctxEmpty}$\footnote{Les contextes sont des objets purement
+syntaxiques: on peut les appliquer entre instructions et expressions
+indifféremment}, on conclut que
 \linebreak
 $\mm{m}{\iReturn{e}}{m'}{\iReturn{e'}}$.
 
