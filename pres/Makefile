@@ -7,6 +7,9 @@ GEN=$(addprefix gen/, $(addsuffix .pyg.tex, $(CODESAMPLES))) gen
 all: $(GEN) gen/pygments-style.tex
 	pdflatex -halt-on-error $(WHAT)
 
+gen:
+	mkdir $@
+
 gen/%.pyg.tex: code/% gen
 	pygmentize -f latex -o $@ $<
 
