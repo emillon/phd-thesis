@@ -2,8 +2,16 @@
 \usepackage[frenchb]{babel}
 \usepackage[utf8]{inputenc}
 
+\usepackage{tikz}
+
 \input{gen/pygments-style.tex}
 \input{mellon.tex}
+\usepackage{etoolbox}
+\usepackage{../switch}
+\usepackage{../mathpartir}
+
+\input{../defs.tex}
+\input{../rules.tex}
 
 \usetheme{SAS}
 \usetikzlibrary{arrows}
@@ -156,16 +164,167 @@ Kernel $= 0$ and User $= 3$.
 \section{Contributions}
 
 \subsection{Un langage impératif bien typé}
-\frame{x}
+
+\begin{frame}
+\end{frame}
+
 \subsection{Une sémantique basée sur les lentilles}
-\frame{x}
+
+\begin{frame}
+\frametitle{Sémantique impérative}
+
+\begin{itemize}
+\item
+  Système de transitions entre états
+\item
+  expression + mémoire
+\item
+  $\mm{m}{e}{m'}{e'}$
+\item
+  définir $m'$ en fonction de $m$:
+
+  \begin{itemize}
+  \item $m[…]$
+  \item $m[… ← v]$
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \begin{itemize}
+        \item valeurs gauches (\emph{lvalues}): \texttt{t[20] = 1}
+        \item formes:
+            \begin{itemize}
+                \item \texttt{var}
+                \item \texttt{lv.l}
+                \item \texttt{lv[e]}
+                \item \texttt{*e}
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Structure de la mémoire}
+
+\begin{itemize}
+\item $m = (s, g)$
+\item liste de cadres de pile + cadre de globales
+\item cadre: $c = ((x_1, v_1), …, (x_n, v_n))$
+\item But: exprimer
+
+  \begin{itemize}
+  \item $m[φ]$
+  \item $m[φ←v]$
+  \end{itemize}
+\item Mise à jour complète : $m' = m[ x ← 0]$
+\item Mise à jour partielle : $m' = m[x.f ← 0]$
+\end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{À la main}
+
+\begin{align*}
+(s, g)[\texttt{Local}~(2, x).f[5] ← 3] &= (s', g) \\
+                   s'_i &= \begin{cases}
+                             s_i & \mbox{ si } i ≠ 2\\
+                             c'  & \mbox{ sinon} \\
+                           \end{cases}\\
+                         c &= s_{2} \mbox{ où } c_i &= (x_i, v_i) \\
+                   c'_i &= (x_i, v'_i) \\
+                   v'_i &= \begin{cases}
+                              v_i &  \mbox{ si } i ≠ 1 \\
+                              3   &  \mbox{ sinon }\\
+                           \end{cases} \\
+                    … & …
+\end{align*}
+\end{frame}
+
+\begin{frame}\frametitle{Lentilles}
+
+\begin{itemize}
+\item
+  Relation entre objet et sous-objet
+\item
+  $ℒ ∈ \setLens{R}{A}$
+\item
+  $ℒ = \begin{cases}           \mathrm{get}_ℒ : R → A \\           \mathrm{put}_ℒ : (A × R) → R \\          \end{cases}$
+\item
+  $\lensGet{ℒ}{\lensNodeBig{green!30}{blue!30}} = \lensInner{blue!30}$
+\item
+  $\lensPut{ℒ}{\lensInner{red!30}}{\lensNodeBig{green!30}{blue!30}} = \lensNodeBig{green!30}{red!30}$
+\end{itemize}
+
+\end{frame}
+
 \subsection{Un système de types abstraits}
-\frame{x}
+
+\begin{frame}
+
+\begin{itemize}
+\item séparer deux types de pointeurs
+\item pointeurs noyau : $\ptrK{t}$
+
+  \begin{itemize}
+  \item valeur fixée à la compilation ou par le runtime
+  \item ex: \texttt{\&x}, \texttt{malloc(n)}
+  \item peuvent être déréférencés (\texttt{*p}, \texttt{memcpy()})
+  \end{itemize}
+\item pointeurs utilisateur : $\ptrU{t}$
+
+  \begin{itemize}
+  \item valeur provient d'un utilisateur non privilégié
+  \item ex: paramètres d'appels systèmes
+  \item doivent être vérifiés dynamiquement!
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \begin{mathpar}
+       \disprule{Lv-Deref}
+
+       \disprule{Addr}
+
+       \disprule{User-Get}
+
+       \disprule{User-Put}
+    \end{mathpar}
+\end{frame}
+
 \subsection{Un prototype d'analyseur statique}
-\frame{x}
+
+\begin{frame}
+
+\begin{itemize}
+\item 1600 lignes d'ocaml
+\item utilise \newspeak (langage + compilateur)
+\item mode de fonctionnement:
+  \begin{itemize}
+  \item compile vers un \texttt{.npk}
+  \item enlève les types C
+  \item infère des types plus sémantiques
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    Utilisé sur 2 bugs du noyau Linux
+\end{frame}
 
 \section{Types abstraits pour C}
 
-\frame{x}
+\begin{frame}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}
+    Merci
+
+    Questions?
+\end{frame}
 
 \end{document}
