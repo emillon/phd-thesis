@@ -15,6 +15,12 @@
 
 \input{pkg.tex}
 \input{geom.tex}
+
+% {{{ subtitle command
+\newcommand\subtitle[1]{%
+  \newcommand\thesubtitle{#1}}
+% }}}
+
 \input{defs.tex}
 \input{urls.tex}
 \input{hyph.tex}
