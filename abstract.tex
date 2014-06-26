@@ -36,49 +36,37 @@ d'appliquer cette analyse à d'autres interfaces du noyau Linux qui communiquent
 avec l'espace utilisateur. De plus, cette technique revient à séparer
 l'interface des types de leur implantation. Ce concept de \emph{types abstraits}
 étant absent de C, de nombreuses erreurs de programmation peuvent également être
-vérifiées à l'aide de cette méthode.
+détectées à l'aide de cette méthode.
 
-%TODO
-%\begin{center}\Large \textbf{Abstract}\end{center}
+\begin{center}\Large \textbf{Abstract}\end{center}
 
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec gravida, diam
-%ullamcorper volutpat varius, est dui blandit nibh, et posuere nisi tortor ut
-%lectus. Aliquam in ipsum at nisl luctus pulvinar. Nulla pulvinar accumsan
-%interdum. Aliquam varius est et ligula commodo varius quis gravida justo. Ut
-%sit amet eros orci, at iaculis metus. Cras placerat condimentum magna ut
-%dictum. Mauris id sollicitudin quam. Ut pretium aliquet lacus, et elementum
-%odio blandit quis.
+Operating system kernels need to manipulate data that comes from user programs
+through system calls. If it is done in an incautious manner, a security
+vulnerability known as the \emph{Confused Deputy Problem} can lead to
+information disclosure or privilege escalation.
 
-%Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-%inceptos himenaeos. Morbi tincidunt, justo sed venenatis imperdiet, diam dui
-%blandit nisl, et sodales urna mauris sit amet felis. Sed congue sodales
-%sollicitudin. Integer imperdiet tellus et ligula consequat quis commodo metus
-%posuere. Donec id vehicula mi. Nullam id tincidunt orci. Nunc luctus ligula ut
-%urna laoreet consequat. In hac habitasse platea dictumst. Sed imperdiet
-%ultricies diam id cursus. Quisque metus orci, tempor et dapibus eget,
-%ullamcorper in augue. Nullam non urna metus, id accumsan lacus. Duis erat
-%arcu, porttitor non laoreet vitae, ultrices vitae tortor. Pellentesque
-%interdum faucibus tellus eu semper. Nulla ac aliquet mauris.
+The goal of this thesis is to use static typing to detect the dangerous uses of
+pointers that are controlled by userspace.
 
-%In in metus purus. Nunc ullamcorper posuere turpis, vel laoreet tortor posuere
-%at. Ut euismod arcu sit amet dui varius vel varius neque pellentesque. Lorem
-%ipsum dolor sit amet, consectetur adipiscing elit. Aliquam nec mi interdum
-%ipsum eleifend tincidunt. Duis bibendum sem vitae risus facilisis mattis. Sed
-%varius eleifend nulla vel commodo. Morbi risus metus, egestas non commodo id,
-%ullamcorper a enim. Integer et augue et orci feugiat rhoncus a in augue.
+We start by isolating \langname{}, a safe subset of the C language, in which
+most operating systems are written. Its operational semantics as well as a type
+system are described, and the classic properties of type safety are established.
 
-%Nulla elementum felis eu eros pretium quis porttitor felis faucibus. Vivamus a
-%vulputate tellus. Suspendisse potenti. Morbi dapibus, quam ac consectetur
-%hendrerit, lorem urna faucibus dui, in vestibulum tellus nisl sit amet ligula.
-%Morbi ultricies venenatis nisi sit amet scelerisque. Nam pharetra bibendum
-%lacinia. Suspendisse potenti. Suspendisse elementum tellus et mi hendrerit
-%sagittis.
+A first example of analysis is described, that identifies integers used as
+bitmasks, which are a common source of bugs in C programs. Then, we add to
+\langname the notion of pointers coming from userspace. This breaks type safety,
+but it is possible to get it back by assigning a different type to the pointers
+that are controlled by userspace. This distinction forces their dereferencing to
+be done in a controlled fashion. This technique makes it possible to detect two
+bugs in the Linux kernel: the first one is in a video driver for an AMD
+video card, and the second one in the \texttt{ptrace} system call for the
+Blackfin architecture.
 
-%Ut dignissim fermentum cursus. Praesent feugiat venenatis rutrum. Cras eget
-%nibh id quam ultrices pellentesque eget non elit. Maecenas justo lorem,
-%fermentum vitae dictum eu, egestas eu urna. In hac habitasse platea dictumst.
-%Cras nec arcu at purus aliquet accumsan. Nam interdum malesuada orci et
-%sagittis
+These works open perspectives in two directions. It is possible to apply
+this analysis to other interfaces of the Linux kernel that communicate with
+userspace. Moreover, this technique comes down to separate a type's interface
+from its implementation. Because this concept of \emph{abstract types} is absent
+in C, many programming errors can be detected using this system.
 
 % (PLAS suit)
 
