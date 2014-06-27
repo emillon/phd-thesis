@@ -5,8 +5,10 @@
 \usepackage{tikz}
 
 \input{gen/pygments-style.tex}
+%\usepackage{xcolor}
 \input{mellon.tex}
 \usepackage{etoolbox}
+\usepackage{xspace}
 \usepackage{../switch}
 \usepackage{../mathpartir}
 
@@ -22,6 +24,14 @@
 \usepackage{amsmath,amsthm, amssymb, latexsym}
 \usefonttheme[onlymath]{serif}
 %\boldmath
+
+\colorlet{codeoutcol}{MellonYellow!60}
+\def\codeout#1{
+    \begin{center}
+    \fboxsep=2mm
+    \colorbox{codeoutcol}{\BUseVerbatim{#1}}
+    \end{center}
+}
 
 \usepackage{fancyvrb}
 
@@ -298,13 +308,25 @@ Kernel $= 0$ and User $= 3$.
 \begin{frame}
 
 \begin{itemize}
-\item 1600 lignes d'ocaml
+\item 1600 lignes d'OCaml
 \item utilise \newspeak (langage + compilateur)
 \item mode de fonctionnement:
   \begin{itemize}
   \item compile vers un \texttt{.npk}
   \item enlève les types C
   \item infère des types plus sémantiques
+
+      \begin{tabular}{ll}
+          \toprule
+          Type (C/NPK) & Type(SPK) \\
+          \midrule
+          \texttt{int} & $\tInt$ \\
+          \texttt{unsigned long} & $\tInt$ \\
+          \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
+          \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
+          \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
+          \bottomrule
+      \end{tabular}
   \end{itemize}
 \end{itemize}
 
@@ -312,6 +334,50 @@ Kernel $= 0$ and User $= 3$.
 
 \begin{frame}
     Utilisé sur 2 bugs du noyau Linux
+
+    \begin{itemize}
+        \item Radeon KMS
+        \item \texttt{ptrace} Blackfin
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    % left bottom right top
+    \includegraphics[trim=2300 1430 100 500,clip,width=\textwidth]{poster.pdf}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{SaveVerbatim}{drmko}
+05-drm.c:17#10 - Type clash between :
+  KPtr (_a15)
+  UPtr (_a8)
+\end{SaveVerbatim}
+
+Résultat de l'algorithme d'inférence -- \textbf{erreur}:
+
+\codeout{drmko}
+\end{frame}
+
+\begin{frame}
+    % left bottom right top
+    \includegraphics[trim=2300 1010 100 1190,clip,width=\textwidth]{poster.pdf}
+\end{frame}
+
+\begin{frame}[fragile]
+
+\begin{SaveVerbatim}{drmok}
+(06-drm-ok.c:17#6)^{
+  Int tmp_cir!0;
+  (06-drm-ok.c:17#6)^tmp_cir!0 <-
+    copy_from_user
+      ( &(value) : KPtr (d),
+        value_ptr_UPtr (d) : UPtr (d),
+        4 : Int); }
+\end{SaveVerbatim}
+
+Résultat de l'algorithme d'inférence -- \textbf{programme complètement annoté}:
+
+\codeout{drmok}
 \end{frame}
 
 \section{Types abstraits pour C}
