@@ -10,33 +10,26 @@ Les noyaux de système d'exploitation manipulent des données fournies par les
 programmes utilisateur via les appels système. Si elles sont manipulées sans
 prendre une attention particulière, une faille de sécurité connue sous le nom de
 \emph{Confused Deputy Problem} peut amener à des fuites de données
-confidentielles ou l'elévation de privilège d'un attaquant.
+confidentielles ou l'elévation de privilèges d'un attaquant.
 
 Le but de cette thèse est d'utiliser des techniques de typage statique afin de
 détecter les manipulations dangereuses de pointeurs contrôlés par l'espace
 utilisateur.
 
-On commence par isoler un sous-langage sûr nommé \langname{} du langage C dans
-lequel sont écrits la plupart des systèmes d'exploitation. Sa sémantique
+La plupart des systèmes d'exploitation sont écrits dans le langage C. On
+commence par en isoler un sous-langage sûr nommé \langname{}. Sa sémantique
 opérationnelle et un système de types sont décrits, et les propriétés classiques
-de sûreté du typage sont établies.
+de sûreté du typage sont établies. Un première analyse sur ce langage est
+décrite, permettant de distinguer les entiers utilisés comme \emph{bitmasks},
+qui sont une source de bugs dans les programmes C.
 
-Un premier exemple d'analyse sur ce langage est décrite, permettant de
-distinguer les entiers utilisés comme \emph{bitmasks}, qui sont une source de
-bugs dans les programmes C. On ajoute ensuite à \langname{} la notion de valeur
-provenant de l'espace utilisateur. La sûreté du typage est alors brisée, mais on
-peut la réétablir en donnant un type particulier aux pointeurs contrôlés par
-l'espace utilisateur, ce qui force leur déférencement à se faire de manière
-contrôlée. Cette technique permet de détecter deux bugs dans le noyau Linux: le
-premier concerne un pilote de carte graphique AMD, et le second l'appel système
+On ajoute ensuite à \langname{} la notion de valeur provenant de
+l'espace utilisateur. La sûreté du typage est alors brisée, mais on peut la
+réétablir en donnant un type particulier aux pointeurs contrôlés par l'espace
+utilisateur, ce qui force leur déférencement à se faire de manière contrôlée.
+Cette technique permet de détecter deux bugs dans le noyau Linux: le premier
+concerne un pilote de carte graphique AMD, et le second l'appel système
 \texttt{ptrace} sur l'architecture Blackfin.
-
-Ces travaux ouvrent des perspectives sur deux points. Il est possible
-d'appliquer cette analyse à d'autres interfaces du noyau Linux qui communiquent
-avec l'espace utilisateur. De plus, cette technique revient à séparer
-l'interface des types de leur implantation. Ce concept de \emph{types abstraits}
-étant absent de C, de nombreuses erreurs de programmation peuvent également être
-détectées à l'aide de cette méthode.
 
 \begin{center}\Large \textbf{Abstract}\end{center}
 
@@ -48,25 +41,19 @@ information disclosure or privilege escalation.
 The goal of this thesis is to use static typing to detect the dangerous uses of
 pointers that are controlled by userspace.
 
-We start by isolating \langname{}, a safe subset of the C language, in which
-most operating systems are written. Its operational semantics as well as a type
+Most operating systems are written in the C language. We start by isolating
+\langname{}, a safe subset of it. Its operational semantics as well as a type
 system are described, and the classic properties of type safety are established.
+A first analysis is described, that identifies integers used as bitmasks, which
+are a common source of bugs in C programs.
 
-A first example of analysis is described, that identifies integers used as
-bitmasks, which are a common source of bugs in C programs. Then, we add to
-\langname the notion of pointers coming from userspace. This breaks type safety,
-but it is possible to get it back by assigning a different type to the pointers
-that are controlled by userspace. This distinction forces their dereferencing to
-be done in a controlled fashion. This technique makes it possible to detect two
-bugs in the Linux kernel: the first one is in a video driver for an AMD
-video card, and the second one in the \texttt{ptrace} system call for the
-Blackfin architecture.
-
-These works open perspectives in two directions. It is possible to apply
-this analysis to other interfaces of the Linux kernel that communicate with
-userspace. Moreover, this technique comes down to separate a type's interface
-from its implementation. Because this concept of \emph{abstract types} is absent
-in C, many programming errors can be detected using this strategy.
+Then, we add to \langname the notion of pointers coming from userspace. This
+breaks type safety, but it is possible to get it back by assigning a different
+type to the pointers that are controlled by userspace. This distinction forces
+their dereferencing to be done in a controlled fashion. This technique makes it
+possible to detect two bugs in the Linux kernel: the first one is in a video
+driver for an AMD video card, and the second one in the \texttt{ptrace} system
+call for the Blackfin architecture.
 
 % (PLAS suit)
 
