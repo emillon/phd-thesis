@@ -10,7 +10,7 @@ Les noyaux de systèmes d'exploitation manipulent des données fournies par les
 programmes utilisateur via les appels système. Si elles sont manipulées sans
 prendre une attention particulière, une faille de sécurité connue sous le nom de
 \emph{Confused Deputy Problem} peut amener à des fuites de données
-confidentielles ou l'elévation de privilèges d'un attaquant.
+confidentielles ou l'élévation de privilèges d'un attaquant.
 
 Le but de cette thèse est d'utiliser des techniques de typage statique afin de
 détecter les manipulations dangereuses de pointeurs contrôlés par l'espace
@@ -18,10 +18,13 @@ utilisateur.
 
 La plupart des systèmes d'exploitation sont écrits dans le langage C. On
 commence par en isoler un sous-langage sûr nommé \langname{}. Sa sémantique
-opérationnelle et un système de types sont décrits, et les propriétés classiques
-de sûreté du typage sont établies. Un première analyse sur ce langage est
-décrite, permettant de distinguer les entiers utilisés comme \emph{bitmasks},
-qui sont une source de bugs dans les programmes C.
+opérationnelle et un premier système de types sont décrits, et les propriétés
+classiques de sûreté du typage sont établies. La manipulation des états mémoire
+est formalisée sous la forme de lentilles bidirectionnelles, qui permettent
+d'encoder les mises à jour partielles des états et variables. Un première
+analyse sur ce langage est décrite, permettant de distinguer les entiers
+utilisés comme \emph{bitmasks}, qui sont une source de bugs dans les programmes
+C.
 
 On ajoute ensuite à \langname{} la notion de valeur provenant de
 l'espace utilisateur. La sûreté du typage est alors brisée, mais on peut la
@@ -44,8 +47,10 @@ pointers that are controlled by userspace.
 Most operating systems are written in the C language. We start by isolating
 \langname{}, a safe subset of it. Its operational semantics as well as a type
 system are described, and the classic properties of type safety are established.
-A first analysis is described, that identifies integers used as bitmasks, which
-are a common source of bugs in C programs.
+Memory states are manipulated using bidirectional lenses, which can encode
+partial updates to states and variables. A first analysis is described, that
+identifies integers used as bitmasks, which are a common source of bugs in C
+programs.
 
 Then, we add to \langname the notion of pointers coming from userspace. This
 breaks type safety, but it is possible to get it back by assigning a different
