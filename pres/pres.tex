@@ -366,7 +366,12 @@
 \begin{itemize}
 \item 1600 lignes d'OCaml
 \item utilise \newspeak (langage + compilateur)
-\item mode de fonctionnement:
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Mode de fonctionnement}
+
   \begin{itemize}
   \item compile vers un \texttt{.npk}
   \item enlève les types C
@@ -384,9 +389,12 @@
           \bottomrule
       \end{tabular}
   \end{itemize}
-\end{itemize}
 
 \end{frame}
+
+\begin{frame} \insertcode{tc-c.c} \end{frame}
+\begin{frame} \insertcode{tc-ml.c} \end{frame}
+\begin{frame} \insertcode{tc-ty.c} \end{frame}
 
 \subsection{Utilisation sur le noyau Linux}
 
