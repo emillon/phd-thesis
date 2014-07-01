@@ -18,6 +18,7 @@
 \usetheme{SAS}
 \usetikzlibrary{arrows}
 \usetikzlibrary{calc}
+\usetikzlibrary{patterns}
 \usepackage{../pelagiccod}
 \usepackage{booktabs}
 
@@ -83,28 +84,27 @@
 
 \subsection{Les systèmes d'exploitation}
 
-\begin{frame}[fragile]{Séparation}
-\begin{tikzpicture}
-  [user/.style={fill=MellonGreen}
-  ,kernel/.style={fill=MellonPink}
-  ]
+% Memory zone
+%
+% #1 - start
+% #2 - end
+% #3 - color
+\newcommand{\mzone}[3]{
+  \path[#3] (#1,0) rectangle (#2,1);
+}
 
-  % Memory zone
-  %
-  % #1 - start
-  % #2 - end
-  % #3 - color
-  \newcommand{\mzone}[3]{
-    \path[#3] (#1,0) rectangle (#2,1);
-  }
-
-  % Address label
-  %
-  % #1 - x position
-  % #2 - text
-  \newcommand{\alabel}[2]{
-    \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \tt #2};
-  }
+% Address label
+%
+% #1 - x position
+% #2 - text
+\newcommand{\alabel}[2]{
+  \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \tt #2};
+}
+\newcommand{\addrlabel}[2]{
+  \draw[<-] (#1,-0.1) -- ++(0,-0.3) node [auto,pos=1] {\small \tt #2};
+  \draw[pattern=north east lines] (#1,0) rectangle ++(0.2,1);
+}
+\long\def\memzones{
 
   % exec
   \mzone{0.5}{1}{user}
@@ -123,6 +123,20 @@
 
   % contour
   \draw (0,0) rectangle (8,1);
+
+  \alabel{0}{0}
+  \alabel{6}{3 Go}
+  \alabel{8}{4 Go}
+
+}
+
+\begin{frame}[fragile]{Séparation}
+\begin{tikzpicture}
+  [user/.style={fill=MellonGreen}
+  ,kernel/.style={fill=MellonPink}
+  ]
+
+  \memzones{}
 
   \node at (2, -0.7) {Programme};
   \node at (7, -0.7) {Noyau};
@@ -143,58 +157,33 @@
 
   \path (Htop) -- ++(0, -2) node { Matériel };
 
-  \alabel{0}{0}
-  \alabel{6}{3 Go}
-  \alabel{8}{4 Go}
-
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Droits}
+\begin{frame}
+    \insertcode{gettimeofday.c}
 
-Execution of a piece of code:
+\begin{tikzpicture}
+  [user/.style={fill=MellonGreen}
+  ,kernel/.style={fill=MellonPink}
+  ]
 
-\begin{itemize}
-    \item with processor at level P
-    \item with privilege level C
-    \item accessing data with level D
-\end{itemize}
-
-is possible iff
-
-\[ P ≤ \min\{C; D\} \]
-
+  \memzones{}
+  \addrlabel{2.7}{tv}
+\end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Droits}
-On x86, levels are \emph{rings}:
+\begin{frame}
+    \insertcode{gettimeofday-bad.c}
 
-Kernel $= 0$ and User $= 3$.
+\begin{tikzpicture}
+  [user/.style={fill=MellonGreen}
+  ,kernel/.style={fill=MellonPink}
+  ]
 
-\begin{center}
-\def\modeK{~Kernel~}
-\def\modeU{~User~}
-\def\accOK{OK}
-\def\accNO{--}
-\begin{tabular}{cccc}
-\toprule
-  P
-& C
-& D
-& Access \\
-\midrule
-  \modeK{} & \modeK{} & \modeK{} & \accOK \\
-  \modeK{} & \modeK{} & \modeU{} & \accOK \\
-  \modeK{} & \modeU{} & \modeK{} & \accOK \\
-  \modeK{} & \modeU{} & \modeU{} & \accOK \\
-  \modeU{} & \modeK{} & \modeK{} & \accNO \\
-  \modeU{} & \modeK{} & \modeU{} & \accNO \\
-  \modeU{} & \modeU{} & \modeK{} & \accNO \\
-  \modeU{} & \modeU{} & \modeU{} & \accOK \\
-\bottomrule
-\end{tabular}
-\end{center}
-
+  \memzones{}
+  \addrlabel{6.7}{tv}
+\end{tikzpicture}
 \end{frame}
 
 \section{Contributions}
