@@ -19,6 +19,7 @@
 \usetikzlibrary{arrows}
 \usetikzlibrary{calc}
 \usetikzlibrary{patterns}
+\usepackage{../gramster}
 \usepackage{../pelagiccod}
 \usepackage{booktabs}
 
@@ -190,12 +191,47 @@
 
 \subsection{Un langage impératif bien typé}
 
-\begin{frame}
+\begin{frame}{Les problèmes de C}
     \begin{itemize}
-        \item C: peu de garanties
+        \item casts
+        \item arithmétique de pointeurs
+        \item peu de garanties
     \end{itemize}
 \end{frame}
 
+\begin{frame}
+  \begin{align*}
+  \gramdef{Expressions}{e}
+                 { c               }{ Constante }
+                 { \opun~e         }{ Opération unaire }
+                 { e~\opbin~e      }{ Opération binaire }
+                 { lv              }{ Accès mémoire }
+                 { lv ← e          }{ Affectation }
+                 { \& lv           }{ Pointeur }
+                 { f               }{ Fonction }
+                 { e (e_1, …, e_n) }{ Appel de fonction }
+                 { \eStruct{
+                    l_1 : e_1
+                    ; …
+                    ; l_n : e_n }  }{ Structure }
+                 { \eArray{e_1 ;…; e_n} }{ Tableau }
+                 {END}
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+  \begin{align*}
+  \gramdef{Instructions}{i}
+                 { \iPass          }{Instruction vide}
+                 { i;i             }{Séquence}
+                 { e               }{Expression}
+                 { \iDecl{x}{e}{i} }{Déclaration de variable}
+                 { \iIf{e}{i}{i}   }{Alternative}
+                 { \iWhile{e}{i}   }{Boucle}
+                 { \iReturn{e}     }{Retour de fonction}
+                 {END}
+  \end{align*}
+\end{frame}
 \subsection{Lentilles}
 
 \begin{frame}
