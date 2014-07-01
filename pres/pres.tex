@@ -55,7 +55,7 @@
 
 \frame{\tableofcontents}
 
-\section{Le confused deputy problem} % TODO emph
+\section{Le problème des pointeurs}
 
 \subsection{L'arnaque du serrurier}
 
@@ -75,14 +75,14 @@
 
 \begin{itemize}
 \item problème de confiance
-\item il appliquer les droits de l'appelant…
-\item …pas les siens
+\item il ne doit pas appliquer ses droits…
+\item …mais ceux de l'appelant
 \item il doit vérifier que j'ai bien les droits sur la maison
 \end{itemize}
 
 \end{frame}
 
-\subsection{Les systèmes d'exploitation}
+\subsection{Isolation entre utilisateur et noyau}
 
 % Memory zone
 %
@@ -186,7 +186,7 @@
 \end{tikzpicture}
 \end{frame}
 
-\section{Contributions}
+\section{Formalisation}
 
 \subsection{Un langage impératif bien typé}
 
@@ -196,7 +196,7 @@
     \end{itemize}
 \end{frame}
 
-\subsection{Une sémantique basée sur les lentilles}
+\subsection{Lentilles}
 
 \begin{frame}
 \frametitle{Sémantique impérative}
@@ -285,7 +285,7 @@
 
 \end{frame}
 
-\subsection{Un système de types abstraits}
+\subsection{Types pointeurs}
 
 \begin{frame}
 
@@ -321,7 +321,9 @@
     \end{mathpar}
 \end{frame}
 
-\subsection{Un prototype d'analyseur statique}
+\section{Expérimentation}
+
+\subsection{Analyseur statique}
 
 \begin{frame}
 
@@ -349,6 +351,8 @@
 \end{itemize}
 
 \end{frame}
+
+\subsection{Utilisation sur le noyau Linux}
 
 \begin{frame}
     Utilisé sur 2 bugs du noyau Linux
@@ -398,9 +402,11 @@ Résultat de l'algorithme d'inférence -- \textbf{programme complètement annot�
 \codeout{drmok}
 \end{frame}
 
-\section{Types abstraits pour C}
+\section{Perspectives}
 
-\subsection{Le problème}
+\subsection{Analyse à plus grande échelle}
+
+\subsection{Types abstraits}
 
 \begin{frame}
     \begin{itemize}
@@ -409,15 +415,13 @@ Résultat de l'algorithme d'inférence -- \textbf{programme complètement annot�
     \end{itemize}
 \end{frame}
 
-\subsection{Possibilités}
-
 \begin{frame}
 \begin{itemize}
 \item encapsulation
 \end{itemize}
 \end{frame}
 
-\section{Conclusion}
+\subsection{Conclusion}
 
 \begin{frame}
     Merci
