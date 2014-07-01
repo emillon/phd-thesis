@@ -398,8 +398,7 @@
 
 \subsection{Utilisation sur le noyau Linux}
 
-\begin{frame}
-    Utilisé sur 2 bugs du noyau Linux
+\begin{frame}{Analyse de 2 bugs}
 
     \begin{itemize}
         \item Radeon KMS
@@ -407,29 +406,31 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Code avec bug}
     % left bottom right top
     \includegraphics[trim=2300 1430 100 500,clip,width=\textwidth]{poster.pdf}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Résultat de l'algorithme d'inférence}
 \begin{SaveVerbatim}{drmko}
 05-drm.c:17#10 - Type clash between :
   KPtr (_a15)
   UPtr (_a8)
 \end{SaveVerbatim}
 
-Résultat de l'algorithme d'inférence -- \textbf{erreur}:
+\textbf{Erreur}:
 
 \codeout{drmko}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Code corrigé}
     % left bottom right top
     \includegraphics[trim=2300 990 100 1220,clip,width=\textwidth]{poster.pdf}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Résultat de l'algorithme d'inférence}
+
+\textbf{Programme complètement annoté}:
 
 \begin{SaveVerbatim}{drmok}
 (06-drm-ok.c:17#6)^{
@@ -441,14 +442,20 @@ Résultat de l'algorithme d'inférence -- \textbf{erreur}:
         4 : Int); }
 \end{SaveVerbatim}
 
-Résultat de l'algorithme d'inférence -- \textbf{programme complètement annoté}:
-
 \codeout{drmok}
 \end{frame}
 
 \section{Perspectives}
 
 \subsection{Analyse à plus grande échelle}
+
+\begin{frame}
+    \begin{itemize}
+        \item Comment détecter les appels système?
+        \item \texttt{SYSCALL\_DEFINEx}, …
+        \item le reste: \texttt{ioctl}s, FS, …
+    \end{itemize}
+\end{frame}
 
 \subsection{Types abstraits}
 
@@ -457,12 +464,6 @@ Résultat de l'algorithme d'inférence -- \textbf{programme complètement annot�
         \item extention: comment le type est représenté
         \item intention: à quoi il sert
     \end{itemize}
-\end{frame}
-
-\begin{frame}
-\begin{itemize}
-\item encapsulation
-\end{itemize}
 \end{frame}
 
 \subsection{Conclusion}
