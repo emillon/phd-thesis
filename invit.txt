@@ -1,0 +1,60 @@
+Bonjour,
+
+J'ai le plaisir de vous inviter à ma soutenance de thèse intitulée:
+
+    Analyse de sécurité de logiciels système par typage statique
+    Application au noyau Linux
+
+Mots clefs: sécurité, typage, isolation, linux, pointeurs utilisateur
+
+Cette soutenance aura lieu *le jeudi 10 juillet 2014 à 14h*
+
+    à l'UPMC – Campus Jussieu, 4 Place Jussieu - 75005 Paris
+    Couloir 26-25, 1er étage, salle 105
+
+devant le jury composé de
+
+    Sandrine Blazy, IRISA, Rapporteuse
+    Emmanuel Chailloux, Université Pierre et Marie Curie, Directeur
+    Pierre Jouvelot, MINES ParisTech, Rapporteur
+    Olivier Levillain, ANSSI, Invité
+    Gilles Muller, Université Pierre et Marie Curie, Examinateur
+    Vincent Simonet, Google, Examinateur
+    Sarah Zennou, Airbus Group Innovations, Directrice
+
+Résumé:
+
+    Les noyaux de systèmes d'exploitation manipulent des données
+    fournies par les programmes utilisateur via les appels système. Si
+    elles sont manipulées sans prendre une attention particulière, une
+    faille de sécurité connue sous le nom de Confused Deputy Problem
+    peut amener à des fuites de données confidentielles ou l'élévation
+    de privilèges d'un attaquant.
+
+    Le but de cette thèse est d'utiliser des techniques de typage
+    statique afin de détecter les manipulations dangereuses de pointeurs
+    contrôlés par l'espace utilisateur.
+
+    La plupart des systèmes d'exploitation sont écrits dans le langage
+    C. On commence par en isoler un sous-langage sûr nommé Safespeak. Sa
+    sémantique opérationnelle et un premier système de types sont
+    décrits, et les propriétés classiques de sûreté du typage sont
+    établies. La manipulation des états mémoire est formalisée sous la
+    forme de lentilles bidirectionnelles, qui permettent d'encoder les
+    mises à jour partielles des états et variables. Un première analyse
+    sur ce langage est décrite, permettant de distinguer les entiers
+    utilisés comme bitmasks, qui sont une source de bugs dans les
+    programmes C.
+
+    On ajoute ensuite à Safespeak la notion de valeur provenant de
+    l'espace utilisateur. La sûreté du typage est alors brisée, mais on
+    peut la réétablir en donnant un type particulier aux pointeurs
+    contrôlés par l'espace utilisateur, ce qui force leur déférencement
+    à se faire de manière contrôlée. Cette technique permet de détecter
+    deux bugs dans le noyau Linux: le premier concerne un pilote de
+    carte graphique AMD, et le second l'appel système ptrace sur
+    l'architecture Blackfin.
+
+Vous êtes également invités au pot qui suivra.
+
+Bien cordialement,
