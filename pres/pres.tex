@@ -187,6 +187,16 @@
 \end{tikzpicture}
 \end{frame}
 
+\begin{frame}
+\begin{itemize}
+    \item il faut vérifier tous les pointeurs
+    \item fonctions \texttt{copy\_from\_user}, \texttt{copy\_to\_user}
+    \item test + \texttt{memcpy}
+    \item ou retournent une erreur ($< 0$)
+    \item but: détecter les cas où on devrait utiliser \texttt{copy\_*\_user}
+\end{itemize}
+\end{frame}
+
 \section{Formalisation}
 
 \subsection{Un langage impératif bien typé}
