@@ -331,6 +331,63 @@
 
 \end{frame}
 
+\begin{frame}\frametitle{Lentilles en sémantique}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  par tableau
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    $T(n) ∈ \setLens{Val}{Val}$
+  \item
+    $T(3) \equiv [1, 2, 3, \circled{5}]$
+  \end{itemize}
+\item
+  par champ
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    $F(l) ∈ \setLens{Val}{Val}$
+  \item
+    $F(y) \equiv \{ x: 0; y: \circled{-3} \}$
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}\frametitle{Exemple : par variable ($V$)}
+
+\[V(v) ∈ \setLens{Mem}{Val}\]
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Pour $m ∈ Mem$, $m = ((s_1, …, s_n), g)$
+\end{itemize}
+
+\begin{align*}
+V(\texttt{Global}~x) &= \texttt{snd} \ggg L(x) \\
+V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
+\end{align*}
+
+\end{frame}
+
+\begin{frame}\frametitle{Exemple : par chemin ($Φ$)}
+
+\[Φ(φ) ∈ \setLens{Mem}{Val}\]
+
+\begin{align*}
+    Φ(v)    &= V(v) \\
+  Φ(φ.l)    &= Φ(φ) \ggg F(l) \\
+  Φ(φ[i])   &= Φ(φ) \ggg T(i) \\
+  \end{align*}
+
+\end{frame}
+
 \subsection{Types pointeurs}
 
 \begin{frame}{Deux types de pointeurs}
