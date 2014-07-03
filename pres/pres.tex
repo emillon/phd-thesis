@@ -443,10 +443,18 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
   \item compile vers un \texttt{.npk}
   \item enlève les types C
   \item infère des types plus sémantiques
+  \end{itemize}
+\end{frame}
 
+\begin{frame}{Traduction: C} \insertcode{tc-c.c} \end{frame}
+\begin{frame}{Traduction: sans les types} \insertcode{tc-ml.c} \end{frame}
+\begin{frame}{Traduction: types inférés} \insertcode{tc-ty.c} \end{frame}
+
+\begin{frame}
+    \centering
       \begin{tabular}{ll}
           \toprule
-          Type (C/NPK) & Type(SPK) \\
+          C/\newspeak & \langname \\
           \midrule
           \texttt{int} & $\tInt$ \\
           \texttt{unsigned long} & $\tInt$ \\
@@ -455,13 +463,7 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
           \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
           \bottomrule
       \end{tabular}
-  \end{itemize}
-
 \end{frame}
-
-\begin{frame} \insertcode{tc-c.c} \end{frame}
-\begin{frame} \insertcode{tc-ml.c} \end{frame}
-\begin{frame} \insertcode{tc-ty.c} \end{frame}
 
 \subsection{Utilisation sur le noyau Linux}
 
