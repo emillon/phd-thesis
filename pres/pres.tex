@@ -28,6 +28,8 @@
 \usefonttheme[onlymath]{serif}
 %\boldmath
 
+\def\colK#1{\colorbox{MellonPink}{\strut $ #1 $}}
+\def\colU#1{\colorbox{MellonGreen}{\strut $ #1 $}}
 \colorlet{codeoutcol}{MellonYellow!60}
 \def\codeout#1{
     \begin{center}
@@ -491,13 +493,25 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 
 \begin{frame}{Règles de typage}
     \begin{mathpar}
-       \disprule{Lv-Deref}
+       \irule{Lv-Deref}
+         { Γ ⊢ \colK{e} : \colK{\ptrK{t}} }
+         { Γ ⊢ \colK{*~e} : t }
 
-       \disprule{Addr}
+       \irule{Addr}
+         { Γ ⊢ lv : t }
+         { Γ ⊢ \& lv : \colK{\ptrK{t}} }
 
-       \disprule{User-Get}
+       \irule{User-Get}
+         { Γ ⊢ \colK{e_d} : \colK{\ptrK{t}}
+        \\ Γ ⊢ \colU{e_s} : \colU{\ptrU{t}}
+         }
+         { Γ ⊢ \uGet{\colK{e_d}}{\colU{e_s}} : \tInt }
 
-       \disprule{User-Put}
+       \irule{User-Put}
+         { Γ ⊢ \colU{e_d} : \colU{\ptrU{t}}
+        \\ Γ ⊢ \colK{e_s} : \colK{\ptrK{t}}
+         }
+         { Γ ⊢ \uPut{\colU{e_d}}{\colK{e_s}} : \tInt }
     \end{mathpar}
 \end{frame}
 
