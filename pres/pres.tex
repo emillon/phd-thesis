@@ -1,6 +1,9 @@
 \documentclass{beamer}
 \usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\uselanguage{French}
+\languagepath{French}
 
 \usepackage{tikz}
 
@@ -23,6 +26,7 @@
 \usepackage{../gramster}
 \usepackage{../pelagiccod}
 \usepackage{booktabs}
+\usepackage{csquotes}
 
 \usepackage{amsmath,amsthm, amssymb, latexsym}
 \usefonttheme[onlymath]{serif}
@@ -533,7 +537,9 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 
 \begin{theorem}[Préservation]
     Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
-    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
+    alors:
+
+    $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
 \end{theorem}
 \end{frame}
 
@@ -658,7 +664,7 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
         \item intention: à quoi il sert
         \item \texttt{int}, \texttt{int32\_t}
         \item \texttt{off\_t}, \texttt{size\_t}, \texttt{intptr\_t}
-        \item Types "numéro de ligne", "numéro de colonne"
+        \item Types \enquote{numéro de ligne}, \enquote{numéro de colonne}
     \end{itemize}
 \end{frame}
 
