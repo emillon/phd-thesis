@@ -67,11 +67,11 @@
 
 \begin{itemize}
 \item
-  j'appelle un serrurier
+  J'appelle un serrurier
 \item
-  il peut m'ouvrir la porte
+  Il peut m'ouvrir la porte
 \item
-  et si je lui dis que j'habite chez mon voisin? à la banque?
+  Et si je lui dis que j'habite chez mon voisin? à la banque?
 \end{itemize}
 
 \end{frame}
@@ -397,17 +397,17 @@
 \end{frame}
 
 \begin{frame}{Lentilles en sémantique}
-    \[Φ ∈ \sPath → \setLens{Mem}{Val}\]
-
-    Pour $φ = (2, x).f[5]$:
 
     \begin{align*}
-    Φ(φ) &= \texttt{fst} \\
-         &\ggg I(2) \\
-         &\ggg L(x) \\
-         &\ggg F(f) \\
-         &\ggg T(5)
+       Φ &∈ \sPath → \setLens{Mem}{Val} \\
+        \\
+       φ &= (2, x).f[5] \\
+    Φ(φ) &= \texttt{fst} \ggg I(2) \ggg L(x) \ggg F(f) \ggg T(5) \\
+        \\
+      m' &= \lensPut{Φ(φ)}{v}{m} \\
+         &\eqdef m[φ ← v]_Φ
     \end{align*}
+
 \end{frame}
 
 \begin{frame}{Lentilles en sémantique}
@@ -467,7 +467,7 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 
 \end{frame}
 
-\subsection{Types pointeurs}
+\subsection{Système de types}
 
 \begin{frame}{Deux types de pointeurs}
 
@@ -493,13 +493,13 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 
 \begin{frame}{Règles de typage}
     \begin{mathpar}
-       \irule{Lv-Deref}
-         { Γ ⊢ \colK{e} : \colK{\ptrK{t}} }
-         { Γ ⊢ \colK{*~e} : t }
-
        \irule{Addr}
          { Γ ⊢ lv : t }
          { Γ ⊢ \& lv : \colK{\ptrK{t}} }
+
+       \irule{Lv-Deref}
+         { Γ ⊢ \colK{e} : \colK{\ptrK{t}} }
+         { Γ ⊢ \colK{*~e} : t }
 
        \irule{User-Get}
          { Γ ⊢ \colK{e_d} : \colK{\ptrK{t}}
