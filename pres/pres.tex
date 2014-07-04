@@ -387,10 +387,26 @@
 \draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
 
 \end{tikzpicture}
+
+\vspace{-1cm}\hspace{7cm} \fbox{$ℒ_1 \ggg ℒ_2$}
+
 \end{center}
 
 \end{frame}
 
+\begin{frame}{Lentilles en sémantique}
+    \[Φ ∈ \sPath → \setLens{Mem}{Val}\]
+
+    Pour $φ = (2, x).f[5]$:
+
+    \begin{align*}
+    Φ(φ) &= \texttt{fst} \\
+         &\ggg I(2) \\
+         &\ggg L(x) \\
+         &\ggg F(f) \\
+         &\ggg T(5)
+    \end{align*}
+\end{frame}
 
 \begin{frame}{Lentilles en sémantique}
 
