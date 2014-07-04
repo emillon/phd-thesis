@@ -515,6 +515,28 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
     \end{mathpar}
 \end{frame}
 
+\begin{frame}{Sûreté du typage}
+
+\begin{theorem}[Progrès]
+  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Alors l'un des cas suivants est vrai:
+
+\begin{itemize}
+  \item $∃ v ≠ Ω, e = v$
+  \item $∃ (e', m'), \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
+\end{itemize}
+\end{theorem}
+\end{frame}
+
+\begin{frame}{Sûreté du typage}
+
+\begin{theorem}[Préservation]
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
+    alors $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
+\end{theorem}
+\end{frame}
+
 \section{Expérimentation}
 
 \subsection{Analyseur statique}
@@ -630,15 +652,10 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 
 \subsection{Types abstraits}
 
-\begin{frame}
+\begin{frame}{Types abstraits : exemples}
     \begin{itemize}
         \item extension: comment le type est représenté
         \item intention: à quoi il sert
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Exemples}
-    \begin{itemize}
         \item \texttt{int}, \texttt{int32\_t}
         \item \texttt{off\_t}, \texttt{size\_t}, \texttt{intptr\_t}
         \item Types "numéro de ligne", "numéro de colonne"
