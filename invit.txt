@@ -14,13 +14,17 @@ Cette soutenance aura lieu *le jeudi 10 juillet 2014 à 14h*
 
 devant le jury composé de
 
-    Sandrine Blazy, IRISA, Rapporteuse
-    Emmanuel Chailloux, Université Pierre et Marie Curie, Directeur
-    Pierre Jouvelot, MINES ParisTech, Rapporteur
-    Olivier Levillain, ANSSI, Invité
-    Gilles Muller, Université Pierre et Marie Curie, Examinateur
-    Vincent Simonet, Google, Examinateur
-    Sarah Zennou, Airbus Group Innovations, Directrice
+    Rapporteurs:
+        Sandrine Blazy, IRISA
+        Pierre Jouvelot, MINES ParisTech
+    Examinateurs:
+        Gilles Muller, Université Pierre et Marie Curie
+        Vincent Simonet, Google
+    Directeurs:
+        Emmanuel Chailloux, Université Pierre et Marie Curie
+        Sarah Zennou, Airbus Group Innovations
+    Invité:
+        Olivier Levillain, ANSSI, Invité
 
 Résumé:
 
