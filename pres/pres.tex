@@ -19,6 +19,7 @@
 \usetikzlibrary{arrows}
 \usetikzlibrary{calc}
 \usetikzlibrary{patterns}
+\usetikzlibrary{shapes}
 \usepackage{../gramster}
 \usepackage{../pelagiccod}
 \usepackage{booktabs}
@@ -207,7 +208,7 @@
 
 \section{Formalisation}
 
-\subsection{Un langage impératif bien typé}
+\subsection{\langname}
 
 \begin{frame}{Les problèmes de C}
     \begin{itemize}
@@ -261,13 +262,7 @@
   expression + mémoire
 \item
   $\mm{m}{e}{m'}{e'}$
-\item
-  définir $m'$ en fonction de $m$:
-
-  \begin{itemize}
-  \item $m[…]$
-  \item $m[… ← v]$
-  \end{itemize}
+\item expressions $→$ valeurs
 \end{itemize}
 
 \end{frame}
@@ -275,30 +270,33 @@
 \begin{frame}
     \begin{itemize}
         \item valeurs gauches (\emph{lvalues}): \texttt{t[20] = 1}
+        \item valeurs gauches $→$ chemins $φ$
         \item formes:
             \begin{itemize}
-                \item \texttt{var}
-                \item \texttt{lv.l}
-                \item \texttt{lv[e]}
-                \item \texttt{*e}
+                \item \texttt{x} $→$ \texttt{(n, x)}
+                \item \texttt{lv.l} $→ φ.l$
+                \item \texttt{lv[e]} $→ φ[n]$
+                \item \texttt{*e} $→ φ$
             \end{itemize}
+        \item $\mm{m}{lv ← e}{m'}{v}$ ?
+        \item ex: $x.f[5] ← 3$
+        \item Mise à jour complète : $m' = m[ x ← 0]$
+        \item Mise à jour partielle : $m' = m[x.f ← 0]$
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Structure de la mémoire}
 
 \begin{itemize}
-\item $m = (s, g)$
-\item liste de cadres de pile + cadre de globales
-\item cadre: $c = ((x_1, v_1), …, (x_n, v_n))$
-\item But: exprimer
-
+\item $m = (s, g) ∈ \sMem$
+\item $\sMem = \sList{\sFrame} × \sFrame$
+\item liste de cadres de pile, cadre de globales
+\item cadre: $c = (x_1 ↦ v_1, …, x_n ↦ v_n) ∈ \sFrame$
+\item Comment exprimer:
   \begin{itemize}
   \item $m[φ]$
   \item $m[φ←v]$
   \end{itemize}
-\item Mise à jour complète : $m' = m[ x ← 0]$
-\item Mise à jour partielle : $m' = m[x.f ← 0]$
 \end{itemize}
 \end{frame}
 
@@ -338,6 +336,61 @@
 \end{itemize}
 
 \end{frame}
+
+\begin{frame}
+
+\begin{center}
+\definecolor{figcola}{HTML}{EFEF52}
+\definecolor{figcolb}{HTML}{52EFA1}
+\definecolor{figcolc}{HTML}{52A1EF}
+\definecolor{figcold}{HTML}{EFA152}
+\begin{tikzpicture}
+[node distance=2.5cm
+,bignode/.style={draw,shape=rectangle,minimum size=1.5cm,fill=figcola}
+,smallnode/.style={draw,shape=circle,minimum size=1cm,fill=figcolb}
+,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
+,>=triangle 45
+,ultra thick
+]
+\node[bignode] (A) {};
+\node[right of=A,smallnode] (B) {};
+\node[right of=B,trinode,fill=figcolc] (C) {};
+\node[below of=B,smallnode] (D) {};
+\node[below of=A,node distance=5cm,bignode] (E) {};
+
+\draw[->] (A) to node[auto] {$\mathrm{get}_{ℒ_1}$} (B);
+\draw[->] (B) to (D);
+\draw[->] (A) to (E);
+\draw (C) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_2}$} ($(B)!0.5!(D)$);
+\draw (D) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_1}$} ($(A)!0.75!(E)$);
+
+\node[smallnode] at (A) {};
+\node[trinode,fill=figcold] at (A) {};
+
+\node[trinode,fill=figcold] at (B) {};
+
+\node[trinode,fill=figcolc] at (D) {};
+
+\node[smallnode] at (E) {};
+\node[trinode,fill=figcolc] at (E) {};
+
+\node[left of=A, node distance=4cm,bignode] (GA) {};
+\node[below of=GA,smallnode] (GB) {};
+\node[below of=GB,trinode,fill=figcold] (GC) {};
+
+\node[smallnode] at (GA) {};
+
+\node[trinode, fill=figcold] at (GA) {};
+\node[trinode, fill=figcold] at (GB) {};
+
+\draw [->] (GA) to node[auto] {$\mathrm{get}_{ℒ_1}$} (GB);
+\draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
+
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
 
 \begin{frame}{Lentilles en sémantique}
 
