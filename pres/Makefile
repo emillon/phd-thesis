@@ -1,4 +1,4 @@
-.PHONY: all watch full
+.PHONY: all watch full check
 WHAT=pres
 
 CODESAMPLES=$(notdir $(wildcard code/*))
@@ -40,3 +40,6 @@ regen-bib:
 
 clean:
 	rm -f *.aux *.nav *.log *.out *.snm *.vrb
+
+check:
+	! ack 'begin{frame}$$'
