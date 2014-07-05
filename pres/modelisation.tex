@@ -427,9 +427,11 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
 \begin{frame}{Sûreté du typage}
 
 \begin{theorem}[Préservation]
-    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
-    alors:
 
-    $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
+Soit $Γ$ un environnement de typage et $m$ un état mémoire tels que
+$\mcomp{Γ}{m}$. Soit $e$ une expression telle que $Γ ⊢ e : t$.
+
+Alors, si $\mm{m}{e}{m'}{e'}$, on a $Γ ⊢ e' : t$ et $\mcomp{Γ}{\cCleanup{m'}}$.
+
 \end{theorem}
 \end{frame}
