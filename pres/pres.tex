@@ -62,6 +62,12 @@
 
 \frame{\tableofcontents}
 
+% TODO on ne sait pas ce que j'ai fait
+% TODO remercier le jury mais pas pour son déplacement
+% TODO ctx industriel dès le début: EADS/LIP6
+% TODO section conclusion: pas de sous parties
+% TODO après serririer direct code KMS
+
 \section{Le problème des pointeurs}
 
 \subsection{L'arnaque du serrurier}
@@ -146,6 +152,7 @@
 }
 
 \begin{frame}[fragile]{Séparation}
+    %TODO à dégager
 \begin{tikzpicture}
   [user/.style={fill=MellonGreen}
   ,kernel/.style={fill=MellonPink}
@@ -184,7 +191,7 @@
   ]
 
   \memzones{}
-  \addrlabel{2.7}{tv}
+  \addrlabel{2.7}{ptv}
 \end{tikzpicture}
 \end{frame}
 
@@ -197,9 +204,11 @@
   ]
 
   \memzones{}
-  \addrlabel{6.7}{tv}
+  \addrlabel{6.7}{ptv}
 \end{tikzpicture}
 \end{frame}
+
+% TODO exemple KMS à la place de gettimeofday
 
 \begin{frame}
 \begin{itemize}
@@ -211,7 +220,13 @@
 \end{itemize}
 \end{frame}
 
-\section{Formalisation}
+% TODO ici: mettre un coup sur pourquoi c'est intéressant/ context
+
+% TODO slide ctx/ partie avec NPK sur la chaîne
+
+\section{Formalisation} % TODO -> modélisation
+
+% TODO Remttre un coup sur le critique
 
 \subsection{\langname}
 
@@ -220,8 +235,10 @@
         \item casts
         \item arithmétique de pointeurs
         \item peu de garanties
-    \end{itemize}
+    \end{itemize} % TODO slide à jeter
 \end{frame}
+
+% TODO slides à chaque slide
 
 \begin{frame}
   \begin{align*}
@@ -289,6 +306,10 @@
         \item Mise à jour partielle : $m' = m[x.f ← 0]$
     \end{itemize}
 \end{frame}
+
+% TODO cibler l'ex sur x.f[5]
+
+% TODO dessiner un état mémoire et des ronds imbriqués
 
 \begin{frame}{Structure de la mémoire}
 
@@ -472,6 +493,12 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 
 \subsection{Système de types}
 
+% TODO caractéristiques du système de types. Comparaison  CQUAL
+
+% TODO figure statique/dynamique à mettre ici et en intro
+
+% TODO grammaire des types
+
 \begin{frame}{Deux types de pointeurs}
 
 \begin{itemize}
@@ -564,18 +591,24 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
   \end{itemize}
 \end{frame}
 
+% TODO rappel ctx
+% TODO mentionner algo d'inférence
+% TODO préciser au début Safespeak qu'on interdit casts etc
+
 \begin{frame}{Traduction: C} \insertcode{tc-c.c} \end{frame}
 \begin{frame}{Traduction: sans les types} \insertcode{tc-ml.c} \end{frame}
 \begin{frame}{Traduction: types inférés} \insertcode{tc-ty.c} \end{frame}
+
+    % TODO titres de ces slides à collapser en grisé
 
 \begin{frame}
     \centering
       \begin{tabular}{ll}
           \toprule
-          C/\newspeak & \langname \\
+          C/\newspeak & \langname \\ % TODO virer NPK
           \midrule
           \texttt{int} & $\tInt$ \\
-          \texttt{unsigned long} & $\tInt$ \\
+          \texttt{unsigned long} & $\tInt$ \\ % TODO virer cette ligne
           \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
           \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
           \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
@@ -593,6 +626,8 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
     \end{itemize}
 \end{frame}
 
+% TODO déplacer cette figure dans sys de types
+
 \begin{frame}{Code avec bug}
     % left bottom right top
     \includegraphics[trim=2300 1430 100 500,clip,width=\textwidth]{poster.pdf}
@@ -607,7 +642,8 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 
 \textbf{Erreur}:
 
-\codeout{drmko}
+\codeout{drmko} % TODO sur le même slide que précédent
+% TODO ne pas parler des inconnues
 \end{frame}
 
 \begin{frame}{Code corrigé}
@@ -618,6 +654,7 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 \begin{frame}[fragile]{Résultat de l'algorithme d'inférence}
 
 \textbf{Programme complètement annoté}:
+% TODO annoté => étiqueté
 
 \begin{SaveVerbatim}{drmok}
 (06-drm-ok.c:17#6)^{
@@ -633,6 +670,12 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 \end{frame}
 
 \section{Perspectives}
+% TODO typage & mémorie
+% TODO rappeler le contexte indus, le type de systèmes
+% TODO 2è bug, bitmasks, comparaisons
+% TODO on a l'impression que c'était facilje
+% TODO comment convaincre les indus
+% TODO CVE-xxx
 
 \subsection{Contributions}
 
@@ -655,6 +698,8 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
     \end{itemize}
 \end{frame}
 
+% TODO automatiser l'annotation
+
 \subsection{Types abstraits}
 
 \begin{frame}{Types abstraits : exemples}
@@ -668,6 +713,8 @@ V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
 \end{frame}
 
 \subsection{Conclusion}
+
+% TODO pas ce slide
 
 \begin{frame}
     Merci
