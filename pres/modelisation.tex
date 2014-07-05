@@ -337,31 +337,44 @@
 
 \subsection{Système de types}
 
+% TODO f -> fun..
+
 % TODO caractéristiques du système de types. Comparaison  CQUAL
 
 % TODO figure statique/dynamique à mettre ici et en intro
 
-% TODO grammaire des types
+\begin{frame}{Système de types}
+\begin{align*}
+  \gramdef{Type}{t}
+      { \tInt                       }{Entier}
+      { \tFloat                     }{Flottant}
+      { \tUnit                      }{Unité}
+      { \ptrK{t}                    }{Pointeur noyau}
+      { \ptrU{t}                    }{Pointeur utilisateur}
+      { t~[~]                       }{Tableau}
+      { \tStruct{ l_1 : t_1; … ; l_n : t_n } }{Structure}
+      { (t_1, …, t_n) \rightarrow t }{Fonction}
+      {END}
+\end{align*}
+\end{frame}
 
 \begin{frame}{Deux types de pointeurs}
 
-\begin{itemize}
-\item séparer deux types de pointeurs
-\item pointeurs noyau : $\ptrK{t}$
+Pointeurs noyau : $\colK{\ptrK{t}}$
 
   \begin{itemize}
   \item valeur fixée à la compilation ou par le runtime
   \item ex: \texttt{\&x}, \texttt{malloc(n)}
   \item peuvent être déréférencés (\texttt{*p}, \texttt{memcpy()})
   \end{itemize}
-\item pointeurs utilisateur : $\ptrU{t}$
+
+Pointeurs utilisateur : $\colU{\ptrU{t}}$
 
   \begin{itemize}
   \item valeur provient d'un utilisateur non privilégié
   \item ex: paramètres d'appels systèmes
   \item doivent être vérifiés dynamiquement!
   \end{itemize}
-\end{itemize}
 
 \end{frame}
 
