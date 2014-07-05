@@ -1,0 +1,155 @@
+\section{Le problème des pointeurs}
+
+\subsection{L'arnaque du serrurier}
+
+\begin{frame}
+
+\begin{itemize}
+\item
+  J'appelle un serrurier
+\item
+  Il peut m'ouvrir la porte
+\item
+  Et si je lui dis que j'habite chez mon voisin? à la banque?
+\end{itemize}
+
+\end{frame}
+\begin{frame}
+
+\begin{itemize}
+\item problème de confiance
+\item il ne doit pas appliquer ses droits…
+\item …mais ceux de l'appelant
+\item il doit vérifier que j'ai bien les droits sur la maison
+\end{itemize}
+
+\end{frame}
+
+\subsection{Isolation entre utilisateur et noyau}
+
+\begin{frame}{Espaces utilisateur et noyau}
+    \begin{itemize}
+        \item espace utilisateur: programmes (navigateur, …)
+        \item espace noyau: pilotes
+        \item matériel
+    \end{itemize}
+\end{frame}
+
+% Memory zone
+%
+% #1 - start
+% #2 - end
+% #3 - color
+\newcommand{\mzone}[3]{
+  \path[#3] (#1,0) rectangle (#2,1);
+}
+
+% Address label
+%
+% #1 - x position
+% #2 - text
+\newcommand{\alabel}[2]{
+  \path (#1,1) -- ++(0,0.3) node [pos=1] {\small \tt #2};
+}
+\newcommand{\addrlabel}[2]{
+  \draw[<-] (#1,-0.1) -- ++(0,-0.3) node [auto,pos=1] {\small \tt #2};
+  \draw[pattern=north east lines] (#1,0) rectangle ++(0.2,1);
+}
+\long\def\memzones{
+
+  % exec
+  \mzone{0.5}{1}{user}
+
+  % lib
+  \mzone{2.5}{3.2}{user}
+
+  % stack
+  \mzone{3.7}{4}{user}
+
+  % stack
+  \mzone{5}{5.5}{user}
+
+  % kernel
+  \mzone{6}{8}{kernel}
+
+  % contour
+  \draw (0,0) rectangle (8,1);
+
+  \alabel{0}{0}
+  \alabel{6}{3 Go}
+  \alabel{8}{4 Go}
+
+}
+
+\begin{frame}[fragile]{Séparation}
+    %TODO à dégager
+\begin{tikzpicture}
+  [user/.style={fill=MellonGreen}
+  ,kernel/.style={fill=MellonPink}
+  ]
+
+  \memzones{}
+
+  \node at (2, -0.7) {Programme};
+  \node at (7, -0.7) {Noyau};
+
+  \draw[>=triangle 45,<->,ultra thick] (3.8, -0.7) -- node[auto] {Appels système} ++(2, 0);
+  \draw[>=triangle 45,<->,ultra thick] (7, -1) -- node[auto,swap] {Instructions
+  privilégiées} ++(0, -1) node (Htop) {};
+
+  \path (Htop) -- ++(-1,-1) node (Htopleft) {};
+  \draw (Htopleft) rectangle ++(2, -2);
+
+  \foreach \x in {0,...,9} {
+      \draw ($ (Htopleft) + (0.1 + 0.2*\x,  0) $) -- ++(0,  0.3);
+      \draw ($ (Htopleft) + (0.1 + 0.2*\x, -2) $) -- ++(0, -0.3);
+      \draw ($ (Htopleft) + (0, -0.2*\x - 0.1) $) -- ++(-0.3, 0);
+      \draw ($ (Htopleft) + (2, -0.2*\x - 0.1) $) -- ++( 0.3, 0);
+   }
+
+  \path (Htop) -- ++(0, -2) node { Matériel };
+
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+    \insertcode{gettimeofday.c}
+
+\begin{tikzpicture}
+  [user/.style={fill=MellonGreen}
+  ,kernel/.style={fill=MellonPink}
+  ]
+
+  \memzones{}
+  \addrlabel{2.7}{ptv}
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+    \insertcode{gettimeofday-bad.c}
+
+\begin{tikzpicture}
+  [user/.style={fill=MellonGreen}
+  ,kernel/.style={fill=MellonPink}
+  ]
+
+  \memzones{}
+  \addrlabel{6.7}{ptv}
+\end{tikzpicture}
+\end{frame}
+
+% TODO exemple KMS à la place de gettimeofday
+
+\begin{frame}
+\begin{itemize}
+    \item il faut vérifier tous les pointeurs
+    \item fonctions \texttt{copy\_from\_user}, \texttt{copy\_to\_user}
+    \item test + \texttt{memcpy}
+    \item ou retournent une erreur ($< 0$)
+    \item but: détecter les cas où on devrait utiliser \texttt{copy\_*\_user}
+\end{itemize}
+\end{frame}
+
+% TODO ici: mettre un coup sur pourquoi c'est intéressant/ context
+
+% TODO slide ctx/ partie avec NPK sur la chaîne

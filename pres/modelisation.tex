@@ -1,0 +1,344 @@
+\section{Formalisation} % TODO -> modélisation
+
+% TODO Remttre un coup sur le critique
+
+\subsection{\langname}
+
+\begin{frame}{Les problèmes de C}
+    \begin{itemize}
+        \item casts
+        \item arithmétique de pointeurs
+        \item peu de garanties
+    \end{itemize} % TODO slide à jeter
+\end{frame}
+
+% TODO slides à chaque slide
+
+\begin{frame}
+  \begin{align*}
+  \gramdef{Expressions}{e}
+                 { c               }{ Constante }
+                 { \opun~e         }{ Opération unaire }
+                 { e~\opbin~e      }{ Opération binaire }
+                 { lv              }{ Accès mémoire }
+                 { lv ← e          }{ Affectation }
+                 { \& lv           }{ Pointeur }
+                 { f               }{ Fonction }
+                 { e (e_1, …, e_n) }{ Appel de fonction }
+                 { \eStruct{
+                    l_1 : e_1
+                    ; …
+                    ; l_n : e_n }  }{ Structure }
+                 { \eArray{e_1 ;…; e_n} }{ Tableau }
+                 {END}
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+  \begin{align*}
+  \gramdef{Instructions}{i}
+                 { \iPass          }{Instruction vide}
+                 { i;i             }{Séquence}
+                 { e               }{Expression}
+                 { \iDecl{x}{e}{i} }{Déclaration de variable}
+                 { \iIf{e}{i}{i}   }{Alternative}
+                 { \iWhile{e}{i}   }{Boucle}
+                 { \iReturn{e}     }{Retour de fonction}
+                 {END}
+  \end{align*}
+\end{frame}
+\subsection{Sémantique}
+
+\begin{frame}{Sémantique impérative}
+
+\begin{itemize}
+\item
+  Système de transitions entre états
+\item
+  expression + mémoire
+\item
+  $\mm{m}{e}{m'}{e'}$
+\item expressions $→$ valeurs
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \begin{itemize}
+        \item valeurs gauches (\emph{lvalues}): \texttt{t[20] = 1}
+        \item valeurs gauches $→$ chemins $φ$
+        \item formes:
+            \begin{itemize}
+                \item \texttt{x} $→$ \texttt{(n, x)}
+                \item \texttt{lv.l} $→ φ.l$
+                \item \texttt{lv[e]} $→ φ[n]$
+                \item \texttt{*e} $→ φ$
+            \end{itemize}
+        \item $\mm{m}{lv ← e}{m'}{v}$ ?
+        \item ex: $x.f[5] ← 3$
+        \item Mise à jour complète : $m' = m[ x ← 0]$
+        \item Mise à jour partielle : $m' = m[x.f ← 0]$
+    \end{itemize}
+\end{frame}
+
+% TODO cibler l'ex sur x.f[5]
+
+% TODO dessiner un état mémoire et des ronds imbriqués
+
+\begin{frame}{Structure de la mémoire}
+
+\begin{itemize}
+\item $m = (s, g) ∈ \sMem$
+\item $\sMem = \sList{\sFrame} × \sFrame$
+\item liste de cadres de pile, cadre de globales
+\item cadre: $c = (x_1 ↦ v_1, …, x_n ↦ v_n) ∈ \sFrame$
+\item Comment exprimer:
+  \begin{itemize}
+  \item $m[φ]$
+  \item $m[φ←v]$
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{À la main}
+
+\begin{align*}
+(s, g)[\texttt{Local}~(2, x).f[5] ← 3] &= (s', g) \\
+                   s'_i &= \begin{cases}
+                             s_i & \mbox{ si } i ≠ 2\\
+                             c'  & \mbox{ sinon} \\
+                           \end{cases}\\
+                         c &= s_{2} \mbox{ où } c_i &= (x_i, v_i) \\
+                   c'_i &= (x_i, v'_i) \\
+                   v'_i &= \begin{cases}
+                              v_i &  \mbox{ si } i ≠ 1 \\
+                              3   &  \mbox{ sinon }\\
+                           \end{cases} \\
+                    … & …
+\end{align*}
+\end{frame}
+
+\subsection{Lentilles}
+
+\begin{frame}{Lentilles}
+
+\begin{itemize}
+\item
+  Relation entre objet et sous-objet
+\item
+  $ℒ ∈ \setLens{R}{A}$
+\item
+  $ℒ = \begin{cases}           \mathrm{get}_ℒ : R → A \\           \mathrm{put}_ℒ : (A × R) → R \\          \end{cases}$
+\item
+  $\lensGet{ℒ}{\lensNodeBig{green!30,ultra thick}{blue!30, ultra thick}} = \lensInner{blue!30, ultra thick}$
+\item
+  $\lensPut{ℒ}{\lensInner{red!30, ultra thick}}{\lensNodeBig{green!30, ultra thick}{blue!30, ultra thick}} = \lensNodeBig{green!30, ultra thick}{red!30, ultra thick}$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{center}
+\definecolor{figcola}{HTML}{EFEF52}
+\definecolor{figcolb}{HTML}{52EFA1}
+\definecolor{figcolc}{HTML}{52A1EF}
+\definecolor{figcold}{HTML}{EFA152}
+\begin{tikzpicture}
+[node distance=2.5cm
+,bignode/.style={draw,shape=rectangle,minimum size=1.5cm,fill=figcola}
+,smallnode/.style={draw,shape=circle,minimum size=1cm,fill=figcolb}
+,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
+,>=triangle 45
+,ultra thick
+]
+\node[bignode] (A) {};
+\node[right of=A,smallnode] (B) {};
+\node[right of=B,trinode,fill=figcolc] (C) {};
+\node[below of=B,smallnode] (D) {};
+\node[below of=A,node distance=5cm,bignode] (E) {};
+
+\draw[->] (A) to node[auto] {$\mathrm{get}_{ℒ_1}$} (B);
+\draw[->] (B) to (D);
+\draw[->] (A) to (E);
+\draw (C) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_2}$} ($(B)!0.5!(D)$);
+\draw (D) |- node[auto,near end,swap] {$\mathrm{put}_{ℒ_1}$} ($(A)!0.75!(E)$);
+
+\node[smallnode] at (A) {};
+\node[trinode,fill=figcold] at (A) {};
+
+\node[trinode,fill=figcold] at (B) {};
+
+\node[trinode,fill=figcolc] at (D) {};
+
+\node[smallnode] at (E) {};
+\node[trinode,fill=figcolc] at (E) {};
+
+\node[left of=A, node distance=4cm,bignode] (GA) {};
+\node[below of=GA,smallnode] (GB) {};
+\node[below of=GB,trinode,fill=figcold] (GC) {};
+
+\node[smallnode] at (GA) {};
+
+\node[trinode, fill=figcold] at (GA) {};
+\node[trinode, fill=figcold] at (GB) {};
+
+\draw [->] (GA) to node[auto] {$\mathrm{get}_{ℒ_1}$} (GB);
+\draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
+
+\end{tikzpicture}
+
+\vspace{-1cm}\hspace{7cm} \fbox{$ℒ_1 \ggg ℒ_2$}
+
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Lentilles en sémantique}
+
+    \begin{align*}
+       Φ &∈ \sPath → \setLens{Mem}{Val} \\
+        \\
+       φ &= (2, x).f[5] \\
+    Φ(φ) &= \texttt{fst} \ggg I(2) \ggg L(x) \ggg F(f) \ggg T(5) \\
+        \\
+      m' &= \lensPut{Φ(φ)}{v}{m} \\
+         &\eqdef m[φ ← v]_Φ
+    \end{align*}
+
+\end{frame}
+
+\begin{frame}{Lentilles en sémantique}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  par tableau
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    $T(n) ∈ \setLens{Val}{Val}$
+  \item
+    $T(3) \equiv [1, 2, 3, \circled{5}]$
+  \end{itemize}
+\item
+  par champ
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    $F(l) ∈ \setLens{Val}{Val}$
+  \item
+    $F(y) \equiv \{ x: 0; y: \circled{-3} \}$
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Exemple : par variable ($V$)}
+
+\[V(v) ∈ \setLens{Mem}{Val}\]
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Pour $m ∈ Mem$, $m = ((s_1, …, s_n), g)$
+\end{itemize}
+
+\begin{align*}
+V(\texttt{Global}~x) &= \texttt{snd} \ggg L(x) \\
+V(\texttt{Local}~(n, x)) &= \texttt{fst} \ggg I(n) \ggg L(x) \\
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Exemple : par chemin ($Φ$)}
+
+\[Φ(φ) ∈ \setLens{Mem}{Val}\]
+
+\begin{align*}
+    Φ(v)    &= V(v) \\
+  Φ(φ.l)    &= Φ(φ) \ggg F(l) \\
+  Φ(φ[i])   &= Φ(φ) \ggg T(i) \\
+  \end{align*}
+
+\end{frame}
+
+\subsection{Système de types}
+
+% TODO caractéristiques du système de types. Comparaison  CQUAL
+
+% TODO figure statique/dynamique à mettre ici et en intro
+
+% TODO grammaire des types
+
+\begin{frame}{Deux types de pointeurs}
+
+\begin{itemize}
+\item séparer deux types de pointeurs
+\item pointeurs noyau : $\ptrK{t}$
+
+  \begin{itemize}
+  \item valeur fixée à la compilation ou par le runtime
+  \item ex: \texttt{\&x}, \texttt{malloc(n)}
+  \item peuvent être déréférencés (\texttt{*p}, \texttt{memcpy()})
+  \end{itemize}
+\item pointeurs utilisateur : $\ptrU{t}$
+
+  \begin{itemize}
+  \item valeur provient d'un utilisateur non privilégié
+  \item ex: paramètres d'appels systèmes
+  \item doivent être vérifiés dynamiquement!
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Règles de typage}
+    \begin{mathpar}
+       \irule{Addr}
+         { Γ ⊢ lv : t }
+         { Γ ⊢ \& lv : \colK{\ptrK{t}} }
+
+       \irule{Lv-Deref}
+         { Γ ⊢ \colK{e} : \colK{\ptrK{t}} }
+         { Γ ⊢ \colK{*~e} : t }
+
+       \irule{User-Get}
+         { Γ ⊢ \colK{e_d} : \colK{\ptrK{t}}
+        \\ Γ ⊢ \colU{e_s} : \colU{\ptrU{t}}
+         }
+         { Γ ⊢ \uGet{\colK{e_d}}{\colU{e_s}} : \tInt }
+
+       \irule{User-Put}
+         { Γ ⊢ \colU{e_d} : \colU{\ptrU{t}}
+        \\ Γ ⊢ \colK{e_s} : \colK{\ptrK{t}}
+         }
+         { Γ ⊢ \uPut{\colU{e_d}}{\colK{e_s}} : \tInt }
+    \end{mathpar}
+\end{frame}
+
+\begin{frame}{Sûreté du typage}
+
+\begin{theorem}[Progrès]
+  Supposons que $Γ ⊢ e : t$. Soit $m$ un état mémoire tel que $\mcomp{Γ}{m}$.
+  Alors l'un des cas suivants est vrai:
+
+\begin{itemize}
+  \item $∃ v ≠ Ω, e = v$
+  \item $∃ (e', m'), \mm{m}{e}{m'}{e'}$
+  \item $∃ Ω ∈ \{\serr{div},\serr{array},\serr{ptr}\}, \msi{m}{e} → Ω$
+\end{itemize}
+\end{theorem}
+\end{frame}
+
+\begin{frame}{Sûreté du typage}
+
+\begin{theorem}[Préservation]
+    Si $Γ ⊢ e : t$ et $\mm{m}{e}{m'}{v}$,
+    alors:
+
+    $\mcomp{Γ}{\cCleanup{m'}}$ et $m' ⊧ v : τ$ où $\tComp{τ}{t}$.
+\end{theorem}
+\end{frame}
