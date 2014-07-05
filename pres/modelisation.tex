@@ -67,18 +67,18 @@
                 \item \texttt{*e} $→ φ$
             \end{itemize}
         \item $\mm{m}{lv ← e}{m'}{v}$ ?
-        \item ex: $x.f[5] ← 3$
+        \item ex: $x.f[2] ← 3$
         \item Mise à jour complète : $m' = m[ x ← 0]$
         \item Mise à jour partielle : $m' = m[x.f ← 0]$
     \end{itemize}
 \end{frame}
 
-% TODO cibler l'ex sur x.f[5]
+% TODO cibler l'ex sur x.f[2]
 
 % TODO dessiner un état mémoire et des ronds imbriqués
 
 \tikzset{ stackframe/.style={ draw
-                            , minimum width=3cm
+                            , minimum width=4.5cm
                             }
         }
 \tikzset{ twovars/.style={ rectangle split
@@ -95,11 +95,18 @@
     \node[stackframe, on chain, join] (stackbot) {$n ↦ 0$};
     \node[stackframe, on chain, join] {$n ↦ 1$};
     \node[stackframe, on chain, join] {$n ↦ 2$};
-    \node[stackframe, on chain, join
-         ,twovars] {$x ↦ 5$ \nodepart{two} $y ↦ 4$};
-    \node[stackframe, on chain, join] {$z ↦ 2$};
+    \node[stackframe, on chain, join, twovars]
+    (stackf) {\parbox{4.2cm}{ $ x ↦ \left\{
+               \begin{array}{ll}
+                 f &: \eArray{1;6;1;8}\\
+                 g &: 3 \\
+               \end{array}
+   \right\} $ }
+         \nodepart{two} $y ↦ 4$};
+    \node[stackframe, on chain, join] (stacktop) {$z ↦ 2$};
 \end{scope}
-\node[stackframe, twovars, right=4cm of stackbot.north, anchor=north]
+\node[stackframe, twovars, right=5cm of stackbot.north, anchor=north]
+    (globvars)
     { $a ↦ 2$ \nodepart{two} $b ↦ 3.14$ };
 }
 
@@ -128,7 +135,7 @@
 \begin{frame}{À la main}
 
 \begin{align*}
-(s, g)[\texttt{Local}~(2, x).f[5] ← 3] &= (s', g) \\
+(s, g)[\texttt{Local}~(2, x).f[2] ← 3] &= (s', g) \\
                    s'_i &= \begin{cases}
                              s_i & \mbox{ si } i ≠ 2\\
                              c'  & \mbox{ sinon} \\
@@ -224,13 +231,60 @@
     \begin{align*}
        Φ &∈ \sPath → \setLens{Mem}{Val} \\
         \\
-       φ &= (2, x).f[5] \\
-    Φ(φ) &= \texttt{fst} \ggg I(2) \ggg L(x) \ggg F(f) \ggg T(5) \\
+       φ &= (2, x).f[2] \\
+    Φ(φ) &= \texttt{fst} \ggg I(2) \ggg L(x) \ggg F(f) \ggg T(2) \\
         \\
       m' &= \lensPut{Φ(φ)}{v}{m} \\
          &\eqdef m[φ ← v]_Φ
     \end{align*}
 
+\end{frame}
+
+\begin{frame}{Application des lentilles}
+
+    {\centering
+
+    \begin{tikzpicture}
+        \figmemstate{}
+
+        \only<2->{
+        \draw ($ (stackbot.north west) + (-3mm, 3mm) $)
+    rectangle ($ (stacktop.south east) + (3mm, -3mm) $);
+        }
+
+        \only<3->{
+        \draw ($ (stackf.north west) + (-3mm, 3mm) $)
+    rectangle ($ (stackf.south east) + (3mm, -3mm) $);
+        }
+
+        \only<4->{
+        \draw ($ (stackf.north west) + (-3mm, 3mm) $)
+    rectangle ($ (stackf.text split east) + (3mm, -3mm) $);
+        }
+
+        \only<5->{
+        \draw ($ (stackf.north west) + (22mm, -1mm) $)
+    rectangle ($ (stackf.text east) + (-7.5mm, 0) $);
+        }
+
+        \only<6->{
+        \draw ($ (stackf.north west) + (30.3mm, -1mm) $)
+    rectangle ($ (stackf.text east) + (-12.3mm, 0) $);
+        }
+
+        \node[below=1cm of globvars] {
+            \begin{minipage}{4cm}
+            \begin{align*}
+                Φ(φ) &= \only<2->{ \texttt{fst} } \\
+         \only<3->{  &\ggg I(2)      \\}
+         \only<4->{  &\ggg L(x)      \\}
+         \only<5->{  &\ggg F(f)      \\}
+         \only<6->{  &\ggg T(2)      \\}
+            \end{align*}
+            \end{minipage}
+        };
+    \end{tikzpicture}
+    }
 \end{frame}
 
 \begin{frame}{Lentilles en sémantique}
