@@ -252,9 +252,6 @@
         \\
        φ &= (2, x).f[2] \\
     Φ(φ) &= \texttt{fst} \ggg I(2) \ggg L(x) \ggg F(f) \ggg T(2) \\
-        \\
-      m' &= \lensPut{Φ(φ)}{v}{m} \\
-         &\eqdef m[φ ← v]_Φ
     \end{align*}
 
 \end{frame}
@@ -331,7 +328,10 @@
 \begin{align*}
     Φ(v)    &= V(v) \\
   Φ(φ.l)    &= Φ(φ) \ggg F(l) \\
-  Φ(φ[i])   &= Φ(φ) \ggg T(i) \\
+  Φ(φ[n])   &= Φ(φ) \ggg T(n) \\
+            & \\
+ m[φ]       &\eqdef \lensGet{Φ(φ)}{m} \\
+ m[φ ← v]   &\eqdef \lensPut{Φ(φ)}{v}{m} \\
   \end{align*}
 \end{frame}
 
