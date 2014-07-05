@@ -25,10 +25,9 @@
     \centering
       \begin{tabular}{ll}
           \toprule
-          C/\newspeak & \langname \\ % TODO virer NPK
+          C & \langname \\
           \midrule
           \texttt{int} & $\tInt$ \\
-          \texttt{unsigned long} & $\tInt$ \\ % TODO virer cette ligne
           \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
           \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
           \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
@@ -48,21 +47,17 @@
 
 % TODO déplacer cette figure dans sys de types
 
-\begin{frame}{Code avec bug}
+\begin{frame}[fragile]{Code avec bug}
     % left bottom right top
     \includegraphics[trim=2300 1430 100 500,clip,width=\textwidth]{poster.pdf}
-\end{frame}
 
-\begin{frame}[fragile]{Résultat de l'algorithme d'inférence}
 \begin{SaveVerbatim}{drmko}
 05-drm.c:17#10 - Type clash between :
   KPtr (_a15)
   UPtr (_a8)
 \end{SaveVerbatim}
 
-\textbf{Erreur}:
-
-\codeout{drmko} % TODO sur le même slide que précédent
+\codeout{drmko}
 % TODO ne pas parler des inconnues
 \end{frame}
 
@@ -73,8 +68,7 @@
 
 \begin{frame}[fragile]{Résultat de l'algorithme d'inférence}
 
-\textbf{Programme complètement annoté}:
-% TODO annoté => étiqueté
+\textbf{Programme complètement étiqueté}:
 
 \begin{SaveVerbatim}{drmok}
 (06-drm-ok.c:17#6)^{
