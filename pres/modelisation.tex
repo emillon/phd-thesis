@@ -241,35 +241,40 @@
 \end{frame}
 
 \begin{frame}{Application des lentilles}
-
-    {\centering
-
+    \centering
     \begin{tikzpicture}
+        [ highlight/.style={ thick
+                           , red
+                           }
+        ]
         \figmemstate{}
 
-        \only<2->{
-        \draw ($ (stackbot.north west) + (-3mm, 3mm) $)
-    rectangle ($ (stacktop.south east) + (3mm, -3mm) $);
+        \path[use as bounding box] ($ (stacktop.south west) + (-3mm, -3mm) $)
+                         rectangle ($ (globvars.north east)  + (3mm, 3mm) $);
+
+        \only<2>{
+            \draw[highlight] ($ (stackbot.north west) + (-3mm, 3mm) $)
+                   rectangle ($ (stacktop.south east) + (3mm, -3mm) $);
         }
 
-        \only<3->{
-        \draw ($ (stackf.north west) + (-3mm, 3mm) $)
-    rectangle ($ (stackf.south east) + (3mm, -3mm) $);
+        \only<3>{
+            \draw[highlight] ($ (stackf.north west) + (-3mm, 3mm) $)
+                   rectangle ($ (stackf.south east) + (3mm, -3mm) $);
         }
 
-        \only<4->{
-        \draw ($ (stackf.north west) + (-3mm, 3mm) $)
-    rectangle ($ (stackf.text split east) + (3mm, -3mm) $);
+        \only<4>{
+            \draw[highlight] ($ (stackf.north west) + (-3mm, 3mm) $)
+                   rectangle ($ (stackf.text split east) + (3mm, -3mm) $);
         }
 
-        \only<5->{
-        \draw ($ (stackf.north west) + (22mm, -1mm) $)
-    rectangle ($ (stackf.text east) + (-7.5mm, 0) $);
+        \only<5>{
+            \draw[highlight] ($ (stackf.north west) + (22mm, -1mm) $)
+                   rectangle ($ (stackf.text east) + (-7.5mm, 0) $);
         }
 
-        \only<6->{
-        \draw ($ (stackf.north west) + (30.3mm, -1mm) $)
-    rectangle ($ (stackf.text east) + (-12.3mm, 0) $);
+        \only<6>{
+            \draw[highlight] ($ (stackf.north west) + (30.3mm, -1mm) $)
+                   rectangle ($ (stackf.text east) + (-12.3mm, 0) $);
         }
 
         \node[below=1cm of globvars] {
@@ -284,7 +289,6 @@
             \end{minipage}
         };
     \end{tikzpicture}
-    }
 \end{frame}
 
 \begin{frame}{Lentilles en sémantique}
