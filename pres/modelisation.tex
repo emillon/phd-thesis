@@ -299,15 +299,40 @@
         \node[below=1cm of globvars] {
             \begin{minipage}{4cm}
             \begin{align*}
+                   φ &= \only<2->{(}\only<3->{2,}\only<4->{ x)}\only<5->{.f}\only<6->{[2]} \\
                 Φ(φ) &= \only<2->{ \texttt{fst} } \\
          \only<3->{  &\ggg I(2)      \\}
          \only<4->{  &\ggg L(x)      \\}
          \only<5->{  &\ggg F(f)      \\}
          \only<6->{  &\ggg T(2)      \\}
+        \hspace{1cm} & \hspace{2.5cm} \\ % align trick...
             \end{align*}
             \end{minipage}
         };
     \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Lentilles en sémantique}
+    \centering
+    \begin{tabular}{cccl}
+        \toprule
+        $ℒ$ & R & A & \\
+        \midrule
+        $I(n)$ & $\sList{α}$     & $α$   & n\ieme élément \\
+        $L(k)$ & $\sList{(α×β)}$ & $β$   & liste d'association \\
+        $T(n)$ & \sVal           & \sVal & tableau \\
+        $F(l)$ & \sVal           & \sVal & structure \\
+        $Φ(φ)$ & \sMem           & \sVal & chemin \\
+        \bottomrule
+    \end{tabular}
+\end{frame}
+
+\begin{frame}{Définition de $Φ$}
+\begin{align*}
+    Φ(v)    &= V(v) \\
+  Φ(φ.l)    &= Φ(φ) \ggg F(l) \\
+  Φ(φ[i])   &= Φ(φ) \ggg T(i) \\
+  \end{align*}
 \end{frame}
 
 \begin{frame}{Lentilles en sémantique}
