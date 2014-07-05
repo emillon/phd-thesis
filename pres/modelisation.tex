@@ -152,6 +152,32 @@
 
 \subsection{Lentilles}
 
+\definecolor{figcola}{HTML}{EFEF52}
+\definecolor{figcolb}{HTML}{52EFA1}
+\definecolor{figcolc}{HTML}{52A1EF}
+\definecolor{figcold}{HTML}{EFA152}
+
+\tikzset{bignode/.style={draw,shape=rectangle,minimum size=1.5cm,fill=figcola}}
+\tikzset{smallnode/.style={draw,shape=circle,minimum size=1cm,fill=figcolb}}
+\tikzset{trinode/.style={draw,shape=regular polygon,regular polygon sides=3}}
+
+\def\lensNodeBigX#1{
+    \vcenter{\hbox{\scalebox{0.5}{
+    \begin{tikzpicture}
+        \node[bignode, ultra thick] (A) {};
+        \node[smallnode, ultra thick, fill=#1] at (A) {};
+    \end{tikzpicture}
+    } } }
+}
+
+\def\lensInnerX#1{
+    \vcenter{\hbox{\scalebox{0.5}{
+    \begin{tikzpicture}
+        \node[smallnode, ultra thick, fill=#1] {};
+    \end{tikzpicture}
+    } } }
+}
+
 \begin{frame}{Lentilles}
 
 \begin{itemize}
@@ -162,9 +188,9 @@
 \item
   $ℒ = \begin{cases}           \mathrm{get}_ℒ : R → A \\           \mathrm{put}_ℒ : (A × R) → R \\          \end{cases}$
 \item
-  $\lensGet{ℒ}{\lensNodeBig{green!30,ultra thick}{blue!30, ultra thick}} = \lensInner{blue!30, ultra thick}$
+  $\lensGet{ℒ}{\lensNodeBigX{figcolb}} = \lensInnerX{figcolb}$
 \item
-  $\lensPut{ℒ}{\lensInner{red!30, ultra thick}}{\lensNodeBig{green!30, ultra thick}{blue!30, ultra thick}} = \lensNodeBig{green!30, ultra thick}{red!30, ultra thick}$
+  $\lensPut{ℒ}{\lensInnerX{figcold}}{\lensNodeBigX{figcolb}} = \lensNodeBigX{figcold}$
 \end{itemize}
 
 \end{frame}
@@ -172,15 +198,8 @@
 \begin{frame}{Composition de lentilles}
 
 \begin{center}
-\definecolor{figcola}{HTML}{EFEF52}
-\definecolor{figcolb}{HTML}{52EFA1}
-\definecolor{figcolc}{HTML}{52A1EF}
-\definecolor{figcold}{HTML}{EFA152}
 \begin{tikzpicture}
 [node distance=2.5cm
-,bignode/.style={draw,shape=rectangle,minimum size=1.5cm,fill=figcola}
-,smallnode/.style={draw,shape=circle,minimum size=1cm,fill=figcolb}
-,trinode/.style={draw,shape=regular polygon,regular polygon sides=3}
 ,>=triangle 45
 ,ultra thick
 ]
