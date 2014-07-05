@@ -77,6 +77,39 @@
 
 % TODO dessiner un état mémoire et des ronds imbriqués
 
+\tikzset{ stackframe/.style={ draw
+                            , minimum width=3cm
+                            }
+        }
+\tikzset{ twovars/.style={ rectangle split
+                         , rectangle split parts=2
+                         }
+        }
+
+\long\def\figmemstate{
+\begin{scope}
+    [ start chain=going below
+    , every join/.style={<-, thick}
+    , node distance=5mm
+    ]
+    \node[stackframe, on chain, join] (stackbot) {$n ↦ 0$};
+    \node[stackframe, on chain, join] {$n ↦ 1$};
+    \node[stackframe, on chain, join] {$n ↦ 2$};
+    \node[stackframe, on chain, join
+         ,twovars] {$x ↦ 5$ \nodepart{two} $y ↦ 4$};
+    \node[stackframe, on chain, join] {$z ↦ 2$};
+\end{scope}
+\node[stackframe, twovars, right=4cm of stackbot.north, anchor=north]
+    { $a ↦ 2$ \nodepart{two} $b ↦ 3.14$ };
+}
+
+\begin{frame}{Structure de la mémoire}
+    \centering
+    \begin{tikzpicture}
+        \figmemstate{}
+    \end{tikzpicture}
+\end{frame}
+
 \begin{frame}{Structure de la mémoire}
 
 \begin{itemize}

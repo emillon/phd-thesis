@@ -23,6 +23,7 @@
 \usetikzlibrary{calc}
 \usetikzlibrary{patterns}
 \usetikzlibrary{shapes}
+\usetikzlibrary{chains}
 \usepackage{../gramster}
 \usepackage{../pelagiccod}
 \usepackage{booktabs}
@@ -68,10 +69,10 @@
 % TODO section conclusion: pas de sous parties
 % TODO après serririer direct code KMS
 
-\input{intro.tex}
-\input{indus.tex}
-\input{modelisation.tex}
-\input{experimentation.tex}
-\input{conclusion.tex}
+\include{intro}
+\include{indus}
+\include{modelisation}
+\include{experimentation}
+\include{conclusion}
 
 \end{document}
