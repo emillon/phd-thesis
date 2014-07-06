@@ -5,9 +5,9 @@
 \begin{frame}{Mode de fonctionnement}
 
   \begin{itemize}
-  \item compile vers un \texttt{.npk}
-  \item enlève les types C
-  \item infère des types plus sémantiques
+  \item Compile vers un \texttt{.npk}
+  \item Enlève les types C
+  \item Infère des types \langname
   \end{itemize}
 \end{frame}
 
@@ -15,37 +15,26 @@
 % TODO mentionner algo d'inférence
 % TODO préciser au début Safespeak qu'on interdit casts etc
 
-\begin{frame}{Traduction: C} \insertcode{tc-c.c} \end{frame}
-\begin{frame}{Traduction: sans les types} \insertcode{tc-ml.c} \end{frame}
-\begin{frame}{Traduction: types inférés} \insertcode{tc-ty.c} \end{frame}
+\begin{frame}{Traduction}
+\begin{exampleblock}{Code C}
+\insertcode{tc-c.c}
+\end{exampleblock}
 
-    % TODO titres de ces slides à collapser en grisé
+\only<1>{
+\begin{exampleblock}{\langname}
+\insertcode{tc-ml.c}
+\end{exampleblock}
+}
 
-\begin{frame}{Différence entre les types C et les types inférés}
-    \centering
-      \begin{tabular}{ll}
-          \toprule
-          C & \langname \\
-          \midrule
-          \texttt{int} & $\tInt$ \\
-          \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
-          \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
-          \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
-          \bottomrule
-      \end{tabular}
+\only<2>{
+\begin{exampleblock}{\langname + types inférés}
+\insertcode{tc-ty.c}
+\end{exampleblock}
+}
+
 \end{frame}
 
 \subsection{Utilisation sur le noyau Linux}
-
-\begin{frame}{Analyse de 2 bugs}
-
-    \begin{itemize}
-        \item Radeon KMS
-        \item \texttt{ptrace} Blackfin
-    \end{itemize}
-\end{frame}
-
-% TODO déplacer cette figure dans sys de types
 
 \begin{frame}[fragile]{Code avec bug}
     % left bottom right top
@@ -58,7 +47,7 @@
 \end{SaveVerbatim}
 
 \codeout{drmko}
-% TODO ne pas parler des inconnues
+% ne pas parler des inconnues
 \end{frame}
 
 \begin{frame}{Code corrigé}
