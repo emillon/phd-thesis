@@ -81,36 +81,35 @@
 
 }
 
-\begin{frame}[fragile]{Séparation}
-    %TODO à dégager
-\begin{tikzpicture}
-  [user/.style={fill=MellonGreen}
-  ,kernel/.style={fill=MellonPink}
-  ]
-
-  \memzones{}
-
-  \node at (2, -0.7) {Programme};
-  \node at (7, -0.7) {Noyau};
-
-  \draw[>=triangle 45,<->,ultra thick] (3.8, -0.7) -- node[auto] {Appels système} ++(2, 0);
-  \draw[>=triangle 45,<->,ultra thick] (7, -1) -- node[auto,swap] {Instructions
-  privilégiées} ++(0, -1) node (Htop) {};
-
-  \path (Htop) -- ++(-1,-1) node (Htopleft) {};
-  \draw (Htopleft) rectangle ++(2, -2);
-
-  \foreach \x in {0,...,9} {
-      \draw ($ (Htopleft) + (0.1 + 0.2*\x,  0) $) -- ++(0,  0.3);
-      \draw ($ (Htopleft) + (0.1 + 0.2*\x, -2) $) -- ++(0, -0.3);
-      \draw ($ (Htopleft) + (0, -0.2*\x - 0.1) $) -- ++(-0.3, 0);
-      \draw ($ (Htopleft) + (2, -0.2*\x - 0.1) $) -- ++( 0.3, 0);
-   }
-
-  \path (Htop) -- ++(0, -2) node { Matériel };
-
-\end{tikzpicture}
-\end{frame}
+%\begin{frame}[fragile]{Séparation}
+%\begin{tikzpicture}
+%  [user/.style={fill=MellonGreen}
+%  ,kernel/.style={fill=MellonPink}
+%  ]
+%
+%  \memzones{}
+%
+%  \node at (2, -0.7) {Programme};
+%  \node at (7, -0.7) {Noyau};
+%
+%  \draw[>=triangle 45,<->,ultra thick] (3.8, -0.7) -- node[auto] {Appels système} ++(2, 0);
+%  \draw[>=triangle 45,<->,ultra thick] (7, -1) -- node[auto,swap] {Instructions
+%  privilégiées} ++(0, -1) node (Htop) {};
+%
+%  \path (Htop) -- ++(-1,-1) node (Htopleft) {};
+%  \draw (Htopleft) rectangle ++(2, -2);
+%
+%  \foreach \x in {0,...,9} {
+%      \draw ($ (Htopleft) + (0.1 + 0.2*\x,  0) $) -- ++(0,  0.3);
+%      \draw ($ (Htopleft) + (0.1 + 0.2*\x, -2) $) -- ++(0, -0.3);
+%      \draw ($ (Htopleft) + (0, -0.2*\x - 0.1) $) -- ++(-0.3, 0);
+%      \draw ($ (Htopleft) + (2, -0.2*\x - 0.1) $) -- ++( 0.3, 0);
+%   }
+%
+%  \path (Htop) -- ++(0, -2) node { Matériel };
+%
+%\end{tikzpicture}
+%\end{frame}
 
 \begin{frame}{Utilisation correcte d'un appel système}
     \insertcode{gettimeofday.c}
@@ -138,7 +137,7 @@
 \end{tikzpicture}
 \end{frame}
 
-% TODO exemple KMS à la place de gettimeofday
+% exemple KMS à la place de gettimeofday?
 
 \begin{frame}{Problème des pointeurs dans les appels système}
 \begin{itemize}
