@@ -1,9 +1,8 @@
 \section{\newspeak}
 
 \begin{frame}{Le projet Penjili}
-
-Analyse de code source C pour la sécurité
-
+\centering
+\includegraphics[scale=.5]{img/penjili.png}
 \end{frame}
 
 \begin{frame}{Le langage intermédiaire \newspeak}
@@ -15,6 +14,39 @@ Un langage adapté à l'analyse statique:
 \item explicite: les effets de bords sont explicites
 \item expressif: tout programme C peut être converti en \newspeak
 \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Exemple}
+
+\begin{SaveVerbatim}{compilnpk}
+int32 x;
+x =(int32) 0;
+do {
+    while (1) {
+        choose {
+            -->
+                guard((10 > x_int32));
+            -->
+                guard(! (10 > x_int32));
+                goto lbl1;
+        }
+        x =(int32) coerce[-2**31,2**31-1]
+                        (x_int32 + 1);
+    }
+} with lbl1: {
+}
+\end{SaveVerbatim}
+
+{\footnotesize
+\begin{minipage}{0.3\linewidth}
+\insertcode{npk-while.c}
+\end{minipage}
+\vrule\hspace{2pt}
+\begin{minipage}{0.6\linewidth}
+\BUseVerbatim{compilnpk}
+\end{minipage}
+}
 
 \end{frame}
 
