@@ -47,18 +47,12 @@ height=1cm, shade, top color=white,
 \draw[->] (no3) -- node {} (npk);
 
 
-\node [file, right of=npk, node distance=3cm, yshift=1cm](warn)
-    {\textcolor{black}{\parbox{2cm}{\centering Programme \linebreak typé}}};
-\node [right of=npk, node distance=3cm, yshift=-1cm](warnn)
-    {\textcolor{black}{Erreurs}};
+\node [file, right of=npk, node distance=3cm](warn)
+    {\textcolor{black}{\centering Alarmes}};
 
 \node [right of=npk3, node distance=3cm](analyser2){};
 
-\node [right of=npk, node distance=3cm] {\small ou};
-
-\draw[->] (npk) -- node[above, yshift=2mm] {{\tiny \ttfamily ptrtype}} (warn);
-
-\draw[->] (npk) -- (warnn);
+\draw[->] (npk) -- node[above, yshift=2mm] {{\tiny \ttfamily penjili}} (warn);
 
 \draw[->] (c4)   -- node[above, text depth=3pt] {\footnotesize Pr\'etraitement} (cc4);
 \draw[->] (cc4)  -- node[above, text depth=3pt] {\footnotesize Compilation} (no4);
