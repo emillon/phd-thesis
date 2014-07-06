@@ -1,5 +1,5 @@
 \section{Conclusion}
-% TODO 2è bug, bitmasks, comparaisons
+% TODO 2è bug, comparaisons
 % TODO comment convaincre les indus
 
 \begin{frame}{Conclusion}
@@ -18,7 +18,8 @@
     \item Application du typage à la sûreté mémoire:
         \begin{itemize}
             \item délicat
-            \item fonctionne avec les bonnes restrictions
+            \item nécessite des restrictions
+            \item mais fonctionne!
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -32,7 +33,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Travaux futurs}
+\begin{frame}{Perspectives}
     \begin{itemize}
         \item automatiser l'annotation
             \begin{itemize}
@@ -40,6 +41,7 @@
                 \item \texttt{SYSCALL\_DEFINEx}, …
                 \item le reste: \texttt{ioctl}s, FS, …
             \end{itemize}
+        \item Autres propriétés: ex \emph{bitmasks}
         \item Types abstraits
             \begin{itemize}
                 \item extension: comment le type est représenté
