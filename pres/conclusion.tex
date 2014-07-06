@@ -1,10 +1,27 @@
 \section{Conclusion}
-% TODO typage & mémorie
-% TODO rappeler le contexte indus, le type de systèmes
 % TODO 2è bug, bitmasks, comparaisons
-% TODO on a l'impression que c'était facilje
 % TODO comment convaincre les indus
-% TODO CVE-xxx
+
+\begin{frame}{Conclusion}
+    \begin{itemize}
+    \item Problème réel:
+        \begin{itemize}
+            \item Janvier 2014:
+                \enquote{Linux 3.4+: arbitrary write with \texttt{CONFIG\_X86\_X32} (CVE-2014-0038)}
+        \end{itemize}
+    \item Difficultés à analyser du code noyau:
+        \begin{itemize}
+            \item structures de données complexes
+            \item pas de \texttt{main()}
+            \item difficile par interprétation abstraite
+        \end{itemize}
+    \item Application du typage à la sûreté mémoire:
+        \begin{itemize}
+            \item délicat
+            \item fonctionne avec les bonnes restrictions
+        \end{itemize}
+    \end{itemize}
+\end{frame}
 
 \begin{frame}{Contributions}
 \begin{itemize}
