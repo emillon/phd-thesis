@@ -4,6 +4,15 @@
 
 \subsection{\langname}
 
+\begin{frame}{Présentation de \langname}
+    \begin{itemize}
+        \item C: expressif mais permissif
+        \item \newspeak: bon front-end mais bas niveau
+        \item \langname = restriction de C \enquote{bien typable}
+        \item pas de casts, …
+    \end{itemize}
+\end{frame}
+
 \begin{frame}{Syntaxe -- Expressions}
   \begin{align*}
   \gramdef{Expressions}{e}
@@ -13,7 +22,7 @@
                  { lv              }{ Accès mémoire }
                  { lv ← e          }{ Affectation }
                  { \& lv           }{ Pointeur }
-                 { f               }{ Fonction }
+                 { \eFun{x_1, …, x_n}{i} }{ Fonction }
                  { e (e_1, …, e_n) }{ Appel de fonction }
                  { \eStruct{
                     l_1 : e_1
@@ -70,10 +79,6 @@
         \item Mise à jour partielle : $m' = m[x.f ← 0]$
     \end{itemize}
 \end{frame}
-
-% TODO cibler l'ex sur x.f[2]
-
-% TODO dessiner un état mémoire et des ronds imbriqués
 
 \tikzset{ stackframe/.style={ draw
                             , minimum width=4.5cm
@@ -334,8 +339,6 @@
 \end{frame}
 
 \subsection{Système de types}
-
-% TODO f -> fun..
 
 % TODO caractéristiques du système de types. Comparaison  CQUAL
 

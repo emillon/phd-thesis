@@ -2,18 +2,13 @@
 
 \subsection{Analyseur statique}
 
-\begin{frame}{Mode de fonctionnement}
+\begin{frame}{L'analyseur \texttt{ptrtype}}
 
-  \begin{itemize}
-  \item Compile vers un \texttt{.npk}
-  \item Enlève les types C
-  \item Infère des types \langname
-  \end{itemize}
+\begin{itemize}
+    \item But: typer des programmes \newspeak.
+    \item Règles de typage $⇒$ algorithme d'inférence (algorithme W).
+\end{itemize}
 \end{frame}
-
-% TODO rappel ctx
-% TODO mentionner algo d'inférence
-% TODO préciser au début Safespeak qu'on interdit casts etc
 
 \begin{frame}{Traduction}
 \begin{block}{Code C}
