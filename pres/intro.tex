@@ -149,14 +149,14 @@
 \end{itemize}
 
 \begin{center}
-\begin{tabular}{ccc}
+\begin{tabular}{cccc}
     \toprule
-    \diagbox{\parbox{2cm}{Pointe sur \newline (\textbf{dynamique})}}
-            {\parbox{2cm}{Contrôlé par \newline (\textbf{statique})}}
-            & Noyau & Utilisateur \\
+    & & \multicolumn{2}{p{2cm}}{Pointe sur \newline (\textbf{dynamique})} \\
+    & & Noyau & Utilisateur \\
     \midrule
-Noyau       & OK & OK \\
-Utilisateur & OK & Danger \\
+\multirow{2}{*}{\parbox{2cm}{Contrôlé par \newline (\textbf{statique})}}
+    & Noyau  & OK & OK \\
+    & Utilisateur & OK & Danger \\
     \bottomrule
 \end{tabular}
 \end{center}
