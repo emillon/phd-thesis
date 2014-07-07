@@ -147,4 +147,18 @@
     \item ou retournent une erreur ($< 0$)
     \item but: détecter les cas où on devrait utiliser \texttt{copy\_*\_user}
 \end{itemize}
+
+\begin{center}
+\begin{tabular}{ccc}
+    \toprule
+    \diagbox{\parbox{2cm}{Pointe sur \newline (\textbf{dynamique})}}
+            {\parbox{2cm}{Contrôlé par \newline (\textbf{statique})}}
+            & Noyau & Utilisateur \\
+    \midrule
+Noyau       & OK & OK \\
+Utilisateur & OK & Danger \\
+    \bottomrule
+\end{tabular}
+\end{center}
+
 \end{frame}
