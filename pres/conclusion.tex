@@ -45,20 +45,18 @@
 
 \begin{frame}{Perspectives}
     \begin{itemize}
-        \item automatiser l'annotation
+        \item Automatiser l'annotation
             \begin{itemize}
                 \item Comment détecter les appels système?
                 \item \texttt{SYSCALL\_DEFINEx}, …
                 \item le reste: \texttt{ioctl}s, FS, …
             \end{itemize}
-        \item Autres propriétés: ex \emph{bitmasks}
-        \item Types abstraits
+        \item Autres propriétés:
             \begin{itemize}
-                \item extension: comment le type est représenté
-                \item intention: à quoi il sert
-                \item \texttt{int}, \texttt{int32\_t}
-                \item \texttt{off\_t}, \texttt{size\_t}, \texttt{intptr\_t}
-                \item Types \enquote{numéro de ligne}, \enquote{numéro de colonne}
+                \item \emph{bitmasks}: \texttt{!x \& y} $⇔$ \texttt{!(x \& y)}
+                \item \texttt{size\_t} / \texttt{int}: \texttt{memset(p, 0, n)} $⇔$ \texttt{memset(p, n, 0)}
             \end{itemize}
+        \item Types abstraits: permettre au programmeur de définir ses propres
+            analyses
         \end{itemize}
 \end{frame}

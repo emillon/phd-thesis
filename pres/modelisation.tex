@@ -1,5 +1,7 @@
 \section{Modélisation}
 
+% TODO motiv lentilles
+
 \input{indus}
 
 \subsection{\langname}
@@ -245,6 +247,8 @@
 
 \end{frame}
 
+% TODO ex fst >>> fst
+
 \begin{frame}{Lentilles en sémantique}
     \centering
     \begin{tabular}{cccl}
@@ -439,7 +443,7 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
 
 \begin{theorem}[Préservation]
 
-Soit $Γ$ un environnement de typage et $m$ un état mémoire tels que
+Soient $Γ$ un environnement de typage et $m$ un état mémoire tels que
 $\mcomp{Γ}{m}$. Soit $e$ une expression telle que $Γ ⊢ e : t$.
 
 Alors, si $\mm{m}{e}{m'}{e'}$, on a $Γ ⊢ e' : t$ et $\mcomp{Γ}{\cCleanup{m'}}$.
