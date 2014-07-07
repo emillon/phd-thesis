@@ -4,11 +4,8 @@
 
 \input{indus}
 
-\subsection{\langname}
-
 \begin{frame}{Présentation de \langname}
     \begin{itemize}
-        \item C: expressif mais permissif
         \item \newspeak: bon front-end mais bas niveau
         \item \langname = restriction de C \enquote{bien typable}
         \item pas de casts, …
@@ -48,9 +45,10 @@
                  {END}
   \end{align*}
 \end{frame}
+
 \subsection{Sémantique}
 
-\begin{frame}{Sémantique impérative}
+\begin{frame}{Sémantique}
 
 \begin{itemize}
 \item
@@ -62,21 +60,6 @@
 \item expressions $→$ valeurs
 \end{itemize}
 
-\end{frame}
-
-\begin{frame}{Valeurs gauches}
-    \begin{itemize}
-        \item valeurs gauches (\emph{lvalues})
-        \item ex: $x.f[2] ← 3$
-        \item formes:
-            \begin{itemize}
-                \item \texttt{x} $→$ \texttt{(n, x)}
-                \item \texttt{lv.l} $→ φ.l$
-                \item \texttt{lv[e]} $→ φ[n]$
-                \item \texttt{*e} $→ φ$
-            \end{itemize}
-        \item $\mm{m}{lv ← e}{m'}{v}$ ?
-    \end{itemize}
 \end{frame}
 
 \tikzset{ stackframe/.style={ draw
@@ -119,19 +102,21 @@
     \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Structure de la mémoire}
 
-\begin{itemize}
-\item $m = (s, g) ∈ \sMem$
-\item $\sMem = \sList{\sFrame} × \sFrame$
-\item liste de cadres de pile, cadre de globales
-\item cadre: $c = (x_1 ↦ v_1, …, x_n ↦ v_n) ∈ \sFrame$
-\item Comment exprimer:
-  \begin{itemize}
-  \item $m[φ]$
-  \item $m[φ←v]$
-  \end{itemize}
-\end{itemize}
+\begin{frame}{Valeurs gauches}
+    \begin{itemize}
+        \item ex: $x.f[2] ← 3$
+        \item valeurs gauches (\emph{lvalues}) $→$ chemins $φ$
+            \begin{align*}
+            \gramdef{Chemins}{φ}
+               { (x)    }{Globale}
+               { (n, x)    }{Locale}
+               { φ.l  }{Accès à un champ}
+               { φ[n] }{Accès à un élément}
+               {END}
+            \end{align*}
+        \item $\mm{m}{φ ← v}{m[φ ← v]}{v}$
+    \end{itemize}
 \end{frame}
 
 %\begin{frame}{À la main}
@@ -151,8 +136,6 @@
 %                    … & …
 %\end{align*}
 %\end{frame}
-
-\subsection{Lentilles}
 
 \definecolor{figcola}{HTML}{EFEF52}
 \definecolor{figcolb}{HTML}{52EFA1}
@@ -240,6 +223,8 @@
 \draw [->] (GB) to node[auto] {$\mathrm{get}_{ℒ_2}$} (GC);
 
 \end{tikzpicture}
+
+% TODO pk pas un overlay
 
 \vspace{-1cm}\hspace{7cm} \fbox{$ℒ_1 \ggg ℒ_2$}
 
@@ -344,13 +329,13 @@
 
 % TODO figure statique/dynamique à mettre ici et en intro
 
-\begin{frame}{Système de types}
-    \begin{itemize}
-        \item Classification statique selon la forme des expressions
-        \item $Γ ⊢ e : t$
-        \item Monomorphe: un seul type par expression
-    \end{itemize}
-\end{frame}
+%\begin{frame}{Système de types}
+%    \begin{itemize}
+%        \item Classification statique selon la forme des expressions
+%        \item $Γ ⊢ e : t$
+%        \item Monomorphe: un seul type par expression
+%    \end{itemize}
+%\end{frame}
 
 \begin{frame}{Système de types}
 \begin{align*}
