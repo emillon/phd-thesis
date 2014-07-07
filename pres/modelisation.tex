@@ -64,8 +64,8 @@
 
 \begin{frame}{Valeurs gauches}
     \begin{itemize}
-        \item valeurs gauches (\emph{lvalues}): \texttt{t[20] = 1}
-        \item valeurs gauches $→$ chemins $φ$
+        \item valeurs gauches (\emph{lvalues})
+        \item ex: $x.f[2] ← 3$
         \item formes:
             \begin{itemize}
                 \item \texttt{x} $→$ \texttt{(n, x)}
@@ -74,9 +74,6 @@
                 \item \texttt{*e} $→ φ$
             \end{itemize}
         \item $\mm{m}{lv ← e}{m'}{v}$ ?
-        \item ex: $x.f[2] ← 3$
-        \item Mise à jour complète : $m' = m[ x ← 0]$
-        \item Mise à jour partielle : $m' = m[x.f ← 0]$
     \end{itemize}
 \end{frame}
 
@@ -385,6 +382,20 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
 
 \end{frame}
 
+\begin{frame}{Différence entre les types C et les types inférés}
+    \centering
+      \begin{tabular}{ll}
+          \toprule
+          C & \langname \\
+          \midrule
+          \texttt{int} & $\tInt$ \\
+          \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
+          \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
+          \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
+          \bottomrule
+      \end{tabular}
+\end{frame}
+
 \begin{frame}{Règles de typage}
     \begin{mathpar}
        \irule{Addr}
@@ -407,20 +418,6 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
          }
          { Γ ⊢ \uPut{\colU{e_d}}{\colK{e_s}} : \tInt }
     \end{mathpar}
-\end{frame}
-
-\begin{frame}{Différence entre les types C et les types inférés}
-    \centering
-      \begin{tabular}{ll}
-          \toprule
-          C & \langname \\
-          \midrule
-          \texttt{int} & $\tInt$ \\
-          \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
-          \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
-          \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
-          \bottomrule
-      \end{tabular}
 \end{frame}
 
 \begin{frame}{Sûreté du typage}
