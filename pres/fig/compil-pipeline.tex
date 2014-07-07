@@ -50,9 +50,14 @@ height=1cm, shade, top color=white,
 \node [file, right of=npk, node distance=3cm](warn)
     {\textcolor{black}{\centering Alarmes}};
 
+\node [right of=npk, node distance=3cm, yshift=-2cm](warnn)
+    {\textcolor{black}{\centering Autres analyses}};
+
 \node [right of=npk3, node distance=3cm](analyser2){};
 
 \draw[->] (npk) -- node[above, yshift=2mm] {{\tiny \ttfamily penjili}} (warn);
+
+\draw[->] (npk) -- (warnn);
 
 \draw[->] (c4)   -- node[above, text depth=3pt] {\footnotesize Pr\'etraitement} (cc4);
 \draw[->] (cc4)  -- node[above, text depth=3pt] {\footnotesize Compilation} (no4);
