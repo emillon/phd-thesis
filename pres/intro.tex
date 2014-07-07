@@ -57,17 +57,18 @@
 }
 \long\def\memzones{
 
+  \mzone{0}{6}{user}
   % exec
-  \mzone{0.5}{1}{user}
+  %\mzone{0.5}{1}{user}
 
-  % lib
-  \mzone{2.5}{3.2}{user}
+  %% lib
+  %\mzone{2.5}{3.2}{user}
 
-  % stack
-  \mzone{3.7}{4}{user}
+  %% stack
+  %\mzone{3.7}{4}{user}
 
-  % stack
-  \mzone{5}{5.5}{user}
+  %% stack
+  %\mzone{5}{5.5}{user}
 
   % kernel
   \mzone{6}{8}{kernel}
@@ -110,6 +111,17 @@
 %
 %\end{tikzpicture}
 %\end{frame}
+
+\begin{frame}{Espaces noyau et utilisateur}
+
+\begin{tikzpicture}
+  [user/.style={fill=MellonGreen}
+  ,kernel/.style={fill=MellonPink}
+  ]
+
+  \memzones{}
+\end{tikzpicture}
+\end{frame}
 
 \begin{frame}{Utilisation correcte d'un appel système}
     \insertcode{gettimeofday.c}
