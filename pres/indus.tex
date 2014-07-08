@@ -1,11 +1,31 @@
 \subsection{Penjili \& \newspeak}
 
 \begin{frame}{Le projet Penjili}
-\centering
-\includegraphics[scale=.5]{img/penjili.png}
-\end{frame}
 
-% TODO mettre un overlay avec nouveaux choses ici
+\includegraphics[scale=.5]{img/penjili.png}
+
+\begin{tikzpicture}[remember picture, overlay]
+
+    \node at ($ (current page.north) + (-1.5, -3.7) $) (A) {};
+\only<2>{
+    \node[ draw
+         , shape=ellipse
+         , shade
+         , top color=cyan!30
+         , bottom color=white
+         , draw=blue!40!black!60
+    ] at ($ (A) + (3, 1) $) (PT) {\texttt{ptrtype}};
+
+    \node at ($ (PT) + (3, 0.5) $) (PTOK) {\parbox{2cm}{\centering Analyse par typage}};
+
+    \draw[thick, orange, ->] (A) to[bend left=10] (PT);
+
+    \draw[thick, orange, ->] (PT) to[bend left=10] (PTOK);
+}
+    \path (A) rectangle ++ (7cm, 2cm);
+
+\end{tikzpicture}
+\end{frame}
 
 % TODO dire pourquoi Penjili ne convient pas
 % TODO et dire ici ce que c'est que le typage
@@ -52,13 +72,5 @@ do {
 \BUseVerbatim{compilnpk}
 \end{minipage}
 }
-
-\end{frame}
-
-\begin{frame}{Compilation \& analyse}
-
-\input{fig/compil-pipeline.tex}
-
-% TODO virer ce slide
 
 \end{frame}
