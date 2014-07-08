@@ -1,17 +1,19 @@
 \section{Modélisation}
 
 \subsection{\langname}
-% TODO motiv lentilles
 
 \begin{frame}{\langname}
     \begin{itemize}
         \item \newspeak: bon front-end mais bas niveau
         \item \langname = restriction de C \enquote{bien typable}
         \item Pas de casts, arithmétique des pointeurs restreinte
+        \item Différence de modèle mémoire:
+            \begin{itemize}
+                \item \newspeak: suite d'octets
+                \item \langname: ensemble structuré de valeurs
+            \end{itemize}
     \end{itemize}
 \end{frame}
-
-% TODO exemple comparatif
 
 \begin{frame}{Syntaxe -- Expressions}
   \begin{align*}
@@ -69,17 +71,15 @@
         }
 \tikzset{ twovars/.style={ rectangle split
                          , rectangle split parts=2
+                         , rectangle split draw splits=false
                          }
         }
 
 
-% TODO pas de fleche
-% TODO tiret entre les variables
-% TODO légende
 \long\def\figmemstate{
 \begin{scope}
     [ start chain=going below
-    , every join/.style={<-, thick}
+    , every join/.style={thick}
     , node distance=5mm
     ]
     \node[stackframe, on chain, join] (stackbot) {$n ↦ 0$};
@@ -100,10 +100,15 @@
     { $a ↦ 2$ \nodepart{two} $b ↦ 3.14$ };
 }
 
+
 \begin{frame}{Structure de la mémoire}
     \centering
     \begin{tikzpicture}
         \figmemstate{}
+        \node[above=2mm of stackbot.north] {Locales};
+        \node[above=2mm of globvars.north] {Globales};
+
+        \node[right=5mm of stackf.east] {Cadre de pile};
     \end{tikzpicture}
 \end{frame}
 
@@ -121,6 +126,7 @@
                {END}
             \end{align*}
         \item $\mm{m}{φ ← v}{m[φ ← v]}{v}$
+        \item Comment définir $m[φ]$ et $m[φ ← v]$?
     \end{itemize}
 \end{frame}
 
@@ -229,15 +235,13 @@
 
 \end{tikzpicture}
 
-% TODO pk pas un overlay
-
 \vspace{-1cm}\hspace{7cm} \fbox{$ℒ_1 \ggg ℒ_2$}
 
 \end{center}
 
 \end{frame}
 
-% TODO ex fst >>> fst
+% ex fst >>> fst
 
 \begin{frame}{Lentilles en sémantique}
     \centering
@@ -253,17 +257,17 @@
     \end{tabular}
 \end{frame}
 
-% TODO virer?
-\begin{frame}{Lentilles en sémantique}
-
-    \begin{align*}
-       Φ &∈ \sPath → \setLens{Mem}{Val} \\
-        \\
-       φ &= (2, x).f[2] \\
-    Φ(φ) &= \texttt{fst} \ggg I(2) \ggg L(x) \ggg F(f) \ggg T(2) \\
-    \end{align*}
-
-\end{frame}
+% virer?
+% \begin{frame}{Lentilles en sémantique}
+% 
+%     \begin{align*}
+%        Φ &∈ \sPath → \setLens{Mem}{Val} \\
+%         \\
+%        φ &= (2, x).f[2] \\
+%     Φ(φ) &= \texttt{fst} \ggg I(2) \ggg L(x) \ggg F(f) \ggg T(2) \\
+%     \end{align*}
+% 
+% \end{frame}
 
 \begin{frame}{Fonctionnement des lentilles}
     \centering
@@ -320,7 +324,8 @@
 
 \begin{frame}{Définition de $Φ$}
 \begin{align*}
-    Φ(v)    &= V(v) \\
+    Φ((x))  &= \texttt{snd} \ggg L(x) \\
+ Φ((n, x))  &= \texttt{fst} \ggg I(n) \ggg L(x) \\
   Φ(φ.l)    &= Φ(φ) \ggg F(l) \\
   Φ(φ[n])   &= Φ(φ) \ggg T(n) \\
             & \\
@@ -376,20 +381,20 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
 
 \end{frame}
 
-% TODO virer ce slide
-\begin{frame}{Différence entre les types C et les types inférés}
-    \centering
-      \begin{tabular}{ll}
-          \toprule
-          C & \langname \\
-          \midrule
-          \texttt{int} & $\tInt$ \\
-          \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
-          \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
-          \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
-          \bottomrule
-      \end{tabular}
-\end{frame}
+% TODx virer ce slide
+% \begin{frame}{Différence entre les types C et les types inférés}
+%     \centering
+%       \begin{tabular}{ll}
+%           \toprule
+%           C & \langname \\
+%           \midrule
+%           \texttt{int} & $\tInt$ \\
+%           \texttt{int *} (utilisé \texttt{x[i]}) & $\tInt~[~]$ \\
+%           \texttt{int *} (utilisé \texttt{*x}) & $\ptrK{\tInt}$ \\
+%           \texttt{int *} (argument syscall) & $\ptrU{\tInt}$ \\
+%           \bottomrule
+%       \end{tabular}
+% \end{frame}
 
 \begin{frame}{Règles de typage}
     \begin{mathpar}
@@ -440,7 +445,7 @@ $\mcomp{Γ}{m}$. Soit $e$ une expression telle que $Γ ⊢ e : t$.
 
 Alors, si $\mm{m}{e}{m'}{e'}$, on a $Γ ⊢ e' : t$ et $\mcomp{Γ}{\cCleanup{m'}}$.
 
-% TODO mentionner le cleanup
+% TODx mentionner le cleanup
 
 \end{theorem}
 \end{frame}
