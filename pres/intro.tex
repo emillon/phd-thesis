@@ -5,22 +5,20 @@
 \begin{frame}{L'arnaque du serrurier}
 
 \begin{itemize}
-\item
-  J'appelle un serrurier
-\item
-  Il peut m'ouvrir la porte
-\item
-  Et si je lui dis que j'habite chez mon voisin? à la banque?
+    \item J'appelle un serrurier
+    \item Je l'attends devant \only<1>{\textbf{chez moi}}\only<2>{\textbf{chez mon voisin}}
+    \item Il ouvre \only<1>{\textbf{ma porte}}\only<2>{\textbf{sa porte}}
+    \item Je rentre \only<1>{\textbf{chez moi}}\only<2>{\textbf{chez mon voisin}}
 \end{itemize}
-
 \end{frame}
+
 \begin{frame}{L'arnaque du serrurier -- conclusion}
 
 \begin{itemize}
-\item problème de confiance
-\item il ne doit pas appliquer ses droits…
+\item Problème de confiance
+\item il ne doit pas appliquer ses droits
 \item …mais ceux de l'appelant
-\item il doit vérifier que j'ai bien les droits sur la maison
+\item Il doit vérifier que j'ai bien les droits sur la maison
 \end{itemize}
 
 \end{frame}
@@ -28,11 +26,15 @@
 \subsection{Isolation entre utilisateur et noyau}
 
 \begin{frame}{Espaces utilisateur et noyau}
-    \begin{itemize}
-        \item espace utilisateur: programmes (navigateur, …)
-        \item espace noyau: pilotes
-        \item matériel
-    \end{itemize}
+    \centering
+    \begin{tikzpicture}
+        [node distance=2cm]
+        \node (U) {\parbox{5cm}{Espace utilisateur:\newline programmes (navigateur, …)}};
+        \node[below of=U] (K) {Noyau: pilotes};
+        \node[below of=K] (H) {Matériel: disque dur, …};
+        \draw[<->] (U) -- node [auto] {Appels système} (K);
+        \draw[<->] (K) -- node [auto] {Instructions privilégiées} (H);
+    \end{tikzpicture}
 \end{frame}
 
 % Memory zone
@@ -113,7 +115,7 @@
 %\end{frame}
 
 \begin{frame}{Espaces noyau et utilisateur}
-
+\centering
 \begin{tikzpicture}
   [user/.style={fill=MellonGreen}
   ,kernel/.style={fill=MellonPink}
@@ -124,6 +126,7 @@
 \end{frame}
 
 \begin{frame}{Utilisation correcte d'un appel système}
+\centering
     \insertcode{gettimeofday.c}
 
 \begin{tikzpicture}
@@ -137,6 +140,7 @@
 \end{frame}
 
 \begin{frame}{Utilisation détournée d'un appel système}
+\centering
     \insertcode{gettimeofday-bad.c}
 
 \begin{tikzpicture}
