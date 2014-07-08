@@ -2,6 +2,10 @@
 
 \subsection{L'arnaque du serrurier}
 
+% TODO le slide qui affiche la subsec = inutile
+
+% TODO remplacer par une "BD" bonhommes rouges & vert
+
 \begin{frame}{L'arnaque du serrurier}
 
 \begin{itemize}
@@ -25,11 +29,14 @@
 
 \subsection{Isolation entre utilisateur et noyau}
 
+% TODO code couleur ici
+% TODO "espace": pas terrible
+
 \begin{frame}{Espaces utilisateur et noyau}
     \centering
     \begin{tikzpicture}
         [node distance=2cm]
-        \node (U) {\parbox{5cm}{Espace utilisateur:\newline programmes (navigateur, …)}};
+        \node (U) {Espace utilisateur: programmes (navigateur, …)};
         \node[below of=U] (K) {Noyau: pilotes};
         \node[below of=K] (H) {Matériel: disque dur, …};
         \draw[<->] (U) -- node [auto] {Appels système} (K);
@@ -122,6 +129,8 @@
   ]
 
   \memzones{}
+
+  % TODO légende + matériel
 \end{tikzpicture}
 \end{frame}
 
@@ -150,12 +159,24 @@
 
   \memzones{}
   \addrlabel{6.7}{ptv}
+  
+    % TODO pourquoi est-ce un pb
 \end{tikzpicture}
 \end{frame}
 
 % exemple KMS à la place de gettimeofday?
 
 \begin{frame}{Problème des pointeurs dans les appels système}
+
+    %TODO gros pb sur ce slide
+    % 2 carac: qui controle
+    % sur quoi ça pointe
+
+    % 2 types de copie
+    % avec check, sns check
+
+    % TODO figure avec cas interdits
+    % TODO ne pas mentionner statique/dynamique
 \begin{itemize}
     \item il faut vérifier tous les pointeurs
     \item fonctions \texttt{copy\_from\_user}, \texttt{copy\_to\_user}

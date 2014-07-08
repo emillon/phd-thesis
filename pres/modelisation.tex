@@ -7,9 +7,11 @@
     \begin{itemize}
         \item \newspeak: bon front-end mais bas niveau
         \item \langname = restriction de C \enquote{bien typable}
-        \item pas de casts, …
+        \item Pas de casts, arithmétique des pointeurs restreinte
     \end{itemize}
 \end{frame}
+
+% TODO exemple comparatif
 
 \begin{frame}{Syntaxe -- Expressions}
   \begin{align*}
@@ -70,6 +72,10 @@
                          }
         }
 
+
+% TODO pas de fleche
+% TODO tiret entre les variables
+% TODO légende
 \long\def\figmemstate{
 \begin{scope}
     [ start chain=going below
@@ -243,12 +249,11 @@
         $L(k)$ & $\sList{(α×β)}$ & $β$   & liste d'association \\
         $T(n)$ & \sVal           & \sVal & tableau \\
         $F(l)$ & \sVal           & \sVal & structure \\
-        $V(v)$ & \sMem           & \sVal & variable \\
-        $Φ(φ)$ & \sMem           & \sVal & chemin \\
         \bottomrule
     \end{tabular}
 \end{frame}
 
+% TODO virer?
 \begin{frame}{Lentilles en sémantique}
 
     \begin{align*}
@@ -301,7 +306,7 @@
             \begin{minipage}{4cm}
             \begin{align*}
                    φ &= \only<2->{(}\only<3->{2,}\only<4->{ x)}\only<5->{.f}\only<6->{[2]} \\
-                Φ(φ) &= \only<2->{ \texttt{fst} } \\
+                   ℒ &= \only<2->{ \texttt{fst} } \\
          \only<3->{  &\ggg I(2)      \\}
          \only<4->{  &\ggg L(x)      \\}
          \only<5->{  &\ggg F(f)      \\}
@@ -326,8 +331,6 @@
 
 \subsection{Système de types}
 
-% TODO figure statique/dynamique à mettre ici et en intro
-
 %\begin{frame}{Système de types}
 %    \begin{itemize}
 %        \item Classification statique selon la forme des expressions
@@ -351,6 +354,8 @@
 \end{align*}
 \end{frame}
 
+% TODO comparer avec cqual
+
 \begin{frame}{Deux types de pointeurs}
 
 Pointeurs noyau : $\colK{\ptrK{t}}$
@@ -366,11 +371,12 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
   \begin{itemize}
   \item valeur provient d'un utilisateur non privilégié
   \item ex: paramètres d'appels systèmes
-  \item doivent être vérifiés dynamiquement!
+  \item peuvent être copiés uniquement par des fonctions sûres (\texttt{copy\_*\_user})
   \end{itemize}
 
 \end{frame}
 
+% TODO virer ce slide
 \begin{frame}{Différence entre les types C et les types inférés}
     \centering
       \begin{tabular}{ll}
@@ -409,6 +415,8 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
     \end{mathpar}
 \end{frame}
 
+% TODO comparer avec gettimeofday
+
 \begin{frame}{Sûreté du typage}
 
 \begin{theorem}[Progrès]
@@ -431,6 +439,8 @@ Soient $Γ$ un environnement de typage et $m$ un état mémoire tels que
 $\mcomp{Γ}{m}$. Soit $e$ une expression telle que $Γ ⊢ e : t$.
 
 Alors, si $\mm{m}{e}{m'}{e'}$, on a $Γ ⊢ e' : t$ et $\mcomp{Γ}{\cCleanup{m'}}$.
+
+% TODO mentionner le cleanup
 
 \end{theorem}
 \end{frame}

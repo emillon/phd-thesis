@@ -1,8 +1,12 @@
 \section{Conclusion}
-\subsection{Conclusion}
+  \begin{frame}<beamer>
+   \tableofcontents[currentsection]
+ \end{frame}
 
-% 2è bug
+% TODO bug blackfin
 % TODO comment convaincre les indus
+
+% TODO contributions
 
 \begin{frame}{Conclusion}
     \begin{itemize}
@@ -55,10 +59,13 @@
             \end{itemize}
         \item Autres propriétés:
             \begin{itemize}
+                    % TODO  => perspectives
                 \item \emph{bitmasks}: \texttt{!x \& y} $⇔$ \texttt{!(x \& y)}
                 \item \texttt{size\_t} / \texttt{int}: \texttt{memset(p, 0, n)} $⇔$ \texttt{memset(p, n, 0)}
             \end{itemize}
         \item Types abstraits: permettre au programmeur de définir ses propres
             analyses
+            % TODO heap
+            % TODO faire collaborer penjili+ptrtype
         \end{itemize}
 \end{frame}
