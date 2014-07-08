@@ -4,8 +4,6 @@
 
 % TODO le slide qui affiche la subsec = inutile
 
-% TODO remplacer par une "BD" bonhommes rouges & vert
-
 \long\def\mec{
     \draw[ultra thick, fill=MellonGreen]
               (0, 0)
@@ -225,35 +223,37 @@
 
 \begin{frame}{Problème des pointeurs dans les appels système}
 
-    %TODO gros pb sur ce slide
-    % 2 carac: qui controle
-    % sur quoi ça pointe
-
-    % 2 types de copie
-    % avec check, sns check
-
-    % TODO figure avec cas interdits
-    % TODO ne pas mentionner statique/dynamique
 \begin{itemize}
-    \item il faut vérifier tous les pointeurs
-    \item fonctions \texttt{copy\_from\_user}, \texttt{copy\_to\_user}
-    \item test + \texttt{memcpy}
-    \item ou retournent une erreur ($< 0$)
-    \item but: détecter les cas où on devrait utiliser \texttt{copy\_*\_user}
+    \item La copie simple n'est pas suffisante: il faut vérifier tous les pointeurs
+    \item 2 propriétés:
+    \begin{itemize}
+        \item Qui contrôle le pointeur?
+        \item Dans quelle plage se trouve sa valeur?
+    \end{itemize}
+    \item Invariant: les pointeurs contrôlés par l'utilisateur pointent dans la
+        mémoire utilisateur
+    \item Fonctions non sûres: \texttt{memcpy}, \texttt{strcpy}
+    \item Fonctions sûres: \texttt{copy\_from\_user}, \texttt{copy\_to\_user}
 \end{itemize}
 
-\begin{center}
-\begin{tabular}{cccc}
-    \toprule
-    & & \multicolumn{2}{p{2cm}}{Contrôlé par \newline (\textbf{statique})} \\
-    & & Noyau & Utilisateur \\
-    \midrule
-\multirow{2}{*}{\parbox{2cm}{Pointe sur \newline (\textbf{dynamique})}}
-    & Noyau  & OK & Danger \\
-    & Utilisateur & OK & OK \\
-    \bottomrule
-\end{tabular}
-\end{center}
+\end{frame}
+
+\begin{frame}{Types de copies}
+
+    \centering
+    \begin{tikzpicture}
+        [ lbl/.style={ auto
+                     }
+        ]
+        \draw[fill=MellonGreen!50] (0, 0) rectangle (-6, 6);
+        \draw[fill=MellonPink!50] (0, 0) rectangle (2, 6);
+
+        \draw[->] (-1, 5)  to[bend left]  node[lbl] {\texttt{copy\_from\_user}} ++ (2, 0);
+        \draw[->] (-1, 4)  to[bend left]  node[lbl] {\sout{\texttt{memcpy}}} ++ (2, 0);
+        \draw[<-] (-1, 2)  to[bend right] node[lbl,swap] {\texttt{copy\_to\_user}} ++ (2, 0);
+        \draw[<-] (-1, 1)  to[bend right] node[lbl,swap] {\sout{\texttt{memcpy}}} ++ (2, 0);
+        \draw[<-] (0.2, 2.5) to[bend right] node[lbl,swap] {\texttt{memcpy}} ++ (0, 1);
+    \end{tikzpicture}
 
 \end{frame}
 
