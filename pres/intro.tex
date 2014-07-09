@@ -4,8 +4,8 @@
 
 % TODO le slide qui affiche la subsec = inutile
 
-\long\def\mec{
-    \draw[ultra thick, fill=MellonGreen]
+\long\def\mecnocol{
+    \draw[ultra thick]
               (0, 0)
         -- ++ (1, -2)
         -- ++ (1, 0)
@@ -24,31 +24,117 @@
         -- cycle;
 }
 
-\long\def\porte#1{
-    \draw[ultra thick, fill=#1]
+\long\def\mec{
+    \draw[fill=MellonGreen]
               (0, 0)
-        -- ++ (5, -2)
-        -- ++ (0, 8)
-        -- ++ (-5, 2)
+        -- ++ (1, -2)
+        -- ++ (1, 0)
+        -- ++ (-1, 3)
+        -- ++ (1, -1)
+        -- ++ (1, 1)
+        -- ++ (-2, 1)
+        -- ++ (0, 1)
+        -- ++ (-2, 0)
+        -- ++ (0, -1)
+        -- ++ (-2, -1)
+        -- ++ (1, -1)
+        -- ++ (1, 1)
+        -- ++ (-1, -3)
+        -- ++ (1, 0)
         -- cycle;
+    \mecnocol{}
+}
 
+\long\def\portepoigneefermee{
     \draw[ultra thick]
            (3.5, 2)
         -- ++ (0.6, -0.24)
         circle(0.1);
 }
 
+\long\def\portepoigneeouverte{
+    \draw[ultra thick]
+           (2.5, 3.6)
+        -- ++ (0.6, 0.14)
+        circle(0.1);
+}
+
+\long\def\portefermee#1{
+    \draw[fill=#1]
+              (0, 0)
+        -- ++ (5, -2)
+        -- ++ (0, 8)
+        -- ++ (-5, 2)
+        -- cycle;
+
+    \portepoigneefermee{}
+}
+\long\def\portecadre{
+    \draw[ultra thick]
+              (0, 0)
+        -- ++ (5, -2)
+        -- ++ (0, 8)
+        -- ++ (-5, 2)
+        -- cycle;
+}
+
+\long\def\porte#1{
+    \portefermee{#1}
+    \portecadre{}
+    \portepoigneefermee{}
+}
+
+\long\def\porteouv#1{
+    \portecadre{}
+    \draw[ultra thick, fill=#1]
+                (0, 0)
+           -- ++(4, 1)
+           -- ++(0, 5.4)
+           -- ++(-4, 1.6)
+           -- (0, 0);
+    \portepoigneeouverte{}
+}
+
+\long\def\serrurier{
+    \mecnocol{}
+    \node at (0, 1.2) {S};
+
+    \path (0, 0)
+        -- ++ (5, -2)
+        -- ++ (0, 8)
+        -- ++ (-5, 2)
+        -- cycle;
+}
+
 \begin{frame}{L'arnaque du serrurier}
 
-    % TODO serrurier + porte fermée = porte ouverte
-
     \centering
+    $
+    \vcenter{\hbox{
+    \begin{tikzpicture}
+        [scale=0.2]
+        \serrurier{}
+    \end{tikzpicture}
+    }}
+    +
+    \vcenter{\hbox{
     \begin{tikzpicture}
         [scale=0.2]
         \only<1>{ \porte{MellonGreen} }
         \only<2>{ \porte{MellonPink} }
         \mec{}
     \end{tikzpicture}
+    }}
+    =
+    \vcenter{\hbox{
+    \begin{tikzpicture}
+        [scale=0.2]
+        \only<1>{ \porteouv{MellonGreen} }
+        \only<2>{ \porteouv{MellonPink} }
+        \mec{}
+    \end{tikzpicture}
+    }}
+    $
 
 \begin{itemize}
     \item J'appelle un serrurier
@@ -238,6 +324,12 @@
 
 \end{frame}
 
+\def\ssout{\bgroup
+ \markoverwith{\lower-0.2ex\hbox
+ {\kern-.03em\vbox{\hrule width.2em\kern0.45ex\hrule}\kern-.03em}}%
+ \ULon}
+\MakeRobust\dout
+
 \begin{frame}{Types de copies}
 
     \centering
@@ -245,14 +337,18 @@
         [ lbl/.style={ auto
                      }
         ]
-        \draw[fill=MellonGreen!50] (0, 0) rectangle (-6, 6);
-        \draw[fill=MellonPink!50] (0, 0) rectangle (2, 6);
+        \draw[fill=MellonGreen] (0, 0) rectangle (-6, 6);
+        \draw[fill=MellonPink] (0, 0) rectangle (2, 6);
 
         \draw[->] (-1, 5)  to[bend left]  node[lbl] {\texttt{copy\_from\_user}} ++ (2, 0);
-        \draw[->] (-1, 4)  to[bend left]  node[lbl] {\sout{\texttt{memcpy}}} ++ (2, 0);
+        \draw[->] (-1, 4)  to[bend left]  node[lbl] (MB1) {\texttt{memcpy}} ++ (2, 0);
         \draw[<-] (-1, 2)  to[bend right] node[lbl,swap] {\texttt{copy\_to\_user}} ++ (2, 0);
-        \draw[<-] (-1, 1)  to[bend right] node[lbl,swap] {\sout{\texttt{memcpy}}} ++ (2, 0);
+        \draw[<-] (-1, 1)  to[bend right] node[lbl,swap] (MB2) {\texttt{memcpy}} ++ (2, 0);
         \draw[<-] (0.2, 2.5) to[bend right] node[lbl,swap] {\texttt{memcpy}} ++ (0, 1);
+
+        \foreach \N in {MB1,MB2}
+        \draw[thick] ($ (\N.east) + (0, 0.5mm) $)
+                  -- ($ (\N.west) + (0, 0.5mm) $);
     \end{tikzpicture}
 
 \end{frame}
