@@ -304,10 +304,17 @@
 \end{tikzpicture}
 \end{frame}
 
+\def\ssout{\bgroup
+ \markoverwith{\lower-0.2ex\hbox
+ {\kern-.03em\vbox{\hrule width.2em\kern0.45ex\hrule}\kern-.03em}}%
+ \ULon}
+\MakeRobust\dout
+
 \begin{frame}{Problème des pointeurs dans les appels système}
 
+\begin{minipage}{0.65\textwidth}
 \begin{itemize}
-    \item La copie simple n'est pas suffisante: il faut vérifier tous les pointeurs
+    \item La copie simple n'est pas suffisante:\newline il faut vérifier tous les pointeurs
     \item 2 propriétés:
     \begin{itemize}
         \item Qui contrôle le pointeur?
@@ -318,24 +325,14 @@
     \item Fonctions non sûres: \texttt{memcpy}, \texttt{strcpy}
     \item Fonctions sûres: \texttt{copy\_from\_user}, \texttt{copy\_to\_user}
 \end{itemize}
-
-\end{frame}
-
-\def\ssout{\bgroup
- \markoverwith{\lower-0.2ex\hbox
- {\kern-.03em\vbox{\hrule width.2em\kern0.45ex\hrule}\kern-.03em}}%
- \ULon}
-\MakeRobust\dout
-
-\begin{frame}{Types de copies}
-
-    \centering
+\end{minipage}
+\begin{minipage}{0.25\textwidth}
     \begin{tikzpicture}
         [ lbl/.style={ auto
                      }
         ]
-        \draw[fill=MellonGreen] (0, 0) rectangle (-6, 6);
-        \draw[fill=MellonPink] (0, 0) rectangle (2, 6);
+        \draw[fill=MellonGreen] (0, 0) rectangle (-1.7, 6);
+        \draw[fill=MellonPink] (0, 0) rectangle (1.7, 6);
 
         \draw[->] (-1, 5)  to[bend left]  node[lbl] {\texttt{copy\_from\_user}} ++ (2, 0);
         \draw[->] (-1, 4)  to[bend left]  node[lbl] (MB1) {\texttt{memcpy}} ++ (2, 0);
@@ -347,6 +344,7 @@
         \draw[thick] ($ (\N.east) + (0, 0.5mm) $)
                   -- ($ (\N.west) + (0, 0.5mm) $);
     \end{tikzpicture}
+\end{minipage}
 
 \end{frame}
 
