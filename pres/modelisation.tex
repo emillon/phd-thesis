@@ -244,18 +244,47 @@
 
 % ex fst >>> fst
 
+%\begin{frame}{Lentilles pour les structures de données}
+%    \centering
+%    \begin{tabular}{cccl}
+%        \toprule
+%        $ℒ$ & R & A & \\
+%        \midrule
+%        $I(n)$ & $\sList{α}$     & $α$   & n\ieme élément \\
+%        $L(k)$ & $\sList{(α×β)}$ & $β$   & liste d'association \\
+%        $T(n)$ & \sVal           & \sVal & tableau \\
+%        $F(l)$ & \sVal           & \sVal & structure \\
+%        \bottomrule
+%    \end{tabular}
+%\end{frame}
+
 \begin{frame}{Lentilles pour les structures de données}
-    \centering
-    \begin{tabular}{cccl}
-        \toprule
-        $ℒ$ & R & A & \\
-        \midrule
-        $I(n)$ & $\sList{α}$     & $α$   & n\ieme élément \\
-        $L(k)$ & $\sList{(α×β)}$ & $β$   & liste d'association \\
-        $T(n)$ & \sVal           & \sVal & tableau \\
-        $F(l)$ & \sVal           & \sVal & structure \\
-        \bottomrule
-    \end{tabular}
+    \begin{itemize}
+        \item
+            $I(n)$: lentille \enquote{n\ieme élément d'une liste}
+
+            \[ \lensPut{I(2)}{5}{[4;8;15;16]} = [4;5;15;16] \]
+
+        \item
+            $L(k)$: lentille \enquote{élément associé à $k$} d'une liste
+            d'association
+
+            \[ \lensGet{L(b)}{[(a, 23);(b, 42)]} = 42 \]
+
+        \item
+            $T(n)$ et $F(k)$: équivalents de $I(n)$ et $F(k)$ sur les valeurs tableaux et structures
+    \end{itemize}
+
+    %\begin{tabular}{cccl}
+    %    \toprule
+    %    $ℒ$ & R & A & \\
+    %    \midrule
+    %    $I(n)$ & $\sList{α}$     & $α$   & n\ieme élément \\
+    %    $L(k)$ & $\sList{(α×β)}$ & $β$   & liste d'association \\
+    %    $T(n)$ & \sVal           & \sVal & tableau \\
+    %    $F(l)$ & \sVal           & \sVal & structure \\
+    %    \bottomrule
+    %\end{tabular}
 \end{frame}
 
 % virer?
@@ -424,6 +453,8 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
 
 \begin{frame}{Exemple: \texttt{gettimeofday}}
 
+    Comment copier l'heure calculée par le noyau à l'adresse $\colU{ptv}$?
+
     Version avec bug:
 
     \begin{itemize}
@@ -439,7 +470,7 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
         \item
     \texttt{copy\_to\_user(\colU{ptv}, \colK{time})};
         \item
-    $ Γ ⊢ \uPut{\colU{e_d}}{\colK{e_s}} : \tInt $
+        $ Γ ⊢ \texttt{copy\_to\_user(\colU{e_d}, \colK{e_s})} : \tInt $
     \end{itemize}
 
 \end{frame}
