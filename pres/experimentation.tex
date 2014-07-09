@@ -4,8 +4,29 @@
 
 \begin{frame}{L'analyseur \texttt{ptrtype}}
 
-    % TODO remplacer ça par le schéma penjili
-    % TODO mentionner les annotations
+\includegraphics[scale=.5]{img/penjili.png}
+
+\begin{tikzpicture}[remember picture, overlay]
+
+    \node at ($ (current page.north) + (-1.5, -3.7) $) (A) {};
+    \node[ draw
+         , shape=ellipse
+         , shade
+         , top color=cyan!30
+         , bottom color=white
+         , draw=blue!40!black!60
+    ] at ($ (A) + (3, 1) $) (PT) {\texttt{ptrtype}};
+
+    \node at ($ (PT) + (3, 0.5) $) (PTOK) {\parbox{2cm}{\centering Analyse par typage}};
+
+    \node at ($ (PT) + (-2, 1) $) (ANN) { Annotations };
+    \draw[thick, orange, ->] (A) to[bend left=10] (PT);
+
+    \draw[thick, orange, ->] (PT) to[bend left=10] (PTOK);
+    \draw[thick, orange, ->] (ANN) to[bend left=10] (PT);
+    \path (A) rectangle ++ (7cm, 2cm);
+
+\end{tikzpicture}
 
 \end{frame}
 
