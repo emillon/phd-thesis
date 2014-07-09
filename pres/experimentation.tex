@@ -15,12 +15,20 @@
          , top color=cyan!30
          , bottom color=white
          , draw=blue!40!black!60
-    ] at ($ (A) + (3, 1) $) (PT) {\texttt{ptrtype}};
+    ] at ($ (A) + (4, 1.5) $) (PT) {\texttt{ptrtype}};
 
-    \node at ($ (PT) + (3, 0.5) $) (PTOK) {\parbox{2cm}{\centering Analyse par typage}};
+    \node[ draw
+         , shade
+         , top color=cyan!30
+         , bottom color=white
+         , draw=blue!40!black!60
+    ] at ($ (A) + (1.5, 1) $) (SP) {\scriptsize \langname};
 
+    \node at ($ (PT) + (2.5, 0.5) $) (PTOK) {\parbox{2cm}{\centering Analyse par typage}};
+
+    \draw[thick, orange, ->] (A) to[bend left=10] (SP);
+    \draw[thick, orange, ->] (SP) to[bend left=10] (PT);
     \node at ($ (PT) + (-2, 1) $) (ANN) { Annotations };
-    \draw[thick, orange, ->] (A) to[bend left=10] (PT);
 
     \draw[thick, orange, ->] (PT) to[bend left=10] (PTOK);
     \draw[thick, orange, ->] (ANN) to[bend left=10] (PT);
@@ -67,14 +75,9 @@
 % ne pas parler des inconnues
 \end{frame}
 
-\begin{frame}{Code corrigé}
+\begin{frame}[fragile]{Code corrigé}
     % left bottom right top
     \includegraphics[trim=2300 990 100 1220,clip,width=\textwidth]{poster.pdf}
-\end{frame}
-
-\begin{frame}[fragile]{Résultat de l'algorithme d'inférence}
-
-\textbf{Programme complètement étiqueté}:
 
 \begin{SaveVerbatim}{drmok}
 (06-drm-ok.c:17#6)^{

@@ -49,9 +49,9 @@
   \end{align*}
 \end{frame}
 
-\subsection{Sémantique}
+\subsection{Sémantique d'exécution}
 
-\begin{frame}{Sémantique}
+\begin{frame}{Sémantique d'exécution}
 
 \begin{itemize}
 \item
@@ -243,7 +243,7 @@
 
 % ex fst >>> fst
 
-\begin{frame}{Lentilles en sémantique}
+\begin{frame}{Lentilles pour les structures de données}
     \centering
     \begin{tabular}{cccl}
         \toprule
@@ -421,7 +421,27 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
     \end{mathpar}
 \end{frame}
 
-% TODO comparer avec gettimeofday
+\begin{frame}{Exemple: \texttt{gettimeofday}}
+
+    Version avec bug:
+
+    \begin{itemize}
+        \item
+    \texttt{memcpy(\colU{ptv}, \colK{time})};
+        \item
+    $ Γ ⊢ \texttt{memcpy}(\colK{e_d}, \colK{e_s}) : \tInt $
+    \end{itemize}
+
+    Version corrigée:
+
+    \begin{itemize}
+        \item
+    \texttt{copy\_to\_user(\colU{ptv}, \colK{time})};
+        \item
+    $ Γ ⊢ \uPut{\colU{e_d}}{\colK{e_s}} : \tInt $
+    \end{itemize}
+
+\end{frame}
 
 \begin{frame}{Sûreté du typage}
 

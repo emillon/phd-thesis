@@ -14,11 +14,19 @@
          , top color=cyan!30
          , bottom color=white
          , draw=blue!40!black!60
-    ] at ($ (A) + (3, 1) $) (PT) {\texttt{ptrtype}};
+    ] at ($ (A) + (4, 1.5) $) (PT) {\scriptsize\texttt{ptrtype}};
 
-    \node at ($ (PT) + (3, 0.5) $) (PTOK) {\parbox{2cm}{\centering Analyse par typage}};
+    \node[ draw
+         , shade
+         , top color=cyan!30
+         , bottom color=white
+         , draw=blue!40!black!60
+    ] at ($ (A) + (1.5, 1) $) (SP) {\scriptsize \langname};
 
-    \draw[thick, orange, ->] (A) to[bend left=10] (PT);
+    \node at ($ (PT) + (2.5, 0.5) $) (PTOK) {\parbox{2cm}{\centering Analyse par typage}};
+
+    \draw[thick, orange, ->] (A) to[bend left=10] (SP);
+    \draw[thick, orange, ->] (SP) to[bend left=10] (PT);
 
     \draw[thick, orange, ->] (PT) to[bend left=10] (PTOK);
 }
