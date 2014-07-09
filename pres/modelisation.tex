@@ -455,7 +455,7 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
 
     Comment copier l'heure calculée par le noyau à l'adresse $\colU{ptv}$?
 
-    Version avec bug:
+    Version naïve:
 
     \begin{itemize}
         \item
@@ -464,7 +464,7 @@ Pointeurs utilisateur : $\colU{\ptrU{t}}$
     $ Γ ⊢ \texttt{memcpy}(\colK{e_d}, \colK{e_s}) : \tInt $
     \end{itemize}
 
-    Version corrigée:
+    Version correcte:
 
     \begin{itemize}
         \item
