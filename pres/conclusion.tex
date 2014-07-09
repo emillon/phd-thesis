@@ -6,11 +6,24 @@
 % TODO comment convaincre les indus
 
 \begin{frame}{Contributions}
+
 \begin{itemize}
 \item \langname: un langage impératif bien typé
+    \begin{itemize}
+        \item[$⇒$] Règles de codage pour avoir une sémantique de haut niveau
+    \end{itemize}
 \item Une sémantique basée sur les lentilles
+    \begin{itemize}
+        \item[$⇒$] Permet une notation simple pour manipuler la mémoire
+    \end{itemize}
 \item Un système de types abstraits
+    \begin{itemize}
+        \item[$⇒$] Alternative: sous-typage (CQual)
+    \end{itemize}
 \item Un prototype d'analyseur statique
+    \begin{itemize}
+        \item[$⇒$] Intégré dans l'outillage industriel du projet Penjili
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -28,11 +41,6 @@
             \item nécessite des restrictions
             \item mais fonctionne!
         \end{itemize}
-    \item Approche par types abstraits:
-        \begin{itemize}
-            \item Correct pour empêcher certaines opérations
-            \item Alternative: sous-typage (CQual)
-        \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -45,7 +53,7 @@
             \begin{itemize}
                 %\item \emph{bitmasks}: \texttt{!x \& y} $⇔$ \texttt{!(x \& y)}
                     %(cf manuscrit)
-                \item différencier \texttt{size\_t} et \texttt{int}: \texttt{memset(p, 0, n)} $⇔$ \texttt{memset(p, n, 0)}
+                \item \texttt{size\_t} et \texttt{int}: \texttt{memset(p, 0, n)} $⇔$ \texttt{memset(p, n, 0)}
             \end{itemize}
         \item Types abstraits: permettre au programmeur de définir ses propres
             analyses
